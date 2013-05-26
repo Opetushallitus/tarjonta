@@ -59,7 +59,6 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private String KOULUTUSTYYPPI_AMM = "koulutustyyppi_1";
     private String KOULUTUSTYYPPI_KK = "koulutustyyppi_3";
     private String KOULUTUSTYYPPI_LUKIO = "koulutustyyppi_2";
-    
     @Value("${tarjonta.showUnderConstruction:false}")
     private boolean underConstraction;
 
@@ -122,8 +121,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
                     if (underConstraction && koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_KK)) {
                         getParent().removeWindow(UusiKoulutusDialog.this);
-                        ValitseKoulutusDialog dialog = new ValitseKoulutusDialog(selectedOrgs.values(), presenter, uiBuilder);
-                        dialog.windowOpen();
+                        presenter.getKorkeakouluPresenter().showValitseKoulutusDialog();
+                      
                     } else if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_LUKIO)) {
                         presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                         logger.info("lukiokoulutus()");

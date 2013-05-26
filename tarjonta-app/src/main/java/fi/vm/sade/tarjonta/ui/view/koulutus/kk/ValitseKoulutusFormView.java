@@ -69,11 +69,13 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
     private TextField tfSearchField;
     private Table table;
     private BeanItemContainer<KoulutuskoodiRowModel> bic;
-    private Button btClear, btSearch, info;
+    private ValitseKoulutusDialog dialog;
+    private Button btClear, btSearch, info, btNext, btPrev;
 
-    public ValitseKoulutusFormView(TarjontaKorkeakouluPresenter presenter, UiBuilder uiBuilder) {
+    public ValitseKoulutusFormView(TarjontaKorkeakouluPresenter presenter, UiBuilder uiBuilder, ValitseKoulutusDialog dialog) {
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
+        this.dialog = dialog;
 
         setSizeFull();
         addInfoText();
@@ -81,15 +83,12 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         addComponentSearchField();
         addSearchButtons();
         addComponentKoulutuskoodiTable();
-
-        //activate all property annotation validations
+        addNavigationButtonLayout();
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
     }
 
     @Override
     protected void buildLayout() {
-
-
         reload();
     }
 
@@ -99,7 +98,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         label.setWidth(100, UNITS_PERCENTAGE);
         label.setStyleName(Oph.LABEL_SMALL);
 
-        info = UiUtil.buttonSmallInfo(this, new Button.ClickListener() {
+        info = UiUtil.buttonSmallInfo(null, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -119,8 +118,9 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
     private void addComponentKoulutusala() {
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
+        comboBox.setCaption(T("koulutusala.caption"));
 
-        kcKoulutusalas = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI, T("koulutusalat"), comboBox, true);
+        kcKoulutusalas = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI, T("koulutusala.prompt"), comboBox, true);
         kcKoulutusalas.setImmediate(true);
         kcKoulutusalas.setCaptionFormatter(koodiNimiFormatter);
         addHL(kcKoulutusalas);
@@ -130,7 +130,10 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         tfSearchField = UiUtil.textFieldSmallSearch(null);
         tfSearchField.setImmediate(true);
         tfSearchField.setWidth(100, UNITS_PERCENTAGE);
+        tfSearchField.setCaption(T("search.caption"));
         tfSearchField.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
 
@@ -153,6 +156,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
                 LOG.debug("clear {}", event);
                 presenter.getPerustiedotModel().getValitseKoulutus().clear();
                 tfSearchField.setValue("");
+                kcKoulutusalas.getField().setValue(null);
                 reload();
             }
         });
@@ -208,13 +212,40 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
                 LOG.debug("Selected: {}, {}" + table.getValue(), event);
 
                 if (event != null) {
-                    presenter.updateKoulutuskoodiToModel((KoulutuskoodiRowModel) event);
+                    presenter.getPerustiedotModel().getValitseKoulutus().setKoulutuskoodiRow((KoulutuskoodiRowModel) table.getValue());
+                    btNext.setEnabled(true);
                 } else {
                     LOG.debug("Null event object");
                 }
-
             }
         });
+    }
+
+    private void addNavigationButtonLayout() {
+        final HorizontalLayout hl = addHL();
+        btPrev = UiUtil.buttonSmallSecodary(hl, I18N.getMessage("peruuta"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                dialog.windowClose();
+            }
+        });
+
+        btNext = UiUtil.buttonSmallSecodary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                presenter.showKorkeakouluKoulutusEditView();
+                dialog.windowClose();
+            }
+        });
+        btNext.setEnabled(false); //no item selected -> disable 
+
+        hl.setExpandRatio(btNext, 1f);
+        hl.setComponentAlignment(btPrev, Alignment.MIDDLE_LEFT);
+        hl.setComponentAlignment(btNext, Alignment.MIDDLE_RIGHT);
     }
 
     private HorizontalLayout addHL() {

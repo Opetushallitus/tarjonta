@@ -16,13 +16,14 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
 import com.google.common.base.Preconditions;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.PropertysetItem;
+import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -86,9 +87,9 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     /*
      * Koodisto code (url).
      */
-    @NotNull(message = "{validation.Koulutus.koulutus.notNull}")
-    @PropertyId("koulutuskoodiModel")
-    private ComboBox cbKoulutusTaiTutkinto;
+    private Label labelKoulutusTaiTutkinto;
+    private Label labelKoodiarvo;
+    private Button vaihda;
     /*
      * Koodisto code (url).
      */
@@ -159,6 +160,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private Label eqf;
     private Label opintojenLaajuusyksikko;
     private Label opintojenLaajuus;
+    private ValitseKoulutusDialog dialog;
 
     public EditKorkeakouluPerustiedotFormView() {
     }
@@ -177,52 +179,32 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     }
 
     private void initializeDataContainers() {
-        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, model.getKoulutuskoodis());
-        cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
 
         bicTutkintoohjelmas = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, model.getTutkintoohjelmas());
         cbTutkintoohjelma.setContainerDataSource(bicTutkintoohjelmas);
 
         if (!model.isLoaded()) {
             //when data is loaded, it do not need listeners.
-
-            cbKoulutusTaiTutkinto.addListener(new Property.ValueChangeListener() {
-                private static final long serialVersionUID = -382717228031608542L;
-
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {
-                    LOG.debug("Koulutuskoodi event.");
-                    if (cbTutkintoohjelma.getVisibleItemIds() != null && !cbTutkintoohjelma.getVisibleItemIds().isEmpty()) {
-                        //clear result data.
-                        cbTutkintoohjelma.removeAllItems();
-                        clearKomoLabels();
-                    }
-                    korkeakouluPresenter.loadTutkintoohjelmas();
-                    bicTutkintoohjelmas.addAll(model.getTutkintoohjelmas());
-                    disableOrEnableComponents(true);
-                    reload();
-                }
-            });
-
-            cbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
-                private static final long serialVersionUID = -382717228031608542L;
-
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {
-                    korkeakouluPresenter.loadSelectedKomoData();
-                    reload();
-                }
-            });
+//            cbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
+//                private static final long serialVersionUID = -382717228031608542L;
+//
+//                @Override
+//                public void valueChange(Property.ValueChangeEvent event) {
+//                    korkeakouluPresenter.loadSelectedKomoData();
+//                    reload();
+//                }
+//            });
         }
 
-        korkeakouluPresenter.loadKoulutuskoodis();
-        bicKoulutuskoodi.addAll(model.getKoulutuskoodis());
-
-        if (model.isLoaded()) {
-            //reload component data from UI model
-            korkeakouluPresenter.loadSelectedKomoData();
-            reload();
-        }
+        //korkeakouluPresenter.loadKoulutuskoodis();
+        //bicKoulutuskoodi.addAll(model.getKoulutuskoodis());
+/*
+         if (model.isLoaded()) {
+         //reload component data from UI model
+         korkeakouluPresenter.loadSelectedKomoData();
+         reload();
+         }
+         */
     }
 
     private void initializeLayout() {
@@ -271,20 +253,24 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
     private void buildGridKoulutusRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        HorizontalLayout hl = new HorizontalLayout();
+        HorizontalLayout hl = UiUtil.horizontalLayout();
+        hl.setWidth(100, UNITS_PERCENTAGE);
 
-        cbKoulutusTaiTutkinto = new ComboBox();
-        cbKoulutusTaiTutkinto.setNullSelectionAllowed(false);
-        cbKoulutusTaiTutkinto.setImmediate(true);
-        cbKoulutusTaiTutkinto.setWidth(350, UNITS_PIXELS);
-        cbKoulutusTaiTutkinto.setReadOnly(model.isLoaded());
-        cbKoulutusTaiTutkinto.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusTaiTutkinto.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
-        hl.addComponent(cbKoulutusTaiTutkinto);
+        PropertysetItem beanItem = new BeanItem(model.getKoulutuskoodiModel());
+        labelKoulutusTaiTutkinto = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_NAME_PROPERY);
+        labelKoulutusTaiTutkinto.setWidth(400, UNITS_PIXELS);
+        labelKoodiarvo = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_VALUE_PROPERY);
+        vaihda = UiUtil.buttonLink(hl, T("button.edit"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-        this.koulutuskoodi = UiUtil.textField(null, "", "", true);
-        this.koulutuskoodi.setEnabled(false);
-        hl.addComponent(koulutuskoodi);
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                korkeakouluPresenter.showValitseKoulutusDialog();
+            }
+        });
+
+
+
 
         addGridRowItems(grid, hl);
     }
