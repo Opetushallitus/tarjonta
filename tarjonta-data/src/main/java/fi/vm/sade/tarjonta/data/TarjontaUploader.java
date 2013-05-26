@@ -19,7 +19,14 @@ public class TarjontaUploader {
             final TarjontaFileType type = TarjontaFileType.valueOf(args[0].toUpperCase());
             reader.read(type, args[1], args[2]);
         } else {
-            System.out.println("Syötä tiedoston tyyppi, nimi ja haun OID parametreina, esim. -Dexec.args=\"koulutus koulutukset.xls 1.2.3.4.5\" tai -Dexec.args=\"hakukohde hakukohteet.xls 1.2.3.4.5\"");
+            System.out.println("\nKoulutusaineiston käsittely: \n" +
+                    "\n" +
+                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"koulutus koulutukset.xls ammatillinen_peruskoulutus\"\n" +
+                    "\n" +
+                    "Hakukohdeaineiston käsittely:\n" +
+                    "\n" +
+                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"hakukohde hakukohteet.xls 1.2.3.4.5\"\n" +
+                    "\n");
         }
 
         System.exit(0);

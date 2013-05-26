@@ -20,6 +20,10 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
@@ -433,13 +438,13 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-                //showRemoveDialog();
+                //getWindow().showNotification("Ei toteutettu");
+                showRemoveDialog();
 
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-        final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+          //Uncomment when functionality is done
+    /*    final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -469,21 +474,21 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        /*final Button esikatsele = */addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+        *//*final Button esikatsele = *//*addNavigationButton(T("esikatsele"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //check permissions
         final TarjontaPermissionServiceImpl permissions = _presenter.getPermission();
         poista.setVisible(permissions.userCanDeleteKoulutus(context));
-        kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
+      /*  kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
         siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
-        lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
+        lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));*/
     }
 
     public void addLayoutSplit(VerticalLayout layout) {
@@ -495,36 +500,36 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         layout.addComponent(split);
     }
+    //Uncomment when functionality is done
+    private void showRemoveDialog() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-//    private void showRemoveDialog() {
-//        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), new Button.ClickListener() {
-//            private static final long serialVersionUID = 5019806363620874205L;
-//
-//            @Override
-//            public void buttonClick(ClickEvent event) {
-//                closeKoulutusCreationDialog();
-//                KoulutusTulos koulutus = new KoulutusTulos();
-//                KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
-//                koulutusKooste.setKoulutusmoduuliToteutus(getEditViewOid());
-//                koulutus.setKoulutus(koulutusKooste);
-//                boolean removeSuccess = _presenter.removeKoulutus(koulutus);
-//                _presenter.getHakukohdeListView().reload();
-//                if (removeSuccess) {
-//                    _presenter.showMainDefaultView();
-//                }
-//            }
-//        }, new Button.ClickListener() {
-//            private static final long serialVersionUID = 5019806363620874205L;
-//
-//            @Override
-//            public void buttonClick(ClickEvent event) {
-//                closeKoulutusCreationDialog();
-//
-//            }
-//        });
-//        tarjontaDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
-//        getWindow().addWindow(tarjontaDialog);
-//    }
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
+                KoulutusTulos koulutus = new KoulutusTulos();
+                KoulutusListausTyyppi listausTyyppi = new KoulutusListausTyyppi();
+                listausTyyppi.setKoulutusmoduuliToteutus(getEditViewOid());
+                koulutus.setKoulutus(listausTyyppi);
+                boolean removeSuccess = _presenter.removeKoulutus(koulutus);
+                _presenter.getHakukohdeListView().reload();
+                if (removeSuccess) {
+                    _presenter.showMainDefaultView();
+                }
+            }
+        }, new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
+
+            }
+        });
+        tarjontaDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(tarjontaDialog);
+    }
 
     public void closeKoulutusCreationDialog() {
         if (tarjontaDialog != null) {

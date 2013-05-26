@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mockito="http://www.mockito.org/spring/mockito"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
@@ -18,20 +18,22 @@
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
-    
+
+    <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
+
     <mockito:mock id="organisaatioService" class="fi.vm.sade.organisaatio.api.model.OrganisaatioService"/>
-                   
+
     <mockito:mock id="koodiPublicService" class="fi.vm.sade.koodisto.service.KoodiService"/>
 
     <mockito:mock id="koodistoPublicService" class="fi.vm.sade.koodisto.service.KoodistoService"/>
-    
+
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
-    
-    <!-- 
-        Create a dynamic mock class for the jms message sender. 
+
+    <!--
+        Create a dynamic mock class for the jms message sender.
         Read more : https://bitbucket.org/kubek2k/springockito/wiki/Home
     -->
     <mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />
@@ -60,5 +62,5 @@
             </list>
         </property>
     </bean>
-    
+
 </beans>

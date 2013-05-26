@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,9 +44,22 @@ public class TarjontaHandler {
         this.organisaatioService = organisaatioService;
     }
 
-    public void addKoulutus(final Koulutus koulutus) {
+    public void addKoulutus(final Koulutus koulutus, final String koulutusastetyyppi) {
         logger.info("Lisätään koulutus");
-        //tarjontaAdminService.lisaaKoulutus(getLisaaKoulutusTyyppi(koulutus));
+
+        final LisaaKoulutusTyyppi koulutusTyyppi = getLisaaKoulutusTyyppi(koulutus, koulutusastetyyppi);
+        tarjontaAdminService.lisaaKoulutus(koulutusTyyppi);
+
+        tarjontaAdminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(getLisaaKoulutusHakukohteelleTyyppi(koulutus, koulutusTyyppi.getOid()));
+    }
+
+    private LisaaKoulutusHakukohteelleTyyppi getLisaaKoulutusHakukohteelleTyyppi(final Koulutus koulutus, final String koulutusOid) {
+        final LisaaKoulutusHakukohteelleTyyppi lisaaKoulutusHakukohteelle = new LisaaKoulutusHakukohteelleTyyppi();
+        lisaaKoulutusHakukohteelle.getKoulutusOids().add(koulutusOid);
+        lisaaKoulutusHakukohteelle.setHakukohdeOid(getHakukohdeOid(koulutus.getOppilaitosnumero(), koulutus.getToimipisteJno(),
+                koulutus.getHakukohdekoodi(), koulutus.getYhkoodi()));
+        lisaaKoulutusHakukohteelle.setLisaa(true);
+        return lisaaKoulutusHakukohteelle;
     }
 
     public void addHakukohde(final Hakukohde hakukohde, final String hakuOid) {
@@ -58,10 +73,111 @@ public class TarjontaHandler {
         }
     }
 
-    private LisaaKoulutusTyyppi getLisaaKoulutusTyyppi(final Koulutus koulutus) {
+    private LisaaKoulutusTyyppi getLisaaKoulutusTyyppi(final Koulutus koulutus, final String koulutusastetyyppi) {
         final LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
 
-        // TODO lisää kaikki tarvittavat tiedot
+        // koulutusastetyyppi
+        if (StringUtils.isBlank(koulutusastetyyppi)) {
+            throw new IllegalArgumentException("koulutusastetyyppi on tyhjä");
+        }
+        lisaaKoulutusTyyppi.setKoulutustyyppi(KoulutusasteTyyppi.valueOf(koulutusastetyyppi.toUpperCase()));
+
+        // koulutusaste
+        // TODO parametrinä?
+        final KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+        koulutusaste.setArvo("32");
+        koulutusaste.setUri("koulutusasteoph2002_32#1");
+        koulutusaste.setVersio(1);
+        lisaaKoulutusTyyppi.setKoulutusaste(koulutusaste);
+
+        // pohjakoulutusvaatimus
+        if (StringUtils.isBlank(koulutus.getPohjakoulutusvaatimus())) {
+            throw new IllegalArgumentException("pohjakoulutusvaatimus on tyhjä");
+        }
+        final KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
+        pohjakoulutusvaatimus.setArvo(koulutus.getPohjakoulutusvaatimus());
+        pohjakoulutusvaatimus.setUri(String.format("pohjakoulutusvaatimustoinenaste_%s#1", koulutus.getPohjakoulutusvaatimus().toLowerCase().trim()));
+        pohjakoulutusvaatimus.setVersio(1);
+        lisaaKoulutusTyyppi.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
+
+        // koulutuslaji
+        if (StringUtils.isBlank(koulutus.getKoulutuslaji())) {
+            throw new IllegalArgumentException("koulutuslaji on tyhjä");
+        }
+        final KoodistoKoodiTyyppi koulutuslaji = new KoodistoKoodiTyyppi();
+        koulutuslaji.setArvo(koulutus.getKoulutuslaji());
+        koulutuslaji.setUri(String.format("koulutuslaji_%s#1", koulutus.getKoulutuslaji().toLowerCase().trim()));
+        koulutuslaji.setVersio(1);
+        lisaaKoulutusTyyppi.getKoulutuslaji().add(koulutuslaji);
+
+        // opetuskieli
+        if (StringUtils.isBlank(koulutus.getOpetuskieli())) {
+            throw new IllegalArgumentException("opetuskieli on tyhjä");
+        }
+        final KoodistoKoodiTyyppi opetuskieli = new KoodistoKoodiTyyppi();
+        opetuskieli.setArvo(koulutus.getOpetuskieli());
+        opetuskieli.setUri(String.format("kieli_%s#1", koulutus.getOpetuskieli().toLowerCase().trim()));
+        opetuskieli.setVersio(1);
+        lisaaKoulutusTyyppi.getOpetuskieli().add(opetuskieli);
+
+        // opetusmuoto
+        if (StringUtils.isBlank(koulutus.getOpetusmuoto())) {
+            throw new IllegalArgumentException("opetusmuoto");
+        }
+        final KoodistoKoodiTyyppi opetusmuoto = new KoodistoKoodiTyyppi();
+        opetusmuoto.setArvo(koulutus.getOpetusmuoto());
+        opetusmuoto.setUri(String.format("opetusmuoto_%s#1", koulutus.getOpetusmuoto().toLowerCase().trim()));
+        opetusmuoto.setVersio(1);
+        lisaaKoulutusTyyppi.getOpetusmuoto().add(opetusmuoto);
+
+        // koulutus
+        if (StringUtils.isBlank(koulutus.getKoulutus())) {
+            throw new IllegalArgumentException("koulutus on tyhjä");
+        }
+        final KoodistoKoodiTyyppi koulutusTyyppi = new KoodistoKoodiTyyppi();
+        koulutusTyyppi.setArvo(koulutus.getKoulutus());
+        koulutusTyyppi.setUri(String.format("koulutus_%s#1", koulutus.getKoulutus().toLowerCase().trim()));
+        koulutusTyyppi.setVersio(1);
+        lisaaKoulutusTyyppi.setKoulutusKoodi(koulutusTyyppi);
+
+        // koulutusohjelma
+        if (StringUtils.isBlank(koulutus.getKoulutusohjelma())) {
+            throw new IllegalArgumentException("koulutusohjelma on tyhjä");
+        }
+        final KoodistoKoodiTyyppi koulutusohjelma = new KoodistoKoodiTyyppi();
+        koulutusohjelma.setArvo(koulutus.getKoulutusohjelma());
+        koulutusohjelma.setUri(String.format("koulutusohjelmaamm_%s#1", koulutus.getKoulutusohjelma().toLowerCase().trim()));
+        koulutusohjelma.setVersio(1);
+        lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(koulutusohjelma);
+
+        // suunniteltu kesto
+        final KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
+        kesto.setArvo(koulutus.getSuunniteltuKesto().toString());
+        kesto.setYksikko("suunniteltukesto_01#1");
+        lisaaKoulutusTyyppi.setKesto(kesto);
+
+        // tarjoaja (organisaatio oid)
+        lisaaKoulutusTyyppi.setTarjoaja(getOrganisaatioOid(koulutus.getOppilaitosnumero(), koulutus.getToimipisteJno()));
+
+        // oid
+        lisaaKoulutusTyyppi.setOid(getKoulutusOid(koulutus.getOppilaitosnumero(), koulutus.getToimipisteJno(),
+                koulutus.getHakukohdekoodi(), koulutus.getYhkoodi(), koulutus.getKoulutusohjelma()));
+
+        // tila
+        lisaaKoulutusTyyppi.setTila(TarjontaTila.LUONNOS);
+
+        // painotus
+        lisaaKoulutusTyyppi.setPainotus(getMonikielinenTekstiTyyppi(koulutus.getPainotus()));
+
+        // koulutuksen alkamispäivä
+        try {
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            lisaaKoulutusTyyppi.setKoulutuksenAlkamisPaiva(sdf.parse("2014-01-01")); // oletusarvo
+        } catch (final ParseException e) {
+            throw new RuntimeException("päivämäärää ei voitu parsia", e);
+        }
+
+        //TODO pitää lisätä tarjontaan koulutukseen: alkamisvuosi, alkamiskausi
 
         return lisaaKoulutusTyyppi;
     }
@@ -74,6 +190,7 @@ public class TarjontaHandler {
         hakukohdeTyyppi.setValinnanAloituspaikat(hakukohde.getValinnanAloituspaikka());
         hakukohdeTyyppi.setAloituspaikat(hakukohde.getAloituspaikka());
         hakukohdeTyyppi.setHakukohteenTila(TarjontaTila.LUONNOS);
+        hakukohdeTyyppi.setKaytetaanHaunPaattymisenAikaa(Boolean.FALSE);
         hakukohdeTyyppi.setLisatiedot(getMonikielinenTekstiTyyppi(null));
 
         fetchAndSetHakukohteenNimi(hakukohde, hakukohdeTyyppi);
@@ -112,11 +229,12 @@ public class TarjontaHandler {
         final OrganisaatioSearchCriteriaDTO organisaatioSearch = new OrganisaatioSearchCriteriaDTO();
         organisaatioSearch.setOlKoodi(true);
         organisaatioSearch.setSearchStr(StringUtils.trim(hakukohde.getOppilaitosnumero()));
-        final List<OrganisaatioPerustietoType> organisaatiot = organisaatioService.searchBasicOrganisaatios(organisaatioSearch);
+        final List<OrganisaatioDTO> organisaatiot = organisaatioService.searchOrganisaatios(organisaatioSearch);
         if (CollectionUtils.isNotEmpty(organisaatiot)) {
-            final OrganisaatioPerustietoType oppilaitos = organisaatiot.get(0);
+            final OrganisaatioDTO oppilaitos = organisaatiot.get(0);
             final List<OrganisaatioDTO> toimipisteet = organisaatioService.findChildrenTo(oppilaitos.getOid());
             if (CollectionUtils.isNotEmpty(toimipisteet)) {
+                logger.info("löytyi {} toimipistettä", toimipisteet.size());
                 for (final OrganisaatioDTO toimipiste : toimipisteet) {
                     if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), StringUtils.trim(hakukohde.getToimipisteJno()))) {
                         for (final YhteystietoDTO yhteystieto : toimipiste.getYhteystiedot()) {
@@ -135,6 +253,8 @@ public class TarjontaHandler {
                                 }
                             }
                         }
+                        logger.warn("postiosoitetta ei löytynyt");
+                        return; // OK, sopivaa osoitetta ei löytynyt
                     }
                 }
             }
@@ -143,8 +263,35 @@ public class TarjontaHandler {
         throw new RuntimeException("oppilaitosta ei löytynyt");
     }
 
+    private String getOrganisaatioOid(final String oppilaitoskoodi, final String jno) {
+        final OrganisaatioSearchCriteriaDTO organisaatioSearch = new OrganisaatioSearchCriteriaDTO();
+        organisaatioSearch.setOlKoodi(true);
+        organisaatioSearch.setSearchStr(oppilaitoskoodi);
+        final List<OrganisaatioDTO> oppilaitokset = organisaatioService.searchOrganisaatios(organisaatioSearch);
+        if (CollectionUtils.isNotEmpty(oppilaitokset)) {
+            final OrganisaatioDTO oppilaitos = oppilaitokset.get(0);
+            final List<OrganisaatioDTO> toimipisteet = organisaatioService.findChildrenTo(oppilaitos.getOid());
+            if (CollectionUtils.isNotEmpty(toimipisteet)) {
+                for (final OrganisaatioDTO toimipiste : toimipisteet) {
+                    if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), jno)) {
+                        return toimipiste.getOid();
+                    }
+                }
+            }
+            throw new RuntimeException("toimipistettä ei löytynyt (koulutustarjoaja)");
+        }
+        throw new RuntimeException("oppilaitosta ei löytynyt (koulutustarjoaja)");
+    }
+
     private String getHakukohdeOid(final String oppilaitoskoodi, final String juoksevaNumero, final String hakukohdekoodi, final String yhkoulu) {
-        return String.format("%s.%s.%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, oppilaitoskoodi, juoksevaNumero, hakukohdekoodi, yhkoulu);
+        return String.format("%s.%s.%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.trim(oppilaitoskoodi), StringUtils.trim(juoksevaNumero),
+                StringUtils.trim(hakukohdekoodi), StringUtils.trim(yhkoulu));
+    }
+
+    private String getKoulutusOid(final String oppilaitoskoodi, final String juoksevaNumero, final String hakukohdekoodi,
+                                  final String yhkoulu, final String koulutusohjelma) {
+        return String.format("%s.%s.%s_%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.trim(oppilaitoskoodi), StringUtils.trim(juoksevaNumero),
+                StringUtils.trim(hakukohdekoodi), StringUtils.trim(yhkoulu), StringUtils.trim(koulutusohjelma));
     }
 
     private ValintakoeTyyppi getEmptyValintakoeTyyppi() {

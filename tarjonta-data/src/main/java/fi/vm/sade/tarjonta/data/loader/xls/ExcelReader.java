@@ -165,7 +165,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
                                     }
                                     break;
                                 case STRING:
-                                    BeanUtils.setProperty(dto, column.getKey(), cellValue);
+                                    BeanUtils.setProperty(dto, column.getKey(), StringUtils.trim(cellValue));
                                     break;
                                 default:
                                     if (verbose) {

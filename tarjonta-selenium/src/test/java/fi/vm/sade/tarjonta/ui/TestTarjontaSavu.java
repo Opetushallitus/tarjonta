@@ -54,11 +54,7 @@ public class TestTarjontaSavu {
         {
                 qa = true;
         }
-
-        if (! qa)
-        {
-        	doit.palvelimenVersio(driver, baseUrl);
-        }
+        doit.palvelimenVersio(driver, baseUrl);
 		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
 		doit.tauko(1);
 		doit.reppuLogin(driver);
@@ -118,18 +114,19 @@ public class TestTarjontaSavu {
         // LUO UUSI KOULUTUS (validialog + jatka)
         driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[7]")).click();
         doit.tauko(1);
-        if (luokka)
-        {
-            doit.textClick(driver, "Lukiokoulutus");
-        }
-        else
-        {
-            doit.textClick(driver, "Ammatillinen peruskoulutus");
-            doit.tauko(1);
-            driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[8]")).click();
-            doit.tauko(1);
-            doit.textClick(driver, "Ammatillinen tutkinto");
-        }
+        doit.textClick(driver, "Lukiokoulutus");
+//        if (luokka)
+//        {
+//            doit.textClick(driver, "Lukiokoulutus");
+//        }
+//        else
+//        {
+//            doit.textClick(driver, "Ammatillinen peruskoulutus");
+//            doit.tauko(1);
+//            driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[8]")).click();
+//            doit.tauko(1);
+//            doit.textClick(driver, "Ammatillinen tutkinto");
+//        }
         doit.tauko(1);
         driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Espoon kaupunki']")).click();
         doit.tauko(1);
@@ -168,7 +165,7 @@ public class TestTarjontaSavu {
         {
                 // Luo uusi lukiokoulutus
                 Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-                                , doit.textElement(driver, "osaksi toista koulutusta")); // lukiokoulutus ??
+                                , doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus ??
         }
         if (ammatillinenKoulutus)
         {
