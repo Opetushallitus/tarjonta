@@ -22,20 +22,19 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
@@ -48,6 +47,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotVi
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ShowKorkeakouluSummaryView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -74,10 +74,13 @@ public class TarjontaKorkeakouluPresenter {
     @Autowired(required = true)
     private KorkeakouluConverter korkeakouluConverter;
     @Autowired(required = true)
-    private KoulutusKoodistoConverter kolutusKoodistoConverter;
+    private KoulutusKoodistoConverter koulutusKoodistoConverter;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
     private TarjontaPresenter presenter; //initialized in Spring xml configuration file.
     private EditKorkeakouluPerustiedotView perustiedotView;
     private EditKorkeakouluKuvailevatTiedotView kuvailevatTiedotView;
+    private ValitseKoulutusDialog valitseKoulutusDialog;
     private EditKorkeakouluView editKoulutusView;
     private RegexModelFilter<KoulutuskoodiRowModel> filter;
 
@@ -180,7 +183,6 @@ public class TarjontaKorkeakouluPresenter {
         setEditKoulutusView(new EditKorkeakouluView(komotoOid, tab));
         getPerustiedotModel().setKomotoOid(null);
         getPerustiedotModel().setTila(TarjontaTila.LUONNOS);
-
         getPresenter().getRootView().changeView(getEditKoulutusView());
     }
 
@@ -207,13 +209,17 @@ public class TarjontaKorkeakouluPresenter {
     }
 
     private void loadKomoto(final String komotoOid) {
+        getPerustiedotModel().clearModel();
+        getKuvailevatTiedotModel().clearModel();
+
         if (komotoOid != null) {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             korkeakouluConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
+            updateKoulutuskoodiToModel(getPerustiedotModel().getKoulutuskoodiModel().getKoodistoUri());
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
-            getPerustiedotModel().clearModel();
-            getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
+            KoulutuskoodiRowModel koulutuskoodiRow = getPerustiedotModel().getValitseKoulutus().getKoulutuskoodiRow();
+            updateKoulutuskoodiToModel(koulutuskoodiRow.getKoodistoUri());
         }
     }
 
@@ -295,7 +301,7 @@ public class TarjontaKorkeakouluPresenter {
         perusModel.createCacheKomos(); //cache komos to map object
 
         //koodisto service search result remapped to UI model objects.
-        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
+        List<KoulutuskoodiModel> listaaKoulutuskoodit = koulutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
 
         perusModel.getKoulutuskoodis().clear();
@@ -376,56 +382,51 @@ public class TarjontaKorkeakouluPresenter {
         this.editKoulutusView = editKoulutusView;
     }
 
-    public void updateKoulutuskoodiToModel(final KoulutuskoodiRowModel rowModel) {
-        Preconditions.checkNotNull(rowModel, "KoulutuskoodiRowModel cannot be null.");
-        List<KoulutuskoodiModel> listaaKoulutukses = kolutusKoodistoConverter.listaaKoulutukses(rowModel, I18N.getLocale());
-
-        if (listaaKoulutukses.isEmpty()) {
-            Preconditions.checkNotNull(rowModel, "No KoulutuskoodiModel object found.");
-        }
-        presenter.getModel().getKorkeakouluPerustiedot().setKoulutuskoodiModel(listaaKoulutukses.get(0));
+    public void updateKoulutuskoodiToModel(String koulutuskoodiUri) {
+        Preconditions.checkNotNull(koulutuskoodiUri, "Koulutuskoodi URI cannot be null.");
+        KoulutuskoodiModel listaaKoulutuskoodi = koulutusKoodistoConverter.listaaKoulutuskoodi(koulutuskoodiUri, I18N.getLocale());
+        Preconditions.checkNotNull(listaaKoulutuskoodi, "KoulutuskoodiModel object cannot be null.");
+        presenter.getModel().getKorkeakouluPerustiedot().setKoulutuskoodiModel(listaaKoulutuskoodi);
     }
 
-    public void showKorkeakouluKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
-        Preconditions.checkNotNull(orgs, "Collection of OrganisaatioPerustietoTypes cannot be null.");
+    public void showKorkeakouluKoulutusEditView() {
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
-    }
-
-    /**
-     * Retrieves the koulutus objects for ListKoulutusView.
-     *
-     * @return the koulutus objects
-     */
-    public List<KoulutuskoodiRowModel> getKoulutusDataSource() {
-        ArrayList<KoulutuskoodiRowModel> results = Lists.<KoulutuskoodiRowModel>newArrayList();
-
-        String num = "";
-
-        for (int i = 0; i < 20; i++) {
-            KoulutuskoodiRowModel r = new KoulutuskoodiRowModel();
-            r.setKoodi(num += i);
-            r.setNimi("nimi asd adad ada adsadsasda da da asd asdd");
-            results.add(r);
-        }
-
-        return results;
     }
 
     public List<KoulutuskoodiRowModel> filterKoulutuskoodis() {
         final String searchWord = getPerustiedotModel().getValitseKoulutus().getSearchWord();
+        final String koulutusalaUri = getPerustiedotModel().getValitseKoulutus().getKoulutusala();
 
-        if (searchWord == null || searchWord.isEmpty() || searchWord.length() < 2) {
-            LOG.debug("Search all items. param : '{}'", searchWord);
-            return getKoulutusDataSource();
+        List<KoulutuskoodiRowModel> models = null;
+
+        if (koulutusalaUri != null && !koulutusalaUri.isEmpty()) {
+            LOG.debug("Filter all items by koulutusala Uri : {}", koulutusalaUri);
+            models = koulutusKoodistoConverter.listaaKoulutuksesByKoulutusala(koulutusalaUri, I18N.getLocale());
+        } else if (searchWord == null || searchWord.isEmpty() || searchWord.length() < 2) {
+            LOG.debug("No filters.");
+            return koulutusKoodistoConverter.listaaKoulutuksesByKoulutusala(null, I18N.getLocale());
+        } else {
+            LOG.debug("Filter all items by koulustusala : '{}' and search word '{}'.", koulutusalaUri, searchWord);
+            models = koulutusKoodistoConverter.listaaKoulutuksesByKoulutusala(null, I18N.getLocale());
         }
 
         if (filter == null) {
             filter = new RegexModelFilter<KoulutuskoodiRowModel>();
-
         }
-        final List<KoulutuskoodiRowModel> result = filter.filterByParams(getKoulutusDataSource(), searchWord);
-        LOG.debug("Result size  : {}, param : '{}' ", result.size(), searchWord);
+        final List<KoulutuskoodiRowModel> result = filter.filterByParams(models, searchWord);
+        LOG.debug("Result size : {} ", result.size());
 
         return result;
+    }
+
+    /**
+     * @return the valitseKoulutusDialog
+     */
+    public void showValitseKoulutusDialog() {
+        if (this.valitseKoulutusDialog == null) {
+            this.valitseKoulutusDialog = new ValitseKoulutusDialog(presenter, uiBuilder);
+        }
+
+        this.valitseKoulutusDialog.windowOpen();
     }
 }

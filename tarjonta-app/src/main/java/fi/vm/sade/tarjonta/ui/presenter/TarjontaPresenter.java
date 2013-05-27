@@ -300,7 +300,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public OrganisaatioDTO getSelectOrganisaatioModel() {
-        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(getTarjoaja().getSelectedOrganisationOid());
+        String orgOid = getTarjoaja().getSelectedOrganisationOid();
+        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(orgOid);
         return organisaatioDTO;
     }
 
@@ -545,9 +546,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         req.setLisaa(false);
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
 
-        HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+      /*  HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setOid(getModel().getHakukohde().getOid());
-        getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);
+        getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);*/
         //If removing last koulutus from hakukohde then hakukohde is not valid
         //anymore, show main view instead
         if (hakukohdeKoulutusCount > 1) {
@@ -1059,6 +1060,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void setModelSelectedKoulutusOidAndNames(List<KoulutusOidNameViewModel> koulutusOidAndNames) {
+
           getModel().setHakukohdeTitleKoulutukses(koulutusOidAndNames);
      }
      /**
@@ -1080,9 +1082,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
 
             if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {
-                getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+                String tarjoajaOid =   getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid();
+                getTarjoaja().setSelectedResultRowOrganisationOid(tarjoajaOid);
             } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
-                getTarjoaja().setSelectedResultRowOrganisationOid(koulutusOids.get(0));
+                getTarjoaja().setSelectedResultRowOrganisationOid(getNavigationOrganisation().getOrganisationOid());
             }
         } else {
             editHakukohdeView.loadLiiteTableWithData();

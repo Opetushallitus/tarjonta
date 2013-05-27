@@ -94,13 +94,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.owasp.antisamy</groupId>
+            <artifactId>antisamy</artifactId>
+            <version>1.4.5</version>
+            <!-- autentikaatiossa excludaavat xerceksen, pitäisikö tässäkin? -->
+        </dependency>
+
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.0</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
-            
 
         <dependency>
             <groupId>org.powermock</groupId>

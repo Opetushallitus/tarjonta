@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -22,7 +23,7 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -37,9 +38,9 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
     public KoulutusKoodiToModelConverter() {
     }
 
-    public List<MODEL> mapKoodistoToModel(Class modelClass, final Locale locale, final List<KoodiType> koodit) {
+    public List<MODEL> mapKoodistoToModel(Class modelClass, final Locale locale, final Collection<KoodiType> koodit) {
 
-        List<MODEL> models = new ArrayList<MODEL>();
+        List<MODEL> models = Lists.<MODEL>newArrayList();
         for (KoodiType koodiType : koodit) {
             models.add(mapKoodiTypeToModel(modelClass, koodiType, locale));
         }
@@ -84,7 +85,6 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
                 teksti.add(new KielikaannosViewModel(kieli.name(), meta.getNimi()));
             }
         }
-
 
         return teksti;
     }
