@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  *
  * @author Jani Wilén
  */
-public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
+public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
 
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO = "32";
     private static final String KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO = "31";
@@ -60,47 +60,6 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     private KuvausDTO tutkinnonKuvaukset;
     private KuvausDTO koulutusohjelmanKuvaukset;
 
-//    /**
-//     * @return the koulutuksenRakenne
-//     */
-//    public String getKoulutuksenRakenne() {
-//        return koulutuksenRakenne;
-//    }
-//
-//    /**
-//     * @param koulutuksenRakenne the koulutuksenRakenne to set
-//     */
-//    public void setKoulutuksenRakenne(String koulutuksenRakenne) {
-//        this.koulutuksenRakenne = koulutuksenRakenne;
-//    }
-//
-//    /**
-//     * @return the tavoitteet
-//     */
-//    public String getTavoitteet() {
-//        return tavoitteet;
-//    }
-//
-//    /**
-//     * @param tavoitteet the tavoitteet to set
-//     */
-//    public void setTavoitteet(String tavoitteet) {
-//        this.tavoitteet = tavoitteet;
-//    }
-//
-//    /**
-//     * @return the jatkoOpinto
-//     */
-//    public String getJatkoOpinto() {
-//        return jatkoOpinto;
-//    }
-//
-//    /**
-//     * @param jatkoOpinto the jatkoOpinto to set
-//     */
-//    public void setJatkoOpinto(String jatkoOpinto) {
-//        this.jatkoOpinto = jatkoOpinto;
-//    }
     /**
      * @return the koulutusohjelmanNimi
      */
@@ -264,7 +223,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        Relaatiot5RowDTO other = (Relaatiot5RowDTO) obj;
+        ExcelMigrationDTO other = (ExcelMigrationDTO) obj;
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(koulutuskoodiKoodiarvo, other.koulutuskoodiKoodiarvo).
                 append(koulutusohjelmanKoodiarvo, other.koulutusohjelmanKoodiarvo);
@@ -280,13 +239,6 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
                 .append(lukiolinjaKoodiarvo).toHashCode();
     }
 
-    public String getKoulutusohjelmanTavoitteet() {
-        return koulutusohjelmanTavoitteet;
-    }
-
-    public void setKoulutusohjelmanTavoitteet(String koulutusohjelmanTavoitteet) {
-        this.koulutusohjelmanTavoitteet = koulutusohjelmanTavoitteet;
-    }
 
     /**
      * @return the lukiolinjaNimi
