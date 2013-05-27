@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,26 +71,6 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
-import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 
 /**
  * @author Tuomas Katva
@@ -387,7 +368,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
     	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
- 
+        int originalHakukohdeKoulutusCount =  hakukohde.getKoulutusmoduuliToteutuses().size();
+        int numberOfKoulutuksesToRemove = parameters.getKoulutusOids().size();
+        log.info("Hakukohde koulutukses : {}" , hakukohde.getKoulutusmoduuliToteutuses().size());
+        log.info("Number koulutukses to remove from hakukohde : {}", parameters.getKoulutusOids().size());
         if (parameters.isLisaa()) {
             hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(), hakukohde));
             log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());
@@ -402,8 +386,36 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 hakukohde.removeKoulutusmoduuliToteutus(komoto);
                 koulutusmoduuliToteutusDAO.update(komoto);
             }
+
+            //If hakukohde has other koulutukses then just update it, otherwise remove it.
+
+            if (!parameters.isLisaa()) {
+            if (originalHakukohdeKoulutusCount > numberOfKoulutuksesToRemove) {
+            log.info("Removing : {} koulutukses from : {} koulutukses",poistettavatModuuliLinkit.size(),hakukohde.getKoulutusmoduuliToteutuses().size());
             hakukohdeDAO.update(hakukohde);
+            List<Long> komotoIds = new ArrayList<Long>();
+            List<Long> hakukohdeOis = new ArrayList<Long>();
+            hakukohdeOis.add(hakukohde.getId());
+            for (KoulutusmoduuliToteutus komoto:poistettavatModuuliLinkit) {
+                komotoIds.add(komoto.getId());
+            }
+                try {
+                    solrIndexer.indexKoulutukset(komotoIds);
+                    solrIndexer.indexHakukohteet(hakukohdeOis);
+                } catch (SolrServerException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            } else {
+                HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+                hakukohdeTyyppi.setOid(parameters.getHakukohdeOid());
+                poistaHakukohde(hakukohdeTyyppi);
+            }
+            }
+
         }
+
     }
 
     @Override
@@ -417,7 +429,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 curKoul.removeHakukohde(hakukohde);
             }
             try {
+                log.info("Removing hakukohde from index...");
                 solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
+                log.info("Removed hakukohde from index : {0}",hakukohdePoisto.getOid());
             } catch (IOException e) {
                 throw new GenericFault("indexing.error", e);
             }
