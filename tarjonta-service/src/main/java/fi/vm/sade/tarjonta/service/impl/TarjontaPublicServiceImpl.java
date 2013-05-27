@@ -253,7 +253,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         vastaus.getHakukohteenLiitteet().addAll(liiteTyyppis);
-        //System.out.println("lueHakukohteenLiitteet("+parameters.getHakukohdeOid()+") -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
 
@@ -655,6 +654,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         log.debug("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
+        toKoulutus.setVersion(fromKoulutus.getVersion());
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
         HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
@@ -743,7 +743,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
-        //System.out.println("lueHakukohde(...) -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
     //TODO: these helper methods implemented in CommonFrom/To Converters

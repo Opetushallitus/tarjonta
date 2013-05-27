@@ -35,6 +35,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
     @Override
     public Haku convert(HakuTyyppi s) {
         Haku m = new Haku();
+        m.setVersion(s.getVersion());
         m.setNimi(convertNimis(s.getHaunKielistetytNimet()));
         m.setOid(s.getOid());
         m.setHakukausiUri(s.getHakukausiUri());

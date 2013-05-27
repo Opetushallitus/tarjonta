@@ -17,6 +17,10 @@ package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+
 import javax.validation.ValidationException;
 import org.junit.Test;
 import static org.junit.Assert.*;

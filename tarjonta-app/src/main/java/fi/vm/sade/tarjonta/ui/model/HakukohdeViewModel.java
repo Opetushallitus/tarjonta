@@ -11,6 +11,15 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 public class HakukohdeViewModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 1L;
+    private Long version;
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     private String oid;
     private String organisaatioOid;
     private String hakukohdeNimi;

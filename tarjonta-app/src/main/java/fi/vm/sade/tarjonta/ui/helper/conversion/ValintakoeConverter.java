@@ -79,7 +79,6 @@ public class ValintakoeConverter {
             valintakoeViewModel.setLpAlinPM("" + lisapisteRajat.getAlinPistemaara());
             valintakoeViewModel.setLpYlinPM("" + lisapisteRajat.getYlinPistemaara());
         } if (kokonaispisteRajat != null) {
-            System.out.println("Kokonaispisteet: " + kokonaispisteRajat.getAlinHyvaksyttyPistemaara());
             valintakoeViewModel.setKpAlinHyvaksyttyPM("" + kokonaispisteRajat.getAlinHyvaksyttyPistemaara());
         }
     }

@@ -83,6 +83,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenKyselyTyyppi;
@@ -750,6 +751,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
+            LOG.info("readeing koulutus:" + koulutusOid);
             readKoulutusToModel(koulutusOid);
         } else {
             Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Missing organisation OID.");
@@ -857,8 +859,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
-    	
-    	System.err.println("READ KOULUTUS "+koulutusOid);
     	
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
@@ -1342,8 +1342,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param tila (save state)
      * @throws ExceptionMessage
      */
-    public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
+        String oid = null; 
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
         }
@@ -1356,17 +1357,21 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             getTarjontaAdminService().paivitaKoulutus(paivita);
+            oid=paivita.getOid();
         } else {
             for (OrganisationOidNamePair pair : getTarjoaja().getOrganisationOidNamePairs()) {
-                persistKoulutus(koulutusModel, pair, tila);
+                oid = persistKoulutus(koulutusModel, pair, tila);
             }
         }
 
-        this.editKoulutusView.enableLisatiedotTab();
-        this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
+        //reload koulutus (optimistic locking)
+        showKoulutustEditView(oid, activeTab);
+
+//        this.editKoulutusView.enableLisatiedotTab();
+//        this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
     }
 
-    private void persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
+    private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
         //persist new KOMO and KOMOTO
         LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), pair);
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
@@ -1376,6 +1381,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getTarjontaAdminService().lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
+            return lisaa.getOid();
         } else {
 
             LOG.debug("Unable to add koulutus because of the duplicate");
@@ -2214,6 +2220,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void showEditKoulutusView(final String koulutusOid, final KoulutusActiveTab tab) {
         editKoulutusView = new EditKoulutusView(koulutusOid, tab);
         getRootView().changeView(editKoulutusView);
+        LOG.info("showing new form");
     }
 
     private String tilaToLangStr(TarjontaTila tila) {

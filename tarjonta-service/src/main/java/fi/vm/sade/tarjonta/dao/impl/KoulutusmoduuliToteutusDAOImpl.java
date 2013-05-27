@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.google.common.base.Preconditions;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -29,8 +30,11 @@ import fi.vm.sade.tarjonta.model.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
 
+import org.hibernate.LockMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -276,7 +280,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
         return q.list(komoto.oid);
     }
-
+    
+    @Override
+    public void update(KoulutusmoduuliToteutus entity) {
+        detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
+        Preconditions.checkNotNull(getEntityManager().find(KoulutusmoduuliToteutus.class, entity.getId()));
+        super.update(entity);
+    }
+    
 }
 
 

@@ -33,6 +33,7 @@ public enum UserNotification {
     ADD_FAILED("notification.error.addFailed", Window.Notification.TYPE_ERROR_MESSAGE),
     SAVE_FAILED("notification.error.saveFailed", Window.Notification.TYPE_ERROR_MESSAGE),
     KOULUTUS_REMOVAL_FAILED("notification.error.koulutus.used", Window.Notification.TYPE_ERROR_MESSAGE),
+    SAVE_FAILED_OPTIMISTIC_LOCKING("notification.error.saveFailed.optimisticLocking", Window.Notification.TYPE_ERROR_MESSAGE),
     
     //Success
     GENERIC_SUCCESS("notification.success", Window.Notification.TYPE_HUMANIZED_MESSAGE),
