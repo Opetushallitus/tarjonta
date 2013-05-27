@@ -7,6 +7,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
 
+/**
+ * TarjontaUploader lukee hakukohteet ja koulutukset Excel-tiedostoista ja syöttää ne tarjontapalveluun.
+ *
+ * OPH:n toimittamat aineistot löytyvät:
+ *
+ *   src/main/resources/TARJONTA/hakukohteet.xls
+ *   src/main/resources/TARJONTA/koulutukset_amm.xls
+ *
+ */
 public class TarjontaUploader {
     private TarjontaUploader() {
 
@@ -17,6 +26,7 @@ public class TarjontaUploader {
             final ApplicationContext context = new ClassPathXmlApplicationContext("spring/context.xml");
             final TarjontaFileReader reader = context.getBean(TarjontaFileReader.class);
             final TarjontaFileType type = TarjontaFileType.valueOf(args[0].toUpperCase());
+
             reader.read(type, args[1], args[2]);
         } else {
             System.out.println("\nKoulutusaineiston käsittely: \n" +

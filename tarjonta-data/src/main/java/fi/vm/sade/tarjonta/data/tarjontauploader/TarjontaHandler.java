@@ -56,9 +56,11 @@ public class TarjontaHandler {
     private LisaaKoulutusHakukohteelleTyyppi getLisaaKoulutusHakukohteelleTyyppi(final Koulutus koulutus, final String koulutusOid) {
         final LisaaKoulutusHakukohteelleTyyppi lisaaKoulutusHakukohteelle = new LisaaKoulutusHakukohteelleTyyppi();
         lisaaKoulutusHakukohteelle.getKoulutusOids().add(koulutusOid);
-        lisaaKoulutusHakukohteelle.setHakukohdeOid(getHakukohdeOid(koulutus.getOppilaitosnumero(), koulutus.getToimipisteJno(),
-                koulutus.getHakukohdekoodi(), koulutus.getYhkoodi()));
+        final String hakukohdeOid = getHakukohdeOid(koulutus.getOppilaitosnumero(), koulutus.getToimipisteJno(),
+                koulutus.getHakukohdekoodi(), koulutus.getYhkoodi());
+        lisaaKoulutusHakukohteelle.setHakukohdeOid(hakukohdeOid);
         lisaaKoulutusHakukohteelle.setLisaa(true);
+        logger.info("Lisätään koulutus [{}] hakukohteelle [{}]", koulutusOid, hakukohdeOid);
         return lisaaKoulutusHakukohteelle;
     }
 
@@ -66,7 +68,7 @@ public class TarjontaHandler {
         logger.info("Lisätään hakukohde");
 
         final HakukohdeTyyppi hakukohdeTyyppi = getHakukohdeTyyppi(hakukohde, hakuOid);
-        tarjontaAdminService.lisaaHakukohde(getHakukohdeTyyppi(hakukohde, hakuOid));
+        tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
 
         if (StringUtils.equalsIgnoreCase(hakukohde.getValintakoe(), "T")) {
             tarjontaAdminService.tallennaValintakokeitaHakukohteelle(hakukohdeTyyppi.getOid(), Collections.singletonList(getEmptyValintakoeTyyppi()));
@@ -81,14 +83,6 @@ public class TarjontaHandler {
             throw new IllegalArgumentException("koulutusastetyyppi on tyhjä");
         }
         lisaaKoulutusTyyppi.setKoulutustyyppi(KoulutusasteTyyppi.valueOf(koulutusastetyyppi.toUpperCase()));
-
-        // koulutusaste
-        // TODO parametrinä?
-        final KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
-        koulutusaste.setArvo("32");
-        koulutusaste.setUri("koulutusasteoph2002_32#1");
-        koulutusaste.setVersio(1);
-        lisaaKoulutusTyyppi.setKoulutusaste(koulutusaste);
 
         // pohjakoulutusvaatimus
         if (StringUtils.isBlank(koulutus.getPohjakoulutusvaatimus())) {
@@ -149,6 +143,34 @@ public class TarjontaHandler {
         koulutusohjelma.setUri(String.format("koulutusohjelmaamm_%s#1", koulutus.getKoulutusohjelma().toLowerCase().trim()));
         koulutusohjelma.setVersio(1);
         lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(koulutusohjelma);
+
+        // koulutusaste
+        final HaeKaikkiKoulutusmoduulitKyselyTyyppi haeKoulutusmoduuli = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
+        haeKoulutusmoduuli.setKoulutuskoodiUri(koulutusTyyppi.getUri());
+        haeKoulutusmoduuli.setKoulutustyyppi(lisaaKoulutusTyyppi.getKoulutustyyppi());
+        final HaeKaikkiKoulutusmoduulitVastausTyyppi koulutusmoduuliVastaus = tarjontaPublicService.haeKaikkiKoulutusmoduulit(haeKoulutusmoduuli);
+        final List<KoulutusmoduuliTulos> koulutusmoduulit = koulutusmoduuliVastaus.getKoulutusmoduuliTulos();
+        if (CollectionUtils.isNotEmpty(koulutusmoduulit)) {
+            logger.info("Löytyi {} vastaavaa koulutusmoduulia", koulutusmoduulit.size());
+            koulutusmoduulit: for (final KoulutusmoduuliTulos koulutusmoduuli : koulutusmoduulit) {
+                final KoulutusmoduuliKoosteTyyppi koosteTyyppi = koulutusmoduuli.getKoulutusmoduuli();
+                tarjontaPublicService.haeKaikkiKoulutusmoduulit(new HaeKaikkiKoulutusmoduulitKyselyTyyppi());
+                if (StringUtils.isNotBlank(koosteTyyppi.getKoulutusasteUri())) {
+                    final KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+                    koulutusaste.setUri(koosteTyyppi.getKoulutusasteUri());
+                    lisaaKoulutusTyyppi.setKoulutusaste(koulutusaste);
+                    logger.info("Asetettiin koulutusasteUri [{}]", koosteTyyppi.getKoulutusasteUri());
+                    break koulutusmoduulit;
+                }
+            }
+        }
+        if (lisaaKoulutusTyyppi.getKoulutusaste() == null) {
+            final KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+            koulutusaste.setUri("koulutusasteoph2002_32#1");
+            lisaaKoulutusTyyppi.setKoulutusaste(koulutusaste);
+
+            logger.warn("Koulutusastetta ei löytynyt koulutusmoduulilta, asetettiin oletusarvo [koulutusasteoph2002_32#1]");
+        }
 
         // suunniteltu kesto
         final KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
