@@ -515,23 +515,29 @@ public class TestTarjontaSavu {
         doit.textClick(driver, "Valintakokeiden tiedot");
         // kahtalajia lomakkeita
         skip = true;
-        Boolean kokonaispisteet = false;
+        Boolean paasykoe = false;
         Boolean uusiValintakoe = false;
         while (skip)
         {
-        	if (doit.isPresentText(driver, "Kokonaispisteet")) { skip = false; kokonaispisteet = true; }
+        	if (doit.isPresentText(driver, "sykoe")) { skip = false; paasykoe = true; }
         	if (doit.isPresentText(driver, "uusi valintakoe")) { skip = false; uusiValintakoe = true; }
         	doit.tauko(1);
         }
-        if (kokonaispisteet)
+        if (paasykoe)
         {
+        	String paasykoeCheckBoxId = doit.getGwtIdBeforeText(driver, "sykoe");
+        	WebElement paasykoeCheckBox = driver.findElement(By.id(paasykoeCheckBoxId));
+        	if (paasykoeCheckBox.getAttribute("checked") == null || ! paasykoeCheckBox.getAttribute("checked").equals("true"))
+        	{
+        		paasykoeCheckBox.click();
+        	}
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
         			, doit.textElement(driver, "Ajankohta"));
         }
         if (uusiValintakoe)
         {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
-        			, doit.textElement(driver, "uusi valintakoe"));
+        			, doit.textElement(driver, "Valintakokeen kuvaus"));
         }
     	t01 = doit.millisDiff(t01);
         System.out.println("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) OK");
