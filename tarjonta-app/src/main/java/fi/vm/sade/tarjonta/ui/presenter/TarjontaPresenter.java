@@ -300,7 +300,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public OrganisaatioDTO getSelectOrganisaatioModel() {
-        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(getTarjoaja().getSelectedOrganisationOid());
+        String orgOid = getTarjoaja().getSelectedOrganisationOid();
+        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(orgOid);
         return organisaatioDTO;
     }
 
@@ -1059,6 +1060,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void setModelSelectedKoulutusOidAndNames(List<KoulutusOidNameViewModel> koulutusOidAndNames) {
+
           getModel().setHakukohdeTitleKoulutukses(koulutusOidAndNames);
      }
      /**
@@ -1080,9 +1082,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
 
             if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {
-                getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+                String tarjoajaOid =   getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid();
+                getTarjoaja().setSelectedResultRowOrganisationOid(tarjoajaOid);
             } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
-                getTarjoaja().setSelectedResultRowOrganisationOid(koulutusOids.get(0));
+                getTarjoaja().setSelectedResultRowOrganisationOid(getNavigationOrganisation().getOrganisationOid());
             }
         } else {
             editHakukohdeView.loadLiiteTableWithData();

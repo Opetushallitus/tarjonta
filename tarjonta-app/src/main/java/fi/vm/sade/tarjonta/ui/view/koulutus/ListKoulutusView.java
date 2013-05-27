@@ -298,6 +298,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (tuple.getValOne() < 1) {
                     List<String> selectedKoulutusOids = presenter.getSelectedKoulutusOids();
                     if (!selectedKoulutusOids.isEmpty()) {
+
                         showCreateHakukohdeDialog(selectedKoulutusOids);
                     }                    
                 } else {
@@ -316,6 +317,7 @@ public class ListKoulutusView extends VerticalLayout {
                         dialog.center();
                         getWindow().addWindow(dialog);
                     } else {
+                        //presenter.getTarjoaja().setSelectedOrganisationOid(presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(),null);
                         presenter.getTarjoaja().setSelectedResultRowOrganisationOid(
                         		presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
@@ -334,6 +336,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (presenter.availableKoulutus()) {
                     List<String> organisaatioOids = new ArrayList<String>();
                     organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
+                    ;
                     UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "600px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);

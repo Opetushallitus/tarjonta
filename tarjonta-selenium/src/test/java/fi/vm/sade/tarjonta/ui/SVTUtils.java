@@ -132,6 +132,16 @@ public class SVTUtils {
 		return gwtuid;
 	}	  
 
+	public String getGwtIdBeforeText(WebDriver driver, String text)
+	{
+		String pageText = driver.getPageSource();
+		String gwtuid;
+		gwtuid = pageText.substring(0, pageText.indexOf(text));
+		gwtuid = gwtuid.substring(gwtuid.lastIndexOf("gwt-uid-"));
+		gwtuid = gwtuid.substring(0, gwtuid.indexOf("\""));
+		return gwtuid;
+	}	  
+
 	public String getGwtIdForFirstHakukohde(WebDriver driver)
 	{
 		String pageText = driver.getPageSource();
@@ -281,6 +291,9 @@ public class SVTUtils {
 	{
 		String pageSource = driver.getPageSource();
 		String id2 = pageSource.substring(0, pageSource.indexOf(id) + id.length());
+		String pageEnd = pageSource.substring(pageSource.indexOf(id) + id.length());
+		pageEnd = pageEnd.substring(0, pageEnd.indexOf("\""));
+		id2 = id2 + pageEnd;
 		id2 = id2.substring(id2.lastIndexOf("id=\"") + 4);
 		if (id2.indexOf(id) < 0)
 		{
