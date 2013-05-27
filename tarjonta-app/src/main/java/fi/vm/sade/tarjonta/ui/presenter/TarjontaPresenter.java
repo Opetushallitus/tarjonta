@@ -546,9 +546,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         req.setLisaa(false);
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
 
-        HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+      /*  HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setOid(getModel().getHakukohde().getOid());
-        getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);
+        getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);*/
         //If removing last koulutus from hakukohde then hakukohde is not valid
         //anymore, show main view instead
         if (hakukohdeKoulutusCount > 1) {
