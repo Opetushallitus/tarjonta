@@ -454,157 +454,165 @@ public class TestTarjontaSavu {
         driver.findElement(By.className("v-button-back")).click();
         
         // HAKUKOHTEEN TARKASTELU
-        doit.notPresentText(driver, "Hakukohteet (0)"
-                , "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU Ei hakukohteita. Ei voi testata.");
         Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
         		, doit.textElement(driver, "Hakukohteet ("));
-        t01 = doit.millis();
-        doit.textClick(driver, "Hakukohteet (");
-        doit.notPresentText(driver, gwtId
-                , "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU " + gwtId + " nakyy viela. Ei toimi.");
-        t01 = doit.millisDiff(t01);
         doit.tauko(1);
-        WebElement lastTriangle = doit.getTriangleForLastHakukohde(driver);
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi.", lastTriangle);
-        lastTriangle.click();
-        doit.tauko(1);
-        driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Tarkastele");
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        		, doit.textElement(driver, "uusi koulutus"));
-        t01 = doit.millisDiff(t01);
-        System.out.println("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
-        doit.tauko(1);
-
-        // HAKUKOHTEEN MUOKKAUS
-        t01 = doit.millis();
-        doit.textClick(driver, "muokkaa");
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
-        		, doit.textElement(driver, "tietoja hakemisesta"));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
-        		, doit.textElement(driver, "Tallenna valmiina"));
-        System.out.println("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS OK");
-        doit.tauko(1);
-        
-        // HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
-        t01 = doit.millis();
-        doit.textClick(driver, "Liitteiden tiedot");
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
-        		, doit.textElement(driver, "Toimitusosoite"));
-        t01 = doit.millisDiff(t01);
-        System.out.println("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) OK");
-        doit.tauko(1);
-        
-        // TODO this
-        // HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite)
-        t01 = doit.millis();
-        doit.textClick(driver, "uusi liite");
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
-        		, doit.textElement(driver, "Voidaan toimittaa my"));
-        t01 = doit.millisDiff(t01);
-        System.out.println("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) OK");
-        doit.tauko(1);
-        doit.textClick(driver, "Peruuta");
-        doit.tauko(1);
-        
-        // HAKUKOHTEEN MUOKKAUS (valintakokeet)
-        t01 = doit.millis();
-        doit.textClick(driver, "Valintakokeiden tiedot");
-        // kahtalajia lomakkeita
-        skip = true;
-        Boolean paasykoe = false;
-        Boolean uusiValintakoe = false;
-        while (skip)
+        if (! doit.isPresentText(driver, "Hakukohteet (0)"))
         {
-        	if (doit.isPresentText(driver, "sykoe")) { skip = false; paasykoe = true; }
-        	if (doit.isPresentText(driver, "uusi valintakoe")) { skip = false; uusiValintakoe = true; }
-        	doit.tauko(1);
-        }
-        if (paasykoe)
-        {
-        	String paasykoeCheckBoxId = doit.getGwtIdBeforeText(driver, "sykoe");
-        	WebElement paasykoeCheckBox = driver.findElement(By.id(paasykoeCheckBoxId));
-        	if (paasykoeCheckBox.getAttribute("checked") == null || ! paasykoeCheckBox.getAttribute("checked").equals("true"))
-        	{
-        		paasykoeCheckBox.click();
-        	}
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
-        			, doit.textElement(driver, "Ajankohta"));
-        }
-        if (uusiValintakoe)
-        {
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
-        			, doit.textElement(driver, "Valintakokeen kuvaus"));
-        }
-    	t01 = doit.millisDiff(t01);
-        System.out.println("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) OK");
-        doit.tauko(1);
-        
-        // UUSI VALINTAKOE
-        if (uusiValintakoe)
-        {
-            t01 = doit.millis();
-            doit.textClick(driver, "uusi valintakoe");
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
-        			, doit.textElement(driver, "Ajankohta"));
+        	doit.notPresentText(driver, "Hakukohteet (0)"
+        			, "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU Ei hakukohteita. Ei voi testata.");
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Hakukohteet (");
+        	doit.notPresentText(driver, gwtId
+        			, "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU " + gwtId + " nakyy viela. Ei toimi.");
         	t01 = doit.millisDiff(t01);
-            System.out.println("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) OK");
-            doit.tauko(1);
-            doit.textClick(driver, "Peruuta");
-            doit.tauko(1);
+        	doit.tauko(1);
+        	WebElement lastTriangle = doit.getTriangleForLastHakukohde(driver);
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi.", lastTriangle);
+        	lastTriangle.click();
+        	doit.tauko(1);
+        	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
+        	doit.tauko(1);
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Tarkastele");
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
+        			, doit.textElement(driver, "uusi koulutus"));
+        	t01 = doit.millisDiff(t01);
+        	System.out.println("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
+        	doit.tauko(1);
+
+        	// HAKUKOHTEEN MUOKKAUS
+        	t01 = doit.millis();
+        	doit.textClick(driver, "muokkaa");
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
+        			, doit.textElement(driver, "tietoja hakemisesta"));
+        	t01 = doit.millisDiff(t01);
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
+        			, doit.textElement(driver, "Tallenna valmiina"));
+        	System.out.println("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS OK");
+        	doit.tauko(1);
+
+        	// HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Liitteiden tiedot");
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
+        			, doit.textElement(driver, "Toimitusosoite"));
+        	t01 = doit.millisDiff(t01);
+        	System.out.println("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) OK");
+        	doit.tauko(1);
+
+        	// TODO this
+        	// HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite)
+        	t01 = doit.millis();
+        	doit.textClick(driver, "uusi liite");
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
+        			, doit.textElement(driver, "Voidaan toimittaa my"));
+        	t01 = doit.millisDiff(t01);
+        	System.out.println("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) OK");
+        	doit.tauko(1);
+        	doit.textClick(driver, "Peruuta");
+        	doit.tauko(1);
+
+        	// HAKUKOHTEEN MUOKKAUS (valintakokeet)
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Valintakokeiden tiedot");
+        	// kahtalajia lomakkeita
+        	skip = true;
+        	Boolean paasykoe = false;
+        	Boolean uusiValintakoe = false;
+        	while (skip)
+        	{
+        		if (doit.isPresentText(driver, "sykoe")) { skip = false; paasykoe = true; }
+        		if (doit.isPresentText(driver, "uusi valintakoe")) { skip = false; uusiValintakoe = true; }
+        		doit.tauko(1);
+        	}
+        	if (paasykoe)
+        	{
+        		String paasykoeCheckBoxId = doit.getGwtIdBeforeText(driver, "sykoe");
+        		WebElement paasykoeCheckBox = driver.findElement(By.id(paasykoeCheckBoxId));
+        		if (paasykoeCheckBox.getAttribute("checked") == null || ! paasykoeCheckBox.getAttribute("checked").equals("true"))
+        		{
+        			paasykoeCheckBox.click();
+        		}
+        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
+        				, doit.textElement(driver, "Ajankohta"));
+        	}
+        	if (uusiValintakoe)
+        	{
+        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
+        				, doit.textElement(driver, "Valintakokeen kuvaus"));
+        	}
+        	t01 = doit.millisDiff(t01);
+        	System.out.println("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) OK");
+        	doit.tauko(1);
+
+        	// UUSI VALINTAKOE
+        	if (uusiValintakoe)
+        	{
+        		t01 = doit.millis();
+        		doit.textClick(driver, "uusi valintakoe");
+        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
+        				, doit.textElement(driver, "Ajankohta"));
+        		t01 = doit.millisDiff(t01);
+        		System.out.println("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) OK");
+        		doit.tauko(1);
+        		doit.textClick(driver, "Peruuta");
+        		doit.tauko(1);
+        	}
+
+        	// HAKUKOHTEEN POISTO
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Hakukohteen perustiedot");
+        	doit.tauko(1);
+        	driver.findElement(By.className("v-button-back")).click();
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
+        			, doit.textElement(driver, "Hakukohteet ("));
+        	t01 = doit.millisDiff(t01);
+        	doit.getTriangleForLastHakukohde(driver).click();
+        	doit.tauko(1);
+        	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
+        	doit.tauko(1);
+        	doit.notPresentText(driver, "window_close"
+        			, "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
+        	t01 = doit.millis();
+        	Boolean poista = false;
+        	Boolean peruutaHakukohde = false;
+        	skip = true;
+        	while (skip)
+        	{
+        		if (doit.isPresentText(driver, ">Poista<")) { skip = false; poista = true; }
+        		if (doit.isPresentText(driver, ">Peruuta hakukohde<")) { skip = false; peruutaHakukohde = true; }
+        		doit.tauko(1);
+        	}
+        	if (poista)
+        	{
+        		driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Poista']")).click();
+        		Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
+        				, doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
+        	}
+        	if (peruutaHakukohde)
+        	{
+        		driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Peruuta hakukohde']")).click();
+        		Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
+        				, doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
+        	}
+        	t01 = doit.millisDiff(t01);
+        	closeId = doit.idLike(driver, "window_close");
+        	WebElement close = driver.findElement(By.id(closeId));
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi.", close);
+        	t01 = doit.millisDiff(t01);
+        	doit.tauko(1);
+        	close.click();
+        	doit.tauko(1);
+        	doit.notPresentText(driver, "window_close"
+        			, "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy viela. Ei toimi.");
+        	System.out.println("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO OK");
+        }
+        else
+        {
+        	System.out.println("Running TarjontaHakukohteetSavu HAKUKOHTEIDEN TESTAUS SIVUUTETTIIN");
         }
         
-        // HAKUKOHTEEN POISTO
-        t01 = doit.millis();
-        doit.textClick(driver, "Hakukohteen perustiedot");
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-                , doit.textElement(driver, "Hakukohteet ("));
-        t01 = doit.millisDiff(t01);
-        doit.getTriangleForLastHakukohde(driver).click();
-        doit.tauko(1);
-        driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
-        doit.tauko(1);
-        doit.notPresentText(driver, "window_close"
-                , "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
-        t01 = doit.millis();
-        Boolean poista = false;
-        Boolean peruutaHakukohde = false;
-        skip = true;
-        while (skip)
-        {
-        	if (doit.isPresentText(driver, ">Poista<")) { skip = false; poista = true; }
-        	if (doit.isPresentText(driver, ">Peruuta hakukohde<")) { skip = false; peruutaHakukohde = true; }
-        	doit.tauko(1);
-        }
-        if (poista)
-        {
-        driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Poista']")).click();
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-                , doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
-        }
-        if (peruutaHakukohde)
-        {
-            driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Peruuta hakukohde']")).click();
-          Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-                  , doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
-        }
-        t01 = doit.millisDiff(t01);
-        closeId = doit.idLike(driver, "window_close");
-        WebElement close = driver.findElement(By.id(closeId));
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi.", close);
-        t01 = doit.millisDiff(t01);
-        doit.tauko(1);
-        close.click();
-        doit.tauko(1);
-        doit.notPresentText(driver, "window_close"
-                , "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy viela. Ei toimi.");
-        System.out.println("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO OK");
-
         doit.tauko(1);
         System.out.println("Running TarjontaHakukohteetSavu END OK");
 	}
