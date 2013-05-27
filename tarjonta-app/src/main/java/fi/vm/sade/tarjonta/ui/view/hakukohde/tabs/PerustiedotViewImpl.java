@@ -117,6 +117,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("hakuOid")
     private ComboBox hakuCombo;
 
+    private Label hakuAikaLabel;
     private ComboBox hakuAikaCombo;
 
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
@@ -276,7 +277,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         addItemToGrid("", buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
-        addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaCombo());
+        hakuAikaLabel = addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaCombo());
 
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
@@ -428,7 +429,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
     }
 
-    private void addItemToGrid(String captionKey, AbstractComponent component) {
+    private Label addItemToGrid(String captionKey, AbstractComponent component) {
 
         if (itemContainer != null) {
             Label label = UiUtil.label(null, T(captionKey));
@@ -436,6 +437,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             itemContainer.setComponentAlignment(label, Alignment.TOP_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
+            return label;
+        } else {
+        	return null;
         }
 
     }
@@ -780,24 +784,22 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
 
+    	hakuAikaCombo.setVisible(hk!=null && hk.getSisaisetHakuajat().size()>1);
+    	hakuAikaLabel.setVisible(hakuAikaCombo.isVisible());
+    	
     	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
     		hakuAikaCombo.setValue(null);
-        	hakuAikaCombo.setEnabled(false);
         } else if (hk.getSisaisetHakuajat().size()==1) {
     		hakuAikaCombo.setValue(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
-        	hakuAikaCombo.setEnabled(false);
     	} else {
     		hakuAikaCombo.setValue(hvm);
-        	hakuAikaCombo.setEnabled(true);
     	}
-
 
     }
 
     private ComboBox buildHakuaikaCombo() {
     	hakuAikaCombo = new ComboBox();
     	hakuAikaCombo.setRequired(true);
-    	hakuAikaCombo.setEnabled(false);
     	return hakuAikaCombo;
     }
 
@@ -805,8 +807,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
         hakuCombo.setImmediate(true);
-        hakuAikaCombo = new ComboBox();
-
         hakuCombo.addListener(new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 

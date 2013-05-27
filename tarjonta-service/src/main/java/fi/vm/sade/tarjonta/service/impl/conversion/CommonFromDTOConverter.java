@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.service.impl.conversion.util.XssFilter;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -40,7 +41,7 @@ public class CommonFromDTOConverter {
             }
         }
         
-        return monikielinenTeksti;
+        return XssFilter.filter(monikielinenTeksti);
     }
 
 
