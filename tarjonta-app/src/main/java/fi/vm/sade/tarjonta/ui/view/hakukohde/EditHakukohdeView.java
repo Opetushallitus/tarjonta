@@ -79,7 +79,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
      */
     private void addTitleLayout() {
         try {
-        HorizontalLayout hl = new HorizontalLayout();
+        VerticalLayout hl = new VerticalLayout();
+        hl.setWidth("100%");
         hl.setSizeFull();
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
            Label hakukohdeNameLbl = new Label(uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi()));
@@ -98,14 +99,21 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             tilaSb.append(")");
             Label tilaLbl = new Label(tilaSb.toString());
 
+            HorizontalLayout hll = new HorizontalLayout();
+            hl.setMargin(true,false,false,false);
+            hll.setSizeFull();
+
+            hll.addComponent(tilaLbl);
+
 
             hl.addComponent(hakukohdeNameLbl);
-            hl.addComponent(tilaLbl);
-            hl.setComponentAlignment(hakukohdeNameLbl,Alignment.MIDDLE_LEFT);
-            hl.setComponentAlignment(tilaLbl,Alignment.MIDDLE_RIGHT);
+            hl.addComponent(hll);
+            hl.setComponentAlignment(hakukohdeNameLbl, Alignment.MIDDLE_LEFT);
+            hl.setComponentAlignment(hll,Alignment.MIDDLE_RIGHT);
             hl.setMargin(false,false,true,false);
             addComponent(hl);
-
+            hll.setWidth("100%");
+            hll.setComponentAlignment(tilaLbl,Alignment.MIDDLE_RIGHT);
         }
 
         } catch (Exception exp) {
