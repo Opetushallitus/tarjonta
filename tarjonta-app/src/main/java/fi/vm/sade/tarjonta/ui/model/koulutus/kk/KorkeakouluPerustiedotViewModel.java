@@ -47,6 +47,8 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private Set<KoulutuskoodiModel> koulutuskoodis;
     private Set<KoulutusohjelmaModel> tutkintoohjelmas;
     private KoulutusohjelmaModel tutkintoohjelma;
+    private String autocompleteTutkintoohjelma;
+    
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
@@ -497,5 +499,19 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setValitseKoulutus(ValitseKoulutusModel valitseKoulutus) {
         this.valitseKoulutus = valitseKoulutus;
+    }
+
+    /**
+     * @return the autocompleteTutkintoohjelma
+     */
+    public String getAutocompleteTutkintoohjelma() {
+        return autocompleteTutkintoohjelma;
+    }
+
+    /**
+     * @param autocompleteTutkintoohjelma the autocompleteTutkintoohjelma to set
+     */
+    public void setAutocompleteTutkintoohjelma(String autocompleteTutkintoohjelma) {
+        this.autocompleteTutkintoohjelma = autocompleteTutkintoohjelma;
     }
 }
