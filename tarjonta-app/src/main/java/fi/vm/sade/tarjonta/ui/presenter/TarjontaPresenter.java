@@ -41,7 +41,6 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -83,7 +82,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenKyselyTyyppi;
@@ -253,12 +251,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
             HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
-            //TODO copy this fresh dto to model;
+            updateHakukohdeModel(fresh);
         } else {
-
             HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
-            //TODO copy this fresh dto to model;
+            updateHakukohdeModel(fresh);
         }
+        
+        updateHakukohdeModel(getModel().getHakukohde().getOid());
     }
 
     private void checkHakuLiitetoimitusPvm() {
@@ -1098,21 +1097,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         //if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
-            LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-            kysely.setOid(hakukohdeOid);
-            getModel().setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(getTarjontaPublicService()
-                    .lueHakukohde(kysely).getHakukohde()));
-            setKomotoOids(getModel().getHakukohde().getKomotoOids());
-
-            if (getModel().getHakukohde().getHakukohdeNimi() != null) {
-                List<KoodiType> koodis = uiHelper.getKoodis(getModel().getHakukohde().getHakukohdeNimi());
-                if (koodis != null && koodis.size() > 0) {
-                    getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
-                }
-            }
-            if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
-                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
-            }
+            updateHakukohdeModel(hakukohdeOid);
         }
 
         getRootView().changeView(editHakukohdeView);
@@ -1122,6 +1107,35 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         } else if (selectedTab != null && selectedTab.trim().equalsIgnoreCase(TarjontaPresenter.LIITTEET_TAB_SELECT)) {
             editHakukohdeView.setLiitteetTabSelected();
 
+        }
+    }
+
+    /**
+     * Lue hakukohde tietovarastosta ja päivitä ui model.
+     */
+    private void updateHakukohdeModel(String hakukohdeOid) {
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(hakukohdeOid);
+        HakukohdeTyyppi hakukohde = getTarjontaPublicService()
+                .lueHakukohde(kysely).getHakukohde();
+        updateHakukohdeModel(hakukohde);
+    }
+
+    /**
+     * Päivitä ui model.
+     */
+    private void updateHakukohdeModel(HakukohdeTyyppi hakukohde) {
+        getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(hakukohde));
+        setKomotoOids(getModel().getHakukohde().getKomotoOids());
+
+        if (getModel().getHakukohde().getHakukohdeNimi() != null) {
+            List<KoodiType> koodis = uiHelper.getKoodis(getModel().getHakukohde().getHakukohdeNimi());
+            if (koodis != null && koodis.size() > 0) {
+                getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
+            }
+        }
+        if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
+            getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
         }
     }
 
