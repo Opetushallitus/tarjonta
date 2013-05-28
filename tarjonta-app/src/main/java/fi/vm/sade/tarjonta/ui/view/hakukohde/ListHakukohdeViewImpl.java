@@ -229,7 +229,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String getKoulutuslaji(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
-        String country = I18N.getLocale().getCountry();
+        String country = I18N.getLocale().getLanguage();
         String retval = "";
         if (country.trim().equalsIgnoreCase("fi")) {
 
@@ -255,6 +255,18 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             }
             return retval;
         }
+
+        if (retval.trim().equalsIgnoreCase("") && monikielinenTekstiTyyppi.getTeksti().size() > 0) {
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().equalsIgnoreCase("fi")) {
+                    retval = teksti.getValue();
+                }
+            }
+            if (retval.trim().equalsIgnoreCase("")) {
+              retval =  monikielinenTekstiTyyppi.getTeksti().get(0).getValue();
+            }
+        }
+
         return retval;
     }
 
