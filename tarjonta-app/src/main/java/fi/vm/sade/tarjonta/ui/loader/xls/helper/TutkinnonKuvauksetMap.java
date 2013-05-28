@@ -43,8 +43,8 @@ public class TutkinnonKuvauksetMap extends KoulutuskoodiMap<KuvausDTO> {
 
             KuvausDTO kuvausDTO = new KuvausDTO();
             kuvausDTO.setJatkoOpintomahdollisuudetTeksti(createJatkoOpintomahdollisuudet(row));
-            kuvausDTO.setKoulutuksenRakenneTeksti(createKoulutuksellisetJaAmmatillisetTavoitteet(row));
-            kuvausDTO.setTavoiteTeksti(createKoulutuksenRakenne(row));
+            kuvausDTO.setKoulutuksenRakenneTeksti(createKoulutuksenRakenne(row));
+            kuvausDTO.setTavoiteTeksti(createKoulutuksellisetJaAmmatillisetTavoitteet(row));
 
             this.put(koodiarvo, kuvausDTO);
             rowIndex++;

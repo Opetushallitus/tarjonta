@@ -134,7 +134,7 @@ public class TarjontaKomoDataTest {
         TutkinnonKuvauksetNuoretRow next = result.iterator().next();
 
         assertEquals("321602", next.getKoulutuskoodiKoodiarvo());
-        assertEquals(null, next.getKoulutuksenRakenneSvTeksti());
+        assertNotNull("KoulutuksenRakenneSvTeksti", next.getKoulutuksenRakenneSvTeksti());
         assertEquals(null, next.getJatkoOpintomahdollisuudetEnTeksti());
         assertNotNull("JatkoOpintomahdollisuudetFiTeksti", next.getJatkoOpintomahdollisuudetFiTeksti());
         assertNotNull("JatkoOpintomahdollisuudetSvTeksti", next.getJatkoOpintomahdollisuudetSvTeksti());

@@ -16,13 +16,15 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
 import com.google.common.base.Preconditions;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.PropertysetItem;
+import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -33,6 +35,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Form;
+import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -60,6 +63,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter;
+import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
 import fi.vm.sade.tarjonta.ui.view.koulutus.YhteyshenkiloViewForm;
 
 /**
@@ -86,15 +90,16 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     /*
      * Koodisto code (url).
      */
-    @NotNull(message = "{validation.Koulutus.koulutus.notNull}")
-    @PropertyId("koulutuskoodiModel")
-    private ComboBox cbKoulutusTaiTutkinto;
+    private Label labelKoulutusTaiTutkinto;
+    private Label labelKoodiarvo;
+    private Button btVaihdaTukintokoodi;
     /*
      * Koodisto code (url).
      */
     @NotNull(message = "{validation.Koulutus.tutkintoohjelma.notNull}")
-    @PropertyId("tutkintoohjelma")
-    private ComboBox cbTutkintoohjelma;
+    @PropertyId("autocompleteTutkintoohjelma")
+    private SimpleAutocompleteTextField atfTutkintoohjelma;
+    private Button btMuokkaaTutkintoohjelma;
 
     /*
      * Start date.
@@ -159,6 +164,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private Label eqf;
     private Label opintojenLaajuusyksikko;
     private Label opintojenLaajuus;
+    private ValitseKoulutusDialog dialog;
 
     public EditKorkeakouluPerustiedotFormView() {
     }
@@ -177,51 +183,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     }
 
     private void initializeDataContainers() {
-        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, model.getKoulutuskoodis());
-        cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
-
-        bicTutkintoohjelmas = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, model.getTutkintoohjelmas());
-        cbTutkintoohjelma.setContainerDataSource(bicTutkintoohjelmas);
-
         if (!model.isLoaded()) {
-            //when data is loaded, it do not need listeners.
-
-            cbKoulutusTaiTutkinto.addListener(new Property.ValueChangeListener() {
-                private static final long serialVersionUID = -382717228031608542L;
-
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {
-                    LOG.debug("Koulutuskoodi event.");
-                    if (cbTutkintoohjelma.getVisibleItemIds() != null && !cbTutkintoohjelma.getVisibleItemIds().isEmpty()) {
-                        //clear result data.
-                        cbTutkintoohjelma.removeAllItems();
-                        clearKomoLabels();
-                    }
-                    korkeakouluPresenter.loadTutkintoohjelmas();
-                    bicTutkintoohjelmas.addAll(model.getTutkintoohjelmas());
-                    disableOrEnableComponents(true);
-                    reload();
-                }
-            });
-
-            cbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
-                private static final long serialVersionUID = -382717228031608542L;
-
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {
-                    korkeakouluPresenter.loadSelectedKomoData();
-                    reload();
-                }
-            });
-        }
-
-        korkeakouluPresenter.loadKoulutuskoodis();
-        bicKoulutuskoodi.addAll(model.getKoulutuskoodis());
-
-        if (model.isLoaded()) {
-            //reload component data from UI model
-            korkeakouluPresenter.loadSelectedKomoData();
-            reload();
         }
     }
 
@@ -271,20 +233,26 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
     private void buildGridKoulutusRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        HorizontalLayout hl = new HorizontalLayout();
+        HorizontalLayout hl = UiUtil.horizontalLayout();
+        hl.setWidth(100, UNITS_PERCENTAGE);
 
-        cbKoulutusTaiTutkinto = new ComboBox();
-        cbKoulutusTaiTutkinto.setNullSelectionAllowed(false);
-        cbKoulutusTaiTutkinto.setImmediate(true);
-        cbKoulutusTaiTutkinto.setWidth(350, UNITS_PIXELS);
-        cbKoulutusTaiTutkinto.setReadOnly(model.isLoaded());
-        cbKoulutusTaiTutkinto.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusTaiTutkinto.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
-        hl.addComponent(cbKoulutusTaiTutkinto);
+        PropertysetItem beanItem = new BeanItem(model.getKoulutuskoodiModel());
+        labelKoulutusTaiTutkinto = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_NAME_PROPERY);
+        labelKoulutusTaiTutkinto.setWidth(400, UNITS_PIXELS);
+        labelKoodiarvo = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_VALUE_PROPERY);
+        btVaihdaTukintokoodi = UiUtil.buttonLink(hl, T("button.edit"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-        this.koulutuskoodi = UiUtil.textField(null, "", "", true);
-        this.koulutuskoodi.setEnabled(false);
-        hl.addComponent(koulutuskoodi);
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                korkeakouluPresenter.showValitseKoulutusDialog();
+            }
+        });
+
+        hl.setComponentAlignment(labelKoulutusTaiTutkinto, Alignment.TOP_LEFT);
+        hl.setComponentAlignment(labelKoodiarvo, Alignment.TOP_LEFT);
+        hl.setComponentAlignment(btVaihdaTukintokoodi, Alignment.TOP_LEFT);
+        hl.setExpandRatio(btVaihdaTukintokoodi, 1f);
 
         addGridRowItems(grid, hl);
     }
@@ -292,16 +260,34 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        cbTutkintoohjelma = new ComboBox();
-        cbTutkintoohjelma.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
-        cbTutkintoohjelma.setEnabled(false);
-        cbTutkintoohjelma.setWidth(300, UNITS_PIXELS);
-        cbTutkintoohjelma.setNullSelectionAllowed(false);
-        cbTutkintoohjelma.setImmediate(true);
-        cbTutkintoohjelma.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbTutkintoohjelma.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
-        cbTutkintoohjelma.setReadOnly(model.isLoaded());
-        addGridRowItems(grid, cbTutkintoohjelma);
+        // HorizontalLayout hlContainer = UiUtil.horizontalLayout();
+
+        //ADD AUTOCOMPLETE TEXT FIELD
+        VerticalLayout vlAutocomplete = UiUtil.verticalLayout();
+        atfTutkintoohjelma = new SimpleAutocompleteTextField(vlAutocomplete, korkeakouluPresenter.getSearchPresenter(), "", "");
+        atfTutkintoohjelma.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        atfTutkintoohjelma.setEnabled(true);
+        atfTutkintoohjelma.setSizeFull();
+        atfTutkintoohjelma.setWidth(300, UNITS_PIXELS);
+
+        atfTutkintoohjelma.setImmediate(true);
+        atfTutkintoohjelma.setReadOnly(model.isLoaded());
+        // hlContainer.addComponent(vlAutocomplete);
+
+//        //ADD EDIT BUTTON
+//        btMuokkaaTutkintoohjelma = UiUtil.buttonLink(hlContainer, T("button.edit"), new Button.ClickListener() {
+//            private static final long serialVersionUID = 5019806363620874205L;
+//
+//            @Override
+//            public void buttonClick(Button.ClickEvent event) {
+//            }
+//        });
+//
+//        hlContainer.setComponentAlignment(vlAutocomplete, Alignment.TOP_LEFT);
+//        hlContainer.setComponentAlignment(btMuokkaaTutkintoohjelma, Alignment.TOP_LEFT);
+
+        addGridRowItems(grid, vlAutocomplete);
+
     }
 
     private void buildGridDatesRow(GridLayout grid, final String propertyKey) {
@@ -317,6 +303,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         tfTunniste.setRequired(true);
         tfTunniste.setImmediate(true);
         tfTunniste.setValidationVisible(true);
+        tfTunniste.setWidth(300, UNITS_PIXELS);
         addGridRowItems(grid, tfTunniste);
     }
 
@@ -400,11 +387,12 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     }
 
     private void disableOrEnableComponents(boolean active) {
-        cbTutkintoohjelma.setEnabled(active);
-        dfKoulutuksenAlkamisPvm.setEnabled(active);
-        tfSuunniteltuKesto.setEnabled(active);
-        kcSuunniteltuKestoTyyppi.setEnabled(active);
-        kcOpetusmuodos.setEnabled(active);
+        /*atfTutkintoohjelma.setEnabled(active);
+         dfKoulutuksenAlkamisPvm.setEnabled(active);
+         tfSuunniteltuKesto.setEnabled(active);
+         kcSuunniteltuKestoTyyppi.setEnabled(active);
+         kcOpetusmuodos.setEnabled(active);
+         */
     }
     private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
         @Override

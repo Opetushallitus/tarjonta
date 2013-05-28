@@ -15,9 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.helper;
 
-import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
-import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusohjelmanKuvauksetRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.KuvausDTO;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.LukionKoulutusModuulitRow;
 import java.util.Collection;

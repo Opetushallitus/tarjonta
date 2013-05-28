@@ -119,7 +119,7 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
     /**
      * Reset model state
      */
-    public void clearModel(DocumentStatus status) {
+    public void clearModel() {
         diplomit.clear();
         kieliA.clear();
         kieliB1.clear();

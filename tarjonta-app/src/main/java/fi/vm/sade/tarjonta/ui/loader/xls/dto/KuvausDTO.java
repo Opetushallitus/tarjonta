@@ -23,10 +23,13 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
  */
 public class KuvausDTO extends AbstractKoulutuskoodiField {
 
+    /*
+     * For all data object
+     */
     private MonikielinenTekstiTyyppi tavoiteTeksti;
     private MonikielinenTekstiTyyppi koulutuksenRakenneTeksti;
     private MonikielinenTekstiTyyppi jatkoOpintomahdollisuudetTeksti;
-
+    
     /**
      * @return the koulutuksellisetTeksti
      */

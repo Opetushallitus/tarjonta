@@ -29,6 +29,7 @@ public class ValitseKoulutusModel extends BaseUIViewModel {
     private String searchWord;
     private String koulutusala;
     private Set<KoulutuskoodiRowModel> searchResultRows;
+    private KoulutuskoodiRowModel koulutuskoodiRow;
 
     public ValitseKoulutusModel() {
         clear();
@@ -79,5 +80,19 @@ public class ValitseKoulutusModel extends BaseUIViewModel {
      */
     public void setSearchWord(String searchWord) {
         this.searchWord = searchWord;
+    }
+
+    /**
+     * @return the koulutuskoodiRowModel
+     */
+    public KoulutuskoodiRowModel getKoulutuskoodiRow() {
+        return koulutuskoodiRow;
+    }
+
+    /**
+     * @param koulutuskoodiRowModel the koulutuskoodiRowModel to set
+     */
+    public void setKoulutuskoodiRow(KoulutuskoodiRowModel koulutuskoodiRowModel) {
+        this.koulutuskoodiRow = koulutuskoodiRowModel;
     }
 }
