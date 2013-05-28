@@ -205,6 +205,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(organisation, INVALID_DATA + "Organisatio DTO cannot be null.");
 
+        tyyppi.setVersion(model.getVersion());
         tyyppi.setTarjoaja(organisation.getOid());
         tyyppi.setOid(komotoOid);
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
@@ -267,6 +268,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel();
+        perustiedot.setVersion(koulutus.getVersion());
         perustiedot.setTila(koulutus.getTila());
         perustiedot.setKomotoOid(koulutus.getOid());
         perustiedot.setKoulutusmoduuliOid(koulutus.getKoulutusmoduuli().getOid());

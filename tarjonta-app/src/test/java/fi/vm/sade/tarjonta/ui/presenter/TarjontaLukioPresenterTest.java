@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -160,7 +161,6 @@ public class TarjontaLukioPresenterTest {
 
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
 
-
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(koulutusLukioConverter, "oidService", oidServiceMock);
@@ -262,7 +262,11 @@ public class TarjontaLukioPresenterTest {
         t.setOid(KOMO_OID);
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
-
+        LueKoulutusVastausTyyppi lueKoulutusVastaus = new LueKoulutusVastausTyyppi();
+        lueKoulutusVastaus.setTarjoaja(ORGANISAATIO_OID);
+        lueKoulutusVastaus.setKoulutusmoduuli(t);
+        lueKoulutusVastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
+        lueKoulutusVastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
         Capture<LisaaKoulutusTyyppi> localeCapture = new Capture<LisaaKoulutusTyyppi>();
 
         /*
@@ -272,6 +276,10 @@ public class TarjontaLukioPresenterTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
+        expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
+        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
 
         /*
          * replay
@@ -280,11 +288,12 @@ public class TarjontaLukioPresenterTest {
         replay(tarjontaAdminServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
+        replay(tarjontaUiHelper);
 
         /*
          * Presenter method call
          */
-        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
+        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT, KoulutusActiveTab.PERUSTIEDOT);
 
         /*
          * verify
@@ -354,25 +363,39 @@ public class TarjontaLukioPresenterTest {
 
         tarjontaPresenter.getModel().getTarjoajaModel().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, ORGANISATION_NAME));
 
+        LueKoulutusVastausTyyppi lueKoulutusVastaus = new LueKoulutusVastausTyyppi();
+        lueKoulutusVastaus.setTarjoaja(ORGANISAATIO_OID);
+        lueKoulutusVastaus.setKoulutusmoduuli(t);
+        lueKoulutusVastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
+        lueKoulutusVastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
+
         Capture<PaivitaKoulutusTyyppi> localeCapture = new Capture<PaivitaKoulutusTyyppi>();
 
         /*
          * Expect
          */
+        
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
+        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
+
 
         /*
          * replay
          */
 
         replay(tarjontaAdminServiceMock);
+        replay(tarjontaPublicServiceMock);
         replay(organisaatioServiceMock);
+        replay(tarjontaUiHelper);
 
         /*
          * Presenter method call
          */
-        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
+        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT, KoulutusActiveTab.PERUSTIEDOT);
 
         /*
          * verify

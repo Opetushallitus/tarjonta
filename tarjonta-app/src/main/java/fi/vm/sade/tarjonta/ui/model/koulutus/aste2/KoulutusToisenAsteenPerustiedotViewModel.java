@@ -64,6 +64,15 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
     private MonikielinenTekstiModel koulutusohjelmaTavoitteet;
+    private Long version;
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     /*
      * Link to opetussuunnitelma
      */
@@ -98,6 +107,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOid(null); //KOMOTO OID
         setTila(TarjontaTila.LUONNOS);
         setKoulutusmoduuliOid(null); //KOMO OID
+        setVersion(null);
 
         //used in control logic
         setDocumentStatus(status);

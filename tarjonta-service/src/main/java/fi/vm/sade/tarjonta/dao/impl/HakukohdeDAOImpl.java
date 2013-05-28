@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Preconditions;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -424,6 +425,13 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         log.info("  result --> {}", result);
 
         return result;
+    }
+    
+    @Override
+    public void update(Hakukohde entity) {
+        detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
+        Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
+        super.update(entity);
     }
 
 }

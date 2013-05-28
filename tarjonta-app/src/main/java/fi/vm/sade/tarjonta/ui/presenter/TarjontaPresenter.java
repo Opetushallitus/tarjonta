@@ -41,7 +41,6 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -252,12 +251,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
             HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
-            //TODO copy this fresh dto to model;
+            updateHakukohdeModel(fresh);
         } else {
-
             HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
-            //TODO copy this fresh dto to model;
+            updateHakukohdeModel(fresh);
         }
+        
+        updateHakukohdeModel(getModel().getHakukohde().getOid());
     }
 
     private void checkHakuLiitetoimitusPvm() {
@@ -750,6 +750,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
+            LOG.info("readeing koulutus:" + koulutusOid);
             readKoulutusToModel(koulutusOid);
         } else {
             Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Missing organisation OID.");
@@ -857,8 +858,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
-    	
-    	System.err.println("READ KOULUTUS "+koulutusOid);
     	
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
@@ -1098,21 +1097,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         //if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
-            LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-            kysely.setOid(hakukohdeOid);
-            getModel().setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(getTarjontaPublicService()
-                    .lueHakukohde(kysely).getHakukohde()));
-            setKomotoOids(getModel().getHakukohde().getKomotoOids());
-
-            if (getModel().getHakukohde().getHakukohdeNimi() != null) {
-                List<KoodiType> koodis = uiHelper.getKoodis(getModel().getHakukohde().getHakukohdeNimi());
-                if (koodis != null && koodis.size() > 0) {
-                    getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
-                }
-            }
-            if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
-                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
-            }
+            updateHakukohdeModel(hakukohdeOid);
         }
 
         getRootView().changeView(editHakukohdeView);
@@ -1122,6 +1107,35 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         } else if (selectedTab != null && selectedTab.trim().equalsIgnoreCase(TarjontaPresenter.LIITTEET_TAB_SELECT)) {
             editHakukohdeView.setLiitteetTabSelected();
 
+        }
+    }
+
+    /**
+     * Lue hakukohde tietovarastosta ja päivitä ui model.
+     */
+    private void updateHakukohdeModel(String hakukohdeOid) {
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(hakukohdeOid);
+        HakukohdeTyyppi hakukohde = getTarjontaPublicService()
+                .lueHakukohde(kysely).getHakukohde();
+        updateHakukohdeModel(hakukohde);
+    }
+
+    /**
+     * Päivitä ui model.
+     */
+    private void updateHakukohdeModel(HakukohdeTyyppi hakukohde) {
+        getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(hakukohde));
+        setKomotoOids(getModel().getHakukohde().getKomotoOids());
+
+        if (getModel().getHakukohde().getHakukohdeNimi() != null) {
+            List<KoodiType> koodis = uiHelper.getKoodis(getModel().getHakukohde().getHakukohdeNimi());
+            if (koodis != null && koodis.size() > 0) {
+                getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
+            }
+        }
+        if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
+            getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
         }
     }
 
@@ -1342,8 +1356,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param tila (save state)
      * @throws ExceptionMessage
      */
-    public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
+        String oid = null; 
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
         }
@@ -1356,17 +1371,21 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             getTarjontaAdminService().paivitaKoulutus(paivita);
+            oid=paivita.getOid();
         } else {
             for (OrganisationOidNamePair pair : getTarjoaja().getOrganisationOidNamePairs()) {
-                persistKoulutus(koulutusModel, pair, tila);
+                oid = persistKoulutus(koulutusModel, pair, tila);
             }
         }
 
-        this.editKoulutusView.enableLisatiedotTab();
-        this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
+        //reload koulutus (optimistic locking)
+        showKoulutustEditView(oid, activeTab);
+
+//        this.editKoulutusView.enableLisatiedotTab();
+//        this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
     }
 
-    private void persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
+    private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
         //persist new KOMO and KOMOTO
         LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), pair);
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
@@ -1376,6 +1395,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getTarjontaAdminService().lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
+            return lisaa.getOid();
         } else {
 
             LOG.debug("Unable to add koulutus because of the duplicate");
@@ -2214,6 +2234,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void showEditKoulutusView(final String koulutusOid, final KoulutusActiveTab tab) {
         editKoulutusView = new EditKoulutusView(koulutusOid, tab);
         getRootView().changeView(editKoulutusView);
+        LOG.info("showing new form");
     }
 
     private String tilaToLangStr(TarjontaTila tila) {

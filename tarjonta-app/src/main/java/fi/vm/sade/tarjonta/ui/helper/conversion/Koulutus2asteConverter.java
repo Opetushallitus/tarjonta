@@ -77,6 +77,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), pair);
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
+        paivita.setVersion(tarjontaModel.getKoulutusPerustiedotModel().getVersion());
         mapToKoulutusTyyppi(paivita, model, komotoOid, dto);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
@@ -223,6 +224,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setTila(koulutus.getTila());
         model2Aste.setOid(koulutus.getOid());
+        model2Aste.setVersion(koulutus.getVersion());
 
         /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));

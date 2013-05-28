@@ -18,9 +18,7 @@ package fi.vm.sade.tarjonta.ui.loader.xls;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 

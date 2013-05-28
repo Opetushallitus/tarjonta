@@ -37,7 +37,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
     @Override
     public Hakukohde convert(HakukohdeTyyppi from) {
         Hakukohde hakukohde = new Hakukohde();
-
+        hakukohde.setVersion(from.getVersion());
         hakukohde.setAloituspaikatLkm(from.getAloituspaikat());
         hakukohde.setHakukelpoisuusvaatimus(from.getHakukelpoisuusVaatimukset());
         hakukohde.setHakukohdeNimi(from.getHakukohdeNimi());

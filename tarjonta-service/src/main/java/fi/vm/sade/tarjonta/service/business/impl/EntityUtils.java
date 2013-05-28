@@ -97,6 +97,7 @@ public final class EntityUtils {
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
+        to.setVersion(from.getVersion()); //optimistic locking
         to.setTila(convertTila(from.getTila()));
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
@@ -335,6 +336,7 @@ public final class EntityUtils {
      */
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
 
+        target.setVersion(1L);
         target.setOid(source.getOid());
         target.setKoulutusKoodi(source.getKoulutuskoodiUri());
         target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());

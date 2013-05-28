@@ -18,23 +18,24 @@ package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 import fi.vm.sade.tarjonta.ui.loader.xls.Column;
 import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
 import static fi.vm.sade.tarjonta.ui.loader.xls.dto.AbstractKoulutuskoodiField.KOULUTUSKOODI_PROPERTY;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
  * @author Jani Wilén
  */
 public class LukionKoulutusModuulitRow extends AbstractKoulutuskoodiField {
-    public static final String FILENAME = "LUKION_MODUULIT";
+
+    public static final String FILENAME = "LUKION_MODUULIT_konversio";
     public static final Column[] COLUMNS = {
         new Column(KOULUTUSKOODI_PROPERTY, "koulutus", InputColumnType.INTEGER),
         new Column("koulutuksellisetTeksti", "Koulutukselliset tavoitteet", InputColumnType.STRING),
         new Column("koulutuksenRakenneTeksti", "Koulutuksen rakenne", InputColumnType.STRING),
         new Column("jatkoOpintomahdollisuudetTeksti", "Jatko-opintomahdollisuudet", InputColumnType.STRING)};
-   
     private String koulutuksellisetTeksti;
     private String koulutuksenRakenneTeksti;
     private String jatkoOpintomahdollisuudetTeksti;
-    
+
     /**
      * @return the koulutuksellisetTeksti
      */
@@ -76,5 +77,10 @@ public class LukionKoulutusModuulitRow extends AbstractKoulutuskoodiField {
      */
     public void setJatkoOpintomahdollisuudetTeksti(String jatkoOpintomahdollisuudetTeksti) {
         this.jatkoOpintomahdollisuudetTeksti = jatkoOpintomahdollisuudetTeksti;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

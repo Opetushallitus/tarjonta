@@ -293,6 +293,7 @@ public class TarjontaFixtures {
         t3.addHakukohde(h);
 
         hakukohdeDAO.update(h);
+        h = hakukohdeDAO.read(h.getId());
         flush();
 
 

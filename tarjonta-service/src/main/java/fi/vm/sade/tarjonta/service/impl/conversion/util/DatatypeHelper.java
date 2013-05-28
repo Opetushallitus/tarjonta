@@ -16,6 +16,7 @@ public class DatatypeHelper {
     public static XMLGregorianCalendar convertDateToXmlGregorianCal(Date date) {
        if (date != null) {
             GregorianCalendar gcal = new GregorianCalendar();
+           gcal.setTime(date);
             try {
                 XMLGregorianCalendar xgcal = DatatypeFactory.newInstance()
                         .newXMLGregorianCalendar(gcal);

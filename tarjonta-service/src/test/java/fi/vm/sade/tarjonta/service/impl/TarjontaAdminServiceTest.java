@@ -18,9 +18,7 @@ package fi.vm.sade.tarjonta.service.impl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -46,13 +44,14 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
 
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import javax.persistence.OptimisticLockException;
 
 /**
  *
@@ -64,8 +63,8 @@ import java.util.*;
     TransactionalTestExecutionListener.class
 })
 @RunWith(SpringJUnit4ClassRunner.class)
-@Transactional
 @ActiveProfiles("embedded-solr")
+@Transactional()
 public class TarjontaAdminServiceTest {
 
     @Autowired
@@ -142,7 +141,10 @@ public class TarjontaAdminServiceTest {
     public void testUpdateKoulutusHappyPath() {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
-        adminService.paivitaKoulutus(createPaivitaKoulutusTyyppi());
+        PaivitaKoulutusTyyppi update= createPaivitaKoulutusTyyppi();
+        update.setVersion(toteutus.getVersion());
+        
+        adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
@@ -150,12 +152,42 @@ public class TarjontaAdminServiceTest {
     }
 
     @Test
+    public void testOptimisticLockingKoulutus() {
+        LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
+        kysely.setOid(SAMPLE_KOULUTUS_OID);
+        LueKoulutusVastausTyyppi vastaus = publicService.lueKoulutus(kysely);
+        assertNotNull(vastaus);
+        
+        PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
+        
+        //update with illegal version
+        update.setVersion(100L);
+        try {
+            adminService.paivitaKoulutus(update);
+            fail("Should throw exception!");
+        } catch (OptimisticLockException ole){
+            //all is good...
+        }
+        //update with proper version
+        update.setVersion(0L);
+        adminService.paivitaKoulutus(update);
+        vastaus = publicService.lueKoulutus(kysely);
+        assertNotNull(vastaus);
+        //update with proper version
+        update.setVersion(1L);
+        adminService.paivitaKoulutus(update);
+        vastaus = publicService.lueKoulutus(kysely);
+        assertNotNull(vastaus);
+    }
+    
+    @Test
     public void testUpdateKoulutusYhteyshenkilo() {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
         assertEquals("Kalle Matti", toteutus.getYhteyshenkilos().iterator().next().getEtunimis());
 
         PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi = createPaivitaKoulutusTyyppi();
+        createPaivitaKoulutusTyyppi.setVersion(toteutus.getVersion());
         createPaivitaKoulutusTyyppi.getYhteyshenkiloTyyppi().add(createAnotherYhteyshenkilo());
         EntityUtils.copyFields(createPaivitaKoulutusTyyppi, toteutus);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
@@ -360,6 +392,7 @@ public class TarjontaAdminServiceTest {
         oppiaine.setOppiaine("foo");
         oppiaine.setPainokerroin(1);
         dto.getPainotettavatOppiaineet().add(oppiaine);
+        dto.setVersion(dto.getVersion());
         dto=this.adminService.paivitaHakukohde(dto);
         assertEquals(1,dto.getPainotettavatOppiaineet().size());
         assertEquals("foo",dto.getPainotettavatOppiaineet().get(0).getOppiaine());
@@ -694,6 +727,7 @@ public class TarjontaAdminServiceTest {
         Date updatedAlkamisPvm = calDate.getTime();
         PaivitaKoulutusTyyppi paivita = convertLueToPaivita(vastaus);
         paivita.setKoulutuksenAlkamisPaiva(updatedAlkamisPvm);
+        paivita.setVersion(vastaus.getVersion());
         adminService.paivitaKoulutus(paivita);
         
         //Verifying that all komotos in the hierarchy have the updated date

@@ -161,9 +161,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
 
-        categoryTree.setColumnExpandRatio(COLUMN_A, 2.1f);
+        categoryTree.setColumnExpandRatio(COLUMN_A, 1.9f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.4f);
         categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
         categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
@@ -229,7 +229,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String getKoulutuslaji(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
-        String country = I18N.getLocale().getCountry();
+        String country = I18N.getLocale().getLanguage();
         String retval = "";
         if (country.trim().equalsIgnoreCase("fi")) {
 
@@ -255,6 +255,18 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             }
             return retval;
         }
+
+        if (retval.trim().equalsIgnoreCase("") && monikielinenTekstiTyyppi.getTeksti().size() > 0) {
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().equalsIgnoreCase("fi")) {
+                    retval = teksti.getValue();
+                }
+            }
+            if (retval.trim().equalsIgnoreCase("")) {
+              retval =  monikielinenTekstiTyyppi.getTeksti().get(0).getValue();
+            }
+        }
+
         return retval;
     }
 

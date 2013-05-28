@@ -58,7 +58,6 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
     @Override
     public TarjontaTyyppi haeTarjonta(@WebParam(name = "oid", targetNamespace = "") String oid) {
 
-        System.out.println("Returning mocked tarjonta");
         TarjontaTyyppi tt = new TarjontaTyyppi();
 
         HakuTyyppi haku = new HakuTyyppi();

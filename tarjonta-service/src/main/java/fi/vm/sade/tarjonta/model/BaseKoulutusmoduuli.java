@@ -34,7 +34,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
 
     private static final long serialVersionUID = -8023508784857174305L;
 
-    @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false)
+    @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false, unique = true)
     private String oid;
 
     @Column(name = TILA_COLUMN_NAME)
@@ -43,13 +43,6 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-
-
-    /**
-     * Make sure you call super when overriding constructor.
-     */
-    public BaseKoulutusmoduuli() {
-    }
 
     @PreUpdate
     protected void beforeUpdate() {

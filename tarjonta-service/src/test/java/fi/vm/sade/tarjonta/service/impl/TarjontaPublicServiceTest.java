@@ -173,6 +173,7 @@ public class TarjontaPublicServiceTest {
 
         hakukohde.addValintakoe(valintakoe);
         hakukohdeDAO.update(hakukohde);
+        hakukohde = hakukohdeDAO.read(hakukohde.getId());
 
         // 1. koulutusmoduuli+toteutus
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
@@ -187,6 +188,7 @@ public class TarjontaPublicServiceTest {
         // liitä koulutus hakukohteeseen
         hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus);
         hakukohdeDAO.update(hakukohde);
+        hakukohde = hakukohdeDAO.read(hakukohde.getId());
 
         // 2. hakukohde
         Hakukohde hakukohde2 = fixtures.createHakukohde();
@@ -207,6 +209,7 @@ public class TarjontaPublicServiceTest {
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus2);
         hakukohde2.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);
         hakukohdeDAO.update(hakukohde2);
+        hakukohde2 = hakukohdeDAO.read(hakukohde2.getId());
 
         //Liita koulutus 1:een hakukohteeseen
         hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);

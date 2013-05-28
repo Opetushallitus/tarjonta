@@ -83,6 +83,8 @@ public class TarjontaKorkeakouluPresenter {
     private ValitseKoulutusDialog valitseKoulutusDialog;
     private EditKorkeakouluView editKoulutusView;
     private RegexModelFilter<KoulutuskoodiRowModel> filter;
+    @Autowired(required = true)
+    private SearchPresenter searchPresenter;
 
     public TarjontaKorkeakouluPresenter() {
     }
@@ -428,5 +430,19 @@ public class TarjontaKorkeakouluPresenter {
         }
 
         this.valitseKoulutusDialog.windowOpen();
+    }
+
+    /**
+     * @return the searchPresenter
+     */
+    public SearchPresenter getSearchPresenter() {
+        return searchPresenter;
+    }
+
+    /**
+     * @param searchPresenter the searchPresenter to set
+     */
+    public void setSearchPresenter(SearchPresenter searchPresenter) {
+        this.searchPresenter = searchPresenter;
     }
 }

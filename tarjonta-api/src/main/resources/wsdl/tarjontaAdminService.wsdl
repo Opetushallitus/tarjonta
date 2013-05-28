@@ -257,6 +257,7 @@
             </wsdl:input>
             <wsdl:output message="tns:lisaaHakukohdeVastaus" name="lisaaHakukohdeVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="paivitaHakukohde">
@@ -267,6 +268,7 @@
             </wsdl:input>
             <wsdl:output message="tns:paivitaHakukohdeVastaus" name="paivitaHakukohdeVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="poistaHakukohde">
@@ -317,6 +319,7 @@
             </wsdl:input>
             <wsdl:output message="tns:lisaaHakuVastaus" name="lisaaHakuVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="paivitaHaku">
@@ -327,6 +330,7 @@
             </wsdl:input>
             <wsdl:output message="tns:paivitaHakuVastaus" name="paivitaHakuVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="poistaHaku">
@@ -337,6 +341,7 @@
             </wsdl:input>
             <wsdl:output message="tns:poistaHakuVastaus" name="poistaHakuVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="lisaaKoulutus">

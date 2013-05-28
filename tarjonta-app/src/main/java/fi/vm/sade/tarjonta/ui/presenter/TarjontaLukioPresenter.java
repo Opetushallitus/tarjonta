@@ -86,22 +86,26 @@ public class TarjontaLukioPresenter {
      * @param tila
      * @throws ExceptionMessage
      */
-    public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
         LOG.debug("in saveKoulutus, tila : {}", tila);
         this.editLukioKoulutusView.enableKuvailevatTiedotTab();
         this.kuvailevatTiedotView.getLisatiedotForm().reBuildTabsheet();
+        
+        String koulutusOid = null;
 
         KoulutusLukioPerustiedotViewModel perustiedot = getPerustiedotModel();
 
         if (perustiedot.isLoaded()) {//update KOMOTO
             PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
             tarjontaAdminService.paivitaKoulutus(paivita);
+            koulutusOid = paivita.getOid();
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
                 LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), pair, tila);
                 checkKoulutusmoduuli();
                 if (checkExistingKomoto(lisaa)) {
                     tarjontaAdminService.lisaaKoulutus(lisaa);
+                    koulutusOid = lisaa.getOid();
                     perustiedot.setKomotoOid(lisaa.getOid());
                 } else {
                     LOG.debug("Unable to add koulutus because of the duplicate");
@@ -109,6 +113,9 @@ public class TarjontaLukioPresenter {
                 }
             }
         }
+        Preconditions.checkNotNull(koulutusOid);
+        showEditKoulutusView(koulutusOid, activeTab);
+        
     }
 
     /**
@@ -207,6 +214,7 @@ public class TarjontaLukioPresenter {
     private void loadKomoto(final String komotoOid) {
         if (komotoOid != null) {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
+            Preconditions.checkNotNull(koulutus);
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");   

@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.Column;
 import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
@@ -92,5 +93,10 @@ public class KoulutusohjelmanKuvauksetRow {
      */
     public void setKoulutusohjelmanTavoiteSvTeksti(String koulutusohjelmanTavoiteSvTeksti) {
         this.koulutusohjelmanTavoiteSvTeksti = koulutusohjelmanTavoiteSvTeksti;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }
