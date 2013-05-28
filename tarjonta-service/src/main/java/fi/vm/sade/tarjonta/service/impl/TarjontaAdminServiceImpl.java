@@ -455,7 +455,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());
 
         hakukohdeDAO.update(hakukohde);
-        solrIndexer.indexHakukohde(Lists.newArrayList(hakukohde));
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
