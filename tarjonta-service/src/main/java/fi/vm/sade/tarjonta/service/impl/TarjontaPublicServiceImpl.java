@@ -614,7 +614,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         //System.out.println("lueKoulutus(...) -> "+(System.currentTimeMillis()-t)+" ms");
-        
+
         return result;
     }
 
@@ -674,7 +674,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
 
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
-        toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getLastUpdateDate()));
+        toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getUpdated()));
+
         toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();
         greg.setTime(fromKoulutus.getKoulutuksenAlkamisPvm());
