@@ -14,6 +14,7 @@ import java.io.IOException;
  *
  *   src/main/resources/TARJONTA/hakukohteet.xls
  *   src/main/resources/TARJONTA/koulutukset_amm.xls
+ *   src/main/resources/TARJONTA/koulutukset_kotitalous.xls
  *
  */
 public class TarjontaUploader {
