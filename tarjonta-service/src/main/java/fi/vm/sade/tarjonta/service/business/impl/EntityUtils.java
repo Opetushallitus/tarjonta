@@ -60,8 +60,8 @@ import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
  */
 public final class EntityUtils {
 
-    private EntityUtils() {}
-    
+    private EntityUtils() {
+    }
     public static final String STR_ARRAY_SEPARATOR = "|";
 
     /**
@@ -91,9 +91,8 @@ public final class EntityUtils {
     }
 
     public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi source, MonikielinenTeksti target) {
-    	return MonikielinenTeksti.merge(target, CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(source));
+        return MonikielinenTeksti.merge(target, CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(source));
     }
-
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
@@ -163,7 +162,7 @@ public final class EntityUtils {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
 
-        
+
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
@@ -221,7 +220,7 @@ public final class EntityUtils {
 
         toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot(), toKoulutus.getKuvailevatTiedot()));
         toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen()));
-        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(),toKoulutus.getSijoittuminenTyoelamaan()));
+        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan()));
         toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), toKoulutus.getSisalto()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
     }
@@ -238,7 +237,7 @@ public final class EntityUtils {
         if (koodit != null && !koodit.isEmpty()) {
             Set<String> lcs = new HashSet<String>();
             for (KoodistoKoodiTyyppi curKoodi : koodit) {
-            	lcs.add(curKoodi.getUri());
+                lcs.add(curKoodi.getUri());
             }
             toKoulutus.setKieliValikoima(aine.name(), lcs);
         } else {
@@ -352,6 +351,21 @@ public final class EntityUtils {
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
+
+        System.out.println(source.getKoulutuskoodiUri() + " " + source.getKoulutusohjelmakoodiUri());
+
+        if (source.getKoulutuksenRakenne() != null) {
+            System.out.println(source.getKoulutuksenRakenne().getTeksti());
+        }
+
+        if (source.getTavoitteet() != null) {
+            System.out.println(source.getTavoitteet().getTeksti());
+        }
+
+        if (source.getJatkoOpintoMahdollisuudet() != null) {
+            System.out.println(source.getJatkoOpintoMahdollisuudet().getTeksti());
+        }
+
 
         return target;
     }

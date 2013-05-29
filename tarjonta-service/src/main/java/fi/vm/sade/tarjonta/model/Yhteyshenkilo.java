@@ -16,9 +16,13 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import org.apache.commons.lang.StringUtils;
 
@@ -55,6 +59,10 @@ public class Yhteyshenkilo extends BaseEntity {
 
     @Column(name = "titteli")
     private String titteli;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tyyppi")
+    private HenkiloTyyppi henkiloTyyppi;
     
     private transient boolean persisted;
 
@@ -192,7 +200,20 @@ public class Yhteyshenkilo extends BaseEntity {
         this.persisted = persisted;
     }
 
-   
+    /**
+     * @return the henkiloTyyppi
+     */
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return henkiloTyyppi;
+    }
 
+    /**
+     * @param henkiloTyyppi the henkiloTyyppi to set
+     */
+    public void setHenkiloTyyppi(HenkiloTyyppi henkiloTyyppi) {
+        this.henkiloTyyppi = henkiloTyyppi;
+    }
+
+  
 }
 

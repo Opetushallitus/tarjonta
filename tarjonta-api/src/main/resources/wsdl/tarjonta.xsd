@@ -125,9 +125,9 @@
                         minOccurs="1"/>
                         
             <xs:element name="sisaisetHakuajat"
-            			minOccurs="0"
-            			maxOccurs="1"
-            			type="tns:SisaisetHakuAjat"/>
+                        minOccurs="0"
+                        maxOccurs="1"
+                        type="tns:SisaisetHakuAjat"/>
             
             <xs:element name="hakukohteenHaunNimi"
                         type="tns:MonikielinenTekstiTyyppi"
@@ -391,10 +391,10 @@
                         minOccurs="0"
                         maxOccurs="1"/>
 
-             <xs:element name="hakukohteet"
-                         type="tns:HakukohdeTyyppi"
-                         minOccurs="0"
-                         maxOccurs="unbounded"/>
+            <xs:element name="hakukohteet"
+                        type="tns:HakukohdeTyyppi"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -783,7 +783,7 @@
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="Pohjakoulutusvaatimus" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Pohjakoulutusvaatimus" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Linkki" type="tns:WebLinkkiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="YhteyshenkiloTyyppi" type="tns:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
@@ -821,7 +821,12 @@
                         type="xs:dateTime"
                         minOccurs="0"
                         maxOccurs="1"/>
-            
+          
+            <!-- Korkeakoululle spesifeja tietoja -->     
+            <xs:element name="Teemat" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="PohjakoulutusvaatimusKorkeakoulu" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Maksullisuus" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                
         </xs:sequence>
     </xs:group>
 
@@ -960,6 +965,9 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="henkiloTyyppi" type="tns:HenkiloTyyppi" minOccurs="0" maxOccurs="1">
+            </xs:element>
+
         </xs:sequence>
     </xs:complexType>
 
@@ -1062,6 +1070,13 @@
             <xs:element minOccurs="1" maxOccurs="1" name="arvo" type="tns:LongString"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:simpleType name="HenkiloTyyppi">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EctsKoordinaattori" />
+            <xs:enumeration value="Yhteyshenkilo"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 
 </xs:schema>

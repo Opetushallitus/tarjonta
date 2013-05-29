@@ -157,7 +157,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
-    
+ 
     //Lukiospesifeja kenttia
     @MapKey(name="key")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
