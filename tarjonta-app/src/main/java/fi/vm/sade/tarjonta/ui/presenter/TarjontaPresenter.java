@@ -280,7 +280,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(uiHelper.getKoodiNimi(hakukohdeLiite.getLiitteenTyyppi()));
         liitteet.add(hakukohdeLiite);
 
-        for (HakukohdeLiiteViewModel hakuLiite : loadHakukohdeLiitteet()) {
+        for (HakukohdeLiiteViewModel hakuLiite : loadHakukohdeLiitteet(true)) {
             HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
             liitteet.add(liite);
         }
@@ -917,11 +917,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private String cachedLiitteetOid = null;
     private List<HakukohdeLiiteViewModel> cachedLiitteet = null;
 
-    public synchronized List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
+    /**
+     * @param forceReload Jos tosi, liitteitä et oteta kakusta.
+     */
+    public synchronized List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet(boolean forceReload) {
         if (getModel().getHakukohde() == null || getModel().getHakukohde().getOid() == null) {
             return Collections.emptyList();
         }
-        if (cachedLiitteetOid != null
+        if (forceReload) {
+        	cachedLiitteet = null;
+        	cachedLiitteetOid = null;
+        } else if (cachedLiitteetOid != null
                 && cachedLiitteet != null
                 && cachedLiitteetOid.equals(getModel().getHakukohde().getOid())) {
             return cachedLiitteet;
@@ -1125,6 +1131,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Päivitä ui model.
      */
     private void updateHakukohdeModel(HakukohdeTyyppi hakukohde) {
+    	cachedLiitteet = null;
+    	cachedLiitteetOid = null;
         getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(hakukohde));
         setKomotoOids(getModel().getHakukohde().getKomotoOids());
 
