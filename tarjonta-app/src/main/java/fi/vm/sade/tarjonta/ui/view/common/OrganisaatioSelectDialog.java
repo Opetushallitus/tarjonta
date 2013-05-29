@@ -73,11 +73,24 @@ public abstract class OrganisaatioSelectDialog extends Window {
     protected Button peruutaBtn; 
     protected Button jatkaBtn;
     protected KoulutusasteTyyppi koulutusTyyppi;
+    private boolean limitToOne = false;
     
     protected HashMap<String,OrganisaatioPerustietoType> selectedOrgs = new HashMap<String,OrganisaatioPerustietoType>();
     
     public OrganisaatioSelectDialog(String width,String height) {
         super();
+        _i18n = new I18NHelper(this);
+        setWidth(width);
+        setHeight(height);
+        setContent(buildMainLayout());
+        addElementsToTree(getOrganisaatioOids());
+        setModal(true);
+        setButtonListeners();
+    }
+
+    public OrganisaatioSelectDialog(String width,String height,boolean limitToOne) {
+        super();
+        this.limitToOne = limitToOne;
         _i18n = new I18NHelper(this);
         setWidth(width);
         setHeight(height);
@@ -245,6 +258,9 @@ public abstract class OrganisaatioSelectDialog extends Window {
     
      public void addOrganisaatioToRight(OrganisaatioPerustietoType org) {
         if (!selectedOrgs.containsKey(org.getOid())) {
+        if (limitToOne && selectedOrgs.size() > 0) {
+            return;
+        }
         SelectableItem<OrganisaatioPerustietoType> link = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiFi");
         selectedOrgs.put(org.getOid(),org);
         link.setMargin(false);
@@ -279,5 +295,12 @@ public abstract class OrganisaatioSelectDialog extends Window {
         }
         return "";
     }
-    
+
+    public boolean isLimitToOne() {
+        return limitToOne;
+    }
+
+    public void setLimitToOne(boolean limitToOne) {
+        this.limitToOne = limitToOne;
+    }
 }
