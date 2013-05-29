@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * This entity is used to store "looong" multilanguage texts by key (avain) and category (kategoria).
+ *
  * @author mlyly
  */
 @Entity
