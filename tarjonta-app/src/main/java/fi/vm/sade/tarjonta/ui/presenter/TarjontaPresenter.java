@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -409,6 +410,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         for (HakuTyyppi foundHaku : haut.getResponse()) {
             foundHaut.add(new HakuViewModel(foundHaku));
         }
+        Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
+        	@Override
+        	public int compare(HakuViewModel a, HakuViewModel b) {
+        		int ret = a.getNimi().compareTo(b.getNimi());
+        		return ret!=0 ? ret : a.getHakuOid().compareTo(b.getHakuOid());
+        	}
+		});
 
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
 

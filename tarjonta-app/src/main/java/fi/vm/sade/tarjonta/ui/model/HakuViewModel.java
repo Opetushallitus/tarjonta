@@ -16,12 +16,18 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import fi.vm.sade.generic.common.I18N;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 
@@ -33,7 +39,9 @@ import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
  */
 public class HakuViewModel extends BaseUIViewModel {
 
-    private String hakuOid;
+	private static final long serialVersionUID = 1L;
+	
+	private String hakuOid;
     private String hakutyyppi;
     private String hakukausi;
     private int hakuvuosi;
@@ -274,6 +282,26 @@ public class HakuViewModel extends BaseUIViewModel {
         for (SisaisetHakuAjat curHakuaika : hakuDto.getSisaisetHakuajat()) {
             sisaisetHakuajat.add(new HakuaikaViewModel(curHakuaika));
         }
+        Collections.sort(sisaisetHakuajat, new Comparator<HakuaikaViewModel>() {
+        	@Override
+        	public int compare(HakuaikaViewModel o1, HakuaikaViewModel o2) {
+        		int ret = o1.getAlkamisPvm().compareTo(o2.getAlkamisPvm());
+        		if (ret==0) {
+        			return ret;
+        		}
+        		ret = o1.getPaattymisPvm().compareTo(o2.getPaattymisPvm());
+        		if (ret==0) {
+        			return ret;
+        		}
+        		if (o1.getHakuajanKuvaus()!=null && o2.getHakuajanKuvaus()!=null) {
+            		ret = o1.getHakuajanKuvaus().compareTo(o2.getHakuajanKuvaus());
+            		if (ret==0) {
+            			return ret;
+            		}
+        		}
+        		return o1.getHakuaikaOid().compareTo(o2.getHakuaikaOid());
+        	}
+		});
 
         return sisaisetHakuajat;
     }
@@ -320,6 +348,11 @@ public class HakuViewModel extends BaseUIViewModel {
         this.kaytetaanJarjestelmanHakulomaketta = kaytetaanJarjestelmanHakulomaketta;
     }
 
+    public String getNimi() {
+    	String ret = getKielistettyNimiFromDto(BasicLanguage.getUserLanguage());
+    	return ret==null ? "" : ret;
+    }
+    
     /**
      * @return the nimiFi
      */
