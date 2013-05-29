@@ -49,7 +49,6 @@ import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -130,7 +129,7 @@ public class ShowHakukohdeTab extends CustomComponent {
     private void buildLiiteLayout(VerticalLayout layout) {
         VerticalLayout liiteLayout = new VerticalLayout();
         liiteLayout.setMargin(true);
-        final List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet();
+        final List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet(false);
 
         Date lastUpdated = null;
 
@@ -157,7 +156,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
-        for (HakukohdeLiiteViewModel liite : presenter.loadHakukohdeLiitteet()) {
+        for (HakukohdeLiiteViewModel liite : presenter.loadHakukohdeLiitteet(false)) {
             addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())));
             addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(liite.getLiitteenSanallinenKuvaus())));
             addItemToGrid(grid, "liiteoimMennessaLbl", getLiiteAika(liite));

@@ -35,6 +35,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
     @Override
     public HakuTyyppi convert(Haku from) {
         HakuTyyppi h = new HakuTyyppi();
+        h.setVersion(from.getVersion());
         h.setHakuVuosi(from.getHakukausiVuosi());
         h.setHakukausiUri(from.getHakukausiUri());
         h.setHakulomakeUrl(from.getHakulomakeUrl());

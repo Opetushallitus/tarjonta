@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
@@ -54,7 +55,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    private KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAO;
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
     @Autowired
@@ -69,7 +70,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return koulutusmoduuliDAO.insert(moduuli);
 
     }
-
+    
     @Override
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli) {
 
@@ -120,7 +121,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
         KoulutusmoduuliToteutus response =  koulutusmoduuliToteutusDAO.insert(komotoModel);
-        //TODO index
+        
         return response;
     }
 
@@ -229,10 +230,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
         //Handling the creation or update of the parent (tutkinto) komoto
         handleParentKomoto(koulutus, moduuli);
-        
+
         EntityUtils.copyFields(koulutus, model);
-        
         koulutusmoduuliToteutusDAO.update(model);
+        model = koulutusmoduuliToteutusDAO.read(model.getId());
 
         return model;
 

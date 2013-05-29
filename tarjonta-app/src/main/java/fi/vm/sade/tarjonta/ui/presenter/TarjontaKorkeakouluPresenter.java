@@ -121,7 +121,6 @@ public class TarjontaKorkeakouluPresenter {
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
                 LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
-                checkKoulutusmoduuli();
                 tarjontaAdminService.lisaaKoulutus(lisaa);
                 perustiedot.setKomotoOid(lisaa.getOid());
             }

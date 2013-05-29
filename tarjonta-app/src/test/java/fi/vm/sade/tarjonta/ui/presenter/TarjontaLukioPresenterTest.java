@@ -1,13 +1,7 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
-import com.google.common.collect.Lists;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
-import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
@@ -16,9 +10,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
@@ -27,24 +19,18 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
@@ -54,16 +40,12 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotFormView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.easymock.Capture;
 import static org.easymock.EasyMock.*;
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -138,7 +120,6 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         tarjontaUiHelper = createMock(TarjontaUIHelper.class);
 
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
-
 
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
@@ -241,7 +222,11 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         t.setOid(KOMO_OID);
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
-
+        LueKoulutusVastausTyyppi lueKoulutusVastaus = new LueKoulutusVastausTyyppi();
+        lueKoulutusVastaus.setTarjoaja(ORGANISAATIO_OID);
+        lueKoulutusVastaus.setKoulutusmoduuli(t);
+        lueKoulutusVastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
+        lueKoulutusVastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
         Capture<LisaaKoulutusTyyppi> localeCapture = new Capture<LisaaKoulutusTyyppi>();
 
         /*
@@ -251,6 +236,10 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
+        expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
+        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
 
         /*
          * replay
@@ -259,11 +248,12 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         replay(tarjontaAdminServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
+        replay(tarjontaUiHelper);
 
         /*
          * Presenter method call
          */
-        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
+        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT, KoulutusActiveTab.PERUSTIEDOT);
 
         /*
          * verify
@@ -333,25 +323,39 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
 
         tarjontaPresenter.getModel().getTarjoajaModel().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, ORGANISATION_NAME));
 
+        LueKoulutusVastausTyyppi lueKoulutusVastaus = new LueKoulutusVastausTyyppi();
+        lueKoulutusVastaus.setTarjoaja(ORGANISAATIO_OID);
+        lueKoulutusVastaus.setKoulutusmoduuli(t);
+        lueKoulutusVastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
+        lueKoulutusVastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
+
         Capture<PaivitaKoulutusTyyppi> localeCapture = new Capture<PaivitaKoulutusTyyppi>();
 
         /*
          * Expect
          */
+        
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
+        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
+
 
         /*
          * replay
          */
 
         replay(tarjontaAdminServiceMock);
+        replay(tarjontaPublicServiceMock);
         replay(organisaatioServiceMock);
+        replay(tarjontaUiHelper);
 
         /*
          * Presenter method call
          */
-        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
+        instance.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT, KoulutusActiveTab.PERUSTIEDOT);
 
         /*
          * verify

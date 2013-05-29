@@ -45,7 +45,13 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setTila(IndexingUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexingUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexingUtils.createTarjoaja(koulutusDoc, solrOrgList));
-        
+        if (koulutusDoc.containsKey(KAUSI_KOODI)) {
+            koulutus.setKoulutuksenAlkamiskausiUri("" + koulutusDoc.getFieldValue(KAUSI_KOODI));
+        }
+        if (koulutusDoc.containsKey(VUOSI_KOODI)) {
+            koulutus.setKoulutuksenAlkamisVuosi(new Integer((String)koulutusDoc.getFieldValue(VUOSI_KOODI)));
+        }
+
         if(koulutus.getTarjoaja().getNimi()==null) {
             return null;
         }

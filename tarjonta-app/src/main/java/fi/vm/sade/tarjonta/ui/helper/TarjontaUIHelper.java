@@ -597,7 +597,7 @@ public class TarjontaUIHelper {
     public static MonikielinenTekstiTyyppi.Teksti getClosestMonikielinenTekstiTyyppiName(Locale locale, MonikielinenTekstiTyyppi monikielinenTeksti) {
         Preconditions.checkNotNull(locale, "Locale object cannot be null.");
         Preconditions.checkNotNull(monikielinenTeksti, "MonikielinenTekstiTyyppi object cannot be null.");
-        
+
         MonikielinenTekstiTyyppi.Teksti teksti = null;
         if (locale != null) {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
@@ -785,6 +785,7 @@ public class TarjontaUIHelper {
      * @return the end results for given koodisto relation "path"
      */
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String... koodistoUris) {
+        Preconditions.checkNotNull(koodiUri, "Koodi URI cannot be null.");
         LOG.info("getKoodistoRelations({}, {})", koodiUri, koodistoUris);
 
         KoodistoRelationTraversal relations[] = new KoodistoRelationTraversal[koodistoUris.length];
@@ -876,7 +877,7 @@ public class TarjontaUIHelper {
      */
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String koodistoUri, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
         LOG.info("getKoodistoRelations(koodiUri={}, koodistoUri={}, alaKoodi={}, suhdeTyyppi={})", new Object[]{koodiUri, koodistoUri, alaKoodi, suhdeTyyppi});
-
+        Preconditions.checkNotNull(koodistoUri, "Koodisto URI cannot be null.");
         Set<KoodiType> result = new HashSet<KoodiType>();
 
         if (suhdeTyyppi == null) {
@@ -887,6 +888,7 @@ public class TarjontaUIHelper {
         KoodiUriAndVersioType koodiUriAndVersioType = getKoodiUriAndVersioByKoodiUri(koodiUri);
 
         // Get relations and filter only wanted koodisto koodis
+        Preconditions.checkNotNull(koodiUriAndVersioType, "koodiUriAndVersioType object cannot be null.");
         List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);
         for (KoodiType koodiType : resultKoodis) {
 

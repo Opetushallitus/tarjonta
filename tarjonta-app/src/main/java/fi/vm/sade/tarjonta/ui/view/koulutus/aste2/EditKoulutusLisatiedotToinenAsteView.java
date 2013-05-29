@@ -20,6 +20,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -76,7 +77,7 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
 
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
-        presenter.saveKoulutus(tila);
+        presenter.saveKoulutus(tila, KoulutusActiveTab.LISATIEDOT);
         presenter.getReloadKoulutusListData();
         return presenter.getModel().getKoulutusPerustiedotModel().getOid();
     }

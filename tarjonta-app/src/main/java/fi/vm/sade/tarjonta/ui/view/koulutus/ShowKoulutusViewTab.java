@@ -75,7 +75,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
      *
      * @param language is used to match monikielinen teksi
      * @param locale is used for koodi values
-     * @param koulutus the koulutus to display
+     *
      */
     public ShowKoulutusViewTab(final String language, final Locale locale) {
         Preconditions.checkNotNull(language, "Language cannot be null");
@@ -134,7 +134,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         titleLabel.setStyleName(Oph.LABEL_H2);
 
         //TODO get real date
-        final Date modifiedDate = new Date();
+        final Date modifiedDate = presenter.getModel().getKoulutusPerustiedotModel().getViimeisinPaivitysPvm();
 
         if (showTime) {
             final Label modifiedLabel = UiUtil.label(grid, i18n.getMessage("tallennettuLabel", uiHelper.formatDate(modifiedDate), uiHelper.formatTime(modifiedDate)));

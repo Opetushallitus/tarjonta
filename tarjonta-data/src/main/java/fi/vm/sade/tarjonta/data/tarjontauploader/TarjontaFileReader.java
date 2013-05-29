@@ -61,6 +61,7 @@ public class TarjontaFileReader {
         final List<ErrorRow> errors = new ArrayList<ErrorRow>();
 
         if (type == TarjontaFileType.KOULUTUS) {
+            // luetaan koulutustiedosto
             final ExcelReader<Koulutus> koulutusReader = new ExcelReader<Koulutus>(Koulutus.class, KOULUTUS_COLUMNS, Integer.MAX_VALUE);
             final Set<Koulutus> koulutukset = koulutusReader.read(filename, true);
 
@@ -72,11 +73,13 @@ public class TarjontaFileReader {
                     try {
                         tarjontaHandler.addKoulutus(koulutus, args2);
                     } catch (final Exception e) {
+                        logger.error("virhe lisättäessä koulutusta", e);
                         errors.add(new ErrorRow(e, rivilaskuri, koulutus));
                     }
                 }
             }
         } else if (type == TarjontaFileType.HAKUKOHDE) {
+            // luetaan hakukohdetiedosto
             final ExcelReader<Hakukohde> hakukohdeReader = new ExcelReader<Hakukohde>(Hakukohde.class, HAKUKOHDE_COLUMNS, Integer.MAX_VALUE);
             final Set<Hakukohde> hakukohteet = hakukohdeReader.read(filename, true);
 
@@ -104,6 +107,9 @@ public class TarjontaFileReader {
         logger.info("Tiedoston käsittely tehty");
     }
 
+    /**
+     * Jos syöttämisessä tapahtui virhe, sen tiedot kootaan ErrorRow-olioon.
+     */
     class ErrorRow {
         private Exception exception;
         private Integer rowNumber;

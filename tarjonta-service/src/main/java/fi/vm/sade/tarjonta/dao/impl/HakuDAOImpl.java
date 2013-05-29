@@ -50,6 +50,15 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     private static final Logger LOG = LoggerFactory.getLogger(HakuDAOImpl.class);
 
     @Override
+    public List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi) {
+        QHaku qHaku = QHaku.haku;
+        return from(qHaku)
+                .where(qHaku.koulutuksenAlkamiskausiUri.eq(kausi.trim()).and(qHaku.koulutuksenAlkamisVuosi.eq((alkamisVuosi))))
+                .list(qHaku);
+
+    }
+
+    @Override
     public List<Haku> findHakukohdeHakus(Haku haku) {
         return getEntityManager()
                 .createQuery("select h.haku from Hakukohde h where h.haku.oid = :oid")

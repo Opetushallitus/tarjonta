@@ -178,7 +178,7 @@ public class BaseTarjontaTest {
         KoodistoItemType koodistoItemType = new KoodistoItemType();
 
         if (koodistoUri == null) {
-            koodistoItemType.setKoodistoUri(createKoodistoUri(koodistoUri));
+            koodistoItemType.setKoodistoUri(createKoodistoUri(fieldName));
         } else {
             koodistoItemType.setKoodistoUri(koodistoUri);
         }

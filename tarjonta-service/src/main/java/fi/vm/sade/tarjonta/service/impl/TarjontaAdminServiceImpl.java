@@ -399,14 +399,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             for (KoulutusmoduuliToteutus komoto:poistettavatModuuliLinkit) {
                 komotoIds.add(komoto.getId());
             }
-                try {
                     solrIndexer.indexKoulutukset(komotoIds);
                     solrIndexer.indexHakukohteet(hakukohdeOis);
-                } catch (SolrServerException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
             } else {
                 HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
                 hakukohdeTyyppi.setOid(parameters.getHakukohdeOid());
@@ -451,7 +445,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setId(hakukohdeTemp.get(0).getId());
 
         //why do we overwrite version from DTO?
-        hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
+        //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
         hakukohde.setHaku(haku);
@@ -461,7 +455,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());
 
         hakukohdeDAO.update(hakukohde);
-        solrIndexer.indexHakukohde(Lists.newArrayList(hakukohde));
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -537,15 +531,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             hakukohteenidt.add(hk.getId());
         }
         
-        try {
-            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
-        } catch (SolrServerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
         
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;

@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.TutkintoohjelmaTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
@@ -202,8 +203,14 @@ public class KorkeakouluConverter extends KoulutusConveter {
         tyyppi.setKoulutusKoodi(mapToValidKoodistoKoodiTyyppi(false, koulutuskoodiRow));
 
         /*
+         * set the tutkinto-ohjelma data to tyyppi object
+         */
+        tyyppi.setTutkintoohjelma(createTutkintoohjelmaTyyppi(model));
+
+        /*
          * Other input fields
          */
+        tyyppi.setKoulutustyyppi(koulutusaste);
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
@@ -216,10 +223,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         tyyppi.setTarjoaja(organisation.getOid());
         tyyppi.setOid(komotoOid);
 
-        /*
-         * set the tutkinto-ohjelma data to tyyppi object
-         */
-        updateTutkintoohjelmaDataToKoulutusTyyppi(model, tyyppi);
+
 
         /*
          * Other optional(?) sets/list
@@ -232,19 +236,19 @@ public class KorkeakouluConverter extends KoulutusConveter {
 
         if (model.getOpetuskielis() != null && !model.getOpetuskielis().isEmpty()) {
             for (String kieli : model.getOpetuskielis()) {
-                tyyppi.getOpetusmuoto().add(createKoodi(kieli, true, "opetuskieli"));
+                tyyppi.getOpetuskieli().add(createKoodi(kieli, true, "opetuskieli"));
             }
         }
 
         if (model.getTeemas() != null && !model.getTeemas().isEmpty()) {
             for (String teema : model.getTeemas()) {
-                tyyppi.getOpetusmuoto().add(createKoodi(teema, true, "teema"));
+                tyyppi.getTeemat().add(createKoodi(teema, true, "teema"));
             }
         }
 
         if (model.getPohjakoulutusvaatimukset() != null && !model.getPohjakoulutusvaatimukset().isEmpty()) {
             for (String pohjakoulutusvaatimus : model.getPohjakoulutusvaatimukset()) {
-                tyyppi.getOpetusmuoto().add(createKoodi(pohjakoulutusvaatimus, true, "pohjakoulutusvaatimus"));
+                tyyppi.getPohjakoulutusvaatimusKorkeakoulu().add(createKoodi(pohjakoulutusvaatimus, true, "pohjakoulutusvaatimus"));
             }
         }
 
@@ -292,7 +296,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
          */
         KoulutuskoodiModel listaaKorkeakouluKoulutuskoodi = koulutusKoodisto.listaaKorkeakouluKoulutuskoodi(vastaus.getKoulutusKoodi(), locale);
         perustiedot.setKoulutuskoodiModel(listaaKorkeakouluKoulutuskoodi);
-        perustiedot.setTutkintoohjelma(convertToTutkintoohjelmaModel(vastaus.getKoulutusohjelmaKoodi(), vastaus.getNimi(), locale));
+        perustiedot.setTutkintoohjelma(convertToTutkintoohjelmaModel(vastaus.getTutkintoohjelma(), locale));
         Preconditions.checkNotNull(perustiedot.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
         Preconditions.checkNotNull(perustiedot.getTutkintoohjelma(), INVALID_DATA + "tutkinto-ohjelma model cannot be null.");
 
@@ -343,19 +347,17 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return perustiedot;
     }
 
-    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(KoodistoKoodiTyyppi koodi, MonikielinenTekstiTyyppi teksti, Locale locale) {
-        Preconditions.checkNotNull(koodi, "KoodistoKoodiTyyppi object for tutkinto-ohjelma cannot be null.");
-        Preconditions.checkNotNull(teksti, "MonikielinenTekstiTyyppi object for tutkinto-ohjelma cannot be null.");
+    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(TutkintoohjelmaTyyppi tyyppi, Locale locale) {
+        Preconditions.checkNotNull(tyyppi, "TutkintoohjelmaTyyppi object for tutkinto-ohjelma cannot be null.");
+        Preconditions.checkNotNull(tyyppi.getArvo(), "Arvo (numeric value) for tutkinto-ohjelma cannot be null.");
         TutkintoohjelmaModel tutkintoohjelma = new TutkintoohjelmaModel();
+        tutkintoohjelma.setKoodi(tyyppi.getArvo());
 
-        Preconditions.checkNotNull(koodi.getArvo(), "No koodisto value for tutkinto-ohjelma.");
-        tutkintoohjelma.setKoodi(koodi.getArvo());
-
-        MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, teksti);
+        MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
         Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");
         tutkintoohjelma.setNimi(selectedTeksti.getValue());
         tutkintoohjelma.setKielikoodi(selectedTeksti.getKieliKoodi());
-        tutkintoohjelma.setKielikaannos(new HashSet(mapToKielikaannosViewModel(teksti)));
+        tutkintoohjelma.setKielikaannos(new HashSet(mapToKielikaannosViewModel(tyyppi.getNimi())));
 
         return tutkintoohjelma;
     }
@@ -402,17 +404,16 @@ public class KorkeakouluConverter extends KoulutusConveter {
      * it makes data output to backend a little bit harder to understand. In
      * future it would be easier to create spesific object for this use.
      */
-    private static void updateTutkintoohjelmaDataToKoulutusTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusTyyppi tyyppi) {
+    private static TutkintoohjelmaTyyppi createTutkintoohjelmaTyyppi(KorkeakouluPerustiedotViewModel model) {
+        Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(model.getTutkintoohjelma(), "Tutkinto-ohjelma not selected, or TutkintoohjelmaModel object not initialized!");
 
+        TutkintoohjelmaTyyppi t = new TutkintoohjelmaTyyppi();
         //we us the nimi field for the text data
-        tyyppi.setNimi(mapToMonikielinenTekstiTyyppi(model.getTutkintoohjelma().getKielikaannos()));
+        t.setNimi(mapToMonikielinenTekstiTyyppi(model.getTutkintoohjelma().getKielikaannos()));
+        //we use arvo field for the 'numeric' code value.
+        t.setArvo(model.getTunniste());
 
-        //we only need to use the value field
-        final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-        koodi.setArvo(model.getTunniste());
-
-        //we use koulutusohjelmat field for the 'numeric' code value.
-        tyyppi.setKoulutusohjelmaKoodi(koodi);
+        return t;
     }
 }

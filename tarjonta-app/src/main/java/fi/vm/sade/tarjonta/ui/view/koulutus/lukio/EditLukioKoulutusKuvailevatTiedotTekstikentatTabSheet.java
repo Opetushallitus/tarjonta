@@ -58,30 +58,31 @@ public class EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet extends EditL
         vl.setMargin(true);
 
         KoulutusLisatietoModel model = getModel().getKoulutusLukioKuvailevatTiedot().getTekstikentat().get(uri);
-        
+
         if(model==null) {
             model = new KoulutusLisatietoModel();
             getModel().getKoulutusLukioKuvailevatTiedot().getTekstikentat().put(uri, model);
         }
-        
+
         final PropertysetItem psi = new BeanItem(model);
 
-        createEditor(uri, vl, psi, "sisalto");
-        createEditor(uri, vl, psi, "kansainvalistyminen");
-        createEditor(uri, vl, psi, "yhteistyoMuidenToimijoidenKanssa");
+        createEditor(uri, vl, psi, "sisalto", 16384);
+        createEditor(uri, vl, psi, "kansainvalistyminen", 16384);
+        createEditor(uri, vl, psi, "yhteistyoMuidenToimijoidenKanssa", 16384);
 
         return vl;
     }
 
-    private void createEditor(final String langUri, final VerticalLayout vl, final PropertysetItem psi, final String id) {
-        final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, id);
+    private void createEditor(final String langUri, final VerticalLayout vl, final PropertysetItem psi, final String id, int maxLength) {
+        final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, id, maxLength,
+                T("_textTooLong", T(id + ".label"), maxLength));
         rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".label"), LabelStyleEnum.H2));
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".help"), LabelStyleEnum.TEXT));
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".help", maxLength), LabelStyleEnum.TEXT));
         vl.addComponent(rta);
     }
-    
-    
+
+
     @Override
     protected void initializeTabsheet(boolean allowDefault) {
         // What languages should we have as preselection when initializing the form?

@@ -63,7 +63,7 @@ public class TarjontaRootView extends Window {
     private Boolean _showIdentifier = false;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
-    @Value("${root.organisaatio.oid:NOT_SET}")
+    @Value("${root.organisaatio.oid}")
     private String ophOid;
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView organisationSearchView;

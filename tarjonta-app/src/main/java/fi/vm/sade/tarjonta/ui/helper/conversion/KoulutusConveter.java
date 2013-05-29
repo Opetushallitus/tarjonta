@@ -345,12 +345,14 @@ public class KoulutusConveter {
     }
 
     public static Set<String> convertListToSet(final List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = Sets.<String>newHashSet();
         for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
             set.add(curKoodi.getUri());
         }
         return set;
     }
+    
+    
     /**
      * Converter KoodistoKoodiTyyppi -> String
      */

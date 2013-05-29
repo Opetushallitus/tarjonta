@@ -228,7 +228,7 @@ public class IndexerResource {
         deleteByOid(oids, hakukohdeSolr);
     }
     
-    public void indexHakukohteet(List<Long> hakukohdeIdt) throws SolrServerException, IOException {
+    public void indexHakukohteet(List<Long> hakukohdeIdt) {
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
         int index = 0;
@@ -279,7 +279,7 @@ public class IndexerResource {
      * @throws IOException 
      * @throws SolrServerException 
      */
-    public void indexKoulutukset(List<Long> koulutukset) throws SolrServerException, IOException {
+    public void indexKoulutukset(List<Long> koulutukset) {
         int batch_size = 50;
         int index = 0;
         do {
@@ -301,8 +301,14 @@ public class IndexerResource {
         commit(koulutusSolr);
     }
 
-    private void commit(SolrServer solr) throws SolrServerException, IOException {
-        solr.commit(true,true,false);
+    private void commit(SolrServer solr) {
+        try {
+            solr.commit(true,true,false);
+        } catch (SolrServerException e) {
+            throw new RuntimeException("indexing.error", e);
+        } catch (IOException e) {
+            throw new RuntimeException("indexing.error", e);
+        }
     }
 
     @GET

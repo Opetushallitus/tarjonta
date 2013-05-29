@@ -56,6 +56,7 @@ public class HakukohdeViewModelToDTOConverter {
 
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+        hakukohde.setVersion(hakukohdevm.getVersion());
         User usr = UserFeature.get();
         hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
@@ -146,6 +147,7 @@ public class HakukohdeViewModelToDTOConverter {
 
     public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeTyyppi hakukohdeTyyppi) {
         HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
+        hakukohdeVM.setVersion(hakukohdeTyyppi.getVersion());
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
         hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());

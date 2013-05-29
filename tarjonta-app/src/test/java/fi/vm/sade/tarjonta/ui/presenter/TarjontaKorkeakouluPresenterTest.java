@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.TutkintoohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -288,7 +289,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         verify(oidServiceMock);
         verify(tarjontaAdminServiceMock);
         verify(organisaatioServiceMock);
-        verify(tarjontaPublicServiceMock);
+        //verify(tarjontaPublicServiceMock);
 
 
         LisaaKoulutusTyyppi koulutus = localeCapture.getValue();
@@ -296,30 +297,22 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         assertNotNull(koulutus);
         assertEquals(KOMOTO_OID, koulutus.getOid());
 
-        assertEquals(4, koulutus.getOpetuskieli().size());
-        assertEquals(3, koulutus.getOpetusmuoto().size());
-        assertEquals(2, koulutus.getTeemat().size());
-        assertEquals(1, koulutus.getPohjakoulutusvaatimusKorkeakoulu().size());
-
-        assertEquals(1, koulutus.getNimi()); //tutkinto-ohjelma name
-        assertEquals("KoulutusohjelmaKoodi", koulutus.getKoulutusohjelmaKoodi());
-
         assertNotNull("Koulutuksen kesto tyyppi", koulutus.getKesto());
         assertEquals("kesto", koulutus.getKesto().getArvo());
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
         assertEquals(DATE, koulutus.getKoulutuksenAlkamisPaiva());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusKoodi().getUri());
+        assertEquals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, koulutus.getKoulutustyyppi());
 
-        assertEquals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, koulutus.getKoulutustyyppi());
-
-        assertEquals(createUri("pohjakoulutusvaatimus"), koulutus.getPohjakoulutusvaatimus().getUri());
         assertEquals(ORGANISAATIO_OID, koulutus.getTarjoaja());
         assertEquals(TarjontaTila.LUONNOS, koulutus.getTila());
 
-        assertNotNull(koulutus.getYhteyshenkiloTyyppi());
+        assertEquals(1, koulutus.getPohjakoulutusvaatimusKorkeakoulu().size());
+        assertEquals(4, koulutus.getOpetuskieli().size());
+        assertEquals(3, koulutus.getOpetusmuoto().size());
+        assertEquals(2, koulutus.getTeemat().size());
         List<YhteyshenkiloTyyppi> yhteyshenkiloTyyppis = koulutus.getYhteyshenkiloTyyppi();
-
-        assertEquals("contact person", 2, koulutus.getYhteyshenkilo().size()); //not needed
+        assertEquals("contact person", 2, yhteyshenkiloTyyppis.size()); //not needed
         boolean ects = false;
         boolean contactPerson = false;
         for (YhteyshenkiloTyyppi tyyppi : yhteyshenkiloTyyppis) {
@@ -349,7 +342,8 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         /*
          * Null fields
          */
-
+        assertNull("pohjakoulutusvaatimus", koulutus.getPohjakoulutusvaatimus());
+        assertNull("KoulutusohjelmaKoodi", koulutus.getKoulutusohjelmaKoodi());
         assertNull("koulutusaste", koulutus.getKoulutusaste());
         assertNull("painotus", koulutus.getPainotus());
         assertNull("SijoittuminenTyoelamaan", koulutus.getSijoittuminenTyoelamaan());
@@ -358,6 +352,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         assertNull("sisalto", koulutus.getSisalto());
         assertNull("kansainvalistyminen", koulutus.getKansainvalistyminen());
         assertNull("yhteistyo", koulutus.getYhteistyoMuidenToimijoidenKanssa());
+        assertNull("nimi", koulutus.getNimi()); //???
     }
 //
 //    @Test
@@ -467,8 +462,11 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         vastaus.setKoulutusohjelmanValinta(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KoulutusohjelmanValinta"));
         vastaus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         vastaus.setKuvailevatTiedot(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KuvailevatTiedot"));
-        vastaus.setKoulutusohjelmaKoodi(createKoodistoKoodiTyyppiWithValue(TUTKINTOOHJELMA, "1234567890ABCDEFG"));
-        vastaus.setNimi(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "tutkinto-ohjelma name"));
+        TutkintoohjelmaTyyppi tutkintoohjelmaTyyppi = new TutkintoohjelmaTyyppi();
+        tutkintoohjelmaTyyppi.setArvo("654321");
+        tutkintoohjelmaTyyppi.setOid("1.2.3.4");
+        tutkintoohjelmaTyyppi.setNimi(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "tutkinto-ohjelma name"));
+        vastaus.setTutkintoohjelma(tutkintoohjelmaTyyppi);
         vastaus.setOid(KOMOTO_OID);
         vastaus.setTarjoaja(ORGANISAATIO_OID);
         vastaus.setTila(TarjontaTila.VALMIS);
@@ -552,7 +550,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         commonKomoData.add(laajuusyksikko);
         commonKomoData.add(koulutusaste);
 
-        expect(tarjontaUiHelper.getKoodistoRelations(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, KoulutusKoodistoConverter.KOMO_KOODISTO_RELATIONS)).andReturn(commonKomoData);
+        expect(tarjontaUiHelper.getKoodistoRelations("koulutuskoodi_uri", KoulutusKoodistoConverter.KOMO_KOODISTO_RELATIONS)).andReturn(commonKomoData);
         expect(tarjontaUiHelper.getKoodis(eq(koulutuskoodi.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(koulutuskoodi));
         expect(tarjontaUiHelper.getKoodis(eq(koulutusaste.getKoodiUri()))).andReturn(createKoodiTypeList(koulutusaste));
         expect(tarjontaUiHelper.getKoodis(eq(opintoala.getKoodiUri()))).andReturn(createKoodiTypeList(opintoala));
@@ -596,6 +594,10 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
 
         assertEquals(KOMO_OID, perustiedotModel.getKoulutusmoduuliOid());
 
+        assertEquals(1, perustiedotModel.getTutkintoohjelma().getKielikaannos().size());
+        assertEquals("654321", perustiedotModel.getTutkintoohjelma().getKoodi());
+        assertEquals("tutkinto-ohjelma name", perustiedotModel.getTutkintoohjelma().getNimi());
+
         /*
          * values on bottom are loaded to the model only after combox event is fired
          */
@@ -620,7 +622,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         assertNull(perustiedotModel.getTutkintonimike());
         assertNull(perustiedotModel.getKoulutusala());
         assertNull(perustiedotModel.getKoulutusaste());
-        assertNull(perustiedotModel.getKoulutuskoodiModel());
         assertNull(perustiedotModel.getOpintoala());
         assertNull(perustiedotModel.getOpintojenLaajuusyksikko());
     }

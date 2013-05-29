@@ -192,7 +192,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             Haku findHakuWithOid = hakuDao.findByOid(parameters.getHakuOid());
             haut.add(findHakuWithOid);
             hakuVastaus.getResponse().addAll(convert(haut, false));
-        } else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
+        }  else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {
+            List<Haku> foundHaut = hakuDao.findByKoulutuksenKausi(parameters.getKoulutuksenAlkamisKausi(), parameters.getKoulutuksenAlkamisVuosi());
+            hakuVastaus.getResponse().addAll(convert(foundHaut,false));
+        }
+
+        else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
             //REMOVING FIND BY SEARCH STRING QUERY FOR NOW, NOT WORKING PROPERLY
             //List<Haku> haut = new ArrayList<Haku>();
             //haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
@@ -204,7 +209,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             allCriteria.setTulevat(true);
             haut.addAll(businessService.findAll(allCriteria));
             hakuVastaus.getResponse().addAll(convert(filterByHakusana(hakusana, parameters.getHakuSanaKielikoodi(), haut), true));
-        } else {
+        }
+
+        else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
             allCriteria.setMeneillaan(true);
             allCriteria.setPaattyneet(true);
@@ -253,7 +260,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         vastaus.getHakukohteenLiitteet().addAll(liiteTyyppis);
-        //System.out.println("lueHakukohteenLiitteet("+parameters.getHakukohdeOid()+") -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
 
@@ -614,7 +620,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         //System.out.println("lueKoulutus(...) -> "+(System.currentTimeMillis()-t)+" ms");
-        
+
         return result;
     }
 
@@ -655,6 +661,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         log.debug("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
+        toKoulutus.setVersion(fromKoulutus.getVersion());
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
         HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
@@ -674,7 +681,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
 
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
-        toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getLastUpdateDate()));
+        toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getUpdated()));
+
         toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();
         greg.setTime(fromKoulutus.getKoulutuksenAlkamisPvm());
@@ -742,7 +750,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
-        //System.out.println("lueHakukohde(...) -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
     //TODO: these helper methods implemented in CommonFrom/To Converters

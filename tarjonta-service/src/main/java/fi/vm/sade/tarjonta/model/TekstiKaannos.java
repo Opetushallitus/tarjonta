@@ -39,7 +39,7 @@ public class TekstiKaannos extends BaseEntity {
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
 
-    @Column(name = "arvo", length = 4096)
+    @Column(name = "arvo", length = 16384)
     private String arvo;
 
     @ManyToOne(optional = false, fetch=FetchType.LAZY)
@@ -63,7 +63,7 @@ public class TekstiKaannos extends BaseEntity {
     public String getArvo() {
         return arvo;
     }
-    
+
     public void setArvo(String arvo) {
 		this.arvo = arvo;
 	}

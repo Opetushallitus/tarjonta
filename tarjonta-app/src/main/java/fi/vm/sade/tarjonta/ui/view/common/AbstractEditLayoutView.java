@@ -44,6 +44,8 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -375,9 +377,18 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
             } catch (javax.xml.ws.WebServiceException e) {
                 LOG.error("Unknown backend service error - persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SERVICE_UNAVAILABLE);
-            } catch (GenericFault e) {
-                LOG.error("Application error - persist failed, message :  " + e.getMessage(), e);
-                presenter.showNotification(UserNotification.SAVE_FAILED);
+            } catch (fi.vm.sade.tarjonta.service.GenericFault e) {
+                if(e.getFaultInfo().getErrorCode()!=null) {
+                    if(e.getFaultInfo().getErrorCode().equals("javax.persistence.OptimisticLockException")) {
+                        presenter.showNotification(UserNotification.SAVE_FAILED_OPTIMISTIC_LOCKING);
+                    } else {
+                        LOG.error("An unknown application error - persist failed, message :  " + e.getFaultInfo().getErrorCode(), e);
+                        presenter.showNotification(UserNotification.SAVE_FAILED);
+                    }
+                } else {
+                    LOG.error("Application error - persist failed, message :  " + e.getMessage(), e);
+                    presenter.showNotification(UserNotification.SAVE_FAILED);
+                }
             } catch (Validator.InvalidValueException ex) {
                 errorView.addError(ex.getMessage());
                 presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);

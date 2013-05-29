@@ -224,6 +224,9 @@
                         minOccurs="0"
                         maxOccurs="1"/>
         
+            <!-- optimistic locking -->
+            <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>            
+        
         </xs:sequence>
     </xs:complexType>
 
@@ -395,6 +398,8 @@
                         type="tns:HakukohdeTyyppi"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
+            <!-- optimistic locking -->
+            <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>            
         </xs:sequence>
     </xs:complexType>
 
@@ -732,6 +737,8 @@
             <xs:element name="Koulutuslaji" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Lukiolinjakoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="KoulutuksenAlkamiskausiUri" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="KoulutuksenAlkamisVuosi" type="xs:int" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 
@@ -821,12 +828,16 @@
                         type="xs:dateTime"
                         minOccurs="0"
                         maxOccurs="1"/>
-          
+
+            <!-- optimistic locking -->
+            <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>    
+            
+            
             <!-- Korkeakoululle spesifeja tietoja -->     
             <xs:element name="Teemat" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="PohjakoulutusvaatimusKorkeakoulu" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="Maksullisuus" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                
+            <xs:element name="Maksullisuus" type="xs:boolean" minOccurs="0" maxOccurs="1"/>           
+            <xs:element name="Tutkintoohjelma" type="tns:TutkintoohjelmaTyyppi" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:group>
 
@@ -1078,5 +1089,12 @@
         </xs:restriction>
     </xs:simpleType>
 
-
+    <xs:complexType name="TutkintoohjelmaTyyppi">
+        <xs:sequence>
+            <xs:element name="nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="oid" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="arvo" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="uri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

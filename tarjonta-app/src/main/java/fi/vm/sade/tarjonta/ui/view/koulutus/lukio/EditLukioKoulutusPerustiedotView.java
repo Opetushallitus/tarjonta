@@ -22,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -68,7 +69,7 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
-            presenter.getLukioPresenter().saveKoulutus(tila);
+            presenter.getLukioPresenter().saveKoulutus(tila, KoulutusActiveTab.PERUSTIEDOT);
             presenter.getLukioPresenter().getReloadKoulutusListData();
             return model.getKomotoOid();
         } catch (ExceptionMessage exceptionMessage) {
