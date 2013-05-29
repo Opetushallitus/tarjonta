@@ -354,6 +354,28 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         editHakukohdeView.closeHakukohdeLiiteEditWindow();
     }
 
+    private StringTuple getHakukohdeKoulutusAlkamisKausiVuosi(HakukohdeViewModel hakukohdeViewModel) {
+        //Try to get hakukohtees koulutus alkamiskausi and vuosi from service, first koulutus will suffice because
+        //all hakukohde koulutukses should have same alkamiskausi and vuosi.
+        if (hakukohdeViewModel.getKoulukses() != null && hakukohdeViewModel.getKoulukses().size() > 0) {
+            HaeKoulutuksetKyselyTyyppi kyselyTyyppi = new HaeKoulutuksetKyselyTyyppi();
+            kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKoulukses().get(0).getKoulutusOid());
+            HaeKoulutuksetVastausTyyppi vastausTyyppi =  tarjontaPublicService.haeKoulutukset(kyselyTyyppi);
+            return new StringTuple(vastausTyyppi.getKoulutusTulos().get(0).getKoulutus().getKoulutuksenAlkamiskausiUri(),
+                    vastausTyyppi.getKoulutusTulos().get(0).getKoulutus().getKoulutuksenAlkamisVuosi().toString());
+        }  else if (hakukohdeViewModel.getKomotoOids() != null && hakukohdeViewModel.getKomotoOids().size() > 0) {
+            HaeKoulutuksetKyselyTyyppi kyselyTyyppi = new HaeKoulutuksetKyselyTyyppi();
+            kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKomotoOids().get(0));
+            HaeKoulutuksetVastausTyyppi vastausTyyppi =  tarjontaPublicService.haeKoulutukset(kyselyTyyppi);
+            return new StringTuple(vastausTyyppi.getKoulutusTulos().get(0).getKoulutus().getKoulutuksenAlkamiskausiUri(),
+                    vastausTyyppi.getKoulutusTulos().get(0).getKoulutus().getKoulutuksenAlkamisVuosi().toString());
+        }
+
+        else {
+           return new StringTuple(null,null);
+        }
+    }
+
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
@@ -361,7 +383,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }  else {
             getModel().getHakukohde().setSahkoinenToimitusSallittu(false);
         }
-        ListHakuVastausTyyppi haut = getTarjontaPublicService().listHaku(new ListaaHakuTyyppi());
+
+        ListaaHakuTyyppi hakuKyselyTyyppi = new ListaaHakuTyyppi();
+
+
+
+        StringTuple tuple = getHakukohdeKoulutusAlkamisKausiVuosi(getModel().getHakukohde());
+        hakuKyselyTyyppi.setKoulutuksenAlkamisKausi(tuple.getStrOne());
+        hakuKyselyTyyppi.setKoulutuksenAlkamisVuosi(new Integer(tuple.getStrTwo()));
+
+
+
+        ListHakuVastausTyyppi haut = getTarjontaPublicService().listHaku(hakuKyselyTyyppi);
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         HakuViewModel hakuView = null;
@@ -2337,5 +2370,25 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void setKorkeakouluPresenter(TarjontaKorkeakouluPresenter korkeakouluPresenter) {
         this.korkeakouluPresenter = korkeakouluPresenter;
+    }
+
+    public static class StringTuple {
+
+        private String strOne;
+        private String strTwo;
+
+        public StringTuple(String stringOne,String stringTwo) {
+             this.strOne = stringOne;
+             this.strTwo = stringTwo;
+        }
+
+
+        public String getStrOne() {
+            return strOne;
+        }
+
+        public String getStrTwo() {
+            return strTwo;
+        }
     }
 }

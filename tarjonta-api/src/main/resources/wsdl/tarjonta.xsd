@@ -737,6 +737,8 @@
             <xs:element name="Koulutuslaji" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Lukiolinjakoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="KoulutuksenAlkamiskausiUri" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="KoulutuksenAlkamisVuosi" type="xs:int" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 

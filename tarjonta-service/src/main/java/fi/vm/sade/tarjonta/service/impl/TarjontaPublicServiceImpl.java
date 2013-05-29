@@ -192,7 +192,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             Haku findHakuWithOid = hakuDao.findByOid(parameters.getHakuOid());
             haut.add(findHakuWithOid);
             hakuVastaus.getResponse().addAll(convert(haut, false));
-        } else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
+        }  else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {
+            List<Haku> foundHaut = hakuDao.findByKoulutuksenKausi(parameters.getKoulutuksenAlkamisKausi(), parameters.getKoulutuksenAlkamisVuosi());
+            hakuVastaus.getResponse().addAll(convert(foundHaut,false));
+        }
+
+        else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
             //REMOVING FIND BY SEARCH STRING QUERY FOR NOW, NOT WORKING PROPERLY
             //List<Haku> haut = new ArrayList<Haku>();
             //haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
@@ -204,7 +209,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             allCriteria.setTulevat(true);
             haut.addAll(businessService.findAll(allCriteria));
             hakuVastaus.getResponse().addAll(convert(filterByHakusana(hakusana, parameters.getHakuSanaKielikoodi(), haut), true));
-        } else {
+        }
+
+        else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
             allCriteria.setMeneillaan(true);
             allCriteria.setPaattyneet(true);
