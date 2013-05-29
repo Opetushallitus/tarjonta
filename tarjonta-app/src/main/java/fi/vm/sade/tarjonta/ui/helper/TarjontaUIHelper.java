@@ -595,6 +595,9 @@ public class TarjontaUIHelper {
      * @return
      */
     public static MonikielinenTekstiTyyppi.Teksti getClosestMonikielinenTekstiTyyppiName(Locale locale, MonikielinenTekstiTyyppi monikielinenTeksti) {
+        Preconditions.checkNotNull(locale, "Locale object cannot be null.");
+        Preconditions.checkNotNull(monikielinenTeksti, "MonikielinenTekstiTyyppi object cannot be null.");
+        
         MonikielinenTekstiTyyppi.Teksti teksti = null;
         if (locale != null) {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
@@ -896,7 +899,6 @@ public class TarjontaUIHelper {
 
         return result;
     }
-    
 
     public String getKoulutusNimi(KoulutusTulos curKoulutus) {
 
@@ -1031,7 +1033,7 @@ public class TarjontaUIHelper {
     public Collection<KoodiType> getKoulutusalaRelatedKoulutuskoodis(final String koulutusala) {
         Preconditions.checkNotNull(koulutusala, "Koulutusaste URI cannot be null.");
         LOG.debug("getKoulutusalaRelatedKoulutuskoodis({})", koulutusala);
-       
+
         return getKoodistoRelations(koulutusala,
                 new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }

@@ -56,11 +56,12 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KKAutocompleteModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter;
 import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
@@ -272,6 +273,34 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         atfTutkintoohjelma.setImmediate(true);
         atfTutkintoohjelma.setReadOnly(model.isLoaded());
+        atfTutkintoohjelma.addListener(new Listener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof SimpleAutocompleteTextField.SimpleTextAutocompleteEvent
+                        && ((SimpleAutocompleteTextField.SimpleTextAutocompleteEvent) event).getEventType() == SimpleAutocompleteTextField.SimpleTextAutocompleteEvent.SELECTED) {
+                    KKAutocompleteModel model = (KKAutocompleteModel) ((SimpleAutocompleteTextField.SimpleTextAutocompleteEvent) event).getModel();
+                    LOG.debug("Selected : {}", model);
+
+                    if (model != null && model.getTutkintoohjelma() != null) {
+                        TutkintoohjelmaModel koulutusohjelma = model.getTutkintoohjelma();
+                        //Populate object to perustiedot model
+                        korkeakouluPresenter.getPerustiedotModel().setTutkintoohjelma(koulutusohjelma);
+
+                        //set the selected text data to textfield
+                        atfTutkintoohjelma.setValue(koulutusohjelma.getNimi());
+                    }
+                } else if (event instanceof SimpleAutocompleteTextField.SimpleTextAutocompleteEvent
+                        && ((SimpleAutocompleteTextField.SimpleTextAutocompleteEvent) event).getEventType() == SimpleAutocompleteTextField.SimpleTextAutocompleteEvent.NOT_SELECTED) {
+                    LOG.debug("Not selected");
+                } else if (event instanceof SimpleAutocompleteTextField.SimpleTextAutocompleteEvent
+                        && ((SimpleAutocompleteTextField.SimpleTextAutocompleteEvent) event).getEventType() == SimpleAutocompleteTextField.SimpleTextAutocompleteEvent.CLEAR) {
+                    LOG.debug("Clear");
+                }
+            }
+        });
+
         // hlContainer.addComponent(vlAutocomplete);
 
 //        //ADD EDIT BUTTON
@@ -409,20 +438,21 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
      * Reload data from UI model
      */
     public void reload() {
-        KorkeakouluConverter.copySelectedKoodiDataToModel(model);
+        KoulutuskoodiModel m = model.getKoulutuskoodiModel();
 
-        koulutuskoodi.setValue(model.getKoulutuskoodi());
-
-        labelDataBind(opintoala, model.getOpintoala());
-        labelDataBind(koulutusaste, model.getKoulutusaste());
-        labelDataBind(koulutusala, model.getKoulutusala());
-        labelDataBind(opintojenLaajuusyksikko, model.getOpintojenLaajuusyksikko());
-
-        if (model.getOpintojenLaajuus() != null) {
-            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(model, "opintojenLaajuus"));
+        if (m != null) {
+            tutkinto.setPropertyDataSource(new NestedMethodProperty(m, KoulutusKoodistoModel.MODEL_NAME_PROPERY));
+        }
+        
+        if (m.getOpintojenLaajuus() != null) {
+            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(m, "opintojenLaajuus"));
         }
 
-        labelDataBind(tutkintonimike, model.getTutkintonimike());
+        labelDataBind(opintoala, m.getOpintoala());
+        labelDataBind(koulutusaste, m.getKoulutusaste());
+        labelDataBind(koulutusala, m.getKoulutusala());
+        labelDataBind(opintojenLaajuusyksikko, m.getOpintojenLaajuusyksikko());
+        labelDataBind(tutkintonimike, m.getTutkintonimike());
         disableOrEnableComponents(true);
     }
 

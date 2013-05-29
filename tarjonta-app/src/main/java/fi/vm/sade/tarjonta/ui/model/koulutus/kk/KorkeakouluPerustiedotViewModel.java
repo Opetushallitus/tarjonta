@@ -43,12 +43,10 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     /*
      * Data for comboxes (komo + tutkintoohjelma) 
      */
-    private List<KoulutusmoduuliKoosteTyyppi> komos;
-    private Set<KoulutuskoodiModel> koulutuskoodis;
-    private Set<KoulutusohjelmaModel> tutkintoohjelmas;
-    private KoulutusohjelmaModel tutkintoohjelma;
+    private Set<TutkintoohjelmaModel> tutkintoohjelmas;
+    private TutkintoohjelmaModel tutkintoohjelma;
+    //the selected text, the same data is in tutkintoohjelma
     private String autocompleteTutkintoohjelma;
-    
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
@@ -58,10 +56,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private String suunniteltuKestoTyyppi;
     private Set<String> opetuskielis;
     private Set<String> opetusmuodos;
-    /*
-     * Link to opetussuunnitelma
-     */
-    private String opsuLinkki;
     /*
      * KK
      */
@@ -126,20 +120,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setSuunniteltuKestoTyyppi(String suunniteltuKestoTyyppi) {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
-    }
-
-    /**
-     * @return the opsuLinkki
-     */
-    public String getOpsuLinkki() {
-        return opsuLinkki;
-    }
-
-    /**
-     * @param opsuLinkki the opsuLinkki to set
-     */
-    public void setOpsuLinkki(String opsuLinkki) {
-        this.opsuLinkki = opsuLinkki;
     }
 
     /**
@@ -276,46 +256,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     }
 
     /**
-     * @return the komos
-     */
-    public List<KoulutusmoduuliKoosteTyyppi> getKomos() {
-        if (komos == null) {
-            komos = new ArrayList<KoulutusmoduuliKoosteTyyppi>();
-        }
-
-        return komos;
-    }
-
-    /**
-     * @param komos the komos to set
-     */
-    public void setKomos(List<KoulutusmoduuliKoosteTyyppi> komos) {
-        this.komos = komos;
-    }
-
-    /**
-     * @return the koulutuskoodis
-     */
-    public Set<KoulutuskoodiModel> getKoulutuskoodis() {
-        if (koulutuskoodis == null) {
-            koulutuskoodis = new HashSet<KoulutuskoodiModel>();
-        }
-        return koulutuskoodis;
-    }
-
-    /**
-     * @param koulutuskoodis the koulutuskoodis to set
-     */
-    public void setKoulutuskoodis(Set<KoulutuskoodiModel> koulutuskoodis) {
-        this.koulutuskoodis = koulutuskoodis;
-    }
-
-    public void createCacheKomos() {
-        setCacheKomoTutkinto(KoulutusLukioConverter.komoCacheMapByKoulutuskoodi(komos));
-        setCacheKomo(KoulutusLukioConverter.fullLukioKomoCacheMap(komos));
-    }
-
-    /**
      * @return the cacheKomoTutkinto
      */
     public KoulutusmoduuliKoosteTyyppi getQuickKomo(final String koulutuskoodiUri, final String koulutusohjelmaUri) {
@@ -442,30 +382,32 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     /**
      * @return the tutkintoohjelmas
      */
-    public Set<KoulutusohjelmaModel> getTutkintoohjelmas() {
+    public Set<TutkintoohjelmaModel> getTutkintoohjelmas() {
+        if (this.tutkintoohjelmas == null) {
+            this.tutkintoohjelmas = new HashSet<TutkintoohjelmaModel>();
+        }
+
         return tutkintoohjelmas;
     }
 
     /**
      * @param tutkintoohjelmas the tutkintoohjelmas to set
      */
-    public void setTutkintoohjelmas(Set<KoulutusohjelmaModel> tutkintoohjelmas) {
-        if (this.tutkintoohjelmas == null) {
-            this.tutkintoohjelmas = new HashSet<KoulutusohjelmaModel>();
-        }
+    public void setTutkintoohjelmas(Set<TutkintoohjelmaModel> tutkintoohjelmas) {
+        this.tutkintoohjelmas = tutkintoohjelmas;
     }
 
     /**
      * @return the tutkintoohjelma
      */
-    public KoulutusohjelmaModel getTutkintoohjelma() {
+    public TutkintoohjelmaModel getTutkintoohjelma() {
         return tutkintoohjelma;
     }
 
     /**
      * @param tutkintoohjelma the tutkintoohjelma to set
      */
-    public void setTutkintoohjelma(KoulutusohjelmaModel tutkintoohjelma) {
+    public void setTutkintoohjelma(TutkintoohjelmaModel tutkintoohjelma) {
         this.tutkintoohjelma = tutkintoohjelma;
     }
 

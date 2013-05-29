@@ -16,18 +16,14 @@
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import com.google.common.collect.Lists;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  *
@@ -69,23 +65,11 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
         if (model instanceof MonikielinenTekstiModel) {
             //add all languages to the UI object
             MonikielinenTekstiModel o = (MonikielinenTekstiModel) model;
-            o.setKielikaannos(map(koodiType.getMetadata()));
+            o.setKielikaannos(KoulutusConveter.convertToKielikaannosViewModel(koodiType.getMetadata()));
         }
 
         return model;
     }
 
-    private Set<KielikaannosViewModel> map(final List<KoodiMetadataType> languageMetaData) {
-        Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
-
-        for (KoodiMetadataType meta : languageMetaData) {
-            final KieliType kieli = meta.getKieli();
-
-            if (kieli != null && meta.getNimi() != null && !meta.getNimi().isEmpty()) {
-                teksti.add(new KielikaannosViewModel(kieli.name(), meta.getNimi()));
-            }
-        }
-
-        return teksti;
-    }
+   
 }

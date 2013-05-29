@@ -16,10 +16,15 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KKAutocompleteModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,29 +36,44 @@ public class SearchPresenter implements SimpleAutocompleteTextField.IAutocomplet
 
     private static transient final Logger LOG = LoggerFactory.getLogger(SearchPresenter.class);
     private String text;
+    @Autowired(required = true)
+    private TarjontaPublicService tarjontaPublicService;
 
     public SearchPresenter() {
         text = "";
     }
 
     @Override
-    public List<String> searchAutocompleteText(String searchword) {
+    public List<SimpleAutocompleteTextField.IAutocompleteModel> searchAutocompleteText(String searchword) {
         LOG.error("Searchword : {}", searchword);
 
-        List<String> texts = Lists.<String>newArrayList();
+        //tarjontaPublicService.hae
+        
+        List<SimpleAutocompleteTextField.IAutocompleteModel> texts = Lists.<SimpleAutocompleteTextField.IAutocompleteModel>newArrayList();
         if (searchword == null) {
             return texts;
         }
+        TutkintoohjelmaModel t1 = new TutkintoohjelmaModel();
+        t1.setNimi("jotain 1");
 
-        texts.add("jotain 1");
-        texts.add("Uuno on numero 1");
-        texts.add("hackathon");
-        texts.add("Marilla oli lammas");
+        TutkintoohjelmaModel t2 = new TutkintoohjelmaModel();
+        t2.setNimi("Uuno on numero 1");
 
-        List<String> lOut = Lists.<String>newArrayList();
+        TutkintoohjelmaModel t3 = new TutkintoohjelmaModel();
+        t3.setNimi("hackathon");
 
-        for (String s : texts) {
-            if (s.contains(searchword)) {
+        TutkintoohjelmaModel t4 = new TutkintoohjelmaModel();
+        t4.setNimi("Marilla oli lammas");
+
+        texts.add(new KKAutocompleteModel(t1.getNimi(), t1));
+        texts.add(new KKAutocompleteModel(t2.getNimi(), t2));
+        texts.add(new KKAutocompleteModel(t3.getNimi(), t3));
+        texts.add(new KKAutocompleteModel(t4.getNimi(), t4));
+
+        List<SimpleAutocompleteTextField.IAutocompleteModel> lOut = Lists.<SimpleAutocompleteTextField.IAutocompleteModel>newArrayList();
+
+        for (SimpleAutocompleteTextField.IAutocompleteModel s : texts) {
+            if (s.getText().contains(searchword)) {
                 lOut.add(s);
             }
         }
@@ -67,5 +87,4 @@ public class SearchPresenter implements SimpleAutocompleteTextField.IAutocomplet
     public void clearAutocompleteTextField() {
         text = "";
     }
-
 }

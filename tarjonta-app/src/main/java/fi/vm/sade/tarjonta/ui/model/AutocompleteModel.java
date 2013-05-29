@@ -13,28 +13,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
+package fi.vm.sade.tarjonta.ui.model;
 
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
+import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField.IAutocompleteModel;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutuskoodiRowModel extends KoulutusKoodistoModel {
+public class AutocompleteModel implements IAutocompleteModel {
 
-    private static final long serialVersionUID = -333467651874245252L;
+    private String text;
 
-    public KoulutuskoodiRowModel() {
+    public AutocompleteModel() {
     }
 
-    public KoulutuskoodiRowModel(KoulutusKoodistoModel model) {
-        nimi = model.getNimi();
-        kuvaus = model.getKuvaus();
-        kielikoodi = model.getKielikoodi();
-        koodi = model.getKoodi();
-        koodistoUri = model.getKoodistoUri();
-        koodistoVersio = model.getKoodistoVersio();
-        koodistoUriVersio = model.getKoodistoUriVersio();
+    /**
+     * @return the text
+     */
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    /**
+     * @param text the text to set
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return text != null ? text : "???";
     }
 }

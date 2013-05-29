@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 
+import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -33,6 +34,7 @@ public class YhteyshenkiloModel {
     protected String yhtHenkEmail;
     protected String yhtHenkPuhelin;
     protected String YhtHenkiloOid;
+    protected HenkiloTyyppi henkiloTyyppi;
 
     public YhteyshenkiloModel() {
     }
@@ -148,5 +150,19 @@ public class YhteyshenkiloModel {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * @return the henkiloTyyppi
+     */
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return henkiloTyyppi;
+    }
+
+    /**
+     * @param henkiloTyyppi the henkiloTyyppi to set
+     */
+    public void setHenkiloTyyppi(HenkiloTyyppi henkiloTyyppi) {
+        this.henkiloTyyppi = henkiloTyyppi;
     }
 }

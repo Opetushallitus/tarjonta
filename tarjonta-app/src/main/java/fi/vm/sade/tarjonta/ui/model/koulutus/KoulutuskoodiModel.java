@@ -22,12 +22,28 @@ package fi.vm.sade.tarjonta.ui.model.koulutus;
 public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 
     private static final long serialVersionUID = -7111768236565522022L;
+    /*
+     * For all:
+     * - Lukio
+     * - Ammatillinen
+     * - Korkeakoulu
+     */
     private KoodiModel koulutusaste;
     private KoodiModel koulutusala;
     private KoodiModel opintojenLaajuusyksikko;
     private String opintojenLaajuus;
     private KoodiModel opintoala;
-    private KoodiModel tutkintonimike; //lukio
+    /*
+     * Only for:
+     * - lukio 
+     * - korkeakoulut
+     */
+    private KoodiModel tutkintonimike;
+    /*
+     * Only for:
+     * - Ammatillinen 
+     * - korkeakoulut
+     */
     private MonikielinenTekstiModel koulutuksenRakenne;
     private MonikielinenTekstiModel tavoitteet;
     private MonikielinenTekstiModel jatkoopintomahdollisuudet;

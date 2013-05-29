@@ -15,26 +15,33 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
+import fi.vm.sade.tarjonta.ui.model.AutocompleteModel;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutuskoodiRowModel extends KoulutusKoodistoModel {
+public class KKAutocompleteModel extends AutocompleteModel {
 
-    private static final long serialVersionUID = -333467651874245252L;
+    private TutkintoohjelmaModel tutkintoohjelma;
 
-    public KoulutuskoodiRowModel() {
+    public KKAutocompleteModel(String text, TutkintoohjelmaModel tutkintoohjelma) {
+        super();
+        setText(text);
+        setTutkintoohjelma(tutkintoohjelma);
     }
 
-    public KoulutuskoodiRowModel(KoulutusKoodistoModel model) {
-        nimi = model.getNimi();
-        kuvaus = model.getKuvaus();
-        kielikoodi = model.getKielikoodi();
-        koodi = model.getKoodi();
-        koodistoUri = model.getKoodistoUri();
-        koodistoVersio = model.getKoodistoVersio();
-        koodistoUriVersio = model.getKoodistoUriVersio();
+    /**
+     * @return the koulutusohjelma
+     */
+    public TutkintoohjelmaModel getTutkintoohjelma() {
+        return tutkintoohjelma;
+    }
+
+    /**
+     * @param koulutusohjelma the koulutusohjelma to set
+     */
+    public void setTutkintoohjelma(TutkintoohjelmaModel tutkintoohjelma) {
+        this.tutkintoohjelma = tutkintoohjelma;
     }
 }

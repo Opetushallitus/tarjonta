@@ -20,11 +20,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
@@ -38,7 +41,6 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.IN
 import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.mapToKoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
@@ -65,6 +67,7 @@ public class KoulutusConveter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusConveter.class);
     public static final String INVALID_DATA = "Invalid data exception - ";
+    private static final String FALLBACK_LANG_CODE = "fi";
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
@@ -134,6 +137,7 @@ public class KoulutusConveter {
         yhteyshenkilo.setSahkoposti(model.getYhtHenkEmail());
         yhteyshenkilo.setTitteli(model.getYhtHenkTitteli());
         yhteyshenkilo.setHenkiloOid(model.getYhtHenkiloOid());
+        yhteyshenkilo.setHenkiloTyyppi(HenkiloTyyppi.YHTEYSHENKILO);
         return yhteyshenkilo;
     }
 
@@ -144,6 +148,7 @@ public class KoulutusConveter {
         yhteyshenkilo.setSahkoposti(model.getYhtHenkEmail());
         yhteyshenkilo.setTitteli(model.getYhtHenkTitteli());
         yhteyshenkilo.setHenkiloOid(model.getYhtHenkiloOid());
+        yhteyshenkilo.setHenkiloTyyppi(model.getHenkiloTyyppi());
         return yhteyshenkilo;
     }
 
@@ -171,6 +176,7 @@ public class KoulutusConveter {
         yhteyshenkiloModel.setYhtHenkPuhelin(yhtHenk.getPuhelin());
         yhteyshenkiloModel.setYhtHenkTitteli(yhtHenk.getTitteli());
         yhteyshenkiloModel.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
+        yhteyshenkiloModel.setHenkiloTyyppi(yhtHenk.getHenkiloTyyppi());
     }
 
     public static KoulutusLinkkiViewModel mapToKoulutusLinkkiViewModel(WebLinkkiTyyppi type) {
@@ -194,25 +200,6 @@ public class KoulutusConveter {
         }
     }
 
-    public static YhteyshenkiloTyyppi mapToYhteyshenkiloTyyppiDto(final KoulutusYhteyshenkiloViewModel model) throws ExceptionMessage {
-        YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
-
-        yhteyshenkiloTyyppi.setHenkiloOid(model.getHenkiloOid());
-        yhteyshenkiloTyyppi.setEtunimet(model.getEtunimet());
-        yhteyshenkiloTyyppi.setSukunimi(model.getSukunimi());
-        yhteyshenkiloTyyppi.setSahkoposti(model.getEmail());
-        yhteyshenkiloTyyppi.setTitteli(model.getTitteli());
-        yhteyshenkiloTyyppi.setPuhelin(model.getPuhelin());
-
-        if (model.getKielet() != null && !model.getKielet().isEmpty()) {
-            for (String kieliUri : model.getKielet()) {
-                yhteyshenkiloTyyppi.getKielet().add(kieliUri);
-            }
-        }
-
-        return yhteyshenkiloTyyppi;
-    }
-
     public static WebLinkkiTyyppi mapToWebLinkkiTyyppiDto(final KoulutusLinkkiViewModel model) throws ExceptionMessage {
         WebLinkkiTyyppi web = new WebLinkkiTyyppi();
         web.setKieli(model.getKieli());
@@ -220,23 +207,6 @@ public class KoulutusConveter {
         web.setUri(model.getUrl());
 
         return web;
-    }
-
-    public static KoulutusYhteyshenkiloViewModel mapToKoulutusYhteyshenkiloViewModel(final YhteyshenkiloTyyppi tyyppi) {
-        KoulutusYhteyshenkiloViewModel yhteyshenkiloModel = new KoulutusYhteyshenkiloViewModel();
-        yhteyshenkiloModel.setHenkiloOid(tyyppi.getHenkiloOid());
-        yhteyshenkiloModel.setEmail(tyyppi.getSahkoposti());
-        yhteyshenkiloModel.setEtunimet(tyyppi.getEtunimet());
-        yhteyshenkiloModel.setPuhelin(tyyppi.getPuhelin());
-        yhteyshenkiloModel.setSukunimi(tyyppi.getSukunimi());
-        yhteyshenkiloModel.setTitteli(tyyppi.getTitteli());
-        final List<String> kielet = tyyppi.getKielet();
-        if (kielet != null && !kielet.isEmpty()) {
-            for (String kieliUri : kielet) {
-                yhteyshenkiloModel.getKielet().add(kieliUri);
-            }
-        }
-        return yhteyshenkiloModel;
     }
 
     public KoulutuskoodiModel mapToKoulutuskoodiModel(final KoodistoKoodiTyyppi koulutusKoodi, final Locale locale) {
@@ -509,7 +479,7 @@ public class KoulutusConveter {
                 m.setKielikoodi(teksti.getKieliKoodi());
                 m.setNimi(teksti.getValue());
             } else {
-                LOG.warn("Maybe a data error - MonikielinenTekstiModel; has no requested content for locale: " + locale + " *AND* no FI fallback data!");
+                LOG.error("An invalid data error -´MonikielinenTekstiModel object was missing Finnish language data.");
             }
         }
 
@@ -535,4 +505,81 @@ public class KoulutusConveter {
         return hashMap;
 
     }
+
+    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final List<KoodiMetadataType> languageMetaData) {
+        Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
+
+        for (KoodiMetadataType meta : languageMetaData) {
+            final KieliType kieli = meta.getKieli();
+
+            if (kieli != null && meta.getNimi() != null && !meta.getNimi().isEmpty()) {
+                teksti.add(new KielikaannosViewModel(kieli.name(), meta.getNimi()));
+            }
+        }
+
+        return teksti;
+    }
+
+    /*
+    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
+        List<KoodistoKoodiTyyppi.Nimi> nimis = koodistoKoodiTyyppi.getNimi();
+
+        for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
+            if (nimi != null && nimi.getKieli() != null && !nimi.getKieli().isEmpty()) {
+                teksti.add(new KielikaannosViewModel(nimi.getKieli(), nimi.getKieli()));
+            }
+        }
+
+        return teksti;
+    }
+
+    public static KoodistoKoodiTyyppi.Nimi getClosestKoodistoKoodiTyyppiNimi(Locale locale, KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        Preconditions.checkNotNull(koodistoKoodiTyyppi, "KoodistoKoodiTyyppi object cannot be null.");
+
+        KoodistoKoodiTyyppi.Nimi teksti = null;
+        if (locale != null) {
+            teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), locale);
+        }
+
+
+        //fi default fallback
+        if ((teksti == null || teksti.getKieli() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase(FALLBACK_LANG_CODE)) {
+            final Locale localeFallback = new Locale(FALLBACK_LANG_CODE);
+            teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), localeFallback);
+        }
+
+        //get first existing
+        if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
+            //first existing
+            if (koodistoKoodiTyyppi.getNimi().size() > 0) {
+                teksti = koodistoKoodiTyyppi.getNimi().get(0);
+            }
+            if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
+                LOG.error("An invalid data error - KoodistoKoodiTyyppi.Nimi did not contain any values.");
+            }
+        }
+
+        return teksti;
+    }
+
+    public static KoodistoKoodiTyyppi.Nimi searchNimiTyyppiByLanguage(List<KoodistoKoodiTyyppi.Nimi> nimis, final Locale locale) {
+        LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (nimis != null ? nimis.size() : nimis));
+        final String langCode = locale.getLanguage().toUpperCase();
+
+        for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
+
+            if (nimi.getKieli() != null
+                    && nimi.getKieli().toUpperCase().equals(langCode)) {
+                return nimi;
+            } else if (nimi.getKieli() == null) {
+                LOG.error("An unknown data bug : KoodistoKoodiTyyppi.Nimi kieli was null?");
+            }
+        }
+
+        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
+
+        return null;
+    }
+    */ 
 }

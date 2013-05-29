@@ -15,10 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
+import fi.vm.sade.tarjonta.ui.presenter.SearchPresenter;
+import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
 import fi.vm.sade.vaadin.Oph;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -90,7 +94,7 @@ public class AdminApplication extends AbstractWebApplication {
 
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
@@ -129,7 +133,7 @@ public class AdminApplication extends AbstractWebApplication {
         });
 
         hl.addComponent(btnIndexHakukohteet);
-        
+
         final Button btnIndexOrganisaatiot = new Button("Indeksoi organisaatiot", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -150,6 +154,17 @@ public class AdminApplication extends AbstractWebApplication {
         });
 
         hl.addComponent(btnIndexOrganisaatiot);
+
+        buildTest(hl);
     }
 
+    private void buildTest(AbstractLayout l) {
+        SearchPresenter searchPresenter = new SearchPresenter();
+
+        VerticalLayout vl = new VerticalLayout();
+
+        SimpleAutocompleteTextField atf = new SimpleAutocompleteTextField(vl, searchPresenter, "", "");
+
+        l.addComponent(vl);
+    }
 }

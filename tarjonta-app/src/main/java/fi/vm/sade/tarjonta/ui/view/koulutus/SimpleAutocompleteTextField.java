@@ -47,17 +47,17 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  */
 public class SimpleAutocompleteTextField extends TextField implements Handler {
-    private static final long serialVersionUID = 8944710358662496253L;
 
+    private static final long serialVersionUID = 8944710358662496253L;
     private VerticalLayout vl;
     /* The suggestion list of text string. */
     private ListSelect suggestionList;
-    /* The button to clear current values in yhteyshenkilo fields.*/
+    /* The button to clear current values in fields.*/
     private Button clear;
     private IAutocompleteSearch presenter;
     /* The current list of users in the suggestionList*/
-    private List<String> inputText;
-    /*The currently selected index in the henkilos list. */
+    private List<IAutocompleteModel> inputText;
+    /*The currently selected index in  list. */
     private int selectedIndex = -1;
     /*The text typed by the user. */
     private String typedText;
@@ -133,7 +133,7 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
 
         hl.addComponent(this);
 
-        //The clear button. When the button is pressed the yhteyshenkilo fields are cleared.
+        //The clear button. When the button is pressed the fields are cleared.
         clear = UiUtil.buttonLink(hl, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = -6386527358361971773L;
 
@@ -176,8 +176,7 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
     }
 
 
-    /*Handling of clear button click. Setting the text field to null and fireing event.
-     * Event is catched by EditKoulutusPerustiedotForm which sets other yhteyshenkilo fields to null. */
+    /*Handling of clear button click. Setting the text field to null and fireing event. */
     private void handleClearButtonClick() {
         this.setValue(null);
         clearSelectedText();
@@ -186,21 +185,20 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
 
 
     /*
-     * Populates the henkilo suggestions under the yhtHenkKokoNimi field in according
-     * to current search results from UserService.
+     * Populates the suggestions.
      */
-    private void populateSuggestions(List<String> henkilos) {
-        this.inputText = henkilos;
+    private void populateSuggestions(List<IAutocompleteModel> models) {
+        this.inputText = models;
         selectedIndex = -1;
-        if (!henkilos.isEmpty()) {
+        if (!models.isEmpty()) {
             getWindow().addActionHandler(this);
             suggestionList.setVisible(true);
             suggestionList.removeAllItems();
-            suggestionList.setRows(henkilos.size() + 1);
+            suggestionList.setRows(models.size() + 1);
 
-            for (String curHenkilo : henkilos) {
-                suggestionList.addItem(curHenkilo);
-                suggestionList.setItemCaption(curHenkilo, curHenkilo);
+            for (IAutocompleteModel cur : models) {
+                suggestionList.addItem(cur);
+                suggestionList.setItemCaption(cur, cur.getText());
             }
         } else {
             getWindow().removeActionHandler(this);
@@ -211,12 +209,12 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         }
         focus();
     }
+    
     /*
-     * Handling of value change event. Fires an event witch is listened by EditKoulutusPerustiedotForm which updates the yhteyshenkilo fields. 
+     * Handling of value change event. 
      */
-
     private void handleValueChange() {
-        fireEvent(new SimpleTextAutocompleteEvent(this, (String) (suggestionList.getValue()), SimpleTextAutocompleteEvent.SELECTED));
+        fireEvent(new SimpleTextAutocompleteEvent(this, (IAutocompleteModel) (suggestionList.getValue()), SimpleTextAutocompleteEvent.SELECTED));
         if (!isFocused) {
             handleEnter();
         }
@@ -235,8 +233,8 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         if (selectedIndex < this.inputText.size() - 1) {
             ++selectedIndex;
         }
-        String nextText = inputText.get(selectedIndex);
-        suggestionList.select(nextText);
+        IAutocompleteModel nextModel = inputText.get(selectedIndex);
+        suggestionList.select(nextModel);
     }
 
     /*
@@ -252,8 +250,8 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         //user is selected, otherwise the selection is removed and a user not selected.
         //is fired and the string typed by the user is set as the value of the text field. 
         if (selectedIndex >= 0) {
-            String prevText = inputText.get(selectedIndex);
-            suggestionList.select(prevText);
+            IAutocompleteModel prevModel = inputText.get(selectedIndex);
+            suggestionList.select(prevModel);
         } else {
             setValue(typedText);
             suggestionList.unselect(inputText.get(selectedIndex + 1));
@@ -300,7 +298,7 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         return _i18n.getMessage(key);
     }
 
-    protected List<String> searchText(TextChangeEvent event) {
+    protected List<IAutocompleteModel> searchText(TextChangeEvent event) {
         return presenter.searchAutocompleteText(event.getText());
     }
 
@@ -331,20 +329,20 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         /**
          * The user selected.
          */
-        private String text;
+        private IAutocompleteModel model;
 
-        public SimpleTextAutocompleteEvent(Component source, String text, int eventType) {
+        public SimpleTextAutocompleteEvent(Component source, IAutocompleteModel model, int eventType) {
             super(source);
             this.setEventType(eventType);
-            this.setText(text);
+            this.setModel(model);
         }
 
-        public String getText() {
-            return text;
+        public IAutocompleteModel getModel() {
+            return model;
         }
 
-        public void setText(String henkilo) {
-            this.text = henkilo;
+        public void setModel(IAutocompleteModel model) {
+            this.model = model;
         }
 
         public int getEventType() {
@@ -358,9 +356,13 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
 
     public interface IAutocompleteSearch {
 
-        public List<String> searchAutocompleteText(final String searchword);
+        public List<IAutocompleteModel> searchAutocompleteText(final String searchword);
 
         public void clearAutocompleteTextField();
-        
+    }
+
+    public interface IAutocompleteModel {
+
+        public String getText();
     }
 }

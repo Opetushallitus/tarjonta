@@ -59,6 +59,13 @@ public class KoulutusKoodistoConverter {
     private static final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> koulutusKoodiToKoulutusohjelmaModel = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
     private static final KoulutusKoodiToModelConverter<KoulutuskoodiModel> koulutusKoodiToKoulutuskoodiModel = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
     private static final KoulutusKoodiToModelConverter<KoulutuskoodiRowModel> koulutusKoodiToKoulutuskoodiRowModel = new KoulutusKoodiToModelConverter<KoulutuskoodiRowModel>();
+    public static final String[] KOMO_KOODISTO_RELATIONS = new String[]{
+        KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI,
+        KoodistoURIHelper.KOODISTO_OPINTOALA_URI,
+        KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI,
+        KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+        KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI
+    };
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUiHelper;
     @Autowired
@@ -258,7 +265,7 @@ public class KoulutusKoodistoConverter {
 
         return null;
     }
-    
+
     public KoulutuskoodiModel listaaKoulutuskoodi(final String koulutuskoodiUri, final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(koulutuskoodiUri);
         if (koodistoData != null && !koodistoData.isEmpty()) {
@@ -309,10 +316,20 @@ public class KoulutusKoodistoConverter {
     }
 
     private void komoBaseData(final KoulutuskoodiModel tutkinto, final KoulutusmoduuliKoosteTyyppi tyyppi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
+        Preconditions.checkNotNull(tutkinto, "KoulutuskoodiModel object cannot be null.");
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(kc, "KoulutusKoodiToModelConverter object cannot be null.");
+
         //text data models
-        tutkinto.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
-        tutkinto.setJatkoopintomahdollisuudet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
-        tutkinto.setKoulutuksenRakenne(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+        if (tyyppi.getTutkinnonTavoitteet() != null) {
+            tutkinto.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
+        }
+        if (tyyppi.getJatkoOpintoMahdollisuudet() != null) {
+            tutkinto.setJatkoopintomahdollisuudet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
+        }
+        if (tyyppi.getKoulutuksenRakenne() != null) {
+            tutkinto.setKoulutuksenRakenne(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+        }
 
         //koodisto koodi data models 
         tutkinto.setOpintojenLaajuus(tyyppi.getLaajuusarvoUri());
@@ -321,6 +338,29 @@ public class KoulutusKoodistoConverter {
         tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), kc, locale));
         tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), kc, locale));
         tutkinto.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), kc, locale));
+    }
+
+    private void komoBaseData(final KoulutuskoodiModel koulutuskoo, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
+        Preconditions.checkNotNull(koulutuskoo, "KoulutuskoodiModel object cannot be null.");
+        Collection<KoodiType> koodistoRelations = tarjontaUiHelper.getKoodistoRelations(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, KOMO_KOODISTO_RELATIONS);
+
+        for (KoodiType type : koodistoRelations) {
+            LOG.info("{} = {}", type.getKoodisto().getKoodistoUri(), KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI);
+
+            if (type.getKoodisto().getKoodistoUri().equals(KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI)) {
+                koulutuskoo.setKoulutusala(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURIHelper.KOODISTO_OPINTOALA_URI)) {
+                koulutuskoo.setOpintoala(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI)) {
+                koulutuskoo.setTutkintonimike(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)) {
+                koulutuskoo.setOpintojenLaajuusyksikko(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI)) {
+                koulutuskoo.setKoulutusaste(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else {
+                LOG.warn("Unmapped koodi value. koodi : {} koodisto : {}", type.getKoodiUri(), type.getKoodisto().getKoodistoUri());
+            }
+        }
     }
 
     public List<KoulutuskoodiRowModel> listaaKoulutuksesByKoulutusala(String koulutusalaKoodiUri, final Locale locale) {
@@ -385,5 +425,22 @@ public class KoulutusKoodistoConverter {
             koodiUris.add(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI + "_" + arvo);
         }
         return Collections.unmodifiableSet(koodiUris);
+    }
+
+    /**
+     * Search koulutuskoodi by KoodistoKoodiTyyppi object. Only for korkeakoulu.
+     */
+    public KoulutuskoodiModel listaaKorkeakouluKoulutuskoodi(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
+        return listaaKorkeakouluKoulutuskoodi(tyyppi.getUri(), locale);
+    }
+
+    /**
+     * Search koulutuskoodi by koodi uri. Only for korkeakoulu.
+     */
+    public KoulutuskoodiModel listaaKorkeakouluKoulutuskoodi(final String koodiUri, final Locale locale) {
+        KoulutuskoodiModel km = listaaKoulutuskoodi(koodiUri, locale);
+        komoBaseData(km, koulutusKoodiToKoodiModel, locale);
+
+        return km;
     }
 }

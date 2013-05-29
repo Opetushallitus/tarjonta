@@ -15,26 +15,15 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.*;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutuskoodiRowModel extends KoulutusKoodistoModel {
-
-    private static final long serialVersionUID = -333467651874245252L;
-
-    public KoulutuskoodiRowModel() {
-    }
-
-    public KoulutuskoodiRowModel(KoulutusKoodistoModel model) {
-        nimi = model.getNimi();
-        kuvaus = model.getKuvaus();
-        kielikoodi = model.getKielikoodi();
-        koodi = model.getKoodi();
-        koodistoUri = model.getKoodistoUri();
-        koodistoVersio = model.getKoodistoVersio();
-        koodistoUriVersio = model.getKoodistoUriVersio();
+public class TutkintoohjelmaModel extends MonikielinenTekstiModel {
+    private static final long serialVersionUID = -5947159028438495028L;
+    
+    public TutkintoohjelmaModel() {
     }
 }
