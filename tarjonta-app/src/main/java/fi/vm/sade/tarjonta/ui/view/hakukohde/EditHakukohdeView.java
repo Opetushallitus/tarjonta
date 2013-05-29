@@ -262,6 +262,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         //XXXX validoi painotettavat
 
+        presenter.saveHakuKohde(tila);
+        
         if (presenter.getModel().getHakukohde().getKoulukses() != null
                 || !presenter.getModel().getHakukohde().getKoulukses().isEmpty()
                 || presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
@@ -275,7 +277,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
                 }
             }
         }
-        presenter.saveHakuKohde(tila);
+        
+        presenter.refreshHakukohdeUIModel(hakukohde.getOid());
 
         return getHakukohdeOid();
     }

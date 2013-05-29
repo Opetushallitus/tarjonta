@@ -251,13 +251,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
             HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
-            updateHakukohdeModel(fresh);
+            refreshHakukohdeUIModel(fresh);
         } else {
             HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
-            updateHakukohdeModel(fresh);
+            refreshHakukohdeUIModel(fresh);
         }
         
-        updateHakukohdeModel(getModel().getHakukohde().getOid());
+        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
     }
 
     private void checkHakuLiitetoimitusPvm() {
@@ -287,16 +287,19 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         getTarjontaAdminService().tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(), liitteet);
         getModel().setSelectedLiite(null);
+        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
     }
 
     public void removeLiiteFromHakukohde(HakukohdeLiiteViewModel liite) {
         getTarjontaAdminService().poistaHakukohdeLiite(liite.getHakukohdeLiiteId());
         editHakukohdeView.loadLiiteTableWithData();
+        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
     }
 
     public void removeValintakoeFromHakukohde(ValintakoeViewModel valintakoe) {
         getTarjontaAdminService().poistaValintakoe(valintakoe.getValintakoeTunniste());
         editHakukohdeView.loadValintakokees();
+        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
     }
 
     public OrganisaatioDTO getSelectOrganisaatioModel() {
@@ -317,6 +320,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         editHakukohdeView.loadValintakokees();
+        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
         editHakukohdeView.closeValintakoeEditWindow();
     }
 
@@ -1103,7 +1107,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         //if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
-            updateHakukohdeModel(hakukohdeOid);
+            refreshHakukohdeUIModel(hakukohdeOid);
         }
 
         getRootView().changeView(editHakukohdeView);
@@ -1119,20 +1123,20 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     /**
      * Lue hakukohde tietovarastosta ja päivitä ui model.
      */
-    private void updateHakukohdeModel(String hakukohdeOid) {
+    public void refreshHakukohdeUIModel(String hakukohdeOid) {
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(hakukohdeOid);
         HakukohdeTyyppi hakukohde = getTarjontaPublicService()
                 .lueHakukohde(kysely).getHakukohde();
-        updateHakukohdeModel(hakukohde);
+        refreshHakukohdeUIModel(hakukohde);
     }
 
     /**
      * Päivitä ui model.
      */
-    private void updateHakukohdeModel(HakukohdeTyyppi hakukohde) {
-    	cachedLiitteet = null;
-    	cachedLiitteetOid = null;
+    private void refreshHakukohdeUIModel(HakukohdeTyyppi hakukohde) {
+        cachedLiitteet = null;
+        cachedLiitteetOid = null;
         getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(hakukohde));
         setKomotoOids(getModel().getHakukohde().getKomotoOids());
 
@@ -1185,7 +1189,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
             String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getHakukohde().getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(hkKey)) {
-                LOG.info("Adding a new key to the map: " + hkKey);
                 List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
                 hakukohteetM.add(curHk);
                 map.put(hkKey, hakukohteetM);
