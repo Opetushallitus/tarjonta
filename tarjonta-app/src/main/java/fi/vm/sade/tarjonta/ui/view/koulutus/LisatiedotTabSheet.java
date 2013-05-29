@@ -89,6 +89,10 @@ public abstract class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
         return getI18n().getMessage(key);
     }
 
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
     private I18NHelper getI18n() {
         if (_i18n == null) {
             _i18n = new I18NHelper(getClass().getSimpleName() + ".");

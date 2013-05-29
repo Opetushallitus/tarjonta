@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
+ * Used to select languages and then update/input textual data for them.
  *
  * @author Tuomas Katva
  * @author Jani Wilén
@@ -144,7 +145,7 @@ public abstract class LanguageTabSheet extends VerticalLayout {
             richText.setWidth("100%");
             /*
              There is something wrong with the Vaadin height and width calculation when using
-             a rich text area addon. This is a quick hack fix, but at least it works. 
+             a rich text area addon. This is a quick hack fix, but at least it works.
              Problem 1. : when the rich text area has text data, height is lost.
              Problem 2. : when height is set same as layout height, then Vaadin show a horizontal scroll bar.
              */
