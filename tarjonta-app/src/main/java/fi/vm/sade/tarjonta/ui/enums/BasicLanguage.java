@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.enums;
 
+import fi.vm.sade.generic.common.I18N;
+
 /**
  *
  * @author jani
@@ -40,6 +42,10 @@ public enum BasicLanguage {
             }
         }
         return BasicLanguage.FI;
+    }
+    
+    public static BasicLanguage getUserLanguage() {
+    	return toLanguageEnum(I18N.getLocale().getLanguage());
     }
 
     public String getLowercaseLanguageCode() {
