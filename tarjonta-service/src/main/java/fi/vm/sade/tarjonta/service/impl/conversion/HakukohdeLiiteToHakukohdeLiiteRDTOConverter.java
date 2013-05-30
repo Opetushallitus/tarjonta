@@ -32,12 +32,6 @@ public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConvert
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeLiiteToHakukohdeLiiteRDTOConverter.class);
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
-    private ConversionService conversionService;
-
     @Override
     public HakukohdeLiiteDTO convert(HakukohdeLiite s) {
         HakukohdeLiiteDTO t = new HakukohdeLiiteDTO();
@@ -55,12 +49,18 @@ public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConvert
         return t;
     }
 
+    @Autowired
+    private ApplicationContext _applicationContext;
+
+    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
+    private ConversionService _conversionService;
+
     private ConversionService getConversionService() {
-        if (conversionService == null) {
+        if (_conversionService == null) {
             LOG.info("looking up ConversionService...");
-            conversionService = applicationContext.getBean(ConversionService.class);
+            _conversionService = _applicationContext.getBean(ConversionService.class);
         }
-        return conversionService;
+        return _conversionService;
     }
 
 }
