@@ -117,10 +117,12 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public static class SearchCriteria {
 
+        private String kieliUri;
         private String nimiQuery;
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
-        private String lukiolinjaKoodiUri;
+        private String lukiolinjaKoodiUri;     
+        private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
         private KoulutusasteTyyppi koulutustyyppi;
         private Class<? extends BaseKoulutusmoduuli> type;
@@ -209,6 +211,34 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setOppilaitostyyppis(List<String> oppilaitostyyppis) {
             this.oppilaitostyyppis = oppilaitostyyppis;
+        }
+
+        /**
+         * @return the tarjoajaOids
+         */
+        public List<String> getTarjoajaOids() {
+            return tarjoajaOids;
+        }
+
+        /**
+         * @param tarjoajaOids the tarjoajaOids to set
+         */
+        public void setTarjoajaOids(List<String> tarjoajaOids) {
+            this.tarjoajaOids = tarjoajaOids;
+        }
+
+        /**
+         * @return the kieliUri
+         */
+        public String getKieliUri() {
+            return kieliUri;
+        }
+
+        /**
+         * @param kieliUri the kieliUri to set
+         */
+        public void setKieliUri(String kieliUri) {
+            this.kieliUri = kieliUri;
         }
 
         public enum GroupBy {

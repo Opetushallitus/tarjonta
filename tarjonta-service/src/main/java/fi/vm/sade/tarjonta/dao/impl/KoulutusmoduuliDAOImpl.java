@@ -15,10 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.google.common.base.Preconditions;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.expr.DslExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
@@ -88,18 +90,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         BooleanExpression whereExpr = null;
-        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
-
+        QMonikielinenTeksti mteksti = QMonikielinenTeksti.monikielinenTeksti;
+        QTekstiKaannos kaannos = QTekstiKaannos.tekstiKaannos;
         // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
         //Expression groupBy = groupBy(criteria);
 
-        if (criteria.getNimiQuery() != null) {
-            // todo: FIX THIS
-            //whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
-        }
 
         if (criteria.getKoulutusKoodi() != null) {
+
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
         }
 
@@ -125,14 +124,34 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, ors);
         }
 
-        if (whereExpr == null) {
+        if (whereExpr == null && criteria.getNimiQuery() == null) {
+            /*
+             * No filters, return all the modules
+             */
             return from(moduuli).
-                    leftJoin(moduuli.nimi, nimi).fetch().
+                    leftJoin(moduuli.nimi, mteksti).fetch().
                     list(moduuli);
+        } else if (criteria.getNimiQuery() != null) {
+            /*
+             * filter by a search word and other optional paramters.
+             */
+            //Search word is not an optional parameter.
+            BooleanExpression searchByName = kaannos.arvo.containsIgnoreCase( criteria.getNimiQuery() );
+            //Add an optional paramter language filter.
+            BooleanExpression filterBylang = criteria.getKieliUri() != null ? kaannos.kieliKoodi.eq(criteria.getKieliUri()) : null;
+            //Add all above paramters, if any.
+            BooleanExpression andAll = QuerydslUtils.andAll(searchByName, whereExpr, filterBylang);
+
+            return from(moduuli).join(moduuli.nimi, mteksti)
+                    .join(mteksti.tekstis, kaannos)
+                    .where(andAll).list(moduuli);
         } else {
+            /*
+             * filter a query with all the given parameters except the search word.
+             */
             return from(moduuli).
                     where(whereExpr).
-                    leftJoin(moduuli.nimi, nimi).fetch().
+                    leftJoin(moduuli.nimi, mteksti).fetch().
                     list(moduuli);
         }
 

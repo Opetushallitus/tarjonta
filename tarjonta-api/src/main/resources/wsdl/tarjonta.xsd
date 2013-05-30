@@ -1097,4 +1097,11 @@
             <xs:element name="uri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
+    
+     <xs:complexType name="HakusanaTyyppi">
+        <xs:sequence>
+            <xs:element name="hakusana" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="kieliUri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

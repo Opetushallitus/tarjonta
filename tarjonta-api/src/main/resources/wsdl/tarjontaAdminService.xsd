@@ -82,7 +82,7 @@
     
     <xs:element name="kopioiKoulutus" type="tns:KopioiKoulutusTyyppi"/>
     <xs:element name="kopioiKoulutusVastaus" type="tns:KopioiKoulutusVastausTyyppi" />
-
+    
     <xs:element name="emptyString" type="xs:string"/>
 
     <xs:complexType name="PoistaHakukohdeType">
