@@ -65,10 +65,8 @@ import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
@@ -485,9 +483,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             } else {
                 return true;
             }
-        } else {
+        } else if (osoite!=null) {
             setOsoiteToOrganisaationPostiOsoite(osoite);
             return false;
+        } else {
+        	return true;
         }
     }
 
@@ -500,30 +500,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private OsoiteDTO getOrganisaationPostiOsoite() {
-        OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
-
-        OsoiteDTO returnValue = null;
-        if (organisaatioDTO != null) {
-            for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
-                if (yhteystietoDTO instanceof OsoiteDTO) {
-                    OsoiteDTO osoite = (OsoiteDTO) yhteystietoDTO;
-                    if (osoite.getOsoiteTyyppi().equals(OsoiteTyyppi.POSTI)) {
-                        returnValue = osoite;
-                    }
-                }
-            }
-        }
-
-        // TODO minkä organisaatiom postiosoite?
-        // FIXME minkä organisaatiom postiosoite?
-        // 1. Saako valita useamman koulutuksen?
-        // 2. Saavatko koulutukset kuulua useammalla tarjoajalle?
-        // 3. Entä saman "tarjoajan" eri aliorganisaatioita?
-        // 4. Mikä silloin olisi "oletus" toimitus-osoite?
-
-        Preconditions.checkNotNull(returnValue, "Organisation OsoiteDTO object cannot be null.");
-
-        return returnValue;
+        return presenter.resolveSelectedOrganisaatioOsoite(OsoiteTyyppi.POSTI);
     }
 
     private AbstractLayout buildOsoiteSelect() {
@@ -537,12 +514,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         osoiteSelectOptionGroup.setNullSelectionAllowed(false);
         boolean isMuuOsoiteOsoite = setLiitteidenToimOsoite();
         if (isMuuOsoiteOsoite) {
-
             osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectMuuOsoite"));
-
         } else {
             osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
         }
+        
+        osoiteSelectOptionGroup.setEnabled(getOrganisaationPostiOsoite()!=null);
+
         osoiteSelectOptionGroup.setImmediate(true);
         osoiteSelectOptionGroup.addListener(new Property.ValueChangeListener() {
             @Override
