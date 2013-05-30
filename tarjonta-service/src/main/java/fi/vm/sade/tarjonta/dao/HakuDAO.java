@@ -32,5 +32,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @return
      */
     List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
+
+    List<Haku> findByKoulutuksenKausi(String kausi,Integer alkamisVuosi);
 }
 

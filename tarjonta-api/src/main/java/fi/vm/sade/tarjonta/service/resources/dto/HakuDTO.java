@@ -14,7 +14,9 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +37,8 @@ public class HakuDTO extends BaseRDTO {
     private String _koulutuksenAlkamiskausiUri;
     private String _tila;
     private boolean _sijoittelu;
+
+    private List<HakuaikaRDTO> _hakuaikas;
 
     private Map<String, String> _nimi;
 
@@ -142,6 +146,17 @@ public class HakuDTO extends BaseRDTO {
 
     public boolean isSijoittelu() {
         return _sijoittelu;
+    }
+
+    public List<HakuaikaRDTO> getHakuaikas() {
+        if (_hakuaikas == null) {
+            _hakuaikas = new ArrayList<HakuaikaRDTO>();
+        }
+        return _hakuaikas;
+    }
+
+    public void setHakuaikas(List<HakuaikaRDTO> _hakuaikas) {
+        this._hakuaikas = _hakuaikas;
     }
 
 }

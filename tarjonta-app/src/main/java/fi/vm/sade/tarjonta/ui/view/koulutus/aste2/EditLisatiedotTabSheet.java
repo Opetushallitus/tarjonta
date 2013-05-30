@@ -34,15 +34,21 @@ import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.LisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
+ * "Toinen aste" extra / additional information.
  *
  * @author Jani Wilén
  */
 public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditLisatiedotTabSheet.class);
+
     private static final String TEXT_AREA_DEFAULT_WIDTH = "550px";
+
+    private static final int MAX_LENGTH = 16384;
+
     private static final long serialVersionUID = -7726685044305900176L;
 
     public EditLisatiedotTabSheet(TarjontaModel tarjontaModel, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
@@ -59,7 +65,7 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
         if (opetuskieliKoodiUri != null) {
             languageUris.add(opetuskieliKoodiUri); //only single language in 2aste
         }
-        
+
         languageUris.addAll(getModel().getKoulutusLisatiedotModel().getKielet());
 
         if (!languageUris.isEmpty()) {
@@ -86,52 +92,60 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
     protected AbstractComponent createLanguageEditor(String uri) {
         VerticalLayout vl = UiBuilder.verticalLayout();
 
+        String kieli = "-";
+
         vl.setSpacing(true);
         vl.setMargin(true);
 
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.title"), LabelStyleEnum.H2));
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.help"), LabelStyleEnum.TEXT));
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.help", MAX_LENGTH), LabelStyleEnum.TEXT));
 
         KoulutusLisatietoModel model = getModel().getKoulutusLisatiedotModel().getLisatiedot(uri);
         PropertysetItem psi = new BeanItem(model);
 
         {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sisalto");
+
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "sisalto", MAX_LENGTH,
+                    T("_textTooLong", T("koulutuksenSisalto") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help", MAX_LENGTH), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sijoittuminenTyoelamaan");
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "sijoittuminenTyoelamaan", MAX_LENGTH,
+                    T("_textTooLong", T("sijoittuminenTyoelamaan") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help", MAX_LENGTH), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kansainvalistyminen");
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "kansainvalistyminen", MAX_LENGTH,
+                    T("_textTooLong", T("kansainvalistyminen") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help", MAX_LENGTH), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa");
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa", MAX_LENGTH,
+                    T("_textTooLong", T("yhteistyoMuidenToimijoidenKanssa") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help", MAX_LENGTH), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "koulutusohjelmanValinta");
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "koulutusohjelmanValinta", MAX_LENGTH,
+                    T("_textTooLong", T("koulutusOhjelmanValinta") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help", MAX_LENGTH), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 

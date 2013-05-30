@@ -89,7 +89,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         }
 
         if (hakukohteenLiitteetTable != null) {
-            List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet();            
+            List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet(true);            
             hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(loadHakukohdeLiitteet));
             hakukohteenLiitteetTable.setVisibleColumns(new String[]{"liitteenTyyppi", "liitteenSanallinenKuvaus", "toimitettavaMennessa",
                 "toimitusOsoite", "muokkaaBtn", "poistaBtn"});

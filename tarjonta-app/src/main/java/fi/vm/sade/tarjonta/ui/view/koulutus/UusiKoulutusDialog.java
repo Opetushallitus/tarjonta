@@ -63,7 +63,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private boolean underConstraction;
 
     public UusiKoulutusDialog(String width, String height) {
-        super(width, height);
+        super(width, height,true);
         //setSizeUndefined();
         //setWidth(width);
         setCaption(_i18n.getMessage("dialog.title"));
