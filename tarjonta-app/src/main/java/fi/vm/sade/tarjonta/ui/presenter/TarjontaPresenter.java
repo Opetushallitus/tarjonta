@@ -484,7 +484,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> returnVal = new ArrayList<String>();
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
+
+        Set<String> koulutusAlkamiskaudes = new HashSet<String>();
+        Set<Integer>  koulutusAlkamisVuodes = new HashSet<Integer>();
         for (KoulutusTulos koulutusModel : koulutukses) {
+            koulutusAlkamiskaudes.add(koulutusModel.getKoulutus().getKoulutuksenAlkamiskausiUri());
+            koulutusAlkamisVuodes.add(koulutusModel.getKoulutus().getKoulutuksenAlkamisVuosi());
             koulutusKoodis.add(koulutusModel.getKoulutus().getKoulutuskoodi().getUri());
             pohjakoulutukses.add(koulutusModel.getKoulutus().getPohjakoulutusVaatimus());
         }
@@ -494,6 +499,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
         }
+
+        if (koulutusAlkamiskaudes.size() > 1 || koulutusAlkamisVuodes.size() > 1) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.koulutusAlkaminenDoesNotMatch"));
+        }
+
         return returnVal;
     }
 
