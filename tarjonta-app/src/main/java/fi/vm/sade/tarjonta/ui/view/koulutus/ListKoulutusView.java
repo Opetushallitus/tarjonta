@@ -15,12 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import java.util.*;
-
-
-import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,27 +35,30 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  *
@@ -175,6 +180,15 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());      
     }
 
+    private String getKoulutusNimi(KoulutusTulos koulutus, Map<KoulutusTulos, String> cache) {
+    	String ret = cache.get(koulutus);
+    	if (ret==null) {
+    		ret = uiHelper.getKoulutusNimi(koulutus);
+    		cache.put(koulutus, ret);
+    	}
+    	return ret;
+    }
+    
     /**
      * Creates the vaadin HierarchicalContainer datasource for the Koulutus
      * listing based on data provided by the presenter.
@@ -195,16 +209,28 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
         
         
+        // väliaikainen kakku nimille jottei haeta koodistosta moneen kertaan järjestyksen yhteydessä
+        final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
+        
+        
         for (Map.Entry<String, List<KoulutusTulos>> e : set) {
-            LOG.debug("getTreeDataSource()" + e.getKey());
+            //LOG.debug("getTreeDataSource()" + e.getKey());
             KoulutusResultRow rowStyle = new KoulutusResultRow();
+            
+            Collections.sort(e.getValue(), new Comparator<KoulutusTulos>() {
+            	@Override
+            	public int compare(KoulutusTulos a, KoulutusTulos b) {
+            		return getKoulutusNimi(a, nimet).compareTo(getKoulutusNimi(b, nimet));
+            	}
+			});
             
             Object rootItem = hc.addItem();
             
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
             
             for (KoulutusTulos curKoulutus : e.getValue()) {
-                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, uiHelper.getKoulutusNimi(curKoulutus));
+                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
+
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));

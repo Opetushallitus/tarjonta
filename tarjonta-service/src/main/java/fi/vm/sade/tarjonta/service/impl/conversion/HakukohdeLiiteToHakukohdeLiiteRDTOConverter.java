@@ -36,15 +36,19 @@ public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConvert
     public HakukohdeLiiteDTO convert(HakukohdeLiite s) {
         HakukohdeLiiteDTO t = new HakukohdeLiiteDTO();
 
-        t.setErapaiva(s.getErapaiva());
-        // t.setHakukohdeOid(s.getHakukohde());
-        t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
-        t.setModified(s.getLastUpdateDate());
-        t.setModifiedBy(s.getLastUpdatedByOid());
-        t.setLiitteenTyyppiUri(s.getLiitetyyppi());
-        t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
-        t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
-        t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
+        if (s != null) {
+            t.setOid("" + s.getId());
+
+            t.setErapaiva(s.getErapaiva());
+            // t.setHakukohdeOid(s.getHakukohde());
+            t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
+            t.setModified(s.getLastUpdateDate());
+            t.setModifiedBy(s.getLastUpdatedByOid());
+            t.setLiitteenTyyppiUri(s.getLiitetyyppi());
+            t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
+            t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
+            t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
+        }
 
         return t;
     }

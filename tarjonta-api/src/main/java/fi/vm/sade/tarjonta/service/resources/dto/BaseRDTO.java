@@ -16,6 +16,8 @@ package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * "Basic" info for "all" REST DTO's.
@@ -30,6 +32,8 @@ public class BaseRDTO implements Serializable {
     private String modifiedBy;
     private String oid;
     private int version;
+
+    private int _API_VERSION = 2;
 
     public Date getCreated() {
         return created;
@@ -78,5 +82,16 @@ public class BaseRDTO implements Serializable {
     public void setVersion(int version) {
         this.version = version;
     }
+
+    public int getAPI_VERSION() {
+        return _API_VERSION;
+    }
+
+    public void setAPI_VERSION(int API_VERSION) {
+        if (API_VERSION != _API_VERSION) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "WARNING - REMOTE API VERSION DIFFERENT FROM CLIENT API!");
+        }
+    }
+
 
 }
