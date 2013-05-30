@@ -140,7 +140,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         List<HakukohdeLiiteDTO> result = new ArrayList<HakukohdeLiiteDTO>();
 
         for (HakukohdeLiite hakukohdeLiite : s) {
-            result.add(conversionService.convert(hakukohdeLiite, HakukohdeLiiteDTO.class));
+            result.add(getConversionService().convert(hakukohdeLiite, HakukohdeLiiteDTO.class));
         }
 
         return result;

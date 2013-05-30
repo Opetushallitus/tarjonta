@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -22,30 +21,11 @@ import java.util.Date;
  *
  * @author mlyly
  */
-public class HakuaikaRDTO implements Serializable {
-// extends BaseRDTO {
+public class HakuaikaRDTO extends BaseRDTO {
 
-    String _oid;
-    int _version;
     String _nimi;
     Date _alkuPvm;
     Date _loppuPvm;
-
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String _oid) {
-        this._oid = _oid;
-    }
-
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int _version) {
-        this._version = _version;
-    }
 
     public String getNimi() {
         return _nimi;

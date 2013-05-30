@@ -14,9 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.util.Date;
-
 /**
+ * Osoite (address) to REST API Osoite.
  *
  * @author mlyly
  */
