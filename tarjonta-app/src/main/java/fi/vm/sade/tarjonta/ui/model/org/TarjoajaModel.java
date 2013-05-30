@@ -129,7 +129,13 @@ public class TarjoajaModel extends BaseUIViewModel {
     public void addSelectedOrganisations(Collection<OrganisaatioPerustietoType> orgs) {
         getOrganisationOidNamePairs().clear();
         List<OrganisaatioPerustietoType> tempOrgs = new ArrayList<OrganisaatioPerustietoType>(orgs);
-        addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiFi()));
+        if (tempOrgs.get(0).getNimiFi() != null && tempOrgs.get(0).getNimiFi().length() > 0) {
+            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiFi()));
+        } else if (tempOrgs.get(0).getNimiSv() != null && tempOrgs.get(0).getNimiSv().length() > 0) {
+            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiSv()));
+        } else if (tempOrgs.get(0).getNimiEn() != null && tempOrgs.get(0).getNimiEn().length() > 0) {
+            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiEn()));
+        }
     }
 
     /*
