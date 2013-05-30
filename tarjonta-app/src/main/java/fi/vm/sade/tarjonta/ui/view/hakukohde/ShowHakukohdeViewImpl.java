@@ -135,18 +135,18 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+        /*Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
         poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context));
-        kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));
+        /*kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));*/
     }
 
     private void showConfirmationDialog() {
