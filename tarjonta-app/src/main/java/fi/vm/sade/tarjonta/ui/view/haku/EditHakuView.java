@@ -66,21 +66,32 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     public boolean isformDataLoaded() {
         return model.getHakuOid() != null;
     }
-
+    //Override validateFormDate method to add custom validations to same error messages and validation
     @Override
-    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+    protected void validateFormData() throws Validator.InvalidValueException {
+        errorView.resetErrors();
         List<String> errorMessages = formView.getSisaisetHakuajatContainer().bindHakuajat();
         errorMessages.addAll(formView.checkNimi());
-        
-        if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
-            presenter.getHakuModel().setHakuLomakeUrl(null);
-        }
         if (!errorMessages.isEmpty()) {
             for (String curMessage : errorMessages) {
                 this.errorView.addError(curMessage);
             }
+            form.commit();
             throw new Validator.InvalidValueException("");
         }
+        else {
+            form.commit();
+        }
+    }
+
+    @Override
+    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+
+        
+        if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
+            presenter.getHakuModel().setHakuLomakeUrl(null);
+        }
+
 
         presenter.saveHaku(tila);
 
