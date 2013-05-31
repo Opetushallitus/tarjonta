@@ -28,7 +28,7 @@ public class TestTarjontaElements {
     private Boolean luokka = false;
     private Boolean reppu = false;
 
-    private Boolean readPageFromFile = true;
+    private Boolean readPageFromFile = false;
 
     @Before
     public void setUp() throws Exception {
