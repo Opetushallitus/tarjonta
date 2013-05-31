@@ -77,7 +77,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         t.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
-        // t.set(s.getValintakoes());
+        // TODO t.set(s.getValintakoes());
         t.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
         t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm().intValue() : 0);
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
