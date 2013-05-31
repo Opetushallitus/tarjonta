@@ -15,8 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
@@ -54,8 +56,6 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -307,30 +307,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         return hl;
     }
 
-    /**
-     * Initializes organisaatio tree.
-     */
-    private void initializeData() {
-        bind();
-        //If an oid list is provided lists the child tree of each organisaatio
-        //Otherwise searches with empty search criteria.
-        criteria.getOidResctrictionList().clear();
-        //TODO uncommenting the population of oid restriction below 
-        //criteria.getOidResctrictionList().addAll(this.presenter.getPermission().getUserOrganisationOids());
-        try {
-            this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
-        } catch (Exception ex) {
-            /*if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
-             this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
-                
-             }*/
-            this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
-        }
-        
-        sortAlphabetically();
-        
-        tree.setContainerDataSource(createDatasource());
-    }
 
     /**
      * Searches the organisaatios according to criteria, and updates the data in
@@ -366,6 +342,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_KEY, String.class, "");
         //Setting the items to the tree.
+        Ordering<OrganisaatioPerustietoType> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<OrganisaatioPerustietoType, Comparable>() {
+            public Comparable apply(OrganisaatioPerustietoType input) {
+                return getClosestNimi(I18N.getLocale(), input);
+                
+            };
+        });
+        //sort
+        organisaatios = ordering.immutableSortedCopy(organisaatios);
+        
+
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
             hc.addItem(curOrg);
             hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));//curOrg.getNimiFi());
@@ -512,15 +498,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             return org.getNimiEn();
         }
         return "";
-    }
-    
-    private void sortAlphabetically() {
-        Collections.sort(organisaatios, new Comparator<OrganisaatioPerustietoType>() {
-            @Override
-            public int compare(OrganisaatioPerustietoType f1, OrganisaatioPerustietoType f2) {
-                return getClosestNimi(I18N.getLocale(), f1).compareTo(getClosestNimi(I18N.getLocale(), f2));
-            }
-        });
     }
     
     public void clearTreeSelection() {
