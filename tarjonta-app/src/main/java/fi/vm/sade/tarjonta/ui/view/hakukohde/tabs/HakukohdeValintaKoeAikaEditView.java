@@ -84,20 +84,30 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         mainLayout = new VerticalLayout();
 
         mainLayout.addComponent(buildOsoiteEditLayout());
-        mainLayout.addComponent(buildValintakoeAikaLayout());
-        
-        lisatietoja = UiUtil.textField(null);
-        lisatietoja.setWidth("482px");
-        lisatietoja.setInputPrompt(T("HakukohdeValintakoeViewImpl.lisatietojaValintakokeesta"));
-        mainLayout.addComponent(lisatietoja);
+        //mainLayout.addComponent(buildValintakoeAikaLayout());
 
-        lisaaBtn = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.lisaaBtn"),null);
-        mainLayout.addComponent(lisaaBtn);
+
+
 
         setCompositionRoot(mainLayout);
     }
 
+    private HorizontalLayout buildLisatietoLayout() {
+        HorizontalLayout lisaTietoLayout = new HorizontalLayout();
+
+        lisatietoja = UiUtil.textField(null);
+        lisatietoja.setWidth("482px");
+        lisatietoja.setInputPrompt(T("HakukohdeValintakoeViewImpl.lisatietojaValintakokeesta"));
+        lisaTietoLayout.addComponent(lisatietoja);
+
+        lisaaBtn = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.lisaaBtn"),null);
+        lisaTietoLayout.addComponent(lisaaBtn);
+        //lisaTietoLayout.setExpandRatio(lisatietoja,1.0f);
+        return lisaTietoLayout;
+    }
+
     private HorizontalLayout buildOsoiteEditLayout() {
+        VerticalLayout vl = new VerticalLayout();
         HorizontalLayout osoiteAddLayout = new HorizontalLayout();
 
         osoiteRiviTxt = UiUtil.textField(null);
@@ -150,7 +160,6 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
 
         postinumeroCombo.setImmediate(true);
 
-
         return osoiteAddLayout;
     }
 
@@ -160,7 +169,8 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         }
     }
 
-    private HorizontalLayout buildValintakoeAikaLayout() {
+    public VerticalLayout buildValintakoeAikaLayout() {
+        VerticalLayout vl = new VerticalLayout();
         HorizontalLayout valintakoeAikaLayout = new HorizontalLayout();
 
         alkupvm = new DateField();
@@ -174,8 +184,10 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         loppuPvm = new DateField();
         loppuPvm.setResolution(DateField.RESOLUTION_MIN);
         valintakoeAikaLayout.addComponent(loppuPvm);
+        vl.addComponent(valintakoeAikaLayout);
+        vl.addComponent(buildLisatietoLayout());
 
-        return valintakoeAikaLayout;
+        return vl;
     }
 
     private String T(String key) {
