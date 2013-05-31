@@ -98,9 +98,9 @@ public class TestTarjontaElements {
 
         String elements = ""
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box v-textfield-prompt\""
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 120px;\""
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 184px;\""
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<input type=\"checkbox\" value=\"on\" id=\"gwt-uid-1\" tabindex=\"0\""
         		+ ".*<label for=\"gwt-uid-1\">Näytä myös lakkautetut</label>"
