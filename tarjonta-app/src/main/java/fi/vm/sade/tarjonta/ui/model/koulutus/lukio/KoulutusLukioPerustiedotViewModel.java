@@ -46,8 +46,8 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * Data for comboxes (komo + lukiolinja) 
      */
     protected List<KoulutusmoduuliKoosteTyyppi> komos;
-    protected Set<KoulutuskoodiModel> koulutuskoodis;
-    protected Set<LukiolinjaModel> lukiolinjas;
+    protected List<KoulutuskoodiModel> koulutuskoodis;
+    protected List<LukiolinjaModel> lukiolinjas;
     protected LukiolinjaModel lukiolinja;
     /*
      * Other user selected form input data
@@ -323,9 +323,9 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     /**
      * @return the koulutuskoodis
      */
-    public Set<KoulutuskoodiModel> getKoulutuskoodis() {
+    public List<KoulutuskoodiModel> getKoulutuskoodis() {
         if (koulutuskoodis == null) {
-            koulutuskoodis = new HashSet<KoulutuskoodiModel>();
+            koulutuskoodis = new ArrayList<KoulutuskoodiModel>();
         }
         return koulutuskoodis;
     }
@@ -333,16 +333,16 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     /**
      * @param koulutuskoodis the koulutuskoodis to set
      */
-    public void setKoulutuskoodis(Set<KoulutuskoodiModel> koulutuskoodis) {
+    public void setKoulutuskoodis(List<KoulutuskoodiModel> koulutuskoodis) {
         this.koulutuskoodis = koulutuskoodis;
     }
 
     /**
      * @return the lukiolinjas
      */
-    public Set<LukiolinjaModel> getLukiolinjas() {
+    public List<LukiolinjaModel> getLukiolinjas() {
         if (lukiolinjas == null) {
-            lukiolinjas = new HashSet<LukiolinjaModel>();
+            lukiolinjas = new ArrayList<LukiolinjaModel>();
         }
 
         return lukiolinjas;
@@ -351,7 +351,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     /**
      * @param lukiolinjas the lukiolinjas to set
      */
-    public void setLukiolinjas(Set<LukiolinjaModel> lukiolinjas) {
+    public void setLukiolinjas(List<LukiolinjaModel> lukiolinjas) {
         this.lukiolinjas = lukiolinjas;
     }
 

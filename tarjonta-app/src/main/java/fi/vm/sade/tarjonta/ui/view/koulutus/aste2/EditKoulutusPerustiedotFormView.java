@@ -50,6 +50,9 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,6 +68,7 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField;
 import fi.vm.sade.tarjonta.ui.view.koulutus.NoKoulutusDialog;
 
@@ -86,7 +90,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private TarjontaPresenter presenter;
     private Map<KoulutusasteType, Set<Component>> selectedComponents;
     private BeanItemContainer<KoulutusohjelmaModel> bicKoulutusohjelma;
-    private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
+    private BeanItemContainer<MonikielinenTekstiModel> bicKoulutuskoodi;
     /*
      * Koodisto code (url).
      */
@@ -212,7 +216,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void initializeDataContainers() {
-        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, koulutusModel.getKoulutuskoodit());
+        bicKoulutuskoodi = new BeanItemContainer<MonikielinenTekstiModel>(MonikielinenTekstiModel.class, new ArrayList<MonikielinenTekstiModel>());
+        
         cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
 
         bicKoulutusohjelma = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, koulutusModel.getKoulutusohjelmat());
@@ -233,6 +238,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                         clearKomoLabels();
                     }
                     presenter.loadKoulutusohjelmat();
+                    Collections.sort(koulutusModel.getKoulutusohjelmat());
                     bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
                     disableOrEnableComponents(true);
                 }
@@ -250,6 +256,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         }
 
         presenter.loadKoulutuskoodit();
+        //sort
+        Collections.sort(koulutusModel.getKoulutuskoodit());
         bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
 
         if (koulutusModel.isLoaded()) {

@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
+import java.util.Collections;
+
 import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
@@ -190,6 +192,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                         clearKomoLabels();
                     }
                     lukioPresenter.loadLukiolinjas();
+                    Collections.sort(model.getLukiolinjas());
                     bicLukiolinjas.addAll(model.getLukiolinjas());
                     disableOrEnableComponents(true);
                     reload();
@@ -208,6 +211,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         }
 
         lukioPresenter.loadKoulutuskoodis();
+        Collections.sort(model.getKoulutuskoodis());
         bicKoulutuskoodi.addAll(model.getKoulutuskoodis());
 
         if (model.isLoaded()) {

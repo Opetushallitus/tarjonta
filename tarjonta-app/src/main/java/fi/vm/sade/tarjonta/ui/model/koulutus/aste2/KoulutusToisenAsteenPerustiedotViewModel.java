@@ -18,11 +18,9 @@ package fi.vm.sade.tarjonta.ui.model.koulutus.aste2;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -34,7 +32,6 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -45,6 +42,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Model holding basic information data for Koulutus.
@@ -58,8 +56,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
     private static final long serialVersionUID = 4511930754933045032L;
     private List<KoulutusmoduuliKoosteTyyppi> komos;
-    private Set<KoulutuskoodiModel> koulutuskoodit;
-    private Set<KoulutusohjelmaModel> koulutusohjelmat;
+    private List<KoulutuskoodiModel> koulutuskoodit;
+    private List<KoulutusohjelmaModel> koulutusohjelmat;
     private TarjontaTila tila;
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
@@ -132,8 +130,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setPohjakoulutusvaatimus(null);
         setOpetusmuoto(null);
         setOpetuskieli(null);
-        setKoulutuskoodit(new HashSet<KoulutuskoodiModel>());
-        setKoulutusohjelmat(new HashSet<KoulutusohjelmaModel>());
+        setKoulutuskoodit(new ArrayList<KoulutuskoodiModel>());
+        setKoulutusohjelmat(new ArrayList<KoulutusohjelmaModel>());
         setOpsuLinkki(null); //optional
         setYhtHenkEmail(null); //optional
         setYhtHenkKokoNimi(null); //optional
@@ -159,28 +157,28 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     /**
      * @return the koulutuskoodit
      */
-    public Set<KoulutuskoodiModel> getKoulutuskoodit() {
+    public List<KoulutuskoodiModel> getKoulutuskoodit() {
         return koulutuskoodit;
     }
 
     /**
      * @param koulutuskoodit the koulutuskoodit to set
      */
-    public void setKoulutuskoodit(Set<KoulutuskoodiModel> koulutuskoodit) {
+    public void setKoulutuskoodit(List<KoulutuskoodiModel> koulutuskoodit) {
         this.koulutuskoodit = koulutuskoodit;
     }
 
     /**
      * @return the koulutusohjelmat
      */
-    public Set<KoulutusohjelmaModel> getKoulutusohjelmat() {
+    public List<KoulutusohjelmaModel> getKoulutusohjelmat() {
         return koulutusohjelmat;
     }
 
     /**
      * @param koulutusohjelmat the koulutusohjelmat to set
      */
-    public void setKoulutusohjelmat(Set<KoulutusohjelmaModel> koulutusohjelmat) {
+    public void setKoulutusohjelmat(List<KoulutusohjelmaModel> koulutusohjelmat) {
         this.koulutusohjelmat = koulutusohjelmat;
     }
 
