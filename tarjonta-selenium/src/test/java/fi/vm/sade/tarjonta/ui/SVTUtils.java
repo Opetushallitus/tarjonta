@@ -566,7 +566,7 @@ public class SVTUtils {
             return hit;
     }
 
-    private Boolean thisDebug = true;
+    private Boolean thisDebug = false;
     public Boolean checkEasyHitElements(String element, Boolean switched)
     {
             Boolean hit = false;
