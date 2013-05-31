@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.Assert;
@@ -328,10 +330,32 @@ public class SVTUtils {
 		return driver.findElement(By.xpath("//*[contains(@id, '" + text + "')]"));
 	}
 
+	public String getPageSourceFromFile() throws IOException
+	{
+		String fileName = System.getProperty("user.home") + "/page.txt";
+		String page = "";
+		page = readFile(fileName);
+		return page;
+	}
+
+	private String readFile( String file ) throws IOException {
+		BufferedReader reader = new BufferedReader( new FileReader (file));
+		String         line = null;
+		StringBuilder  stringBuilder = new StringBuilder();
+		String         ls = System.getProperty("line.separator");
+
+		while( ( line = reader.readLine() ) != null ) {
+			stringBuilder.append( line );
+			stringBuilder.append( ls );
+		}
+
+		return stringBuilder.toString();
+	}
+
 	public void sendPageToFile(WebDriver driver)
 	{
 		String pageSource = driver.getPageSource();
-		writeToFile("C:/tmp/page.txt", pageSource);
+		writeToFile(System.getProperty("user.home") + "/page.txt", pageSource);
 		System.out.println("page.txt");
 	}
 
@@ -386,4 +410,225 @@ public class SVTUtils {
 		System.out.println(versio);
 	}
 
+    //////////////// START //////////////////////////////////////
+    // regex is giving unexplained false -> this long version
+    private Boolean missingElement = false;
+    private Boolean tryFind = false;
+    private String cutPage = "";
+    private String wholePage = "";
+    private Map kMap = new HashMap() ;
+    public Boolean checkElements(WebDriver driver, String elements, Boolean switched)
+    {
+            Boolean ok = true;
+            String page = "";
+            if (readPageFromFile)
+            {
+                    try {
+                            page = getPageSourceFromFile();
+                    } catch (IOException e) {
+                            e.printStackTrace();
+                    }
+            }
+            else
+            {
+                    page = driver.getPageSource();
+            }
+            cutPage = page;
+            wholePage = page;
+            String elementArray[] = elements.split("\\.\\*");
+            for (int j = 0; j < elementArray.length; j++) {
+                    String element = elementArray[j];
+                    // Handle KPL syntax
+                    if (element.indexOf("KPL") > 0)
+                    {
+                            int count = Integer.parseInt(element.split("KPL")[0]);
+                            int found = page.split(element.split("KPL")[1]).length - 1;
+                            if (found != count)
+                            {
+                                    System.out.println("Running ERROR missing elements: count=" + count
+                                                    + " found=" + found + " element=" + element);
+                                    missingElement = true;
+                                    ok = false;
+                            }
+                            else
+                            {
+                                    continue;
+                            }
+                    }
+
+                    // Handle elements one by one
+                    tryFind = true;
+                    if (! checkEasyHitElements(element, switched))
+                    {
+                            if (! checkDottedElements(element, switched))
+                            {
+                                    ok = false;
+                            }
+                    }
+            }
+            if (! ok) { this.sendPageToFile(driver); }
+            return ok;
+    }
+
+    public Boolean checkDottedElements(String element, Boolean switched)
+    {
+            if (! tryFind) { return false; }
+
+            Boolean hit = false;
+            Boolean debug = false;
+            Boolean getOut = false;
+            if (cutPage.indexOf(element) < 0)
+            {
+                    String shortElement = element;
+                    Boolean failing = true;
+                    String lastChar = "";
+                    String endString = "";
+                    String dotPage = "";
+                    Boolean GetBack = false;
+                    int dotCount = 0;
+                    while (failing && shortElement.length() > 0)
+                    {
+                            lastChar = shortElement.substring(shortElement.length() - 1);
+                            endString = lastChar + endString;
+                            if (lastChar.equals("."))
+                            {
+                                    GetBack = true;
+                                    dotCount++;
+                            }
+                            else
+                            {
+                                    GetBack = false;
+                                    dotCount = 0;
+                            }
+                            shortElement = shortElement.substring(0, shortElement.length() - 1);
+                            if (debug) { System.out.println("DEBUG shortElement=" + shortElement); }
+                            if (cutPage.indexOf(shortElement) > 0)
+                            {
+                                    if (debug) { System.out.println("DEBUG lastChar=" + lastChar
+                                                    + " GetBack=" + GetBack + " dotCount=" + dotCount); }
+                                    if (GetBack)
+                                    {
+                                            // Loop for 14 dotPage canditates
+                                            String dotPageArray[] = cutPage.split(shortElement);
+                                            for (int i = 1; i < dotPageArray.length; i++) {
+                                                    dotPage = dotPageArray[i];
+                                                    if (debug) { System.out.println("DEBUG i=" + i + " dotPage40=" + dotPage.substring(0, 40)); }
+                                                    dotPage = dotPage.substring(0, dotCount);
+                                                    String shortElement2 = shortElement + dotPage + endString.substring(dotCount);
+                                                    if (debug) { System.out.println("DEBUG dotPage=" + dotPage + " endString=" + endString);
+                                                    System.out.println("DEBUG shortElement2=" + shortElement2); }
+                                                    if (cutPage.indexOf(shortElement2) > 0 && dotCount > 0) {
+                                                            checkEasyHitElements(shortElement2, switched);
+                                                            if (debug) { System.out.println("DEBUG out 1 index=" + cutPage.indexOf(shortElement2)); }
+                                                            return true; }
+//                                                  if (checkDottedElements(shortElement2, page) && dotCount > 0) {
+//                                                          System.out.println("DEBUG out 2");
+//                                                          return ok; }
+                                            }
+                                            GetBack = false;
+                                            dotCount = 0;
+                                            endString = "";
+                                    }
+                                    else
+                                    {
+                                            failing = false;
+                                            System.out.println("Running ERROR finding element=" + shortElement);
+                                    }
+                            }
+                    }
+                    if (! getOut)
+                    {
+                            if (wholePage.indexOf(element) > 0)
+                            {
+                                    System.out.println("Running ERROR switched element: k="
+                                                    + wholePage.indexOf(element) + " element=" + element);
+                            }
+                            else
+                            {
+                                    if (element.indexOf(".") > 0)
+                                    {
+                                            String partArray[] = element.split("\\.");
+                                            String part1 = partArray[0].toString();
+                                            String part9 = partArray[partArray.length - 1].toString();
+                                            mapPrint(part1);
+                                            mapPrint(part9);
+                                    }
+                                    System.out.println("Running ERROR missing element=" + element);
+                            }
+                            hit = false;
+//                          missingElement = true;
+                    }
+            }
+            else
+            {
+                    hit = true;
+            }
+            return hit;
+    }
+
+    private Boolean thisDebug = true;
+    public Boolean checkEasyHitElements(String element, Boolean switched)
+    {
+            Boolean hit = false;
+            int hitIndex = 0;
+            if (cutPage.indexOf(element) > 0)
+            { // OK
+                    hitIndex = wholePage.length() - cutPage.length() + cutPage.indexOf(element);
+                    if (! missingElement && thisDebug)
+                    {
+                            System.out.println("Running DEBUG: index=" + hitIndex + " element=" + element);
+                    }
+                    kMap.put(hitIndex + "", element);
+                    cutPage = cutPage.substring(cutPage.indexOf(element) + element.length());
+                    hit = true;
+            }
+            else
+            {
+                    if (wholePage.indexOf(element) > 0)
+                    {
+                            mapPrint(element);
+                            tryFind = false;
+                    }
+            }
+            return hit;
+    }
+
+    public void mapPrint(String element)
+    {
+            if (wholePage.indexOf(element) > 0)
+            {
+                    int k = wholePage.indexOf(element);
+                    int count = wholePage.split(element).length - 1;
+                    System.out.println("Running ERROR switched element: k=" + k + " count=" + count + " element=" + element);
+                    if (count > 1)
+                    {
+                            String elementArray[] = wholePage.split(element);
+                            k = 0;
+                            for (int i = 0; i + 1 < elementArray.length; i++) {
+                                    String part = elementArray[i];
+                                    k = k + part.length();
+                                    String add = "ADD";
+                                    if (   kMap.containsKey(k + "")
+                                            && (   element.indexOf(kMap.get(k + "").toString()) > -1
+                                                    || kMap.get(k + "").toString().indexOf(element) > -1))
+                                    {
+                                            add = "OK";
+                                    }
+                                    if (elementArray.length < 10 || add.equals("ADD"))
+                                    {
+                                            System.out.println("Running                         k=" + k + " " + add);
+                                    }
+                                    k = k + element.length();
+                            }
+                    }
+            }
+    }
+
+    private Boolean readPageFromFile = false;
+    public void skipLoading(Boolean readPageFromFileParam)
+    {
+            readPageFromFile = readPageFromFileParam;
+    }
+
+    //////////////// END //////////////////////////////////////
 }
