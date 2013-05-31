@@ -69,9 +69,9 @@ public class TarjontaAdminServiceTest {
 
     @Autowired
     private TarjontaAdminService adminService;
-    @Autowired 
+    @Autowired
     private TarjontaPublicService publicService;
-    
+
     @Autowired
     private TarjontaFixtures fixtures;
     @Autowired
@@ -143,7 +143,7 @@ public class TarjontaAdminServiceTest {
         assertEquals(1, toteutus.getYhteyshenkilos().size());
         PaivitaKoulutusTyyppi update= createPaivitaKoulutusTyyppi();
         update.setVersion(toteutus.getVersion());
-        
+
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
@@ -157,9 +157,9 @@ public class TarjontaAdminServiceTest {
         kysely.setOid(SAMPLE_KOULUTUS_OID);
         LueKoulutusVastausTyyppi vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
-        
+
         PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
-        
+
         //update with illegal version
         update.setVersion(100L);
         try {
@@ -179,7 +179,7 @@ public class TarjontaAdminServiceTest {
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
     }
-    
+
     @Test
     public void testUpdateKoulutusYhteyshenkilo() {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
@@ -202,30 +202,30 @@ public class TarjontaAdminServiceTest {
 
     	//Oid to be used in the test to identify a komoto
     	String oid = "54.54.54.54.54.54";
-    	
-    	
+
+
     	//Testing removal of the sample komoto. It does not have a hakukohde so removal should succeed
     	int komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
-    	
+
     	try {
     		this.adminService.poistaKoulutus(SAMPLE_KOULUTUS_OID);
     		assertTrue(komotosOriginalSize == (this.koulutusmoduuliToteutusDAO.findAll().size() + 1));
     	} catch (Exception ex) {
     		fail();
     	}
-        
-    	
+
+
     	//Creating a komoto with hakukohde (this can not be removed so removal should fail)
     	LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
         lisaaKoulutus.setOid(oid);
         LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
-        
+
         Hakukohde hakukohde = fixtures.createHakukohde();
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
         hakukohde.addKoulutusmoduuliToteutus(komoto);
-        
+
         Haku haku = fixtures.createHaku();
-        
+
         Hakuaika hakuaika = new Hakuaika();
         Calendar alkuPvm = Calendar.getInstance();//.getTime();
         hakuaika.setAlkamisPvm(alkuPvm.getTime());
@@ -238,7 +238,7 @@ public class TarjontaAdminServiceTest {
         hakukohde = this.hakukohdeDAO.insert(hakukohde);
         komoto.addHakukohde(hakukohde);
         this.koulutusmoduuliToteutusDAO.update(komoto);
-        
+
         komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
         try {
         	this.adminService.poistaKoulutus(oid);
@@ -325,10 +325,10 @@ public class TarjontaAdminServiceTest {
 
         return valintakoe;
     }
-    
+
     @Test
     public void testCRUDHakukohde() {
-    	
+
     	String oid = "56.56.56.57.57.57";
     	String oid2 = "56.56.56.57.57.58";
     	//Creating a hakukohde with an ongoing hakuaika. Removal should fail
@@ -348,9 +348,9 @@ public class TarjontaAdminServiceTest {
         haku = this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
         this.hakukohdeDAO.insert(hakukohde);
-        
+
         int originalSize = this.hakukohdeDAO.findAll().size();
-        
+
         try {
         	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
         	hakukohdeT.setOid(oid);
@@ -360,8 +360,8 @@ public class TarjontaAdminServiceTest {
         	log.debug("Exception thrown");
         }
         assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
-        
-        
+
+
         //Creating a hakukohde with a hakuaika in the future. Removal should succeed
         hakukohde = fixtures.createHakukohde();
         hakukohde.setOid(oid2);
@@ -378,9 +378,9 @@ public class TarjontaAdminServiceTest {
         haku = this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
         this.hakukohdeDAO.insert(hakukohde);
-        
+
         originalSize = this.hakukohdeDAO.findAll().size();
-        
+
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(oid2);
         LueHakukohdeVastausTyyppi vastaus = this.publicService.lueHakukohde(kysely);
@@ -415,7 +415,7 @@ public class TarjontaAdminServiceTest {
                 || oppiaine.getPainokerroin() == dto.getPainotettavatOppiaineet().get(1).getPainokerroin());
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
         assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
-        
+
         dto.getPainotettavatOppiaineet().remove(0);
         dto=this.adminService.paivitaHakukohde(dto);
         assertEquals(1,dto.getPainotettavatOppiaineet().size());
@@ -424,7 +424,7 @@ public class TarjontaAdminServiceTest {
 //        assertEquals(oppiaine2.getPainokerroin(),dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
         assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
-        
+
         dto.getPainotettavatOppiaineet().remove(0);
         dto=this.adminService.paivitaHakukohde(dto);
         assertEquals(0,dto.getPainotettavatOppiaineet().size());
@@ -437,7 +437,7 @@ public class TarjontaAdminServiceTest {
         } catch (Exception ex) {
             fail();
         }
-        
+
     }
 
     @Test
@@ -459,14 +459,14 @@ public class TarjontaAdminServiceTest {
         assertEquals(KOULUTUSKOODI, komo.getKoulutusKoodi());
 
     }
-    
+
     @Test
     public void testLisaaLukiokoulutusmoduuliHappyPath() {
         String oidParent = "oid:" + System.currentTimeMillis();
         String oidChild = oidParent + 2;
         String LUKIOTUTKINTO = "yoTutkinto11";
         String LUKIOLINJA = "jokuMediaLinja";
-        
+
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliParentT.setOid(oidParent);
         koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
@@ -474,7 +474,7 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
-        
+
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliChildT.setOid(oidChild);
         koulutusmoduuliChildT.setParentOid(oidParent);
@@ -483,20 +483,20 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
-        
+
         Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
         assertTrue(child.getOid().equals(oidChild));
     }
-    
+
     @Test
     public void testLisaaLukiokoulutusHappyPath() {
         String oidParent = "oid:" + System.currentTimeMillis();
         String oidChild = oidParent + 2;
         String komotoOid = oidChild + 2;
-        
+
         String LUKIOTUTKINTO = "yoTutkinto11";
         String LUKIOLINJA = "jokuMediaLinja";
-        
+
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliParentT.setOid(oidParent);
         koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
@@ -504,7 +504,7 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
-        
+
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliChildT.setOid(oidChild);
         koulutusmoduuliChildT.setParentOid(oidParent);
@@ -513,10 +513,10 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
-        
+
         Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
         assertTrue(child.getOid().equals(oidChild));
-        
+
         LisaaKoulutusTyyppi koulutusTyyppi = createSampleKoulutus();
         koulutusTyyppi.setOid(komotoOid);
         koulutusTyyppi.setKoulutusKoodi(createKoodi(LUKIOTUTKINTO));
@@ -524,12 +524,12 @@ public class TarjontaAdminServiceTest {
         koulutusTyyppi.setLukiolinjaKoodi(createKoodi(LUKIOLINJA));
         koulutusTyyppi.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutus(koulutusTyyppi);
-        
+
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
         assertTrue(komoto != null);
     }
-    
-    
+
+
 
     private Date getDateFromString(String dateStr) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -699,7 +699,7 @@ public class TarjontaAdminServiceTest {
 
         return paivitaKoulutus;
     }
-    
+
     //Testing that komoto hierarchy works as expected
     @Test
     public void testKomotoHierarchyUpdate() {
@@ -710,26 +710,27 @@ public class TarjontaAdminServiceTest {
         String KOMOTO_OID2 = KOMOTO_OID1 + "1";
         String PARENT_KOMOTO_OID1 = KOMOTO_OID1 + "2";
         createSimpleKomotoHierarchy(KOMOTO_OID1, KOMOTO_OID2, PARENT_KOMOTO_OID1, TARJOAJA_OID1, POHJAKOULUTUSVAATIMUS);
-        
+
         //Creating a simple komoto hierarchy with parent komoto and two child komotos for another tarjoaja
         String TARJOAJA_OID2 = "jokin.tarjoaja.oid.2";
         String KOMOTO_OID3= "jokin.KOMOTO.oid.1.1.12.3." + System.currentTimeMillis();
         String KOMOTO_OID4 = KOMOTO_OID3 + "1";
         String PARENT_KOMOTO_OID2 = KOMOTO_OID3 + "2";
         createSimpleKomotoHierarchy(KOMOTO_OID3, KOMOTO_OID4, PARENT_KOMOTO_OID2, TARJOAJA_OID2, POHJAKOULUTUSVAATIMUS);
-        
-        //Reading a child komoto from the first komoto hierarchy and updating its koulutuksenAlkamisPvm (a parent komoto field) 
+
+        //Reading a child komoto from the first komoto hierarchy and updating its koulutuksenAlkamisPvm (a parent komoto field)
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
         kysely.setOid(KOMOTO_OID1);
         LueKoulutusVastausTyyppi vastaus = this.publicService.lueKoulutus(kysely);
         Calendar calDate = Calendar.getInstance();
-        calDate.set(Calendar.MONTH, calDate.get(Calendar.MONDAY) + 1); //Changing the month of the date
+        calDate.set(Calendar.DAY_OF_MONTH, 11); //Changing the day of the month to "11"
+        calDate.set(Calendar.MONTH, calDate.get(Calendar.MONTH) + 1); //Changing the month of the date
         Date updatedAlkamisPvm = calDate.getTime();
         PaivitaKoulutusTyyppi paivita = convertLueToPaivita(vastaus);
         paivita.setKoulutuksenAlkamisPaiva(updatedAlkamisPvm);
         paivita.setVersion(vastaus.getVersion());
         adminService.paivitaKoulutus(paivita);
-        
+
         //Verifying that all komotos in the hierarchy have the updated date
         LueKoulutusKyselyTyyppi kysely1 = new LueKoulutusKyselyTyyppi();
         kysely1.setOid(KOMOTO_OID1);
@@ -741,13 +742,13 @@ public class TarjontaAdminServiceTest {
         kysely1.setOid(PARENT_KOMOTO_OID1);
         komoto = publicService.lueKoulutus(kysely1);
         assertTrue(komoto.getKoulutuksenAlkamisPaiva().getMonth() == calDate.get(Calendar.MONTH));
-        
+
         //Verifying that a komoto in the other hierarchy has not been updated
         kysely1.setOid(KOMOTO_OID3);
         komoto = publicService.lueKoulutus(kysely1);
         assertTrue(komoto.getKoulutuksenAlkamisPaiva().toGregorianCalendar().get(Calendar.MONTH) != calDate.get(Calendar.MONTH));
     }
-    
+
     private PaivitaKoulutusTyyppi convertLueToPaivita(LueKoulutusVastausTyyppi vastaus) {
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         paivita.setKesto(vastaus.getKesto());
@@ -771,14 +772,14 @@ public class TarjontaAdminServiceTest {
         parent.getAlamoduuliList().add(child);
         koulutusmoduuliDAO.insert(parent);
         KoulutusmoduuliToteutus komotoChild1 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid1, pohjakoulutusvaatimus);
-   
+
         koulutusmoduuliToteutusDAO.insert(komotoChild1);
         KoulutusmoduuliToteutus komotoChild2 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid2, pohjakoulutusvaatimus);
         koulutusmoduuliToteutusDAO.insert(komotoChild2);
         KoulutusmoduuliToteutus komotoParent = createKomotoWithKomoTarjoajaPohjakoulutus(parent, tarjoajaOid, parentKomotoOid, pohjakoulutusvaatimus);
         koulutusmoduuliToteutusDAO.insert(komotoParent);
     }
-    
+
     private KoulutusmoduuliToteutus createKomotoWithKomoTarjoajaPohjakoulutus(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid, String pohjakoulutusvaatimus) {
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
@@ -796,7 +797,7 @@ public class TarjontaAdminServiceTest {
         komoto.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return komoto;
     }
-    
+
     private List<KoodistoKoodiTyyppi> createKoodistoList(String koodiUri) {
         List<KoodistoKoodiTyyppi> opetusmuotos = new ArrayList<KoodistoKoodiTyyppi>();
         opetusmuotos.add(createKoodi(koodiUri));
