@@ -277,7 +277,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
         hakuAikaLabel = addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaCombo());
 
-        addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
+        //OVT-4671, agreed that hakukelpoisuus vaatimus is removed from form.
+        //addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText", buildValinnoissaKaytettavatAloitusPaikat());
