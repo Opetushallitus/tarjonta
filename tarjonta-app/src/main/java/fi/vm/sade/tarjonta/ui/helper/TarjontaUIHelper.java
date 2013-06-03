@@ -603,11 +603,10 @@ public class TarjontaUIHelper {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
         }
 
-
         //fi default fallback
         if ((teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase("fi")) {
-            final Locale locale1 = new Locale("fi");
-            teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale1);
+            final Locale fallbackFi = new Locale("fi");
+            teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), fallbackFi);
         }
 
         //get first existing

@@ -604,10 +604,17 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
 
         //if parent komo does not exist, we are reading a parent komoto, thus the koulutusohjelmanvalinta field is in the komoto itself
+
+        System.out.println("parent : " + parentKomo);
         if (parentKomo == null) {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
             result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
 
+            if (result.getKoulutusmoduuli().getNimi() != null && !result.getKoulutusmoduuli().getNimi().getTeksti().isEmpty()) {
+                System.out.println("child name : " + result.getKoulutusmoduuli().getNimi().getTeksti().size());
+            } else {
+                System.out.println("no child name ");
+            }
             //if parent komo exists we read the koulutusohjelmanValinta field from the parent (tutkinto) komoto,
             //and merging the parent and actual komo to get the komo fields.
         } else {
@@ -770,13 +777,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         criteria.setKoulutustyyppi(kysely.getKoulutustyyppi());
-        
+
         if (kysely.getHakusana() != null) {
             //search by search word
             criteria.setNimiQuery(kysely.getHakusana().getHakusana());
             criteria.setKieliUri(kysely.getHakusana().getKieliUri());
         }
-        
+
         criteria.setTarjoajaOids(kysely.getTarjoajaOids());
 
         HaeKoulutusmoduulitVastausTyyppi vastaus = new HaeKoulutusmoduulitVastausTyyppi();
@@ -790,7 +797,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             kooste.setOid(curKomo.getOid());
             kooste.setKoulutuskoodiUri(curKomo.getKoulutusKoodi());
             kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
-            kooste.setKoulutusmoduulinNimi( EntityUtils.copyFields(curKomo.getNimi()));
+            kooste.setKoulutusmoduulinNimi(EntityUtils.copyFields(curKomo.getNimi()));
             tulos.setKoulutusmoduuli(kooste);
 
             vastaus.getKoulutusmoduuliTulos().add(tulos);

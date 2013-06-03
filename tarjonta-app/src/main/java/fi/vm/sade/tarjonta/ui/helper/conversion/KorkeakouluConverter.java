@@ -366,10 +366,13 @@ public class KorkeakouluConverter extends KoulutusConveter {
     private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
         Preconditions.checkNotNull(tyyppi, "TutkintoohjelmaTyyppi object for tutkinto-ohjelma cannot be null.");
         Preconditions.checkNotNull(tyyppi.getUlkoinenTunniste(), "UlkoinenTunniste (numeric value) for tutkinto-ohjelma cannot be null.");
+        Preconditions.checkNotNull(tyyppi.getNimi(), "Tutkinto-ohjelma name object cannot be null.");
+        Preconditions.checkArgument(!tyyppi.getNimi().getTeksti().isEmpty(), "No tutkinto-ohjelma names for KOMO.");
 
         UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
         TutkintoohjelmaModel tutkintoohjelma = builder.build(tyyppi.getNimi(), locale);
         tutkintoohjelma.setKoodi(tyyppi.getUlkoinenTunniste());
+
 
         MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
         Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");

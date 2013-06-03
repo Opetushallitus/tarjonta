@@ -272,7 +272,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
 
         Capture<LisaaKoulutusTyyppi> localeCapture = new Capture<LisaaKoulutusTyyppi>();
         LisaaKoulutusVastausTyyppi lisaaKoulutusVastausTyyppi = new LisaaKoulutusVastausTyyppi();
-        lisaaKoulutusVastausTyyppi.setVersion(VERSION_ID +1);
+        lisaaKoulutusVastausTyyppi.setVersion(VERSION_ID + 1);
         /*
          * Expect
          */
@@ -381,8 +381,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         koulutuksenKestoTyyppi.setYksikko("yksikko");
         vastaus.setKesto(koulutuksenKestoTyyppi);
         vastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
-        // vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
-        vastaus.setKoulutusmoduuli(new KoulutusmoduuliKoosteTyyppi());
 
         vastaus.setKoulutusohjelmanValinta(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KoulutusohjelmanValinta"));
         vastaus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);

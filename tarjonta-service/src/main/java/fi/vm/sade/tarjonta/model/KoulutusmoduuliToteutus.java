@@ -44,6 +44,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import java.math.BigInteger;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -173,8 +174,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Date lastUpdateDate;
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+ 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_pohjakoulutusvaatimus", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    @Column(name="kk_pohjakoulutusvaatimus")
+    private Set<KoodistoUri> kkPohjakoulutusvaatimus = new HashSet<KoodistoUri>();
 
-
+    @Column(name="hinta")
+    private BigInteger hinta;
+    
     public KoulutusmoduuliToteutus() {
         super();
     }
@@ -723,5 +732,33 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
+    }
+
+    /**
+     * @return the kkPohjakoulutusvaatimus
+     */
+    public Set<KoodistoUri> getKkPohjakoulutusvaatimus() {
+        return kkPohjakoulutusvaatimus;
+    }
+
+    /**
+     * @param kkPohjakoulutusvaatimus the kkPohjakoulutusvaatimus to set
+     */
+    public void setKkPohjakoulutusvaatimus(Set<KoodistoUri> kkPohjakoulutusvaatimus) {
+        this.kkPohjakoulutusvaatimus = kkPohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the hinta
+     */
+    public BigInteger getHinta() {
+        return hinta;
+    }
+
+    /**
+     * @param hinta the hinta to set
+     */
+    public void setHinta(BigInteger hinta) {
+        this.hinta = hinta;
     }
 }

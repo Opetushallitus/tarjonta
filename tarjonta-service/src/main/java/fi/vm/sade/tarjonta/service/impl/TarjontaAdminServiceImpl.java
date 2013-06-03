@@ -511,8 +511,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
-        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
-        vastaus.setVersion(toteutus.getVersion());
+        
+        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();      
+        vastaus.setVersion(toteutus.getVersion()); //optimistic logging
     
         return vastaus;
     }
