@@ -20,11 +20,13 @@ import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Some basic functionality for REST DTO converters.
@@ -32,6 +34,14 @@ import java.util.Set;
  * @author mlyly
  */
 public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends AbstractFromDomainConverter<FROM, TO> {
+
+    @Autowired(required = true)
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
+    public TarjontaKoodistoHelper getTarjontaKoodistoHelper() {
+        return tarjontaKoodistoHelper;
+    }
+
 
     public Map<String, String> convertMonikielinenTekstiToMap(MonikielinenTeksti s) {
         if (s == null) {
@@ -41,7 +51,8 @@ public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends Abs
         Map<String, String> t = new HashMap<String, String>();
 
         for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
-            t.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
+            t.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(tekstiKaannos.getKieliKoodi()),
+                    tekstiKaannos.getArvo());
         }
 
         return t;

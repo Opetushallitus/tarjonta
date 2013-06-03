@@ -42,6 +42,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private Map<String, String> _lisatiedot;
     private Map<String, String> _sorakuvaus;
     private Map<String, String> _valintaperustekuvaus;
+    private Map<String, String> _hakukelpoisuusvaatimus;
     private List<List<String>> _painotettavatOppiaineet;
     private boolean _kaytetaanHaunPaattymisenAikaa;
     private List<HakukohdeLiiteDTO> _liitteet;
@@ -205,4 +206,13 @@ public class HakukohdeDTO extends BaseRDTO {
     public void setLiitteet(List<HakukohdeLiiteDTO> _liitteet) {
         this._liitteet = _liitteet;
     }
+
+    public Map<String, String> getHakukelpoisuusvaatimus() {
+        return _hakukelpoisuusvaatimus;
+    }
+
+    public void setHakukelpoisuusvaatimus(Map<String, String> _hakukelpoisuusvaatimus) {
+        this._hakukelpoisuusvaatimus = _hakukelpoisuusvaatimus;
+    }
+
 }

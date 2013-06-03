@@ -18,25 +18,23 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.SearchKoodisVersioSelectionType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import net.sf.ehcache.CacheManager;
 
 /**
  * Koodisto related helpers used from UI and Servier side.
@@ -60,33 +58,66 @@ public class TarjontaKoodistoHelper {
     @Value("${koodisto.language.sv.uri:kieli_sv}")
     private String langKoodiUriSv;
 
-//    @Autowired
-//    @Qualifier(value = "ehcacheTarjonta")
-//    private CacheManager _cacheManager;
-
     public TarjontaKoodistoHelper() {
         LOG.info("*** TarjontaKoodistoHelper ***");
     }
 
-//    @Scheduled(cron = "0 */5 * * * ?")
-//    public void printCacheStats() {
-//        LOG.info("CACHE STATISTICS (name size/hits/misses)");
-//
-//        if (_cacheManager == null) {
-//            LOG.info("  NO EHCACHE ... no stats!");
-//            return;
-//        }
-//
-//        for (String cacheName : _cacheManager.getCacheNames()) {
-//            LOG.info("UI ---    {} {}/{}/{}",
-//                    new Object[]{
-//                cacheName,
-//                _cacheManager.getCache(cacheName).getSize(),
-//                _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
-//                _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
-//            });
-//        }
-//    }
+    /**
+     * Try to convert any language related value to different "kieli" URI.
+     *
+     * <pre>
+     * kieliX --> kieliX
+     * EN,en -> kieli_en#1
+     * SV,sv -> kieli_sv#1
+     * FI,fi -> kieli_fi#1
+     *
+     * Search "kieli" koodisto for suitable value
+     *
+     * Finally, give up and return the provided value
+     * </pre>
+     *
+     * @param kieli
+     * @return
+     */
+    public String convertKielikoodiToKieliUri(String kieli) {
+        String result = kieli;
+
+        if (kieli == null) {
+            return result;
+        }
+
+        String tmp = kieli.toLowerCase();
+
+        if (tmp.startsWith("kieli")) {
+            // All "kieli" kodiisto values
+            result = kieli;
+        } else if (tmp.startsWith("fi")) {
+            // "fi", "FI", "fi_fi", ...
+            result = langKoodiUriFi;
+        } else if (tmp.startsWith("en")) {
+            // "EN", "en", "en_US", ...
+            result = langKoodiUriEn;
+        } else if (tmp.startsWith("sv")) {
+            result = langKoodiUriSv;
+        } else {
+            SearchKoodisCriteriaType skct = new SearchKoodisCriteriaType();
+            skct.setKoodiArvo(kieli);
+            skct.setKoodiVersioSelection(SearchKoodisVersioSelectionType.LATEST);
+
+            List<KoodiType> koodis = _koodiService.searchKoodis(skct);
+            for (KoodiType koodiType : koodis) {
+                if (koodiType.getKoodisto().getKoodistoUri().equals("kieli")) {
+                    result = koodiType.getKoodiUri();
+                    break;
+                }
+            }
+        }
+
+        LOG.info("convertKielikoodiToKieliUri({}) --> '{}'", kieli, result);
+
+        return result;
+    }
+
 
     /**
      * Construct versioned koodi uri (adds #version to the end of uri).
@@ -119,7 +150,7 @@ public class TarjontaKoodistoHelper {
     }
 
     /**
-     * Split koodi URI with (possible) version number to array of "uri" and "version". If no version can be extracted retirn "-1" as version.
+     * Split koodi URI with (possible) version number to array of "uri" and "version". If no version can be extracted return "-1" as version.
      *
      * @param koodiUriWithVersion
      * @return
@@ -298,6 +329,50 @@ public class TarjontaKoodistoHelper {
         type.setKoodiUri(getKoodiURIFromVersionedUri(koodiUriWithVersion));
         type.setVersio(getKoodiVersionFromVersionedUri(koodiUriWithVersion));
         return type;
+    }
+
+    /**
+     * Get koodisto relationa for given koodi.
+     *
+     * @param koodiUri
+     * @param targetKoodistoName
+     * @param suhteenTyyppiType
+     * @param alasuhde
+     * @return
+     */
+    public Collection<KoodiType> getKoodistoRelations(String koodiUri, String targetKoodistoName, SuhteenTyyppiType suhteenTyyppiType, boolean alasuhde) {
+        LOG.info("getKoodistoRelations(kuri={}, tkn={}, stt={}, as={})", new Object[] {koodiUri, targetKoodistoName, suhteenTyyppiType, alasuhde});
+
+        Collection<KoodiType> result = new HashSet<KoodiType>();
+
+        // Get koodi
+        KoodiType sourceKoodiType = getKoodiByUri(koodiUri);
+
+        // Create uri + version
+        KoodiUriAndVersioType koodi = getKoodiUriAndVersioTypeByKoodiUriAndVersion(createKoodiUriWithVersion(sourceKoodiType));
+
+        // Get relations
+        List<KoodiType> relatedKoodis = _koodiService.listKoodiByRelation(koodi, alasuhde, suhteenTyyppiType);
+        if (targetKoodistoName == null || targetKoodistoName.trim().isEmpty()) {
+            result.addAll(relatedKoodis);
+        } else {
+            // Select relations to target koodis
+            for (KoodiType relatedKoodi : relatedKoodis) {
+                LOG.info("  considering: {}", relatedKoodi.getKoodiUri());
+                if (targetKoodistoName.equals(relatedKoodi.getKoodisto().getKoodistoUri()))  {
+                    LOG.info("    -- OK!");
+                    result.add(relatedKoodi);
+                }
+            }
+        }
+
+        LOG.info("  --> result, koodi type {} relations: {}", koodiUri, result);
+        for (KoodiType koodiType : result) {
+            LOG.info("    {}", koodiType.getKoodiUri());
+        }
+
+        return result;
+
     }
 
 }
