@@ -79,11 +79,11 @@ public class ShowKoulutusViewTab extends CustomComponent {
      */
     public ShowKoulutusViewTab(final String language, final Locale locale) {
         Preconditions.checkNotNull(language, "Language cannot be null");
-        Preconditions.checkNotNull(presenter.getTarjoaja(), "Tarjoaja cannot be null");
-        Preconditions.checkNotNull(presenter.getTarjoaja().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
+        Preconditions.checkNotNull(presenter.getModel().getTarjoajaModel(), "Tarjoaja cannot be null");
+        Preconditions.checkNotNull(presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
         this.language = language;
         this.locale = getKoodistoLocale(locale);
-        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
+        this.context = OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid());
         final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
         layout.setMargin(true);
