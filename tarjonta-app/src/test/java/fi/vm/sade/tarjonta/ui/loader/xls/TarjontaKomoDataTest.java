@@ -44,7 +44,7 @@ public class TarjontaKomoDataTest {
         assertEquals(1, result.size());
         GenericRow next = result.iterator().next();
 
-        assertEquals("16031", next.getRelaatioKoodiarvo());
+        assertEquals("1603", next.getRelaatioKoodiarvo());
         assertEquals("321101", next.getKoulutuskoodiKoodiarvo());
         assertEquals("32", next.getKoulutusasteKoodiarvo());
         assertEquals("120", next.getLaajuusKoodiarvo());
