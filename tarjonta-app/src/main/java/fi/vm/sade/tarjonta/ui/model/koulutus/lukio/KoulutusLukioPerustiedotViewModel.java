@@ -37,11 +37,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
 
     private static final long serialVersionUID = 604308326420805144L;
 
-    /**
-     * for optimistic locking
-     */
-    private Long version;
-
     /*
      * Data for comboxes (komo + lukiolinja) 
      */
@@ -74,13 +69,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         clearModel();
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
+   
 
     /**
      * @return the koulutuksenAlkamisPvm

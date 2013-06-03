@@ -21,7 +21,6 @@ import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -35,12 +34,10 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
@@ -51,13 +48,8 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ShowKorkeakouluSummaryView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -102,7 +94,7 @@ public class TarjontaKorkeakouluPresenter {
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         LOG.debug("in saveKoulutus, tila : {}", tila);
-   
+
         /**
          * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
          */
@@ -114,6 +106,7 @@ public class TarjontaKorkeakouluPresenter {
          * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
          */
         KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
+        LOG.debug("In is loaded : {}", perustiedot.isLoaded());
 
         if (perustiedot.isLoaded()) {//update KOMOTO
             PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
@@ -121,8 +114,16 @@ public class TarjontaKorkeakouluPresenter {
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
                 LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
-                tarjontaAdminService.lisaaKoulutus(lisaa);
+
+                LOG.debug("old version ID : {}", lisaa.getVersion());
+                LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
+                Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
+
+                //TODO: load tutkinto komo
                 perustiedot.setKomotoOid(lisaa.getOid());
+                perustiedot.setVersion(lisaaKoulutus.getVersion());
+
+                LOG.debug("new version ID : {}", lisaa.getVersion());
             }
         }
     }
@@ -224,6 +225,7 @@ public class TarjontaKorkeakouluPresenter {
     }
 
     private void loadKomoto(final String komotoOid) {
+        LOG.debug("In loadKomoto : {}", komotoOid);
         getPerustiedotModel().clearModel();
         getKuvailevatTiedotModel().clearModel();
 

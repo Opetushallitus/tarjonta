@@ -39,7 +39,7 @@ public class SearchWordUtil {
         Map<String, StringBuilder> langKeywords = new HashMap<String, StringBuilder>();
         appendTyyppi(langKeywords, koulutus.getKoulutusKoodi());
         appendTyyppi(langKeywords, koulutus.getKoulutusohjelmaKoodi());
-        appendTyyppi(langKeywords, koulutus.getKoulutusaste());
+        //appendTyyppi(langKeywords, koulutus.getKoulutusaste());
 
         Map<String, String> outputLangKeywords = new HashMap<String, String>();
 

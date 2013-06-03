@@ -174,7 +174,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         tyyppi.setTarjoaja(organisatio.getOid());
         tyyppi.setOid(komotoOid);
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel().getKoulutusaste()));
+        //tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel().getKoulutusaste()));
         tyyppi.setKoulutusKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel()));
 
         //URI data example : "koulutusohjelma/1603#1"
@@ -195,7 +195,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji(), true, "koulutuslaji"));
         tyyppi.setViimeisinPaivittajaOid(model.getViimeisinPaivittajaOid());
         if (model.getViimeisinPaivitysPvm() != null) {
-        tyyppi.setViimeisinPaivitysPvm(model.getViimeisinPaivitysPvm());
+            tyyppi.setViimeisinPaivitysPvm(model.getViimeisinPaivitysPvm());
         } else {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
@@ -231,7 +231,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
-        model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+            model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
         }
         model2Aste.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         model2Aste.setKoulutuksenAlkamisPvm(
@@ -242,8 +242,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
-        
-        model2Aste.setKoulutusaste(convert(koulutus.getKoulutusaste()));
+
+        model2Aste.setKoulutusaste(convert(koulutus.getKoulutusmoduuli().getKoulutusasteUri()));
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
@@ -277,9 +277,15 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return model2Aste;
     }
 
-    private KoodiModel convert(KoodistoKoodiTyyppi koulutusaste) {
+    private KoodiModel convert(String uri) {
         KoodiModel koulutusAste = new KoodiModel();
-        koulutusAste.setKoodistoUri(koulutusaste.getUri());
+        koulutusAste.setKoodistoUri(uri);
+        return koulutusAste;
+    }
+
+    private KoodiModel convert(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        KoodiModel koulutusAste = new KoodiModel();
+        koulutusAste.setKoodistoUri(koodistoKoodiTyyppi.getUri());
         return koulutusAste;
     }
 

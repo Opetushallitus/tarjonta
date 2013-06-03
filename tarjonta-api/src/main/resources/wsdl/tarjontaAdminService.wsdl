@@ -218,7 +218,7 @@
     
     <wsdl:portType name="TarjontaAdminService">
         
-       <wsdl:documentation>
+        <wsdl:documentation>
             Palvelu hakujen yllapitoon.
         </wsdl:documentation>
 

@@ -150,7 +150,7 @@ public class BaseTarjontaTest {
 
     protected MonikielinenTekstiTyyppi convertToMonikielinenTekstiTyyppi(final String languageCode, final String text) {
         MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
-        tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppiTeksti(languageCode, text));
+        tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppi(languageCode, text));
 
         return tyyppi;
     }

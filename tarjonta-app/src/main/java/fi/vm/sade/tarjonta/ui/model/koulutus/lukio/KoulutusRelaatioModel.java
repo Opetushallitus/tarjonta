@@ -30,7 +30,10 @@ import java.util.Date;
 public class KoulutusRelaatioModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = -3444254965510159782L;
-
+    /**
+     * for optimistic locking
+     */
+    private Long version;
     /*
      * OID of the loaded enity.
      * Update database
@@ -71,7 +74,6 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      * Other info
      */
     public String koulutuskoodi; //6-numero koodi arvo
-    
     /*
      * Updated by
      */
@@ -339,5 +341,13 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
 
     public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
         this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

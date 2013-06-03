@@ -16,15 +16,12 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
-import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

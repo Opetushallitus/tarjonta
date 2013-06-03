@@ -692,11 +692,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
 
-        if (fromKoulutus.getKoulutusaste() != null) {
-            KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
-            koulutusaste.setUri(fromKoulutus.getKoulutusaste());
-            toKoulutus.setKoulutusaste(koulutusaste);
-        }
+//        if (fromKoulutus.getKoulutusaste() != null) {
+//            KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+//            koulutusaste.setUri(fromKoulutus.getKoulutusaste());
+//            toKoulutus.setKoulutusaste(koulutusaste);
+//        }
 
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
@@ -772,6 +772,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setKoulutustyyppi(kysely.getKoulutustyyppi());
         
         if (kysely.getHakusana() != null) {
+            //search by search word
             criteria.setNimiQuery(kysely.getHakusana().getHakusana());
             criteria.setKieliUri(kysely.getHakusana().getKieliUri());
         }
@@ -789,6 +790,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             kooste.setOid(curKomo.getOid());
             kooste.setKoulutuskoodiUri(curKomo.getKoulutusKoodi());
             kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
+            kooste.setKoulutusmoduulinNimi( EntityUtils.copyFields(curKomo.getNimi()));
             tulos.setKoulutusmoduuli(kooste);
 
             vastaus.getKoulutusmoduuliTulos().add(tulos);

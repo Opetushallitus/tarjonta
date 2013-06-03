@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import com.google.common.base.Preconditions;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -35,15 +39,21 @@ import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -52,6 +62,8 @@ import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
 @Transactional
 public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
+    @Autowired
+    private OIDService oidService;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
@@ -70,7 +82,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return koulutusmoduuliDAO.insert(moduuli);
 
     }
-    
+
     @Override
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli) {
 
@@ -107,6 +119,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case LUKIOKOULUTUS:
                 moduuli = handleLukiomoduuli(koulutus);
                 break;
+            case AMMATTIKORKEAKOULUTUS:
+            case YLIOPISTOKOULUTUS:
+                moduuli = handleKorkeakoulumoduuli(koulutus);
+                break;
+
             default:
                 throw new RuntimeException("Unsupported koulutustyyppi.");
         }
@@ -120,16 +137,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
-        KoulutusmoduuliToteutus response =  koulutusmoduuliToteutusDAO.insert(komotoModel);
-        
-        return response;
+        KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoModel);
+        return koulutusmoduuliToteutusDAO.findByOid(response.getOid());
     }
 
     private Koulutusmoduuli handleToisenAsteenModuuli(LisaaKoulutusTyyppi koulutus) {
-
-//        if (koulutus.getKoulutusohjelmaKoodi() == null) {
-//            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
-//        } else {
         Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
                 koulutus.getKoulutusKoodi().getUri(),
                 koulutus.getKoulutusohjelmaKoodi().getUri());
@@ -142,17 +154,12 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         //Handling the creation of the parent komoto
         handleParentKomoto(koulutus, moduuli);
-        //}
+
         return moduuli;
 
     }
 
     private Koulutusmoduuli handleLukiomoduuli(LisaaKoulutusTyyppi koulutus) {
-
-//        if (koulutus.getLukiolinjaKoodi() == null) {
-//            moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), null);
-//       } else {
-
         Koulutusmoduuli moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
 
         if (moduuli == null) {
@@ -161,60 +168,73 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                     + ", lukiolinja koodi : " + koulutus.getLukiolinjaKoodi().getUri());
         }
 
-        
         //Handling the creation of the parent komoto
         handleParentKomoto(koulutus, moduuli);
-        //}
 
         return moduuli;
     }
-    
+
+    private Koulutusmoduuli handleKorkeakoulumoduuli(LisaaKoulutusTyyppi koulutus) {
+        Preconditions.checkNotNull(koulutus, "LisaaKoulutusTyyppi cannot be null.");
+
+        Koulutusmoduuli komo = null;
+        if (koulutus.getKoulutusmoduuli() == null && koulutus.getKoulutusmoduuli().getOid() != null) {
+            komo = koulutusmoduuliDAO.findByOid(koulutus.getKoulutusmoduuli().getOid());
+        } else {
+            komo = koulutusmoduuliDAO.createKomoKorkeakoulu(koulutus.getKoulutusmoduuli());
+            this.koulutusmoduuliDAO.insert(komo);
+        }
+
+        return komo;
+    }
+
     /**
-     * Filtteröi monikieliset tekstit, poistaen kaikki jotka ovat tyhjiä ja eri kuin opetuskieli.
-     * 
+     * Filtteröi monikieliset tekstit, poistaen kaikki jotka ovat tyhjiä ja eri
+     * kuin opetuskieli.
+     *
      * @param pkt
      */
     private void filterKieliKoodis(PaivitaKoulutusTyyppi pkt) {
-    	Set<String> ret = new HashSet<String>();
-    	for (KoodistoKoodiTyyppi kkt : pkt.getOpetuskieli()) {
-    		ret.add(kkt.getUri());
-    	}
-    	
-    	List<MonikielinenTekstiTyyppi> mkts = new ArrayList<MonikielinenTekstiTyyppi>();
-    	
-    	try {
-    		// haetaan mkt:t looppaamalla getterit läpi (parempi olisi pitää mkt:t enum->string mapissa)
-			for (Method m : pkt.getClass().getMethods()) {
-				if (m.getName().startsWith("get")
-						&& m.getParameterTypes().length==0
-						&& m.getReturnType().equals(MonikielinenTekstiTyyppi.class)) {
-					MonikielinenTekstiTyyppi mtt = (MonikielinenTekstiTyyppi) m.invoke(pkt);
-					if (mtt!=null) {
-						mkts.add(mtt);
-						for (Teksti t : mtt.getTeksti()) {
-							if (t.getValue()!=null && t.getValue().trim().length()>0) {
-								ret.add(t.getKieliKoodi());
-							}
-						}
-					}
-					
-				}
-			}
-		} catch (Exception e) { // reflektiovirheitä varten, joita ei tietenkääns saisi tapahtua
-			throw new RuntimeException(e);
-		}
-        
+        Set<String> ret = new HashSet<String>();
+        for (KoodistoKoodiTyyppi kkt : pkt.getOpetuskieli()) {
+            ret.add(kkt.getUri());
+        }
+
+        List<MonikielinenTekstiTyyppi> mkts = new ArrayList<MonikielinenTekstiTyyppi>();
+
+        try {
+            // haetaan mkt:t looppaamalla getterit läpi (parempi olisi pitää mkt:t enum->string mapissa)
+            for (Method m : pkt.getClass().getMethods()) {
+                if (m.getName().startsWith("get")
+                        && m.getParameterTypes().length == 0
+                        && m.getReturnType().equals(MonikielinenTekstiTyyppi.class)) {
+                    MonikielinenTekstiTyyppi mtt = (MonikielinenTekstiTyyppi) m.invoke(pkt);
+                    if (mtt != null) {
+                        mkts.add(mtt);
+                        for (Teksti t : mtt.getTeksti()) {
+                            if (t.getValue() != null && t.getValue().trim().length() > 0) {
+                                ret.add(t.getKieliKoodi());
+                            }
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception e) { // reflektiovirheitä varten, joita ei tietenkääns saisi tapahtua
+            throw new RuntimeException(e);
+        }
+
         for (MonikielinenTekstiTyyppi mtt : mkts) {
-        	for (Iterator<Teksti> i = mtt.getTeksti().iterator(); i.hasNext();) {
-        		Teksti t = i.next();
-        		if (!ret.contains(t.getKieliKoodi())) {
-        			i.remove();
-        		}
-        	}
+            for (Iterator<Teksti> i = mtt.getTeksti().iterator(); i.hasNext();) {
+                Teksti t = i.next();
+                if (!ret.contains(t.getKieliKoodi())) {
+                    i.remove();
+                }
+            }
         }
 
     }
-    
+
     @Override
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
@@ -226,7 +246,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         if (model == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value(), oid);
         }
-        
+
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
         //Handling the creation or update of the parent (tutkinto) komoto
         handleParentKomoto(koulutus, moduuli);
@@ -283,10 +303,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     }
 
     private String generateOid() {
-        Random r = new Random();
-        long number = oidMin + ((long) (r.nextDouble() * (oidMax - oidMin)));
-        int checkDigit = ibmCheck(number);
-        return OID_PRE + number + checkDigit;
+        try {
+            return oidService.newOid(NodeClassCode.TEKN_5);
+        } catch (ExceptionMessage ex) {
+            throw new TarjontaBusinessException("OID service unavailable.", ex);
+        }
     }
 
     private int ibmCheck(Long oid) {
@@ -308,23 +329,22 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
      * updating the startDate to siblings of the komoto given in koulutus. 
      */
     /*private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
-        for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
+     for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
 
-            String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
-            List<KoulutusmoduuliToteutus> curKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
+     String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
+     List<KoulutusmoduuliToteutus> curKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
 
-            if (curKomotos == null) {
-                continue;
-            }
-            for (KoulutusmoduuliToteutus curKomoto : curKomotos) {
-                if (!curKomoto.getOid().equals(koulutus.getOid())) {
-                    curKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
-                    this.koulutusmoduuliToteutusDAO.update(curKomoto);
-                }
-            }
-        }
-    }*/
-
+     if (curKomotos == null) {
+     continue;
+     }
+     for (KoulutusmoduuliToteutus curKomoto : curKomotos) {
+     if (!curKomoto.getOid().equals(koulutus.getOid())) {
+     curKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+     this.koulutusmoduuliToteutusDAO.update(curKomoto);
+     }
+     }
+     }
+     }*/
     private boolean isNew(BaseEntity e) {
         // no good
         return (e.getId() == null);

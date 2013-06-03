@@ -37,7 +37,7 @@ public class ConvertKoulutusTyyppiToLisaaKoulutus {
         lisaaKoulutusTyyppi.setKuvailevatTiedot(koulutusTyyppi.getKuvailevatTiedot());
         lisaaKoulutusTyyppi.setKoulutusohjelmanValinta(koulutusTyyppi.getKoulutusohjelmanValinta());
         lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(koulutusTyyppi.getKoulutusohjelmaKoodi());
-        lisaaKoulutusTyyppi.setKoulutusaste(koulutusTyyppi.getKoulutusaste());
+        //lisaaKoulutusTyyppi.setKoulutusaste(koulutusTyyppi.getKoulutusaste());
         lisaaKoulutusTyyppi.setNimi(koulutusTyyppi.getNimi());
         lisaaKoulutusTyyppi.setOid(koulutusTyyppi.getOid());
         lisaaKoulutusTyyppi.setPainotus(koulutusTyyppi.getPainotus());

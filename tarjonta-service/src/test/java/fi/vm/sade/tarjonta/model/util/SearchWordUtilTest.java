@@ -83,7 +83,7 @@ public class SearchWordUtilTest {
 
         koodistoKoodiTyyppi2.getNimi().add(nimi3);
         koodistoKoodiTyyppi2.getNimi().add(nimi4);
-        tyyppi1.setKoulutusaste(koodistoKoodiTyyppi2);
+        //  tyyppi1.setKoulutusaste(koodistoKoodiTyyppi2);
     }
 
     /**
@@ -94,7 +94,10 @@ public class SearchWordUtilTest {
         Map<String, String> createSearchKeywords = SearchWordUtil.createSearchKeywords(tyyppi1);
         assertEquals(2, createSearchKeywords.size());
 
-        assertEquals("nimi1, nimi2", createSearchKeywords.get(LANG_CODE_FI));
-        assertEquals("name1, name2", createSearchKeywords.get(LANG_CODE_EN));
+//        assertEquals("nimi1, nimi2", createSearchKeywords.get(LANG_CODE_FI));
+//        assertEquals("name1, name2", createSearchKeywords.get(LANG_CODE_EN));
+
+        assertEquals("nimi1", createSearchKeywords.get(LANG_CODE_FI));
+        assertEquals("name1", createSearchKeywords.get(LANG_CODE_EN));
     }
 }

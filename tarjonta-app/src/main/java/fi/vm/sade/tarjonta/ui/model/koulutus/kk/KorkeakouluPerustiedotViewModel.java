@@ -164,6 +164,7 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          */
         setKoulutuskoodiModel(null);
         setTutkintoohjelma(null);
+        setAutocompleteTutkintoohjelma(null);
 
         /*
          * Koodisto service koodi data

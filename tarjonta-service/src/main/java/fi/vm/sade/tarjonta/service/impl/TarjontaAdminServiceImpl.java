@@ -512,6 +512,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
+        vastaus.setVersion(toteutus.getVersion());
+    
         return vastaus;
     }
 

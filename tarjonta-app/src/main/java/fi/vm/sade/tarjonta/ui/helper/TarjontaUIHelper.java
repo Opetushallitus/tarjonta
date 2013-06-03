@@ -1045,4 +1045,31 @@ public class TarjontaUIHelper {
         return getKoodistoRelationsForUris(koulutusastes,
                 new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
+
+    /**
+     * Get data from koulutus koodi relations.
+     *
+     * Return Kooditypes from the relations to koulutuskoodi: Koulutusaste,
+     * Koulutusala, Opintoala, Tutkinto, EQF, Opintojen laajuus tyyppi
+     *
+     * @return
+     */
+    public Collection<KoodiType> getKoulutusRelations(String koodiUri) {
+        Preconditions.checkNotNull(koodiUri, "Koulutuskoodi URI cannot be null");
+        Collection<KoodiType> koodiTypes = Lists.<KoodiType>newArrayList();
+
+        String[] searchBy = new String[]{
+            KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI,
+            KoodistoURIHelper.KOODISTO_OPINTOALA_URI,
+            KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI,
+            KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+            KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI
+        };
+
+        for (String koodistoUri : searchBy) {
+            koodiTypes.addAll(getKoodistoRelations(koodiUri, koodistoUri, false, SuhteenTyyppiType.SISALTYY));
+        }
+
+        return koodiTypes;
+    }
 }

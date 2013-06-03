@@ -72,8 +72,8 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
-            presenter.getLukioPresenter().saveKoulutus(tila, KoulutusActiveTab.PERUSTIEDOT);
-            presenter.getLukioPresenter().getReloadKoulutusListData();
+            presenter.getKorkeakouluPresenter().saveKoulutus(tila);
+            presenter.getKorkeakouluPresenter().getReloadKoulutusListData();
             return model.getKomotoOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
@@ -86,6 +86,6 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
 
     @Override
     public void actionNext(ClickEvent event) {
-        presenter.getLukioPresenter().showSummaryKoulutusView();
+        presenter.getKorkeakouluPresenter().showSummaryKoulutusView();
     }
 }

@@ -31,13 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.TutkintoohjelmaTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
@@ -95,10 +94,13 @@ public class KorkeakouluConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KorkeakouluPerustiedotViewModel perustiedotModel = tarjontaModel.getKorkeakouluPerustiedot();
+        Preconditions.checkNotNull(perustiedotModel.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
+
         final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         convertToKorkeakouluKoulutusTyyppi(paivita, koulutusaste, perustiedotModel, komotoOid, dto);
+
         convertToKorkeakouluLisatiedotTyyppi(paivita, tarjontaModel.getKorkeakouluKuvailevatTiedot());
         paivita.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
 
@@ -187,30 +189,28 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return model;
     }
 
-    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusasteTyyppi koulutusaste, final KorkeakouluPerustiedotViewModel model, final String komotoOid, OrganisaatioDTO organisation) {
+    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusasteTyyppi koulutusasteTyyppi, final KorkeakouluPerustiedotViewModel model, final String komotoOid, OrganisaatioDTO organisation) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
-        Preconditions.checkNotNull(koulutusaste, INVALID_DATA + "KoulutusasteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(koulutusasteTyyppi, INVALID_DATA + "KoulutusasteTyyppi object cannot be null.");
         Preconditions.checkNotNull(model, INVALID_DATA + "KorkeakouluPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(organisation, INVALID_DATA + "Organisation DTO cannot be null.");
         Preconditions.checkNotNull(organisation.getOid(), INVALID_DATA + "Organisation OID cannot be null.");
 
         /*
-         * get koulutusohjelma 'koodi' from the dialog model
+         * set Optimistic lock version
          */
-        KoulutuskoodiRowModel koulutuskoodiRow = model.getValitseKoulutus().getKoulutuskoodiRow();
-        Preconditions.checkNotNull(koulutuskoodiRow, "Koulutus not selected, or KoulutuskoodiRowModel object not initialized!");
-        tyyppi.setKoulutusKoodi(mapToValidKoodistoKoodiTyyppi(false, koulutuskoodiRow));
-
+        tyyppi.setVersion(model.getVersion());
         /*
-         * set the tutkinto-ohjelma data to tyyppi object
+         * KOMO:
+         * set the koulutus and tutkinto-ohjelma data to koulutusmoduuli tyyppi
          */
-        tyyppi.setTutkintoohjelma(createTutkintoohjelmaTyyppi(model));
+        tyyppi.setKoulutusmoduuli(createKoulutusmoduuliKoosteTyyppi(model, koulutusasteTyyppi));
 
         /*
          * Other input fields
          */
-        tyyppi.setKoulutustyyppi(koulutusaste);
+        tyyppi.setKoulutustyyppi(koulutusasteTyyppi);
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
@@ -222,8 +222,6 @@ public class KorkeakouluConverter extends KoulutusConveter {
          */
         tyyppi.setTarjoaja(organisation.getOid());
         tyyppi.setOid(komotoOid);
-
-
 
         /*
          * Other optional(?) sets/list
@@ -270,6 +268,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
 
+
         return tyyppi;
     }
 
@@ -287,89 +286,96 @@ public class KorkeakouluConverter extends KoulutusConveter {
     private KorkeakouluPerustiedotViewModel createKorkeakouluPerustiedotViewModel(LueKoulutusVastausTyyppi vastaus, Locale locale) {
         Preconditions.checkNotNull(vastaus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
 
-        KorkeakouluPerustiedotViewModel perustiedot = new KorkeakouluPerustiedotViewModel();
-        perustiedot.setTila(vastaus.getTila());
-        perustiedot.setKomotoOid(vastaus.getOid());
-        perustiedot.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuli().getOid());
+        KorkeakouluPerustiedotViewModel perustiedotModel = new KorkeakouluPerustiedotViewModel();
         /*
-         * Combobox fields;
+         * set Optimistic lock version
          */
-        KoulutuskoodiModel listaaKorkeakouluKoulutuskoodi = koulutusKoodisto.listaaKorkeakouluKoulutuskoodi(vastaus.getKoulutusKoodi(), locale);
-        perustiedot.setKoulutuskoodiModel(listaaKorkeakouluKoulutuskoodi);
-        perustiedot.setTutkintoohjelma(convertToTutkintoohjelmaModel(vastaus.getTutkintoohjelma(), locale));
-        Preconditions.checkNotNull(perustiedot.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
-        Preconditions.checkNotNull(perustiedot.getTutkintoohjelma(), INVALID_DATA + "tutkinto-ohjelma model cannot be null.");
+        Preconditions.checkNotNull(vastaus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
+        perustiedotModel.setVersion(vastaus.getVersion());
+
+        /*
+         * set basic data
+         */
+        perustiedotModel.setTila(vastaus.getTila());
+        perustiedotModel.setKomotoOid(vastaus.getOid());
+        perustiedotModel.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuli().getOid());
+
+        /*
+         * Combobox data;
+         * 
+         * support for the  case:
+         * A) When KOMO is yet not saved to DB, it load all komo related data from Koodisto service.
+         * 
+         * B) When KOMO is loaded from DB, it uses the loaded URIs.
+         * 
+         */
+        KoulutuskoodiModel koulutuskoodiModel = koulutusKoodisto.listaaKorkeakouluKoulutuskoodi(vastaus.getKoulutusKoodi(), vastaus.getKoulutusmoduuli(), locale);
+
+        perustiedotModel.setKoulutuskoodiModel(koulutuskoodiModel);
+        perustiedotModel.setTutkintoohjelma(convertToTutkintoohjelmaModel(vastaus.getKoulutusmoduuli(), locale));
+        Preconditions.checkNotNull(perustiedotModel.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
+        Preconditions.checkNotNull(perustiedotModel.getTutkintoohjelma(), INVALID_DATA + "tutkinto-ohjelma model cannot be null.");
 
         /*
          * Update the select koulutuskoodi dialog data object
          */
-        perustiedot.getValitseKoulutus().setKoulutuskoodiRow(new KoulutuskoodiRowModel(perustiedot.getKoulutuskoodiModel()));
+        perustiedotModel.getValitseKoulutus().setKoulutuskoodiRow(new KoulutuskoodiRowModel(perustiedotModel.getKoulutuskoodiModel()));
 
         /*
          * Other UI fields
          */
-        perustiedot.setKoulutuksenAlkamisPvm(
+        perustiedotModel.setKoulutuksenAlkamisPvm(
                 vastaus.getKoulutuksenAlkamisPaiva() != null ? vastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
 
         if (vastaus.getKesto() != null) {
-            perustiedot.setSuunniteltuKesto(vastaus.getKesto().getArvo());
-            perustiedot.setSuunniteltuKestoTyyppi(vastaus.getKesto().getYksikko());
+            perustiedotModel.setSuunniteltuKesto(vastaus.getKesto().getArvo());
+            perustiedotModel.setSuunniteltuKestoTyyppi(vastaus.getKesto().getYksikko());
         }
 
         if (vastaus.getOpetuskieli() != null && !vastaus.getOpetuskieli().isEmpty()) {
-            perustiedot.setOpetuskielis(convertListToSet(vastaus.getOpetuskieli()));
+            perustiedotModel.setOpetuskielis(convertListToSet(vastaus.getOpetuskieli()));
         }
 
         if (vastaus.getOpetusmuoto() != null && !vastaus.getOpetusmuoto().isEmpty()) {
-            perustiedot.setOpetusmuodos(convertListToSet(vastaus.getOpetusmuoto()));
+            perustiedotModel.setOpetusmuodos(convertListToSet(vastaus.getOpetusmuoto()));
         }
 
         if (vastaus.getTeemat() != null && !vastaus.getTeemat().isEmpty()) {
-            perustiedot.setTeemas(convertListToSet(vastaus.getTeemat()));
+            perustiedotModel.setTeemas(convertListToSet(vastaus.getTeemat()));
         }
 
         if (vastaus.getPohjakoulutusvaatimusKorkeakoulu() != null && !vastaus.getPohjakoulutusvaatimusKorkeakoulu().isEmpty()) {
-            perustiedot.setPohjakoulutusvaatimukset(convertListToSet(vastaus.getPohjakoulutusvaatimusKorkeakoulu()));
+            perustiedotModel.setPohjakoulutusvaatimukset(convertListToSet(vastaus.getPohjakoulutusvaatimusKorkeakoulu()));
         }
 
         /*
          * contact person data conversion
          */
-        mapYhteyshenkiloToViewModel(perustiedot.getYhteyshenkilo(), vastaus);
+        mapYhteyshenkiloToViewModel(perustiedotModel.getYhteyshenkilo(), vastaus);
 
         /*
          * Data fields used on UI only as extra information:
          */
 
         //6-numero koodi arvo 
-        perustiedot.setKoulutuskoodi(perustiedot.getKoulutuskoodiModel().getKoodi());
+        perustiedotModel.setKoulutuskoodi(perustiedotModel.getKoulutuskoodiModel().getKoodi());
 
-        return perustiedot;
+        return perustiedotModel;
     }
 
-    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(TutkintoohjelmaTyyppi tyyppi, Locale locale) {
+    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
         Preconditions.checkNotNull(tyyppi, "TutkintoohjelmaTyyppi object for tutkinto-ohjelma cannot be null.");
-        Preconditions.checkNotNull(tyyppi.getArvo(), "Arvo (numeric value) for tutkinto-ohjelma cannot be null.");
-        TutkintoohjelmaModel tutkintoohjelma = new TutkintoohjelmaModel();
-        tutkintoohjelma.setKoodi(tyyppi.getArvo());
+        Preconditions.checkNotNull(tyyppi.getUlkoinenTunniste(), "UlkoinenTunniste (numeric value) for tutkinto-ohjelma cannot be null.");
+
+        UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
+        TutkintoohjelmaModel tutkintoohjelma = builder.build(tyyppi.getNimi(), locale);
+        tutkintoohjelma.setKoodi(tyyppi.getUlkoinenTunniste());
 
         MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
         Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");
         tutkintoohjelma.setNimi(selectedTeksti.getValue());
         tutkintoohjelma.setKielikoodi(selectedTeksti.getKieliKoodi());
         tutkintoohjelma.setKielikaannos(new HashSet(mapToKielikaannosViewModel(tyyppi.getNimi())));
-
-        return tutkintoohjelma;
-    }
-
-    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(KoulutusmoduuliKoosteTyyppi tyyppi, Locale locale) {
-        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
-        TutkintoohjelmaModel tutkintoohjelma = new TutkintoohjelmaModel();
-
-        tutkintoohjelma.setKielikaannos(new HashSet(mapToKielikaannosViewModel(tyyppi.getKoulutusmoduulinNimi())));
-        MonikielinenTekstiTyyppi.Teksti closestMonikielinenTekstiTyyppiName = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getKoulutusmoduulinNimi());
-        tutkintoohjelma.setKielikoodi(closestMonikielinenTekstiTyyppiName.getKieliKoodi());
-        tutkintoohjelma.setNimi(closestMonikielinenTekstiTyyppiName.getValue());
 
         return tutkintoohjelma;
     }
@@ -386,7 +392,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
     }
 
     public void updateKoulutuskoodiModel(KorkeakouluPerustiedotViewModel model, Locale locale) {
-        Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel objecy cannot be null.");
+        Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
         KoulutuskoodiRowModel koulutuskoodiRow = model.getValitseKoulutus().getKoulutuskoodiRow();
         Preconditions.checkNotNull(koulutuskoodiRow, "KoulutuskoodiRowModel object cannot be null.");
 
@@ -404,16 +410,39 @@ public class KorkeakouluConverter extends KoulutusConveter {
      * it makes data output to backend a little bit harder to understand. In
      * future it would be easier to create spesific object for this use.
      */
-    private static TutkintoohjelmaTyyppi createTutkintoohjelmaTyyppi(KorkeakouluPerustiedotViewModel model) {
+    private static KoulutusmoduuliKoosteTyyppi createKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusasteTyyppi koulutusasteTyyppi) {
         Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
-        Preconditions.checkNotNull(model.getTutkintoohjelma(), "Tutkinto-ohjelma not selected, or TutkintoohjelmaModel object not initialized!");
+        Preconditions.checkNotNull(model.getTunniste(), "Tutkinto-ohjelma external ID cannot be null!");
+        KoulutusmoduuliKoosteTyyppi kooste = new KoulutusmoduuliKoosteTyyppi();
+        kooste.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        kooste.setKoulutustyyppi(koulutusasteTyyppi);
 
-        TutkintoohjelmaTyyppi t = new TutkintoohjelmaTyyppi();
-        //we us the nimi field for the text data
-        t.setNimi(mapToMonikielinenTekstiTyyppi(model.getTutkintoohjelma().getKielikaannos()));
-        //we use arvo field for the 'numeric' code value.
-        t.setArvo(model.getTunniste());
+        /*
+         * get koulutusohjelma 'koodi' from the dialog model
+         */
+        KoulutuskoodiRowModel koulutuskoodiRow = model.getValitseKoulutus().getKoulutuskoodiRow();
+        Preconditions.checkNotNull(koulutuskoodiRow, "Koulutus not selected, or KoulutuskoodiRowModel object not initialized!");
+        Preconditions.checkNotNull(koulutuskoodiRow.getKoodistoUriVersio(), "Koulutuskoodi URI cannot be null!");
+        kooste.setKoulutuskoodiUri(koulutuskoodiRow.getKoodistoUriVersio());
 
-        return t;
+        if (model.getTutkintoohjelma() != null && model.getTutkintoohjelma().getKomoOid() != null) {
+            // use already created KOMO
+            kooste.setOid(model.getTutkintoohjelma().getKomoOid());
+
+            //the name data
+            kooste.setNimi(mapToMonikielinenTekstiTyyppi(model.getTutkintoohjelma().getKielikaannos()));
+        } else {
+            // create new KOMO
+            //TODO: kieli
+            kooste.setNimi(mapToMonikielinenTekstiTyyppi(model.getAutocompleteTutkintoohjelma(), "kieli_fi"));
+        }
+        Preconditions.checkNotNull(kooste.getNimi(), "Tutkinto-ohjelma MonikielinenTekstiTyyppi object cannot be null!");
+        Preconditions.checkNotNull(kooste.getNimi().getTeksti(), "Tutkinto-ohjelma name list cannot be null!");
+        Preconditions.checkArgument(!kooste.getNimi().getTeksti().isEmpty(), "No Tutkinto-ohjelma names, at least one needed!");
+
+        //we use ulkoinen tunniste field for the 'numeric' code value.
+        kooste.setUlkoinenTunniste(model.getTunniste());
+
+        return kooste;
     }
 }

@@ -200,12 +200,19 @@
     </xs:complexType>
 
     <xs:complexType name="LisaaKoulutusVastausTyyppi">
-        <xs:sequence></xs:sequence>
+        <xs:sequence>
+            <!-- optimistic locking -->
+            <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>     
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="PaivitaKoulutusTyyppi">
         <xs:complexContent>
-            <xs:extension base="tarjonta:KoulutusTyyppi"/>
+            <xs:extension base="tarjonta:KoulutusTyyppi">
+                <xs:sequence>
+                    <xs:element name="KomoOid" minOccurs="0" maxOccurs="1"  type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

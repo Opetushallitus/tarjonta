@@ -351,8 +351,6 @@ public class KoulutusConveter {
         }
         return set;
     }
-    
-    
     /**
      * Converter KoodistoKoodiTyyppi -> String
      */
@@ -391,7 +389,7 @@ public class KoulutusConveter {
      * @param teksti
      * @return
      */
-    public MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppi(final String languageUri, final String teksti) {
+    public static MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppi(final String languageUri, final String teksti) {
         MonikielinenTekstiTyyppi.Teksti mktt = new MonikielinenTekstiTyyppi.Teksti();
         mktt.setValue(teksti);
 
@@ -406,17 +404,16 @@ public class KoulutusConveter {
         MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
 
         for (KielikaannosViewModel nimi : kielet) {
-            tyyppi.getTeksti().add(convertToMonikielinenTekstiTyyppiTeksti(nimi.getKielikoodi(), nimi.getNimi()));
+            tyyppi.getTeksti().add(convertToMonikielinenTekstiTyyppi(nimi.getKielikoodi(), nimi.getNimi()));
         }
 
         return tyyppi;
     }
 
-    public static MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppiTeksti(String kielikoodi, String nimi) {
-        MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-        teksti.setKieliKoodi(kielikoodi);
-        teksti.setValue(nimi);
-        return teksti;
+    public static MonikielinenTekstiTyyppi mapToMonikielinenTekstiTyyppi(final String languageUri, final String teksti) {
+        MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
+        tyyppi.getTeksti().add(convertToMonikielinenTekstiTyyppi(languageUri, teksti));
+        return tyyppi;
     }
 
     public static List<KielikaannosViewModel> mapToKielikaannosViewModel(final MonikielinenTekstiTyyppi kielet) {
@@ -433,7 +430,7 @@ public class KoulutusConveter {
         return models;
     }
 
-    public static Set<KielikaannosViewModel> mapToKoodiModel(final MonikielinenTekstiTyyppi tyyppi) {
+    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final MonikielinenTekstiTyyppi tyyppi) {
         Set<KielikaannosViewModel> model = new HashSet<KielikaannosViewModel>();
 
         for (MonikielinenTekstiTyyppi.Teksti teksti : tyyppi.getTeksti()) {
@@ -485,7 +482,7 @@ public class KoulutusConveter {
             }
         }
 
-        m.setKielikaannos(mapToKoodiModel(tyyppi));
+        m.setKielikaannos(convertToKielikaannosViewModel(tyyppi));
         return m;
     }
 
@@ -523,65 +520,65 @@ public class KoulutusConveter {
     }
 
     /*
-    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
-        List<KoodistoKoodiTyyppi.Nimi> nimis = koodistoKoodiTyyppi.getNimi();
+     public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+     Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
+     List<KoodistoKoodiTyyppi.Nimi> nimis = koodistoKoodiTyyppi.getNimi();
 
-        for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
-            if (nimi != null && nimi.getKieli() != null && !nimi.getKieli().isEmpty()) {
-                teksti.add(new KielikaannosViewModel(nimi.getKieli(), nimi.getKieli()));
-            }
-        }
+     for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
+     if (nimi != null && nimi.getKieli() != null && !nimi.getKieli().isEmpty()) {
+     teksti.add(new KielikaannosViewModel(nimi.getKieli(), nimi.getKieli()));
+     }
+     }
 
-        return teksti;
-    }
+     return teksti;
+     }
 
-    public static KoodistoKoodiTyyppi.Nimi getClosestKoodistoKoodiTyyppiNimi(Locale locale, KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        Preconditions.checkNotNull(koodistoKoodiTyyppi, "KoodistoKoodiTyyppi object cannot be null.");
+     public static KoodistoKoodiTyyppi.Nimi getClosestKoodistoKoodiTyyppiNimi(Locale locale, KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+     Preconditions.checkNotNull(koodistoKoodiTyyppi, "KoodistoKoodiTyyppi object cannot be null.");
 
-        KoodistoKoodiTyyppi.Nimi teksti = null;
-        if (locale != null) {
-            teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), locale);
-        }
+     KoodistoKoodiTyyppi.Nimi teksti = null;
+     if (locale != null) {
+     teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), locale);
+     }
 
 
-        //fi default fallback
-        if ((teksti == null || teksti.getKieli() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase(FALLBACK_LANG_CODE)) {
-            final Locale localeFallback = new Locale(FALLBACK_LANG_CODE);
-            teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), localeFallback);
-        }
+     //fi default fallback
+     if ((teksti == null || teksti.getKieli() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase(FALLBACK_LANG_CODE)) {
+     final Locale localeFallback = new Locale(FALLBACK_LANG_CODE);
+     teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), localeFallback);
+     }
 
-        //get first existing
-        if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
-            //first existing
-            if (koodistoKoodiTyyppi.getNimi().size() > 0) {
-                teksti = koodistoKoodiTyyppi.getNimi().get(0);
-            }
-            if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
-                LOG.error("An invalid data error - KoodistoKoodiTyyppi.Nimi did not contain any values.");
-            }
-        }
+     //get first existing
+     if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
+     //first existing
+     if (koodistoKoodiTyyppi.getNimi().size() > 0) {
+     teksti = koodistoKoodiTyyppi.getNimi().get(0);
+     }
+     if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
+     LOG.error("An invalid data error - KoodistoKoodiTyyppi.Nimi did not contain any values.");
+     }
+     }
 
-        return teksti;
-    }
+     return teksti;
+     }
 
-    public static KoodistoKoodiTyyppi.Nimi searchNimiTyyppiByLanguage(List<KoodistoKoodiTyyppi.Nimi> nimis, final Locale locale) {
-        LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (nimis != null ? nimis.size() : nimis));
-        final String langCode = locale.getLanguage().toUpperCase();
+     public static KoodistoKoodiTyyppi.Nimi searchNimiTyyppiByLanguage(List<KoodistoKoodiTyyppi.Nimi> nimis, final Locale locale) {
+     LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (nimis != null ? nimis.size() : nimis));
+     final String langCode = locale.getLanguage().toUpperCase();
 
-        for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
+     for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
 
-            if (nimi.getKieli() != null
-                    && nimi.getKieli().toUpperCase().equals(langCode)) {
-                return nimi;
-            } else if (nimi.getKieli() == null) {
-                LOG.error("An unknown data bug : KoodistoKoodiTyyppi.Nimi kieli was null?");
-            }
-        }
+     if (nimi.getKieli() != null
+     && nimi.getKieli().toUpperCase().equals(langCode)) {
+     return nimi;
+     } else if (nimi.getKieli() == null) {
+     LOG.error("An unknown data bug : KoodistoKoodiTyyppi.Nimi kieli was null?");
+     }
+     }
 
-        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
+     LOG.debug("  --> no text found by locale : " + locale.getLanguage());
 
-        return null;
-    }
-    */ 
+     return null;
+     }
+     */
 }

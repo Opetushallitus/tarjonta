@@ -276,7 +276,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
         assertEquals(DATE, koulutus.getKoulutuksenAlkamisPaiva());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusKoodi().getUri());
-        assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
+ //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
@@ -377,7 +377,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
         assertEquals(DATE, koulutus.getKoulutuksenAlkamisPaiva());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusKoodi().getUri());
-        assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
+ //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
@@ -425,7 +425,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         vastaus.setKesto(koulutuksenKestoTyyppi);
 
         vastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
-        vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
+   //     vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
         vastaus.setKoulutusmoduuli(new KoulutusmoduuliKoosteTyyppi());
 
         vastaus.setKoulutusohjelmanValinta(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KoulutusohjelmanValinta"));

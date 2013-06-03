@@ -109,9 +109,9 @@ public final class EntityUtils {
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
         to.setPainotus(copyFields(from.getPainotus(), to.getPainotus()));
 
-        if (from.getKoulutusaste() != null) {
-            to.setKoulutusaste(from.getKoulutusaste().getUri());
-        }
+//        if (from.getKoulutusaste() != null) {
+//            to.setKoulutusaste(from.getKoulutusaste().getUri());
+//        }
 
         if (from.getPohjakoulutusvaatimus() != null) {
             to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
@@ -159,9 +159,9 @@ public final class EntityUtils {
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
-        if (fromKoulutus.getKoulutusaste() != null) {
-            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
-        }
+//        if (fromKoulutus.getKoulutusaste() != null) {
+//            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+//        }
 
 
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
@@ -373,6 +373,11 @@ public final class EntityUtils {
     }
 
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(tyyppi.getKoulutuskoodiUri(), "Koulutuskoodi URI object cannot be null.");
+        Preconditions.checkNotNull(tyyppi.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(tyyppi.getKoulutustyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+
         Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
         komo.setOid(tyyppi.getOid());
 
@@ -399,10 +404,8 @@ public final class EntityUtils {
         komo.setTavoitteet(copyFields(tyyppi.getTavoitteet(), komo.getTavoitteet()));
         komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet(), komo.getJatkoOpintoMahdollisuudet()));
 
-
-
         //names for KOMOTO search 
-        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi(), komo.getJatkoOpintoMahdollisuudet()));
+        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi(), komo.getNimi()));
 
         return komo;
     }

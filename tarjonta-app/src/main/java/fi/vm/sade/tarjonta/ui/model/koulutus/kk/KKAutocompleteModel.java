@@ -31,6 +31,12 @@ public class KKAutocompleteModel extends AutocompleteModel {
         setTutkintoohjelma(tutkintoohjelma);
     }
 
+    public KKAutocompleteModel(TutkintoohjelmaModel tutkintoohjelma) {
+        super();
+        setText(tutkintoohjelma.getNimi());
+        setTutkintoohjelma(tutkintoohjelma);
+    }
+
     /**
      * @return the koulutusohjelma
      */

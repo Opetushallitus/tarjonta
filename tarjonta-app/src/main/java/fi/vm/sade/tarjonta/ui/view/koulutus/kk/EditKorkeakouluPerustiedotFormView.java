@@ -132,8 +132,8 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
      * A list of key words like Ylioppilas, Ammatillinen perustutkinto, Ammattitutkinto etc.
      */
     @NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
-    @PropertyId("pohjakoulutusvaatimus")
-    private KoodistoComponent kcPohjakoulutusvaatimus;
+    @PropertyId("pohjakoulutusvaatimukset")
+    private KoodistoComponent kcPohjakoulutusvaatimukset;
     /*
      * A list of key words like Aluetiede, Antropologia, Argeologia etc.
      */
@@ -160,6 +160,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private Label koulutusaste;
     private Label koulutusala;
     private Label opintoala;
+    
     private Label tutkinto;
     private Label tutkintonimike;
     private Label eqf;
@@ -220,6 +221,8 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         //activate all property annotation validations
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+        
+        reload();
     }
 
     private Label buildLabel(GridLayout grid, final String propertyKey) {
@@ -375,10 +378,10 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridPohjakoulutusvaatimuksetRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcPohjakoulutusvaatimus = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
-        kcPohjakoulutusvaatimus.setCaptionFormatter(koodiNimiFormatter);
-        kcPohjakoulutusvaatimus.setImmediate(true);
-        addGridRowItems(grid, kcPohjakoulutusvaatimus);
+        kcPohjakoulutusvaatimukset = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
+        kcPohjakoulutusvaatimukset.setCaptionFormatter(koodiNimiFormatter);
+        kcPohjakoulutusvaatimukset.setImmediate(true);
+        addGridRowItems(grid, kcPohjakoulutusvaatimukset);
     }
 
     private void buildGridOpintojenMaksullisuusRow(GridLayout grid, final String propertyKey) {

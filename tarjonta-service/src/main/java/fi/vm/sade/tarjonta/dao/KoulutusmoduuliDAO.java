@@ -21,8 +21,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -95,7 +95,6 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public List<Koulutusmoduuli> findAllKomos();
 
-
     /**
      * Find list of oid's matching.
      *
@@ -107,7 +106,6 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @return
      */
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
-
 
     /**
      * Contract and model for passing search criterias to DAO. Another option
@@ -121,7 +119,7 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String nimiQuery;
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
-        private String lukiolinjaKoodiUri;     
+        private String lukiolinjaKoodiUri;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
         private KoulutusasteTyyppi koulutustyyppi;
@@ -256,4 +254,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
     public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo);
 
     public Koulutusmoduuli findLukiolinja(String uri, String uri2);
+
+    public Koulutusmoduuli createKomoKorkeakoulu(KoulutusmoduuliKoosteTyyppi komoKoosteTyyppi);
+
+    public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri);
 }

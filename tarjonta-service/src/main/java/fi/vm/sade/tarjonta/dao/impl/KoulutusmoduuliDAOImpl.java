@@ -22,15 +22,26 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.expr.DslExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import java.util.Date;
 
 import java.util.List;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -41,22 +52,20 @@ import org.springframework.stereotype.Repository;
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+    @Autowired
+    private OIDService oidService;
 
     @Override
     public Koulutusmoduuli findByOid(String oid) {
-
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         BooleanExpression oidEq = moduuli.oid.eq(oid);
 
         return from(moduuli).where(oidEq).singleResult(moduuli);
-
     }
 
     @Override
     public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize) {
-
         return findBy(Koulutusmoduuli.TILA_COLUMN_NAME, tila, startIndex, pageSize);
-
     }
 
     public List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde) {
@@ -136,7 +145,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
              * filter by a search word and other optional paramters.
              */
             //Search word is not an optional parameter.
-            BooleanExpression searchByName = kaannos.arvo.containsIgnoreCase( criteria.getNimiQuery() );
+            BooleanExpression searchByName = kaannos.arvo.containsIgnoreCase(criteria.getNimiQuery());
             //Add an optional paramter language filter.
             BooleanExpression filterBylang = criteria.getKieliUri() != null ? kaannos.kieliKoodi.eq(criteria.getKieliUri()) : null;
             //Add all above paramters, if any.
@@ -274,5 +283,23 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         return q.list(komo.oid);
+    }
+
+    @Override
+    public Koulutusmoduuli createKomoKorkeakoulu(KoulutusmoduuliKoosteTyyppi tyyppi) {
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null!");
+        Koulutusmoduuli komo = EntityUtils.copyFieldsToKoulutusmoduuli(tyyppi);
+        try {
+            komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+        } catch (ExceptionMessage ex) {
+            throw new TarjontaBusinessException("OID service unavailable.", ex);
+        }
+
+        return komo;
+    }
+
+    @Override
+    public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri) {
+        return findTutkintoOhjelma(koulutusLuokitusUri, null);
     }
 }

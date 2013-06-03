@@ -45,6 +45,6 @@ public class AutocompleteModel implements IAutocompleteModel {
 
     @Override
     public String toString() {
-        return text != null ? text : "???";
+        return text != null ? text : "No text data?";
     }
 }

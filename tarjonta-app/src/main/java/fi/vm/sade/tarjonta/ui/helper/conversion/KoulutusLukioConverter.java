@@ -213,7 +213,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         //URI data example : "lukiolinja/xxxx#1"
         tyyppi.setLukiolinjaKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getLukiolinja()));
-        tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutusaste()));
+        //tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutusaste()));
         tyyppi.setPohjakoulutusvaatimus(mapToValidKoodistoKoodiTyyppi(true, model.getPohjakoulutusvaatimus()));
 
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
