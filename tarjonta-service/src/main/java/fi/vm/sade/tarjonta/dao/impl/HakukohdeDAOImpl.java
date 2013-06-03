@@ -118,11 +118,8 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoe != null && valintakoe.getId() != null) {
-
             getEntityManager().remove(getEntityManager().find(Valintakoe.class, valintakoe.getId()));
-
             getEntityManager().flush();
-
         }
     }
 
@@ -138,62 +135,17 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     	return (Hakukohde) getEntityManager().createQuery("FROM "+Hakukohde.class.getName()+" WHERE oid=?")
     			.setParameter(1, oid)
     			.getSingleResult();
-    	/*
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
-        Hakukohde hakukohde = from(qHakukohde)
-                .where(qHakukohde.oid.trim().equalsIgnoreCase(oid))
-                .singleResult(qHakukohde);
-        return hakukohde;*/
     }
 
     @Override
     public Hakukohde findHakukohdeWithKomotosByOid(String oid) {
     	return findHakukohdeByOid(oid);
-    	/*QHakukohde qHakukohde = QHakukohde.hakukohde;
-        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-
-        Hakukohde hakukohde = from(qHakukohde, qKomoto)
-                .join(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
-                .where(qHakukohde.oid.trim().eq(oid.trim()))
-                .singleResult(qHakukohde);
-
-        return hakukohde;*/
     }
 
     @Override
     public Hakukohde findHakukohdeWithDepenciesByOid(String oid) {
     	return findHakukohdeByOid(oid);
-    	/*QHakukohde qHakukohde = QHakukohde.hakukohde;
-        QHaku qHaku = QHaku.haku;
-        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
-    	
-        
-        return from(qHakukohde, qHaku, qKomoto)
-                .join(qHakukohde.haku, qHaku)
-                //.leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
-                .leftJoin(qHakukohde.valintaperusteKuvaus,qMonikielinenTeksti).fetch()
-                .where(qHakukohde.oid.eq(oid.trim()))
-                .singleResult(qHakukohde);
-
-        //log.info("findHakukohdeWithDepenciesByOid({}) --> result size = {}", oid, hakukohdes.size());
-        return hakukohdes;*/
     }
-
-    /*
-    private MonikielinenTeksti findLisatiedotToHakuKohde(Hakukohde hakukohde) {
-        QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
-        QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
-
-        MonikielinenTeksti tekstis = from(qTekstis, qHakukohde)
-                .join(qHakukohde.lisatiedot, qTekstis)
-                .join(qTekstis.tekstis, qKaannos).fetch()
-                .where(qHakukohde.oid.eq(hakukohde.getOid().trim()))
-                .singleResult(qTekstis);
-        return tekstis;
-    }
-    */
 
     @Override
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
@@ -422,11 +374,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             result.add(tuple.toArray());
         }
 
-        log.info("  result --> {}", result);
+        log.info("  result size = {}", result.size());
 
         return result;
     }
-    
+
     @Override
     public void update(Hakukohde entity) {
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging

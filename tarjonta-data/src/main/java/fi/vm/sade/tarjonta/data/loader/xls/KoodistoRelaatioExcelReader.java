@@ -41,59 +41,78 @@ public class KoodistoRelaatioExcelReader {
             throw new RuntimeException("Missing file path.");
         }
 
-        final FileInputStream fileInputStream = new FileInputStream(pathToFile);
+        FileInputStream fileInputStream = null;
 
-        workbook = new HSSFWorkbook(fileInputStream);
-        final HSSFSheet sheet = workbook.getSheetAt(0);
-        final List<String> headers = new ArrayList<String>();
-        rows: for (int rowNumber = 0; rowNumber <= sheet.getLastRowNum(); rowNumber++) {
-            final HSSFRow currentRow = sheet.getRow(rowNumber);
-            if (rowNumber == 0) {
-                for (int cellCount = 0; cellCount <= currentRow.getLastCellNum(); cellCount++) {
-                    final String koodistoNimi = getCellValueAsString(currentRow.getCell(cellCount));
-                    if (koodistoNimi != null) {
-                        final String koodistoUri = DataUtils.createKoodistoUriFromName(koodistoNimi);
-                        if (koodistoHelper.isKoodisto(koodistoUri)) {
-                            headers.add(koodistoUri);
-                        } else {
-                            log.warn("Koodisto not found with koodistoUri [{}], skipping this column in file [{}]", koodistoUri, pathToFile);
-                            if (cellCount == 0) {
-                                // ylaKoodisto not found, abort whole file
-                                break rows;
+        try {
+            fileInputStream = new FileInputStream(pathToFile);
+
+            log.info("Read file : " + pathToFile);
+            log.info("Read bytes : " + fileInputStream.available());
+
+            workbook = new HSSFWorkbook(fileInputStream);
+            final HSSFSheet sheet = workbook.getSheetAt(0);
+
+            log.info("Rows available in sheet : " + sheet.getLastRowNum());
+
+            final List<String> headers = new ArrayList<String>();
+            rows: for (int rowNumber = 0; rowNumber <= sheet.getLastRowNum(); rowNumber++) {
+                final HSSFRow currentRow = sheet.getRow(rowNumber);
+                if (rowNumber == 0) {
+                    for (int cellCount = 0; cellCount <= currentRow.getLastCellNum(); cellCount++) {
+                        final String koodistoNimi = getCellValueAsString(currentRow.getCell(cellCount));
+                        if (koodistoNimi != null) {
+                            final String koodistoUri = DataUtils.createKoodistoUriFromName(koodistoNimi);
+                            if (koodistoHelper.isKoodisto(koodistoUri)) {
+                                headers.add(koodistoUri);
+                            } else {
+                                log.warn("Koodisto not found with koodistoUri [{}], skipping this column in file [{}]", koodistoUri, pathToFile);
+                                if (cellCount == 0) {
+                                    // ylaKoodisto not found, abort whole file
+                                    break rows;
+                                }
+                                // mark this koodisto to be skipped
+                                headers.add("-1");
                             }
-                            // mark this koodisto to be skipped
-                            headers.add("-1");
                         }
                     }
-                }
-            } else {
-                alaArvos: for (int cellCount = 1; cellCount < headers.size(); cellCount++) {
-                    // skip koodistos with "-1"
-                    final String alaKoodistoUri = headers.get(cellCount);
-                    if (!StringUtils.equals(alaKoodistoUri, "-1")) {
-                        final KoodiRelaatio relaatio = new KoodiRelaatio();
-                        relaatio.setYlaArvoKoodisto(headers.get(0));
-                        final String ylaArvo = getCellValueAsString(currentRow.getCell(0));
-                        if (ylaArvo != null && ylaArvo.trim().length() > 0) {
-                            relaatio.setKoodiYlaArvo(ylaArvo);
-                            relaatio.setAlaArvoKoodisto(alaKoodistoUri);
-                            final String alaArvo = getCellValueAsString(currentRow.getCell(cellCount));
-                            if (alaArvo == null) {
-                                continue alaArvos;
+                } else {
+                    alaArvos: for (int cellCount = 1; cellCount < headers.size(); cellCount++) {
+                        // skip koodistos with "-1"
+                        final String alaKoodistoUri = headers.get(cellCount);
+                        if (!StringUtils.equals(alaKoodistoUri, "-1")) {
+                            final KoodiRelaatio relaatio = new KoodiRelaatio();
+                            relaatio.setYlaArvoKoodisto(headers.get(0));
+                            final String ylaArvo = getCellValueAsString(currentRow.getCell(0));
+                            if (ylaArvo != null && ylaArvo.trim().length() > 0) {
+                                relaatio.setKoodiYlaArvo(ylaArvo);
+                                relaatio.setAlaArvoKoodisto(alaKoodistoUri);
+                                final String alaArvo = getCellValueAsString(currentRow.getCell(cellCount));
+                                if (alaArvo == null) {
+                                    continue alaArvos;
+                                }
+                                relaatio.setKoodiAlaArvo(alaArvo);
+                                if (StringUtils.containsIgnoreCase(pathToFile, "rinnastei")) {
+                                    relaatio.setSuhteenTyyppi(SuhteenTyyppiType.RINNASTEINEN);
+                                } else {
+                                    relaatio.setSuhteenTyyppi(SuhteenTyyppiType.SISALTYY);
+                                }
+                                koodiRelaatios.add(relaatio);
                             }
-                            relaatio.setKoodiAlaArvo(alaArvo);
-                            if (StringUtils.containsIgnoreCase(pathToFile, "rinnastei")) {
-                                relaatio.setSuhteenTyyppi(SuhteenTyyppiType.RINNASTEINEN);
-                            } else {
-                                relaatio.setSuhteenTyyppi(SuhteenTyyppiType.SISALTYY);
-                            }
-                            koodiRelaatios.add(relaatio);
                         }
                     }
                 }
             }
+        } catch (IOException e) {
+            log.error("Error reading file", e);
+        } finally {
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (final Exception ex) {
+                log.error("Cannot close file", ex);
+            }
         }
-
 
         return koodiRelaatios;
     }

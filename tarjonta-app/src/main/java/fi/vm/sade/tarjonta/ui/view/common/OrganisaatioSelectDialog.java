@@ -261,7 +261,14 @@ public abstract class OrganisaatioSelectDialog extends Window {
         if (limitToOne && selectedOrgs.size() > 0) {
             return;
         }
-        SelectableItem<OrganisaatioPerustietoType> link = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiFi");
+        SelectableItem<OrganisaatioPerustietoType> link = null ;
+        if (org.getNimiFi() != null && org.getNimiFi().trim().length() > 0) {
+          link  = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiFi");
+        } else if (org.getNimiSv() != null && org.getNimiSv().trim().length() > 0) {
+            link  = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiSv");
+        } else if (org.getNimiEn() != null && org.getNimiEn().trim().length() > 0) {
+            link  = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiEn");
+        }
         selectedOrgs.put(org.getOid(),org);
         link.setMargin(false);
         link.addListener(new SelectableItemListener() {

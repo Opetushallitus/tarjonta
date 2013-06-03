@@ -32,35 +32,39 @@ public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConvert
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeLiiteToHakukohdeLiiteRDTOConverter.class);
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
-    private ConversionService conversionService;
-
     @Override
     public HakukohdeLiiteDTO convert(HakukohdeLiite s) {
         HakukohdeLiiteDTO t = new HakukohdeLiiteDTO();
 
-        t.setErapaiva(s.getErapaiva());
-        // t.setHakukohdeOid(s.getHakukohde());
-        t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
-        t.setModified(s.getLastUpdateDate());
-        t.setModifiedBy(s.getLastUpdatedByOid());
-        t.setLiitteenTyyppiUri(s.getLiitetyyppi());
-        t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
-        t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
-        t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
+        if (s != null) {
+            t.setOid("" + s.getId());
+
+            t.setErapaiva(s.getErapaiva());
+            // t.setHakukohdeOid(s.getHakukohde());
+            t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
+            t.setModified(s.getLastUpdateDate());
+            t.setModifiedBy(s.getLastUpdatedByOid());
+            t.setLiitteenTyyppiUri(s.getLiitetyyppi());
+            t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
+            t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
+            t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
+        }
 
         return t;
     }
 
+    @Autowired
+    private ApplicationContext _applicationContext;
+
+    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
+    private ConversionService _conversionService;
+
     private ConversionService getConversionService() {
-        if (conversionService == null) {
+        if (_conversionService == null) {
             LOG.info("looking up ConversionService...");
-            conversionService = applicationContext.getBean(ConversionService.class);
+            _conversionService = _applicationContext.getBean(ConversionService.class);
         }
-        return conversionService;
+        return _conversionService;
     }
 
 }

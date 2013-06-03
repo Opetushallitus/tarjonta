@@ -28,6 +28,7 @@
 
     <modules>
         <module>tarjonta-api</module>
+        <module>tarjonta-shared</module>
         <module>tarjonta-publication-api</module>
         <module>tarjonta-enricher</module>
         <module>tarjonta-service</module>

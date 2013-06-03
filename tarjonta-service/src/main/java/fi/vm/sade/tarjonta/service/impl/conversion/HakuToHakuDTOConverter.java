@@ -15,13 +15,34 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuaikaRDTO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.convert.ConversionService;
 
 /**
+ * Convert domain Haku to REST API DTO.
  *
  * @author mlyly
  */
 public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
+
+    @Autowired
+    private ApplicationContext _applicationContext;
+    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
+    private ConversionService _conversionService;
+
+    private ConversionService getConversionService() {
+        if (_conversionService == null) {
+            _conversionService = _applicationContext.getBean(ConversionService.class);
+        }
+        return _conversionService;
+    }
 
     @Override
     public HakuDTO convert(Haku s) {
@@ -30,7 +51,8 @@ public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
         t.setOid(s.getOid());
         t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : -1);
 
-        // t.set(s.getHakuaikas());
+        t.setHakuaikas(convertHakuaikas(s.getHakuaikas()));
+
         t.setHakukausiUri(s.getHakukausiUri());
         t.setHakukausiVuosi(s.getHakukausiVuosi());
         // t.set(s.getHakukohdes());
@@ -51,4 +73,13 @@ public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
         return t;
     }
 
+    private List<HakuaikaRDTO> convertHakuaikas(Set<Hakuaika> hakuaikas) {
+        List<HakuaikaRDTO> result = new ArrayList<HakuaikaRDTO>();
+
+        for (Hakuaika hakuaika : hakuaikas) {
+            result.add(getConversionService().convert(hakuaika, HakuaikaRDTO.class));
+        }
+
+        return result;
+    }
 }

@@ -30,6 +30,8 @@ import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,6 +48,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -622,7 +625,7 @@ public class TarjontaUIHelper {
 
         return teksti;
     }
-
+    
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *

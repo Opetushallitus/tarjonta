@@ -75,7 +75,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;
     protected ErrorMessage errorView;
-    private Form form;
+    protected Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.
     private CommonPresenter presenter;
@@ -333,7 +333,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
      */
     public abstract String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception;
 
-    private void validateFormData() throws Validator.InvalidValueException {
+    protected void validateFormData() throws Validator.InvalidValueException {
         errorView.resetErrors();
         form.commit();
     }
@@ -414,7 +414,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     /**
-     * @param formDataHashcode the formDataHashcode to set
+
      */
     public void setFormDataHashcode(final MODEL model) {
         this.model = model;

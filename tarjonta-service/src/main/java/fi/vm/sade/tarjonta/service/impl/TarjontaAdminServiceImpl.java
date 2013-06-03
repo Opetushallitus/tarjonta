@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.service.search.SearchService;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
@@ -107,6 +108,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private TarjontaPublicService publicService;
     @Autowired
     private IndexerResource solrIndexer;
+    @Autowired
+    private SearchService searchService;
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -325,6 +328,34 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     	return null;
     }
 
+    private boolean checkHakuAndHakukohdekoulutusKaudet(HakukohdeTyyppi hakukohde, Haku haku) {
+
+
+
+        //Get hakukohde koulutukses
+        if (hakukohde.getHakukohteenKoulutusOidit() != null) {
+
+            HaeKoulutuksetKyselyTyyppi koulutusKysely = new HaeKoulutuksetKyselyTyyppi();
+            koulutusKysely.getKoulutusOids().addAll(hakukohde.getHakukohteenKoulutusOidit());
+            List<HaeKoulutuksetVastausTyyppi.KoulutusTulos> koulutusTuloses =  searchService.haeKoulutukset(koulutusKysely).getKoulutusTulos();
+            //Loop through hakukohtee's koulutukses and check all koulutukses and check that all have the same alkamiskausi and vuosi as the haku
+            for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : koulutusTuloses) {
+                if (!koulutusTulos.getKoulutus().getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
+                        || !koulutusTulos.getKoulutus().getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
+                   return false;
+                }
+            }
+
+
+        } else {
+            //If hakukohde does not have koulutukses it is a fault -> return false
+            return false;
+        }
+
+
+       return true;
+    }
+
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
@@ -334,6 +365,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakuOid);
+        if (!checkHakuAndHakukohdekoulutusKaudet(hakukohde,haku)) {
+            throw new RuntimeException("hakukohde.koulutukses.alkamisaika.do.not.match.haku");
+        }
         Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
 
         hakuk.setHaku(haku);
