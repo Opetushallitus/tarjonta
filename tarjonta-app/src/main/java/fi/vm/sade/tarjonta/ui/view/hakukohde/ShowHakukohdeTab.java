@@ -519,6 +519,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         grid.setWidth("100%");
         grid.setMargin(true);
         addItemToGrid(grid, "hakukohdeNimi", uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null));
+        addItemToGrid(grid, "yhteishaunKoulutustunnus", uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo());
         addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuOid()));
         addItemToGrid(grid, "hakuaika", presenter.getModel().getHakukohde().getHakuaika());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());

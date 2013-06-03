@@ -109,7 +109,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 //    @PropertyId("hakukohdeNimi")
 //    KoodistoComponent hakukohteenNimiCombo;
     private ComboBox hakukohteenNimiCombo;
-    @PropertyId("tunnisteKoodi")
+//    @PropertyId("tunnisteKoodi")
     private TextField tunnisteKoodiText;
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
@@ -214,7 +214,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Override
     public void setTunnisteKoodi(String tunnistekoodi) {
+        tunnisteKoodiText.setEnabled(true);
         tunnisteKoodiText.setValue(tunnistekoodi);
+        tunnisteKoodiText.setEnabled(false);
     }
 
     @Override
@@ -227,9 +229,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             public void valueChange(ValueChangeEvent event) {
                 if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
                     HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
-                    tunnisteKoodiText.setEnabled(true);
-                    tunnisteKoodiText.setValue(selectedHakukohde.getHakukohdeArvo());
-                    tunnisteKoodiText.setEnabled(false);
+                    setTunnisteKoodi(selectedHakukohde.getHakukohdeArvo());
                 } else {
                     LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
                             (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
