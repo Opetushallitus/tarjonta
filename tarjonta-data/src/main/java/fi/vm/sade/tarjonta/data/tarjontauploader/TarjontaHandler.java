@@ -130,7 +130,7 @@ public class TarjontaHandler {
         }
         final KoodistoKoodiTyyppi koulutusTyyppi = new KoodistoKoodiTyyppi();
         koulutusTyyppi.setArvo(koulutus.getKoulutus());
-        koulutusTyyppi.setUri(String.format("koulutus_%s#1", koulutus.getKoulutus().toLowerCase().trim()));
+        koulutusTyyppi.setUri(String.format("koulutus_%s#1", StringUtils.leftPad(koulutus.getKoulutus().toLowerCase().trim(), 6, '0')));
         koulutusTyyppi.setVersio(1);
         lisaaKoulutusTyyppi.setKoulutusKoodi(koulutusTyyppi);
 
@@ -140,7 +140,7 @@ public class TarjontaHandler {
         }
         final KoodistoKoodiTyyppi koulutusohjelma = new KoodistoKoodiTyyppi();
         koulutusohjelma.setArvo(koulutus.getKoulutusohjelma());
-        koulutusohjelma.setUri(String.format("koulutusohjelmaamm_%s#1", koulutus.getKoulutusohjelma().toLowerCase().trim()));
+        koulutusohjelma.setUri(String.format("koulutusohjelmaamm_%s#1", StringUtils.leftPad(koulutus.getKoulutusohjelma().toLowerCase().trim(), 4, '0')));
         koulutusohjelma.setVersio(1);
         lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(koulutusohjelma);
 
@@ -154,7 +154,6 @@ public class TarjontaHandler {
             logger.info("Löytyi {} vastaavaa koulutusmoduulia", koulutusmoduulit.size());
             koulutusmoduulit: for (final KoulutusmoduuliTulos koulutusmoduuli : koulutusmoduulit) {
                 final KoulutusmoduuliKoosteTyyppi koosteTyyppi = koulutusmoduuli.getKoulutusmoduuli();
-                tarjontaPublicService.haeKaikkiKoulutusmoduulit(new HaeKaikkiKoulutusmoduulitKyselyTyyppi());
                 if (StringUtils.isNotBlank(koosteTyyppi.getKoulutusasteUri())) {
                     final KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
                     koulutusaste.setUri(koosteTyyppi.getKoulutusasteUri());
@@ -250,7 +249,7 @@ public class TarjontaHandler {
         //aseta liitteidentoimitusosoite organisaatiopalvelusta...
         final OrganisaatioSearchCriteriaDTO organisaatioSearch = new OrganisaatioSearchCriteriaDTO();
         organisaatioSearch.setOlKoodi(true);
-        organisaatioSearch.setSearchStr(StringUtils.trim(hakukohde.getOppilaitosnumero()));
+        organisaatioSearch.setSearchStr(StringUtils.leftPad(StringUtils.trim(hakukohde.getOppilaitosnumero()), 5, '0'));
         final List<OrganisaatioDTO> organisaatiot = organisaatioService.searchOrganisaatios(organisaatioSearch);
         if (CollectionUtils.isNotEmpty(organisaatiot)) {
             final OrganisaatioDTO oppilaitos = organisaatiot.get(0);
@@ -258,7 +257,7 @@ public class TarjontaHandler {
             if (CollectionUtils.isNotEmpty(toimipisteet)) {
                 logger.info("löytyi {} toimipistettä", toimipisteet.size());
                 for (final OrganisaatioDTO toimipiste : toimipisteet) {
-                    if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), StringUtils.trim(hakukohde.getToimipisteJno()))) {
+                    if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), StringUtils.leftPad(StringUtils.trim(hakukohde.getToimipisteJno()), 2, '0'))) {
                         for (final YhteystietoDTO yhteystieto : toimipiste.getYhteystiedot()) {
                             if (yhteystieto instanceof OsoiteDTO) {
                                 final OsoiteDTO osoite = (OsoiteDTO) yhteystieto;
@@ -288,14 +287,14 @@ public class TarjontaHandler {
     private String getOrganisaatioOid(final String oppilaitoskoodi, final String jno) {
         final OrganisaatioSearchCriteriaDTO organisaatioSearch = new OrganisaatioSearchCriteriaDTO();
         organisaatioSearch.setOlKoodi(true);
-        organisaatioSearch.setSearchStr(oppilaitoskoodi);
+        organisaatioSearch.setSearchStr(StringUtils.leftPad(StringUtils.trim(oppilaitoskoodi), 5, '0'));
         final List<OrganisaatioDTO> oppilaitokset = organisaatioService.searchOrganisaatios(organisaatioSearch);
         if (CollectionUtils.isNotEmpty(oppilaitokset)) {
             final OrganisaatioDTO oppilaitos = oppilaitokset.get(0);
             final List<OrganisaatioDTO> toimipisteet = organisaatioService.findChildrenTo(oppilaitos.getOid());
             if (CollectionUtils.isNotEmpty(toimipisteet)) {
                 for (final OrganisaatioDTO toimipiste : toimipisteet) {
-                    if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), jno)) {
+                    if (StringUtils.equalsIgnoreCase(toimipiste.getOpetuspisteenJarjNro(), StringUtils.leftPad(jno, 2, '0'))) {
                         return toimipiste.getOid();
                     }
                 }
@@ -306,14 +305,16 @@ public class TarjontaHandler {
     }
 
     private String getHakukohdeOid(final String oppilaitoskoodi, final String juoksevaNumero, final String hakukohdekoodi, final String yhkoulu) {
-        return String.format("%s.%s.%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.trim(oppilaitoskoodi), StringUtils.trim(juoksevaNumero),
-                StringUtils.trim(hakukohdekoodi), StringUtils.trim(yhkoulu));
+        return String.format("%s.%s.%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.leftPad(StringUtils.trim(oppilaitoskoodi), 5, '0'),
+                StringUtils.leftPad(StringUtils.trim(juoksevaNumero), 2, '0'), StringUtils.trim(hakukohdekoodi),
+                StringUtils.leftPad(StringUtils.trim(yhkoulu), 4, '0'));
     }
 
     private String getKoulutusOid(final String oppilaitoskoodi, final String juoksevaNumero, final String hakukohdekoodi,
                                   final String yhkoulu, final String koulutusohjelma) {
-        return String.format("%s.%s.%s_%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.trim(oppilaitoskoodi), StringUtils.trim(juoksevaNumero),
-                StringUtils.trim(hakukohdekoodi), StringUtils.trim(yhkoulu), StringUtils.trim(koulutusohjelma));
+        return String.format("%s.%s.%s_%s_%s_%s_%s", OID_PREFIX, OID_TEKN_5, StringUtils.leftPad(StringUtils.trim(oppilaitoskoodi), 5, '0'),
+                StringUtils.leftPad(StringUtils.trim(juoksevaNumero), 2, '0'), StringUtils.trim(hakukohdekoodi),
+                StringUtils.leftPad(StringUtils.trim(yhkoulu), 4, '0'), StringUtils.trim(koulutusohjelma));
     }
 
     private ValintakoeTyyppi getEmptyValintakoeTyyppi() {

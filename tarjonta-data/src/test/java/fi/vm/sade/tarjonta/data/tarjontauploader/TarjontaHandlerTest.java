@@ -7,11 +7,10 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoVersioSelectionTy
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.*;
+import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -32,6 +31,13 @@ public class TarjontaHandlerTest {
     @Before
     public void setup() {
         tarjontaPublicService = mock(TarjontaPublicService.class);
+        final KoulutusmoduuliKoosteTyyppi koulutusmoduuli = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuli.setKoulutusasteUri("koulutusasteoph2002_32#1");
+        KoulutusmoduuliTulos koulutusmoduuliWrapper = new KoulutusmoduuliTulos();
+        koulutusmoduuliWrapper.setKoulutusmoduuli(koulutusmoduuli);
+        final HaeKaikkiKoulutusmoduulitVastausTyyppi vastausTyyppi = new HaeKaikkiKoulutusmoduulitVastausTyyppi();
+        vastausTyyppi.getKoulutusmoduuliTulos().add(koulutusmoduuliWrapper);
+        when(tarjontaPublicService.haeKaikkiKoulutusmoduulit(any(HaeKaikkiKoulutusmoduulitKyselyTyyppi.class))).thenReturn(vastausTyyppi);
 
         tarjontaAdminService = mock(TarjontaAdminService.class);
 
