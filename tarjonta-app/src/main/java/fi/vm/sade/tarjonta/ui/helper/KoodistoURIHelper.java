@@ -91,7 +91,7 @@ public class KoodistoURIHelper {
     /*
      * For tutkinto dialog
      */
-    public static String KOODISTO_TARJONTA_KOULUTUSASTE;
+    public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
     /*
      * For korkeakoulu
      */
@@ -102,9 +102,9 @@ public class KoodistoURIHelper {
         KOODISTO_VALINTAKOE_TYYPPI_URI = uri;
     }
 
-    @Value("${koodisto-uris.tarjontakoulutusaste}")
-    public void setKoodistoTarjontaKoulutusaste(String uri) {
-        KOODISTO_TARJONTA_KOULUTUSASTE = uri;
+    @Value("${koodisto-uris.tarjontakoulutustyyppi}")
+    public void setKoodistoTarjontaKoulutustyyppi(String uri) {
+        KOODISTO_TARJONTA_KOULUTUSTYYPPI = uri;
     }
 
     @Value("${koodisto-uris.hakutyyppi}")
