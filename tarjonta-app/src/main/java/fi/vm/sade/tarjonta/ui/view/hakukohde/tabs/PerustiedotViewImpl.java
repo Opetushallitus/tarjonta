@@ -708,7 +708,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private TextField buildAlinHyvaksyttavaKeskiarvo() {
         alinHyvaksyttavaKeskiarvoText = UiUtil.textField(null);
-        alinHyvaksyttavaKeskiarvoText.setRequired(true);
+        alinHyvaksyttavaKeskiarvoText.setRequired(false);
         alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
         return alinHyvaksyttavaKeskiarvoText;
     }
