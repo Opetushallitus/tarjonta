@@ -25,7 +25,7 @@ import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractSimpleEditLayoutView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import org.slf4j.Logger;
@@ -34,6 +34,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Valintaperustekuvausryhma view.
  *
+ * Note: This ui is used to manage and update both Valintaperustekuvaus AND SORA-vaatimus descriptions.
+ *
+ * TODO hakukelpoisuusvaatimus
+ *
  * @author Jani Wilén
  */
 public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
@@ -41,10 +45,10 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
     private static final Logger LOG = LoggerFactory.getLogger(EditValintakuvausView.class);
     private transient UiBuilder uiBuilder;
     private MetaCategory category;
-    private ValintaPresenter presenter;
+    private ValintaperustekuvausPresenter presenter;
     private EditValintakuvausForm form;
 
-    public EditValintakuvausView(MetaCategory category, ValintaPresenter presenter, UiBuilder uiBuilder) {
+    public EditValintakuvausView(MetaCategory category, ValintaperustekuvausPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.category = category;
         this.presenter = presenter;
@@ -72,7 +76,7 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
 
                     if (presenter.getModel().isForward()) {
                         /*
-                         * When an user has decided to leave page without saving. 
+                         * When an user has decided to leave page without saving.
                          */
                         LOG.debug("Form data : go to");
                         final String to = presenter.getModel().getForwardToUri();
@@ -141,7 +145,7 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
         } else {
             throw new Validator.InvalidValueException("error");
         }
-        
+
         //presenter.getRootView().executeJavaScript("window.location.reload();");
          presenter.loadMetaDataToModel(category);
         form.reloadKoodistoComponentRyhmaCaption();
@@ -176,8 +180,8 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
         form.getkuvaus().clear();
         //Initialize tabsheet data by valinta model values.
         form.initializeKuvausTabSheet();
-        //Tab form data binding hard to implement, so we need to manually set 
-        //data model to super class. 
+        //Tab form data binding hard to implement, so we need to manually set
+        //data model to super class.
         setModelDataToValidationHandler();
         //Reset checksum.
         makeFormDataUnmodified();

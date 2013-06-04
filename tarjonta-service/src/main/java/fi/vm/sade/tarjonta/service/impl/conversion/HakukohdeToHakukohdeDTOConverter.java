@@ -14,20 +14,18 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +33,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.convert.ConversionService;
 
 /**
  * Conversion for the REST services.
@@ -50,12 +46,6 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    // @Autowired -- cannot do this, this bean is defined in "scope" of conversion beans creation...
-    private ConversionService conversionService;
-
     @Override
     public HakukohdeDTO convert(Hakukohde s) {
         HakukohdeDTO t = new HakukohdeDTO();
@@ -67,53 +57,66 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setAlinValintaPistemaara(s.getAlinValintaPistemaara() != null ? s.getAlinValintaPistemaara().intValue() : 0);
         t.setAloituspaikatLkm(s.getAloituspaikatLkm() != null ? s.getAloituspaikatLkm().intValue() : 0);
         t.setEdellisenVuodenHakijatLkm(s.getEdellisenVuodenHakijat() != null ? s.getEdellisenVuodenHakijat().intValue() : 0);
-        // t.set(s.getHaku());
-        t.setHakukelpoisuusvaatimusUri(s.getHakukelpoisuusvaatimus());
+        t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
         t.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
-        // t.set(s.getKoulutusmoduuliToteutuses());
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());
-        // t.set(s.getLiites());
-        // t.set(s.getLiitteidenToimitusOsoite());
+        t.setLiitteidenToimitusosoite(getConversionService().convert(s.getLiitteidenToimitusOsoite(), OsoiteRDTO.class));
         t.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
         t.setLisatiedot(convertMonikielinenTekstiToMap(s.getLisatiedot()));
         t.setPainotettavatOppiaineet(convertPainotettavatOppianeet(s.getPainotettavatOppiaineet()));
         t.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
-        t.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
-        // TODO t.set(s.getValintakoes());
-        t.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
+
+        t.setValintakoes(convertValintakokeet(s.getValintakoes()));
+
         t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm().intValue() : 0);
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
 
         t.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
 
-        if (s.getSoraKuvausKoodiUri() != null) {
-            t.setSorakuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(s.getSoraKuvausKoodiUri(),
-                    MetaCategory.SORA_KUVAUS.name())));
-        }
-
-        if (s.getValintaperustekuvausKoodiUri() != null) {
-            t.setValintaperustekuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(s.getSoraKuvausKoodiUri(),
-                    MetaCategory.VALINTAPERUSTEKUVAUS.name())));
-        }
-
-        t.setHakukelpoisuusvaatimus(convertKoodistoToHakukelpoisuusVaatimukset(s.getHakukohdeNimi()));
-
-
         t.setLiitteet(convertLiitteet(s.getLiites()));
+
+        // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from koodisto)
+        {
+            String uri = getTarjontaKoodistoHelper().getHakukelpoisuusvaatimusrymaUriForHakukohde(s.getHakukohdeNimi());
+            t.setHakukelpoisuusvaatimusUri(uri);
+            t.setHakukelpoisuusvaatimus(getTarjontaKoodistoHelper().getKoodiMetadataKuvaus(uri));
+        }
+
+        // VALINTAPERUSTEKUVAUS DESCRIPTION (relation from koodisto, data from metadata)
+        {
+            String uri = getTarjontaKoodistoHelper().getValintaperustekuvausryhmaUriForHakukohde(s.getHakukohdeNimi());
+            t.setValintaperustekuvausKoodiUri(uri);
+            if (t.getValintaperustekuvausKoodiUri() != null) {
+                t.setValintaperustekuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(t.getValintaperustekuvausKoodiUri(),
+                        MetaCategory.VALINTAPERUSTEKUVAUS.name())));
+            }
+        }
+
+        // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data from metadata)
+        {
+            String uri = getTarjontaKoodistoHelper().getSORAKysymysryhmaUriForHakukohde(s.getHakukohdeNimi());
+            t.setSoraKuvausKoodiUri(uri);
+            if (t.getSoraKuvausKoodiUri() != null) {
+                t.setSorakuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(t.getSoraKuvausKoodiUri(),
+                        MetaCategory.SORA_KUVAUS.name())));
+            }
+        }
 
 
         return t;
     }
 
-    private ConversionService getConversionService() {
-        if (conversionService == null) {
-            LOG.info("looking up ConversionService...");
-            conversionService = applicationContext.getBean(ConversionService.class);
+    private List<ValintakoeRDTO> convertValintakokeet(Set<Valintakoe> valintakoes) {
+        List<ValintakoeRDTO> result = new ArrayList<ValintakoeRDTO>();
+
+        for (Valintakoe valintakoe : valintakoes) {
+            result.add(getConversionService().convert(valintakoe, ValintakoeRDTO.class));
         }
-        return conversionService;
+
+        return result.isEmpty() ? null : result;
     }
 
 
@@ -134,7 +137,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             result.add(t);
         }
 
-        return result;
+        return result.isEmpty() ? null : result;
     }
 
     /**
@@ -150,7 +153,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             result.add(getConversionService().convert(hakukohdeLiite, HakukohdeLiiteDTO.class));
         }
 
-        return result;
+        return result.isEmpty() ? null : result;
     }
 
 
@@ -167,59 +170,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             result.put(getTarjontaKoodistoHelper().convertKielikoodiToKieliUri(monikielinenMetadata.getKieli()), monikielinenMetadata.getArvo());
         }
 
-        return result;
-    }
-
-    /**
-     * Conversion from koodisto:
-     *
-     * <pre>
-     * "hakukohde" -> "hakukelpoisuusvaatimus ta" (description)
-     * </pre>
-     *
-     * @param hakukohdenimiUri
-     * @return
-     */
-    private Map<String, String> convertKoodistoToHakukelpoisuusVaatimukset(String hakukohdenimiUri) {
-        LOG.info("convertKoodistoToHakukelpoisuusVaatimukset({})", hakukohdenimiUri);
-
-        Map<String, String> result = new HashMap<String, String>();
-
-        String HAKUKELPOISUUSVAATIMUS_TA = "hakukelpoisuusvaatimusta";
-
-        if (hakukohdenimiUri != null) {
-            // 1. get hakukohde name koodi
-            KoodiType sourceKoodiType = getTarjontaKoodistoHelper().getKoodiByUri(hakukohdenimiUri);
-            if (sourceKoodiType != null) {
-                // 2. Get relation to "hakukelpoisuusvaatimus ta" koodisto
-                Collection<KoodiType> relations =
-                        getTarjontaKoodistoHelper().getKoodistoRelations(hakukohdenimiUri, HAKUKELPOISUUSVAATIMUS_TA, SuhteenTyyppiType.SISALTYY, false);
-
-                if (relations != null && !relations.isEmpty()) {
-                    if (relations.size() > 1) {
-                        LOG.warn("  hmm.... too many relations for hakukohde '" + hakukohdenimiUri + "' to " + HAKUKELPOISUUSVAATIMUS_TA + " koodisto.");
-                    }
-
-                    // TODO JUST TAKE THE FIRST ONE...
-                    KoodiType targetKoodiType = relations.iterator().next();
-
-                    // 3. Get metadata (kieli, kuvaus)
-
-                    for (KoodiMetadataType koodiMetadataType : targetKoodiType.getMetadata()) {
-                        String kuvaus = koodiMetadataType.getKuvaus();
-                        String kieli = koodiMetadataType.getKieli().name();
-
-                        LOG.info("  {} {}", kieli, kuvaus);
-
-                        result.put(getTarjontaKoodistoHelper().convertKielikoodiToKieliUri(kieli), kuvaus);
-                    }
-                }
-            }
-        }
-
-        LOG.info("  --> result = {}", result);
-
-        return result;
+        return result.isEmpty() ? null : result;
     }
 
 }

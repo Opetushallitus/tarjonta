@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import fi.vm.sade.tarjonta.ui.view.common.LanguageTabSheet;
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValintaLanguageTabSheet.class);
-    protected ValintaPresenter presenter;
+    protected ValintaperustekuvausPresenter presenter;
     protected MetaCategory category;
 
     public ValintaLanguageTabSheet() {
@@ -48,7 +48,7 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
     }
 
-    public ValintaLanguageTabSheet(ValintaPresenter presenter, MetaCategory category, boolean useRichText, String width, String height) {
+    public ValintaLanguageTabSheet(ValintaperustekuvausPresenter presenter, MetaCategory category, boolean useRichText, String width, String height) {
         super(useRichText, width, height);
         this.presenter = presenter;
         this.category = category;

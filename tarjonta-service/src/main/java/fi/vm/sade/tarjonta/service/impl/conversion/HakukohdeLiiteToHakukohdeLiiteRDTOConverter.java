@@ -17,12 +17,8 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.convert.ConversionService;
 
 /**
  *
@@ -51,20 +47,6 @@ public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConvert
         }
 
         return t;
-    }
-
-    @Autowired
-    private ApplicationContext _applicationContext;
-
-    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
-    private ConversionService _conversionService;
-
-    private ConversionService getConversionService() {
-        if (_conversionService == null) {
-            LOG.info("looking up ConversionService...");
-            _conversionService = _applicationContext.getBean(ConversionService.class);
-        }
-        return _conversionService;
     }
 
 }

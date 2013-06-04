@@ -18,7 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.valinta;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 
 /**
@@ -29,9 +29,9 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 public class ValintaperusteMainView extends AbstractVerticalLayout {
 
     private transient UiBuilder uiBuilder;
-    private ValintaPresenter presenter;
+    private ValintaperustekuvausPresenter presenter;
 
-    public ValintaperusteMainView(ValintaPresenter presenter, UiBuilder uiBuilder) {
+    public ValintaperusteMainView(ValintaperustekuvausPresenter presenter, UiBuilder uiBuilder) {
         super();
 
         this.presenter = presenter;
@@ -53,5 +53,7 @@ public class ValintaperusteMainView extends AbstractVerticalLayout {
          */
         EditValintakuvausView soraView = new EditValintakuvausView(MetaCategory.SORA_KUVAUS, presenter, uiBuilder);
         tabs.addTab(soraView, T("sorakuvaus"));
+
+        // TODO "hakukelpoisuusvaatimus ta" will be processed later here too
     }
 }
