@@ -422,7 +422,9 @@ public class ListKoulutusView extends VerticalLayout {
             }
         });
         koulutusDialog = new TarjontaDialogWindow(noKoulutusView, i18n.getMessage("noKoulutusLabel"));
-        getWindow().addWindow(koulutusDialog);
+        koulutusDialog.setWidth("300px");
+        koulutusDialog.setHeight("200px");
+       getWindow().addWindow(koulutusDialog);
     }
     
     public void closeKoulutusDialog() {
