@@ -67,7 +67,8 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
         koulutusLisatiedotModel = presenter.getModel().getKoulutusLisatiedotModel();
         editKoulutusLisatiedotForm = new EditKoulutusLisatiedotForm(presenter, uiHelper, uiBuilder, koulutusLisatiedotModel);
 
-        buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
+        // OVT-4727 buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
+        buildFormLayout(null, presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
     }
 
     @Override

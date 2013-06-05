@@ -104,39 +104,38 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
         PropertysetItem psi = new BeanItem(model);
 
         {
-
             OphRichTextArea rta = UiUtil.richTextArea(null, psi, "sisalto", MAX_LENGTH,
-                    T("_textTooLong", T("koulutuksenSisalto") + " (" + kieli + ")", MAX_LENGTH));
+                    T("_textTooLong", T("koulutuksenSisalto") + " (" + kieli + ")", 5000));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help", MAX_LENGTH), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help", 5000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiUtil.richTextArea(null, psi, "sijoittuminenTyoelamaan", MAX_LENGTH,
-                    T("_textTooLong", T("sijoittuminenTyoelamaan") + " (" + kieli + ")", MAX_LENGTH));
+                    T("_textTooLong", T("sijoittuminenTyoelamaan") + " (" + kieli + ")", 1000));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help", MAX_LENGTH), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help", 1000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiUtil.richTextArea(null, psi, "kansainvalistyminen", MAX_LENGTH,
-                    T("_textTooLong", T("kansainvalistyminen") + " (" + kieli + ")", MAX_LENGTH));
+                    T("_textTooLong", T("kansainvalistyminen") + " (" + kieli + ")", 5000));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help", MAX_LENGTH), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help", 5000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiUtil.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa", MAX_LENGTH,
-                    T("_textTooLong", T("yhteistyoMuidenToimijoidenKanssa") + " (" + kieli + ")", MAX_LENGTH));
+                    T("_textTooLong", T("yhteistyoMuidenToimijoidenKanssa") + " (" + kieli + ")", 2000));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help", MAX_LENGTH), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help", 2000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 

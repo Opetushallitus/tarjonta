@@ -143,7 +143,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         }
 
         /*
-         * TOP TITLE AND STATUS LAYOUT 
+         * TOP TITLE AND STATUS LAYOUT
          */
         buildInformationLayout(titleProperty, vlBaseFormLayout);
 
@@ -190,8 +190,8 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         header.setExpandRatio(labelDocumentStatus, 1l);
         header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
         layout.addComponent(header);
-        }
         UiUtil.hr(layout);
+        }
     }
 
     private void bindModelToViewForm(AbstractLayout layout, VIEW view) {
@@ -262,9 +262,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     /*
-     * 
+     *
      * Methods for tarjonta states for buttons.
-     * 
+     *
      */
     protected void addNavigationSaveButton(final String property, final Button.ClickListener listener, final TarjontaTila... tila) {
         addNavigationButton(T(property), listener, StyleEnum.STYLE_BUTTON_PRIMARY);
@@ -285,9 +285,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     /*
-     * 
+     *
      * Navigation button events.
-     * 
+     *
      */
     protected void eventBack(Button.ClickEvent event) {
         presenter.showMainDefaultView();

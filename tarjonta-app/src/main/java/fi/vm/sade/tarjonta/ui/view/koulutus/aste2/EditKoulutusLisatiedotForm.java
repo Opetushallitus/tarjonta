@@ -69,6 +69,8 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
 
 
         hlAmmattinimike = new HorizontalLayout();
+        hlAmmattinimike.setMargin(false, false, true, false);
+
         PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
         f = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
         f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
@@ -100,7 +102,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         // Build tabsheet for languages with koodisto select languages
         //
         tabs = new EditLisatiedotTabSheet(_presenter.getModel(), uiHelper, uiBuilder);
-        addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
+        // OVT-4727 addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
     }
 
