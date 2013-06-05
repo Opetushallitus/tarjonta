@@ -77,9 +77,11 @@
         <aop:scoped-proxy/>
     </bean>
 
+<!--
     <bean id="valintaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
+-->
 
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl" ></bean>
 

@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 /**
  * Presenter for Valintaperistekuvaustyhmä description management.
@@ -57,6 +60,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author janiw
  *
  */
+@Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValintaperustekuvausPresenter.class);
