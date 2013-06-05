@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.convert.ConversionService;
 
 /**
  * Some basic functionality for REST DTO converters.
@@ -38,8 +40,21 @@ public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends Abs
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    // @Autowired -- cannot do this, this bean is defined in "scope" of conversion beans creation...
+    private ConversionService conversionService;
+
     public TarjontaKoodistoHelper getTarjontaKoodistoHelper() {
         return tarjontaKoodistoHelper;
+    }
+
+    public ConversionService getConversionService() {
+        if (conversionService == null) {
+            conversionService = applicationContext.getBean(ConversionService.class);
+        }
+        return conversionService;
     }
 
 

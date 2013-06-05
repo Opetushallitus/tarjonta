@@ -443,17 +443,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private Label buildOsoiteSelectLabel() {
-        //VerticalLayout osoiteSelectLayout = new VerticalLayout();
-        //osoiteSelectLayout.setSizeFull();
+        Label label = UiUtil.label((AbstractLayout) null, T("PerustiedotView.osoiteSelectLabel"), LabelStyleEnum.TEXT);
+        label.setWidth("725px");
+        return label;
 
-    	return /*osoiteSelectLabel =*/ UiUtil.label((AbstractLayout) null, T("PerustiedotView.osoiteSelectLabel"), LabelStyleEnum.TEXT);
-
-        //osoiteSelectLabel = new Label(T("PerustiedotView.osoiteSelectLabel"));
-        //osoiteSelectLayout.addComponent(osoiteSelectLabel);
-
-        //osoiteSelectLayout.addComponent(osoiteSelectLabel);
-
-        //return osoiteSelectLayout;
     }
 
     private void enableOrDeEnableOsoite(boolean toEnableOrNot) {

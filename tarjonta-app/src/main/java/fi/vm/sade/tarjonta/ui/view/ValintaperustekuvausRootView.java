@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import com.vaadin.ui.AbstractLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
 
 /**
- * Root view for Haku management.
+ * Root view for Valintaperustekuvaus management.
  *
- * @author markus
+ * @author janiw
  */
 @Configurable(preConstruction = true)
 public class ValintaperustekuvausRootView extends Window {
@@ -39,7 +39,7 @@ public class ValintaperustekuvausRootView extends Window {
     private static final long serialVersionUID = -942466086095854495L;
     private AbstractLayout appRootLayout;
     @Autowired(required = true)
-    private ValintaPresenter valintaPresenter;
+    private ValintaperustekuvausPresenter valintaPresenter;
 
     public ValintaperustekuvausRootView() {
         super();
@@ -49,7 +49,7 @@ public class ValintaperustekuvausRootView extends Window {
     private void init() {
         // Fixi jrebelille...
         if (valintaPresenter == null) {
-            valintaPresenter = new ValintaPresenter();
+            valintaPresenter = new ValintaperustekuvausPresenter();
         }
         valintaPresenter.setRootView(this);
 

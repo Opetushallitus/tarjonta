@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class HakukohdeDTO extends BaseRDTO {
 
+    private String _hakuOid;
     private double _alinHyvaksyttavaKeskiarvo;
     private int _alinValintaPistemaara;
     private int _aloituspaikatLkm;
@@ -46,6 +47,16 @@ public class HakukohdeDTO extends BaseRDTO {
     private List<List<String>> _painotettavatOppiaineet;
     private boolean _kaytetaanHaunPaattymisenAikaa;
     private List<HakukohdeLiiteDTO> _liitteet;
+    private OsoiteRDTO _liitteidenToimitusosoite;
+    private List<ValintakoeRDTO> _valintakoes;
+
+    public String getHakuOid() {
+        return _hakuOid;
+    }
+
+    public void setHakuOid(String _hakuOid) {
+        this._hakuOid = _hakuOid;
+    }
 
     public double getAlinHyvaksyttavaKeskiarvo() {
         return _alinHyvaksyttavaKeskiarvo;
@@ -213,6 +224,22 @@ public class HakukohdeDTO extends BaseRDTO {
 
     public void setHakukelpoisuusvaatimus(Map<String, String> _hakukelpoisuusvaatimus) {
         this._hakukelpoisuusvaatimus = _hakukelpoisuusvaatimus;
+    }
+
+    public OsoiteRDTO getLiitteidenToimitusosoite() {
+        return _liitteidenToimitusosoite;
+    }
+
+    public void setLiitteidenToimitusosoite(OsoiteRDTO _liitteidenToimitusosoite) {
+        this._liitteidenToimitusosoite = _liitteidenToimitusosoite;
+    }
+
+    public List<ValintakoeRDTO> getValintakoes() {
+        return _valintakoes;
+    }
+
+    public void setValintakoes(List<ValintakoeRDTO> _valintakoes) {
+        this._valintakoes = _valintakoes;
     }
 
 }

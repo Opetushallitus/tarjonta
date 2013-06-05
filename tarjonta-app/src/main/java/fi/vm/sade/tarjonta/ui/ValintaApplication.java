@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.vaadin.Oph;
 
 /**
- * Main portlet application class for Haku management.
+ * Main portlet application class for Valintaperustekuvaus management.
  *
  * @author markus
  */

@@ -38,29 +38,4 @@
     -->
     <mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />
 
-    <bean id="conversionService"
-          class="fi.vm.sade.generic.service.conversion.SadeConversionServiceFactoryBean">
-        <property name="converters">
-            <list>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuFromDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeFromDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteFromDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteToDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeFromDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToDTOConverter"/>
-            </list>
-        </property>
-    </bean>
-
 </beans>

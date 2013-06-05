@@ -20,17 +20,8 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeListausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +30,6 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -52,22 +42,24 @@ import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- * Presenter for searching, creating, editing, and viewing Haku objects.
+ * Presenter for Valintaperistekuvaustyhmä description management.
  *
- * @author markus
+ * Structure is: "one valintaperustekuvausryhmä" has multilanguage description.
+ * This description then belongs to N Hakukohde (via koodisto relation
+ * hakukohde -> valintaperustekuvausryhmä)
+ *
+ * @author janiw
  *
  */
-public class ValintaPresenter implements CommonPresenter<ValintaModel> {
+public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaModel> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValintaPresenter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValintaperustekuvausPresenter.class);
     private ValintaperustekuvausRootView rootView;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
@@ -85,7 +77,7 @@ public class ValintaPresenter implements CommonPresenter<ValintaModel> {
     @Autowired(required = true)
     private KoodistoService koodistoService;
 
-    public ValintaPresenter() {
+    public ValintaperustekuvausPresenter() {
     }
 
     public void setRootView(ValintaperustekuvausRootView rootView) {
@@ -202,57 +194,59 @@ public class ValintaPresenter implements CommonPresenter<ValintaModel> {
             tarjontaAdminService.tallennaMetadata(kuvausRyhmaUri, category, kieli.getKielikoodi(), kieli.getNimi());
         }
 
-        KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kuvausRyhmaUri);
-
-        List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, false, SuhteenTyyppiType.SISALTYY);
-
-        if (koodiService != null && listKoodiByRelation != null) {
-            Set<String> koodiUris = new HashSet<String>();
-            //search all koodis related to descrption group
-            for (KoodiType koodi : listKoodiByRelation) {
-                final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
-
-                if (KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI.equals(koodistoUri)) {
-                    koodiUris.add(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
-                }
-            }
-
-            //update all Application Options with metadata description
-            for (String koodiUri : koodiUris) {
-                HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
-                kysely.setNimiKoodiUri(koodiUri);
-                HaeHakukohteetVastausTyyppi haeHakukohteet = tarjontaPublicService.haeHakukohteet(kysely);
-                for (HaeHakukohteetVastausTyyppi.HakukohdeTulos result : haeHakukohteet.getHakukohdeTulos()) {
-
-                    HakukohdeListausTyyppi hakukohde = result.getHakukohde();
-
-                    if (hakukohde != null && hakukohde.getOid() != null) {
-                        LueHakukohdeKyselyTyyppi lueHakukohdeKyselyTyyppi = new LueHakukohdeKyselyTyyppi();
-                        lueHakukohdeKyselyTyyppi.setOid(hakukohde.getOid());
-                        LueHakukohdeVastausTyyppi lueHakukohde = tarjontaPublicService.lueHakukohde(lueHakukohdeKyselyTyyppi);
-                        HakukohdeTyyppi updateHakukohde = lueHakukohde.getHakukohde();
-
-                        if (updateHakukohde != null) {
-                            if (MetaCategory.SORA_KUVAUS.equals(metaCategory)) {
-                                updateHakukohde.setSoraKuvausKoodiUri(kuvausRyhmaUri);
-                            } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
-                                updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
-                            }
-
-                            tarjontaAdminService.paivitaHakukohde(updateHakukohde);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());
-                            }
-                        }
-                    } else {
-                        LOG.debug("Search result was missing data?");
-
-                    }
-                }
-            }
-        } else {
-            LOG.warn("No koodisto relatios found!");
-        }
+//        if (false) {
+//            KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kuvausRyhmaUri);
+//
+//            List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, false, SuhteenTyyppiType.SISALTYY);
+//
+//            if (koodiService != null && listKoodiByRelation != null) {
+//                Set<String> koodiUris = new HashSet<String>();
+//                //search all koodis related to descrption group
+//                for (KoodiType koodi : listKoodiByRelation) {
+//                    final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
+//
+//                    if (KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI.equals(koodistoUri)) {
+//                        koodiUris.add(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
+//                    }
+//                }
+//
+//                //update all Application Options with metadata description
+//                for (String koodiUri : koodiUris) {
+//                    HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+//                    kysely.setNimiKoodiUri(koodiUri);
+//                    HaeHakukohteetVastausTyyppi haeHakukohteet = tarjontaPublicService.haeHakukohteet(kysely);
+//                    for (HaeHakukohteetVastausTyyppi.HakukohdeTulos result : haeHakukohteet.getHakukohdeTulos()) {
+//
+//                        HakukohdeListausTyyppi hakukohde = result.getHakukohde();
+//
+//                        if (hakukohde != null && hakukohde.getOid() != null) {
+//                            LueHakukohdeKyselyTyyppi lueHakukohdeKyselyTyyppi = new LueHakukohdeKyselyTyyppi();
+//                            lueHakukohdeKyselyTyyppi.setOid(hakukohde.getOid());
+//                            LueHakukohdeVastausTyyppi lueHakukohde = tarjontaPublicService.lueHakukohde(lueHakukohdeKyselyTyyppi);
+//                            HakukohdeTyyppi updateHakukohde = lueHakukohde.getHakukohde();
+//
+//                            if (updateHakukohde != null) {
+//                                if (MetaCategory.SORA_KUVAUS.equals(metaCategory)) {
+//                                    updateHakukohde.setSoraKuvausKoodiUri(kuvausRyhmaUri);
+//                                } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
+//                                    updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
+//                                }
+//
+//                                tarjontaAdminService.paivitaHakukohde(updateHakukohde);
+//                                if (LOG.isDebugEnabled()) {
+//                                    LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());
+//                                }
+//                            }
+//                        } else {
+//                            LOG.debug("Search result was missing data?");
+//
+//                        }
+//                    }
+//                }
+//            } else {
+//                LOG.warn("No koodisto relatios found!");
+//            }
+//        }
     }
 
     /**
@@ -286,8 +280,7 @@ public class ValintaPresenter implements CommonPresenter<ValintaModel> {
     }
 
     /**
-     * Select a model by given category. Description tabs can have its own data
-     * model object.
+     * Select a model by given category. Description tabs can have its own data model object.
      *
      * @param metaCategory
      * @return

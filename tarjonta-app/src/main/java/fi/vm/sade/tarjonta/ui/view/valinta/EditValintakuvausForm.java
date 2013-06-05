@@ -38,7 +38,7 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +60,7 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditValintakuvausForm.class);
     private transient UiBuilder uiBuilder;
-    private ValintaPresenter presenter;
+    private ValintaperustekuvausPresenter presenter;
     //MainLayout element
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
@@ -75,7 +75,7 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
     /*
      * Init view with new model
      */
-    public EditValintakuvausForm(MetaCategory category, ValintaPresenter presenter, UiBuilder uiBuilder) {
+    public EditValintakuvausForm(MetaCategory category, ValintaperustekuvausPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
