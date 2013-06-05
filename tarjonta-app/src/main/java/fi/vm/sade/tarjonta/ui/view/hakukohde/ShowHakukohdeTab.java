@@ -530,7 +530,7 @@ public class ShowHakukohdeTab extends CustomComponent {
             addItemToGrid(grid, "painotettavatOppiaineet", getHakukohdeOppiaineet());
 
         }
-        addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
+        //addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid, "lisatietojaHakemisesta", getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
         addItemToGrid(grid, "liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm() == null ? null
