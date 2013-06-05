@@ -199,32 +199,34 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
 
     private AbstractLayout createComboLayout() {
-        final GridLayout gridLayout = new GridLayout(4, 2);
-        gridLayout.setColumnExpandRatio(0, 0.25f);
-        gridLayout.setColumnExpandRatio(1, 0.25f);
-        gridLayout.setColumnExpandRatio(2, 0.25f);
-        gridLayout.setColumnExpandRatio(3, 0.25f);
-        gridLayout.setWidth("798");
+        final GridLayout gridLayout = new GridLayout(3, 2);
+        gridLayout.setColumnExpandRatio(0, 0.15f);
+        gridLayout.setColumnExpandRatio(1, 0.10f);
+        gridLayout.setColumnExpandRatio(2, 0.5f);
+        //gridLayout.setColumnExpandRatio(3, 0.25f);
+        gridLayout.setWidth("800");
         final Label valitseKoulutusLbl = new Label(_i18n.getMessage("valitseKoulutusLbl"));
         gridLayout.addComponent(valitseKoulutusLbl);
         koulutusValintaCombo = buildKoulutusValintaCombo();
         gridLayout.addComponent(koulutusValintaCombo);
 
-        koulutuksenTyyppiLbl = new Label(_i18n.getMessage("koulutuksenTyyppi"));
-        gridLayout.addComponent(koulutuksenTyyppiLbl);
+        //koulutuksenTyyppiLbl = new Label(_i18n.getMessage("koulutuksenTyyppi"));
+        //gridLayout.addComponent(koulutuksenTyyppiLbl);
         koulutuksenTyyppiCombo = uiBuilder.comboBox(null, null, null);//buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSTYYPPI);
+
         koulutuksenTyyppiCombo.setImmediate(true);
         List<String> oppilaitostyypit = super.presenter.getOppilaitostyyppiUris();
         buildKoulutustyyppiCombo(oppilaitostyypit);
-        
+
         gridLayout.addComponent(koulutuksenTyyppiCombo);
-   
+        //gridLayout.addComponent(new Label());
         pohjakoulutusvaatimusLbl = new Label(_i18n.getMessage("Pohjakoulutusvaatimus"));
-        pohjakoulutusvaatimusLbl.setEnabled(false);
-        gridLayout.addComponent(pohjakoulutusvaatimusLbl);
-        gridLayout.setComponentAlignment(pohjakoulutusvaatimusLbl, Alignment.MIDDLE_RIGHT);
+        pohjakoulutusvaatimusLbl.setVisible(false);
+        gridLayout.addComponent(pohjakoulutusvaatimusLbl,0,1);
+
+        //gridLayout.setComponentAlignment(pohjakoulutusvaatimusLbl, Alignment.MIDDLE_RIGHT);
         kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
-        kcPohjakoulutusvaatimus.setEnabled(false);
+        kcPohjakoulutusvaatimus.setVisible(false);
 
         koulutuksenTyyppiCombo.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -8476437837944397351L;
@@ -232,13 +234,14 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 boolean isEnabled = koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer && ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri().contains(KOULUTUSTYYPPI_AMM);
-                pohjakoulutusvaatimusLbl.setEnabled(isEnabled);
-                kcPohjakoulutusvaatimus.setEnabled(isEnabled);
+                pohjakoulutusvaatimusLbl.setVisible(isEnabled);
+                kcPohjakoulutusvaatimus.setVisible(isEnabled);
             }
         });
 
-        gridLayout.addComponent(kcPohjakoulutusvaatimus, 1, 1);
-
+        //gridLayout.addComponent(kcPohjakoulutusvaatimus, 1, 1);
+        kcPohjakoulutusvaatimus.setWidth("100%");
+        gridLayout.addComponent(kcPohjakoulutusvaatimus,1,1,2,1);
         gridLayout.setMargin(false, false, false, true);
 
         gridLayout.setHeight("100px");
@@ -291,7 +294,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         
         //clear all items
         koulutuksenTyyppiCombo.removeAllItems();
-        
+        koulutuksenTyyppiCombo.setInputPrompt(_i18n.getMessage("koulutuksenTyyppi"));
         //add applicable data
         for(KoodiType koodi: koodis) {
             koulutuksenTyyppiCombo.addItem(new KoodiContainer(koodi));
