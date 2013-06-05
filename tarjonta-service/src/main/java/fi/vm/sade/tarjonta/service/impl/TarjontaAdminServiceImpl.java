@@ -548,6 +548,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();      
         vastaus.setVersion(toteutus.getVersion()); //optimistic logging
+        vastaus.setKomoOid(toteutus.getKoulutusmoduuli().getOid());
     
         return vastaus;
     }

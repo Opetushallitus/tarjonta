@@ -15,28 +15,35 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertToKielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import java.util.List;
 import java.util.Locale;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author Jani Wilén
  */
+@Configurable(preConstruction = false)
 public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
 
+    private transient static final Locale LOCALE_FI = new Locale("FI");
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(UiModelBuilder.class);
     private Class<MODEL> modelClass;
+    private TarjontaKoodistoHelper helper;
 
-    public UiModelBuilder(Class<MODEL> modelClass) {
+    public UiModelBuilder(Class<MODEL> modelClass, TarjontaKoodistoHelper helper) {
         if (modelClass == null) {
             throw new RuntimeException("An invalid constructor argument - the class argument cannot be null.");
         }
         this.modelClass = modelClass;
+        this.helper = helper;
     }
 
     private MODEL newModelInstance() {
@@ -73,11 +80,79 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
 
         if (m.getNimi() == null || m.getNimi().isEmpty()) {
             //FI default fallback
-            final Locale locale1 = new Locale("FI");
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale1);
+            final MonikielinenTekstiTyyppi.Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), LOCALE_FI);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Language code fallback : " + locale1.getLanguage());
+                LOG.debug("Language code fallback : " + LOCALE_FI.getLanguage());
+                LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
+            }
+
+            if (teksti != null) {
+                m.setKielikoodi(teksti.getKieliKoodi());
+                m.setNimi(teksti.getValue());
+            } else {
+                LOG.error("An invalid data error -´MonikielinenTekstiModel object was missing Finnish language data.");
+            }
+        }
+
+        m.setKielikaannos(convertToKielikaannosViewModel(tyyppi));
+        return m;
+    }
+
+    public MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final Locale locale) {
+        LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
+        Preconditions.checkNotNull(helper, "TarjontaKoodistoHelper object cannot be null");
+
+        final String langCode = helper.convertKielikoodiToKieliUri(locale.getLanguage());
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
+            if (teksti.getKieliKoodi() != null) {
+                final String tekstiLang = helper.convertKielikoodiToKieliUri(teksti.getKieliKoodi());
+                if (teksti.getKieliKoodi() != null && tekstiLang.equals(langCode)) {
+                    return teksti;
+                }
+            } else if (teksti.getKieliKoodi() == null) {
+                LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
+            }
+        }
+
+        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
+
+        return null;
+    }
+
+    public MODEL build(final MonikielinenTekstiTyyppi tyyppi, final String koodiUri) {
+        MODEL m = newModelInstance();
+
+        if (tyyppi == null) {
+            LOG.warn("MonikielinenTekstiTyyppi object was null, the missing data cannot be show on UI.");
+            return m;
+        }
+
+        if (koodiUri != null) {
+            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), koodiUri);
+
+            if (teksti != null) {
+                m.setKielikoodi(teksti.getKieliKoodi());
+                m.setNimi(teksti.getValue());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Language code : " + teksti.getKieliKoodi());
+                    LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
+                }
+            } else {
+                LOG.debug("No text data found for locale " + koodiUri);
+            }
+        }
+
+        if (m.getNimi() == null || m.getNimi().isEmpty()) {
+            //FI default fallback
+            final String fiKoodiUri = helper.convertKielikoodiToKieliUri(LOCALE_FI.getLanguage());
+            
+            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), fiKoodiUri);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Language code fallback : " + LOCALE_FI.getLanguage());
                 LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
             }
 

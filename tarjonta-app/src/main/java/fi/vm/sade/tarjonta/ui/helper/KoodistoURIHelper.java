@@ -60,6 +60,7 @@ public class KoodistoURIHelper {
     public static String KOODISTO_TUTKINTONIMIKE_URI;
     public static String KOODISTO_OPINTOALA_URI;
     public static String KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI;
+    public static String KOODISTO_OPINTOJEN_LAAJUUSARVO_URI;
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
     /*
      * KOMOTO URIs
@@ -200,6 +201,11 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.opintojenLaajuusyksikko}")
     public void setOpintojenLaajuusyksikkoUri(String uri) {
         KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.opintojenLaajuusarvo}")
+    public void setOpintojenLaajuusarvoUri(String uri) {
+        KOODISTO_OPINTOJEN_LAAJUUSARVO_URI = uri;
     }
 
     @Value("${koodisto-uris.pohjakoulutusvaatimus}")

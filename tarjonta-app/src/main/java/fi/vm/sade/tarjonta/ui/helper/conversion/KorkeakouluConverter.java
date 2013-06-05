@@ -31,12 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
@@ -44,8 +46,8 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertL
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.createKoodi;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToKielikaannosViewModel;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToMonikielinenTekstiTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToValidKoodistoKoodiTyyppi;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapYhteyshenkiloToTyyppi;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
@@ -119,10 +121,6 @@ public class KorkeakouluConverter extends KoulutusConveter {
         tarjontaModel.setKorkeakouluPerustiedot(perustiedot);
         KorkeakouluKuvailevatTiedotViewModel kuvailevatTiedot = createKorkeakouluKuvailevatTiedotViewModel(koulutus);
         tarjontaModel.setKorkeakouluKuvailevatTiedot(kuvailevatTiedot);
-
-        //clear and set the loaded lukiolinja to combobox field data list
-        perustiedot.getTutkintoohjelmas().clear();
-        perustiedot.getTutkintoohjelmas().add(perustiedot.getTutkintoohjelma());
     }
 
     private void convertToKorkeakouluLisatiedotTyyppi(KoulutusTyyppi target, KorkeakouluKuvailevatTiedotViewModel source) {
@@ -216,6 +214,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
+        tyyppi.setMaksullisuus(model.getOpintojenMaksullisuus());
 
         /*
          * OIDs
@@ -285,6 +284,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
 
     private KorkeakouluPerustiedotViewModel createKorkeakouluPerustiedotViewModel(LueKoulutusVastausTyyppi vastaus, Locale locale) {
         Preconditions.checkNotNull(vastaus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
+        Preconditions.checkNotNull(vastaus.getKoulutusmoduuli(), INVALID_DATA + "KoulutusmoduuliKoosteTyyppi object cannot be null.");
 
         KorkeakouluPerustiedotViewModel perustiedotModel = new KorkeakouluPerustiedotViewModel();
         /*
@@ -299,6 +299,8 @@ public class KorkeakouluConverter extends KoulutusConveter {
         perustiedotModel.setTila(vastaus.getTila());
         perustiedotModel.setKomotoOid(vastaus.getOid());
         perustiedotModel.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuli().getOid());
+        perustiedotModel.setOpintojenMaksullisuus(vastaus.isMaksullisuus());
+        perustiedotModel.setTunniste(vastaus.getKoulutusmoduuli().getUlkoinenTunniste());
 
         /*
          * Combobox data;
@@ -312,7 +314,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         KoulutuskoodiModel koulutuskoodiModel = koulutusKoodisto.listaaKorkeakouluKoulutuskoodi(vastaus.getKoulutusKoodi(), vastaus.getKoulutusmoduuli(), locale);
 
         perustiedotModel.setKoulutuskoodiModel(koulutuskoodiModel);
-        perustiedotModel.setTutkintoohjelma(convertToTutkintoohjelmaModel(vastaus.getKoulutusmoduuli(), locale));
+        perustiedotModel.setTutkintoohjelma(convertKoosteTyyppiToTutkintoohjelmaModel(vastaus.getKoulutusmoduuli(), locale));
         Preconditions.checkNotNull(perustiedotModel.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
         Preconditions.checkNotNull(perustiedotModel.getTutkintoohjelma(), INVALID_DATA + "tutkinto-ohjelma model cannot be null.");
 
@@ -363,16 +365,15 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return perustiedotModel;
     }
 
-    private static TutkintoohjelmaModel convertToTutkintoohjelmaModel(KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
+    private TutkintoohjelmaModel convertKoosteTyyppiToTutkintoohjelmaModel(KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
         Preconditions.checkNotNull(tyyppi, "TutkintoohjelmaTyyppi object for tutkinto-ohjelma cannot be null.");
         Preconditions.checkNotNull(tyyppi.getUlkoinenTunniste(), "UlkoinenTunniste (numeric value) for tutkinto-ohjelma cannot be null.");
         Preconditions.checkNotNull(tyyppi.getNimi(), "Tutkinto-ohjelma name object cannot be null.");
         Preconditions.checkArgument(!tyyppi.getNimi().getTeksti().isEmpty(), "No tutkinto-ohjelma names for KOMO.");
 
-        UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
+        UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class, helper);
         TutkintoohjelmaModel tutkintoohjelma = builder.build(tyyppi.getNimi(), locale);
         tutkintoohjelma.setKoodi(tyyppi.getUlkoinenTunniste());
-
 
         MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
         Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");
@@ -383,12 +384,12 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return tutkintoohjelma;
     }
 
-    public static List<TutkintoohjelmaModel> convertToTutkintoohjelmaModels(final List<KoulutusmoduuliKoosteTyyppi> komos, final Locale locale) {
+    public List<TutkintoohjelmaModel> convertToTutkintoohjelmaModels(final List<KoulutusmoduuliKoosteTyyppi> komos, final Locale locale) {
         Preconditions.checkNotNull(komos, "List of KoulutusmoduuliKoosteTyyppi object cannot be null.");
 
         List<TutkintoohjelmaModel> tutkintoohjelma = Lists.<TutkintoohjelmaModel>newArrayList();
         for (KoulutusmoduuliKoosteTyyppi t : komos) {
-            tutkintoohjelma.add(convertToTutkintoohjelmaModel(t, locale));
+            tutkintoohjelma.add(convertKoosteTyyppiToTutkintoohjelmaModel(t, locale));
         }
 
         return tutkintoohjelma;
@@ -410,7 +411,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
     /**
      * Tutkinto-ohjelma data conversion. Remeber, the korkeakoulu case do not
      * have Koodisto service URIs in tutkinto-ohjelma data and because of that
-     * it makes data output to backend a little bit harder to understand. In
+     * it makes data output to server side a little bit harder to understand. In
      * future it would be easier to create spesific object for this use.
      */
     private static KoulutusmoduuliKoosteTyyppi createKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusasteTyyppi koulutusasteTyyppi) {
@@ -428,17 +429,51 @@ public class KorkeakouluConverter extends KoulutusConveter {
         Preconditions.checkNotNull(koulutuskoodiRow.getKoodistoUriVersio(), "Koulutuskoodi URI cannot be null!");
         kooste.setKoulutuskoodiUri(koulutuskoodiRow.getKoodistoUriVersio());
 
+
+        /*
+         * KoulutuskoodiModel
+         */
+        KoulutuskoodiModel km = model.getKoulutuskoodiModel();
+        if (km != null) {
+            if (km.getKoulutusala() != null) {
+                kooste.setKoulutusalaUri(km.getKoulutusala().getKoodistoUriVersio());
+            }
+
+            if (km.getOpintoala() != null) {
+                kooste.setOpintoalaUri(km.getOpintoala().getKoodistoUriVersio());
+            }
+
+            if (km.getTutkintonimike() != null) {
+                kooste.setTutkintonimikeUri(km.getTutkintonimike().getKoodistoUriVersio());
+            }
+
+            if (km.getOpintojenLaajuusyksikko() != null) {
+                kooste.setLaajuusyksikkoUri(km.getOpintojenLaajuusyksikko().getKoodistoUriVersio());
+            }
+
+            if (km.getKoulutusaste() != null) {
+                kooste.setKoulutusasteUri(km.getKoulutusaste().getKoodistoUriVersio());
+            }
+        }
+
+        /*
+         * Tutkintoohjelma
+         */
         if (model.getTutkintoohjelma() != null && model.getTutkintoohjelma().getKomoOid() != null) {
+            TutkintoohjelmaModel m = model.getTutkintoohjelma();
+
             // use already created KOMO
-            kooste.setOid(model.getTutkintoohjelma().getKomoOid());
+            kooste.setOid(m.getKomoOid());
 
             //the name data
-            kooste.setNimi(mapToMonikielinenTekstiTyyppi(model.getTutkintoohjelma().getKielikaannos()));
+            kooste.setNimi(mapToMonikielinenTekstiTyyppi(m.getKielikaannos()));
+
         } else {
-            // create new KOMO
-            //TODO: kieli
-            kooste.setNimi(mapToMonikielinenTekstiTyyppi(model.getAutocompleteTutkintoohjelma(), "kieli_fi"));
+            // create new KOMO with the new name and koodi URI
+            //this should't be use to update the KOMO in database... but I guess it could do that
+            kooste.setNimi(mapToMonikielinenTekstiTyyppi(getUserLangUri(model), model.getTutkintoohjelmaNimi()));
         }
+
         Preconditions.checkNotNull(kooste.getNimi(), "Tutkinto-ohjelma MonikielinenTekstiTyyppi object cannot be null!");
         Preconditions.checkNotNull(kooste.getNimi().getTeksti(), "Tutkinto-ohjelma name list cannot be null!");
         Preconditions.checkArgument(!kooste.getNimi().getTeksti().isEmpty(), "No Tutkinto-ohjelma names, at least one needed!");
@@ -447,5 +482,40 @@ public class KorkeakouluConverter extends KoulutusConveter {
         kooste.setUlkoinenTunniste(model.getTunniste());
 
         return kooste;
+    }
+
+    public MonikielinenTekstiTyyppi updateTutkintoohjelmaModelTextData(KorkeakouluPerustiedotViewModel model) {
+        Preconditions.checkNotNull(model.getTutkintoohjelmaNimi(), "Tutkinto-ohjelman name cannot be null.");
+        Preconditions.checkArgument(!model.getTutkintoohjelmaNimi().isEmpty(), "Tutkinto-ohjelman name cannot be empty.");
+
+        TutkintoohjelmaModel orginalTutkintoohjelma = model.getTutkintoohjelma();
+        Set<KielikaannosViewModel> kielikaannos = orginalTutkintoohjelma.getKielikaannos();
+        final String koodiUriFromUserLang = getUserLangUri(model);
+
+        boolean langUdated = false;
+        for (KielikaannosViewModel kvm : kielikaannos) {
+            //only update name
+            if (kvm.getKielikoodi().equals(koodiUriFromUserLang)) {
+                LOG.debug("Update name from '{}' to '{}'", kvm.getNimi(), model.getTutkintoohjelmaNimi());
+                kvm.setNimi(model.getTutkintoohjelmaNimi());
+                langUdated = true;
+            }
+        }
+
+        if (!langUdated) {
+            //add missing language and name
+            kielikaannos.add(new KielikaannosViewModel(koodiUriFromUserLang, model.getTutkintoohjelmaNimi()));
+        }
+
+        //Update tutkinto-ohjelma UI model.
+        MonikielinenTekstiTyyppi monikielinenTeksti = mapToMonikielinenTekstiTyyppi(kielikaannos);
+        UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class, helper);
+        TutkintoohjelmaModel build = builder.build(monikielinenTeksti, koodiUriFromUserLang);
+        build.setKomoOid(orginalTutkintoohjelma.getKomoOid());
+        build.setKomoParentOid(orginalTutkintoohjelma.getKomoParentOid());
+
+        model.setTutkintoohjelma(build);
+        
+        return monikielinenTeksti;
     }
 }

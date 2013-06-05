@@ -54,6 +54,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import java.math.BigDecimal;
 
 /**
  *
@@ -101,23 +102,22 @@ public final class EntityUtils {
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
+        to.setKkPohjakoulutusvaatimus(toKoodistoUriSet(from.getPohjakoulutusvaatimusKorkeakoulu()));
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
-        to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
         to.setPainotus(copyFields(from.getPainotus(), to.getPainotus()));
         to.setTeemas(toKoodistoUriSet(from.getTeemat()));
-
-//        if (from.getKoulutusaste() != null) {
-//            to.setKoulutusaste(from.getKoulutusaste().getUri());
-//        }
+        if (from.getHinta() != null) {
+            to.setHinta(new BigDecimal(from.getHinta()));
+        }
 
         if (from.getPohjakoulutusvaatimus() != null) {
             to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
         }
-
+        
         to.setTarjoaja(from.getTarjoaja());
 
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
@@ -160,6 +160,11 @@ public final class EntityUtils {
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
         toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus(), toKoulutus.getPainotus()));
         toKoulutus.setTeemas(toKoodistoUriSet(fromKoulutus.getTeemat()));
+        toKoulutus.setKkPohjakoulutusvaatimus(toKoodistoUriSet(fromKoulutus.getPohjakoulutusvaatimusKorkeakoulu()));
+
+        if (fromKoulutus.getHinta() != null) {
+            toKoulutus.setHinta(new BigDecimal(fromKoulutus.getHinta()));
+        }
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
@@ -361,6 +366,8 @@ public final class EntityUtils {
         target.setEqfLuokitus(source.getEqfLuokitus());
         target.setNqfLuokitus(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
+        target.setNimi(copyFields(source.getNimi(), target.getNimi()));
+        target.setKoulutustyyppi(source.getKoulutustyyppi().value());
 
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));

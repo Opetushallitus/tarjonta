@@ -44,6 +44,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -182,7 +183,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Set<KoodistoUri> kkPohjakoulutusvaatimus = new HashSet<KoodistoUri>();
 
     @Column(name="hinta")
-    private BigInteger hinta;
+    private BigDecimal hinta;
     
     public KoulutusmoduuliToteutus() {
         super();
@@ -751,14 +752,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the hinta
      */
-    public BigInteger getHinta() {
+    public BigDecimal getHinta() {
         return hinta;
     }
 
     /**
      * @param hinta the hinta to set
      */
-    public void setHinta(BigInteger hinta) {
+    public void setHinta(BigDecimal hinta) {
         this.hinta = hinta;
     }
 }

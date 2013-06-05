@@ -1805,10 +1805,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
         kysely.setOid(komotoOid);
-        LOG.info("getKoulutusByOId");
+        LOG.debug("getKoulutusByOId({})", komotoOid);
         LueKoulutusVastausTyyppi vastaus = this.getTarjontaPublicService().lueKoulutus(kysely);
-        LOG.info("getKoulutusByOId, done.");
-
+    
         return vastaus;
     }
 
@@ -2220,7 +2219,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.getOppilaitostyyppiUris().addAll(oppilaitostyyppiUris);
-        return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
+        //return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
+        
+        return true;
     }
 
     /**

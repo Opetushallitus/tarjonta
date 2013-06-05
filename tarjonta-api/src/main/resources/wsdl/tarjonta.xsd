@@ -835,6 +835,14 @@
             <xs:element name="PohjakoulutusvaatimusKorkeakoulu" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Maksullisuus" type="xs:boolean" minOccurs="0" maxOccurs="1"/>           
             <xs:element name="Koulutusmoduuli" type="tns:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1" />         
+            <xs:element name="Hinta" type="xs:string"/>
+            
+            <xs:element minOccurs="0" maxOccurs="1" name="ulkoinenTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Ulkoinen tunniste</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
         </xs:sequence>
     </xs:group>
 

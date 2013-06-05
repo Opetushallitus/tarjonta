@@ -29,7 +29,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditLisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import java.util.HashSet;

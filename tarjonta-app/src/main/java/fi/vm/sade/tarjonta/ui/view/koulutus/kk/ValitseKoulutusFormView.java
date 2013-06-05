@@ -237,8 +237,8 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showKorkeakouluKoulutusEditView();
                 dialog.windowClose();
+                presenter.showValitseTutkintoohjelmaDialog();
             }
         });
         btNext.setEnabled(false); //no item selected -> disable 

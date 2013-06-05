@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -73,7 +74,8 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     /*
      * Other info
      */
-    public String koulutuskoodi; //6-numero koodi arvo
+    protected String koulutuskoodi; //6-numero koodi arvo
+    protected String userKoodiLangUri; //like FI_fi -> kieli_fi
     /*
      * Updated by
      */
@@ -349,5 +351,22 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    /**
+     * @return the userKoodiLangUri
+     */
+    public String getUserKoodiLangUri() {
+        return userKoodiLangUri;
+    }
+
+    /**
+     * @param userKoodiLangUri the userKoodiLangUri to set
+     */
+    public void setUserKoodiLangUri(String userKoodiLangUri) {
+        Preconditions.checkNotNull(userKoodiLangUri, "User koodi URI language code cannot be null.");
+        Preconditions.checkArgument(!userKoodiLangUri.isEmpty(), "User koodi URI language code cannot be an empty string.");
+
+        this.userKoodiLangUri = userKoodiLangUri;
     }
 }

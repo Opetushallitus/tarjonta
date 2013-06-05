@@ -15,12 +15,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
+
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 
 /**
- * @author: Tuomas Katva
- * Date: 28.2.2013
+ * @author: Tuomas Katva Date: 28.2.2013
  */
 public class ConvertKoulutusTyyppiToLisaaKoulutus {
 
@@ -45,7 +45,10 @@ public class ConvertKoulutusTyyppiToLisaaKoulutus {
         lisaaKoulutusTyyppi.setTila(koulutusTyyppi.getTila());
         lisaaKoulutusTyyppi.setYhteistyoMuidenToimijoidenKanssa(koulutusTyyppi.getYhteistyoMuidenToimijoidenKanssa());
 
+        lisaaKoulutusTyyppi.setMaksullisuus(koulutusTyyppi.isMaksullisuus());
+        lisaaKoulutusTyyppi.setHinta(koulutusTyyppi.getHinta());
+        lisaaKoulutusTyyppi.getPohjakoulutusvaatimusKorkeakoulu().addAll(koulutusTyyppi.getPohjakoulutusvaatimusKorkeakoulu());
+
         return lisaaKoulutusTyyppi;
     }
-
 }

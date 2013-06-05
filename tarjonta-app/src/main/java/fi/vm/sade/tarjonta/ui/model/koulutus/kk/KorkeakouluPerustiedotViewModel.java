@@ -15,19 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -43,10 +35,9 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     /*
      * Data for comboxes (komo + tutkintoohjelma) 
      */
-    private Set<TutkintoohjelmaModel> tutkintoohjelmas;
     private TutkintoohjelmaModel tutkintoohjelma;
     //the selected text, the same data is in tutkintoohjelma
-    private String autocompleteTutkintoohjelma;
+    private String tutkintoohjelmaNimi;
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
@@ -62,6 +53,7 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private Boolean opintojenMaksullisuus;
     private Set<String> pohjakoulutusvaatimukset;
     private Set<String> teemas;
+    private String opintojenLaajuusarvo;
     /*
      * Contact persons
      */
@@ -69,11 +61,10 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private YhteyshenkiloModel ectsKoordinaattori;
 
     /*
-     * cache maps
+     * Koulutuskoodi filter dialog model
      */
-    private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
-    private Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
     private ValitseKoulutusModel valitseKoulutus;
+
 
     public KorkeakouluPerustiedotViewModel() {
         super();
@@ -164,7 +155,8 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          */
         setKoulutuskoodiModel(null);
         setTutkintoohjelma(null);
-        setAutocompleteTutkintoohjelma(null);
+        setTutkintoohjelmaNimi(null);
+        setTunniste(null);
 
         /*
          * Koodisto service koodi data
@@ -194,6 +186,8 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
         setEctsKoordinaattori(new YhteyshenkiloModel());
         setOpetuskielis(new HashSet<String>());
         setPohjakoulutusvaatimukset(new HashSet<String>());
+        setOpintojenMaksullisuus(false);
+        setTeemas(new HashSet<String>());
 
         /*
          * Other from info
@@ -254,46 +248,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
                 .append(getPohjakoulutusvaatimus())
                 .append(yhteyshenkilo)
                 .toHashCode();
-    }
-
-    /**
-     * @return the cacheKomoTutkinto
-     */
-    public KoulutusmoduuliKoosteTyyppi getQuickKomo(final String koulutuskoodiUri, final String koulutusohjelmaUri) {
-        Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(koulutuskoodiUri, koulutusohjelmaUri);
-        return getCacheKomo().get(e);
-    }
-
-    public List<KoulutusmoduuliKoosteTyyppi> getQuickKomosByKoulutuskoodiUri(final String koulutuskoodiUri) {
-        return getCacheKomoTutkinto().get(koulutuskoodiUri);
-    }
-
-    /**
-     * @return the cacheKomoTutkinto
-     */
-    public Map<String, List<KoulutusmoduuliKoosteTyyppi>> getCacheKomoTutkinto() {
-        return cacheKomoTutkinto;
-    }
-
-    /**
-     * @param cacheKomoTutkinto the cacheKomoTutkinto to set
-     */
-    public void setCacheKomoTutkinto(Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto) {
-        this.cacheKomoTutkinto = cacheKomoTutkinto;
-    }
-
-    /**
-     * @return the cacheKomo
-     */
-    public Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> getCacheKomo() {
-        return cacheKomo;
-    }
-
-    /**
-     * @param cacheKomo the cacheKomo to set
-     */
-    public void setCacheKomo(Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
-        this.cacheKomo = cacheKomo;
     }
 
     /**
@@ -379,25 +333,7 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     public void setPohjakoulutusvaatimukset(Set<String> pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
-
-    /**
-     * @return the tutkintoohjelmas
-     */
-    public Set<TutkintoohjelmaModel> getTutkintoohjelmas() {
-        if (this.tutkintoohjelmas == null) {
-            this.tutkintoohjelmas = new HashSet<TutkintoohjelmaModel>();
-        }
-
-        return tutkintoohjelmas;
-    }
-
-    /**
-     * @param tutkintoohjelmas the tutkintoohjelmas to set
-     */
-    public void setTutkintoohjelmas(Set<TutkintoohjelmaModel> tutkintoohjelmas) {
-        this.tutkintoohjelmas = tutkintoohjelmas;
-    }
-
+    
     /**
      * @return the tutkintoohjelma
      */
@@ -445,16 +381,32 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     }
 
     /**
-     * @return the autocompleteTutkintoohjelma
+     * @return the tutkintoohjelmaNimi
      */
-    public String getAutocompleteTutkintoohjelma() {
-        return autocompleteTutkintoohjelma;
+    public String getTutkintoohjelmaNimi() {
+        return tutkintoohjelmaNimi;
     }
 
     /**
-     * @param autocompleteTutkintoohjelma the autocompleteTutkintoohjelma to set
+     * @param tutkintoohjelmaNimi the tutkintoohjelmaNimi to set
      */
-    public void setAutocompleteTutkintoohjelma(String autocompleteTutkintoohjelma) {
-        this.autocompleteTutkintoohjelma = autocompleteTutkintoohjelma;
+    public void setTutkintoohjelmaNimi(String tutkintoohjelmaNimi) {
+        this.tutkintoohjelmaNimi = tutkintoohjelmaNimi;
     }
+
+    /**
+     * @return the opintojenLaajuusarvo
+     */
+    public String getOpintojenLaajuusarvo() {
+        return opintojenLaajuusarvo;
+    }
+
+    /**
+     * @param opintojenLaajuusarvo the opintojenLaajuusarvo to set
+     */
+    public void setOpintojenLaajuusarvo(String opintojenLaajuusarvo) {
+        this.opintojenLaajuusarvo = opintojenLaajuusarvo;
+    }
+
+
 }

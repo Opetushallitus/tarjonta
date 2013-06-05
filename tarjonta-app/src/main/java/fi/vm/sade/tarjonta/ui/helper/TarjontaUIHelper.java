@@ -625,7 +625,7 @@ public class TarjontaUIHelper {
 
         return teksti;
     }
-    
+
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *
@@ -674,9 +674,20 @@ public class TarjontaUIHelper {
      * @return
      */
     public static MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final Locale locale) {
+        Preconditions.checkNotNull(locale, "Locale object cannot be null");
         LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
-        final String langCode = locale.getLanguage().toUpperCase();
+        final MonikielinenTekstiTyyppi.Teksti teksti = searchKieliByString(tekstis, locale.getLanguage().toUpperCase());
+        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
+        return teksti;
+    }
 
+    public static MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final String kieliKoodiUri) {
+        Preconditions.checkNotNull(kieliKoodiUri, "Language Koodisto koodi URI cannot be null");
+        LOG.debug("locale : " + kieliKoodiUri + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
+        return searchKieliByString(tekstis, kieliKoodiUri.toUpperCase());
+    }
+
+    private static MonikielinenTekstiTyyppi.Teksti searchKieliByString(List<MonikielinenTekstiTyyppi.Teksti> tekstis, String langCode) {
         for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
 
             if (teksti.getKieliKoodi() != null
@@ -686,9 +697,6 @@ public class TarjontaUIHelper {
                 LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
             }
         }
-
-        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
-
         return null;
     }
 

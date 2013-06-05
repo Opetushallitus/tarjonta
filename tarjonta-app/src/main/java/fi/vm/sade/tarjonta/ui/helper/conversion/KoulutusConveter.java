@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper.splitKoodiURIAllowNull;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.INVALID_DATA;
@@ -45,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import java.util.ArrayList;
@@ -74,6 +76,8 @@ public class KoulutusConveter {
     protected KoulutusKoodistoConverter koulutusKoodisto;
     @Autowired(required = true)
     private OIDService oidService;
+    @Autowired(required = true)
+    protected TarjontaKoodistoHelper helper;
 
     public OrganisationOidNamePair searchOrganisationByOid(final String organisaatioOid) {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
@@ -100,6 +104,17 @@ public class KoulutusConveter {
         model.dtoToModel(dto);
 
         return dto;
+    }
+
+    public String getUserLangUri() {
+        return helper.convertKielikoodiToKieliUri(I18N.getLocale().getLanguage());
+    }
+
+    public static String getUserLangUri(KoulutusRelaatioModel baseModel) {
+        Preconditions.checkNotNull(baseModel.getUserKoodiLangUri(), "User koodi URI language code cannot be null.");
+        Preconditions.checkArgument(!baseModel.getUserKoodiLangUri().isEmpty(), "User koodi URI language code cannot be an empty string.");
+
+        return baseModel.getUserKoodiLangUri();
     }
 
     public static String checkWwwOsoite(String linkki) {
@@ -519,66 +534,4 @@ public class KoulutusConveter {
         return teksti;
     }
 
-    /*
-     public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-     Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
-     List<KoodistoKoodiTyyppi.Nimi> nimis = koodistoKoodiTyyppi.getNimi();
-
-     for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
-     if (nimi != null && nimi.getKieli() != null && !nimi.getKieli().isEmpty()) {
-     teksti.add(new KielikaannosViewModel(nimi.getKieli(), nimi.getKieli()));
-     }
-     }
-
-     return teksti;
-     }
-
-     public static KoodistoKoodiTyyppi.Nimi getClosestKoodistoKoodiTyyppiNimi(Locale locale, KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-     Preconditions.checkNotNull(koodistoKoodiTyyppi, "KoodistoKoodiTyyppi object cannot be null.");
-
-     KoodistoKoodiTyyppi.Nimi teksti = null;
-     if (locale != null) {
-     teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), locale);
-     }
-
-
-     //fi default fallback
-     if ((teksti == null || teksti.getKieli() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase(FALLBACK_LANG_CODE)) {
-     final Locale localeFallback = new Locale(FALLBACK_LANG_CODE);
-     teksti = searchNimiTyyppiByLanguage(koodistoKoodiTyyppi.getNimi(), localeFallback);
-     }
-
-     //get first existing
-     if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
-     //first existing
-     if (koodistoKoodiTyyppi.getNimi().size() > 0) {
-     teksti = koodistoKoodiTyyppi.getNimi().get(0);
-     }
-     if (teksti == null || teksti.getKieli() == null || teksti.getValue() == null) {
-     LOG.error("An invalid data error - KoodistoKoodiTyyppi.Nimi did not contain any values.");
-     }
-     }
-
-     return teksti;
-     }
-
-     public static KoodistoKoodiTyyppi.Nimi searchNimiTyyppiByLanguage(List<KoodistoKoodiTyyppi.Nimi> nimis, final Locale locale) {
-     LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (nimis != null ? nimis.size() : nimis));
-     final String langCode = locale.getLanguage().toUpperCase();
-
-     for (KoodistoKoodiTyyppi.Nimi nimi : nimis) {
-
-     if (nimi.getKieli() != null
-     && nimi.getKieli().toUpperCase().equals(langCode)) {
-     return nimi;
-     } else if (nimi.getKieli() == null) {
-     LOG.error("An unknown data bug : KoodistoKoodiTyyppi.Nimi kieli was null?");
-     }
-     }
-
-     LOG.debug("  --> no text found by locale : " + locale.getLanguage());
-
-     return null;
-     }
-     */
 }

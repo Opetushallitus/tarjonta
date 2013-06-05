@@ -108,5 +108,10 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
         return null;
     }
 
+    @Override
+    public LueKoulutusmoduuliVastausTyyppi lueKoulutusmoduuli(LueKoulutusmoduuliKyselyTyyppi kysely) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
    
 }

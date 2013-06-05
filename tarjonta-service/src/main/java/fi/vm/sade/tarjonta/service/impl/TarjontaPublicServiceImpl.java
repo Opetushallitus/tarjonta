@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -93,6 +94,8 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaKys
 import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusmoduuliKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusmoduuliVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
@@ -579,6 +582,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return pvmStr + " " + cal.get(Calendar.YEAR);
     }
 
+    @Override
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
         //long t = System.currentTimeMillis();
         log.debug("in LueKoulutusVastausTyyppi");
@@ -737,6 +741,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         EntityUtils.copyKoodistoUris(fromKoulutus.getLukiodiplomit(), toKoulutus.getLukiodiplomit());
 
+        //Korkeakoulu
+        EntityUtils.copyKoodistoUris(fromKoulutus.getTeemas(), toKoulutus.getTeemat());
+        EntityUtils.copyKoodistoUris(fromKoulutus.getKkPohjakoulutusvaatimus(), toKoulutus.getPohjakoulutusvaatimusKorkeakoulu());
+        if (fromKoulutus.getHinta() != null) {
+            toKoulutus.setHinta(fromKoulutus.getHinta().toString());
+        }
+        toKoulutus.setMaksullisuus(false); //todo
+
         return toKoulutus;
     }
 
@@ -842,5 +854,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             }
         }
         return false;
+    }
+
+    @Override
+    public LueKoulutusmoduuliVastausTyyppi lueKoulutusmoduuli(LueKoulutusmoduuliKyselyTyyppi kysely) {
+        Preconditions.checkNotNull(kysely, "LueKoulutusmoduuliKyselyTyyppi object cannot be null");
+        Preconditions.checkNotNull(kysely.getOid(), "KOMO OID cannot be null");
+        LueKoulutusmoduuliVastausTyyppi komo = new LueKoulutusmoduuliVastausTyyppi();
+        komo.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(koulutusmoduuliDAO.findByOid(kysely.getOid())));
+        return komo;
     }
 }

@@ -49,6 +49,9 @@
     
     <xs:element name="haeTarjoajanKoulutustenPohjakoulutuksetKysely" type="tns:HaeTarjoajanKoulutustenPohjakoulutuksetKysely"/>
     <xs:element name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus" type="tns:HaeTarjoajanKoulutustenPohjakoulutuksetVastaus"/>
+    
+    <xs:element name="lueKoulutusmoduuliKysely" type="tns:LueKoulutusmoduuliKyselyTyyppi" />
+    <xs:element name="lueKoulutusmoduuliVastaus" type="tns:LueKoulutusmoduuliVastausTyyppi" />
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -353,6 +356,26 @@
     <xs:complexType name="HaeTarjoajanKoulutustenPohjakoulutuksetVastaus">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="pohjakoulutusKoodi" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="LueKoulutusmoduuliVastausTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="LueKoulutusmoduuliKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste koulutusmoduulille.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 

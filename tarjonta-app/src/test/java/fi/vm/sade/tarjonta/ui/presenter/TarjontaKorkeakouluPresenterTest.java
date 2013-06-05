@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -54,6 +55,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.easymock.Capture;
@@ -93,6 +95,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
     private static final String KOMO_TUTKINTOOHJELMA_NAME = "tutkinto-ohjelman nimi";
     private static final Long VERSION_ID = 123l;
     private KoodistoURIHelper helpper;
+    private TarjontaKoodistoHelper tarjontaKoodistoHelpperMock;
 
     public TarjontaKorkeakouluPresenterTest() {
     }
@@ -138,6 +141,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         EditLukioKoulutusKuvailevatTiedotView lisatiedotView = new EditLukioKoulutusKuvailevatTiedotView(KOMOTO_OID);
         kuvailevatTiedotTab = tabSheet.addTab(lisatiedotView, "kuvailevattiedot");
 
+        tarjontaKoodistoHelpperMock = createMock(TarjontaKoodistoHelper.class);
         oidServiceMock = createMock(OIDService.class);
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
@@ -147,6 +151,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
 
         //Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditKorkeakouluKuvailevatTiedotView(null));
         Whitebox.setInternalState(editKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
+        Whitebox.setInternalState(korkeakouluConverter, "helper", tarjontaKoodistoHelpperMock);
         Whitebox.setInternalState(korkeakouluConverter, "oidService", oidServiceMock);
         Whitebox.setInternalState(korkeakouluConverter, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(korkeakouluConverter, "koulutusKoodisto", koulutusKoodisto);
@@ -273,6 +278,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         Capture<LisaaKoulutusTyyppi> localeCapture = new Capture<LisaaKoulutusTyyppi>();
         LisaaKoulutusVastausTyyppi lisaaKoulutusVastausTyyppi = new LisaaKoulutusVastausTyyppi();
         lisaaKoulutusVastausTyyppi.setVersion(VERSION_ID + 1);
+        lisaaKoulutusVastausTyyppi.setKomoOid("komooid_1234567");
         /*
          * Expect
          */
@@ -456,6 +462,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
+        expect(tarjontaKoodistoHelpperMock.convertKielikoodiToKieliUri(isA(String.class))).andReturn("kieli_fi");
 
         final KoodiType koulutuskoodi = createKoodiType(KOULUTUSKOODI, helpper.KOODISTO_TUTKINTO_URI);
         final KoodiType koulutusala = createKoodiType(KOULUTUSALA, helpper.KOODISTO_KOULUTUSALA_URI);
@@ -493,6 +500,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         replay(oidServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
+        replay(tarjontaKoodistoHelpperMock);
 
         /*
          * Presenter method call
@@ -503,6 +511,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         /*
          * verify
          */
+        verify(tarjontaKoodistoHelpperMock);
         verify(tarjontaUiHelper);
         verify(oidServiceMock);
         verify(organisaatioServiceMock);

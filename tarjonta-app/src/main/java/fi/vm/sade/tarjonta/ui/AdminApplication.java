@@ -155,16 +155,16 @@ public class AdminApplication extends AbstractWebApplication {
 
         hl.addComponent(btnIndexOrganisaatiot);
 
-        buildTest(hl);
+        //buildTest(hl);
     }
 
-    private void buildTest(AbstractLayout l) {
-        SearchPresenter searchPresenter = new SearchPresenter();
-
-        VerticalLayout vl = new VerticalLayout();
-
-        SimpleAutocompleteTextField atf = new SimpleAutocompleteTextField(vl, searchPresenter, "", "");
-
-        l.addComponent(vl);
-    }
+//    private void buildTest(AbstractLayout l) {
+//        SearchPresenter searchPresenter = new SearchPresenter();
+//
+//        VerticalLayout vl = new VerticalLayout();
+//
+//        SimpleAutocompleteTextField atf = new SimpleAutocompleteTextField(vl, searchPresenter, "");
+//
+//        l.addComponent(vl);
+//    }
 }

@@ -38,6 +38,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KKAutocompleteModel;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -68,15 +69,13 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
     private I18NHelper _i18n = new I18NHelper(this);
     private boolean isFocused = false;
 
-    public SimpleAutocompleteTextField(final VerticalLayout vl, final IAutocompleteSearch presenter, final String inputPrompt, final String nullRepresentation) {
+    public SimpleAutocompleteTextField(final VerticalLayout vl, final IAutocompleteSearch presenter, final String nullRepresentation) {
         super();
         Preconditions.checkNotNull(presenter, "Presenter object cannot be null.");
         Preconditions.checkNotNull(vl, "Vertical Layout object cannot be null.");
-        Preconditions.checkNotNull(inputPrompt, "Input prompt string object cannot be null.");
 
         this.vl = vl;
         setNullRepresentation(nullRepresentation);
-        setInputPrompt(inputPrompt);
         this.presenter = presenter;
         setImmediate(true);
         buildLayout();
@@ -209,13 +208,21 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         }
         focus();
     }
-    
+
     /*
      * Handling of value change event. 
      */
     private void handleValueChange() {
         fireEvent(new SimpleTextAutocompleteEvent(this, (IAutocompleteModel) (suggestionList.getValue()), SimpleTextAutocompleteEvent.SELECTED));
         if (!isFocused) {
+            handleEnter();
+        }
+    }
+
+    public void loadSelected(final String oid) {
+        if (oid != null) {
+            this.setValue(null);
+            fireEvent(new SimpleTextAutocompleteEvent(this, presenter.loadSelected(oid), SimpleTextAutocompleteEvent.SELECTED));
             handleEnter();
         }
     }
@@ -359,6 +366,8 @@ public class SimpleAutocompleteTextField extends TextField implements Handler {
         public List<IAutocompleteModel> searchAutocompleteText(final String searchword);
 
         public void clearAutocompleteTextField();
+
+        public KKAutocompleteModel loadSelected(final String oid);
     }
 
     public interface IAutocompleteModel {

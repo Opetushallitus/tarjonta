@@ -19,6 +19,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
@@ -29,20 +30,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jani Wilén
  */
-public class ValitseKoulutusDialog extends TarjontaWindow {
+public class MuokkaaTutkintoohjelmaDialog extends TarjontaWindow {
 
-    private static transient final Logger LOG = LoggerFactory.getLogger(ValitseKoulutusDialog.class);
+    private static transient final Logger LOG = LoggerFactory.getLogger(MuokkaaTutkintoohjelmaDialog.class);
     private static final long serialVersionUID = -7357037259731478017L;
-    private static final String WINDOW_HEIGHT = "650px";
+    private static final String WINDOW_HEIGHT = "400px";
     private static final String WINDOW_WIDTH = "700px";
     private TarjontaPresenter presenter;
-    private UiBuilder uiBuilder;
     private ValidatingViewBoundForm form;
+    private boolean mode;
 
-    public ValitseKoulutusDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
+    public MuokkaaTutkintoohjelmaDialog(TarjontaPresenter presenter) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
-        this.uiBuilder = uiBuilder;
 
         setCaption(T(WINDOW_TITLE_PROPERTY));
     }
@@ -50,42 +50,16 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
     @Override
     public void buildLayout(VerticalLayout layout) {
         layout.setMargin(false, true, true, true);
-        ValitseKoulutusFormView view = new ValitseKoulutusFormView(presenter.getKorkeakouluPresenter(), uiBuilder, this);
+        MuokkaaTutkintoohjelmaFormView view = new MuokkaaTutkintoohjelmaFormView(presenter.getKorkeakouluPresenter(), this, mode);
         form = new ValidatingViewBoundForm(view);
 
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
-
-        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getKorkeakouluPerustiedot().getValitseKoulutus();
-        BeanItem<ValitseKoulutusModel> beanItem = new BeanItem<ValitseKoulutusModel>(valitseKoulutus);
+        KorkeakouluPerustiedotViewModel korkeakouluPerustiedot = presenter.getModel().getKorkeakouluPerustiedot();
+        BeanItem<KorkeakouluPerustiedotViewModel> beanItem = new BeanItem<KorkeakouluPerustiedotViewModel>(korkeakouluPerustiedot);
         form.setItemDataSource(beanItem);
-
         layout.addComponent(form);
-    }
-    
-    
-    public void buildValitseTutkintoOhjelma(VerticalLayout layout) {
-        this.removeAllComponents();
-        
-        layout.setMargin(false, true, true, true);
-        ValitseKoulutusFormView view = new ValitseKoulutusFormView(presenter.getKorkeakouluPresenter(), uiBuilder, this);
-        form = new ValidatingViewBoundForm(view);
-
-        form.setValidationVisible(false);
-        form.setValidationVisibleOnCommit(false);
-        form.setSizeFull();
-
-        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getKorkeakouluPerustiedot().getValitseKoulutus();
-        BeanItem<ValitseKoulutusModel> beanItem = new BeanItem<ValitseKoulutusModel>(valitseKoulutus);
-
-        LOG.debug("buildLayout {}", valitseKoulutus);
-        LOG.debug("beanItem '{}'", beanItem);
-
-        form.setItemDataSource(beanItem);
-
-        layout.addComponent(form);
-         
     }
 
     public void windowClose() {
@@ -99,5 +73,12 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
 
     public void windowOpen() {
         presenter.getRootView().addWindow(this);
+    }
+
+    /**
+     * @param mode the mode to set
+     */
+    public void setMode(boolean mode) {
+        this.mode = mode;
     }
 }

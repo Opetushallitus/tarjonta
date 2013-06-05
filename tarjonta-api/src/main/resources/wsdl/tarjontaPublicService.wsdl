@@ -125,6 +125,14 @@
     <wsdl:message name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
         <wsdl:part element="ns1:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="lueKoulutusmoduuliKysely">
+        <wsdl:part element="ns1:lueKoulutusmoduuliKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueKoulutusmoduuliVastaus">
+        <wsdl:part element="ns1:lueKoulutusmoduuliVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -248,6 +256,16 @@
             <wsdl:documentation>Haetaan tarjoajan koulutusten pohjakoulutukset tietylla ajanjaksolla</wsdl:documentation>
             <wsdl:input message="tns:haeTarjoajanKoulutustenPohjakoulutuksetKysely" name="haeTarjoajanKoulutustenPohjakoulutuksetKysely"></wsdl:input>
             <wsdl:output message="tns:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus"></wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutusmoduuli">
+            <wsdl:documentation>
+                Hakee yhden koulutusmoduulin tiedot oidin perusteella.
+            </wsdl:documentation>
+            <wsdl:input message="tns:lueKoulutusmoduuliKysely" name="lueKoulutusmoduuliKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueKoulutusmoduuliVastaus" name="lueKoulutusmoduuliVastaus">
+            </wsdl:output>
         </wsdl:operation>
 
     </wsdl:portType>
@@ -392,6 +410,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutusmoduuli">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueKoulutusmoduuli"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

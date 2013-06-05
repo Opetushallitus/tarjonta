@@ -22,7 +22,6 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
@@ -42,6 +41,7 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
     private static final Logger LOG = LoggerFactory.getLogger(EditKorkeakouluPerustiedotView.class);
     private static final long serialVersionUID = 2756886453541825771L;
     private KorkeakouluPerustiedotViewModel model;
+    private EditKorkeakouluPerustiedotFormView formView;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     @Autowired
@@ -60,7 +60,7 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
          *  FORM LAYOUT (form components under navigation buttons)
          */
         model = presenter.getModel().getKorkeakouluPerustiedot();
-        EditKorkeakouluPerustiedotFormView formView = new EditKorkeakouluPerustiedotFormView(presenter, getUiBuilder(), uiHelper, model);
+        formView = new EditKorkeakouluPerustiedotFormView(presenter, getUiBuilder(), uiHelper, model);
         buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
     }
 

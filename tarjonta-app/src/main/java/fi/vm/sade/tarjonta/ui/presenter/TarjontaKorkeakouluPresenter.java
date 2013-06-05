@@ -37,7 +37,10 @@ import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KKAutocompleteModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
@@ -46,10 +49,13 @@ import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.MuokkaaTutkintoohjelmaDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ShowKorkeakouluSummaryView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseTutkintoohjelmaDialog;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +67,7 @@ import org.springframework.stereotype.Component;
 public class TarjontaKorkeakouluPresenter {
 
     private static transient final Logger LOG = LoggerFactory.getLogger(TarjontaKorkeakouluPresenter.class);
+    private static transient final String URI_LANG_FI = "kieli_fi";
     @Autowired(required = true)
     protected OIDService oidService;
     @Autowired(required = true)
@@ -77,6 +84,8 @@ public class TarjontaKorkeakouluPresenter {
     private EditKorkeakouluPerustiedotView perustiedotView;
     private EditKorkeakouluKuvailevatTiedotView kuvailevatTiedotView;
     private ValitseKoulutusDialog valitseKoulutusDialog;
+    private ValitseTutkintoohjelmaDialog valitseTutkintoohjelmaDialog;
+    private MuokkaaTutkintoohjelmaDialog muokkaaTutkintoohjelmaDialog;
     private EditKorkeakouluView editKoulutusView;
     private RegexModelFilter<KoulutuskoodiRowModel> filter;
     @Autowired(required = true)
@@ -91,10 +100,10 @@ public class TarjontaKorkeakouluPresenter {
      *
      * @param tila
      * @throws ExceptionMessage
+     * @return komo oid
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         LOG.debug("in saveKoulutus, tila : {}", tila);
-
         /**
          * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
          */
@@ -111,44 +120,18 @@ public class TarjontaKorkeakouluPresenter {
         if (perustiedot.isLoaded()) {//update KOMOTO
             PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
             tarjontaAdminService.paivitaKoulutus(paivita);
+            perustiedot.setKoulutusmoduuliOid(paivita.getKomoOid());
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
                 LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
 
-                LOG.debug("old version ID : {}", lisaa.getVersion());
                 LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
                 Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
-
-                //TODO: load tutkinto komo
+                Preconditions.checkNotNull(lisaaKoulutus.getKomoOid(), INVALID_DATA + "KOMO OID cannot ne null.");
                 perustiedot.setKomotoOid(lisaa.getOid());
                 perustiedot.setVersion(lisaaKoulutus.getVersion());
-
-                LOG.debug("new version ID : {}", lisaa.getVersion());
+                perustiedot.setKoulutusmoduuliOid(lisaaKoulutus.getKomoOid());
             }
-        }
-    }
-
-    /**
-     * Tries to find KoulutusModuuli ("KOMO") for given koulutus (tutkinto ==
-     * KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmsKoodiUri)
-     */
-    private void checkKoulutusmoduuli() {
-        HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
-
-
-
-        kysely.setKoulutuskoodiUri(getPerustiedotModel().getKoulutuskoodiModel().getKoodistoUriVersio());
-        kysely.setKoulutusohjelmakoodiUri(getPerustiedotModel().getTutkintoohjelma().getKoodistoUriVersio());
-        HaeKoulutusmoduulitVastausTyyppi vastaus = this.tarjontaPublicService.haeKoulutusmoduulit(kysely);
-
-        if (vastaus.getKoulutusmoduuliTulos().isEmpty()) {
-            //No KOMO, insert new KOMO
-            LOG.error("Tarjonta do not have requested komo! "
-                    + "tutkinto : '" + kysely.getKoulutuskoodiUri()
-                    + "', koulutusohjelma : '" + kysely.getKoulutusohjelmakoodiUri() + "'");
-        } else {
-            //KOMO found
-            getPerustiedotModel().setKoulutusmoduuliOid(vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid());
         }
     }
 
@@ -224,42 +207,26 @@ public class TarjontaKorkeakouluPresenter {
         getPresenter().getRootView().changeView(new ShowKorkeakouluSummaryView(getPerustiedotModel().getTutkintoohjelma().getNimi(), null));
     }
 
+    /**
+     * Reset UI models and set loaded values to the models.
+     *
+     * @param komotoOid, allows null value.
+     */
     private void loadKomoto(final String komotoOid) {
         LOG.debug("In loadKomoto : {}", komotoOid);
-        getPerustiedotModel().clearModel();
-        getKuvailevatTiedotModel().clearModel();
 
         if (komotoOid != null) {
+            getPerustiedotModel().clearModel();
+            getKuvailevatTiedotModel().clearModel();
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             korkeakouluConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, locale);
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
             korkeakouluConverter.updateKoulutuskoodiModel(getPerustiedotModel(), locale);
         }
-    }
 
-    /**
-     * Load and convert Koodisto service data to human readable format. The data
-     * is used in form combobox component.
-     */
-    public void loadTutkintoohjelmas(final String komoUri, KoulutusasteTyyppi aste) {
-        Preconditions.checkNotNull(komoUri, "KOMO URI cannot be null.");
-        HaeKaikkiKoulutusmoduulitKyselyTyyppi tyyppi = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
-        tyyppi.setKoulutuskoodiUri(komoUri);
-
-        if (aste != null) {
-            tyyppi.setKoulutustyyppi(aste);
-        }
-
-        HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = tarjontaPublicService.haeKaikkiKoulutusmoduulit(tyyppi);
-        List<KoulutusmoduuliTulos> modules = haeKaikkiKoulutusmoduulit.getKoulutusmoduuliTulos();
-
-        List<KoulutusmoduuliKoosteTyyppi> komoTyyppis = Lists.<KoulutusmoduuliKoosteTyyppi>newArrayList();
-        for (KoulutusmoduuliTulos t : modules) {
-            komoTyyppis.add(t.getKoulutusmoduuli());
-        }
-
-        List<TutkintoohjelmaModel> koulutusohjelmas = KorkeakouluConverter.convertToTutkintoohjelmaModels(komoTyyppis, locale);
+        //set the user koodi language uri to the base model.
+        getPerustiedotModel().setUserKoodiLangUri(korkeakouluConverter.getUserLangUri());
     }
 
     private TarjontaModel getTarjontaModel() {
@@ -367,14 +334,87 @@ public class TarjontaKorkeakouluPresenter {
     }
 
     /**
-     * @return the valitseKoulutusDialog
+     * Direct KOMO name text update request to database. Search and update by
+     * KOMO OID.
+     *
+     * @param komoOid, not null value.
+     */
+    public void updateSelectedKOMOName(final String komoOid) {
+        Preconditions.checkNotNull(komoOid, "KOMO OID cannot be null.");
+        LueKoulutusmoduuliKyselyTyyppi kysely = new LueKoulutusmoduuliKyselyTyyppi();
+        kysely.setOid(komoOid);
+
+        LueKoulutusmoduuliVastausTyyppi lueKoulutusmoduuli = tarjontaPublicService.lueKoulutusmoduuli(kysely);
+        Preconditions.checkNotNull(lueKoulutusmoduuli, "Update failed, KOMO not found by OID " + komoOid);
+
+
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuli = lueKoulutusmoduuli.getKoulutusmoduuli();
+        MonikielinenTekstiTyyppi name = korkeakouluConverter.updateTutkintoohjelmaModelTextData(getPerustiedotModel());
+        koulutusmoduuli.setNimi(name);
+        koulutusmoduuli.setKoulutusmoduulinNimi(name); ///?? same as above?
+
+        //persist changed data to db, after the operatio we need to reload komos to form. 
+        tarjontaAdminService.paivitaKoulutusmoduuli(koulutusmoduuli);
+    }
+
+    /**
+     * @return the ValitseKoulutusDialog
      */
     public void showValitseKoulutusDialog() {
+        getPerustiedotModel().clearModel();
+        getKuvailevatTiedotModel().clearModel();
+        getPerustiedotModel().setUserKoodiLangUri(korkeakouluConverter.getUserLangUri());
+
         if (this.valitseKoulutusDialog == null) {
             this.valitseKoulutusDialog = new ValitseKoulutusDialog(presenter, uiBuilder);
+        } else {
+            //fix for Jrebel window close issue.
+            valitseKoulutusDialog.windowClose();
         }
 
         this.valitseKoulutusDialog.windowOpen();
+    }
+
+    /**
+     * @return the ValitseTutkintoohjelmaDialog
+     */
+    public void showValitseTutkintoohjelmaDialog() {
+        if (this.valitseTutkintoohjelmaDialog == null) {
+            this.valitseTutkintoohjelmaDialog = new ValitseTutkintoohjelmaDialog(presenter, uiBuilder);
+        } else {
+            //fix for Jrebel window close issue.
+            valitseTutkintoohjelmaDialog.windowClose();
+        }
+
+        this.valitseTutkintoohjelmaDialog.windowOpen();
+    }
+
+    /**
+     * @return the MuokkaaTutkintoohjelmaDialog
+     */
+    public void showMuokkaaTutkintoohjelmaDialog(final boolean edit) {
+        TutkintoohjelmaModel tutkintoohjelma = getPerustiedotModel().getTutkintoohjelma();
+
+        if (edit) {
+            //set the current name of the form text edit field.
+            Preconditions.checkNotNull(tutkintoohjelma, "Loaded tutkinto-ohjelma UI model cannot be null.");
+            Preconditions.checkNotNull(tutkintoohjelma.getKomoOid(), "Loaded tutkinto-ohjelma KOMO OID cannot be null.");
+            Preconditions.checkArgument(!tutkintoohjelma.getKielikaannos().isEmpty(), "Loaded tutkinto-ohjelma UI model cannot be empty.");
+            Preconditions.checkNotNull(tutkintoohjelma.getNimi(), "Loaded tutkinto-ohjelma name cannot be empty.");
+
+            LOG.debug("Original KOMO name : {}", tutkintoohjelma.getNimi());
+            getPerustiedotModel().setTutkintoohjelmaNimi(tutkintoohjelma.getNimi());
+        }
+
+        if (this.muokkaaTutkintoohjelmaDialog == null) {
+            this.muokkaaTutkintoohjelmaDialog = new MuokkaaTutkintoohjelmaDialog(presenter);
+        } else {
+            //fix for Jrebel window close issue.
+            muokkaaTutkintoohjelmaDialog.windowClose();
+        }
+
+        this.muokkaaTutkintoohjelmaDialog.setMode(edit); //modes : edit or add
+        this.muokkaaTutkintoohjelmaDialog.windowOpen();
     }
 
     /**

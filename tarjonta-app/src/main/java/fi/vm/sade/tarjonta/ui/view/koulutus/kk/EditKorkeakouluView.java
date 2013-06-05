@@ -60,7 +60,7 @@ public class EditKorkeakouluView extends AbstractVerticalLayout {
     @Override
     protected void buildLayout() {
         
-        String organisaatioName = getOrganisaationNames();
+        final String organisaatioName = getOrganisaationNames();
         
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
