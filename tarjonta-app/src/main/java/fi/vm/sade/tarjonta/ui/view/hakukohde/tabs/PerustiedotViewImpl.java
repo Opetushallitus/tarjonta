@@ -126,8 +126,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
     private TextField valinnoissaKaytettavatPaikatText;
-    @PropertyId("hakukelpoisuusVaatimus")
-    private Label hakuKelpoisuusVaatimuksetLabel;
+
     @PropertyId("osoiteRivi1")
     private TextField liitteidenOsoiteRivi1Text;
     @PropertyId("osoiteRivi2")
@@ -688,11 +687,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return osoiteLayout;
     }
 
-    private Label buildHakukelpoisuusVaatimukset() {
-        //TODO get the text from valintaperusteista
-        hakuKelpoisuusVaatimuksetLabel = UiUtil.label((AbstractLayout) null, T("PerustiedotView.hakukelpoisuusvaatimukset.help"), LabelStyleEnum.TEXT);
-        return hakuKelpoisuusVaatimuksetLabel;
-    }
 
     private TextField buildAloitusPaikat() {
         aloitusPaikatText = UiUtil.textField(null);
