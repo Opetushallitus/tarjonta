@@ -154,6 +154,11 @@ public class SVTUtils {
 		return gwtuid;
 	}	  
 
+	public WebElement getTriangleForFirstItem(WebDriver driver)
+	{
+        return driver.findElements(By.className("v-treetable-treespacer")).get(0);
+	}	  
+
 	public WebElement getTriangleForLastHakukohde(WebDriver driver)
 	{
         return driver.findElements(By.className("v-treetable-treespacer"))

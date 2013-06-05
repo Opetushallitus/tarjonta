@@ -142,7 +142,149 @@ public class TestTarjontaElements {
         System.out.println("Running TarjontaElements001 EtuSivu OK");
 	}
 
+	public void TarkasteleKoulutus(String haku, String linkki) throws Exception {
+    	// TODO here
+    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
+    	search.clear();
+    	search.sendKeys(haku);
+    	doit.tauko(1);
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+    	WebElement triangle = doit.getTriangleForFirstItem(driver);
+        Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", triangle);
+    	doit.tauko(1);
+    	triangle.click();
+    	WebElement link = doit.textElement(driver, linkki); 
+        Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", link);
+        link.click();
+        Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
+        		, doit.textElement(driver, "Lukiolinja"));
+	}
+	
+	// tarkasteleLukioKoulutus
+	//@Test
+	public void testTarkasteleLukioKoulutus() throws Exception {
+        if (! readPageFromFile)
+        {
+        	this.frontPage();
+        	this.TarkasteleKoulutus("ylioppi", "Ylioppilastutkinto");
+        }
+        
+        String elements = "Koulutusaste"
+        		+ ".*"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements002 TarkasteleLukioKoulutus ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements002 TarkasteleLukioKoulutus OK");
+	}
+	// muokkaaLukioKoulutuksenPerustiedot
 	// @Test
+	public void testMuokkaaLukioKoulutuksenPerustiedot() throws Exception {
+        if (! readPageFromFile)
+        {
+                this.frontPage();
+                // hae: ylioppi
+                // open first
+                // click first
+                
+                // click Muokkaa(1)
+        }
+        
+        String elements = ""
+        		+ ".*3KPL<label for=\"gwt-uid"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements003 MuokkaaLukioKoulutuksenPerustiedot ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements003 MuokkaaLukioKoulutuksenPerustiedot OK");
+	}
+	// muokkaaLukioKoulutusKuvailevatTiedot
+	// @Test
+	public void testMuokkaaLukioKoulutusKuvailevatTiedot() throws Exception {
+        if (! readPageFromFile)
+        {
+                this.frontPage();
+                // hae: ylioppi
+                // open first
+                // click first
+                
+                // click Muokkaa(2)
+        }
+        
+        String elements = ""
+        		+ ".*3KPL<label for=\"gwt-uid"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements004 MuokkaaLukioKoulutusKuvailevatTiedot ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements004 MuokkaaLukioKoulutusKuvailevatTiedot OK");
+	}
+	// tarkasteleAmmatillinenKoulutus
+	// @Test
+	public void testTarkasteleAmmatillinenKoulutus() throws Exception {
+        if (! readPageFromFile)
+        {
+                this.frontPage();
+                // hae: ohjelma
+                // open first
+                // click first
+        }
+        
+        String elements = ""
+        		+ ".*3KPL<label for=\"gwt-uid"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus OK");
+	}
+	// muokkaaAmmatillinenKoulutusKoulutuksenPerustiedot
+	// @Test
+	public void testMuokkaaAmmatillinenKoulutuksenPerustiedot() throws Exception {
+        if (! readPageFromFile)
+        {
+                this.frontPage();
+                // hae: ylioppi
+                // open first
+                // click first
+                
+                // click Muokkaa(1)
+        }
+        
+        String elements = ""
+        		+ ".*3KPL<label for=\"gwt-uid"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot OK");
+	}
+	// muokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot
+	// @Test
+	public void testMuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot() throws Exception {
+        if (! readPageFromFile)
+        {
+                this.frontPage();
+                // hae: ylioppi
+                // open first
+                // click first
+        }
+        
+        String elements = ""
+        		+ ".*3KPL<label for=\"gwt-uid"
+		;
+
+        doit.skipLoading(readPageFromFile);
+        Assert.assertTrue("Running TarjontaElements007 MuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot ei toimi."
+        		, doit.checkElements(driver, elements, false));
+        System.out.println("Running TarjontaElements007 MuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot OK");
+	}
+
 	public void testEtuSivuHae() throws Exception {
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
