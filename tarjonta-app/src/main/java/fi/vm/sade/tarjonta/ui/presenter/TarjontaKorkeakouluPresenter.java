@@ -404,6 +404,9 @@ public class TarjontaKorkeakouluPresenter {
 
             LOG.debug("Original KOMO name : {}", tutkintoohjelma.getNimi());
             getPerustiedotModel().setTutkintoohjelmaNimi(tutkintoohjelma.getNimi());
+        } else {
+            //clear name field
+            presenter.getKorkeakouluPresenter().getPerustiedotModel().setTutkintoohjelmaNimi(null);
         }
 
         if (this.muokkaaTutkintoohjelmaDialog == null) {

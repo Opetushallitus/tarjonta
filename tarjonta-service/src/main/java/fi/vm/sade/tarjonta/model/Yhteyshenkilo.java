@@ -25,6 +25,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Yhteyshenkilo's are always maintained in Henkilo service.
@@ -34,36 +36,25 @@ import org.apache.commons.lang.StringUtils;
 public class Yhteyshenkilo extends BaseEntity {
 
     public static final String TABLE_NAME = "yhteyshenkilo";
-
     private static final long serialVersionUID = -1434499440678133630L;
-
     private static final String KIELI_SEPARATOR = ",";
-
     @Column(name = "etunimis", nullable = false)
     private String etunimis;
-
     @Column(name = "sukunimi", nullable = false)
     private String sukunimi;
-
     @Column(name = "sahkoposti")
     private String sahkoposti;
-
     @Column(name = "puhelin")
     private String puhelin;
-
     @Column(name = "kielis")
     private String kielis;
-
     @Column(name = "henkilo_oid")
     private String henkioOid;
-
     @Column(name = "titteli")
     private String titteli;
-    
     @Enumerated(EnumType.STRING)
     @Column(name = "tyyppi")
     private HenkiloTyyppi henkiloTyyppi;
-    
     private transient boolean persisted;
 
     /**
@@ -92,7 +83,7 @@ public class Yhteyshenkilo extends BaseEntity {
     public final void setKielis(String... kieli) {
 
         if (kieli == null || kieli.length == 0) {
-           kielis = null;
+            kielis = null;
         }
 
         kielis = StringUtils.join(formatKielis(kieli), KIELI_SEPARATOR);
@@ -173,17 +164,12 @@ public class Yhteyshenkilo extends BaseEntity {
             return false;
         }
         final Yhteyshenkilo other = (Yhteyshenkilo) obj;
-        if ((this.henkioOid == null) ? (other.henkioOid != null) : !this.henkioOid.equals(other.henkioOid)) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder().append(henkioOid, other.henkioOid).append(henkiloTyyppi, other.henkiloTyyppi).isEquals();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.henkioOid != null ? this.henkioOid.hashCode() : 0);
-        return hash;
+        return new HashCodeBuilder().append(henkioOid).append(henkiloTyyppi).toHashCode();
     }
 
     /**
@@ -213,7 +199,4 @@ public class Yhteyshenkilo extends BaseEntity {
     public void setHenkiloTyyppi(HenkiloTyyppi henkiloTyyppi) {
         this.henkiloTyyppi = henkiloTyyppi;
     }
-
-  
 }
-

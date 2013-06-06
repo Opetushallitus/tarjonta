@@ -111,7 +111,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
 
         if (model.getYhtHenkKokoNimi() != null && !model.getYhtHenkKokoNimi().isEmpty()) {
-            lisaa.getYhteyshenkilo().add(mapYhteyshenkiloToTyyppi(model));
+            lisaa.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model));
         }
 
         //convert linkki model objects to linkki type objects.

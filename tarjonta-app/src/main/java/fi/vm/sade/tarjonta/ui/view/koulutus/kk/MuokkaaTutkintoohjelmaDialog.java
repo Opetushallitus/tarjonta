@@ -18,11 +18,10 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
+import static fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow.WINDOW_TITLE_PROPERTY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class MuokkaaTutkintoohjelmaDialog extends TarjontaWindow {
 
     private static transient final Logger LOG = LoggerFactory.getLogger(MuokkaaTutkintoohjelmaDialog.class);
     private static final long serialVersionUID = -7357037259731478017L;
-    private static final String WINDOW_HEIGHT = "400px";
+    private static final String WINDOW_HEIGHT = "250px";
     private static final String WINDOW_WIDTH = "700px";
     private TarjontaPresenter presenter;
     private ValidatingViewBoundForm form;
@@ -43,12 +42,11 @@ public class MuokkaaTutkintoohjelmaDialog extends TarjontaWindow {
     public MuokkaaTutkintoohjelmaDialog(TarjontaPresenter presenter) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
-
-        setCaption(T(WINDOW_TITLE_PROPERTY));
     }
 
     @Override
     public void buildLayout(VerticalLayout layout) {
+        setCaption(T(mode() + WINDOW_TITLE_PROPERTY));
         layout.setMargin(false, true, true, true);
         MuokkaaTutkintoohjelmaFormView view = new MuokkaaTutkintoohjelmaFormView(presenter.getKorkeakouluPresenter(), this, mode);
         form = new ValidatingViewBoundForm(view);
@@ -80,5 +78,9 @@ public class MuokkaaTutkintoohjelmaDialog extends TarjontaWindow {
      */
     public void setMode(boolean mode) {
         this.mode = mode;
+    }
+
+    private String mode() {
+        return this.mode ? "edit." : "add.";
     }
 }

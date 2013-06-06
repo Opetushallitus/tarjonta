@@ -721,7 +721,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
         EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajis(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
-        EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
+        EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkiloTyyppi());
         toKoulutus.setPainotus(EntityUtils.copyFields(fromKoulutus.getPainotus()));
         //
         // Koulutus lisätiedot / additional information for Koulutus

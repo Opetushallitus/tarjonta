@@ -607,7 +607,7 @@ public class TarjontaAdminServiceTest {
 
     private void assertKoulutusEquals(LisaaKoulutusTyyppi expected, KoulutusmoduuliToteutus actual) {
 
-        assertEquals(expected.getYhteyshenkilo().size(), actual.getYhteyshenkilos().size());
+        assertEquals(expected.getYhteyshenkiloTyyppi().size(), actual.getYhteyshenkilos().size());
 
     }
 
@@ -627,7 +627,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(getDateFromString("02.02.2013"));
         lisaaKoulutus.setKesto(kesto3Vuotta);
-        lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
+        lisaaKoulutus.getYhteyshenkiloTyyppi().add(createYhteyshenkilo());
         lisaaKoulutus.getLinkki().add(createLinkki("google", null, "http://google.com"));
         lisaaKoulutus.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
 

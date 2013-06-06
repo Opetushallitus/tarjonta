@@ -30,6 +30,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.model.Kieliaine;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
@@ -117,10 +118,10 @@ public final class EntityUtils {
         if (from.getPohjakoulutusvaatimus() != null) {
             to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
         }
-        
+
         to.setTarjoaja(from.getTarjoaja());
 
-        Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
+        Set<WebLinkki> toLinkkis = Sets.<WebLinkki>newHashSet();
         if (from.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : from.getLinkki()) {
                 WebLinkki toLinkki = new WebLinkki(fromLinkki.getTyyppi(), fromLinkki.getKieli(), fromLinkki.getUri());
@@ -129,10 +130,10 @@ public final class EntityUtils {
         } // else, set is empty which will clear all previous links
         to.setLinkkis(toLinkkis);
 
-        HashSet<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
+        Set<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         if (!from.getYhteyshenkiloTyyppi().isEmpty()) {
-            Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
             for (YhteyshenkiloTyyppi tyyppi : from.getYhteyshenkiloTyyppi()) {
+                Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
                 copyFields(tyyppi, newYhteyshenkilo);
                 yhteyshenkilos.add(newYhteyshenkilo);
             }
@@ -177,11 +178,12 @@ public final class EntityUtils {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
 
-        for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
+        for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkiloTyyppi()) {
             Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
             copyFields(henkiloFrom, henkiloTo);
             toKoulutus.addYhteyshenkilo(henkiloTo);
         }
+
 
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (fromKoulutus.getLinkki() != null) {

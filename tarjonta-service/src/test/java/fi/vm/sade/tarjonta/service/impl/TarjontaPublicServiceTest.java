@@ -368,7 +368,7 @@ public class TarjontaPublicServiceTest {
         assertNotNull(vastaus);
 
         assertTrue(vastaus.getOpetuskieli().get(0).getUri().equals("http://kielet/fi"));
-        assertEquals(1, vastaus.getYhteyshenkilo().size());
+        assertEquals(1, vastaus.getYhteyshenkiloTyyppi().size());
        // assertTrue(vastaus.getKoulutusaste().getUri().equals(KOULUTUSASTEKOODI));
     }
 

@@ -232,7 +232,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
             }
         });
 
-        btNext = UiUtil.buttonSmallSecodary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
+        btNext = UiUtil.buttonSmallPrimary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override

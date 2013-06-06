@@ -28,6 +28,7 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
+import static fi.vm.sade.tarjonta.service.types.HenkiloTyyppi.ECTS_KOORDINAATTORI;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
@@ -156,23 +157,23 @@ public class KoulutusConveter {
         return yhteyshenkilo;
     }
 
-    public static YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(YhteyshenkiloModel model) {
+    public static YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(YhteyshenkiloModel model, HenkiloTyyppi tyyppiEnum) {
         YhteyshenkiloTyyppi yhteyshenkilo = new YhteyshenkiloTyyppi();
         yhteyshenkilo.setEtunimet(model.getYhtHenkKokoNimi());
         yhteyshenkilo.setPuhelin(model.getYhtHenkPuhelin());
         yhteyshenkilo.setSahkoposti(model.getYhtHenkEmail());
         yhteyshenkilo.setTitteli(model.getYhtHenkTitteli());
         yhteyshenkilo.setHenkiloOid(model.getYhtHenkiloOid());
-        yhteyshenkilo.setHenkiloTyyppi(model.getHenkiloTyyppi());
+        yhteyshenkilo.setHenkiloTyyppi(tyyppiEnum);
         return yhteyshenkilo;
     }
 
     protected void mapYhteyshenkiloToViewModel(KoulutusToisenAsteenPerustiedotViewModel model2Aste, LueKoulutusVastausTyyppi tyyppi) {
-        if (tyyppi.getYhteyshenkilo().isEmpty()) {
+        if (tyyppi.getYhteyshenkiloTyyppi().isEmpty()) {
             return;
         }
 
-        YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkilo().get(0);
+        YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkiloTyyppi().get(0);
         model2Aste.setYhtHenkKokoNimi(yhtHenk.getEtunimet() + " " + yhtHenk.getSukunimi());
         model2Aste.setYhtHenkEmail(yhtHenk.getSahkoposti());
         model2Aste.setYhtHenkPuhelin(yhtHenk.getPuhelin());
@@ -180,18 +181,28 @@ public class KoulutusConveter {
         model2Aste.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
     }
 
-    protected void mapYhteyshenkiloToViewModel(YhteyshenkiloModel yhteyshenkiloModel, LueKoulutusVastausTyyppi tyyppi) {
-        if (tyyppi.getYhteyshenkilo().isEmpty()) {
+    protected void mapYhteyshenkiloToViewModel(YhteyshenkiloModel yhteyshenkiloModel, LueKoulutusVastausTyyppi tyyppi, HenkiloTyyppi tyyppiEnum) {
+        Preconditions.checkNotNull(tyyppiEnum, "HenkiloTyyppi enum cannot be null.");
+        if (tyyppi.getYhteyshenkiloTyyppi().isEmpty()) {
             return;
         }
 
-        YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkilo().get(0);
-        yhteyshenkiloModel.setYhtHenkKokoNimi(yhtHenk.getEtunimet() + " " + yhtHenk.getSukunimi());
-        yhteyshenkiloModel.setYhtHenkEmail(yhtHenk.getSahkoposti());
-        yhteyshenkiloModel.setYhtHenkPuhelin(yhtHenk.getPuhelin());
-        yhteyshenkiloModel.setYhtHenkTitteli(yhtHenk.getTitteli());
-        yhteyshenkiloModel.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
-        yhteyshenkiloModel.setHenkiloTyyppi(yhtHenk.getHenkiloTyyppi());
+        for (YhteyshenkiloTyyppi henk : tyyppi.getYhteyshenkiloTyyppi()) {
+            HenkiloTyyppi henkiloTyyppi = henk.getHenkiloTyyppi();
+            if (henkiloTyyppi == null) {
+                henkiloTyyppi = HenkiloTyyppi.YHTEYSHENKILO;
+            }
+
+            if (tyyppiEnum.equals(henkiloTyyppi)) {
+                yhteyshenkiloModel.setYhtHenkKokoNimi(henk.getEtunimet() + " " + henk.getSukunimi());
+                yhteyshenkiloModel.setYhtHenkEmail(henk.getSahkoposti());
+                yhteyshenkiloModel.setYhtHenkPuhelin(henk.getPuhelin());
+                yhteyshenkiloModel.setYhtHenkTitteli(henk.getTitteli());
+                yhteyshenkiloModel.setYhtHenkiloOid(henk.getHenkiloOid());
+                yhteyshenkiloModel.setHenkiloTyyppi(henk.getHenkiloTyyppi());
+                break;
+            }
+        }
     }
 
     public static KoulutusLinkkiViewModel mapToKoulutusLinkkiViewModel(WebLinkkiTyyppi type) {
@@ -533,5 +544,4 @@ public class KoulutusConveter {
 
         return teksti;
     }
-
 }

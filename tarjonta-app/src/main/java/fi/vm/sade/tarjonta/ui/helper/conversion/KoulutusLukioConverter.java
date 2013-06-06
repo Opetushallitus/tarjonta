@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
@@ -237,7 +238,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         }
 
         if (model.getYhteyshenkilo().getYhtHenkKokoNimi() != null && !model.getYhteyshenkilo().getYhtHenkKokoNimi().isEmpty()) {
-            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getYhteyshenkilo()));
+            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getYhteyshenkilo(), HenkiloTyyppi.YHTEYSHENKILO));
         }
 
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
@@ -313,7 +314,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         /*
          * contact person data conversion
          */
-        mapYhteyshenkiloToViewModel(perustiedot.getYhteyshenkilo(), koulutus);
+        mapYhteyshenkiloToViewModel(perustiedot.getYhteyshenkilo(), koulutus, HenkiloTyyppi.YHTEYSHENKILO);
 
         /*
          * convert koodisto uris to UI models

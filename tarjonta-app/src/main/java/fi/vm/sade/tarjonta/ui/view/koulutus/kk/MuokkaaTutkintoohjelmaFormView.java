@@ -53,7 +53,6 @@ public class MuokkaaTutkintoohjelmaFormView extends AbstractVerticalLayout {
     private static final long serialVersionUID = 6245718709351863230L;
     private static transient final Logger LOG = LoggerFactory.getLogger(MuokkaaTutkintoohjelmaFormView.class);
     private TarjontaKorkeakouluPresenter presenter;
-  
     private MuokkaaTutkintoohjelmaDialog dialog;
     private Button btNext, btPrev;
     @NotNull(message = "{validation.Koulutus.tutkintoohjelma.notNull}")
@@ -61,7 +60,7 @@ public class MuokkaaTutkintoohjelmaFormView extends AbstractVerticalLayout {
     private TextField tftutkintoohjelmanNimi;
     private boolean mode;
 
-    public MuokkaaTutkintoohjelmaFormView(TarjontaKorkeakouluPresenter presenter,  MuokkaaTutkintoohjelmaDialog dialog, boolean mode) {
+    public MuokkaaTutkintoohjelmaFormView(TarjontaKorkeakouluPresenter presenter, MuokkaaTutkintoohjelmaDialog dialog, boolean mode) {
         this.presenter = presenter;
         this.dialog = dialog;
         this.mode = mode;
@@ -118,7 +117,7 @@ public class MuokkaaTutkintoohjelmaFormView extends AbstractVerticalLayout {
             }
         });
 
-        btNext = UiUtil.buttonSmallSecodary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
+        btNext = UiUtil.buttonSmallPrimary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -126,7 +125,11 @@ public class MuokkaaTutkintoohjelmaFormView extends AbstractVerticalLayout {
                 TutkintoohjelmaModel tutkintoohjelma = presenter.getPerustiedotModel().getTutkintoohjelma();
 
                 LOG.debug("tutkintoohjelma : {}", tutkintoohjelma);
-                if (tutkintoohjelma != null && tutkintoohjelma.getKomoOid() != null) {
+                /*
+                 * mode == true => edit komo name => next page => create tutkinto
+                 * mode == false => add new name => next page => create new komo + tutkinto
+                 */
+                if (mode && tutkintoohjelma != null && tutkintoohjelma.getKomoOid() != null) {
                     //update the changed name to database
                     presenter.updateSelectedKOMOName(tutkintoohjelma.getKomoOid());
                 }

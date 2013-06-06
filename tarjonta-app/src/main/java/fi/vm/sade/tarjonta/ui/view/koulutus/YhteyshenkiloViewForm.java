@@ -124,7 +124,6 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
         selectionFieldLayout = new VerticalLayout();
 
         yhtHenkKokoNimi = new YhteyshenkiloAutocompleteTextField(selectionFieldLayout, "prompt.kokoNimi", "", presenter, model);
-
         yhtHenkKokoNimi.addListener(new Listener() {
             private static final long serialVersionUID = 6680073663370984689L;
 

@@ -66,7 +66,6 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
 
     @Override
     protected void buildLayout() {
-    
     }
 
     private enum RadioItemType {
@@ -162,7 +161,7 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
             }
         });
 
-        btNext = UiUtil.buttonSmallSecodary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
+        btNext = UiUtil.buttonSmallPrimary(hl, I18N.getMessage("jatka"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -269,6 +268,7 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
     private void enableNextDialogButton(RadioItemType type) {
         RadioItem ri = (RadioItem) valitseMuokkaaLisaa.getValue();
         TutkintoohjelmaModel m = (TutkintoohjelmaModel) cbTutkintoohjelma.getValue();
+        btNext.setEnabled(false); //set to default
         switch (type) {
             case ADD:
                 btNext.setEnabled(ri != null);

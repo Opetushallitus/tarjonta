@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-
 import com.vaadin.event.Action.Handler;
 import com.vaadin.ui.VerticalLayout;
 
@@ -40,7 +39,7 @@ public class YhteyshenkiloAutocompleteTextField extends AutocompleteTextField im
             TarjontaPresenter presenter,
             YhteyshenkiloModel koulutusModel) {
         super(vl, inputPrompt, nullRepresentation, presenter, null);
-        yhteyshenkilo = presenter.getModel().getKoulutusLukioPerustiedot().getYhteyshenkilo();
+        yhteyshenkilo = koulutusModel;
     }
 
     @Override

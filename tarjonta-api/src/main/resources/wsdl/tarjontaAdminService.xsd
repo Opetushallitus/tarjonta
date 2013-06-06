@@ -191,10 +191,6 @@
     <xs:complexType name="LisaaKoulutusTyyppi">
         <xs:complexContent>
             <xs:extension base="tarjonta:KoulutusTyyppi">
-                <xs:sequence>
-                    <xs:element name="Yhteyshenkilo" type="tarjonta:YhteyshenkiloTyyppi" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -33,7 +33,7 @@ public class ValitseTutkintoohjelmaDialog extends TarjontaWindow {
 
     private static transient final Logger LOG = LoggerFactory.getLogger(ValitseTutkintoohjelmaDialog.class);
     private static final long serialVersionUID = -7357037259731478017L;
-    private static final String WINDOW_HEIGHT = "400px";
+    private static final String WINDOW_HEIGHT = "300px";
     private static final String WINDOW_WIDTH = "700px";
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;

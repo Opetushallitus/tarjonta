@@ -53,7 +53,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private Boolean opintojenMaksullisuus;
     private Set<String> pohjakoulutusvaatimukset;
     private Set<String> teemas;
-    private String opintojenLaajuusarvo;
     /*
      * Contact persons
      */
@@ -393,20 +392,5 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     public void setTutkintoohjelmaNimi(String tutkintoohjelmaNimi) {
         this.tutkintoohjelmaNimi = tutkintoohjelmaNimi;
     }
-
-    /**
-     * @return the opintojenLaajuusarvo
-     */
-    public String getOpintojenLaajuusarvo() {
-        return opintojenLaajuusarvo;
-    }
-
-    /**
-     * @param opintojenLaajuusarvo the opintojenLaajuusarvo to set
-     */
-    public void setOpintojenLaajuusarvo(String opintojenLaajuusarvo) {
-        this.opintojenLaajuusarvo = opintojenLaajuusarvo;
-    }
-
 
 }

@@ -289,8 +289,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertNotNull(koulutus.getYhteyshenkiloTyyppi());
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
-        assertTrue("contact person", koulutus.getYhteyshenkilo().isEmpty()); //not needed
-
+   
         assertEquals("Kansainvalistyminen", koulutus.getKansainvalistyminen().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getKansainvalistyminen().getTeksti().get(0).getKieliKoodi());
 
@@ -463,7 +462,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         y.setPuhelin(yhteyshenkiloModel.getYhtHenkPuhelin());
         y.setSahkoposti(yhteyshenkiloModel.getYhtHenkEmail());
         y.setTitteli(yhteyshenkiloModel.getYhtHenkTitteli());
-        vastaus.getYhteyshenkilo().add(y);
+        vastaus.getYhteyshenkiloTyyppi().add(y);
 
         KoulutusmoduuliKoosteTyyppi t = new KoulutusmoduuliKoosteTyyppi();
         t.setOid(KOMO_OID);

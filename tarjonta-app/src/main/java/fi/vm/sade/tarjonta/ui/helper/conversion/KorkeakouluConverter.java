@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -203,7 +204,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
          * KOMO:
          * set the koulutus and tutkinto-ohjelma data to koulutusmoduuli tyyppi
          */
-        tyyppi.setKoulutusmoduuli(createKoulutusmoduuliKoosteTyyppi(model, koulutusasteTyyppi));
+        tyyppi.setKoulutusmoduuli(convertModelToKoulutusmoduuliKoosteTyyppi(model, koulutusasteTyyppi));
 
         /*
          * Other input fields
@@ -215,7 +216,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
         tyyppi.setMaksullisuus(model.getOpintojenMaksullisuus());
-
+        tyyppi.setUlkoinenTunniste(model.getTunniste());
         /*
          * OIDs
          */
@@ -250,11 +251,11 @@ public class KorkeakouluConverter extends KoulutusConveter {
         }
 
         if (model.getYhteyshenkilo().getYhtHenkKokoNimi() != null && !model.getYhteyshenkilo().getYhtHenkKokoNimi().isEmpty()) {
-            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getYhteyshenkilo()));
+            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getYhteyshenkilo(), HenkiloTyyppi.YHTEYSHENKILO));
         }
 
         if (model.getEctsKoordinaattori().getYhtHenkKokoNimi() != null && !model.getEctsKoordinaattori().getYhtHenkKokoNimi().isEmpty()) {
-            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getEctsKoordinaattori()));
+            tyyppi.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model.getEctsKoordinaattori(), HenkiloTyyppi.ECTS_KOORDINAATTORI));
         }
 
         /*
@@ -300,8 +301,8 @@ public class KorkeakouluConverter extends KoulutusConveter {
         perustiedotModel.setKomotoOid(vastaus.getOid());
         perustiedotModel.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuli().getOid());
         perustiedotModel.setOpintojenMaksullisuus(vastaus.isMaksullisuus());
-        perustiedotModel.setTunniste(vastaus.getKoulutusmoduuli().getUlkoinenTunniste());
-
+        perustiedotModel.setTunniste(vastaus.getKoulutusmoduuli().getUlkoinenTunniste()); //TODO: fix ulkoinen tunniste
+        perustiedotModel.setOpintojenLaajuus(vastaus.getKoulutusmoduuli().getLaajuusarvoUri());
         /*
          * Combobox data;
          * 
@@ -353,7 +354,8 @@ public class KorkeakouluConverter extends KoulutusConveter {
         /*
          * contact person data conversion
          */
-        mapYhteyshenkiloToViewModel(perustiedotModel.getYhteyshenkilo(), vastaus);
+        mapYhteyshenkiloToViewModel(perustiedotModel.getYhteyshenkilo(), vastaus, HenkiloTyyppi.YHTEYSHENKILO);
+        mapYhteyshenkiloToViewModel(perustiedotModel.getEctsKoordinaattori(), vastaus, HenkiloTyyppi.ECTS_KOORDINAATTORI);
 
         /*
          * Data fields used on UI only as extra information:
@@ -374,6 +376,8 @@ public class KorkeakouluConverter extends KoulutusConveter {
         UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class, helper);
         TutkintoohjelmaModel tutkintoohjelma = builder.build(tyyppi.getNimi(), locale);
         tutkintoohjelma.setKoodi(tyyppi.getUlkoinenTunniste());
+        tutkintoohjelma.setKomoOid(tyyppi.getOid());
+        tutkintoohjelma.setKomoOid(tyyppi.getParentOid());
 
         MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
         Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");
@@ -409,12 +413,9 @@ public class KorkeakouluConverter extends KoulutusConveter {
     }
 
     /**
-     * Tutkinto-ohjelma data conversion. Remeber, the korkeakoulu case do not
-     * have Koodisto service URIs in tutkinto-ohjelma data and because of that
-     * it makes data output to server side a little bit harder to understand. In
-     * future it would be easier to create spesific object for this use.
+     * Tutkinto-ohjelma + koulutuskoodi (KOMO) data conversion to Tyyppi object.
      */
-    private static KoulutusmoduuliKoosteTyyppi createKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusasteTyyppi koulutusasteTyyppi) {
+    private static KoulutusmoduuliKoosteTyyppi convertModelToKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusasteTyyppi koulutusasteTyyppi) {
         Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(model.getTunniste(), "Tutkinto-ohjelma external ID cannot be null!");
         KoulutusmoduuliKoosteTyyppi kooste = new KoulutusmoduuliKoosteTyyppi();
@@ -481,15 +482,23 @@ public class KorkeakouluConverter extends KoulutusConveter {
         //we use ulkoinen tunniste field for the 'numeric' code value.
         kooste.setUlkoinenTunniste(model.getTunniste());
 
+        kooste.setLaajuusarvoUri(model.getOpintojenLaajuus());
+
         return kooste;
     }
 
+    /**
+     * Update the name of tutkinto-ohjelma in tutkintoohjelma model instance.
+     *
+     * @param model
+     * @return updated tyyppi object
+     */
     public MonikielinenTekstiTyyppi updateTutkintoohjelmaModelTextData(KorkeakouluPerustiedotViewModel model) {
         Preconditions.checkNotNull(model.getTutkintoohjelmaNimi(), "Tutkinto-ohjelman name cannot be null.");
         Preconditions.checkArgument(!model.getTutkintoohjelmaNimi().isEmpty(), "Tutkinto-ohjelman name cannot be empty.");
 
-        TutkintoohjelmaModel orginalTutkintoohjelma = model.getTutkintoohjelma();
-        Set<KielikaannosViewModel> kielikaannos = orginalTutkintoohjelma.getKielikaannos();
+        TutkintoohjelmaModel oldTutkintoohjelma = model.getTutkintoohjelma();
+        Set<KielikaannosViewModel> kielikaannos = oldTutkintoohjelma.getKielikaannos();
         final String koodiUriFromUserLang = getUserLangUri(model);
 
         boolean langUdated = false;
@@ -510,12 +519,10 @@ public class KorkeakouluConverter extends KoulutusConveter {
         //Update tutkinto-ohjelma UI model.
         MonikielinenTekstiTyyppi monikielinenTeksti = mapToMonikielinenTekstiTyyppi(kielikaannos);
         UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class, helper);
-        TutkintoohjelmaModel build = builder.build(monikielinenTeksti, koodiUriFromUserLang);
-        build.setKomoOid(orginalTutkintoohjelma.getKomoOid());
-        build.setKomoParentOid(orginalTutkintoohjelma.getKomoParentOid());
-
-        model.setTutkintoohjelma(build);
-        
+        TutkintoohjelmaModel newTutkintoohjelmaModel = builder.build(monikielinenTeksti, koodiUriFromUserLang);
+        newTutkintoohjelmaModel.setKomoOid(oldTutkintoohjelma.getKomoOid());
+        newTutkintoohjelmaModel.setKomoParentOid(oldTutkintoohjelma.getKomoParentOid());
+        model.setTutkintoohjelma(newTutkintoohjelmaModel);
         return monikielinenTeksti;
     }
 }

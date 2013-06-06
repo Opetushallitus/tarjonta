@@ -147,7 +147,8 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     /*
      * Value of laajuus, a numeric value like '180'.
      */
-    private KoodistoComponent kcLaajuus;
+    @PropertyId("opintojenLaajuus")
+    private KoodistoComponent kcLaajuusarvo;
     /*
      * Labels
      */
@@ -158,7 +159,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private Label tutkintonimike;
     private Label eqf;
     private Label opintojenLaajuusyksikko;
-    private Label opintojenLaajuus;
+    //private Label opintojenLaajuus;
     private ValitseKoulutusDialog dialog;
 
     public EditKorkeakouluPerustiedotFormView() {
@@ -197,10 +198,10 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         tutkintonimike = buildLabel(this, "tutkintonimike");
         eqf = buildLabel(this, "eqfLuokitus");
         opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
-        opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
+        //opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
 
         buildGridTunnisteRow(this, "tutkintoohjelmanTunniste");
-        buildGridLRow(this);
+        buildGridLRow(this, "opintojenLaajuusarvo");
 
         buildGridDatesRow(this, "koulutuksenAlkamisPvm");
         buildGridKestoRow(this, "suunniteltuKesto");
@@ -296,13 +297,14 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         addGridRowItems(grid, dfKoulutuksenAlkamisPvm);
     }
 
-    private void buildGridLRow(GridLayout grid) {
+    private void buildGridLRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
-        kcLaajuus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T("opintojenLaajuusarvo" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
-        kcLaajuus.setImmediate(true);
-        kcLaajuus.setCaptionFormatter(koodiNimiFormatter);
-        addGridRowItems(grid, kcLaajuus);
+        kcLaajuusarvo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T("opintojenLaajuusarvo" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
+        kcLaajuusarvo.setImmediate(true);
+        kcLaajuusarvo.setCaptionFormatter(koodiNimiFormatter);
+        addGridRowItems(grid, kcLaajuusarvo);
     }
 
     private void buildGridTunnisteRow(GridLayout grid, final String propertyKey) {
@@ -423,14 +425,14 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
             tutkinto.setPropertyDataSource(new NestedMethodProperty(m, KoulutusKoodistoModel.MODEL_NAME_PROPERY));
         }
 
-        if (m.getOpintojenLaajuus() != null) {
-            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(m, "opintojenLaajuus"));
-        }
+//        if (m.getOpintojenLaajuus() != null) {
+//            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(m, "opintojenLaajuus"));
+//        }
 
         labelDataBind(opintoala, m.getOpintoala());
         labelDataBind(koulutusaste, m.getKoulutusaste());
         labelDataBind(koulutusala, m.getKoulutusala());
-        labelDataBind(opintojenLaajuusyksikko, m.getOpintojenLaajuusyksikko());
+        //  labelDataBind(opintojenLaajuusyksikko, m.getOpintojenLaajuusyksikko());
         labelDataBind(tutkintonimike, m.getTutkintonimike());
         disableOrEnableComponents(true);
     }
@@ -515,7 +517,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         koulutusaste.setValue("");
         koulutusala.setValue("");
         opintojenLaajuusyksikko.setValue("");
-        opintojenLaajuus.setValue("");
+        //opintojenLaajuus.setValue("");
         tutkintonimike.setValue("");
         koulutuskoodi.setValue("");
     }
