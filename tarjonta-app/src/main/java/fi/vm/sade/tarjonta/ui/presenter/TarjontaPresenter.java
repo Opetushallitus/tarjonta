@@ -1930,7 +1930,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     private String getOrganisaatioOlTyyppi(String oid) {
         OrganisaatioDTO organisaatio = this.getOrganisaatioService().findByOid(oid);
-        return organisaatio.getOppilaitosTyyppi();
+        if (organisaatio.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            return organisaatio.getOppilaitosTyyppi();
+        } else if (organisaatio.getTyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) { 
+            return getOrganisaatioOlTyyppi(organisaatio.getParentOid());
+        }
+        return null;
     }
 
     /*
