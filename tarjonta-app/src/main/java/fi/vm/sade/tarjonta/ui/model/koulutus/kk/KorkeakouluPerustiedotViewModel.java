@@ -192,6 +192,11 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          * Other from info
          */
         setKoulutuskoodi(null);
+        
+        /*
+         * Valitse dialog
+         */
+        setValitseKoulutus(null);
     }
 
     @Override
