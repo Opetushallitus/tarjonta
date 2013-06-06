@@ -1211,6 +1211,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         HakukohdeTyyppi hakukohde = getTarjontaPublicService()
                 .lueHakukohde(kysely).getHakukohde();
         refreshHakukohdeUIModel(hakukohde);
+        loadHakukohdeValintaKokees();
+
     }
 
     /**
