@@ -348,6 +348,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         editHakukohdeView.loadValintakokees();
         refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
+        editHakukohdeView.refreshValintaKokeetLastUpdatedBy();
         editHakukohdeView.closeValintakoeEditWindow();
     }
 

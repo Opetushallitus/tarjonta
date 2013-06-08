@@ -16,11 +16,16 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
+import com.vaadin.ui.*;
+import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
+import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Validator;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -31,6 +36,8 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
+
+import java.text.SimpleDateFormat;
 
 /**
  * 
@@ -44,18 +51,119 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
     private ValintakoeViewImpl formView;
-    
+
+    @Autowired(required = true)
+    private UserService userService;
+
+    private HorizontalLayout headerLayout;
+
     public  HakukohdeValintakoeTabImpl(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
+    }
+
+    private AbstractLayout buildHeaderLayout() {
+        headerLayout = UiUtil.horizontalLayout();
+
+        Label ohjeLabel = new Label(T("ohjeteksti"));
+        ohjeLabel.setStyleName(Oph.LABEL_SMALL);
+
+        headerLayout.addComponent(ohjeLabel);
+
+        Label lastUpdBy = new Label(getLastUpdatedBy());
+        headerLayout.addComponent(lastUpdBy);
+
+        headerLayout.setSizeFull();
+        headerLayout.setComponentAlignment(ohjeLabel, Alignment.MIDDLE_LEFT);
+        headerLayout.setComponentAlignment(lastUpdBy,Alignment.MIDDLE_RIGHT);
+
+        return headerLayout;
+    }
+
+    public void refreshLastUpdatedBy()  {
+        headerLayout.removeAllComponents();
+        Label ohjeLabel = new Label(T("ohjeteksti"));
+        ohjeLabel.setStyleName(Oph.LABEL_SMALL);
+
+        headerLayout.addComponent(ohjeLabel);
+
+        Label lastUpdBy = new Label(getLastUpdatedBy());
+        headerLayout.addComponent(lastUpdBy);
+
+        headerLayout.setSizeFull();
+        headerLayout.setComponentAlignment(ohjeLabel, Alignment.MIDDLE_LEFT);
+        headerLayout.setComponentAlignment(lastUpdBy,Alignment.MIDDLE_RIGHT);
+    }
+
+    private String getLastUpdatedBy() {
+        String lastUpdatedBy = null;
+
+        if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getValintaKokees() != null) {
+            ValintakoeViewModel latestAndGreatest = null;
+            for (ValintakoeViewModel model:presenter.getModel().getHakukohde().getValintaKokees()) {
+                 if (latestAndGreatest == null) {
+                     latestAndGreatest = model;
+                 } else {
+
+                     if (model.getViimeisinPaivitysPvm().after(latestAndGreatest.getViimeisinPaivitysPvm())) {
+                         latestAndGreatest = model;
+                     }
+
+                 }
+
+            }
+
+         if (latestAndGreatest != null) {
+
+             lastUpdatedBy = getLatestUpdaterLabelText(latestAndGreatest);
+
+         }
+
+        } else {
+            lastUpdatedBy = "";
+        }
+        return lastUpdatedBy;
+    }
+
+    private String getLatestUpdaterLabelText(ValintakoeViewModel latestAndGreatest ) {
+        String latestUpdaterName = tryGetViimPaivittaja(latestAndGreatest.getViimeisinPaivittaja());
+        StringBuilder sb = new StringBuilder();
+        sb.append("( ");
+        sb.append(presenter.getModel().getHakukohde().getTila().value());
+        sb.append(", ");
+        SimpleDateFormat sdf = new SimpleDateFormat(EditHakukohdeView.DATE_PATTERN);
+        sb.append(sdf.format(latestAndGreatest.getViimeisinPaivitysPvm()));
+        sb.append(", ");
+        sb.append(latestUpdaterName);
+        sb.append( " )" );
+        return sb.toString();
+    }
+
+    private String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            String userName = null;
+            HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+            if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+            }  else {
+                userName = henkilo.getKayttajatunnus();
+            }
+            return userName;
+        } catch (Exception exp) {
+
+            return viimPaivittajaOid;
+        }
     }
     
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
         formView = new ValintakoeViewImpl(presenter, getUiBuilder());
-        buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
+
+
+
+        buildFormLayout(buildHeaderLayout(), presenter, layout, presenter.getModel().getHakukohde(), formView);
 
 
         visibleButtonByListener(clickListenerSaveAsDraft, false);

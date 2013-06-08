@@ -67,7 +67,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private PerustiedotViewImpl perustiedot;
     private VerticalLayout hl;
 
-    public static final String DATE_PATTERN = "dd.MM.yyyy";
+    public static final String DATE_PATTERN = "dd.MM.yyyy HH:mm";
     
     public EditHakukohdeView(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
@@ -86,6 +86,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             addLayout = false;
         }  else {
         hl = new VerticalLayout();
+
             addLayout = true;
         }
         hl.setWidth("100%");
@@ -161,6 +162,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         try {
         VerticalLayout vl = new VerticalLayout();
 
+            vl.setMargin(true);
         List<KoulutusOidNameViewModel> koulutusOidNameViewModels  = null;
         if (oid != null) {
             koulutusOidNameViewModels =   presenter.getHakukohdeKoulutukses(oid);
@@ -335,7 +337,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         layout.setMargin(false,false,true,false);
         VerticalLayout wrapperVl = new VerticalLayout();
         perustiedot = new PerustiedotViewImpl(presenter,uiBuilder);
-        buildFormLayout(null, presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
+        buildFormLayout(new HorizontalLayout(), presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
         
         liitteet = new HakukohteenLiitteetTabImpl();
@@ -358,6 +360,12 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     public void setLiitteetTabSelected() {
         if (tabs != null && liitteetTab != null) {
             tabs.setSelectedTab(liitteetTab);
+        }
+    }
+
+    public void refreshValintaKokeetLastUpdatedBy() {
+        if (valintakokeet != null) {
+            valintakokeet.refreshLastUpdatedBy();
         }
     }
 }
