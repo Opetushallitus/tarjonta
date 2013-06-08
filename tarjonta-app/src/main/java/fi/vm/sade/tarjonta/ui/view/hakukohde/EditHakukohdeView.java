@@ -65,6 +65,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private HakukohteenLiitteetTabImpl liitteet;
     private HakukohdeValintakoeTabImpl valintakokeet;
     private PerustiedotViewImpl perustiedot;
+    private VerticalLayout hl;
 
     public static final String DATE_PATTERN = "dd.MM.yyyy";
     
@@ -79,7 +80,14 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
      */
     private void addTitleLayout() {
         try {
-        VerticalLayout hl = new VerticalLayout();
+        boolean addLayout = false;
+        if (hl != null) {
+            hl.removeAllComponents();
+            addLayout = false;
+        }  else {
+        hl = new VerticalLayout();
+            addLayout = true;
+        }
         hl.setWidth("100%");
         hl.setSizeFull();
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
@@ -111,9 +119,17 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             hl.setComponentAlignment(hakukohdeNameLbl, Alignment.MIDDLE_LEFT);
             hl.setComponentAlignment(hll,Alignment.MIDDLE_RIGHT);
             hl.setMargin(false,false,true,false);
+            if (addLayout) {
             addComponent(hl);
+            }
             hll.setWidth("100%");
             hll.setComponentAlignment(tilaLbl,Alignment.MIDDLE_RIGHT);
+        } else {
+            Label uusiHakukohdeLbl = new Label(T("uusiHakukohdeLbl"));
+            uusiHakukohdeLbl.setStyleName(Oph.LABEL_H1);
+            hl.addComponent(uusiHakukohdeLbl);
+            hl.setMargin(false,false,true,false);
+            addComponent(hl);
         }
 
         } catch (Exception exp) {
@@ -159,9 +175,10 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             int counter = 0;
            for (KoulutusOidNameViewModel oidNameViewModel : koulutusOidNameViewModels) {
                if (counter != 0) {
-                  sb.append(", ");
+                  sb.append("; ");
                }
                sb.append(oidNameViewModel.getKoulutusNimi());
+               counter++;
            }
         }
         labelTitle = sb.toString();
@@ -279,7 +296,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         }
         
         presenter.refreshHakukohdeUIModel(hakukohde.getOid());
-
+        addTitleLayout();
+        requestRepaintAll();
         return getHakukohdeOid();
     }
 
