@@ -19,13 +19,20 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.*;
+import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
+import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -42,12 +49,21 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
     private Button uusiLiiteBtn;
     private HakukohdeLiiteetDialog liitteetDialog = null;
 
+    @Autowired(required = true)
+    private UserService userService;
+
+    private HorizontalLayout headerLayout;
+
     public HakukohteenLiitteetTabImpl() {
         super();
     }
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+        headerLayout = UiUtil.horizontalLayout();
+        headerLayout.setMargin(false,false,true,false);
+        layout.addComponent(headerLayout);
+        UiUtil.hr(layout);
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         uusiLiiteBtn = UiBuilder.button(null, T("uusiLiiteBtn"), new Button.ClickListener() {
             @Override
@@ -64,6 +80,96 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         loadTableWithData();
     }
 
+    private AbstractLayout buildHeaderLayout(List<HakukohdeLiiteViewModel> liites) {
+        if (headerLayout == null) {
+        headerLayout = UiUtil.horizontalLayout();
+        } else {
+            headerLayout.removeAllComponents();
+        }
+
+        Label ohjeLabel = new Label(T("ohjeteksti"));
+        ohjeLabel.setStyleName(Oph.LABEL_SMALL);
+
+        headerLayout.addComponent(ohjeLabel);
+
+        Label lastUpdBy = new Label(getLastUpdatedBy(liites));
+        headerLayout.addComponent(lastUpdBy);
+
+        headerLayout.setSizeFull();
+        headerLayout.setComponentAlignment(ohjeLabel, Alignment.MIDDLE_LEFT);
+        headerLayout.setComponentAlignment(lastUpdBy,Alignment.MIDDLE_RIGHT);
+
+        return headerLayout;
+    }
+
+    private String getLastUpdatedBy(List<HakukohdeLiiteViewModel> liites) {
+        String lastUpdatedBy = null;
+
+        if (liites != null) {
+            HakukohdeLiiteViewModel latestAndGreatest = null;
+            for (HakukohdeLiiteViewModel model:liites) {
+                if (latestAndGreatest == null) {
+                    latestAndGreatest = model;
+                } else {
+
+                    if (model.getViimeisinPaivitysPvm().after(latestAndGreatest.getViimeisinPaivitysPvm())) {
+                        latestAndGreatest = model;
+                    }
+
+                }
+
+            }
+
+            if (latestAndGreatest != null) {
+
+                lastUpdatedBy = getLatestUpdaterLabelText(latestAndGreatest);
+
+            }
+
+        } else {
+            lastUpdatedBy = "";
+        }
+        return lastUpdatedBy;
+    }
+
+    private String getLatestUpdaterLabelText(HakukohdeLiiteViewModel latestAndGreatest ) {
+        String latestUpdaterName = tryGetViimPaivittaja(latestAndGreatest.getViimeisinPaivittaja());
+        StringBuilder sb = new StringBuilder();
+        sb.append("( ");
+        sb.append(presenter.getModel().getHakukohde().getTila().value());
+        sb.append(", ");
+        SimpleDateFormat sdf = new SimpleDateFormat(EditHakukohdeView.DATE_PATTERN);
+        sb.append(sdf.format(latestAndGreatest.getViimeisinPaivitysPvm()));
+        sb.append(", ");
+        sb.append(latestUpdaterName);
+        sb.append( " )" );
+        return sb.toString();
+    }
+
+    private String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            String userName = null;
+            HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+            if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+            }  else {
+                userName = henkilo.getKayttajatunnus();
+            }
+            return userName;
+        } catch (Exception exp) {
+
+            return viimPaivittajaOid;
+        }
+    }
+
+    private String cutString(String stringToCut) {
+        if (stringToCut.length() > 100) {
+            return stringToCut.substring(0,100) + "...";
+        } else {
+            return stringToCut;
+        }
+    }
+
     public void loadTableWithData() {
 
         if (hakukohteenLiitteetTable != null) {
@@ -78,7 +184,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
                 public Object generateCell(Table table, Object o, Object o2) {
                     if (table != null) {
                         Item item = table.getItem(o);
-                        Label label = new Label(item.getItemProperty("liitteenSanallinenKuvaus"));
+                        Label label = new Label(cutString((String)item.getItemProperty("liitteenSanallinenKuvaus").getValue()));
                         label.setContentMode(Label.CONTENT_XHTML);
                         return label;
                     } else {
@@ -89,7 +195,8 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         }
 
         if (hakukohteenLiitteetTable != null) {
-            List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet(true);            
+            List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet(true);
+            buildHeaderLayout(loadHakukohdeLiitteet);
             hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(loadHakukohdeLiitteet));
             hakukohteenLiitteetTable.setVisibleColumns(new String[]{"liitteenTyyppi", "liitteenSanallinenKuvaus", "toimitettavaMennessa",
                 "toimitusOsoite", "muokkaaBtn", "poistaBtn"});
@@ -102,6 +209,14 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             hakukohteenLiitteetTable.setColumnHeader("poistaBtn", "");
             hakukohteenLiitteetTable.setImmediate(true);
             hakukohteenLiitteetTable.setSizeFull();
+
+            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenTyyppi",0.2f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenSanallinenKuvaus",0.5f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("toimitettavaMennessa",0.2f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("toimitusOsoite",0.4f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("muokkaaBtn",0.1f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("poistaBtn",0.1f);
+
             hakukohteenLiitteetTable.requestRepaint();
             hakukohteenLiitteetTable.setPageLength(loadHakukohdeLiitteet.size());
         }
