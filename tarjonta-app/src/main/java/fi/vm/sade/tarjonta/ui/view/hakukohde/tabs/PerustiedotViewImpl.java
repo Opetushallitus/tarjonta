@@ -556,7 +556,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                             Object id = hakuCombo.getValue();
 
                             if (id instanceof HakuViewModel) {
-                                liitteidenToimitusPvm.setValue(((HakuViewModel) id).getAlkamisPvm());
+                                liitteidenToimitusPvm.setValue(((HakuViewModel) id).getPaattymisPvm());
                             }
                         }
                         liitteidenToimitusPvm.setEnabled(false);
