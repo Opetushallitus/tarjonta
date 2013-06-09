@@ -96,6 +96,10 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     }
 
+    public void showErrorMsg(String msg) {
+        getWindow().showNotification(T(msg), Window.Notification.TYPE_ERROR_MESSAGE);
+    }
+
     private Set<String> getAllKielet() {
         Set<String> kielet = new HashSet<String>();
         List<KielikaannosViewModel> lisatietoKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getLisatiedot();

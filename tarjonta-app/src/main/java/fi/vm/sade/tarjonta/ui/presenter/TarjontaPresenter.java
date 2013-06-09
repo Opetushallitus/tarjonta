@@ -606,7 +606,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void removeHakukohdeFromKoulutus(String hakukohdeOid) {
-
+         try {
         LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
         req.setLisaa(false);
         req.setHakukohdeOid(hakukohdeOid);
@@ -614,6 +614,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
         hakukohde.setOid(hakukohdeOid);
+         } catch (Exception exp) {
+             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")){
+                 showKoulutusView.addErrorMsg("hakukohdeRemovalErrorMsg");
+             }
+         }
         //getTarjontaAdminService().poistaHakukohde(hakukohde);
         showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
     }
@@ -626,19 +631,25 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         req.setHakukohdeOid(getModel().getHakukohde().getOid());
         req.getKoulutusOids().addAll(poistettavatKoulutukses);
         req.setLisaa(false);
+        try {
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
-
+            if (hakukohdeKoulutusCount > 1) {
+                showHakukohdeViewImpl(getModel().getHakukohde().getOid());
+            } else {
+                reloadAndShowMainDefaultView();
+                //showMainDefaultView();
+            }
+        } catch (Exception exp) {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException"))  {
+                hakukohdeView.showErrorMsg("hakukohdeRemovalErrorMsg");
+            }
+        }
       /*  HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setOid(getModel().getHakukohde().getOid());
         getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);*/
         //If removing last koulutus from hakukohde then hakukohde is not valid
         //anymore, show main view instead
-        if (hakukohdeKoulutusCount > 1) {
-            showHakukohdeViewImpl(getModel().getHakukohde().getOid());
-        } else {
-            reloadAndShowMainDefaultView();
-            //showMainDefaultView();
-        }
+
     }
 
     public void addKoulutuksesToHakukohde(Collection<KoulutusOidNameViewModel> koulutukses) {

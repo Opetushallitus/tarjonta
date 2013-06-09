@@ -497,6 +497,8 @@ public class ShowHakukohdeTab extends CustomComponent {
         return rows;
     }
 
+
+
     private Label buildTallennettuLabel(Date date) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
