@@ -402,6 +402,9 @@ public class TestTarjontaSavu {
         Boolean a_scenario = false; // Ammatillinen koulutus vain yksi loytyi 
         Boolean b_scenario = false; // too many dialog
         Boolean c_scenario = false; // Lukiokohde loytyi ja menee jo muokaa sivulle
+        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
+        String b_text = "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi";
+        String c_text = "tietoja hakemisesta";
         if (! doit.isPresentText(driver, "Koulutukset (1)"))
         {
         t01 = doit.millis();
@@ -412,9 +415,6 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Luo uusi hakukohde");
-        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
-        String b_text = "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi";
-        String c_text = "tietoja hakemisesta";
         Boolean skip2 = true;
         while (skip2)
         {
@@ -461,10 +461,19 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Luo uusi hakukohde");
-        if (a_scenario || b_scenario)
+        if (a_scenario)
         {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        			, doit.textElement(driver, "Olet luomassa uutta hakukohdetta seuraavista koulutuksista"));
+        			, doit.textElement(driver, a_text));
+        	t01 = doit.millisDiff(t01);
+        	t01 = doit.millis();
+        	doit.sendPageToFile(driver);
+        	doit.textClick(driver, "Jatka");
+        }
+        if (c_scenario)
+        {
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
+        			, doit.textElement(driver, c_text));
         	t01 = doit.millisDiff(t01);
         	t01 = doit.millis();
         	doit.sendPageToFile(driver);
