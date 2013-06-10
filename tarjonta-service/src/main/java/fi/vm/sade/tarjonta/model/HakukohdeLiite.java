@@ -16,6 +16,9 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
+
 import java.util.Date;
 import javax.persistence.*;
 
@@ -24,6 +27,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "hakukohdeliite")
+@EntityListeners(XssFilterListener.class)
 public class HakukohdeLiite extends BaseEntity {
 
     private static final long serialVersionUID = 6186622208433509334L;
@@ -53,6 +57,7 @@ public class HakukohdeLiite extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date erapaiva;
 
+    @FilterXss
     private String sahkoinenToimitusosoite;
 
     @Column(name="viimPaivitysPvm")
