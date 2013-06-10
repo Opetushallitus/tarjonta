@@ -506,7 +506,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1162px;\">"
         		+ ".*<div class=\"v-captiontext\">suomi</div>"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 282px;\">( Tallennettu"
+        		+ ".*<div class=\"v-label\" style=\"width: 28.px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
