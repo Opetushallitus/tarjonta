@@ -173,7 +173,7 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Poista</span>"
         		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1162px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 28.px;\">( Tallennettu"
+        		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
@@ -506,7 +506,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1162px;\">"
         		+ ".*<div class=\"v-captiontext\">suomi</div>"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 28.px;\">( Tallennettu"
+        		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
@@ -625,25 +625,26 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
             this.frontPage();
-            this.TarkasteleKoulutus("ylioppilastutkint", "Ylioppilastutkinto");                
-            driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+            this.TarkasteleKoulutus("tusohjel", "koulutusohjelma");
+            driver.findElement(By.xpath("//*[text()='muokkaa']")).click(); // click Muokkaa(1)
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
-                            , doit.textElement(driver, "Yritysten nimien mainitsemista"));
+                            , doit.textElement(driver, "Tehtävänimike"));
         }
         
-        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet muokkaamassa"
+        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
         		+ ".*<div class=\"v-captiontext\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-captiontext\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">JULKAISTU</div>"
+//        		+ ".*<div class=\"v-label v-label-undef-w\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
+        		+ ".*<button type=\"button\" class=\"v-datefield-button\" tabindex=\"-2\"></button>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus tai tutkinto</div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input v-filterselect-input-readonly\" style=\"width: 313px;\" readonly=\"\">"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelma</div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input v-filterselect-input-readonly\" style=\"width: 263px;\" readonly=\"\">"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 736px;\">Ammatillinen koulutus</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
@@ -661,33 +662,32 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\">"
-        		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-required-field-indicator\">*</div>"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+//        		+ ".*<div class=\"v-filterselect-button\"></div>"
+//        		+ ".*<div class=\"v-required-field-indicator\">*</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen alkamispäivä</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-datefield-textfield\">"
-        		+ ".*<button type=\"button\" class=\"v-datefield-button\" tabindex=\"-2\"></button>"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-datefield-textfield\">"
         		+ ".*<div class=\"v-label v-label-undef-w\">Suunniteltu kesto</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\">"
-        		+ ".*<div class=\"v-filterselect-button\"></div>"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\">"
+//        		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuslaji</div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\">"
-        		+ ".*<div class=\"v-filterselect-button\"></div>"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+//        		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetusmuoto</div>"
-        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 186px;\">"
-        		+ ".*<div class=\"v-filterselect-button\"></div>"
+//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+//        		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Linkki opetussuunnitelmaan</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\">"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\">"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<span class=\"v-button-caption\">Tyhjennä tiedot</span>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tehtävänimike</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\">"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Sähköposti</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\">"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Puhelin</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\">"
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
@@ -697,15 +697,14 @@ public class TestTarjontaElements {
 //        		+ ".*<div class=\"v-filterselect-button\"></div>" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-filterselect-input" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">" // debug rivi
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
-        		+ ".*18KPL<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*11KPL<span class=\"v-button-caption\">"
-        		+ ".*5KPLv-required-field-indicator"
+        		+ ".*14KPL<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*9KPL<span class=\"v-button-caption\">"
+        		+ ".*6KPLv-required-field-indicator"
         		+ ".*5KPLv-textfield v-textfield-prompt"
-        		+ ".*4KPL<input type=\"text\" class=\"v-filterselect-input"
-        		+ ".*4KPL<div class=\"v-filterselect-button\"></div>"
-        		+ ".*1KPL<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
+        		+ ".*6KPL<input type=\"text\" class=\"v-filterselect-input"
+        		+ ".*6KPL<div class=\"v-filterselect-button\"></div>"
         		+ ".*1KPLv-datefield-textfield"
                 // TODO here
                 ;
@@ -723,7 +722,8 @@ public class TestTarjontaElements {
                 this.frontPage();
                 // hae: ylioppi
                 // open first
-                // click first
+                // click second
+                driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
         }
         
         String elements = ""
