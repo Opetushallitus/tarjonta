@@ -26,11 +26,14 @@ import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
@@ -215,6 +218,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), true);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
+        oppilaitosTyyppi.getField().setWidth("200px");
         oppilaitosTyyppi.setCaptionFormatter(this.koodiNimiFormatter);
 
         panelTop.addComponent(oppilaitosTyyppi);
@@ -278,6 +282,21 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         
         tree.setItemCaptionPropertyId(COLUMN_KEY);
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
+        tree.setItemDescriptionGenerator(new AbstractSelect.ItemDescriptionGenerator() {
+
+            private static final long serialVersionUID = 618972158328470017L;
+
+            @Override
+            public String generateDescription(Component source, Object itemId,
+                    Object propertyId) {
+                if (itemId instanceof OrganisaatioPerustietoType) {
+                    OrganisaatioPerustietoType tooltipOrg = (OrganisaatioPerustietoType) itemId;
+                    return getClosestNimi(I18N.getLocale(), tooltipOrg);
+                }
+                
+                return null;
+            }
+        });
         
         tree.addListener(new ItemClickEvent.ItemClickListener() {
             private static final long serialVersionUID = -2318797984292753676L;
@@ -339,6 +358,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      */
     private HierarchicalContainer createDatasource() {
         tree.removeAllItems();
+        //tree.setItem
         hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_KEY, String.class, "");
         //Setting the items to the tree.

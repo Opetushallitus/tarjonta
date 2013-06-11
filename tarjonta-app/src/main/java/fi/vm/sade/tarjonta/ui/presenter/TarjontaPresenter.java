@@ -165,7 +165,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
 public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-    private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
+    private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy HH:mm";
     private static final String NAME_OPH = "OPH";
     @Autowired(required = true)
     private UserService userService;
