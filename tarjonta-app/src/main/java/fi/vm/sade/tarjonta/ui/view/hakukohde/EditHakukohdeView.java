@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ import java.util.List;
  * @author Tuomas Katva
  */
 @Configurable(preConstruction = true)
-public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
+    public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakukohdeView.class);
     private static final long serialVersionUID = 8806220426371090907L;
@@ -263,6 +264,12 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
 
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+        Date today = new Date();
+        if (hakukohde.getLiitteidenToimitusPvm() != null && hakukohde.getLiitteidenToimitusPvm().before(today)) {
+            errorView.addError(T("hakukohdeLiiteToimPvmMenneessa"));
+            return null;
+        }
+
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());
         hakukohde.setHakuaika(perustiedot.getSelectedHakuaika());
