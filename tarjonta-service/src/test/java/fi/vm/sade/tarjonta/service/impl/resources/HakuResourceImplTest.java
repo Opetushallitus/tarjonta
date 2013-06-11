@@ -81,6 +81,8 @@ public class HakuResourceImplTest {
         // Save created Haku OIDs here for referrals
         List<String> tmpOids = new ArrayList<String>();
         tmpOids.add(haku.getOid());
+        
+        Thread.sleep(250L);
 
         Date beforeAnyHakusCreated = new Date();
         Thread.sleep(250L); // make sure dates wont overlap

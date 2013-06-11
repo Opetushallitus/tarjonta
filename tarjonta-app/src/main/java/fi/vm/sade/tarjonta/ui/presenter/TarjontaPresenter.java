@@ -337,7 +337,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
         getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
-        getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
+        addOrReplaceSelectedValintakoe();
         List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
         for (ValintakoeViewModel valintakoeViewModel : getModel().getHakukohde().getValintaKokees()) {
             valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
@@ -350,6 +350,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
         editHakukohdeView.refreshValintaKokeetLastUpdatedBy();
         editHakukohdeView.closeValintakoeEditWindow();
+    }
+
+    private void addOrReplaceSelectedValintakoe() {
+        List<ValintakoeViewModel> updatedValintakokees = new ArrayList<ValintakoeViewModel>();
+        for (ValintakoeViewModel curValintakoe : getModel().getHakukohde().getValintaKokees()) {
+            if (!curValintakoe.getValintakoeTunniste().equals(getModel().getSelectedValintaKoe().getValintakoeTunniste())) {
+                updatedValintakokees.add(curValintakoe);
+            }
+        }
+        getModel().getHakukohde().getValintaKokees().clear();
+        getModel().getHakukohde().getValintaKokees().addAll(updatedValintakokees);
+        getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
     }
 
     public void closeCancelHakukohteenEditView() {
