@@ -133,7 +133,6 @@ public class TarjontaRootView extends Window {
      */
     private VerticalLayout getEmptyAppRootLayout() {
         if (_appRootLayout == null) {
-            LOG.warn("reset layout");
             _appRootLayout = buildAppContentLayout();
             this.setContent(_appRootLayout);
         } else {
@@ -209,7 +208,6 @@ public class TarjontaRootView extends Window {
                 
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    LOG.warn("event {}", event);
                     if (organisationSearchView.isVisible()) {
                         organisationSearchView.setVisible(false);
                         
@@ -267,7 +265,7 @@ public class TarjontaRootView extends Window {
         TarjontaModel model = _presenter.getModel();
 
         //Set OPH organisaatio OID.
-        model.setRootOrganisaatioOid("1");
+        model.setRootOrganisaatioOid(rootOphOid);
     }
     
     private void addToEmptyContent(final AbstractLayout layout) {
