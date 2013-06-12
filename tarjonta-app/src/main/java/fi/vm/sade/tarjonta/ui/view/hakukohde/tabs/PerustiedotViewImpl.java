@@ -796,13 +796,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (presenter.getModel().getSelectedKoulutukset() != null) {
         //We can get the first koulutukses pohjakouluvaatimus, because all selected koulutukses should have
         //the same pohjakoulutus
-
+        if (presenter.getModel().getSelectedKoulutukset() != null) {
         String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getPohjakoulutusVaatimus();
         Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
-
-        pkHakukohdeKoodis.retainAll(hakukohdeKoodis);
+        hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
+        }
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
-        for (KoodiType koodiType : pkHakukohdeKoodis) {
+        for (KoodiType koodiType : hakukohdeKoodis) {
             hakukohdes.add(presenter.hakukohdeNameUriModelFromKoodi(koodiType));
         }
         BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);

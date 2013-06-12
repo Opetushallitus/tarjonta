@@ -1182,13 +1182,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private void reloadSelectedKoulutuksesModel(List<String> koulutusOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        if (koulutusOids != null) {
         kysely.getKoulutusOids().addAll(koulutusOids);
         HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
              getModel().getSelectedKoulutukset().clear();
              getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
         }
-
+        }
     }
      /**
      * Show hakukohde edit view.
@@ -1198,7 +1199,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels, String selectedTab) {
         LOG.info("showHakukohdeEditView()");
+        if (koulutusOids != null) {
         reloadSelectedKoulutuksesModel(koulutusOids);
+        }
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView(hakukohdeOid);
         if (hakukohdeOid == null) {
@@ -1228,6 +1231,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         //if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
             refreshHakukohdeUIModel(hakukohdeOid);
+            setKomotoOids(getModel().getHakukohde().getKomotoOids());
+            reloadSelectedKoulutuksesModel(getModel().getHakukohde().getKomotoOids());
         }
 
         getRootView().changeView(editHakukohdeView);
