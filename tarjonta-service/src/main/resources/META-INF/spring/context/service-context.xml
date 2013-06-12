@@ -9,6 +9,9 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
+    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" />
+    <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
+
     <!--
       ### Conversion service
     -->
@@ -47,6 +50,8 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToValintakoeRDTOConverter"/>
             </list>
         </property>
+        
+        
     </bean>
 
 </beans>

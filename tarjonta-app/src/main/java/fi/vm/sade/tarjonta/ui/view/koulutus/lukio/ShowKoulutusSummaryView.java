@@ -41,6 +41,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
@@ -55,8 +57,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewM
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -402,7 +402,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
-            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter)));
+            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter.getNavigationOrganisation().getOrganisationOid())));
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
