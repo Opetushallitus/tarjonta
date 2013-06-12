@@ -32,25 +32,22 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import java.io.Serializable;
 
 /**
  * Contains information about user context. This object is bound to session.
  */
 @Service
 @Scope(org.springframework.web.context.WebApplicationContext.SCOPE_SESSION)
-public class UserContext implements InitializingBean {
+public class UserContext implements InitializingBean, Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(UserContext.class);
-
-    
+    private transient static final Logger log = LoggerFactory.getLogger(UserContext.class);
     String rootOrgOid;
-
     private boolean isUseRestriction;
-
     private Set<String> userOrganisations;
-    
+
     private Set<String> parseUserOrganisations(Authentication authentication) {
-        if(authentication==null) {
+        if (authentication == null) {
             log.warn("user is not authenticated!");
             return Sets.newHashSet();
         }
@@ -71,10 +68,9 @@ public class UserContext implements InitializingBean {
         return orgs;
     }
 
-
     /**
      * Return "first" org oid for user or null if no orgs available for user.
-     * 
+     *
      * @return
      */
     public String getFirstOrganisaatio() {
@@ -82,10 +78,10 @@ public class UserContext implements InitializingBean {
     }
 
     @Autowired
-    public UserContext(@Value("${root.organisaatio.oid}")String rootOrgOid) {
+    public UserContext(@Value("${root.organisaatio.oid}") String rootOrgOid) {
         this.rootOrgOid = rootOrgOid;
         log.debug("Constructing new user context");
-        userOrganisations=parseUserOrganisations(SecurityContextHolder.getContext().getAuthentication());
+        userOrganisations = parseUserOrganisations(SecurityContextHolder.getContext().getAuthentication());
     }
 
     //Sami USE THIS!!!
@@ -97,18 +93,18 @@ public class UserContext implements InitializingBean {
     /**
      * Should organisaatio search be executed automatically. Yes if user is not
      * oph user is member of max 1 orgs.
-     * 
+     *
      * @return
      */
     public boolean isDoAutoSearch() {
         final boolean is = !isOphUser() && userOrganisations.size() >= 1;
-        log.info("is Autosearch:{}",is);
+        log.info("is Autosearch:{}", is);
         return is;
     }
-    
+
     /**
      * Checks if user is member of "oph".
-     * 
+     *
      * @return
      */
     public boolean isOphUser() {
@@ -116,23 +112,23 @@ public class UserContext implements InitializingBean {
         log.debug("isOphUser: {}", isOphUser);
         return isOphUser;
     }
-    
-    public boolean isUseRestriction(){
+
+    public boolean isUseRestriction() {
         return isUseRestriction;
     }
-    
+
     public void setUseRestriction(boolean useRestriction) {
         this.isUseRestriction = useRestriction;
     }
 
     /**
      * Convenience method for getting user organisations.
-     * 
+     *
      * @return
      */
     public Set<String> getUserOrganisations() {
         final Set<String> userOrgs = ImmutableSet.copyOf(userOrganisations);
-        log.debug("userOrgs: {}", userOrgs.toString() );
+        log.debug("userOrgs: {}", userOrgs.toString());
         return userOrgs;
     }
 
@@ -142,5 +138,4 @@ public class UserContext implements InitializingBean {
         isUseRestriction = !isOphUser() && getUserOrganisations().size() >= 1;
         log.debug("useRestriction: {}", isUseRestriction);
     }
-
 }

@@ -100,7 +100,7 @@ public class ListKoulutusView extends VerticalLayout {
      * TreeTable component to display the Hakukohde objects in a
      * grouped/hierarchical manner.
      */
-    private TreeTable categoryTree;
+    private CategoryTreeView categoryTree;
     /**
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
@@ -139,8 +139,7 @@ public class ListKoulutusView extends VerticalLayout {
         //Adding the select all checkbox.
         addValitsekaikki();
 
-        //Adding the actual tutkinto-listing component.
-        addTutkintoResultList();
+
 
         /**
          * Sets the datasource for the hierarchical listing of Koulutus objects.
@@ -149,7 +148,23 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
     }
 
-    private void addTutkintoResultList() {
+    /*
+     * Adding the actual tutkinto-listing component.
+     */
+    private void addAndRebuildTutkintoResultList() {
+        /*
+         * A problem with Vaadin TreeTable:
+         * 
+         * SearchResultsView must be initialized every time data rows are changed.
+         * 
+         * If there is a better way to make TreeTable to not show result rows 
+         * with right scrollbar, then the code on bottom can be modified so it only 
+         * attached once. 
+         */
+        if (categoryTree != null) {
+            this.removeComponent(categoryTree);
+            categoryTree = null;
+        }
         //Adding the actual Hakukohde-listing component.
         categoryTree = new CategoryTreeView();
         categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow());
@@ -188,6 +203,7 @@ public class ListKoulutusView extends VerticalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 toggleHakuSelections(valKaikki.booleanValue());
+
             }
         });
         wrapper.addComponent(valKaikki);
@@ -516,6 +532,7 @@ public class ListKoulutusView extends VerticalLayout {
      * Reloads the data to the Hakukohde list.
      */
     public void reload() {
+
         clearAllDataItems();
         //this.btnPoista.setEnabled(false);
         this.btnSiirraJaKopioi.setEnabled(false);
@@ -523,6 +540,7 @@ public class ListKoulutusView extends VerticalLayout {
         Map<String, List<KoulutusTulos>> koulutusDataSource = presenter.getKoulutusDataSource();
         categoryTree.setContainerDataSource(createDataSource(koulutusDataSource));
         setPageLength(categoryTree.getItemIds().size());
+        refreshLayout();
     }
 
     public void toggleCreateKoulutusB(String organisaatioOid, boolean b) {
@@ -539,7 +557,8 @@ public class ListKoulutusView extends VerticalLayout {
      * Clear all data items from a tree component.
      */
     public void clearAllDataItems() {
-        categoryTree.removeAllItems();
+        addAndRebuildTutkintoResultList(); //will remove all items
+        // categoryTree.removeAllItems();
     }
 
     public void setPageLength(int pageLength) {
@@ -584,12 +603,9 @@ public class ListKoulutusView extends VerticalLayout {
      * Refresh layout view.
      */
     public void refreshLayout() {
-        if (isAttached) {
-            this.setWidth("100%");
-            if (categoryTree != null) {
-                categoryTree.refreshRowCache();
-                categoryTree.setWidth("100%");
-            }
+        if (categoryTree != null) {
+            setWidth("100%");
+            categoryTree.setWidth("100%");
         }
     }
 }

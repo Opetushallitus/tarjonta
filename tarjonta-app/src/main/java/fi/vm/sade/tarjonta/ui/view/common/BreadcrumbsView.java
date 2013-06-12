@@ -74,6 +74,9 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_LEFT);
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
         addComponent(hl);
+
+        hl.setSizeFull();
+        hl.setExpandRatio(poistaValintaB, 1f);
     }
 
     /**
@@ -83,8 +86,8 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         this.organisaatioNimi.setValue(organisaatioNimi);
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
     }
-    
-    private boolean isNavigationOrganisationSelected(){
+
+    private boolean isNavigationOrganisationSelected() {
         return presenter.getNavigationOrganisation().isOrganisationSelected();
     }
 }

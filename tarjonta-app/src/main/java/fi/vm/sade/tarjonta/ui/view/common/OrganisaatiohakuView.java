@@ -78,9 +78,9 @@ import org.vaadin.addon.formbinder.FormView;
 @Configurable(preConstruction = false)
 public class OrganisaatiohakuView extends VerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
+    private transient static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
     public static final String COLUMN_KEY = "COLUMN";
-    private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
+    private transient static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
     private static final long serialVersionUID = -7700929639425223853L;
     private TextField search;

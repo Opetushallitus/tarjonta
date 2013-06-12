@@ -124,7 +124,18 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         //Adding the select all checkbox.
         addSelectAllButton();
 
-        //Adding the actual hakukohde-listing component.
+        presenter.setHakukohdeListView(this);
+    }
+
+    /*
+     *  Adding the actual hakukohde-listing component.
+     */
+    private void addAndRebuildTutkintoResultList() {
+        if (categoryTree != null) {
+            this.removeComponent(categoryTree);
+            categoryTree = null;
+        }
+
         categoryTree = new CategoryTreeView();
         categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
@@ -151,7 +162,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.setSizeFull();
         addComponent(categoryTree);
         setExpandRatio(categoryTree, 1f);
-        presenter.setHakukohdeListView(this);
+
     }
 
     private void addSelectAllButton() {
@@ -168,16 +179,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         });
         wrapper.addComponent(valKaikki);
         addComponent(wrapper);
-    }
-
-    /**
-     * Sets the datasource for the hierarchical listing of Hakukohde objects.
-     */
-    public void setDataSource() {
-        presenter.setHakukohdeListView(this);
-        categoryTree.removeAllItems();
-        categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
-        setPageLength(categoryTree.getItemIds().size());
     }
 
     /**
@@ -382,7 +383,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     @Override
     public void clearAllDataItems() {
-        categoryTree.removeAllItems();
+        addAndRebuildTutkintoResultList();
     }
 
     private String T(String key, Object... args) {
@@ -401,9 +402,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * Refresh layout view.
      */
     public void refreshLayout() {
-        categoryTree.refreshRowCache();
-        this.setWidth("100%");
-        categoryTree.setWidth("100%");
+        if (categoryTree != null) {
+            setWidth("100%");
+            categoryTree.setWidth("100%");
+        }
     }
 
     public void setPageLength(int pageLength) {

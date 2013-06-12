@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
