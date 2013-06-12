@@ -18,11 +18,11 @@ package fi.vm.sade.tarjonta.ui.view;
 import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -30,12 +30,12 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable
-public class SearchResultsView extends VerticalLayout {
+public class SearchResultsView extends TabSheet {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SearchResultsView.class);
     private static final long serialVersionUID = -6602022577510112620L;
     boolean attached = false;
     private transient I18NHelper _i18n = new I18NHelper(this);
-    private TabSheet tabs;
     private ListKoulutusView koulutusList;
     private ListHakukohdeViewImpl hakukohdeList;
 
@@ -53,34 +53,28 @@ public class SearchResultsView extends VerticalLayout {
         }
         attached = true;
 
-        tabs = new TabSheet();
-        tabs.setHeight(-1, UNITS_PIXELS);
-        addComponent(tabs);
-
-        setKoulutusList(new ListKoulutusView());
-        getKoulutusList().addListener(new Listener() {
+        koulutusList = new ListKoulutusView();
+        koulutusList.addListener(new Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
 
             @Override
             public void componentEvent(Event event) {
                 fireEvent(event);
-
             }
         });
+        this.addTab(koulutusList, T("koulutukset"));
 
-        tabs.addTab(getKoulutusList(), T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         hakukohdeList = new ListHakukohdeViewImpl();
-        tabs.addTab(hakukohdeList, T("hakuryhmat"));
+        this.addTab(hakukohdeList, T("hakuryhmat"));
+    }
+
+    public void setResultSizeForKoulutusTab(int size) {
+        this.getTab(koulutusList).setCaption(T("koulutukset") + " (" + size + ")");
 
     }
-    
-    public void setResultSizeForKoulutusTab(int size) {
-        tabs.getTab(koulutusList).setCaption(T("koulutukset") + " (" + size + ")");
-        
-    }
-    
+
     public void setResultSizeForHakukohdeTab(int size) {
-        tabs.getTab(hakukohdeList).setCaption(T("hakuryhmat")+ " (" + size + ")");
+        this.getTab(hakukohdeList).setCaption(T("hakuryhmat") + " (" + size + ")");
     }
 
     private String T(String key) {
@@ -100,11 +94,17 @@ public class SearchResultsView extends VerticalLayout {
     public void setKoulutusList(ListKoulutusView koulutusList) {
         this.koulutusList = koulutusList;
     }
-    
+
     /**
      * @return the hakukohdeList
      */
     public ListHakukohdeViewImpl getHakukohdeList() {
         return this.hakukohdeList;
+    }
+
+    public void refreshTabs() {
+        this.setWidth("100%");
+        koulutusList.refreshLayout();
+        hakukohdeList.refreshLayout();
     }
 }

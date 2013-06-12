@@ -79,7 +79,6 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     private String koulutusNimi;
     private Window removeKoulutusDialog;
-
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
     /**
@@ -89,8 +88,9 @@ public class KoulutusResultRow extends HorizontalLayout {
     private TarjontaPresenter tarjontaPresenter;
 
     public KoulutusResultRow() {
-
         this.koulutus = new KoulutusTulos();
+        this.setHeight(-1, UNITS_PIXELS);
+        this.setWidth(-1, UNITS_PIXELS);
     }
 
     public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
@@ -101,17 +101,17 @@ public class KoulutusResultRow extends HorizontalLayout {
 
     private void formatKoulutusName() {
         if (this.koulutusNimi != null && koulutus.getKoulutus() != null && koulutus.getKoulutus().getPohjakoulutusVaatimus() != null && this.koulutusNimi.length() > 0) {
-           List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getKoulutus().getPohjakoulutusVaatimus());
-           if (koodis != null && koodis.size() > 0) {
-             this.koulutusNimi = this.koulutusNimi + ", " + tryGetKoodistoLyhytNimi(koodis.get(0));
-           }
+            List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getKoulutus().getPohjakoulutusVaatimus());
+            if (koodis != null && koodis.size() > 0) {
+                this.koulutusNimi = this.koulutusNimi + ", " + tryGetKoodistoLyhytNimi(koodis.get(0));
+            }
         }
     }
 
     private String tryGetKoodistoLyhytNimi(KoodiType koodi) {
         String retval = koodi.getKoodiArvo();
 
-        List<KoodiMetadataType> metas =  koodi.getMetadata();
+        List<KoodiMetadataType> metas = koodi.getMetadata();
         Locale locale = I18N.getLocale();
         for (KoodiMetadataType meta : metas) {
             if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
@@ -132,7 +132,6 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            //DEBUGSAWAY:LOG.debug(selectedItem.getText());
             menuItemClicked(selectedItem.getText());
         }
     };
@@ -152,8 +151,8 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
-        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
-        		&& tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
+        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
+                && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
@@ -162,7 +161,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelPublish(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
-        	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
 
         return rowMenuBar;
@@ -200,29 +199,27 @@ public class KoulutusResultRow extends HorizontalLayout {
             tarjontaPresenter.showHakukohteetForKoulutus(koulutus);
         }
     }
-    
+
     private void showPeruutaDialog() {
         RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), koulutusNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
-
-                    private static final long serialVersionUID = -908351229767113315L;
+            private static final long serialVersionUID = -908351229767113315L;
 
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
                 tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
             }
-
         },
-               new Button.ClickListener() {
-                private static final long serialVersionUID = 5019806363620874205L;
+                new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-                @Override
-                public void buttonClick(ClickEvent event) {
-                    closeKoulutusCreationDialog();
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
 
-                }
-            });
+            }
+        });
         removeKoulutusDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
         getWindow().addWindow(removeKoulutusDialog);
     }
@@ -273,13 +270,13 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (koulutus != null
-                		&& koulutus.getKoulutus() != null
+                        && koulutus.getKoulutus() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
                     tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
-                } else if (koulutus != null 
-                		&& koulutus.getKoulutus() != null) {
+                } else if (koulutus != null
+                        && koulutus.getKoulutus() != null) {
                     tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
                 }
 
@@ -289,8 +286,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         });
 
         //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
-        setWidth(-1, Sizeable.UNITS_PIXELS);
-        setHeight(-1, Sizeable.UNITS_PIXELS);
+
 
         addComponent(isSelected);
         if (withMenuBar) {

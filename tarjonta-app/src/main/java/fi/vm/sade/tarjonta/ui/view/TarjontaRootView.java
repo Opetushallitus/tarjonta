@@ -15,8 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.google.common.base.Preconditions;
+import static com.vaadin.terminal.Sizeable.UNITS_EM;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -25,6 +29,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
+import fi.vm.sade.tarjonta.ui.view.common.ButtonBorderView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
@@ -64,20 +69,21 @@ public class TarjontaRootView extends Window {
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
     @Value("${root.organisaatio.oid}")
-    private String ophOid;
+    private String rootOphOid;
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView organisationSearchView;
     private BreadcrumbsView breadcrumbsView;
     private SearchSpesificationView searchSpesificationView;
     private SearchResultsView searchResultsView;
-    private VerticalLayout vlRight;
+    private VerticalLayout vlMainRight;
     private boolean isAttached = false;
+    private HorizontalLayout hlMainLayout;
 
     public TarjontaRootView() {
         super();
     }
-    
-    public void init(){
+
+    public void init() {
         LOG.info("TarjontaView(): presenter={}", _presenter);
 
         // Fixi jrebelille...
@@ -94,8 +100,6 @@ public class TarjontaRootView extends Window {
         _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(_appRootLayout); // root layout
 
-        // create app layout with organization navigation
-        buildMainLayout();
         // Show application identifier if needed
         final TarjontaModel model = _presenter.getModel();
         model.setShowIdentifier(_showIdentifier);
@@ -115,12 +119,8 @@ public class TarjontaRootView extends Window {
             return;
         }
         isAttached = true;
-        showMainView();
-    }
-
-    public void showMainView() {
-        LOG.debug("showMainView()");
-        changeView(this.getOrganisaatiohakuView());
+        // create app layout with organization navigation
+        buildMainLayout();
     }
 
     public ListKoulutusView getListKoulutusView() {
@@ -171,16 +171,70 @@ public class TarjontaRootView extends Window {
         return organisationSearchView;
     }
 
+    public void showMainView() {
+        LOG.debug("showMainView()");
+        changeView(getAppRootLayout());
+    }
+
     private void buildMainLayout() {
         // Create components
 
-        organisationSearchView = new OrganisaatiohakuView();
         breadcrumbsView = new BreadcrumbsView(_presenter);
-        searchResultsView = new SearchResultsView();
-        _presenter.setSearchResultsView(searchResultsView);
-        searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
+        breadcrumbsView.setSizeFull();
 
-        // Add listener for search events
+        searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
+        searchSpesificationView.setSizeFull();
+
+        searchResultsView = new SearchResultsView();
+        ButtonBorderView borderView = new ButtonBorderView();
+        organisationSearchView = new OrganisaatiohakuView();
+
+        _presenter.setSearchResultsView(searchResultsView);
+
+        vlMainRight = new VerticalLayout();
+        vlMainRight.setHeight(-1, UNITS_PIXELS);
+        vlMainRight.addComponent(breadcrumbsView);
+        vlMainRight.addComponent(searchSpesificationView);
+        vlMainRight.addComponent(searchResultsView);
+
+        vlMainRight.setSizeFull();
+        searchSpesificationView.setSizeFull();
+        searchResultsView.setSizeFull();
+
+
+        hlMainLayout = new HorizontalLayout();
+        hlMainLayout.addComponent(organisationSearchView);
+        hlMainLayout.addComponent(borderView);
+        hlMainLayout.addComponent(vlMainRight);
+
+        hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
+        hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
+        hlMainLayout.setSizeFull();
+        getAppRootLayout().addComponent(hlMainLayout);
+        organisationSearchView.setWidth("100%");
+
+        //close and open organisation navigation tree
+        borderView.setButtonListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                if (organisationSearchView.isVisible()) {
+                    organisationSearchView.setVisible(false);
+
+                    hlMainLayout.setExpandRatio(organisationSearchView, 0f);
+                    hlMainLayout.setExpandRatio(vlMainRight, 1f);
+                } else {
+                    organisationSearchView.setVisible(true);
+
+                    hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
+                    hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
+                }
+
+                searchResultsView.refreshTabs();//reset width to 100%
+            }
+        });
+
         searchSpesificationView.addListener(new Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
 
@@ -191,19 +245,6 @@ public class TarjontaRootView extends Window {
                 }
             }
         });
-
-        //bind the components together
-        vlRight = new VerticalLayout();
-        vlRight.setSizeFull();
-        vlRight.addComponent(breadcrumbsView);
-        vlRight.addComponent(searchSpesificationView);
-        vlRight.addComponent(searchResultsView);
-        vlRight.setExpandRatio(searchResultsView, 1f);
-        vlRight.setSizeFull();
-
-
-        organisationSearchView.addComponent(vlRight);
-        organisationSearchView.setExpandRatio(vlRight, 1f);
     }
 
     public TarjontaPresenter getTarjontaPresenter() {
@@ -214,6 +255,6 @@ public class TarjontaRootView extends Window {
         TarjontaModel model = _presenter.getModel();
 
         //Set OPH organisaatio OID.
-        model.setRootOrganisaatioOid(ophOid);
+        model.setRootOrganisaatioOid(rootOphOid);
     }
 }
