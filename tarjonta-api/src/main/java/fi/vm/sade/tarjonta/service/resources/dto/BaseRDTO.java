@@ -33,7 +33,7 @@ public class BaseRDTO implements Serializable {
     private String oid;
     private int version;
 
-    private int _API_VERSION = 3;
+    private int _API_VERSION = 4;
 
     public Date getCreated() {
         return created;

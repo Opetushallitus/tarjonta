@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.resources;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import java.util.Date;
 
 import javax.ws.rs.*;
@@ -104,5 +105,18 @@ public interface HakukohdeResource {
     @Path("{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
+
+    /**
+     * /hakukohde/OID/nimi
+     *
+     * Resolves the Hakukohde name from the tarjoaja and hakukohde.
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/nimi")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakukohdeNimiRDTO getHakukohdeNimi(@PathParam("oid") String oid);
 
 }
