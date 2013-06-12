@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -414,10 +415,47 @@ public class SVTUtils {
 		echo("Running versioUrl: " + baseUrl + versioUrl);
 		driver.get(baseUrl + versioUrl); 
 		t01 = millisDiff(t01);
-		String versio = driver.getPageSource();
-		versio = versio.split("pre>")[1];
-		versio = versio.replace("</", "").replace("<", "");
-		versio = "Running " + versio.replace("\n", "\nRunning ");
+		
+        Boolean branch = false;
+        Boolean certificate = false;
+        Boolean skip = true;
+        while (skip)
+        {
+                if (this.isPresentText(driver, "branchName")) { skip = false; branch = true; }
+                if (this.isPresentText(driver, "Certificate")) { skip = false; certificate = true; }
+                this.tauko(1);
+        }
+        if (this.isPresentText(driver, "Certificate"))
+        {
+                this.tauko(1);
+                driver.findElement(By.id("overridelink")).sendKeys(Keys.F12);
+                System.out.println("HOUHOU Vaihda IE mode . . . + F12");
+                this.tauko(30);
+                driver.navigate().refresh();
+                this.tauko(2);
+                driver.findElement(By.id("overridelink")).click();
+        }
+        Assert.assertNotNull("Running buildversion.txt ei toimi.", this.textElement(driver, "branchName"));
+		
+        this.tauko(1);
+        String versio = driver.getPageSource();
+        if (versio.indexOf("pre-wrap") > 0) // Safari
+        {
+                versio = versio.split("pre-wrap;\">")[1];
+                versio = versio.split("pre>")[0];
+                versio = versio.replace("</", "").replace("<", "");
+        }
+        if (versio.indexOf("pre>") > 0) // Firefox
+        {
+                versio = versio.split("pre>")[1];
+                versio = versio.replace("</", "").replace("<", "");
+        }
+        if (versio.indexOf("PRE>") > 0) // IE
+        {
+                versio = versio.split("PRE>")[1];
+                versio = versio.replace("</", "").replace("<", "");
+        }
+        versio = "Running " + versio.replace("\n", "\nRunning ");
 		echo(versio);
 	}
 
