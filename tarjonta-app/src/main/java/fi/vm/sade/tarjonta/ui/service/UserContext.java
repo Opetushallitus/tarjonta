@@ -20,6 +20,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -80,6 +81,7 @@ public class UserContext implements InitializingBean {
         return userOrganisations.size() > 0 ? userOrganisations.iterator().next() : null;
     }
 
+    @Autowired
     public UserContext(@Value("${root.organisaatio.oid}")String rootOrgOid) {
         this.rootOrgOid = rootOrgOid;
         log.debug("Constructing new user context");
