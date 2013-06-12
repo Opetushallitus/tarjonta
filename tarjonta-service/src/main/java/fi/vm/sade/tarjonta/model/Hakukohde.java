@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "hakukohde")
+@EntityListeners(XssFilterListener.class)
 public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
@@ -64,6 +67,7 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
     @Column(name = "hakukelpoisuusvaatimus")
+    @FilterXss
     private String hakukelpoisuusvaatumus;
 
     /* todo: double check if this is koodisto uri. */
