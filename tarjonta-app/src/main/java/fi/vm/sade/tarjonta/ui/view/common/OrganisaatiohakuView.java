@@ -470,10 +470,22 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private void organisaatioSelected(final OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
-            presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
+            presenter.selectOrganisaatio(item.getOid(), getOrganisaatioNimi(item));
         } else {
             presenter.unSelectOrganisaatio();
         }
+    }
+
+    private String getOrganisaatioNimi(final OrganisaatioPerustietoType item) {
+        if (item.getNimiFi() != null) {
+            return item.getNimiFi();
+        } else if (item.getNimiSv() != null ) {
+            return item.getNimiSv();
+
+        }   else if (item.getNimiEn() != null) {
+            return item.getNimiEn();
+        }
+        return null;
     }
 
     /**

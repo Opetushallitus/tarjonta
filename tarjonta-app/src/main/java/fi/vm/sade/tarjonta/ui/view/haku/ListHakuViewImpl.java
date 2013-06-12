@@ -213,7 +213,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     }
     
     private String getAjankohtaStr(HakuViewModel curHaku) {
-        return  getKoodiNimi(curHaku.getHakukausi()) + " " + curHaku.getHakuvuosi();
+        return  getKoodiNimi(curHaku.getKoulutuksenAlkamisKausi()) + " " + curHaku.getKoulutuksenAlkamisvuosi();
     }
     
     private String getHakutapaStr(HakuViewModel curHaku) {

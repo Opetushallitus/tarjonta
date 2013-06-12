@@ -337,7 +337,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
         getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
-        getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
+        addOrReplaceSelectedValintakoe();
         List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
         for (ValintakoeViewModel valintakoeViewModel : getModel().getHakukohde().getValintaKokees()) {
             valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
@@ -350,6 +350,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
         editHakukohdeView.refreshValintaKokeetLastUpdatedBy();
         editHakukohdeView.closeValintakoeEditWindow();
+    }
+
+    private void addOrReplaceSelectedValintakoe() {
+        List<ValintakoeViewModel> updatedValintakokees = new ArrayList<ValintakoeViewModel>();
+        for (ValintakoeViewModel curValintakoe : getModel().getHakukohde().getValintaKokees()) {
+            if (!curValintakoe.getValintakoeTunniste().equals(getModel().getSelectedValintaKoe().getValintakoeTunniste())) {
+                updatedValintakokees.add(curValintakoe);
+            }
+        }
+        getModel().getHakukohde().getValintaKokees().clear();
+        getModel().getHakukohde().getValintaKokees().addAll(updatedValintakokees);
+        getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
     }
 
     public void closeCancelHakukohteenEditView() {
@@ -1166,6 +1178,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
           getModel().setHakukohdeTitleKoulutukses(koulutusOidAndNames);
      }
+
+
+    private void reloadSelectedKoulutuksesModel(List<String> koulutusOids) {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getKoulutusOids().addAll(koulutusOids);
+        HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
+        if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+             getModel().getSelectedKoulutukset().clear();
+             getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
+        }
+
+    }
      /**
      * Show hakukohde edit view.
      *
@@ -1174,6 +1198,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels, String selectedTab) {
         LOG.info("showHakukohdeEditView()");
+        reloadSelectedKoulutuksesModel(koulutusOids);
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView(hakukohdeOid);
         if (hakukohdeOid == null) {
@@ -1186,6 +1211,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {
                 String tarjoajaOid =   getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid();
+
                 getTarjoaja().setSelectedResultRowOrganisationOid(tarjoajaOid);
             } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
                 getTarjoaja().setSelectedResultRowOrganisationOid(getNavigationOrganisation().getOrganisationOid());
