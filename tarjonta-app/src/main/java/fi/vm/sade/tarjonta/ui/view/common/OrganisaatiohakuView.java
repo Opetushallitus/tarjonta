@@ -215,8 +215,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
         // TODO missä tämä koodisto on? Eikös orgnanisaation puolella se ole olemassa?
         oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), true);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
-        oppilaitosTyyppi.setWidth("100%");
-        oppilaitosTyyppi.getField().setWidth("200px");
+        oppilaitosTyyppi.setSizeUndefined();
+        oppilaitosTyyppi.getField().setSizeUndefined();
         oppilaitosTyyppi.setCaptionFormatter(this.koodiNimiFormatter);
 
         panelTop.addComponent(oppilaitosTyyppi);

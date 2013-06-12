@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class SearchResultsView extends TabSheet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SearchResultsView.class);
+    private transient static final Logger LOG = LoggerFactory.getLogger(SearchResultsView.class);
     private static final long serialVersionUID = -6602022577510112620L;
     boolean attached = false;
     private transient I18NHelper _i18n = new I18NHelper(this);
@@ -60,6 +60,7 @@ public class SearchResultsView extends TabSheet {
             @Override
             public void componentEvent(Event event) {
                 fireEvent(event);
+                refreshTabs();
             }
         });
         this.addTab(koulutusList, T("koulutukset"));
@@ -104,7 +105,13 @@ public class SearchResultsView extends TabSheet {
 
     public void refreshTabs() {
         this.setWidth("100%");
-        koulutusList.refreshLayout();
-        hakukohdeList.refreshLayout();
+
+        if (koulutusList != null) {
+            koulutusList.refreshLayout();
+        }
+
+        if (hakukohdeList != null) {
+            hakukohdeList.refreshLayout();
+        }
     }
 }

@@ -646,7 +646,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 showHakukohdeViewImpl(getModel().getHakukohde().getOid());
             } else {
                 reloadAndShowMainDefaultView();
-                //showMainDefaultView();
             }
         } catch (Exception exp) {
             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException"))  {
@@ -1575,15 +1574,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public TarjontaRootView getRootView() {
         return _rootView;
-    }
-
-    /**
-     * If true (read from model, value set from application property
-     * "common.showAppIdentifier") UI should show app identifier so that testers
-     * know what version was deployed.
-     */
-    public boolean isShowIdentifier() {
-        return getModel().isShowIdentifier();
     }
 
     /**

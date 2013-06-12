@@ -581,12 +581,15 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     /**
-     * Refresh layout view. 
+     * Refresh layout view.
      */
     public void refreshLayout() {
-        categoryTree.refreshRowCache();
-        this.setWidth("100%");
-        categoryTree.setWidth("100%");
-
+        if (isAttached) {
+            this.setWidth("100%");
+            if (categoryTree != null) {
+                categoryTree.refreshRowCache();
+                categoryTree.setWidth("100%");
+            }
+        }
     }
 }

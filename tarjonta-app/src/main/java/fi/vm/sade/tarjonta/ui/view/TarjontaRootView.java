@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.google.common.base.Preconditions;
-import static com.vaadin.terminal.Sizeable.UNITS_EM;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
@@ -34,7 +32,6 @@ import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +55,11 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Configurable(preConstruction = true)
 public class TarjontaRootView extends Window {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
     private static final long serialVersionUID = -1669758858870001028L;
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    // Show label that shows last modification
-    @Value("${common.showAppIdentifier:true}")
-    private Boolean _showIdentifier = false;
-    @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
-    private String _identifier;
     @Value("${root.organisaatio.oid}")
     private String rootOphOid;
     private VerticalLayout _appRootLayout;
@@ -78,11 +70,12 @@ public class TarjontaRootView extends Window {
     private VerticalLayout vlMainRight;
     private boolean isAttached = false;
     private HorizontalLayout hlMainLayout;
-
+    private ButtonBorderView borderView;
+    
     public TarjontaRootView() {
         super();
     }
-
+    
     public void init() {
         LOG.info("TarjontaView(): presenter={}", _presenter);
 
@@ -91,27 +84,10 @@ public class TarjontaRootView extends Window {
             _presenter = new TarjontaPresenter();
         }
         _presenter.setRootView(this);
-
-        // Create root layout
-        _appRootLayout = UiBuilder.verticalLayout();
-        _appRootLayout.setSizeFull();
-        _appRootLayout.setHeight(-1, UNITS_PIXELS);
-
-        _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
-        setContent(_appRootLayout); // root layout
-
-        // Show application identifier if needed
-        final TarjontaModel model = _presenter.getModel();
-        model.setShowIdentifier(_showIdentifier);
-        model.setIdentifier(_identifier);
         initializeOrganisationData();
-        if (_presenter.isShowIdentifier()) {
-            _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
-        }
-
         // The default view to show is main default view (called here since "main" app cannot access presenter)
     }
-
+    
     @Override
     public void attach() {
         super.attach();
@@ -119,10 +95,10 @@ public class TarjontaRootView extends Window {
             return;
         }
         isAttached = true;
-        // create app layout with organization navigation
-        buildMainLayout();
+        // create app layout with organization navigation tree
+        showMainView();
     }
-
+    
     public ListKoulutusView getListKoulutusView() {
         return this.getSearchResultsView().getKoulutusList();
     }
@@ -147,114 +123,160 @@ public class TarjontaRootView extends Window {
         if (clear) {
             this.removeAllComponents();
         }
-
-        this.addComponent(layout);
+        addToEmptyContent(layout);
     }
 
-    public VerticalLayout getAppRootLayout() {
+    /**
+     * The base layout for Vaadin application window.
+     *
+     * @return
+     */
+    private VerticalLayout getEmptyAppRootLayout() {
+        if (_appRootLayout == null) {
+            LOG.warn("reset layout");
+            _appRootLayout = buildAppContentLayout();
+            this.setContent(_appRootLayout);
+        } else {
+            _appRootLayout.removeAllComponents();
+        }
+        
         return _appRootLayout;
     }
-
+    
+    private VerticalLayout buildAppContentLayout() {
+        // Create root layout
+        _appRootLayout = UiBuilder.verticalLayout();
+        _appRootLayout.setSizeFull();
+        _appRootLayout.setHeight(-1, UNITS_PIXELS);
+        _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
+        
+        return _appRootLayout;
+    }
+    
     public SearchSpesificationView getSearchSpesificationView() {
         return searchSpesificationView;
     }
-
+    
     public BreadcrumbsView getBreadcrumbsView() {
         return breadcrumbsView;
     }
-
+    
     public SearchResultsView getSearchResultsView() {
         return searchResultsView;
     }
-
+    
     public OrganisaatiohakuView getOrganisaatiohakuView() {
         return organisationSearchView;
     }
-
+    
     public void showMainView() {
         LOG.debug("showMainView()");
-        changeView(getAppRootLayout());
+        //Add UI components to root layout
+        addToEmptyContent(buildMainLayoutComponents());
     }
-
-    private void buildMainLayout() {
+    
+    private HorizontalLayout buildMainLayoutComponents() {
         // Create components
 
-        breadcrumbsView = new BreadcrumbsView(_presenter);
-        breadcrumbsView.setSizeFull();
-
-        searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
-        searchSpesificationView.setSizeFull();
-
-        searchResultsView = new SearchResultsView();
-        ButtonBorderView borderView = new ButtonBorderView();
-        organisationSearchView = new OrganisaatiohakuView();
-
-        _presenter.setSearchResultsView(searchResultsView);
-
-        vlMainRight = new VerticalLayout();
-        vlMainRight.setHeight(-1, UNITS_PIXELS);
-        vlMainRight.addComponent(breadcrumbsView);
-        vlMainRight.addComponent(searchSpesificationView);
-        vlMainRight.addComponent(searchResultsView);
-
-        vlMainRight.setSizeFull();
-        searchSpesificationView.setSizeFull();
-        searchResultsView.setSizeFull();
-
-
-        hlMainLayout = new HorizontalLayout();
-        hlMainLayout.addComponent(organisationSearchView);
-        hlMainLayout.addComponent(borderView);
-        hlMainLayout.addComponent(vlMainRight);
-
-        hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
-        hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
-        hlMainLayout.setSizeFull();
-        getAppRootLayout().addComponent(hlMainLayout);
-        organisationSearchView.setWidth("100%");
-
-        //close and open organisation navigation tree
-        borderView.setButtonListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                if (organisationSearchView.isVisible()) {
-                    organisationSearchView.setVisible(false);
-
-                    hlMainLayout.setExpandRatio(organisationSearchView, 0f);
-                    hlMainLayout.setExpandRatio(vlMainRight, 1f);
-                } else {
-                    organisationSearchView.setVisible(true);
-
-                    hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
-                    hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
+        if (breadcrumbsView == null) {
+            breadcrumbsView = new BreadcrumbsView(_presenter);
+        }
+        
+        if (searchSpesificationView == null) {
+            searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
+            searchSpesificationView.addListener(new Listener() {
+                private static final long serialVersionUID = -8696709317724642137L;
+                
+                @Override
+                public void componentEvent(Event event) {
+                    if (event instanceof SearchSpesificationView.SearchEvent) {
+                        _presenter.reloadMainView(true);
+                    }
                 }
-
-                searchResultsView.refreshTabs();//reset width to 100%
-            }
-        });
-
-        searchSpesificationView.addListener(new Listener() {
-            private static final long serialVersionUID = -8696709317724642137L;
-
-            @Override
-            public void componentEvent(Event event) {
-                if (event instanceof SearchSpesificationView.SearchEvent) {
-                    _presenter.reloadMainView(true);
+            });
+        }
+        
+        if (searchResultsView == null) {
+            searchResultsView = new SearchResultsView();
+            _presenter.setSearchResultsView(searchResultsView);
+        }
+        
+        if (borderView == null) {
+            borderView = new ButtonBorderView();
+            //close and open organisation navigation tree
+            borderView.setButtonListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+                
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    LOG.warn("event {}", event);
+                    if (organisationSearchView.isVisible()) {
+                        organisationSearchView.setVisible(false);
+                        
+                        hlMainLayout.setExpandRatio(organisationSearchView, 0f);
+                        hlMainLayout.setExpandRatio(vlMainRight, 1f);
+                    } else {
+                        organisationSearchView.setVisible(true);
+                        
+                        hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
+                        hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
+                    }
+                    organisationSearchView.setWidth("100%");
+                    
+                    searchResultsView.refreshTabs();//reset width to 100%                  
                 }
-            }
-        });
+            });
+        }
+        
+        if (organisationSearchView == null) {
+            organisationSearchView = new OrganisaatiohakuView();
+        }
+        
+        if (vlMainRight == null) {
+            vlMainRight = new VerticalLayout();
+            vlMainRight.addComponent(breadcrumbsView);
+            vlMainRight.addComponent(searchSpesificationView);
+            vlMainRight.addComponent(searchResultsView);
+            vlMainRight.setSizeFull();
+            
+            breadcrumbsView.setSizeFull();
+            searchSpesificationView.setSizeFull();
+            searchResultsView.setSizeFull();
+        }
+        
+        if (hlMainLayout == null) {
+            hlMainLayout = new HorizontalLayout();
+            hlMainLayout.addComponent(organisationSearchView);
+            hlMainLayout.addComponent(borderView);
+            hlMainLayout.addComponent(vlMainRight);
+            
+            hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
+            hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
+            hlMainLayout.setSizeFull();
+            // organisationSearchView.setWidth("100%");
+        }
+        
+        return hlMainLayout;
     }
-
+    
     public TarjontaPresenter getTarjontaPresenter() {
         return _presenter;
     }
-
+    
     private void initializeOrganisationData() {
         TarjontaModel model = _presenter.getModel();
 
         //Set OPH organisaatio OID.
-        model.setRootOrganisaatioOid(rootOphOid);
+        model.setRootOrganisaatioOid("1");
+    }
+    
+    private void addToEmptyContent(final AbstractLayout layout) {
+        final VerticalLayout appRootLayout = getEmptyAppRootLayout();
+        
+        appRootLayout.addComponent(layout);
+        
+        if (organisationSearchView != null) {
+            organisationSearchView.setWidth("100%");
+        }
     }
 }

@@ -44,6 +44,8 @@ public class ButtonBorderView<T extends AbstractComponentContainer> extends Vert
 
     public ButtonBorderView() {
         setWidth(-1, UNITS_PIXELS);
+        viewToggleButton = UiUtil.button(null, "");
+        viewToggleButton.setStyleName("vertical-collapse");
     }
 
     @Override
@@ -65,15 +67,15 @@ public class ButtonBorderView<T extends AbstractComponentContainer> extends Vert
         buttonPanel.setHeight(BUTTON_PANEL_HEIGHT, UNITS_PIXELS);
         buttonPanel.setScrollable(false);
 
-        viewToggleButton = UiUtil.button(innerPanelLayout, "");
-        viewToggleButton.setStyleName("vertical-collapse");
         viewToggleButton.setSizeUndefined();
+        innerPanelLayout.addComponent(viewToggleButton);
         super.addComponent(buttonPanel);
         super.setComponentAlignment(buttonPanel, Alignment.TOP_LEFT);
     }
 
     public void setButtonListener(Button.ClickListener listener) {
         Preconditions.checkNotNull(listener, "Show / hide organisation layout toggle listener cannot be null.");
+
         viewToggleButton.addListener(listener);
     }
 }
