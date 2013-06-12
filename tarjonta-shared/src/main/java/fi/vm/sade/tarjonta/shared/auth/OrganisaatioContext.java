@@ -13,17 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.service;
+package fi.vm.sade.tarjonta.shared.auth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 
 /**
  * Oganisation context. Immutable.
@@ -56,17 +52,6 @@ public class OrganisaatioContext {
         return new OrganisaatioContext(ooid);
     }
 
-    /**
-     * Creates new context based on data available in presenter.
-     * 
-     * @param tarjontaPresenter
-     * @return
-     */
-    public static OrganisaatioContext getContext(final TarjontaPresenter tarjontaPresenter) {
-        Preconditions.checkNotNull(tarjontaPresenter);
-        return getContext(tarjontaPresenter.getNavigationOrganisation().getOrganisationOid());
-    }
-    
     @Override
     public String toString() {
         return this.getClass().getName() + ": " + ooid;

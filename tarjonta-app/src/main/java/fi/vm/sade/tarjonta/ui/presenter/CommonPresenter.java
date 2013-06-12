@@ -17,9 +17,9 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 
 /**
  *

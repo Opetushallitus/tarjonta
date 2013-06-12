@@ -1,54 +1,51 @@
-/*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
 package fi.vm.sade.tarjonta.ui.service;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import fi.vm.sade.tarjonta.mock.UserProviderMock;
+import com.google.common.collect.Lists;
 
 public class UserContextTest {
+    
+    private String userOid="USER";
+    private String subOrgOid = "1.2.2004.2";
+    private String rootOrgOid = "1.0";
+
 
     @Test
     public void test() throws Exception {
+      setCurrentUser(userOid, Lists.newArrayList(getAuthority("ROLE_TARJONTA_APP", subOrgOid)));
+      UserContext context = new UserContext(rootOrgOid);
+      context.afterPropertiesSet();
+      Assert.assertEquals(1, context.getUserOrganisations().size());
+      Assert.assertEquals(false, context.isOphUser());
+      Assert.assertEquals(true, context.isDoAutoSearch());
+      Assert.assertEquals(true, context.isUseRestriction());
+      context.setUseRestriction(false);
+      Assert.assertEquals(false, context.isUseRestriction());
+    }
+
+    
+    List<GrantedAuthority> getAuthority(String appPermission, String oid) {
+        GrantedAuthority orgAuthority = new SimpleGrantedAuthority(String.format("%s", appPermission));
+        GrantedAuthority roleAuthority = new SimpleGrantedAuthority(String.format("%s_%s", appPermission, oid));
+        return Lists.newArrayList(orgAuthority, roleAuthority);
+    }
+    
+    static void setCurrentUser(final String oid, final List<GrantedAuthority> grantedAuthorities) {
         
-        //"oph user"
-        UserProviderMock userProvider = new UserProviderMock();
-        userProvider.setUserOrgSet("3 2 1");
-        userProvider.setDebugCRUD(true);
-        UserContext userContext = new UserContext();
-        userContext.userProvider = userProvider;
-        userContext.rootOrgOid = "1";
-        Assert.assertFalse(userContext.isDoAutoSearch());
-        Assert.assertTrue(userContext.isOphUser());
-
-        //non "oph user" with multiple orgs
-        userProvider = new UserProviderMock();
-        userProvider.setUserOrgSet("2 3 4");
-        userContext.userProvider = userProvider;
-        Assert.assertTrue(userContext.isDoAutoSearch());
-        Assert.assertFalse(userContext.isOphUser());
-
-        //non "oph user" with single org
-        userProvider = new UserProviderMock();
-        userProvider.setUserOrgSet("2");
-        userContext.userProvider = userProvider;
-        Assert.assertTrue(userContext.isDoAutoSearch());
-        Assert.assertFalse(userContext.isOphUser());
-}
+        Authentication auth = new TestingAuthenticationToken(oid, null, grantedAuthorities);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
 }

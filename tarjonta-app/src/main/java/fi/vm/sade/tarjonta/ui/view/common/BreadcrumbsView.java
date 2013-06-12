@@ -71,7 +71,7 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
             }
         });
         hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(poistaValintaB, Alignment.TOP_RIGHT);
+        hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_LEFT);
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
         addComponent(hl);
     }

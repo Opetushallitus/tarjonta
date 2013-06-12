@@ -96,7 +96,6 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     protected void buildLayout() {
         setSizeFull();
         //without the height parameter result area would be hidden.
-        setHeight(80, UNITS_PIXELS);
         //
         // Create fields
         //

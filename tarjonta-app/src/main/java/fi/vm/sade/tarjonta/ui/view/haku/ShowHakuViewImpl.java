@@ -220,7 +220,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                          hakuPresenter.showHakuEdit(hakuPresenter.getHakuModel());
                     }
                 }
-                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanEditHaku()));
+                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanUpdateHaku()));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -281,7 +281,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                           ShowHakuViewImpl.this.getWindow().showNotification("Ei toteutettu");
                     }
                 }
-                ,null , hakuPresenter.getPermission().userCanEditHaku()));
+                ,null , hakuPresenter.getPermission().userCanUpdateHaku()));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
