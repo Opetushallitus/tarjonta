@@ -83,7 +83,7 @@
     </bean>
 -->
 
-    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.common.auth.TarjontaPermissionServiceImpl" ></bean>
+    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" ></bean>
 
     <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
 
