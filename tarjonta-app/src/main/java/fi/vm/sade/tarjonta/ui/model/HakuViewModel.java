@@ -285,6 +285,7 @@ public class HakuViewModel extends BaseUIViewModel {
         Collections.sort(sisaisetHakuajat, new Comparator<HakuaikaViewModel>() {
         	@Override
         	public int compare(HakuaikaViewModel o1, HakuaikaViewModel o2) {
+                if (o1 != null && o2 != null && o1.getHakuaikaOid() != null && o2.getHakuaikaOid() != null) {
         		int ret = o1.getAlkamisPvm().compareTo(o2.getAlkamisPvm());
         		if (ret==0) {
         			return ret;
@@ -300,6 +301,9 @@ public class HakuViewModel extends BaseUIViewModel {
             		}
         		}
         		return o1.getHakuaikaOid().compareTo(o2.getHakuaikaOid());
+                } else {
+                    return 0;
+                }
         	}
 		});
 
