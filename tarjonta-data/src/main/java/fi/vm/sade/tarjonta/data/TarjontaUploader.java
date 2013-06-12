@@ -32,11 +32,11 @@ public class TarjontaUploader {
         } else {
             System.out.println("\nKoulutusaineiston käsittely: \n" +
                     "\n" +
-                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"koulutus koulutukset.xls ammatillinen_peruskoulutus\"\n" +
+                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"koulutus src/main/resources/TARJONTA/koulutukset_amm.xls ammatillinen_peruskoulutus\"\n" +
                     "\n" +
                     "Hakukohdeaineiston käsittely:\n" +
                     "\n" +
-                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"hakukohde hakukohteet.xls 1.2.3.4.5\"\n" +
+                    "  mvn exec:java -Dexec.mainClass=fi.vm.sade.tarjonta.data.TarjontaUploader -Dexec.args=\"hakukohde src/main/resources/TARJONTA/hakukohteet.xls 1.2.246.562.5.2013060313080811526781\"\n" +
                     "\n");
         }
 

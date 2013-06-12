@@ -133,7 +133,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final Label titleLabel = UiUtil.label(grid, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
-        //TODO get real date
+
         final Date modifiedDate = presenter.getModel().getKoulutusPerustiedotModel().getViimeisinPaivitysPvm();
 
         if (showTime) {

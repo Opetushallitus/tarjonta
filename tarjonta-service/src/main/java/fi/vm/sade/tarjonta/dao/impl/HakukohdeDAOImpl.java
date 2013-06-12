@@ -78,6 +78,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getValintakoes().clear();
 
+        for (Valintakoe valintakoe:valintakoes) {
+            valintakoe.setHakukohdeId(hakukohde.getId());
+        }
+
         hakukohde.getValintakoes().addAll(valintakoes);
 
 

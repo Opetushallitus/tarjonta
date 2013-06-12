@@ -56,6 +56,17 @@ public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
         setHeight("80px");
         rowValintakoeAika = aika;
         resolveFields();
+
+        muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+
+                tarjontaPresenter.getModel().setSelectedValintakoeAika(rowValintakoeAika);
+                parent.setEditableValintakoeAika(rowValintakoeAika);
+
+            }
+        });
+
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -66,15 +77,7 @@ public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
             }
         });
   
-        muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
 
-                tarjontaPresenter.getModel().setSelectedValintakoeAika(rowValintakoeAika);
-                parent.setEditableValintakoeAika(rowValintakoeAika);
-
-            }
-        });
     }
 
     private void resolveFields() {

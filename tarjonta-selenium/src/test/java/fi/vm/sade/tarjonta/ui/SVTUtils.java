@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import junit.framework.Assert;
 
 import org.openqa.selenium.By;
@@ -21,7 +24,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 public class SVTUtils {
-	static {
+    protected final Logger log = LoggerFactory.getLogger("TEST");
+    protected static final Logger log2 = LoggerFactory.getLogger("TEST");
+
+    static {
 		try {
 			loadProperties();
 		} catch (Exception e) {
@@ -39,7 +45,7 @@ public class SVTUtils {
 			Properties vProp = new Properties();
 			try {
 				vProp.load(new FileInputStream(versionFile));
-		        System.out.println("Running tarjonta-selenium.git-version=" + vProp.getProperty("tarjonta-selenium.git-version"));
+		        echo2("Running tarjonta-selenium.git-version=" + vProp.getProperty("tarjonta-selenium.git-version"));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IOException("ERROR: Can't read version properties file. " + versionFile);
@@ -47,7 +53,7 @@ public class SVTUtils {
 		}
 		else
 		{
-			System.out.println("ERROR: Can't find version properties file. " + versionFile);				
+			echo2("ERROR: Can't find version properties file. " + versionFile);				
 		}
 
 		String propertiesFile = System.getProperty("user.home") + "/oph-configuration/tarjonta-selenium.properties";
@@ -57,13 +63,13 @@ public class SVTUtils {
 		String target = System.getenv("TESTTARGET"); 
 		if (target != null)
 		{
-			System.out.println("Running Environment variable TESTTARGET=" + target);
+			echo2("Running Environment variable TESTTARGET=" + target);
 			propertiesFile = propertiesFile + "." + target;
-			System.out.println("Running propertiesFile: " + propertiesFile);
+			echo2("Running propertiesFile: " + propertiesFile);
 		}
 		else
 		{
-			System.out.println("Running WARNING: Environment variable TESTTARGET is missing.");
+			echo2("Running WARNING: Environment variable TESTTARGET is missing.");
 		}
 
 		prop = new Properties();
@@ -73,14 +79,14 @@ public class SVTUtils {
 			e.printStackTrace();
 			throw new IOException("ERROR: Can't read properties file. " + propertiesFile);
 		}
-        System.out.println("Running tarjonta-selenium.oph-url=" + prop.getProperty("tarjonta-selenium.oph-url"));
-        System.out.println("Running tarjonta-selenium.oph-login-url=" + prop.getProperty("tarjonta-selenium.oph-login-url"));
-        System.out.println("Running tarjonta-selenium.tarjonta-url=" + prop.getProperty("tarjonta-selenium.tarjonta-url"));
-        System.out.println("Running tarjonta-selenium.tomcat-logfile=" + prop.getProperty("tarjonta-selenium.tomcat-logfile"));
-        System.out.println("Running tarjonta-selenium.qa=" + prop.getProperty("tarjonta-selenium.qa"));
-        System.out.println("Running tarjonta-selenium.reppu=" + prop.getProperty("tarjonta-selenium.reppu"));
-        System.out.println("Running tarjonta-selenium.luokka=" + prop.getProperty("tarjonta-selenium.luokka"));
-        System.out.println("Running tarjonta-selenium.username=" + prop.getProperty("tarjonta-selenium.username"));
+        echo2("Running tarjonta-selenium.oph-url=" + prop.getProperty("tarjonta-selenium.oph-url"));
+        echo2("Running tarjonta-selenium.oph-login-url=" + prop.getProperty("tarjonta-selenium.oph-login-url"));
+        echo2("Running tarjonta-selenium.tarjonta-url=" + prop.getProperty("tarjonta-selenium.tarjonta-url"));
+        echo2("Running tarjonta-selenium.tomcat-logfile=" + prop.getProperty("tarjonta-selenium.tomcat-logfile"));
+        echo2("Running tarjonta-selenium.qa=" + prop.getProperty("tarjonta-selenium.qa"));
+        echo2("Running tarjonta-selenium.reppu=" + prop.getProperty("tarjonta-selenium.reppu"));
+        echo2("Running tarjonta-selenium.luokka=" + prop.getProperty("tarjonta-selenium.luokka"));
+        echo2("Running tarjonta-selenium.username=" + prop.getProperty("tarjonta-selenium.username"));
 	}
 
 	public void reppuLogin(WebDriver driver)
@@ -106,10 +112,10 @@ public class SVTUtils {
 		if (t2 > 2000 + t1) 
 		{
 			double dur = (t2 - t1) / 1000.0;
-			System.out.println("Running step duration: " + dur);
+			echo("Running step duration: " + dur);
 		}
 		double dur2 = (t2 - t1) / 1000.0;
-		System.out.println("Running step duration: " + dur2);
+		echo("Running step duration: " + dur2);
 		return t2;
 	}
 
@@ -190,7 +196,7 @@ public class SVTUtils {
 
 	public void focus(WebDriver driver, WebElement element, String comment)
 	{
-		System.out.println("focus: " + comment);
+		echo("focus: " + comment);
 		if ("input".equals(element.getTagName()))
 		{
 			element.sendKeys("");
@@ -273,7 +279,7 @@ public class SVTUtils {
 		String source = driver.getPageSource();
 		if (source.indexOf(test) > 0)
 		{
-			System.out.println(err);
+			echo(err);
 			throw new Exception(err);
 		}
 	}
@@ -283,7 +289,7 @@ public class SVTUtils {
 		String source = driver.getPageSource();
 		if (source.indexOf(test) < 0)
 		{
-			System.out.println(err);
+			echo(err);
 		}
 	}
 
@@ -308,7 +314,7 @@ public class SVTUtils {
 			id2 = idLike(driver, id);
 			if (id2.indexOf(id) < 0)
 			{
-				System.out.println("idLike " + id + " Sleep 10...");
+				echo("idLike " + id + " Sleep 10...");
 				tauko(10);
 				id2 = idLike(driver, id);
 				if (id2.indexOf(id) < 0)
@@ -361,7 +367,7 @@ public class SVTUtils {
 	{
 		String pageSource = driver.getPageSource();
 		writeToFile(System.getProperty("user.home") + "/page.txt", pageSource);
-		System.out.println("page.txt");
+		echo("page.txt");
 	}
 
 	public void writeToFile(String fileName, String text)
@@ -373,19 +379,19 @@ public class SVTUtils {
 		}
 		catch (IOException e)
 		{
-			System.out.println("Exception ");
+			echo("Exception ");
 		}
 	}
 
 	public void listXpathElements(WebDriver driver, String xpathExpression)
 	{
 		Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
-		System.out.println("listXpathElements: " + eles.length);
+		echo("listXpathElements: " + eles.length);
 		int i = 1;
 		for (Object ele : eles)
 		{
 			WebElement el = (WebElement)ele;
-			System.out.println("listXpathElements i=" + i++ + "element=" + el.toString());
+			echo("listXpathElements i=" + i++ + "element=" + el.toString());
 		}
 	}
 
@@ -397,7 +403,7 @@ public class SVTUtils {
 			driver.get(baseUrl); // "http://localhost:8080
 			driver.manage().window().maximize();
 		} catch (Exception e) {
-			System.out.println("Running ERROR: Palvelin ei vastaa. baseUrl: " + baseUrl);
+			echo("Running ERROR: Palvelin ei vastaa. baseUrl: " + baseUrl);
 		}
 		t01 = millisDiff(t01);
 		this.tauko(1);
@@ -405,14 +411,14 @@ public class SVTUtils {
 		// palvelimen versio
 		String versioUrl = SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-versio-url");
 		t01 = millis();
-		System.out.println("Running versioUrl: " + baseUrl + versioUrl);
+		echo("Running versioUrl: " + baseUrl + versioUrl);
 		driver.get(baseUrl + versioUrl); 
 		t01 = millisDiff(t01);
 		String versio = driver.getPageSource();
 		versio = versio.split("pre>")[1];
 		versio = versio.replace("</", "").replace("<", "");
 		versio = "Running " + versio.replace("\n", "\nRunning ");
-		System.out.println(versio);
+		echo(versio);
 	}
 
     //////////////// START //////////////////////////////////////
@@ -450,7 +456,7 @@ public class SVTUtils {
                             int found = page.split(element.split("KPL")[1]).length - 1;
                             if (found != count)
                             {
-                                    System.out.println("Running ERROR missing elements: count=" + count
+                                    echo("Running ERROR missing elements: count=" + count
                                                     + " found=" + found + " element=" + element);
                                     missingElement = true;
                                     ok = false;
@@ -506,10 +512,10 @@ public class SVTUtils {
                                     dotCount = 0;
                             }
                             shortElement = shortElement.substring(0, shortElement.length() - 1);
-                            if (debug) { System.out.println("DEBUG shortElement=" + shortElement); }
+                            if (debug) { echo("DEBUG shortElement=" + shortElement); }
                             if (cutPage.indexOf(shortElement) > 0)
                             {
-                                    if (debug) { System.out.println("DEBUG lastChar=" + lastChar
+                                    if (debug) { echo("DEBUG lastChar=" + lastChar
                                                     + " GetBack=" + GetBack + " dotCount=" + dotCount); }
                                     if (GetBack)
                                     {
@@ -517,17 +523,17 @@ public class SVTUtils {
                                             String dotPageArray[] = cutPage.split(shortElement);
                                             for (int i = 1; i < dotPageArray.length; i++) {
                                                     dotPage = dotPageArray[i];
-                                                    if (debug) { System.out.println("DEBUG i=" + i + " dotPage40=" + dotPage.substring(0, 40)); }
+                                                    if (debug) { echo("DEBUG i=" + i + " dotPage40=" + dotPage.substring(0, 40)); }
                                                     dotPage = dotPage.substring(0, dotCount);
                                                     String shortElement2 = shortElement + dotPage + endString.substring(dotCount);
-                                                    if (debug) { System.out.println("DEBUG dotPage=" + dotPage + " endString=" + endString);
-                                                    System.out.println("DEBUG shortElement2=" + shortElement2); }
+                                                    if (debug) { echo("DEBUG dotPage=" + dotPage + " endString=" + endString);
+                                                    echo("DEBUG shortElement2=" + shortElement2); }
                                                     if (cutPage.indexOf(shortElement2) > 0 && dotCount > 0) {
                                                             checkEasyHitElements(shortElement2, switched);
-                                                            if (debug) { System.out.println("DEBUG out 1 index=" + cutPage.indexOf(shortElement2)); }
+                                                            if (debug) { echo("DEBUG out 1 index=" + cutPage.indexOf(shortElement2)); }
                                                             return true; }
 //                                                  if (checkDottedElements(shortElement2, page) && dotCount > 0) {
-//                                                          System.out.println("DEBUG out 2");
+//                                                          echo("DEBUG out 2");
 //                                                          return ok; }
                                             }
                                             GetBack = false;
@@ -537,7 +543,7 @@ public class SVTUtils {
                                     else
                                     {
                                             failing = false;
-                                            System.out.println("Running ERROR finding element=" + shortElement);
+                                            echo("Running ERROR finding element=" + shortElement);
                                     }
                             }
                     }
@@ -545,7 +551,7 @@ public class SVTUtils {
                     {
                             if (wholePage.indexOf(element) > 0)
                             {
-                                    System.out.println("Running ERROR switched element: k="
+                                    echo("Running ERROR switched element: k="
                                                     + wholePage.indexOf(element) + " element=" + element);
                             }
                             else
@@ -558,7 +564,7 @@ public class SVTUtils {
                                             mapPrint(part1);
                                             mapPrint(part9);
                                     }
-                                    System.out.println("Running ERROR missing element=" + element);
+                                    echo("Running ERROR missing element=" + element);
                             }
                             hit = false;
 //                          missingElement = true;
@@ -581,7 +587,7 @@ public class SVTUtils {
                     hitIndex = wholePage.length() - cutPage.length() + cutPage.indexOf(element);
                     if (! missingElement && thisDebug)
                     {
-                            System.out.println("Running DEBUG: index=" + hitIndex + " element=" + element);
+                            echo("Running DEBUG: index=" + hitIndex + " element=" + element);
                     }
                     kMap.put(hitIndex + "", element);
                     cutPage = cutPage.substring(cutPage.indexOf(element) + element.length());
@@ -604,11 +610,12 @@ public class SVTUtils {
             {
                     int k = wholePage.indexOf(element);
                     int count = wholePage.split(element).length - 1;
-                    System.out.println("Running ERROR switched element: k=" + k + " count=" + count + " element=" + element);
+                    echo("Running ERROR switched element: k=" + k + " count=" + count + " element=" + element);
                     if (count > 1)
                     {
                             String elementArray[] = wholePage.split(element);
                             k = 0;
+                            int kk = 0;
                             for (int i = 0; i + 1 < elementArray.length; i++) {
                                     String part = elementArray[i];
                                     k = k + part.length();
@@ -619,9 +626,10 @@ public class SVTUtils {
                                     {
                                             add = "OK";
                                     }
-                                    if (elementArray.length < 10 || add.equals("ADD"))
+                                    if (elementArray.length < 10 || (add.equals("ADD") && kk < 10))
                                     {
-                                            System.out.println("Running                         k=" + k + " " + add);
+                                            echo("Running                         k=" + k + " " + add);
+                                            kk++;
                                     }
                                     k = k + element.length();
                             }
@@ -636,4 +644,14 @@ public class SVTUtils {
     }
 
     //////////////// END //////////////////////////////////////
+    
+    public void echo(String text)
+    {
+    	log.info(text);
+    }
+    
+    public static void echo2(String text)
+    {
+    	log2.info(text);
+    }
 }

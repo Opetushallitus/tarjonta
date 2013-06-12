@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+
         LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
 
         if (presenter == null) {
@@ -219,6 +221,10 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         split.setLocked(true);
 
         layout.addComponent(split);
+    }
+
+    public void addErrorMsg(String msg) {
+        getWindow().showNotification(T(msg), Window.Notification.TYPE_ERROR_MESSAGE);
     }
 
     private void showRemoveDialog() {

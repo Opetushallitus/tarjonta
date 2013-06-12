@@ -129,6 +129,58 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
     }
 
+    public void buildFormLayout(final AbstractLayout titleLayout, final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+        //check arguments
+        validArg(presenter, "the presenter object has not been set correctly");
+        validArg(model, "the form data model has not been set correctly");
+        validArg(view, "the form data view has not been set correctly");
+        validArg(layout, "the form base layout view has not been set correctly");
+
+        //set data
+        this.model = model;
+        this.errorView = new ErrorMessage();
+
+        //set presenter reference
+        setPresenter(presenter);
+
+        //build buttons
+        buildNavigationButtons();
+
+        //build whole layout
+        buildValidationLayout(titleLayout, layout, view);
+
+    }
+
+    private void buildValidationLayout(final AbstractLayout titleLayout, final AbstractLayout layout, final VIEW view) {
+        //create panel inside navigation layout
+        formPanel = new Panel();
+
+        //create layout inside of the panel
+        VerticalLayout vlBaseFormLayout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+        getFormPanel().setContent(vlBaseFormLayout);
+
+        if (!manualFormAttach) {
+            //some cases it's better to make manual attach to parent layout.
+            layout.addComponent(formPanel);
+        }
+
+        /*
+         * TOP TITLE AND STATUS LAYOUT
+         */
+        buildInformationLayout(titleLayout, vlBaseFormLayout);
+
+        /*
+         * MIDDLE ERROR LAYOUT (only visible when is has validation errors)
+         */
+        buildErrorLayoutWrapper(vlBaseFormLayout);
+
+        /*
+         * THE GIVEN VIEW FORM
+         */
+        bindModelToViewForm(vlBaseFormLayout, view);
+
+    }
+
     private void buildValidationLayout(final String titleProperty, final AbstractLayout layout, final VIEW view) {
         //create panel inside navigation layout
         formPanel = new Panel();
@@ -168,6 +220,11 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //enable or disable the save button states
         updateNavigationButtonStates(modelOid, sisalto);
+    }
+
+    private void buildInformationLayout(final AbstractLayout titleLayout, final AbstractLayout layout) {
+        layout.addComponent(titleLayout);
+        UiUtil.hr(layout);
     }
 
     private void buildInformationLayout(final String titleProperty, final AbstractLayout layout) {

@@ -323,7 +323,7 @@ public final class EntityUtils {
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet()));
-        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet()));
+        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
 
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
         tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());

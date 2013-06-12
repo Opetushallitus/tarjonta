@@ -302,12 +302,13 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
 
         valintakoeAikasTable.setContainerDataSource(createTableContainer(valintakoeAjat));
-        valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn", "muokkaaBtn"});
+        valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "muokkaaBtn" ,"poistaBtn"});
         valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
         valintakoeAikasTable.setColumnHeader("ajankohta", T("HakukohdeValintakoeViewImpl.tableAjankohta"));
         valintakoeAikasTable.setColumnHeader("lisatietoja", T("HakukohdeValintakoeViewImpl.tableLisatietoja"));
-        valintakoeAikasTable.setColumnHeader("poistaBtn", "");
         valintakoeAikasTable.setColumnHeader("muokkaaBtn", "");
+        valintakoeAikasTable.setColumnHeader("poistaBtn", "");
+
         valintakoeAikasTable.setImmediate(true);
         valintakoeAikasTable.setSizeFull();
         valintakoeAikasTable.requestRepaint();
@@ -316,8 +317,8 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintakoeAikasTable.setColumnExpandRatio("sijainti", 14);
         valintakoeAikasTable.setColumnExpandRatio("ajankohta", 30);
         valintakoeAikasTable.setColumnExpandRatio("lisatietoja", 30);
-        valintakoeAikasTable.setColumnExpandRatio("poistaBtn", 8);
         valintakoeAikasTable.setColumnExpandRatio("muokkaaBtn", 8);
+        valintakoeAikasTable.setColumnExpandRatio("poistaBtn", 8);
     }
 
     public Form getForm() {

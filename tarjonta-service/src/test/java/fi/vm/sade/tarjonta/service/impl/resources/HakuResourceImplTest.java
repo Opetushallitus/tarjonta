@@ -81,6 +81,8 @@ public class HakuResourceImplTest {
         // Save created Haku OIDs here for referrals
         List<String> tmpOids = new ArrayList<String>();
         tmpOids.add(haku.getOid());
+        
+        Thread.sleep(250L);
 
         Date beforeAnyHakusCreated = new Date();
         Thread.sleep(250L); // make sure dates wont overlap
@@ -118,7 +120,7 @@ public class HakuResourceImplTest {
 
         // Should have 1 Haku (that oid check one)
         tmp = hakuResource.search(null, 1000, 0, beforeAnyHakusCreated, null);
-        assertTrue("Shoud have one Haku that was created before the 100 ones...", tmp.size() == 1);
+        assertTrue("Shoud have one Haku that was created before the 100 ones... but was " + tmp.size(), tmp.size() == 1);
 
         // Should have 100 Haku (that oid check one)
         tmp = hakuResource.search(null, 1000, 0, null, beforeAnyHakusCreated);

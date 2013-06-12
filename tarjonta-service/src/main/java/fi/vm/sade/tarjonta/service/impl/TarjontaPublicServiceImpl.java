@@ -619,8 +619,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             handleParentKomoto(parentKomo, komoto, result);
         }
 
-        //System.out.println("lueKoulutus(...) -> "+(System.currentTimeMillis()-t)+" ms");
-
         return result;
     }
 
