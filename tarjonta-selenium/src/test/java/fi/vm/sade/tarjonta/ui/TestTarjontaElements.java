@@ -181,7 +181,7 @@ public class TestTarjontaElements {
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutus</div>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilastutkinto</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilastutkinto"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Lukiolinja</div>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
@@ -303,7 +303,7 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Luo uusi lukiokoulutus</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">VALMIS</div>"
+        		+ ".*<div class=\"v-label v-label-undef-w\">"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input"
@@ -451,7 +451,7 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/oph/../../themes/oph/img/icon-add-black.png\""
-        		+ ".*<div class=\"v-captiontext\">suomi</div>"
+        		+ ".*<div class=\"v-captiontext\">"
         		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen sisältö</div>"
         		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kuvaus lukiolinjan keskeisistä sisällöistä, painotuksista ja toteutustavoista. Henkilökohtaisen opiskelusuunnitelman laatimisesta on hyvä mainita. Verkkotekstissä on hyvä käyttä lyhyitä lauseita ja kappaleita ja tarvittaessa listoja. Vapaa teksti 16.384 merkkiä.</div>"
         		+ ".*tinyMCE.getInstanceById"
@@ -586,15 +586,15 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Kansainvälistyminen</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Sijoittuminen työelämään</div>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Ammattinimikkeet</div>"
         		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
@@ -620,7 +620,7 @@ public class TestTarjontaElements {
 	}
 
 	// muokkaaAmmatillinenKoulutusKoulutuksenPerustiedot
-	// @Test
+	@Test
 	public void testMuokkaaAmmatillinenKoulutuksenPerustiedot() throws Exception {
         if (! readPageFromFile)
         {
@@ -638,56 +638,75 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
-//        		+ ".*<div class=\"v-label v-label-undef-w\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
+        		+ ".*<div class=\"v-label v-label-undef-w\">"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<button type=\"button\" class=\"v-datefield-button\" tabindex=\"-2\"></button>"
+        		+ ".*v-required-field-indicator"
+        		+ ".*v-required-field-indicator"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*v-required-field-indicator"
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus tai tutkinto</div>"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelma</div>"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label\" style=\"width: 736px;\">Ammatillinen koulutus</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">Sosiaali- ja terveysala (alojen yhteiset ohjelmat)</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">Sosiaali-, terveys- ja liikunta-ala</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuusyksikkö</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label\" style=\"width: 736px;\">opintoviikko</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuus</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label\" style=\"width: 736px;\">120</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkintonimike</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">Lähihoitaja</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*<div class=\"v-label\" style=\"width: 736px;\">"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
+        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
-//        		+ ".*<div class=\"v-filterselect-button\"></div>"
-//        		+ ".*<div class=\"v-required-field-indicator\">*</div>"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*v-required-field-indicator"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen alkamispäivä</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-datefield-textfield\">"
         		+ ".*<div class=\"v-label v-label-undef-w\">Suunniteltu kesto</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\">"
-//        		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuslaji</div>"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
-//        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+				+ ".*v-required-field-indicator"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetusmuoto</div>"
-//        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
-//        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+				+ ".*v-required-field-indicator"
         		+ ".*<div class=\"v-label v-label-undef-w\">Linkki opetussuunnitelmaan</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<span class=\"v-button-caption\">Tyhjennä tiedot</span>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tehtävänimike</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Sähköposti</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Puhelin</div>"
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
@@ -695,9 +714,10 @@ public class TestTarjontaElements {
 //        		+ ".*<div class=\"v-label v-label-undef-w\">" // debug rivi
 //        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"  // debug rivi
 //        		+ ".*<div class=\"v-filterselect-button\"></div>" // debug rivi
+//        		+ ".*<div class=\"v-required-field-indicator\">*</div>" // debug rivi
+//        		+ ".*v-required-field-indicator" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-filterselect-input" // debug rivi
-//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">" // debug rivi
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
         		+ ".*14KPL<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
         		+ ".*9KPL<span class=\"v-button-caption\">"
@@ -706,7 +726,6 @@ public class TestTarjontaElements {
         		+ ".*6KPL<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*6KPL<div class=\"v-filterselect-button\"></div>"
         		+ ".*1KPLv-datefield-textfield"
-                // TODO here
                 ;
 
         doit.skipLoading(readPageFromFile);
@@ -714,268 +733,64 @@ public class TestTarjontaElements {
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot OK");
 	}
-	// muokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot
-	// @Test
-	public void testMuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot() throws Exception {
+	// muokkaaAmmatillinenKoulutuksenKuvailevatTiedot
+	@Test
+	public void testMuokkaaAmmatillinenKoulutuksenKuvailevatTiedot() throws Exception {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                // hae: ylioppi
-                // open first
-                // click second
+                this.TarkasteleKoulutus("tusohjel", "koulutusohjelma");
                 driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+                Assert.assertNotNull("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot ei toimi."
+                                , doit.textElement(driver, "miten valinta koulutusohjelmiin on toteutettu"));
         }
         
-        String elements = ""
-        		+ ".*3KPL<label for=\"gwt-uid"
+        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet muokkaamassa"
+        		+ ".*<div class=\"v-captiontext\">Koulutuksen perustiedot</div>"
+        		+ ".*<div class=\"v-captiontext\">Koulutuksen kuvailevat tiedot</div>"
+        		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
+        		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
+        		+ ".*<span class=\"v-button-caption\">Jatka</span>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1122px;\">Ammattinimikkeet</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1122px;\">Valitse valikosta ne ammattinimikkeet, joissa koulutuksesta valmistuva yleensä toimii.</div>"
+        		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 120px;\""
+        		+ ".*<div class=\"v-filterselect-button\"></div>"
+        		+ ".*<div class=\"v-caption\" style=\"width: 18px;\"><img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/oph/../../themes/oph/img/icon-add-black.png\""
+        		+ ".*<div class=\"v-captiontext\">suomi</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen kuvailevat tiedot</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tarjonnan kentistä osa on pakollisia"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen sisältö</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Lyhyt kuvaus"
+        		+ ".*tinyMCE.getInstanceById"
+        		+ ".*title=\"Rich Text Area"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Sijoittuminen työelämään</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tässä kentässä kuvataan, millaisiin tehtäviin ja työpaikkoihin koulutuksesta valmistutaan"
+        		+ ".*tinyMCE.getInstanceById"
+        		+ ".*title=\"Rich Text Area"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Kansainvälistyminen</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kirjoitetaan jos kansainvälisyyys on keskeinen osa koulutusta"
+        		+ ".*tinyMCE.getInstanceById"
+        		+ ".*title=\"Rich Text Area"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Yhteistyö muoden toimijoiden kanssa</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tässä voidaan kertoa työelämäyhteistyöstä, työssäoppimisesta, oppilaitosten välisestä yhteistyöstä opintopolkujen toteuttamisessa tms"
+        		+ ".*tinyMCE.getInstanceById"
+        		+ ".*title=\"Rich Text Area"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutusohjelman valinta</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kuvaus siitä, miten valinta koulutusohjelmiin on toteutettu"
+        		+ ".*tinyMCE.getInstanceById"
+        		+ ".*title=\"Rich Text Area"
+        		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
+        		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
+        		+ ".*<span class=\"v-button-caption\">Jatka</span>"
 		;
 
         doit.skipLoading(readPageFromFile);
-        Assert.assertTrue("Running TarjontaElements007 MuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot ei toimi."
+        Assert.assertTrue("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot ei toimi."
         		, doit.checkElements(driver, elements, false));
-        doit.echo("Running TarjontaElements007 MuokkaaAmmatillinenKoulutusKoulutuksenKuvailevatTiedot OK");
+        doit.echo("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot OK");
 	}
 
-	public void testEtuSivuHae() throws Exception {
-        // HAE
-        WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
-        haeKentta.clear();
-        haeKentta.sendKeys("espoon");
-        doit.tauko(1);
-        long t01 = doit.millis();
-        driver.findElement(By.xpath("//*[text()='Hae']")).click();
-        Assert.assertNotNull("Running TarjontaSavu002 Hae espoo ei toimi.", doit.textElement(driver, "Espoon kaupunki"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu002 Hae espoo OK");
-        doit.tauko(1);
-
-        // KOULUTUKSET JA HAKUKOHTEET
-        WebElement espoo = driver.findElement(By.xpath("//span[contains(text(), 'Espoon kaupunki')]"));
-        t01 = doit.millis();
-        espoo.click();
-        Assert.assertNotNull("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Koulutukset ("));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Hakukohteet ("));
-        doit.echo("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET OK");
-        doit.tauko(1);
-
-        // LUO UUSI KOULUTUS (validialog)
-        t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi koulutus");
-        Assert.assertNotNull("Running TarjontaSavu004 Luo uusi koulutus ei toimi."
-        		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu004 Luo uusi koulutus OK");
-        doit.tauko(1);
-        
-        // LUO UUSI KOULUTUS (validialog + jatka)
-        driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[7]")).click();
-        doit.tauko(1);
-        doit.textClick(driver, "Lukiokoulutus");
-//        if (luokka)
-//        {
-//            doit.textClick(driver, "Lukiokoulutus");
-//        }
-//        else
-//        {
-//            doit.textClick(driver, "Ammatillinen peruskoulutus");
-//            doit.tauko(1);
-//            driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[8]")).click();
-//            doit.tauko(1);
-//            doit.textClick(driver, "Ammatillinen tutkinto");
-//        }
-        doit.tauko(1);
-        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Espoon kaupunki']")).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Jatka");
-        Assert.assertNotNull("Running TarjontaSavu005 Luo uusi koulutus + jatka ei toimi."
-        		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu005 Luo uusi koulutus + jatka footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu005 Luo uusi koulutus + jatka OK");
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-
-        // TARKASTELE KOULUTUSTA
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi.", doit.textElement(driver, "Koulutukset ("));
-        t01 = doit.millisDiff(t01);
-        driver.findElement(By.className("v-treetable-treespacer")).click();
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-        t01 = doit.millis();
-        driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Tarkastele");
-        
-        Boolean lukiokoulutus = false;
-        Boolean ammatillinenKoulutus = false;
-        Boolean skip = true;
-        while (skip)
-        {
-            if (doit.isPresentText(driver, "Lukiokoulutus")) { lukiokoulutus = true; skip = false; }
-            if (doit.isPresentText(driver, "Ammatillinen koulutus")) { ammatillinenKoulutus = true; skip = false; }
-            doit.tauko(1);
-        }
-        if (lukiokoulutus)
-        {
-                // Luo uusi lukiokoulutus
-                Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-                                , doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus ??
-        }
-        if (ammatillinenKoulutus)
-        {
-                Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-                                , doit.textElement(driver, "Ammattinimikkeet")); // Ammatillinen koulutus
-        }
-        
-        t01 = doit.millis();
-		doit.footerTest(driver, "Running TarjontaSavu006 TARKASTELE KOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu006 TARKASTELE KOULUTUSTA OK");
-        doit.tauko(1);
-        
-        // POISTA KOULUTUS
-        String closeId = "";
-        WebElement close = null;
-        if (ammatillinenKoulutus)
-        {
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy jo. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.textClick(driver, "Poista");
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi."
-        			, doit.textElement(driver, "Haluatko varmasti poistaa"));
-        	t01 = doit.millis();
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaSavu007 POISTA KOULUTUS OK");
-        	doit.tauko(1);
-        
-        	// KOPIOI UUDEKSI
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "Kopioi uudeksi");
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi."
-//        			, doit.textElement(driver, "koulutuksen toiseen organisaatioon"));
-//        	t01 = doit.millisDiff(t01);
-//        	closeId = doit.idLike(driver, "window_close");
-//        	close = driver.findElement(By.id(closeId));
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi.", close);
-//        	doit.tauko(1);
-//        	close.click();
-//        	doit.tauko(1);
-//        	doit.notPresentText(driver, "window_close"
-//        			, "Running TarjontaSavu008 KOPIOI UUDEKSI Close nakyy viela. Ei toimi.");
-//        	doit.echo("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
-//        	doit.tauko(1);
-        
-        	// Lisaa rinnakkainen toteutus
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "rinnakkainen toteutus");
-//        	Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
-//        			, doit.textElement(driver, "Valitse pohjakoulutus"));
-//        	t01 = doit.millisDiff(t01);
-//        	// doit.footerTest(driver, "Running TarjontaSavu009 Lisaa rinnakkainen toteutus footer ei toimi.", true);
-//        	doit.echo("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
-//            doit.tauko(1);
-//        	t01 = doit.millis();
-//            doit.textClick(driver, "Peruuta");
-//            t01 = doit.millisDiff(t01);
-        }
-        doit.tauko(1);
-    	t01 = doit.millis();
-        driver.findElement(By.className("v-button-back")).click();
-        t01 = doit.millisDiff(t01);
-        doit.tauko(1);
-        driver.findElement(By.className("v-treetable-treespacer")).click();
-
-
-        // MUOKKAA KOULUTUSTA
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi.", doit.textElement(driver, "Koulutukset ("));
-        doit.tauko(1);
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-        driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Muokkaa");
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "Tallenna valmiina"));
-		doit.footerTest(driver, "Running TarjontaSavu010 MUOKKAA KOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu010 MUOKKAA KOULUTUSTA OK");
-        doit.tauko(1);
-        
-        // MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot
-        lukiokoulutus = false;
-        ammatillinenKoulutus = false;
-        skip = true;
-        while (skip)
-        {
-            if (doit.isPresentText(driver, "Luo uusi lukiokoulutus")) { lukiokoulutus = true; skip = false; }
-            if (doit.isPresentText(driver, "Ammatillinen koulutus")) { ammatillinenKoulutus = true; skip = false; }
-            doit.tauko(1);
-        }
-        t01 = doit.millis();
-        doit.textClick(driver, "Koulutuksen kuvailevat tiedot");
-        if (lukiokoulutus)
-        {
-        	// Luo uusi lukiokoulutus
-        	Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
-        			, doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus
-        }
-        if (ammatillinenKoulutus)
-        {
-        	Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
-        			, doit.textElement(driver, "Koulutusohjelman valinta")); // Ammatillinen koulutus
-//        	Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
-//        			, doit.textElement(driver, "listyminen")); // toinen aste (kansainvalistyminen)
-        }
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot OK");
-        doit.tauko(1);
-        doit.textClick(driver, "Koulutuksen perustiedot");
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-        doit.tauko(1);
-
-        // SIIRRA TAI KOPIOI KOULUTUS
-        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi."
-                , doit.textElement(driver, "Koulutukset ("));
-        if (! doit.isPresentText(driver, "v-icon"))
-        {
-        	driver.findElement(By.className("v-treetable-treespacer")).click();
-            doit.tauko(1);
-        }
-        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi."
-                , driver.findElement(By.xpath("//img[@class='v-icon']")));
-        String gwtId = doit.getGwtIdForFirstHakukohde(driver);
-        driver.findElement(By.id(gwtId)).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "tai kopioi");
-//        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi.", doit.textElement(driver
-//           		, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat"));
-        while (! doit.isPresentText(driver, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat")) 
-        { doit.tauko(1); }
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS OK");
-        doit.tauko(1);
-        doit.textClick(driver, "Peruuta");
-        doit.tauko(1);
-        doit.echo("Running TarjontaSavu END OK");
-        // END
-	}
+    // TODO here
 
 	//@Test
 	public void test01() throws Exception {
