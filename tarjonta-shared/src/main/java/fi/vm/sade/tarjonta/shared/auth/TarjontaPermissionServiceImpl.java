@@ -240,4 +240,11 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
+    /**
+     *  Check if user can edit valintaperustekuvaus/sorakuvaus
+     * @return
+     */
+    public boolean userCanEditValintaperustekuvaus(){
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
 }

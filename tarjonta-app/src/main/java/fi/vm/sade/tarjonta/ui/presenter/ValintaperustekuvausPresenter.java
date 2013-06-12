@@ -15,7 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -39,6 +45,7 @@ import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.tarjonta.ui.view.valinta.SaveDialogView;
 import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,11 +105,25 @@ public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaMod
     }
 
     public void showValintaperustekuvaus() {
-        initValintaperusteModel(MetaCategory.SORA_KUVAUS);
-        initValintaperusteModel(MetaCategory.VALINTAPERUSTEKUVAUS);
+        
+        if (getPermission().userCanEditValintaperustekuvaus()) {
+            initValintaperusteModel(MetaCategory.SORA_KUVAUS);
+            initValintaperusteModel(MetaCategory.VALINTAPERUSTEKUVAUS);
 
-        ValintaperusteMainView view = new ValintaperusteMainView(this, uiBuilder);
-        getRootView().addToWin(view);
+            ValintaperusteMainView view = new ValintaperusteMainView(this,
+                    uiBuilder);
+
+            getRootView().addToWin(view);
+        } else {
+            // no permission
+            VerticalLayout hl = new VerticalLayout();
+            hl.setSizeFull();
+            hl.setHeight("200px");
+            Label lbl = UiBuilder.label(hl, I18N.getMessage("ValintaperusteMainView.error.ei.kayttooikeutta"),  LabelStyleEnum.H2);
+            lbl.setSizeUndefined();
+            hl.setComponentAlignment(lbl, Alignment.MIDDLE_CENTER);
+            getRootView().addToWin(hl);
+        }
     }
 
     @Override
