@@ -743,6 +743,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             }
             
         });
+        noKoulutusDialog.setWidth("120px");
+        noKoulutusDialog.setHeight("60px");
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
         getWindow().addWindow(noKoulutusDialog);
     }

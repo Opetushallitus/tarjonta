@@ -343,7 +343,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * Builds the yhteyshenkilo part of the form.
      *
      * @param grid
-     * @param propertyKey
+
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
         yhteyshenkiloForm = new YhteyshenkiloViewForm(tarjontaPresenter, model.getYhteyshenkilo());
@@ -508,6 +508,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                 closeNoKoulutusDialog();
             }
         });
+        noKoulutusDialog.setWidth("120px");
+        noKoulutusDialog.setHeight("60px");
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
         getWindow().addWindow(noKoulutusDialog);
     }
