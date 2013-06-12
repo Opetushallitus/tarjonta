@@ -178,10 +178,33 @@ public class TestTarjontaSavu {
         doit.echo("Running TarjontaSavu006 TARKASTELE KOULUTUSTA OK");
         doit.tauko(1);
         
-        // POISTA KOULUTUS
+        // poista hakukohde
         String closeId = "";
         WebElement close = null;
-        if (ammatillinenKoulutus)
+        if (doit.isPresentText(driver, "Poista koulutuksesta"))
+        {
+        	doit.notPresentText(driver, "window_close"
+        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy jo. Ei toimi.");
+        	t01 = doit.millisDiff(t01);
+        	doit.textClick(driver, "Poista");
+        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi."
+        			, doit.textElement(driver, "Haluatko poistaa hakukohteen koulutukselta"));
+        	t01 = doit.millis();
+        	closeId = doit.idLike(driver, "window_close");
+        	close = driver.findElement(By.id(closeId));
+        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi.", close);
+        	t01 = doit.millisDiff(t01);
+        	doit.tauko(1);
+        	close.click();
+        	doit.tauko(1);
+        	doit.notPresentText(driver, "window_close"
+        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy viela. Ei toimi.");
+        	doit.echo("Running TarjontaSavu007 POISTA KOULUTUKSELTA HAKUKOHDE OK");
+        }
+        
+        // POISTA KOULUTUS
+        if (ammatillinenKoulutus && doit.isPresentText(driver, "Poista") 
+        		&& ! doit.isPresentText(driver, "Poista koulutuksesta"))
         {
         	doit.notPresentText(driver, "window_close"
         			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy jo. Ei toimi.");
@@ -219,19 +242,22 @@ public class TestTarjontaSavu {
 //        	doit.echo("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
 //        	doit.tauko(1);
         
-        	// Lisaa rinnakkainen toteutus
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "rinnakkainen toteutus");
-//        	Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
-//        			, doit.textElement(driver, "Valitse pohjakoulutus"));
-//        	t01 = doit.millisDiff(t01);
-//        	// doit.footerTest(driver, "Running TarjontaSavu009 Lisaa rinnakkainen toteutus footer ei toimi.", true);
-//        	doit.echo("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
-//            doit.tauko(1);
-//        	t01 = doit.millis();
-//            doit.textClick(driver, "Peruuta");
-//            t01 = doit.millisDiff(t01);
         }
+
+    	// Lisaa rinnakkainen toteutus
+        if (doit.isPresentText(driver, "rinnakkainen toteutus"))
+    	{
+    		t01 = doit.millis();
+    		doit.textClick(driver, "rinnakkainen toteutus");
+    		Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
+    				, doit.textElement(driver, "Valitse pohjakoulutus"));
+    		t01 = doit.millisDiff(t01);
+    		doit.echo("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
+    		doit.tauko(1);
+    		t01 = doit.millis();
+    		doit.textClick(driver, "Peruuta");
+    		t01 = doit.millisDiff(t01);
+    	}
         doit.tauko(1);
     	t01 = doit.millis();
         driver.findElement(By.className("v-button-back")).click();
