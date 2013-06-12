@@ -86,18 +86,23 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
                 liitteenSanallinenKuvaus = teksti.getNimi();
             }
         }
+        if (liitteenSanallinenKuvaus != null && liitteenSanallinenKuvaus.length() > 50) {
+            liitteenSanallinenKuvaus = liitteenSanallinenKuvaus.substring(0,47) + "...";
+        }
     }
 
     private String getStringConcat() {
         StringBuilder stringBuilder = new StringBuilder();
         if (hakukohdeLiiteViewModel != null) {
             stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
-            stringBuilder.append("\n");
+            stringBuilder.append(System.getProperty("line.separator"));
+
             List<KoodiType> postinumeroKoodis = tarjontaUIHelper.getKoodis(hakukohdeLiiteViewModel.getPostinumero());
             if (postinumeroKoodis != null) {
                 stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
             }
-            stringBuilder.append("\n");
+
+            stringBuilder.append(System.getProperty("line.separator"));
             stringBuilder.append(tarjontaUIHelper.getKoodiNimi(hakukohdeLiiteViewModel.getPostinumero(), I18N.getLocale()));
         }
         return stringBuilder.toString();

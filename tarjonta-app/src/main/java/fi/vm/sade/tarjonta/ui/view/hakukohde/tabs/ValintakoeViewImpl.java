@@ -300,10 +300,10 @@ public class ValintakoeViewImpl extends VerticalLayout {
             valintakoeTable.requestRepaint();
             valintakoeTable.setPageLength(koees.size());
 
-            valintakoeTable.setColumnExpandRatio("valintakokeenTyyppi", 10);
-            valintakoeTable.setColumnExpandRatio("sanallinenKuvaus", 60);
-            valintakoeTable.setColumnExpandRatio("muokkaaBtn", 5);
-            valintakoeTable.setColumnExpandRatio("poistaBtn", 5);
+            valintakoeTable.setColumnExpandRatio("valintakokeenTyyppi", 0.2f);
+            valintakoeTable.setColumnExpandRatio("sanallinenKuvaus", 0.6f);
+            valintakoeTable.setColumnExpandRatio("muokkaaBtn", 0.1f);
+            valintakoeTable.setColumnExpandRatio("poistaBtn", 0.1f);
         }
     }
     
@@ -327,8 +327,8 @@ public class ValintakoeViewImpl extends VerticalLayout {
     }
 
     private String cutString(String stringToCut) {
-        if (stringToCut.length() > 100) {
-            return stringToCut.substring(0,100) + "...";
+        if (stringToCut.length() > 90) {
+            return stringToCut.substring(0,87) + "...";
         } else {
             return stringToCut;
         }

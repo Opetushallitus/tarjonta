@@ -192,6 +192,21 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
                     }
                 }
             });
+
+            hakukohteenLiitteetTable.addGeneratedColumn("toimitusOsoite", new Table.ColumnGenerator() {
+                @Override
+                public Object generateCell(Table table, Object o, Object o2) {
+                    if (table != null) {
+                        Item item = table.getItem(o);
+                        String toimOsoite =  (String)item.getItemProperty("toimitusOsoite").getValue();
+                        Label label = new Label(toimOsoite);
+                        label.setContentMode(Label.CONTENT_TEXT);
+                        return label;
+                    } else {
+                        return null;
+                    }
+                }
+            });
         }
 
         if (hakukohteenLiitteetTable != null) {
@@ -210,9 +225,9 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             hakukohteenLiitteetTable.setImmediate(true);
             hakukohteenLiitteetTable.setSizeFull();
 
-            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenTyyppi",0.2f);
-            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenSanallinenKuvaus",0.5f);
-            hakukohteenLiitteetTable.setColumnExpandRatio("toimitettavaMennessa",0.2f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenTyyppi",0.3f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("liitteenSanallinenKuvaus",0.4f);
+            hakukohteenLiitteetTable.setColumnExpandRatio("toimitettavaMennessa",0.25f);
             hakukohteenLiitteetTable.setColumnExpandRatio("toimitusOsoite",0.4f);
             hakukohteenLiitteetTable.setColumnExpandRatio("muokkaaBtn",0.1f);
             hakukohteenLiitteetTable.setColumnExpandRatio("poistaBtn",0.1f);
