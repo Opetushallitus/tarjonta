@@ -144,7 +144,7 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
                     T("_textTooLong", T("koulutusOhjelmanValinta") + " (" + kieli + ")", MAX_LENGTH));
             rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help", MAX_LENGTH), LabelStyleEnum.TEXT));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help", 1000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
