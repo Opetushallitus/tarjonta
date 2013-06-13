@@ -152,7 +152,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         mainLayout.setMargin(true);
 
         if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
-            mainLayout.addComponent(buildInfoButtonLayout());
+            //mainLayout.addComponent(buildInfoButtonLayout());
         }
 
         mainLayout.addComponent(buildGridLayout());

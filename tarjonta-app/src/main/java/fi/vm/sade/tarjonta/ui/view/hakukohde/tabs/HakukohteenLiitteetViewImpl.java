@@ -56,6 +56,8 @@ import java.util.List;
 @Configurable(preConstruction = true)
 public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
+    public static final String LANGUAGE_TAB_SHEET_WIDTH = "600px";
+
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     @Autowired
     private TarjontaPresenter presenter;
@@ -109,7 +111,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         mainLayout.setMargin(true);
 
-        mainLayout.addComponent(buildInfoButtonLayout());
+        //mainLayout.addComponent(buildInfoButtonLayout());
 
         mainLayout.addComponent(buildGridLayout());
 
@@ -170,9 +172,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
-        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
+        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true, LANGUAGE_TAB_SHEET_WIDTH, languageTabsheetHeight);
 
-        liitteenSanallinenKuvausTxtArea.setWidth("60%");
+
         return liitteenSanallinenKuvausTxtArea;
     }
 
