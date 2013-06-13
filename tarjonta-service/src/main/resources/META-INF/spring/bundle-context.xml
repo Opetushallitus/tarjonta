@@ -34,6 +34,8 @@
 
     <bean id="serviceExceptionWrapper" class="fi.vm.sade.tarjonta.service.impl.exceptionwrapper.ExceptionWrappingAspect"/>
 
+    <bean id="auditLoggerJms" class="fi.vm.sade.log.client.LoggerJms"/>
+
     <!-- Get configuration for generic/generic-events system -->
     <import resource="classpath:META-INF/spring/events-context.xml" />
 

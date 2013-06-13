@@ -26,7 +26,7 @@ public class TestTarjontaSavu {
 
     @Before
     public void setUp() throws Exception {
-    	if (false)
+    	if (true)
     	{
     		FirefoxProfile firefoxProfile = new FirefoxProfile();
     		firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
