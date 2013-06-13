@@ -97,6 +97,7 @@ public class TarjontaRootView extends Window {
         isAttached = true;
         // create app layout with organization navigation tree
         showMainView();
+        organisationSearchView.autoSearch();
     }
 
     public ListKoulutusView getListKoulutusView() {
@@ -177,6 +178,7 @@ public class TarjontaRootView extends Window {
         LOG.debug("showMainView()");
         //Add UI components to root layout
         addToEmptyContent(buildMainLayoutComponents());
+        
     }
 
     private HorizontalLayout buildMainLayoutComponents() {
@@ -250,10 +252,12 @@ public class TarjontaRootView extends Window {
         if (hlMainLayout == null) {
             hlMainLayout = new HorizontalLayout();
 
+           
+            
             hlMainLayout.addComponent(organisationSearchView);
             hlMainLayout.addComponent(borderView);
             hlMainLayout.addComponent(vlMainRight);
-
+            
             hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
             hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
             hlMainLayout.setSizeFull();
@@ -275,7 +279,6 @@ public class TarjontaRootView extends Window {
 
     private void addToEmptyContent(final AbstractLayout layout) {
         getEmptyAppRootLayout().addComponent(layout);
-
         if (organisationSearchView != null) {
             organisationSearchView.setWidth("100%");
         }

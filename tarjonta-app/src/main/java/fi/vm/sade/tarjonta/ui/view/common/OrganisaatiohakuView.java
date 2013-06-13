@@ -148,14 +148,14 @@ public class OrganisaatiohakuView extends VerticalLayout {
         }
 
         buildLayout(this);
-        autoSearch();
+        //autoSearch();
 
         isAttached = true;
         //initializeData();
         bind();
     }
 
-    private void autoSearch() {
+    public void autoSearch() {
         Preconditions.checkNotNull(userContext);
         if (userContext.isDoAutoSearch()) {
             this.rootOrganisaatioOids = Lists.newArrayList(userContext.getUserOrganisations());
