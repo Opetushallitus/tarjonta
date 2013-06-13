@@ -131,9 +131,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                 }
 
                 logger.info("koulutusAsteCombo : {} == {}", koulutuksenTyyppiCombo.getValue(), KOULUTUSTYYPPI_AMM);
-
-                if (koulutuksenTyyppiCombo.getValue() instanceof String
-                        && ((String) koulutuksenTyyppiCombo.getValue()).contains(KOULUTUSTYYPPI_AMM)
+                
+                if (koulutuksenTyyppiCombo.getValue()  instanceof KoodiContainer
+                        && ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(KOULUTUSTYYPPI_AMM)
                         && kcPohjakoulutusvaatimus.getValue() == null) {
                     errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
                     return;
