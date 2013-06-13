@@ -16,12 +16,16 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -34,6 +38,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "valintakoe_ajankohta")
+@EntityListeners(XssFilterListener.class)
 public class ValintakoeAjankohta extends BaseEntity {
 
     private static final long serialVersionUID = -2304365086611685405L;
@@ -45,6 +50,7 @@ public class ValintakoeAjankohta extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date paattymisaika;
 
+    @FilterXss
     private String lisatietoja;
 
     private Osoite ajankohdanOsoite;

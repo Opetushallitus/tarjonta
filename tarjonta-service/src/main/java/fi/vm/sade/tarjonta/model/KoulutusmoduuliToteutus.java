@@ -29,6 +29,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -44,6 +45,8 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -52,6 +55,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Entity
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
+@EntityListeners(XssFilterListener.class)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
@@ -117,8 +121,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
     @Column(name = "ulkoinentunniste")
+    @FilterXss
     private String ulkoinenTunniste;
     @Column(name = "koulutusaste")
+    @FilterXss
     private String koulutusaste;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "arviointikriteerit")
@@ -127,6 +133,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
     @Column(name = "pohjakoulutusvaatimus")
+    @FilterXss
     private String pohjakoulutusvaatimus;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "painotus")

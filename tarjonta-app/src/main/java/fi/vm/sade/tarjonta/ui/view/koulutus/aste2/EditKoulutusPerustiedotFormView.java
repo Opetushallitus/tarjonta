@@ -17,12 +17,29 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -32,7 +49,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
@@ -41,36 +57,22 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
-import fi.vm.sade.vaadin.util.UiUtil;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField;
+import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
 import fi.vm.sade.tarjonta.ui.view.koulutus.NoKoulutusDialog;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Koulutus edit form for second degree studies.
@@ -531,6 +533,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.newLine();
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, kcKoulutuslaji);
+        
+        // OVT-4607 väliaikainen pakotettu valinta
+        kcKoulutuslaji.setEnabled(false);
+                
     }
 
     /*
@@ -641,7 +647,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         dfKoulutuksenAlkamisPvm.setEnabled(active);
         tfSuunniteltuKesto.setEnabled(active);
         kcSuunniteltuKestoTyyppi.setEnabled(active);
-        kcKoulutuslaji.setEnabled(active);
+        //kcKoulutuslaji.setEnabled(active); // OVT-4607 väliaikainen käytöstäpoisto
         kcOpetusmuoto.setEnabled(active);
         //kcPohjakoulutusvaatimus.setEnabled(active);
     }
@@ -714,8 +720,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             koulutusModel.setKoulutusohjelmaTavoitteet(koulutusohjelma.getTavoitteet());
             this.koulutusohjelmanTavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusohjelmaTavoitteet(), KoulutusKoodistoModel.MODEL_NAME_PROPERY));
         }
-
         disableOrEnableComponents(true);
+
+        // OVT-4607 väliaikainen pakotettu valinta
+        kcKoulutuslaji.setValue("koulutuslaji_n#1");
     }
 
     private void clearKomoLabels() {

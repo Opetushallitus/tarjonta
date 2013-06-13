@@ -11,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -25,20 +26,25 @@ public class TestTarjontaSavu {
 
     @Before
     public void setUp() throws Exception {
-            if (true)
-            {
-            	FirefoxProfile firefoxProfile = new FirefoxProfile();
-            	firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
-                driver = new FirefoxDriver(firefoxProfile);
-            }
-            else
-            {
-                    System.setProperty("webdriver.ie.driver", "src/test/resources/IEDriverServer.exe");
-                    driver = new InternetExplorerDriver();
-            }
+    	if (false)
+    	{
+    		FirefoxProfile firefoxProfile = new FirefoxProfile();
+    		firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
+    		driver = new FirefoxDriver(firefoxProfile);
+    	}
+    	else
+    	{
+    		// IE browser will not open unless
+    		// - all security zone have toggle "Protected Mode" checked
+    		// - view zoom = 100%
+    		// - help browser to get certificate clicking the link once
+    		// IE9 mode toimii (reppu organisaatio) 5/2013
+    		System.setProperty("webdriver.ie.driver", "src/test/resources/IEDriverServer.exe");
+    		driver = new InternetExplorerDriver();
+    	}
 
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
-            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
 	@Test

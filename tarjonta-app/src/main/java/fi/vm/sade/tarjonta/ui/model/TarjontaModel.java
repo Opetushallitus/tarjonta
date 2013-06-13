@@ -40,7 +40,6 @@ public class TarjontaModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 6216606779350260527L;
     // Show label that shows last modification
-    private Boolean _showIdentifier;
     private String _identifier;
     private String rootOrganisaatioOid;//OPH's root oid.
     private NavigationModel navigationModel; //data instance of selected organisation
@@ -173,14 +172,6 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public void setIdentifier(String _identifier) {
         this._identifier = _identifier;
-    }
-
-    public boolean isShowIdentifier() {
-        return _showIdentifier;
-    }
-
-    public void setShowIdentifier(boolean _showIdentifier) {
-        this._showIdentifier = _showIdentifier;
     }
 
     public KoulutusSearchSpesificationViewModel getSearchSpec() {

@@ -50,6 +50,9 @@ public class HakukohdeDTO extends BaseRDTO {
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
 
+    // NOTE: this is deducted from the komotos this hakukohde is nailed to
+    private List<String> _opetuskielet;
+
     public String getHakuOid() {
         return _hakuOid;
     }
@@ -240,6 +243,14 @@ public class HakukohdeDTO extends BaseRDTO {
 
     public void setValintakoes(List<ValintakoeRDTO> _valintakoes) {
         this._valintakoes = _valintakoes;
+    }
+
+    public List<String> getOpetuskielet() {
+        return _opetuskielet;
+    }
+
+    public void setOpetuskielet(List<String> _opetuskielet) {
+        this._opetuskielet = _opetuskielet;
     }
 
 }

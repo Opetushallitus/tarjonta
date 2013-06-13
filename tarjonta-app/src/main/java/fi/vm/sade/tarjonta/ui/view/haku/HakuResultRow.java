@@ -87,7 +87,7 @@ public class HakuResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (hakuPresenter.getPermission().userCanEditHaku()) {
+        if (hakuPresenter.getPermission().userCanUpdateHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 

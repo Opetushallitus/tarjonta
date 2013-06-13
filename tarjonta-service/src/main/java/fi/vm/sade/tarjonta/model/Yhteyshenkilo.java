@@ -15,18 +15,25 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Table;
+
 import org.apache.commons.lang.StringUtils;
+
+import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 /**
  * Yhteyshenkilo's are always maintained in Henkilo service.
  */
 @Entity
 @Table(name = Yhteyshenkilo.TABLE_NAME)
+@EntityListeners(XssFilterListener.class)
 public class Yhteyshenkilo extends BaseEntity {
 
     public static final String TABLE_NAME = "yhteyshenkilo";
@@ -36,31 +43,32 @@ public class Yhteyshenkilo extends BaseEntity {
     private static final String KIELI_SEPARATOR = ",";
 
     @Column(name = "etunimis", nullable = false)
+    @FilterXss
     private String etunimis;
 
     @Column(name = "sukunimi", nullable = false)
+    @FilterXss
     private String sukunimi;
 
     @Column(name = "sahkoposti")
+    @FilterXss
     private String sahkoposti;
 
     @Column(name = "puhelin")
+    @FilterXss
     private String puhelin;
 
     @Column(name = "kielis")
+    @FilterXss
     private String kielis;
 
     @Column(name = "henkilo_oid")
     private String henkioOid;
 
     @Column(name = "titteli")
+    @FilterXss
     private String titteli;
     
-    private transient boolean persisted;
-
-    /**
-     *
-     */
     public Yhteyshenkilo() {
     }
 
@@ -177,22 +185,6 @@ public class Yhteyshenkilo extends BaseEntity {
         hash = 37 * hash + (this.henkioOid != null ? this.henkioOid.hashCode() : 0);
         return hash;
     }
-
-    /**
-     * @return the persisted
-     */
-    public boolean isPersisted() {
-        return persisted;
-    }
-
-    /**
-     * @param persisted the persisted to set
-     */
-    public void setPersisted(boolean persisted) {
-        this.persisted = persisted;
-    }
-
-   
 
 }
 

@@ -15,10 +15,10 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.security.xssfilter.XssFilter;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
-import fi.vm.sade.tarjonta.service.impl.conversion.util.XssFilter;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -37,13 +37,12 @@ public class CommonFromDTOConverter {
 
         if (monikielinenTekstiTyyppi!=null && monikielinenTekstiTyyppi.getTeksti()!=null) {
             for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                monikielinenTeksti.addTekstiKaannos(teksti.getKieliKoodi(),teksti.getValue());
+                monikielinenTeksti.addTekstiKaannos(teksti.getKieliKoodi(), teksti.getValue());
             }
         }
         
-        return XssFilter.filter(monikielinenTeksti);
+        return monikielinenTeksti;
     }
-
 
     public static Osoite convertOsoiteToOsoiteTyyppi(OsoiteTyyppi osoiteTyyppi) {
         Osoite osoite = new Osoite();
