@@ -74,7 +74,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private String modelOid;
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;
-    protected ErrorMessage errorView;
+    protected final ErrorMessage errorView = new ErrorMessage();
     protected Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.
@@ -116,7 +116,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //set data
         this.model = model;
-        this.errorView = new ErrorMessage();
+        //this.errorView = new ErrorMessage();
 
         //set presenter reference
         setPresenter(presenter);
@@ -126,6 +126,58 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //build whole layout
         buildValidationLayout(titleProperty, layout, view);
+
+    }
+
+    public void buildFormLayout(final AbstractLayout titleLayout, final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+        //check arguments
+        validArg(presenter, "the presenter object has not been set correctly");
+        validArg(model, "the form data model has not been set correctly");
+        validArg(view, "the form data view has not been set correctly");
+        validArg(layout, "the form base layout view has not been set correctly");
+
+        //set data
+        this.model = model;
+        //this.errorView = new ErrorMessage();
+
+        //set presenter reference
+        setPresenter(presenter);
+
+        //build buttons
+        buildNavigationButtons();
+
+        //build whole layout
+        buildValidationLayout(titleLayout, layout, view);
+
+    }
+
+    private void buildValidationLayout(final AbstractLayout titleLayout, final AbstractLayout layout, final VIEW view) {
+        //create panel inside navigation layout
+        formPanel = new Panel();
+
+        //create layout inside of the panel
+        VerticalLayout vlBaseFormLayout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+        getFormPanel().setContent(vlBaseFormLayout);
+
+        if (!manualFormAttach) {
+            //some cases it's better to make manual attach to parent layout.
+            layout.addComponent(formPanel);
+        }
+
+        /*
+         * TOP TITLE AND STATUS LAYOUT
+         */
+        buildInformationLayout(titleLayout, vlBaseFormLayout);
+
+        /*
+         * MIDDLE ERROR LAYOUT (only visible when is has validation errors)
+         */
+        buildErrorLayoutWrapper(vlBaseFormLayout);
+
+        /*
+         * THE GIVEN VIEW FORM
+         */
+        bindModelToViewForm(vlBaseFormLayout, view);
 
     }
 
@@ -170,6 +222,11 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         updateNavigationButtonStates(modelOid, sisalto);
     }
 
+    private void buildInformationLayout(final AbstractLayout titleLayout, final AbstractLayout layout) {
+        layout.addComponent(titleLayout);
+        UiUtil.hr(layout);
+    }
+
     private void buildInformationLayout(final String titleProperty, final AbstractLayout layout) {
         /*
          *  PAGE HEADLINE
@@ -209,16 +266,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     private void buildErrorLayoutWrapper(AbstractLayout layout) {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
-
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
-
-        layout.addComponent(topErrorArea);
+    	layout.addComponent(errorView);
     }
 
     @Override

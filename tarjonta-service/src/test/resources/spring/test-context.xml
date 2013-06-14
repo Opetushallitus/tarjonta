@@ -14,6 +14,7 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
+    <context:component-scan base-package="fi.vm.sade.tarjonta.shared.auth" />
 
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />

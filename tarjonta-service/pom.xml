@@ -28,6 +28,18 @@
         </dependency>
 
         <dependency>
+            <groupId>fi.vm.sade.log</groupId>
+            <artifactId>log-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.log</groupId>
+            <artifactId>log-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-shared</artifactId>
             <version>${project.version}</version>
@@ -103,7 +115,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.4.5</version>
+            <version>${antisamy.version}</version>
             <!-- autentikaatiossa excludaavat xerceksen, pitäisikö tässäkin? -->
         </dependency>
 

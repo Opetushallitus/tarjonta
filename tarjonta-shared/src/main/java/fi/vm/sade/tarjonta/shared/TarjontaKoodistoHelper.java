@@ -464,4 +464,27 @@ public class TarjontaKoodistoHelper {
         return result;
     }
 
+    /**
+     * Get multilanguage text from koodis metadata "nimi" (name) field.
+     *
+     * @param targetKoodiUri
+     * @return
+     */
+    public Map<String, String> getKoodiMetadataNimi(String targetKoodiUri) {
+        Map<String, String> result = new HashMap<String, String>();
+
+        if (targetKoodiUri != null) {
+            KoodiType targetKoodiType = getKoodiByUri(targetKoodiUri);
+            if (targetKoodiType != null) {
+                for (KoodiMetadataType koodiMetadataType : targetKoodiType.getMetadata()) {
+                    String nimi = koodiMetadataType.getNimi();
+                    String kieli = koodiMetadataType.getKieli().name();
+                    result.put(convertKielikoodiToKieliUri(kieli), nimi);
+                }
+            }
+        }
+
+        return result;
+    }
+
 }

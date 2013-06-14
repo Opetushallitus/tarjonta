@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.model.Valintakoe;
@@ -27,6 +29,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,6 +108,16 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             }
         }
 
+        //
+        // Get the opetuskieli information - makes life easier for Team1.
+        //
+        Set<String> opetuskielis = new HashSet<String>();
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : s.getKoulutusmoduuliToteutuses()) {
+            for (KoodistoUri koodistoUri : koulutusmoduuliToteutus.getOpetuskielis()) {
+                opetuskielis.add(koodistoUri.getKoodiUri());
+            }
+        }
+        t.setOpetuskielet(new ArrayList<String>(opetuskielis));
 
         return t;
     }

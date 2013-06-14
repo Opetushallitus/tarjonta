@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.service;
+package fi.vm.sade.tarjonta.shared.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
 import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.service.PermissionService;
-import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 
 /**
  * This class encapsulates permission service so that changes the actual
@@ -40,40 +39,32 @@ import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 @Component
 public class TarjontaPermissionServiceImpl implements InitializingBean {
 
+    public static final String TARJONTA = "TARJONTA";
+
     //OPH oid
     @Value("${root.organisaatio.oid}")
     String rootOrgOid;
 
-    
-    @Autowired
-    private UserProvider userProvider;
+    public TarjontaPermissionServiceImpl() {
+        // TODO Auto-generated constructor stub
+    }
     
     private static final Logger LOGGER = LoggerFactory.getLogger(TarjontaPermissionServiceImpl.class);
 
     @Component
     public static class TPermissionService extends AbstractPermissionService {
-        public TPermissionService() {
-            super("TARJONTA");
-        }
         
-        @Override
-        @Autowired
-        public void setAuthorizer(OrganisationHierarchyAuthorizer authorizer) {
-            LOGGER.info("Using authorizer:" + authorizer.getClass().getName());
-            super.setAuthorizer(authorizer);
+        public TPermissionService() {
+            super(TARJONTA);
         }
     }
 
-    @Autowired(required = true)
-    TPermissionService wrapped = new TPermissionService();
+    @Autowired
+    TPermissionService wrapped;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         Preconditions.checkNotNull(wrapped, "The permissionService is not set");        
-    }
-
-    protected User getUser() {
-        return userProvider.getUser();
     }
 
     /**
@@ -82,7 +73,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @param org
      * @return
      */
-    public boolean userCanCancelPublish(final OrganisaatioContext context) {
+    public boolean userCanCancelKoulutusPublish(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
 
@@ -214,6 +205,9 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanCreateHaku() {
+        System.out.println(String.format("target permission:%s", wrapped.ROLE_CRUD));
+        System.out.println(String.format("authorities:%s", SecurityContextHolder.getContext().getAuthentication().getAuthorities()));
+
         boolean userCanCreateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
         LOGGER.debug("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
@@ -223,7 +217,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * Check if user can edit haku.
      * @return
      */
-    public boolean userCanEditHaku() {
+    public boolean userCanUpdateHaku() {
         boolean userCanEditHaku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
         LOGGER.debug("userCanEditHaku:" + userCanEditHaku);
         return userCanEditHaku;
@@ -246,4 +240,11 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
+    /**
+     *  Check if user can edit valintaperustekuvaus/sorakuvaus
+     * @return
+     */
+    public boolean userCanEditValintaperustekuvaus(){
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
 }

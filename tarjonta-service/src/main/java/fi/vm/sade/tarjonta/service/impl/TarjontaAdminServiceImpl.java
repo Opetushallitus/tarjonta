@@ -34,7 +34,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +74,8 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.log.model.Tapahtuma;
+import fi.vm.sade.log.client.*;
 
 /**
  * @author Tuomas Katva
@@ -81,7 +85,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
-    private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
     @Autowired(required = true)
     private HakuBusinessService hakuBusinessService;
     @Autowired(required = true)
@@ -110,11 +114,21 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private IndexerResource solrIndexer;
     @Autowired
     private SearchService searchService;
+
+    private fi.vm.sade.log.client.Logger auditLogger;
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
     @Autowired
     private TarjontaSampleData sampleData;
+
+
+    private void constructAuditLogger() {
+        if (auditLogger == null) {
+            auditLogger = new LoggerJms();
+
+        }
+    }
 
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
@@ -128,6 +142,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
+        }
+    }
+
+    private void logAuditTapahtuma(Tapahtuma tapahtuma) {
+            constructAuditLogger();
+        try {
+            if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
+            auditLogger.log(tapahtuma);
+            }
+
+        } catch (Exception e) {
+            log.warn("Unable to send audit log message {}",e.toString());
         }
     }
 
@@ -378,12 +404,32 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
         solrIndexer.indexKoulutus(new ArrayList<KoulutusmoduuliToteutus>(hakuk.getKoulutusmoduuliToteutuses()));
 
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, "INSERT"));
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(hakuk.getOid());
         return publicService.lueHakukohde(kysely).getHakukohde();
+    }
+
+    private Tapahtuma constructHakukohdeAddTapahtuma(Hakukohde hakukohde, String tapahtumaTyyppi) {
+        Tapahtuma tapahtuma = new Tapahtuma();
+        tapahtuma.setAikaleima(new Date());
+        tapahtuma.setMuutoksenKohde("Hakukohde");
+        try {
+          tapahtuma.setTekija((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } catch (Exception exp ) {
+
+        }
+
+        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
+        if (hakukohde.getOid() != null) {
+        tapahtuma.setUusiArvo(hakukohde.getOid() + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "");
+        }   else {
+            tapahtuma.setUusiArvo(hakukohde.getHakukohdeKoodistoNimi());
+        }
+        return tapahtuma;
     }
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
@@ -411,7 +457,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());
             hakukohdeDAO.update(hakukohde);
         } else {
-            List<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
+            List<KoulutusmoduuliToteutus> poistettavatModuuliLinkitLista = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
+            Set<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = new HashSet<KoulutusmoduuliToteutus>(poistettavatModuuliLinkitLista);
             for (KoulutusmoduuliToteutus komoto : poistettavatModuuliLinkit) {
                 log.info("REMOVING KOULUTUS : {} FROM HAKUKOHDE {}", komoto.getOid(), hakukohde.getOid());
 
@@ -450,6 +497,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde,"DELETE"));
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
@@ -474,10 +522,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
 
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
+
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
-
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp.get(0),"UPDATE"));
         //why do we overwrite version from DTO?
         //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());

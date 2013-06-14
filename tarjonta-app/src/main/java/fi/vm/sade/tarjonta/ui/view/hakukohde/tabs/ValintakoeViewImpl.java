@@ -17,12 +17,14 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
@@ -270,8 +272,12 @@ public class ValintakoeViewImpl extends VerticalLayout {
                 public Object generateCell(Table table, Object o, Object o2) {
                     if (table != null) {
                         Item item = table.getItem(o);
-                        Label label = new Label(item.getItemProperty("sanallinenKuvaus"));
+
+
+                        Label label = new Label(cutString((String)item.getItemProperty("sanallinenKuvaus").getValue()));
                         label.setContentMode(Label.CONTENT_XHTML);
+
+
                         return label;
                     } else {
                         return null;
@@ -287,16 +293,17 @@ public class ValintakoeViewImpl extends VerticalLayout {
             valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn", "poistaBtn"});
             valintakoeTable.setColumnHeader("valintakokeenTyyppi", T("valinkoeTyyppiHdr"));
             valintakoeTable.setColumnHeader("sanallinenKuvaus", T("sanallinenKuvaus"));
+
             valintakoeTable.setColumnHeader("muokkaaBtn", "");
             valintakoeTable.setColumnHeader("poistaBtn", "");
             valintakoeTable.setImmediate(true);
             valintakoeTable.requestRepaint();
             valintakoeTable.setPageLength(koees.size());
 
-            valintakoeTable.setColumnExpandRatio("valintakokeenTyyppi", 30);
-            valintakoeTable.setColumnExpandRatio("sanallinenKuvaus", 50);
-            valintakoeTable.setColumnExpandRatio("muokkaaBtn", 10);
-            valintakoeTable.setColumnExpandRatio("poistaBtn", 10);
+            valintakoeTable.setColumnExpandRatio("valintakokeenTyyppi", 0.2f);
+            valintakoeTable.setColumnExpandRatio("sanallinenKuvaus", 0.6f);
+            valintakoeTable.setColumnExpandRatio("muokkaaBtn", 0.1f);
+            valintakoeTable.setColumnExpandRatio("poistaBtn", 0.1f);
         }
     }
     
@@ -317,6 +324,14 @@ public class ValintakoeViewImpl extends VerticalLayout {
         }
 
         return container;
+    }
+
+    private String cutString(String stringToCut) {
+        if (stringToCut.length() > 90) {
+            return stringToCut.substring(0,87) + "...";
+        } else {
+            return stringToCut;
+        }
     }
     
     public HakukohdeValintakoeViewImpl getValintakoeComponent() {
@@ -346,5 +361,7 @@ public class ValintakoeViewImpl extends VerticalLayout {
         }
         return _i18n;
     }
+
+
 
 }

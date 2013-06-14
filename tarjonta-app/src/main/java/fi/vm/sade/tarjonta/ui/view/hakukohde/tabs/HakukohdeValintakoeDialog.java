@@ -29,8 +29,8 @@ import static fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow.WINDOW_TITLE_PRO
  */
 public class HakukohdeValintakoeDialog extends TarjontaWindow {
 
-    private static final String WINDOW_HEIGHT = "750px";
-    private static final String WINDOW_WIDTH = "1000px";
+    private static final String WINDOW_HEIGHT = "650px";
+    private static final String WINDOW_WIDTH = "864px";
     private static final long serialVersionUID = 1893982332664363368L;
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;

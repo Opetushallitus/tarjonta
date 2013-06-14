@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
@@ -68,7 +69,7 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
         editKoulutusLisatiedotForm = new EditKoulutusLisatiedotForm(presenter, uiHelper, uiBuilder, koulutusLisatiedotModel);
 
         // OVT-4727 buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
-        buildFormLayout(null, presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
+        buildFormLayout(new HorizontalLayout(), presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
     }
 
     @Override

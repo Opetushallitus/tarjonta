@@ -16,9 +16,12 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -32,6 +35,7 @@ import javax.persistence.UniqueConstraint;
 	name = "teksti_kaannos",
 	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
 )
+@EntityListeners(XssFilterListener.class)
 public class TekstiKaannos extends BaseEntity {
 
     private static final long serialVersionUID = 8949181662473812771L;
@@ -40,6 +44,7 @@ public class TekstiKaannos extends BaseEntity {
     private String kieliKoodi;
 
     @Column(name = "arvo", length = 16384)
+    @FilterXss
     private String arvo;
 
     @ManyToOne(optional = false, fetch=FetchType.LAZY)

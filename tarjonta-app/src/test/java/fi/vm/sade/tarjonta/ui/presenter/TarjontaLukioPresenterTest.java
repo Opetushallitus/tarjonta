@@ -121,7 +121,6 @@ public class TarjontaLukioPresenterTest {
 
     @BeforeClass
     public static void setUpClass() {
-        
     }
 
     @AfterClass
@@ -141,7 +140,10 @@ public class TarjontaLukioPresenterTest {
 
         tarjontaPresenter = new TarjontaPresenter();
         tarjontaPresenter.getNavigationOrganisation().setOrganisationOid(ORGANISAATIO_OID);
-        tarjontaPresenter.setRootView(new TarjontaRootView());
+        TarjontaRootView tarjontaRootView = new TarjontaRootView();
+        Whitebox.setInternalState(tarjontaRootView, "_presenter", tarjontaPresenter);
+        tarjontaPresenter.setRootView(tarjontaRootView);
+
         instance = new TarjontaLukioPresenter();
 
         koulutusLukioConverter = new KoulutusLukioConverter();
@@ -374,7 +376,7 @@ public class TarjontaLukioPresenterTest {
         /*
          * Expect
          */
-        
+
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
@@ -577,7 +579,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri(KOULUTUSASTE), perustiedotModel.getKoulutuskoodiModel().getKoulutusaste().getKoodistoUriVersio());
         assertEquals(createUri(KOULUTUSKOODI), perustiedotModel.getKoulutuskoodiModel().getKoodistoUriVersio());
         assertEquals(createUri(OPINTOALA), perustiedotModel.getKoulutuskoodiModel().getOpintoala().getKoodistoUriVersio());
-       // assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuus());
+        // assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuus());
         assertEquals(createUri(LAAJUUS_YKSIKKO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuusyksikko().getKoodistoUriVersio());
         assertEquals(createUri(LUKIOLINJA), perustiedotModel.getLukiolinja().getKoodistoUriVersio());
 
@@ -587,7 +589,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri(KOULUTUSASTE), perustiedotModel.getKoulutusaste().getKoodistoUriVersio());
         assertEquals(createUri(KOULUTUSKOODI), perustiedotModel.getKoulutuskoodiModel().getKoodistoUriVersio());
         assertEquals(createUri(OPINTOALA), perustiedotModel.getOpintoala().getKoodistoUriVersio());
-       // assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getOpintojenLaajuus());
+        // assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getOpintojenLaajuus());
         assertEquals(createUri(LAAJUUS_YKSIKKO), perustiedotModel.getOpintojenLaajuusyksikko().getKoodistoUriVersio());
         assertEquals(createUri(LUKIOLINJA), perustiedotModel.getLukiolinja().getKoodistoUriVersio());
         assertEquals(KOMO_OID, perustiedotModel.getKoulutusmoduuliOid());

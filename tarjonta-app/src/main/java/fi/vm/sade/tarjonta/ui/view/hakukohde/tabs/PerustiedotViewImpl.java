@@ -26,6 +26,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -556,7 +557,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                             Object id = hakuCombo.getValue();
 
                             if (id instanceof HakuViewModel) {
-                                liitteidenToimitusPvm.setValue(((HakuViewModel) id).getAlkamisPvm());
+                                liitteidenToimitusPvm.setValue(((HakuViewModel) id).getPaattymisPvm());
                             }
                         }
                         liitteidenToimitusPvm.setEnabled(false);
@@ -792,6 +793,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(presenter.getModel().getHakukohde().getKomotoOids());
+        if (presenter.getModel().getSelectedKoulutukset() != null) {
+        //We can get the first koulutukses pohjakouluvaatimus, because all selected koulutukses should have
+        //the same pohjakoulutus
+        if (presenter.getModel().getSelectedKoulutukset() != null) {
+        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getPohjakoulutusVaatimus();
+        Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
+        hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
+        }
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
         for (KoodiType koodiType : hakukohdeKoodis) {
             hakukohdes.add(presenter.hakukohdeNameUriModelFromKoodi(koodiType));
@@ -800,7 +809,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
         hakukohteenNimiCombo.setImmediate(true);
 
-
+        }
 
         return hakukohteenNimiCombo;
     }

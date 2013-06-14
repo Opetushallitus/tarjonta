@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
@@ -77,6 +78,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+
         LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
 
         if (presenter == null) {
@@ -219,6 +221,10 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         split.setLocked(true);
 
         layout.addComponent(split);
+    }
+
+    public void addErrorMsg(String msg) {
+        getWindow().showNotification(T(msg), Window.Notification.TYPE_ERROR_MESSAGE);
     }
 
     private void showRemoveDialog() {
