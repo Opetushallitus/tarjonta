@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.jws.WebParam;
 
@@ -115,7 +117,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private SearchService searchService;
 
-    private fi.vm.sade.log.client.Logger auditLogger;
+
+
+
+    public static String INSERT_OPERATION = "Insert";
+    public static String UPDATE_OPERATION = "Update";
+    public static String DELETE_OPERATION = "Delete";
+
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -123,13 +131,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private TarjontaSampleData sampleData;
 
 
-    private void constructAuditLogger() {
+   /* private void constructAuditLogger() {
         if (auditLogger == null) {
             auditLogger = new LoggerJms();
 
         }
     }
-
+*/
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
@@ -145,16 +153,28 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
 
-    private void logAuditTapahtuma(Tapahtuma tapahtuma) {
-            constructAuditLogger();
-        try {
-            if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-            auditLogger.log(tapahtuma);
+    private void logAuditTapahtuma(final Tapahtuma tapahtuma) {
+
+        //TODO: Refactor this out if audit log entry from every operation must be guaranteed
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        executor.execute(
+        new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    fi.vm.sade.log.client.Logger auditLogger = new LoggerJms();
+                    if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
+                        auditLogger.log(tapahtuma);
+                    }
+
+                } catch (Exception e) {
+                    log.warn("Unable to send audit log message {}",e.toString());
+                }
             }
 
-        } catch (Exception e) {
-            log.warn("Unable to send audit log message {}",e.toString());
-        }
+
+        });
     }
 
     @Override
@@ -404,7 +424,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
         solrIndexer.indexKoulutus(new ArrayList<KoulutusmoduuliToteutus>(hakuk.getKoulutusmoduuliToteutuses()));
 
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, "INSERT"));
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, INSERT_OPERATION));
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -497,7 +517,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde,"DELETE"));
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde,DELETE_OPERATION));
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
@@ -526,7 +546,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp.get(0),"UPDATE"));
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp.get(0),UPDATE_OPERATION));
         //why do we overwrite version from DTO?
         //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
