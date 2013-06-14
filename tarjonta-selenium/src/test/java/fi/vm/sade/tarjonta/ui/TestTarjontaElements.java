@@ -29,6 +29,10 @@ public class TestTarjontaElements {
     private Boolean reppu = false;
 
     private Boolean readPageFromFile = false;
+    
+    // html
+    private String htmlAbsoluteLeft18 = "<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:";
+    private String htmlAbsoluteLeft = "px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:";
 
     @Before
     public void setUp() throws Exception {
@@ -175,102 +179,102 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilastutkinto"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Lukiolinja</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-				+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-				+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-				+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+				+ ".*" + htmlAbsoluteLeft
+				+ ".*" + htmlAbsoluteLeft
+				+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusaste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Yleissivistävä koulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintoala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Lukiokoulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Tutikintonimike</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilas</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuusyksikkö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">opintopiste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">70</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuslaji</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Pohjakoulutusvaatimus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksellset tavoitteet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Jatko-opintomahdollisuudet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetuskieli</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen alkamispäivä</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Suunniteltu kesto</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetusmuoto</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Linkki opetussuunnitelmaan</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen yhteyshenkilö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">A1-/A2-kieli</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">englanti</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B1-kieli</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">ruotsi</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B2-kieli</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B3-kieli</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Muut kielet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Lukiodiplomit</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen sisältö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Kansainvälistyminen</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Yhteistyö muiden toimijoiden kanssa</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:" // ylimaarainen debuggia varten
+        		+ ".*" + htmlAbsoluteLeft
+//        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
         		+ ".*32KPL<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*4KPL<span class=\"v-button-caption\">"
         		+ ".*32KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">"
@@ -320,40 +324,40 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus / tutkinto</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Lukiolinja</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Lukiokoulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Yleissivistävä koulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Lukiokoulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkintonimike</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Ylioppilas</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuusyksikkö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">opintopiste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuslaji</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Pohjakoulutusvaatimus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutukselliset tavoitteet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input"
 				+ ".*<div class=\"v-filterselect-button\"></div>"
@@ -382,13 +386,13 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
 //        		+ ".*<div class=\"v-label v-label-undef-w\">" // debug rivi
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"  // debug rivi
+//        		+ ".*" + htmlAbsoluteLeft  // debug rivi
 //        		+ ".*<div class=\"v-filterselect-button\"></div>" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-filterselect-input" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
-        		+ ".*18KPL<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*18KPL" + htmlAbsoluteLeft18
         		+ ".*11KPL<span class=\"v-button-caption\">"
         		+ ".*5KPLv-required-field-indicator"
         		+ ".*5KPLv-textfield v-textfield-prompt"
@@ -508,69 +512,69 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutus / tutkinto</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusohjelma</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusaste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintoala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Tutkintonimike</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuslaji</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Pohjakoulutusvaatimus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen alkamispäivä</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Suunniteltu kesto</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetuskieli / -kielet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetusmuoto</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Linkki opetussuunnitelmaan</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen yhteyshenkilö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
@@ -578,33 +582,33 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusohjelman valinta</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen sisältö</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Kansainvälistyminen</div>"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Sijoittuminen työelämään</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Ammattinimikkeet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Jatko-opintomahdollisuudet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Hakuko"
         		+ ".*<span class=\"v-button-caption\">Luo uusi hakukohde</span>"
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:" // ylimaarainen debuggia varten
+//        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">" // ylimaarainen debuggia varten
         		+ ".*25KPL<div class=\"v-label\" style=\"width: 889px;\">"
         		+ ".*25KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">"
@@ -656,35 +660,35 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus tai tutkinto</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelma</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">Ammatillinen koulutus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuusyksikkö</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">opintoviikko</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuus</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">120</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkintonimike</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
-        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
@@ -712,14 +716,14 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
 //        		+ ".*<div class=\"v-label v-label-undef-w\">" // debug rivi
-//        		+ ".*<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"  // debug rivi
+//        		+ ".*" + htmlAbsoluteLeft  // debug rivi
 //        		+ ".*<div class=\"v-filterselect-button\"></div>" // debug rivi
 //        		+ ".*<div class=\"v-required-field-indicator\">*</div>" // debug rivi
 //        		+ ".*v-required-field-indicator" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-filterselect-input" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
-        		+ ".*14KPL<div style=\"height: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
+        		+ ".*14KPL" + htmlAbsoluteLeft18
         		+ ".*9KPL<span class=\"v-button-caption\">"
         		+ ".*6KPLv-required-field-indicator"
         		+ ".*5KPLv-textfield v-textfield-prompt"

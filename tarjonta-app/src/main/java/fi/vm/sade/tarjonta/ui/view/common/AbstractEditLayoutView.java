@@ -74,7 +74,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private String modelOid;
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;
-    protected ErrorMessage errorView;
+    protected final ErrorMessage errorView = new ErrorMessage();
     protected Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.
@@ -116,7 +116,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //set data
         this.model = model;
-        this.errorView = new ErrorMessage();
+        //this.errorView = new ErrorMessage();
 
         //set presenter reference
         setPresenter(presenter);
@@ -138,7 +138,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //set data
         this.model = model;
-        this.errorView = new ErrorMessage();
+        //this.errorView = new ErrorMessage();
 
         //set presenter reference
         setPresenter(presenter);
@@ -266,16 +266,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     private void buildErrorLayoutWrapper(AbstractLayout layout) {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
-
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
-
-        layout.addComponent(topErrorArea);
+    	layout.addComponent(errorView);
     }
 
     @Override
