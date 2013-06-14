@@ -154,27 +154,28 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private void logAuditTapahtuma(final Tapahtuma tapahtuma) {
-
+        log.info("SENDING AUDIT LOG MESSAGE");
         //TODO: Refactor this out if audit log entry from every operation must be guaranteed
         ExecutorService executor = Executors.newFixedThreadPool(10);
         executor.execute(
-        new Thread() {
+                new Thread() {
 
-            @Override
-            public void run() {
-                try {
-                    fi.vm.sade.log.client.Logger auditLogger = new LoggerJms();
-                    if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-                        auditLogger.log(tapahtuma);
+                    @Override
+                    public void run() {
+                        try {
+                            fi.vm.sade.log.client.Logger auditLogger = new LoggerJms();
+                            if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
+                                auditLogger.log(tapahtuma);
+                                log.info("Audit log message sent");
+                            }
+
+                        } catch (Exception e) {
+                            log.warn("UNABLE TO SEND AUDIT LOG MESSAGE : {}", e.toString());
+                        }
                     }
 
-                } catch (Exception e) {
-                    log.warn("Unable to send audit log message {}",e.toString());
-                }
-            }
 
-
-        });
+                });
     }
 
     @Override
@@ -433,6 +434,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
+
     private Tapahtuma constructHakukohdeAddTapahtuma(Hakukohde hakukohde, String tapahtumaTyyppi) {
         Tapahtuma tapahtuma = new Tapahtuma();
         tapahtuma.setAikaleima(new Date());
@@ -445,7 +447,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         if (hakukohde.getOid() != null) {
-        tapahtuma.setUusiArvo(hakukohde.getOid() + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "");
+        tapahtuma.setUusiArvo(hakukohde.getOid()+ " " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "");
         }   else {
             tapahtuma.setUusiArvo(hakukohde.getHakukohdeKoodistoNimi());
         }
@@ -612,16 +614,34 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
-
+        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus,INSERT_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
+    }
+
+    private Tapahtuma constructKoulutusTapahtuma(KoulutusmoduuliToteutus toteutus, String tapahtumaTyyppi) {
+         Tapahtuma tapahtuma = new Tapahtuma();
+         tapahtuma.setAikaleima(new Date());
+         tapahtuma.setMuutoksenKohde("Koulutus");
+         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
+        try {
+            tapahtuma.setTekija((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } catch (Exception exp ) {
+
+        }
+        if (toteutus.getOid() != null) {
+           tapahtuma.setUusiArvo(toteutus.getOid() + " " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
+        }
+
+        return tapahtuma;
     }
 
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus,UPDATE_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
@@ -650,9 +670,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             this.koulutusmoduuliToteutusDAO.remove(komoto);
             try {
                 solrIndexer.deleteKoulutus(Lists.newArrayList(koulutusOid));
+
             } catch (IOException e) {
                 throw new GenericFault("indexing.error", e);
             }
+            logAuditTapahtuma(constructKoulutusTapahtuma(komoto,DELETE_OPERATION));
         } else {
             throw new KoulutusUsedException();
         }
@@ -703,6 +725,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         Koulutusmoduuli komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
+
         if (koulutusmoduuli.getParentOid() != null) {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
         }
