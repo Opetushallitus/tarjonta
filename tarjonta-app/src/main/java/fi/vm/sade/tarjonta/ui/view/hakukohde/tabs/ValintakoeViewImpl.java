@@ -17,34 +17,21 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PisterajaTable.PisterajaEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +40,8 @@ import java.util.List;
  * Created by: Tuomas Katva Date: 23.1.2013
  */
 public class ValintakoeViewImpl extends VerticalLayout {
+
+    private static final long serialVersionUID = -4186294139779319030L;
 
     private TarjontaPresenter presenter;
     private transient UiBuilder uiBuilder;
@@ -223,6 +212,9 @@ public class ValintakoeViewImpl extends VerticalLayout {
     private void buildToinenAsteLayout(VerticalLayout layout) {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         uusiValintakoeBtn = UiBuilder.button(null, T("uusiBtn"), new Button.ClickListener() {
+
+            private static final long serialVersionUID = -2568610745253769065L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 showValintakoeEditWithId(null);
@@ -268,6 +260,9 @@ public class ValintakoeViewImpl extends VerticalLayout {
             layout.addComponent(valintakoeTable);
 
             valintakoeTable.addGeneratedColumn("sanallinenKuvaus", new Table.ColumnGenerator() {
+
+                private static final long serialVersionUID = 1414950227419848014L;
+
                 @Override
                 public Object generateCell(Table table, Object o, Object o2) {
                     if (table != null) {

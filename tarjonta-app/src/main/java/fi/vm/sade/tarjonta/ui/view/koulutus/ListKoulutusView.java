@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -537,7 +539,6 @@ public class ListKoulutusView extends VerticalLayout {
      * Reloads the data to the Hakukohde list.
      */
     public void reload() {
-
         clearAllDataItems();
         //this.btnPoista.setEnabled(false);
         this.btnSiirraJaKopioi.setEnabled(false);
@@ -613,4 +614,22 @@ public class ListKoulutusView extends VerticalLayout {
             categoryTree.setWidth("100%");
         }
     }
+
+    public void synchronizeKoulutusSelections() {
+       presenter.getSelectedKoulutukset().clear();
+       presenter.getSelectedKoulutukset().addAll(getCheckedKoulutukset());
+    }
+
+    private List<KoulutusTulos> getCheckedKoulutukset() {
+        List<KoulutusTulos> checkedKoulutukset = new ArrayList<KoulutusTulos>();
+        for (KoulutusTulos curKoulutus: presenter.getModel().getKoulutukset()) {
+            KoulutusResultRow curRow = (KoulutusResultRow)(categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue());
+            if (curRow.getIsSelected().booleanValue()) {
+                checkedKoulutukset.add(curKoulutus);
+            }
+        }
+        return checkedKoulutukset;
+    }
+    
+    
 }
