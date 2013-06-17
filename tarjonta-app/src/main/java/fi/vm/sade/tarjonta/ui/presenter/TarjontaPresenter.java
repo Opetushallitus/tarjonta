@@ -1181,12 +1181,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void reloadSelectedKoulutuksesModel(List<String> koulutusOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         if (koulutusOids != null) {
-        kysely.getKoulutusOids().addAll(koulutusOids);
-        HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
-        if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
-             getModel().getSelectedKoulutukset().clear();
-             getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
-        }
+            kysely.getKoulutusOids().addAll(koulutusOids);
+            HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
+            if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+                getModel().getSelectedKoulutukset().clear();
+                getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
+            }
         }
     }
      /**

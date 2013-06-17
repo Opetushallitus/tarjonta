@@ -72,13 +72,14 @@ public final class DataUtils {
         final CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiData.getKoodiArvo());
 
-        if (koodiData.getKoodiNimiFi() != null) {
+        final String koodiNimiFi = StringUtils.defaultIfBlank(koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo());
+        if (koodiNimiFi != null) {
             final KoodiMetadataType metadataType = new KoodiMetadataType();
-            metadataType.setNimi(koodiData.getKoodiNimiFi());
+            metadataType.setNimi(koodiNimiFi);
             metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null
-                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
+                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiNimiFi);
             metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null
-                    && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
+                    && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiNimiFi);
             metadataType.setKieli(KieliType.FI);
             koodiDataType.getMetadata().add(metadataType);
         }

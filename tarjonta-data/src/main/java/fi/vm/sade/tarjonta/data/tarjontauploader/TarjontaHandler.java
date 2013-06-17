@@ -329,7 +329,7 @@ public class TarjontaHandler {
         final MonikielinenTekstiTyyppi tekstiTyyppi = new MonikielinenTekstiTyyppi();
 
         final MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-        teksti.setKieliKoodi("fi");
+        teksti.setKieliKoodi("kieli_fi#1");
         teksti.setValue(value);
 
         tekstiTyyppi.getTeksti().add(teksti);
