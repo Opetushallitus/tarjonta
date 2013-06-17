@@ -621,8 +621,16 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private List<KoulutusTulos> getCheckedKoulutukset() {
+
         List<KoulutusTulos> checkedKoulutukset = new ArrayList<KoulutusTulos>();
+        if (categoryTree == null || categoryTree.getContainerDataSource() == null) {
+            return checkedKoulutukset;
+        }
         for (KoulutusTulos curKoulutus: presenter.getModel().getKoulutukset()) {
+            if (categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A) == null
+                    || categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue() == null) {
+                continue;
+            } 
             KoulutusResultRow curRow = (KoulutusResultRow)(categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue());
             if (curRow.getIsSelected().booleanValue()) {
                 checkedKoulutukset.add(curKoulutus);
