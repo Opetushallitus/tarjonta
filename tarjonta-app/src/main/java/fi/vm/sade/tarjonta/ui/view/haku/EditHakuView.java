@@ -42,6 +42,8 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     @Autowired(required = true)
     private HakuPresenter presenter;
 
+    public static final String YHTEISHAKU_URI = "hakutapa_01";
+
     public EditHakuView(String oid) {
         super(oid, SisaltoTyyppi.HAKU);
         setMargin(true);
@@ -87,7 +89,13 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
 
-        
+        String selectedHakutapa = presenter.getModel().getHakutapa();
+        if (selectedHakutapa.trim().contains(YHTEISHAKU_URI)) {
+            if (!presenter.getHakuModel().isHaussaKaytetaanSijoittelua() || !presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
+            errorView.addError(getI18n().getMessage("yhteishakuMsg"));
+            throw new ExceptionMessage(getI18n().getMessage("yhteishakuMsg"));
+            }
+        }
         if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
             presenter.getHakuModel().setHakuLomakeUrl(null);
         }
