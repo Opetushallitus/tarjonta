@@ -167,6 +167,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy HH:mm";
     private static final String NAME_OPH = "OPH";
+    private static final String KOULUTUSLAJI_NUORET = "koulutuslaji_n#1";
     @Autowired(required = true)
     private UserService userService;
     @Autowired(required = true)
@@ -879,7 +880,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(null);
             getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
-            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(null);
+            //Valiakainen pakotettu valinta
+            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(KOULUTUSLAJI_NUORET);
             getModel().getKoulutusPerustiedotModel().setOpetusmuoto(null);
             getModel().getKoulutusPerustiedotModel().setTila(null);
             getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
@@ -1179,12 +1181,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void reloadSelectedKoulutuksesModel(List<String> koulutusOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         if (koulutusOids != null) {
-        kysely.getKoulutusOids().addAll(koulutusOids);
-        HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
-        if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
-             getModel().getSelectedKoulutukset().clear();
-             getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
-        }
+            kysely.getKoulutusOids().addAll(koulutusOids);
+            HaeKoulutuksetVastausTyyppi vastaus =   tarjontaPublicService.haeKoulutukset(kysely);
+            if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+                getModel().getSelectedKoulutukset().clear();
+                getModel().getSelectedKoulutukset().addAll(vastaus.getKoulutusTulos());
+            }
         }
     }
      /**

@@ -41,7 +41,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -51,6 +50,7 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.helper.ButtonSynchronizer;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
@@ -83,6 +83,10 @@ public class ListKoulutusView extends VerticalLayout {
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private Window createHakukohdeDialog;
+    
+    
+    private final ButtonSynchronizer synchronizer = new ButtonSynchronizer();
+    
     /**
      * Button for creating a hakukohde object.
      */
@@ -314,7 +318,8 @@ public class ListKoulutusView extends VerticalLayout {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
         btnSiirraJaKopioi = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
-        btnSiirraJaKopioi.addListener(new Button.ClickListener() {
+        
+        synchronizer.synchronize(btnSiirraJaKopioi, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -328,7 +333,7 @@ public class ListKoulutusView extends VerticalLayout {
                         presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKoulutus().getKomotoOid());
                         KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px", valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
 
-                        getWindow().addWindow(kopiointiDialog);
+                        getWindow().addWindow(synchronizer.synchronize(kopiointiDialog));
 
                     }
 
@@ -337,7 +342,7 @@ public class ListKoulutusView extends VerticalLayout {
         });
 
         luoHakukohdeB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("LuoHakukohde"));
-        luoHakukohdeB.addListener(new Button.ClickListener() {
+        synchronizer.synchronize(luoHakukohdeB, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -363,7 +368,7 @@ public class ListKoulutusView extends VerticalLayout {
                         dialog.setHeight("200px");
                         dialog.setModal(true);
                         dialog.center();
-                        getWindow().addWindow(dialog);
+                        getWindow().addWindow(synchronizer.synchronize(dialog));
                     } else {
                         //presenter.getTarjoaja().setSelectedOrganisationOid(presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(), null);
@@ -376,7 +381,7 @@ public class ListKoulutusView extends VerticalLayout {
 
         //Creating the create koulutus button
         luoKoulutusB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("LuoKoulutus"));
-        luoKoulutusB.addListener(new Button.ClickListener() {
+        synchronizer.synchronize(luoKoulutusB, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -385,7 +390,7 @@ public class ListKoulutusView extends VerticalLayout {
                     List<String> organisaatioOids = new ArrayList<String>();
                     organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
                     UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "476px");
-                    getWindow().addWindow(uusiKoulutusDialog);
+                    getWindow().addWindow(synchronizer.synchronize(uusiKoulutusDialog));
                 } else {
                     showNoKoulutusDialog("viesti");
                 }
