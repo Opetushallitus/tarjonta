@@ -471,52 +471,6 @@ public class KoulutusConveter {
         return model;
     }
 
-    public static MonikielinenTekstiModel convertToMonikielinenTekstiModel(final MonikielinenTekstiTyyppi tyyppi, final Locale locale) {
-        MonikielinenTekstiModel m = new MonikielinenTekstiModel();
-
-        if (tyyppi == null) {
-            LOG.warn("MonikielinenTekstiTyyppi object was null, the missing data cannot be show on UI.");
-            return m;
-        }
-
-        if (locale != null) {
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Language code : " + teksti.getKieliKoodi());
-                    LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-                }
-            } else {
-                LOG.debug("No text data found for locale " + locale.getLanguage());
-            }
-        }
-
-        if (m.getNimi() == null || m.getNimi().isEmpty()) {
-            //FI default fallback
-            final Locale locale1 = new Locale("FI");
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale1);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Language code fallback : " + locale1.getLanguage());
-                LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-            }
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-            } else {
-                LOG.warn("Maybe a data error - MonikielinenTekstiModel; has no requested content for locale: " + locale + " *AND* no FI fallback data!");
-            }
-        }
-
-        m.setKielikaannos(mapToKoodiModel(tyyppi));
-        return m;
-    }
-
     public static Map<String, List<KoulutusmoduuliKoosteTyyppi>> komoCacheMapByKoulutuskoodi(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<String, List<KoulutusmoduuliKoosteTyyppi>> hashMap = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
 
@@ -534,5 +488,15 @@ public class KoulutusConveter {
         }
         return hashMap;
 
+    }
+
+    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final MonikielinenTekstiTyyppi tyyppi) {
+        Set<KielikaannosViewModel> model = new HashSet<KielikaannosViewModel>();
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti : tyyppi.getTeksti()) {
+            model.add(new KielikaannosViewModel(teksti.getKieliKoodi(), teksti.getValue()));
+        }
+
+        return model;
     }
 }

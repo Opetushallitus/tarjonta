@@ -22,15 +22,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="HakueraSimpleTyyppi">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="tns:OidTyyppi"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="nimiFi" type="tns:LongString"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="nimiSv" type="tns:LongString"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="nimiEn" type="tns:LongString"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="SearchCriteriaType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="paattyneet" type="xs:boolean"/>
@@ -39,38 +30,6 @@
             <xs:element minOccurs="1" maxOccurs="1" name="lang" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
-
-    <xs:complexType name="HakueraTyyppi">
-        <xs:complexContent>
-            <xs:extension base="tns:HakueraSimpleTyyppi">
-                <xs:sequence>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="hakutyyppi" type="tns:LongString"/>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="hakukausi" type="tns:LongString"/>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="koulutuksenAlkaminen" type="tns:LongString"/>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="kohdejoukko" type="tns:LongString"/>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="hakutapa" type="tns:LongString"/>
-                    <xs:element minOccurs="1" maxOccurs="1"
-                                name="sijoittelu" type="xs:boolean"/>
-                    <xs:element minOccurs="0" maxOccurs="1"
-                                name="hakulomakeUrl" type="xs:anyURI"/>
-                    <xs:element minOccurs="0" maxOccurs="1"
-                                name="tila" type="tns:TarjontaTila"/>
-                    <xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
-                                type="xs:date">
-                    </xs:element>
-                    <xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm"
-                                type="xs:date">
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
 
     <!-- moved from dto: end -->
 

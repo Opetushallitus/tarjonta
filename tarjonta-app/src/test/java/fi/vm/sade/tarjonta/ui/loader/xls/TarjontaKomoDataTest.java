@@ -60,7 +60,7 @@ public class TarjontaKomoDataTest {
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
         RelaatioMap excelDataMap = new RelaatioMap(result);
 
-        assertEquals(87, result.size());
+        assertEquals(86, result.size());
         GenericRow next = excelDataMap.get("0000");
 
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());

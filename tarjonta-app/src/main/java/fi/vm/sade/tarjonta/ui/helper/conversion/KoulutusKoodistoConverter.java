@@ -25,12 +25,14 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ public class KoulutusKoodistoConverter {
     private static final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> koulutusKoodiToKoulutusohjelmaModel = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
     private static final KoulutusKoodiToModelConverter<KoulutuskoodiModel> koulutusKoodiToKoulutuskoodiModel = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
     private static final KoulutusKoodiToModelConverter<KoulutuskoodiRowModel> koulutusKoodiToKoulutuskoodiRowModel = new KoulutusKoodiToModelConverter<KoulutuskoodiRowModel>();
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUiHelper;
     @Autowired
@@ -103,7 +107,7 @@ public class KoulutusKoodistoConverter {
 
         List<String> listKoodiUris = new ArrayList<String>();
         for (KoulutusmoduuliKoosteTyyppi t : komos) {
-            listKoodiUris.add(noVersionUri(t.getKoulutusohjelmakoodiUri()));
+            listKoodiUris.add(TarjontaUIHelper.noVersionUri(t.getKoulutusohjelmakoodiUri()));
         }
         SearchKoodisByKoodistoCriteriaType koodisByKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(listKoodiUris, KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
         List<KoodiType> koodistoData = koodiService.searchKoodisByKoodisto(koodisByKoodistoUri);
@@ -123,7 +127,7 @@ public class KoulutusKoodistoConverter {
 
         List<String> listKoodiUris = new ArrayList<String>();
         for (KoulutusmoduuliKoosteTyyppi t : komos) {
-            listKoodiUris.add(noVersionUri(t.getLukiolinjakoodiUri()));
+            listKoodiUris.add(TarjontaUIHelper.noVersionUri(t.getLukiolinjakoodiUri()));
         }
         SearchKoodisByKoodistoCriteriaType koodisByKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(listKoodiUris, KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI);
         List<KoodiType> koodistoData = koodiService.searchKoodisByKoodisto(koodisByKoodistoUri);
@@ -164,8 +168,10 @@ public class KoulutusKoodistoConverter {
         komoBaseData(tutkinto, tyyppi, koulutusKoodiToKoodiModel, locale);
 
         if (ohjelma != null) {
+               UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
+
             ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
-            ohjelma.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
+            ohjelma.setTavoitteet(UiModelBuilder.build(tyyppi.getTavoitteet(), locale));
         }
     }
 
@@ -258,7 +264,7 @@ public class KoulutusKoodistoConverter {
 
         return null;
     }
-    
+
     public KoulutuskoodiModel listaaKoulutuskoodi(final String koulutuskoodiUri, final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(koulutuskoodiUri);
         if (koodistoData != null && !koodistoData.isEmpty()) {
@@ -310,9 +316,12 @@ public class KoulutusKoodistoConverter {
 
     private void komoBaseData(final KoulutuskoodiModel tutkinto, final KoulutusmoduuliKoosteTyyppi tyyppi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         //text data models
-        tutkinto.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
-        tutkinto.setJatkoopintomahdollisuudet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
-        tutkinto.setKoulutuksenRakenne(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+        UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
+
+
+        tutkinto.setTavoitteet(UiModelBuilder.build(tyyppi.getTutkinnonTavoitteet(), locale));
+        tutkinto.setJatkoopintomahdollisuudet(UiModelBuilder.build(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
+        tutkinto.setKoulutuksenRakenne(UiModelBuilder.build(tyyppi.getKoulutuksenRakenne(), locale));
 
         //koodisto koodi data models 
         tutkinto.setOpintojenLaajuus(tyyppi.getLaajuusarvoUri());
@@ -347,16 +356,7 @@ public class KoulutusKoodistoConverter {
         return list;
     }
 
-    /**
-     * Remove version information ('#X') from Koodisto uri.
-     *
-     * @param uriWithVersion
-     * @return
-     */
-    private static String noVersionUri(String uriWithVersion) {
-        String[] splitKoodiURI = TarjontaUIHelper.splitKoodiURI(uriWithVersion);
-        return splitKoodiURI[TarjontaUIHelper.PLAIN_URI];
-    }
+   
 
     /**
      * Remove version information ('#X') from set of Koodisto uris.
@@ -367,7 +367,7 @@ public class KoulutusKoodistoConverter {
     private static List<String> noVersionUris(Set<String> uris) {
         List<String> listKoodiUrisWithoutVersion = Lists.<String>newArrayList();
         for (String uri : uris) {
-            listKoodiUrisWithoutVersion.add(noVersionUri(uri));
+            listKoodiUrisWithoutVersion.add(TarjontaUIHelper.noVersionUri(uri));
         }
         return listKoodiUrisWithoutVersion;
     }

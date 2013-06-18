@@ -321,10 +321,10 @@ public final class EntityUtils {
         tyyppi.setNqfLuokitus(parentKomo.getNqfLuokitus());
 
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
-        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
-        tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet()));
-        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
-
+        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //child KOMO: ammatilliset-tavoitteet
+        tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
+        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet())); //parent KOMO: jatko-opintomahdollisuudet
+         
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
         tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
 
@@ -388,7 +388,7 @@ public final class EntityUtils {
 
 
         //names for KOMOTO search 
-        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi(), komo.getJatkoOpintoMahdollisuudet()));
+        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi(), komo.getNimi()));
 
         return komo;
     }

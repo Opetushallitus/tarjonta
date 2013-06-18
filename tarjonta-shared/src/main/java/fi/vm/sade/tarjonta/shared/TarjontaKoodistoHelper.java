@@ -47,9 +47,8 @@ public class TarjontaKoodistoHelper {
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
     public static final String LANGUAGE_SEPARATOR = ", ";
-
+    public static final String KOODI_URI_PREFIX = "kieli_";
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaKoodistoHelper.class);
-
     @Autowired
     private KoodistoService _koodistoService;
     @Autowired
@@ -76,7 +75,7 @@ public class TarjontaKoodistoHelper {
      * @param kieli
      * @return
      */
-    public String convertKielikoodiToKieliUri(String kieli) {
+    public String convertKielikoodiToKieliUri(final String kieli) {
         String result = kieli;
 
         if (kieli == null) {
@@ -115,6 +114,22 @@ public class TarjontaKoodistoHelper {
         return result;
     }
 
+    public static String convertKieliUriToKielikoodi(String kieli) {
+        if (kieli == null || (kieli != null && kieli.length() == 2)) {
+            //return null or real lang code
+            LOG.warn("No data conversion as the data wasn't kieli koodi URI '{}'", kieli);
+            return kieli;
+        }
+
+        final String tmp = kieli.toLowerCase();
+
+        if ((tmp.startsWith(KOODI_URI_PREFIX) && tmp.length() == 8)
+                || (tmp.startsWith(KOODI_URI_PREFIX) && tmp.contains("#") && tmp.length() > 9)) {
+            return tmp.substring(6, 8);
+        }
+
+        throw new RuntimeException("Conversion failed - not kieli URI '" + kieli + "'.");
+    }
 
     /**
      * Construct versioned koodi uri (adds #version to the end of uri).
@@ -137,7 +152,8 @@ public class TarjontaKoodistoHelper {
     }
 
     /**
-     * Get koodi version from versioned URI. -1 means no version could be extracted.
+     * Get koodi version from versioned URI. -1 means no version could be
+     * extracted.
      *
      * @param koodiUriWithVersion
      * @return
@@ -147,7 +163,8 @@ public class TarjontaKoodistoHelper {
     }
 
     /**
-     * Split koodi URI with (possible) version number to array of "uri" and "version". If no version can be extracted return "-1" as version.
+     * Split koodi URI with (possible) version number to array of "uri" and
+     * "version". If no version can be extracted return "-1" as version.
      *
      * @param koodiUriWithVersion
      * @return
@@ -316,7 +333,8 @@ public class TarjontaKoodistoHelper {
     }
 
     /**
-     * Convert Tarjonta koodi uri and version string to KoodiUriAndVersioType object.
+     * Convert Tarjonta koodi uri and version string to KoodiUriAndVersioType
+     * object.
      *
      * @param koodiUriWithVersion
      * @return
@@ -338,7 +356,7 @@ public class TarjontaKoodistoHelper {
      * @return
      */
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String targetKoodistoName, SuhteenTyyppiType suhteenTyyppiType, boolean alasuhde) {
-        LOG.info("getKoodistoRelations(kuri={}, tkn={}, stt={}, as={})", new Object[] {koodiUri, targetKoodistoName, suhteenTyyppiType, alasuhde});
+        LOG.info("getKoodistoRelations(kuri={}, tkn={}, stt={}, as={})", new Object[]{koodiUri, targetKoodistoName, suhteenTyyppiType, alasuhde});
 
         Collection<KoodiType> result = new HashSet<KoodiType>();
 
@@ -356,7 +374,7 @@ public class TarjontaKoodistoHelper {
             // Select relations to target koodis
             for (KoodiType relatedKoodi : relatedKoodis) {
                 LOG.debug("  considering: {}", relatedKoodi.getKoodiUri());
-                if (targetKoodistoName.equals(relatedKoodi.getKoodisto().getKoodistoUri()))  {
+                if (targetKoodistoName.equals(relatedKoodi.getKoodisto().getKoodistoUri())) {
                     LOG.debug("    -- OK!");
                     result.add(relatedKoodi);
                 } else {
@@ -408,8 +426,6 @@ public class TarjontaKoodistoHelper {
         return result;
     }
 
-
-
     /**
      * Get relation from hakukohde to "valintaperustekuvausryhma" koodisto.
      *
@@ -439,7 +455,6 @@ public class TarjontaKoodistoHelper {
     public String getHakukelpoisuusvaatimusrymaUriForHakukohde(String hakukohdeUri) {
         return getUniqueKoodistoRelation(hakukohdeUri, KoodistoURI.KOODISTO_HAKUKELPOISUUSVAATIMUS_URI, SuhteenTyyppiType.SISALTYY, false);
     }
-
 
     /**
      * Get multilanguage text from koodis metadata "kuvaus" (description) field.
@@ -486,5 +501,4 @@ public class TarjontaKoodistoHelper {
 
         return result;
     }
-
 }

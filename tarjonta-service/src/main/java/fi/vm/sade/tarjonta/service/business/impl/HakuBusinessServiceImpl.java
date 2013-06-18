@@ -18,9 +18,6 @@ import java.util.List;
 public class HakuBusinessServiceImpl implements HakuBusinessService {
 
     @Autowired
-    private ConversionService conversionService;
-
-    @Autowired
     private HakuDAO hakuDao;
 
     @Override

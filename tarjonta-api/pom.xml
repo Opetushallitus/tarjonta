@@ -142,27 +142,6 @@
                         </goals>
                     </execution>
                     
-                    <execution>
-                        <id>generate-wsdl2java</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>target/generated-sources/java</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/hakueraService.wsdl</wsdl>
-                                    <bindingFiles>
-                                        <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
-                                    </bindingFiles>
-                                    <extraargs>
-                                    </extraargs>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-
                 </executions>
 
             </plugin>

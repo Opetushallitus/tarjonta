@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
  *
@@ -73,7 +74,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
         for (TekstiKaannos tk: s.getNimi().getTekstis()) {
             HaunNimi hn = new HaunNimi();
-            hn.setKielikoodi(tk.getKieliKoodi());
+            hn.setKielikoodi(TarjontaKoodistoHelper.convertKieliUriToKielikoodi(tk.getKieliKoodi()));
             hn.setNimi(tk.getArvo());
             h.getHaunKielistetytNimet().add(hn);
         }
