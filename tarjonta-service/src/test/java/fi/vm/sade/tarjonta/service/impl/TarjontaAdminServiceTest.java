@@ -15,12 +15,17 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import fi.vm.sade.organisaatio.api.model.GenericFault;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import org.slf4j.Logger;
@@ -35,6 +40,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
+import com.vaadin.terminal.gwt.client.ui.VLink;
+
+import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -44,6 +53,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
 
@@ -65,7 +75,7 @@ import javax.persistence.OptimisticLockException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
-public class TarjontaAdminServiceTest {
+public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
     @Autowired
     private TarjontaAdminService adminService;
@@ -96,14 +106,13 @@ public class TarjontaAdminServiceTest {
     private static final String KOKOODI = "uri:kokoodi1";
 
     @Before
-    public void setUp() {
-
+    @Override
+    public void before() {
+        super.before();
         kesto3Vuotta = new KoulutuksenKestoTyyppi();
         kesto3Vuotta.setArvo("3");
         kesto3Vuotta.setYksikko("kesto/vuosi");
-
         insertSampleKoulutus();
-
     }
 
 
@@ -144,6 +153,7 @@ public class TarjontaAdminServiceTest {
         PaivitaKoulutusTyyppi update= createPaivitaKoulutusTyyppi();
         update.setVersion(toteutus.getVersion());
 
+        System.out.println("tarjoajaOid:" + toteutus.getTarjoaja());
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
@@ -200,23 +210,21 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testPoistaKoulutusHappyPath() throws Exception {
 
-    	//Oid to be used in the test to identify a komoto
-    	String oid = "54.54.54.54.54.54";
+        // Oid to be used in the test to identify a komoto
+        String oid = "54.54.54.54.54.54";
 
+        // Testing removal of the sample komoto. It does not have a hakukohde so
+        // removal should succeed
+        int komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll()
+                .size();
 
-    	//Testing removal of the sample komoto. It does not have a hakukohde so removal should succeed
-    	int komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
+        this.adminService.poistaKoulutus(SAMPLE_KOULUTUS_OID);
+        assertTrue(komotosOriginalSize == (this.koulutusmoduuliToteutusDAO
+                .findAll().size() + 1));
 
-    	try {
-    		this.adminService.poistaKoulutus(SAMPLE_KOULUTUS_OID);
-    		assertTrue(komotosOriginalSize == (this.koulutusmoduuliToteutusDAO.findAll().size() + 1));
-    	} catch (Exception ex) {
-    		fail();
-    	}
-
-
-    	//Creating a komoto with hakukohde (this can not be removed so removal should fail)
-    	LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
+        // Creating a komoto with hakukohde (this can not be removed so removal
+        // should fail)
+        LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
         lisaaKoulutus.setOid(oid);
         LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
 
@@ -429,14 +437,10 @@ public class TarjontaAdminServiceTest {
         dto=this.adminService.paivitaHakukohde(dto);
         assertEquals(0,dto.getPainotettavatOppiaineet().size());
 
-        try {
-        	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
-        	hakukohdeT.setOid(oid2);
-        	this.adminService.poistaHakukohde(hakukohdeT);
-        	assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
-        } catch (Exception ex) {
-            fail();
-        }
+        HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
+        hakukohdeT.setOid(oid2);
+        this.adminService.poistaHakukohde(hakukohdeT);
+        assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
 
     }
 
@@ -690,7 +694,7 @@ public class TarjontaAdminServiceTest {
         kesto.setArvo("new-value");
         kesto.setYksikko("new-units");
         paivitaKoulutus.setKesto(kesto);
-
+        paivitaKoulutus.setTarjoaja(SAMPLE_TARJOAJA);
         paivitaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
@@ -729,6 +733,7 @@ public class TarjontaAdminServiceTest {
         PaivitaKoulutusTyyppi paivita = convertLueToPaivita(vastaus);
         paivita.setKoulutuksenAlkamisPaiva(updatedAlkamisPvm);
         paivita.setVersion(vastaus.getVersion());
+        System.out.println("tarjoaja:" + paivita.getTarjoaja());
         adminService.paivitaKoulutus(paivita);
 
         //Verifying that all komotos in the hierarchy have the updated date
@@ -802,5 +807,220 @@ public class TarjontaAdminServiceTest {
         List<KoodistoKoodiTyyppi> opetusmuotos = new ArrayList<KoodistoKoodiTyyppi>();
         opetusmuotos.add(createKoodi(koodiUri));
         return opetusmuotos;
+    }
+    
+    
+    @Test
+    public void testProtectedResources() throws GenericFault{
+        // Oid to be used in the test to identify a komoto
+        String oid = "54.54.54.54.54.54";
+
+        // Creating a komoto with hakukohde (this can not be removed so removal
+        // should fail)
+        LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
+        lisaaKoulutus.setOid(oid);
+        LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
+
+        
+        Hakukohde hakukohde = fixtures.createHakukohde();
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+
+        Haku haku = fixtures.createHaku();
+
+        Hakuaika hakuaika = new Hakuaika();
+        Calendar alkuPvm = Calendar.getInstance();//.getTime();
+        hakuaika.setAlkamisPvm(alkuPvm.getTime());
+        Calendar loppuPvm = Calendar.getInstance();
+        loppuPvm.set(Calendar.YEAR, loppuPvm.get(Calendar.YEAR) + 1);
+        hakuaika.setPaattymisPvm(loppuPvm.getTime());
+        haku.addHakuaika(hakuaika);
+        this.hakuDAO.insert(haku);
+        hakukohde.setHaku(haku);
+        hakukohde = this.hakukohdeDAO.insert(hakukohde);
+        HakukohdeLiite liite = new HakukohdeLiite();
+        liite.setHakukohde(hakukohde);
+        liite.setLiitetyyppi("tyyppi");
+        hakukohde.addLiite(liite);
+        Valintakoe valintakoe = new Valintakoe();
+        valintakoe.setHakukohdeId(hakukohde.getId());
+        hakukohde.addValintakoe(valintakoe);
+        this.hakukohdeDAO.update(hakukohde);
+        hakukohde = hakukohdeDAO.read(hakukohde.getId());
+        String hakukohdeTunniste = Long.toString(hakukohde.getLiites().iterator().next().getId());
+        String valintakoeTunniste = Long.toString(hakukohde.getValintakoes().iterator().next().getId());
+
+        komoto.addHakukohde(hakukohde);
+        this.koulutusmoduuliToteutusDAO.update(komoto);
+
+        //unauthenticated user
+        setAuthentication(null);
+
+        try {
+            adminService.kopioiKoulutus(null, Lists.newArrayList("oid-1"));
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.lisaaHaku(null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            HakukohdeTyyppi newHakukohde = new HakukohdeTyyppi();
+            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
+            koulutus.setTarjoaja("tarjoaja-oid");
+            newHakukohde.getHakukohdeKoulutukses().add(koulutus);
+            adminService.lisaaHakukohde(newHakukohde);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            LisaaKoulutusTyyppi koulutus = new LisaaKoulutusTyyppi();
+            koulutus.setTarjoaja("tarjoaja-oid");
+            adminService.lisaaKoulutus(koulutus);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.lisaaKoulutusmoduuli(null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            LisaaKoulutusHakukohteelleTyyppi q = new LisaaKoulutusHakukohteelleTyyppi();
+            q.setHakukohdeOid(hakukohde.getOid());
+            adminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(q);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.paivitaHaku(null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+            kysely.setOid(hakukohde.getOid());
+            LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService.lueHakukohde(kysely);
+            adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+        
+        try {
+            PaivitaKoulutusTyyppi koulutus = new PaivitaKoulutusTyyppi();
+            koulutus.setTarjoaja("123");
+            adminService.paivitaKoulutus(koulutus);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+        
+        try {
+            adminService.paivitaKoulutusmoduuli(null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+        
+        try {
+            PaivitaTilaTyyppi paivitaTilat = new PaivitaTilaTyyppi();
+            GeneerinenTilaTyyppi tilatyyppi = new GeneerinenTilaTyyppi();
+            tilatyyppi.setSisalto(SisaltoTyyppi.HAKU);
+            tilatyyppi.setTila(TarjontaTila.JULKAISTU);
+            paivitaTilat.getTilaOids().add(tilatyyppi);
+            adminService.paivitaTilat(paivitaTilat);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.paivitaValintakokeitaHakukohteelle(hakukohde.getOid(), new ArrayList());
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.poistaHaku(null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+            hakukohdeTyyppi.setOid(hakukohde.getOid());
+            adminService.poistaHakukohde(hakukohdeTyyppi);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.poistaHakukohdeLiite(hakukohdeTunniste);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.poistaKoulutus(komoto.getOid());
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+        
+        try {
+            adminService.poistaValintakoe(valintakoeTunniste);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.tallennaLiitteitaHakukohteelle(hakukohde.getOid(), new ArrayList());
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.tallennaMetadata(null,  null,  null,  null);
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+        try {
+            adminService.tallennaValintakokeitaHakukohteelle(hakukohde.getOid(), new ArrayList());
+            fail("unauthenticated user should not be able to access the service");
+        } catch (NotAuthorizedException rte) {
+            assertNoPermission(rte);
+        }
+
+    }
+    
+    
+
+    private void assertNoPermission(RuntimeException rte) {
+        assertTrue(rte.getClass().getName(), rte.getMessage()!=null && rte.getMessage().equals("no.permission"));
     }
 }

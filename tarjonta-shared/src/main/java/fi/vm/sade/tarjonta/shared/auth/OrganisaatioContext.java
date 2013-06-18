@@ -56,4 +56,14 @@ public class OrganisaatioContext {
     public String toString() {
         return this.getClass().getName() + ": " + ooid;
     }
+    
+    @Override
+    public int hashCode() {
+        return ooid.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

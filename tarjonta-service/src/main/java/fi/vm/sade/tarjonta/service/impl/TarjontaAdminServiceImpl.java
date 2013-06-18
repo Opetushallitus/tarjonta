@@ -52,7 +52,6 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -63,6 +62,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
@@ -114,9 +114,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private SearchService searchService;
     @Autowired
     private fi.vm.sade.log.client.Logger auditLogger;
-    /**
-     * Väliaikainne kunnes Koodisto on alustettu.
-     */
+    @Autowired
+    private PermissionChecker permissionChecker;
+
     public static String INSERT_OPERATION = "Insert";
     public static String UPDATE_OPERATION = "Update";
     public static String DELETE_OPERATION = "Delete";
@@ -124,7 +124,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
-        
+        permissionChecker.checkHakuUpdate();
+
         Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
@@ -152,6 +153,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
         for (Valintakoe valintakoe : valintakoes) {
@@ -166,7 +168,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
-        
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
@@ -190,7 +193,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
-        
+        permissionChecker.checkUpdateHakukohdeByHakukohdeliiteTunniste(hakukohdeLiiteTunniste);
         HakukohdeLiite liite = hakukohdeDAO.findHakuKohdeLiiteById(hakukohdeLiiteTunniste);
         Hakukohde hakukohde = liite.getHakukohde();
         hakukohde.removeLiite(liite);
@@ -198,8 +201,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
     
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
+   public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
+        permissionChecker.checkUpdateHakukohdeByValintakoeTunniste(valintakoeTunniste);
+
         Valintakoe valintakoe = new Valintakoe();
         valintakoe.setId(new Long(valintakoeTunniste));
         
@@ -209,6 +214,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
+        permissionChecker.checkCopyKoulutus(organisaatioOids);
         //TODO: should add some organisaatio validation ? Or should it be handled in UI
         for (String organisaatioOid : organisaatioOids) {
             kopioitavaKoulutus.setTarjoaja(organisaatioOid);
@@ -223,7 +229,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
-        
+        //TODO add permission check??
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(), parameters.getPohjakoulutus(), parameters.getKoulutusLuokitusKoodi(), parameters.getKoulutusohjelmaKoodi(),
                 parameters.getOpetuskielis(), parameters.getKoulutuslajis());
         if (komotos == null || komotos.size() < 1) {
@@ -277,21 +283,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return "k";
         }
     }
-    
-    public static Set<KoodistoUri> convertStringToUris(List<String> koodistoUriStrs) {
-        Set<KoodistoUri> koodistoUris = new HashSet<KoodistoUri>();
-        for (String koodistoUriStr : koodistoUriStrs) {
-            KoodistoUri koodistoUri = new KoodistoUri(koodistoUriStr);
-            koodistoUris.add(koodistoUri);
-        }
-        return koodistoUris;
-    }
-    
+
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-        
-        
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+
         List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
         for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
             liites.add(hakukohdeLiite);
@@ -377,6 +374,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
+        permissionChecker.checkCreateHakukohde(hakukohde);
+
         Preconditions.checkNotNull(hakukohde, "HakukohdeTyyppi cannot be null.");
         final String hakuOid = hakukohde.getHakukohteenHakuOid();
         
@@ -438,8 +437,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
+        permissionChecker.checkUpdateHakukohde(parameters.getHakukohdeOid());
+
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
-        int originalHakukohdeKoulutusCount = hakukohde.getKoulutusmoduuliToteutuses().size();
+        int originalHakukohdeKoulutusCount =  hakukohde.getKoulutusmoduuliToteutuses().size();
         int numberOfKoulutuksesToRemove = parameters.getKoulutusOids().size();
         log.info("Hakukohde koulutukses : {}", hakukohde.getKoulutusmoduuliToteutuses().size());
         log.info("Number koulutukses to remove from hakukohde : {}", parameters.getKoulutusOids().size());
@@ -487,6 +488,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
+        permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
         logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde, "DELETE"));
         if (hakuAlkanut(hakukohde)) {
@@ -511,7 +513,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
-        
+        permissionChecker.checkUpdateHakukohde(hakukohdePaivitys.getOid());
+
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
         
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
@@ -541,6 +544,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
+        permissionChecker.checkCreateHaku();
+
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
         logAuditTapahtuma(constructHakuTapahtuma(haku, INSERT_OPERATION));
@@ -576,7 +581,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
-        
+        permissionChecker.checkRemoveHaku();
+
         Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (checkHakuDepencies(haku)) {
             throw new HakuUsedException();
@@ -607,6 +613,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
+        permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
         logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, INSERT_OPERATION));
@@ -634,6 +641,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
+        permissionChecker.checkUpdateKoulutus(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, UPDATE_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
@@ -656,6 +664,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void poistaKoulutus(String koulutusOid) throws GenericFault {
+        permissionChecker.checkRemoveKoulutus(koulutusOid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         
         if (komoto.getHakukohdes().isEmpty()) {
@@ -701,7 +710,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
-        
+        permissionChecker.checkCreateKoulutusmoduuli();
+
         if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) && koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
             log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + " already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
@@ -734,6 +744,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+        permissionChecker.checkUpdateKoulutusmoduuli();
         if (koulutusmoduuli == null || koulutusmoduuli.getOid() == null) {
             throw new IllegalArgumentException("OID cannot be null.");
         }
@@ -888,6 +899,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
+        permissionChecker.checkTilaUpdate(tarjontatiedonTila);
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
         indexTilatToSolr(tarjontatiedonTila);
         return new PaivitaTilaVastausTyyppi();
@@ -921,6 +933,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public MonikielinenMetadataTyyppi tallennaMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria, @WebParam(name = "kieli", targetNamespace = "") String kieli, @WebParam(name = "arvo", targetNamespace = "") String arvo) {
+        permissionChecker.checkUpdateValintaperustekuvaus();
+
         log.info("tallennaMetadata({}, {}, {}, ...)", new Object[]{avain, kategoria, kieli});
         
         MonikielinenMetadata md = metadataDAO.createOrUpdate(avain, kategoria, kieli, arvo);
