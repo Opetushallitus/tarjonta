@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.util.Date;
 import java.util.List;
 
 import com.vaadin.data.Validator;
@@ -24,6 +25,7 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
@@ -86,10 +88,32 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
         }
     }
 
+    private Date getAlkamisaika() {
+        Date alkamisPvm = null;
+        int counter = 0;
+        for (HakuaikaViewModel hakuAika: presenter.getHakuModel().getSisaisetHakuajat()) {
+            if (counter == 0) {
+              alkamisPvm = hakuAika.getAlkamisPvm();
+            } else {
+              if (hakuAika.getAlkamisPvm().before(alkamisPvm)) {
+                  alkamisPvm = hakuAika.getAlkamisPvm();
+              }
+            }
+            counter++;
+        }
+        return alkamisPvm;
+    }
+
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
 
         String selectedHakutapa = presenter.getModel().getHakutapa();
+        Date today = new Date();
+        Date haunAlkamisPvm = getAlkamisaika();
+        if (haunAlkamisPvm.before(today)) {
+            errorView.addError(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
+            throw new ExceptionMessage(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
+        }
         if (selectedHakutapa.trim().contains(YHTEISHAKU_URI)) {
             if (!presenter.getHakuModel().isHaussaKaytetaanSijoittelua() || !presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
             errorView.addError(getI18n().getMessage("yhteishakuMsg"));
