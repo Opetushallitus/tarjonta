@@ -796,10 +796,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (presenter.getModel().getSelectedKoulutukset() != null) {
         //We can get the first koulutukses pohjakouluvaatimus, because all selected koulutukses should have
         //the same pohjakoulutus
-        if (presenter.getModel().getSelectedKoulutukset() != null) {
-        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getPohjakoulutusVaatimus();
-        Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
-        hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
+        if (presenter.getModel().getSelectedKoulutukset() != null 
+                && !presenter.getModel().getSelectedKoulutukset().isEmpty() 
+                && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getPohjakoulutusVaatimus();
+            Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
+            hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
         }
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
         for (KoodiType koodiType : hakukohdeKoodis) {

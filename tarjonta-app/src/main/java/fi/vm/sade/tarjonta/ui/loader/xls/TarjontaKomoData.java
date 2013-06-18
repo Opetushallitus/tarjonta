@@ -143,10 +143,11 @@ public class TarjontaKomoData {
             switch (koulutusTyyppi) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
-                    log.info("Search : {} {}", komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
+
                     break;
                 case LUKIOKOULUTUS:
                     searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getLukiolinjakoodiUri());
+                    log.info("Search : {} {}", komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
                     break;
             }
 
@@ -382,20 +383,20 @@ public class TarjontaKomoData {
         return new LOS(tutkintoKomo, koKomo);
     }
 
-    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final String koodi) {
+    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final String lukiolinjaOrKoulutusohjelma) {
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(koulutusasteTyyppi);
         kysely.setKoulutuskoodiUri(koulutuskoodi);
 
         switch (koulutusasteTyyppi) {
             case AMMATILLINEN_PERUSKOULUTUS:
-                kysely.setKoulutusohjelmakoodiUri(koodi);
+                kysely.setKoulutusohjelmakoodiUri(lukiolinjaOrKoulutusohjelma);
                 break;
             case LUKIOKOULUTUS:
-                kysely.setLukiolinjakoodiUri(koodi);
+                kysely.setLukiolinjakoodiUri(lukiolinjaOrKoulutusohjelma);
                 break;
         }
-        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), koodi);
+        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), lukiolinjaOrKoulutusohjelma);
 
 
         HaeKoulutusmoduulitVastausTyyppi result = tarjontaPublicService.haeKoulutusmoduulit(kysely);
@@ -406,12 +407,26 @@ public class TarjontaKomoData {
                 for (KoulutusmoduuliTulos t : koulutusmoduuliTulos) {
                     log.warn("KoulutusmoduuliTulos : {} {}", t.getKoulutusmoduuli().getKoulutuskoodiUri(), t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
 
-                    if (koodi == null && t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri() == null) {
-                        //a quick hack: as there is no way to search only 'TUTKINTO' -type of komos.
-                        return t;
+                    //a quick hack: as there is other way to search 'TUTKINTO' -type of komos.
+                    if (lukiolinjaOrKoulutusohjelma == null) {
+                        //If we are here, then program have tried to search parent TUTKINTO-type of komo, not a child komo.
+
+                        switch (koulutusasteTyyppi) {
+                            case AMMATILLINEN_PERUSKOULUTUS:
+                                if (t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri() == null) {
+                                    return t;
+                                }
+                                break;
+                            case LUKIOKOULUTUS:
+                                if (t.getKoulutusmoduuli().getLukiolinjakoodiUri() == null) {
+                                    return t;
+                                }
+                                break;
+                            default:
+                                throw new RuntimeException("Unsupported koulutusasteTyyppi : '" + koulutusasteTyyppi + "'");
+                        }
                     }
                 }
-
                 throw new RuntimeException("Search found too many KOMOs - single KOMO was expected. Result size : " + koulutusmoduuliTulos.size());
             }
 

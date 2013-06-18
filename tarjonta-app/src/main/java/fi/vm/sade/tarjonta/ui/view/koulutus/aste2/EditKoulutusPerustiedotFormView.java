@@ -71,6 +71,7 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
 import fi.vm.sade.tarjonta.ui.view.koulutus.NoKoulutusDialog;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -455,6 +456,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
         grid.addComponent(cbKoulutusohjelma);
         grid.newLine();
+
+        Label oteksti = new Label(T("koulutusOhjelma.ohje"));
+        oteksti.addStyleName(Oph.LABEL_SMALL);
+        
+        grid.addComponent(new Label());
+        grid.addComponent(oteksti);
 
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, cbKoulutusohjelma);

@@ -165,6 +165,18 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         _hakuKohdejoukko.setWidth("350px");//_hakuKohdejoukko.setSizeUndefined();
         _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
         _hakutapa.setWidth("350px");//.setSizeUndefined();
+        _hakutapa.setImmediate(true);
+        _hakutapa.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent valueChangeEvent) {
+                String hakutapaVal = (String)valueChangeEvent.getProperty().getValue();
+                if (hakutapaVal.trim().contains(EditHakuView.YHTEISHAKU_URI)) {
+                    _kaytetaanSijoittelua.setValue(true);
+                    _kayteaanJarjestelmanHakulomaketta.setValue(true);
+
+                }
+            }
+        });
         _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setWidth("450px");
         _haunNimiSE = UiUtil.textField(null, "", T("HaunNimiSE.prompt"), false);

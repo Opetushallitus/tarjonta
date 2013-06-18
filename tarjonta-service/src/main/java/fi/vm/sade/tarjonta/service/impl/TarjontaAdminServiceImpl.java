@@ -30,11 +30,8 @@ import javax.jws.WebParam;
 
 import fi.vm.sade.tarjonta.service.search.SearchService;
 import fi.vm.sade.tarjonta.service.types.*;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -119,13 +116,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
-    @Autowired
-    private TarjontaSampleData sampleData;
+    public static String INSERT_OPERATION = "Insert";
+    public static String UPDATE_OPERATION = "Update";
+    public static String DELETE_OPERATION = "Delete";
 
     private void constructAuditLogger() {
         if (auditLogger == null) {
             auditLogger = new LoggerJms();
-
         }
     }
 
@@ -137,6 +134,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
             foundHaku = hakuBusinessService.update(foundHaku);
+            logAuditTapahtuma(constructHakuTapahtuma(foundHaku, UPDATE_OPERATION));
             publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
             return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
@@ -403,7 +401,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
         solrIndexer.indexKoulutus(new ArrayList<KoulutusmoduuliToteutus>(hakuk.getKoulutusmoduuliToteutuses()));
 
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, "INSERT"));
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, INSERT_OPERATION));
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -550,9 +548,34 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
+        logAuditTapahtuma(constructHakuTapahtuma(haku, INSERT_OPERATION));
         publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
         return conversionService.convert(haku, HakuTyyppi.class);
+    }
+
+    private Tapahtuma constructHakuTapahtuma(Haku haku, String tapahtumaTyyppi) {
+        Tapahtuma tapahtuma = new Tapahtuma();
+        tapahtuma.setAikaleima(new Date());
+        tapahtuma.setMuutoksenKohde("Haku");
+        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
+        try {
+            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } catch (Exception exp) {
+        }
+        if (haku.getOid() != null) {
+            StringBuilder uusiArvo = new StringBuilder();
+            uusiArvo.append(haku.getHaunTunniste() != null ? haku.getHaunTunniste() : haku.getOid());
+            uusiArvo.append(", ");
+            uusiArvo.append(haku.getNimiFi() != null ? haku.getNimiFi() : haku.getNimiSv());
+            uusiArvo.append(", ");
+            uusiArvo.append(haku.getNimiSv() == null && haku.getNimiFi() == null ? haku.getNimiEn() : "");
+
+
+            tapahtuma.setUusiArvo(uusiArvo.toString());
+        }
+
+        return tapahtuma;
     }
 
     @Override
@@ -565,6 +588,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } else {
             hakuDAO.remove(haku);
         }
+        logAuditTapahtuma(constructHakuTapahtuma(haku, DELETE_OPERATION));
     }
 
     private boolean checkHakuDepencies(Haku haku) {
@@ -590,16 +614,33 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
-
+        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, INSERT_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
+    }
+
+    private Tapahtuma constructKoulutusTapahtuma(KoulutusmoduuliToteutus toteutus, String tapahtumaTyyppi) {
+        Tapahtuma tapahtuma = new Tapahtuma();
+        tapahtuma.setAikaleima(new Date());
+        tapahtuma.setMuutoksenKohde("Koulutus");
+        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
+        try {
+            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } catch (Exception exp) {
+        }
+        if (toteutus.getOid() != null) {
+            tapahtuma.setUusiArvo(toteutus.getOid() + " " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
+        }
+
+        return tapahtuma;
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, UPDATE_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
@@ -626,9 +667,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             this.koulutusmoduuliToteutusDAO.remove(komoto);
             try {
                 solrIndexer.deleteKoulutus(Lists.newArrayList(koulutusOid));
+
             } catch (IOException e) {
                 throw new GenericFault("indexing.error", e);
             }
+            logAuditTapahtuma(constructKoulutusTapahtuma(komoto, DELETE_OPERATION));
         } else {
             throw new KoulutusUsedException();
         }
@@ -679,6 +722,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         Koulutusmoduuli komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
+
         if (koulutusmoduuli.getParentOid() != null) {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
         }

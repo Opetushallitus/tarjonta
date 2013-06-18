@@ -534,10 +534,7 @@ public class TarjontaUIHelper {
      * @return
      */
     public static String[] splitKoodiURI(final String koodiUriWithVersion) {
-        if (koodiUriWithVersion == null) {
-            throw new IllegalArgumentException("Koodi uri with version string object cannot be null.");
-        }
-
+       Preconditions.checkNotNull(koodiUriWithVersion, "Koodi uri with version string object cannot be null.");
         String[] result = new String[2];
 
         int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);

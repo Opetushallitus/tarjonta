@@ -278,7 +278,8 @@ public class KoulutusResultRow extends HorizontalLayout {
 
                 } else if (koulutus != null
                         && koulutus.getKoulutus() != null) {
-                    tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
+                    removeKoulutusSelection();
+                    
                 }
 
                 tarjontaPresenter.toggleCreateHakukohde();
@@ -318,6 +319,19 @@ public class KoulutusResultRow extends HorizontalLayout {
         }
 
         return this;
+    }
+    
+    private void removeKoulutusSelection() {
+        KoulutusTulos selectionToRemove = null;
+        for (KoulutusTulos curKoul : tarjontaPresenter.getModel().getSelectedKoulutukset()) {
+            if (curKoul.getKoulutus().getKomotoOid().equals(koulutus.getKoulutus().getKomotoOid())) {
+                selectionToRemove = curKoul;
+                break;
+            }
+        }
+        if (selectionToRemove != null) {
+            tarjontaPresenter.getSelectedKoulutukset().remove(selectionToRemove);
+        }
     }
 
     /**
