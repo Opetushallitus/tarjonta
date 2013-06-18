@@ -11,6 +11,8 @@
 
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" />
     <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
+    
+    <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/> <!-- TODO : change to LoggerJms -->
 
     <!--
       ### Conversion service

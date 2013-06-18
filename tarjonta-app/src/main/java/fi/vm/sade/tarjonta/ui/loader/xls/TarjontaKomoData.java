@@ -407,9 +407,10 @@ public class TarjontaKomoData {
                 for (KoulutusmoduuliTulos t : koulutusmoduuliTulos) {
                     log.warn("KoulutusmoduuliTulos : {} {}", t.getKoulutusmoduuli().getKoulutuskoodiUri(), t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
 
-                    //a quick hack: as there is other way to search 'TUTKINTO' -type of komos.
+                    //TODO: add TutktintoTyyppi param to HaeKoulutusmoduulitKyselyTyyppi.
+                    //a quick hack: as there is other way to filter the result to parent 'TUTKINTO' -type of komos.
                     if (lukiolinjaOrKoulutusohjelma == null) {
-                        //If we are here, then program have tried to search parent TUTKINTO-type of komo, not a child komo.
+                        //program have tried to search parent TUTKINTO-type of komo, not a child komo.
 
                         switch (koulutusasteTyyppi) {
                             case AMMATILLINEN_PERUSKOULUTUS:
