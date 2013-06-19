@@ -26,7 +26,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,8 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.DoubleValidator;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect.Filtering;
@@ -65,6 +66,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
@@ -697,6 +699,19 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private TextField buildAlinHyvaksyttavaKeskiarvo() {
         alinHyvaksyttavaKeskiarvoText = UiUtil.textField(null);
         alinHyvaksyttavaKeskiarvoText.setRequired(false);
+        alinHyvaksyttavaKeskiarvoText.addListener(new TextChangeListener() {			
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void textChange(TextChangeEvent event) {
+				
+				String rep = event.getText().replace(',', '.');
+				if (!rep.equals(event.getText())) {
+					alinHyvaksyttavaKeskiarvoText.setValue(rep);
+				}
+						
+				
+			}
+		});
         alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
         return alinHyvaksyttavaKeskiarvoText;
     }
