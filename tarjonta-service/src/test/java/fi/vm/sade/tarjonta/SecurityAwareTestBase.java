@@ -47,7 +47,10 @@ public class SecurityAwareTestBase {
 
         Mockito.stub(oidProvider.getSelfAndParentOids("1.2.3.4.5")).toReturn(
                 Lists.newArrayList(ophOid, "1.2.3.4.5"));
-        
+
+        Mockito.stub(oidProvider.getSelfAndParentOids("oid-1")).toReturn(
+                Lists.newArrayList(ophOid, "oid-1"));
+
         Mockito.stub(oidProvider.getSelfAndParentOids("jokin.tarjoaja.oid.1")).toReturn(
                 Lists.newArrayList(ophOid, "jokin.tarjoaja.oid.1"));
         
@@ -68,6 +71,7 @@ public class SecurityAwareTestBase {
     protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {
         GrantedAuthority orgAuthority = new SimpleGrantedAuthority(String.format("%s", appPermission));
         GrantedAuthority roleAuthority = new SimpleGrantedAuthority(String.format("%s_%s", appPermission, oid));
+        System.out.println("roles:" + orgAuthority + " " + roleAuthority);
         return Lists.newArrayList(orgAuthority, roleAuthority);
     }
     

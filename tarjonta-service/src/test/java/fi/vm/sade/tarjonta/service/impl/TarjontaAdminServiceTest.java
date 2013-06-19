@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.organisaatio.api.model.GenericFault;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -41,7 +40,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.vaadin.terminal.gwt.client.ui.VLink;
 
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
@@ -56,6 +54,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 
 import java.text.SimpleDateFormat;
@@ -857,13 +856,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         setAuthentication(null);
 
         try {
-            adminService.kopioiKoulutus(null, Lists.newArrayList("oid-1"));
-            fail("unauthenticated user should not be able to access the service");
-        } catch (NotAuthorizedException rte) {
-            assertNoPermission(rte);
-        }
-
-        try {
             adminService.lisaaHaku(null);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
@@ -1015,10 +1007,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
     }
-    
-    
 
     private void assertNoPermission(RuntimeException rte) {
         assertTrue(rte.getClass().getName(), rte.getMessage()!=null && rte.getMessage().equals("no.permission"));

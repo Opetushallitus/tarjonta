@@ -69,10 +69,8 @@ import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.log.model.Tapahtuma;
-import fi.vm.sade.log.client.*;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 
 /**
@@ -212,18 +210,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         
     }
     
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
-        permissionChecker.checkCopyKoulutus(organisaatioOids);
-        //TODO: should add some organisaatio validation ? Or should it be handled in UI
-        for (String organisaatioOid : organisaatioOids) {
-            kopioitavaKoulutus.setTarjoaja(organisaatioOid);
-            LisaaKoulutusTyyppi lisaaKoulutusTyyppi = ConvertKoulutusTyyppiToLisaaKoulutus.convert(kopioitavaKoulutus);
-            lisaaKoulutus(lisaaKoulutusTyyppi);
-            
-        }
-    }
-
     /*
      * This method returns true if komoto copy is allowed.
      */
