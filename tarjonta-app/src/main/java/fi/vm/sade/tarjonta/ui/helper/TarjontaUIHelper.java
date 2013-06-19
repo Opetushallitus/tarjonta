@@ -927,6 +927,8 @@ public class TarjontaUIHelper {
         }
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
             return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        }  else if (curKoulutus.getKoulutus().getNimi() != null) {
+            return getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getNimi()).getValue();
         } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
             return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
         }
