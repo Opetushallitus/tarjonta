@@ -222,10 +222,10 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                 errorView.resetErrors();
                 boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
                 boolean pisterajatCorrect = true; 
+                this.formView.getValintakoeComponent().getForm().commit();
                 if (pisterajatValidType) {
                     pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions(); 
                 }
-                this.formView.getValintakoeComponent().getForm().commit();
                 if (!pisterajatValidType) {
                     errorView.addError(T("validation.pisterajatNotValidType"));
                     throw new Validator.InvalidValueException("");

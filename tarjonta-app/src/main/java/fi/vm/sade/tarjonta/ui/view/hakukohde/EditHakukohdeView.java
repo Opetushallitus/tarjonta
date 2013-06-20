@@ -320,7 +320,7 @@ import java.util.List;
                     valintakokeet.actionSave(null,null);
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));
-                    return null;
+                    throw e;
                 }
             }
         }
