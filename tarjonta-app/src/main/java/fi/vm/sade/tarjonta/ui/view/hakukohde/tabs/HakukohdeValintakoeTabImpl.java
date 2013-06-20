@@ -82,6 +82,9 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     }
 
     public void refreshLastUpdatedBy()  {
+        if (headerLayout == null) {
+            return;
+        }
         headerLayout.removeAllComponents();
         Label ohjeLabel = new Label(T("ohjeteksti"));
         ohjeLabel.setStyleName(Oph.LABEL_SMALL);
@@ -161,9 +164,13 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         super.buildLayout(layout); //init base navigation here
         formView = new ValintakoeViewImpl(presenter, getUiBuilder());
 
+        AbstractLayout headerLayout = null;
+        
+        if (isAmmatillinenHakukohde()) {
+             headerLayout = buildHeaderLayout();
+        }
 
-
-        buildFormLayout(buildHeaderLayout(), presenter, layout, presenter.getModel().getHakukohde(), formView);
+        buildFormLayout(headerLayout, presenter, layout, presenter.getModel().getHakukohde(), formView);
 
 
         visibleButtonByListener(clickListenerSaveAsDraft, false);
@@ -178,6 +185,19 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
             visibleButtonByListener(clickListenerSaveAsReady, false);
         }*/
     }
+    
+    
+
+    private boolean isAmmatillinenHakukohde() {
+        if (!presenter.getModel().getHakukohde().getKoulukses().isEmpty()) {
+            return presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        } else if (!presenter.getSelectedKoulutukset().isEmpty()){
+            return presenter.getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        }
+        return true;
+    }
+
+
 
     private static final long serialVersionUID = -6105916942362263403L;
 
@@ -213,8 +233,10 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                     errorView.addError(T("validation.pisterajatNotValid"));
                     throw new Validator.InvalidValueException("");
                 }
-                if (this.formView.getValintakoeComponent().getForm().isValid()) {
-                    formView.getPisterajaTable().bindData(presenter.getModel().getSelectedValintaKoe());
+                
+                if (this.formView.getValintakoeComponent().getForm().isValid() && isValintakoeInSync() && isLisapisteetInSync()) {
+                    formView.getPisterajaTable().bindValintakoeData(presenter.getModel().getSelectedValintaKoe());
+                    formView.getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
                     presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
                     presenter.getModel().getHakukohde().getValintaKokees().clear();
                     presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
@@ -229,6 +251,24 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         }
         return null;
         
+    }
+    
+    private boolean isValintakoeInSync() throws Exception {
+        formView.getPisterajaTable().getValintakoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
+        
+        if (formView.getPisterajaTable().getPkCb().booleanValue() && (!formView.getPisterajaTable().isValintakoePisterajat() || formView.getValintakoeComponent().getValintakoeAikasTable().getItemIds().isEmpty())) {
+            errorView.addError(T("validation.valintakoeDataIsMissing"));
+            throw new Validator.InvalidValueException("");
+        }
+        return true;
+    }
+        
+   private boolean isLisapisteetInSync() throws Exception {
+        if (formView.getPisterajaTable().getLpCb().booleanValue() && (!formView.getPisterajaTable().isLisapisteetPisterajat() || !formView.getPisterajaTable().isLisapisteetSpecified())) {
+            errorView.addError(T("validation.lisapisteetDataIsMissing"));
+            throw new Validator.InvalidValueException("");
+        }
+        return true;
     }
     
     @Override

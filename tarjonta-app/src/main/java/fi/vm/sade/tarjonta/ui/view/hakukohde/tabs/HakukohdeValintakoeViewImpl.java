@@ -97,6 +97,13 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
     }
+    
+    public void clearData() {
+        valintaKoeKuvaus.resetTabSheets();
+        valintaKoeKuvaus.initializeTabsheet();
+        loadTableData();
+        valintaKoeAikaEditView.clearData();
+    }
 
     public void setEditableValintakoeAika(ValintakoeAikaViewModel valintakoeAika) {
         if (valintaKoeAikaEditView != null && valintaKoeAikaForm != null) {
@@ -349,6 +356,10 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintaKoeKuvaus.setSizeUndefined();
         return valintaKoeKuvaus;
 
+    }
+    
+    public Table getValintakoeAikasTable() {
+        return valintakoeAikasTable;
     }
 
     public List<KielikaannosViewModel> getValintakokeenKuvaukset() {

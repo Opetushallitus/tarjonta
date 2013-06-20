@@ -105,14 +105,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
     
     private void buildPisterajaLayout(VerticalLayout layout) {
         VerticalLayout prL = UiUtil.verticalLayout();
-        HorizontalLayout infoLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
-        infoLayout.setWidth(UiConstant.PCT100);
-        Label titleLabel = UiUtil.label(infoLayout, T("valintaTiedot"));
-        titleLabel.setStyleName(Oph.LABEL_H2); 
-        buildInfoButtonLayout(infoLayout);
-        prL.addComponent(infoLayout);
-        Label ohje = UiUtil.label(prL, T("valintaTiedotOhje"));
-        ohje.addStyleName(Oph.LABEL_SMALL);
         buildPisterajaTable(prL);
         layout.addComponent(prL);
         layout.addComponent(buildSplitPanel());
@@ -128,9 +120,18 @@ public class ValintakoeViewImpl extends VerticalLayout {
     
     private void buildPisterajaTable(VerticalLayout layout) {
         VerticalLayout lvl = UiUtil.verticalLayout();
+        lvl.setSpacing(true);
         lvl.setMargin(true, false, false, false);
-        Label pisterajatLabel = UiUtil.label(lvl, T("pisterajat"));
+        
+        HorizontalLayout infoLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
+        infoLayout.setWidth(UiConstant.PCT100);
+        
+        Label pisterajatLabel = UiUtil.label(infoLayout, T("pisterajat"));
         pisterajatLabel.setStyleName(Oph.LABEL_H2);
+        buildInfoButtonLayout(infoLayout);
+        lvl.addComponent(infoLayout);
+        Label pisterajaOhje = UiUtil.label(lvl, T("pisterajaohje"));
+        pisterajaOhje.setStyleName(Oph.LABEL_SMALL);
         layout.addComponent(lvl);
         pisterajaTable = new PisterajaTable(presenter.getModel().getSelectedValintaKoe()); 
         pisterajaTable.addListener(new Listener() {
@@ -151,12 +152,38 @@ public class ValintakoeViewImpl extends VerticalLayout {
     
     protected void applyVisiblilities(PisterajaEvent event) {
         if (event.getType().equals(PisterajaEvent.PAASYKOE)) {
-            paasykoeLayout.setVisible(event.isSelected());
+            setPaasykoeVisiblities(event);
+            
         } else if (event.getType().equals(PisterajaEvent.LISAPISTEET)) {
-            lisapisteetLayout.setVisible(event.isSelected());
+            setLisapisteVisiblities(event);
+            
         }
         
     }
+
+    private void setLisapisteVisiblities(PisterajaEvent event) {
+        lisapisteetLayout.setVisible(event.isSelected());
+        if (!event.isSelected()) {
+            presenter.getModel().getSelectedValintaKoe().getLisanayttoKuvaukset().clear();
+            lisanaytotKuvaus.resetTabSheets();
+            lisanaytotKuvaus.initializeTabsheet();
+        }
+        
+    }
+
+
+
+    private void setPaasykoeVisiblities(PisterajaEvent event) {
+        paasykoeLayout.setVisible(event.isSelected());
+        if (!event.isSelected()) {
+            presenter.getModel().getSelectedValintaKoe().getSanallisetKuvaukset().clear();
+            presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().clear();
+            valintakoeComponent.clearData();
+        }
+        
+    }
+
+
 
     private void buildLisanaytotlayout(VerticalLayout layout) {
         HorizontalLayout infoLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);

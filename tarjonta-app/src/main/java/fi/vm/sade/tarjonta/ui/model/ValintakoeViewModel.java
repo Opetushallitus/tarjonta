@@ -193,4 +193,8 @@ public class ValintakoeViewModel {
     public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
         this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
     }
+
+    public boolean isEmpty() {
+        return (this.valintakoeAjat == null || this.valintakoeAjat.isEmpty()) && (this.lisanayttoKuvaukset == null || this.lisanayttoKuvaukset.isEmpty());
+    }
 }

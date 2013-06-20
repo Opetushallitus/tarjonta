@@ -167,7 +167,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         /*
          * TOP TITLE AND STATUS LAYOUT
          */
-        buildInformationLayout(titleLayout, vlBaseFormLayout);
+        if (titleLayout != null) {
+            buildInformationLayout(titleLayout, vlBaseFormLayout);
+        }
 
         /*
          * MIDDLE ERROR LAYOUT (only visible when is has validation errors)
