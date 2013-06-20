@@ -2,161 +2,159 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>tarjonta</artifactId>
-        <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>5.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
+
+    <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta-data</artifactId>
-    <name>Tarjonta :: Data</name>
+    <version>5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <name>Tarjonta :: Data</name>
+    <url>http://tarjonta-data.opintopolku.fi</url>
+
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <deploy.to.server>tomcat</deploy.to.server>
         <powermock.version>1.4.12</powermock.version>
-        <spring.security.version>${spring.version}</spring.security.version>
+        <spring.version>3.2.3.RELEASE</spring.version>
+        <spring.security.version>3.1.4.RELEASE</spring.security.version>
+        <cxf.version>2.7.3</cxf.version>
+
+        <oph.service.version>5.0-SNAPSHOT</oph.service.version>
     </properties>
    
     <dependencies>
         <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+            <version>5.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>fi.vm.sade.auth</groupId>
             <artifactId>authentication-api</artifactId>
-            <version>4.0</version>
+            <version>${oph.service.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
+            <version>${oph.service.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-api</artifactId>
-            <version>${organisaatio.api.version}</version>
+            <version>${oph.service.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.oid</groupId>
+            <artifactId>oid-api</artifactId>
+            <version>${oph.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.koodisto</groupId>
+            <artifactId>koodisto-api</artifactId>
+            <version>${oph.service.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId> 
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-events</artifactId>
-            <version>${generic.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-            <version>${generic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>dependencies-vaadin</artifactId>
-            <version>${generic.version}</version>
-            <type>pom</type>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>3.1.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
+            <version>1.7.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
         </dependency>
-
         <dependency>
-            <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-api</artifactId>
-            <version>${koodisto.api.version}</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-api</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -165,48 +163,38 @@
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-bundle</artifactId>         
+            <artifactId>cxf-bundle</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.8</version>
         </dependency>
-        
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.8.3</version>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.oid</groupId>
-            <artifactId>oid-api</artifactId>
-            <version>${oid.api.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.0</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.google.collections</groupId>
             <artifactId>google-collections</artifactId>
             <version>1.0</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 
@@ -222,6 +210,27 @@
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <copyConfigurationDirectory>false</copyConfigurationDirectory>
+                    <configurationDirectory>etc</configurationDirectory>
+                    <repositoryName>lib</repositoryName>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <programs>
+                        <program>
+                            <mainClass>fi.vm.sade.tarjonta.data.BatchKoodistoUploader</mainClass>
+                            <name>batch-koodisto-uploader</name>
+                        </program>
+                        <program>
+                            <mainClass>fi.vm.sade.tarjonta.data.KoodistoUploader</mainClass>
+                            <name>koodisto-uploader</name>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
@@ -233,14 +242,12 @@
                     <name>netbeans.deploy</name>
                 </property>
             </activation>
-
             <dependencies>
                 <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </dependency>
             </dependencies>
-            
             <build>
                 <plugins>
                     <plugin>
@@ -256,11 +263,8 @@
                             </execution>
                         </executions>
                     </plugin>
-
-                  
                 </plugins>
             </build>
         </profile>
     </profiles>
-    
 </project>
