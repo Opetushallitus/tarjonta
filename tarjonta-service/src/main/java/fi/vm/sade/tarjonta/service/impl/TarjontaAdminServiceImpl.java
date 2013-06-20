@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
 import fi.vm.sade.tarjonta.service.search.SearchService;
@@ -37,7 +38,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -47,7 +50,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
-import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -99,8 +101,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired(required = true)
     private ConversionService conversionService;
     @Autowired(required = true)
-    private YhteyshenkiloDAO yhteyshenkiloDAO;
-    @Autowired(required = true)
     private PublicationDataService publication;
     @Autowired(required = true)
     private MonikielinenMetadataDAO metadataDAO;
@@ -115,9 +115,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private PermissionChecker permissionChecker;
 
-    public static String INSERT_OPERATION = "Insert";
-    public static String UPDATE_OPERATION = "Update";
-    public static String DELETE_OPERATION = "Delete";
+    public static final String INSERT_OPERATION = "Insert";
+    public static final String UPDATE_OPERATION = "Update";
+    public static final String DELETE_OPERATION = "Delete";
     
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -378,8 +378,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
-        solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
-        solrIndexer.indexKoulutus(new ArrayList<KoulutusmoduuliToteutus>(hakuk.getKoulutusmoduuliToteutuses()));
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                return arg0.getId();
+            }
+        })));
         
         logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, INSERT_OPERATION));
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
@@ -587,21 +591,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
     
-    private boolean checkHakukohdeDepencies(Hakukohde hakukohde) {
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findKomotoByHakukohde(hakukohde);
-        if (komotos != null && komotos.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, INSERT_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
@@ -643,8 +638,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
         
-        PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
-        return vastaus;
+        return new PaivitaKoulutusVastausTyyppi();
     }
     
     @Override
@@ -763,14 +757,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         koulutusmoduuliDAO.update(komo);
     }
     
-    private List<HakuTyyppi> convert(List<Haku> haut) {
-        List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
-        for (Haku haku : haut) {
-            tyypit.add(conversionService.convert(haku, HakuTyyppi.class));
-        }
-        return tyypit;
-    }
-
     /**
      * @return the businessService
      */
@@ -892,23 +878,23 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
     
     private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila) {
-        List<KoulutusmoduuliToteutus> komotot = new ArrayList<KoulutusmoduuliToteutus>();
-        List<Hakukohde> hakukohteet = new ArrayList<Hakukohde>();
+        List<Long> komotot = Lists.newArrayList();
+        List<Long> hakukohteet = Lists.newArrayList();
         for (GeneerinenTilaTyyppi curTilaT : tarjontatiedonTila.getTilaOids()) {
             if (SisaltoTyyppi.KOMOTO.equals(curTilaT.getSisalto())) {
                 KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(curTilaT.getOid());
                 if (komoto != null) {
-                    komotot.add(komoto);
+                    komotot.add(komoto.getId());
                 }
             } else if (SisaltoTyyppi.HAKUKOHDE.equals(curTilaT.getSisalto())) {
                 Hakukohde hakukohde = this.hakukohdeDAO.findHakukohdeWithKomotosByOid(curTilaT.getOid());
                 if (hakukohde != null) {
-                    hakukohteet.add(hakukohde);
+                    hakukohteet.add(hakukohde.getId());
                 }
             }
         }
-        solrIndexer.indexKoulutus(komotot);
-        solrIndexer.indexHakukohde(hakukohteet);
+        solrIndexer.indexKoulutukset(komotot);
+        solrIndexer.indexHakukohteet(hakukohteet);
     }
     
     @Override
