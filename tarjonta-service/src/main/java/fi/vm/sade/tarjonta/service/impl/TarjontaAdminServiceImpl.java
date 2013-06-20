@@ -70,6 +70,7 @@ import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.log.model.Tapahtuma;
@@ -477,7 +478,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
+    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
         logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde, "DELETE"));
@@ -492,7 +493,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
                 log.info("Removed hakukohde from index : {0}", hakukohdePoisto.getOid());
             } catch (IOException e) {
-                throw new GenericFault("indexing.error", e);
+                throw new TarjontaBusinessException("indexing.error", e);
             }
             
             hakukohdeDAO.remove(hakukohde);
@@ -643,7 +644,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public void poistaKoulutus(String koulutusOid) throws GenericFault {
+    public void poistaKoulutus(String koulutusOid) {
         permissionChecker.checkRemoveKoulutus(koulutusOid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         
@@ -653,7 +654,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 solrIndexer.deleteKoulutus(Lists.newArrayList(koulutusOid));
                 
             } catch (IOException e) {
-                throw new GenericFault("indexing.error", e);
+                throw new TarjontaBusinessException("indexing.error", e);
             }
             logAuditTapahtuma(constructKoulutusTapahtuma(komoto, DELETE_OPERATION));
         } else {

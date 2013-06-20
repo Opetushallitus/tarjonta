@@ -15,13 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.organisaatio.api.model.GenericFault;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 
 import java.text.SimpleDateFormat;
@@ -700,87 +701,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         return paivitaKoulutus;
     }
 
-    //Testing that komoto hierarchy works as expected
-    @Test
-    public void testKomotoHierarchyUpdate() {
-        //Creating a simple komoto hierarchy with parent komoto and two child komotos
-        String TARJOAJA_OID1 = "jokin.tarjoaja.oid.1";
-        String POHJAKOULUTUSVAATIMUS = "http://vaatimus.fi/yo";
-        String KOMOTO_OID1 = "jokin.KOMOTO.oid.1.1.12.2." + System.currentTimeMillis();
-        String KOMOTO_OID2 = KOMOTO_OID1 + "1";
-        String PARENT_KOMOTO_OID1 = KOMOTO_OID1 + "2";
-        createSimpleKomotoHierarchy(KOMOTO_OID1, KOMOTO_OID2, PARENT_KOMOTO_OID1, TARJOAJA_OID1, POHJAKOULUTUSVAATIMUS);
-
-        //Creating a simple komoto hierarchy with parent komoto and two child komotos for another tarjoaja
-        String TARJOAJA_OID2 = "jokin.tarjoaja.oid.2";
-        String KOMOTO_OID3= "jokin.KOMOTO.oid.1.1.12.3." + System.currentTimeMillis();
-        String KOMOTO_OID4 = KOMOTO_OID3 + "1";
-        String PARENT_KOMOTO_OID2 = KOMOTO_OID3 + "2";
-        createSimpleKomotoHierarchy(KOMOTO_OID3, KOMOTO_OID4, PARENT_KOMOTO_OID2, TARJOAJA_OID2, POHJAKOULUTUSVAATIMUS);
-
-        //Reading a child komoto from the first komoto hierarchy and updating its koulutuksenAlkamisPvm (a parent komoto field)
-        LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
-        kysely.setOid(KOMOTO_OID1);
-        LueKoulutusVastausTyyppi vastaus = this.publicService.lueKoulutus(kysely);
-        Calendar calDate = Calendar.getInstance();
-        calDate.set(Calendar.DAY_OF_MONTH, 11); //Changing the day of the month to "11"
-        calDate.set(Calendar.MONTH, calDate.get(Calendar.MONTH) + 1); //Changing the month of the date
-        Date updatedAlkamisPvm = calDate.getTime();
-        PaivitaKoulutusTyyppi paivita = convertLueToPaivita(vastaus);
-        paivita.setKoulutuksenAlkamisPaiva(updatedAlkamisPvm);
-        paivita.setVersion(vastaus.getVersion());
-        System.out.println("tarjoaja:" + paivita.getTarjoaja());
-        adminService.paivitaKoulutus(paivita);
-
-        //Verifying that all komotos in the hierarchy have the updated date
-        LueKoulutusKyselyTyyppi kysely1 = new LueKoulutusKyselyTyyppi();
-        kysely1.setOid(KOMOTO_OID1);
-        LueKoulutusVastausTyyppi komoto = publicService.lueKoulutus(kysely1);
-        assertTrue(komoto.getKoulutuksenAlkamisPaiva().toGregorianCalendar().get(Calendar.MONTH) == calDate.get(Calendar.MONTH));
-        kysely1.setOid(KOMOTO_OID2);
-        komoto = publicService.lueKoulutus(kysely1);
-        assertTrue(komoto.getKoulutuksenAlkamisPaiva().getMonth() == calDate.get(Calendar.MONTH));
-        kysely1.setOid(PARENT_KOMOTO_OID1);
-        komoto = publicService.lueKoulutus(kysely1);
-        assertTrue(komoto.getKoulutuksenAlkamisPaiva().getMonth() == calDate.get(Calendar.MONTH));
-
-        //Verifying that a komoto in the other hierarchy has not been updated
-        kysely1.setOid(KOMOTO_OID3);
-        komoto = publicService.lueKoulutus(kysely1);
-        assertTrue(komoto.getKoulutuksenAlkamisPaiva().toGregorianCalendar().get(Calendar.MONTH) != calDate.get(Calendar.MONTH));
-    }
-
-    private PaivitaKoulutusTyyppi convertLueToPaivita(LueKoulutusVastausTyyppi vastaus) {
-        PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
-        paivita.setKesto(vastaus.getKesto());
-        paivita.setKoulutusaste(vastaus.getKoulutusaste());
-        paivita.setKoulutusKoodi(vastaus.getKoulutusKoodi());
-        paivita.setKoulutusohjelmaKoodi(vastaus.getKoulutusohjelmaKoodi());
-        paivita.setKoulutusohjelmanValinta(vastaus.getKoulutusohjelmanValinta());
-        paivita.setOid(vastaus.getOid());
-        paivita.setPohjakoulutusvaatimus(vastaus.getPohjakoulutusvaatimus());
-        paivita.setTarjoaja(vastaus.getTarjoaja());
-        paivita.setTila(vastaus.getTila());
-        paivita.getOpetuskieli().add(vastaus.getOpetuskieli().get(0));
-        paivita.getOpetusmuoto().add(vastaus.getOpetusmuoto().get(0));
-        return paivita;
-    }
-
-    private void createSimpleKomotoHierarchy(String komotoOid1, String komotoOid2, String parentKomotoOid, String tarjoajaOid, String pohjakoulutusvaatimus) {
-        Koulutusmoduuli child = fixtures.createTutkintoOhjelma();
-        koulutusmoduuliDAO.insert(child);
-        Koulutusmoduuli parent = fixtures.createKoulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO);
-        parent.getAlamoduuliList().add(child);
-        koulutusmoduuliDAO.insert(parent);
-        KoulutusmoduuliToteutus komotoChild1 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid1, pohjakoulutusvaatimus);
-
-        koulutusmoduuliToteutusDAO.insert(komotoChild1);
-        KoulutusmoduuliToteutus komotoChild2 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid2, pohjakoulutusvaatimus);
-        koulutusmoduuliToteutusDAO.insert(komotoChild2);
-        KoulutusmoduuliToteutus komotoParent = createKomotoWithKomoTarjoajaPohjakoulutus(parent, tarjoajaOid, parentKomotoOid, pohjakoulutusvaatimus);
-        koulutusmoduuliToteutusDAO.insert(komotoParent);
-    }
-
     private KoulutusmoduuliToteutus createKomotoWithKomoTarjoajaPohjakoulutus(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid, String pohjakoulutusvaatimus) {
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
@@ -807,7 +727,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     
     
     @Test
-    public void testProtectedResources() throws GenericFault{
+    public void testProtectedResources() {
         // Oid to be used in the test to identify a komoto
         String oid = "54.54.54.54.54.54";
 

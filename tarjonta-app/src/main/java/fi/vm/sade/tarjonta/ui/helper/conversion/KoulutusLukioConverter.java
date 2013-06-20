@@ -113,7 +113,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         if (koulutus.getViimeisinPaivitysPvm() != null) {
-            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
         }
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);
         KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus);
@@ -295,7 +295,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         }
 
         perustiedot.setKoulutuksenAlkamisPvm(
-                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva() : null);
 
         if (koulutus.getKesto() != null) {
             perustiedot.setSuunniteltuKesto(koulutus.getKesto().getArvo());

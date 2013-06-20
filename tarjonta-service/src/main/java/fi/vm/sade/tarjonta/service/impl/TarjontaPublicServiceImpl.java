@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jws.WebParam;
-import javax.xml.datatype.DatatypeFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,6 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
-import fi.vm.sade.tarjonta.service.impl.conversion.util.DatatypeHelper;
 import fi.vm.sade.tarjonta.service.search.SearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
@@ -675,13 +673,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
 
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
-        toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getUpdated()));
+        toKoulutus.setViimeisinPaivitysPvm(fromKoulutus.getUpdated());
 
         toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();
         greg.setTime(fromKoulutus.getKoulutuksenAlkamisPvm());
         try {
-            toKoulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+            toKoulutus.setKoulutuksenAlkamisPaiva(greg.getTime());
         } catch (Exception ex) {
             toKoulutus.setKoulutuksenAlkamisPaiva(null);
         }

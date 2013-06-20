@@ -5,9 +5,7 @@
            xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
-
+	<xs:include schemaLocation="tarjonta.xsd"/>
 
     <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
     <xs:element name="listaaHakuVastaus" type="tns:ListHakuVastausTyyppi" />
