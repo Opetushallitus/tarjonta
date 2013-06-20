@@ -102,7 +102,7 @@ import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
  *
  * @author Tuomas Katva
  */
-@Transactional(rollbackFor=Throwable.class, readOnly=true)
+@Transactional(rollbackFor = Throwable.class, readOnly = true)
 @Service("tarjontaPublicService")
 public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
@@ -192,12 +192,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             Haku findHakuWithOid = hakuDao.findByOid(parameters.getHakuOid());
             haut.add(findHakuWithOid);
             hakuVastaus.getResponse().addAll(convert(haut, false));
-        }  else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {
+        } else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {
             List<Haku> foundHaut = hakuDao.findByKoulutuksenKausi(parameters.getKoulutuksenAlkamisKausi(), parameters.getKoulutuksenAlkamisVuosi());
-            hakuVastaus.getResponse().addAll(convert(foundHaut,false));
-        }
-
-        else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
+            hakuVastaus.getResponse().addAll(convert(foundHaut, false));
+        } else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
             //REMOVING FIND BY SEARCH STRING QUERY FOR NOW, NOT WORKING PROPERLY
             //List<Haku> haut = new ArrayList<Haku>();
             //haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
@@ -209,9 +207,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             allCriteria.setTulevat(true);
             haut.addAll(businessService.findAll(allCriteria));
             hakuVastaus.getResponse().addAll(convert(filterByHakusana(hakusana, parameters.getHakuSanaKielikoodi(), haut), true));
-        }
-
-        else {
+        } else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
             allCriteria.setMeneillaan(true);
             allCriteria.setPaattyneet(true);
@@ -249,9 +245,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
-    	//long t = System.currentTimeMillis();
-    	HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
-    	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+        //long t = System.currentTimeMillis();
+        HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
         ArrayList<HakukohdeLiiteTyyppi> liiteTyyppis = new ArrayList<HakukohdeLiiteTyyppi>();
 
@@ -435,11 +431,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
-       /* Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
-        List<KoulutusmoduuliToteutus> komotos = new ArrayList<KoulutusmoduuliToteutus>();
-        if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
-            komotos.addAll(hakukohde.getKoulutusmoduuliToteutuses());
-        }*/
+        /* Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
+         List<KoulutusmoduuliToteutus> komotos = new ArrayList<KoulutusmoduuliToteutus>();
+         if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
+         komotos.addAll(hakukohde.getKoulutusmoduuliToteutuses());
+         }*/
 
 
         HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
@@ -452,20 +448,20 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         for (KoulutusTulos tulos : koulutusVastaus.getKoulutusTulos()) {
 
-           KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
-           koulutus.setTila(tulos.getKoulutus().getTila());
-           koulutus.setKomotoOid(tulos.getKoulutus().getKomotoOid());
-           koulutus.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
-           koulutus.setAjankohta(tulos.getKoulutus().getAjankohta());
-           if (tulos.getKoulutus().getKoulutusohjelmakoodi() != null) {
-               koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
-           } else if (tulos.getKoulutus().getLukiolinjakoodi() != null) {
-               koulutus.setLukiolinjakoodi(tulos.getKoulutus().getLukiolinjakoodi().getUri());
-           }
-           
-           koulutus.setKoulutuskoodi(tulos.getKoulutus().getKoulutuskoodi().getUri());
+            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
+            koulutus.setTila(tulos.getKoulutus().getTila());
+            koulutus.setKomotoOid(tulos.getKoulutus().getKomotoOid());
+            koulutus.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
+            koulutus.setAjankohta(tulos.getKoulutus().getAjankohta());
+            if (tulos.getKoulutus().getKoulutusohjelmakoodi() != null) {
+                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
+            } else if (tulos.getKoulutus().getLukiolinjakoodi() != null) {
+                koulutus.setLukiolinjakoodi(tulos.getKoulutus().getLukiolinjakoodi().getUri());
+            }
 
-          hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
+            koulutus.setKoulutuskoodi(tulos.getKoulutus().getKoulutuskoodi().getUri());
+
+            hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
         }
 
 
@@ -584,7 +580,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
-    	//long t = System.currentTimeMillis();
+        //long t = System.currentTimeMillis();
         log.debug("in LueKoulutusVastausTyyppi");
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
@@ -631,12 +627,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         if (parentKomoto != null) {
             //alkamispaiv no longer in parent
             /*GregorianCalendar greg = new GregorianCalendar();
-            greg.setTime(parentKomoto.getKoulutuksenAlkamisPvm());
-            try {
-                result.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
-            } catch (Exception ex) {
-                result.setKoulutuksenAlkamisPaiva(null);
-            }*/
+             greg.setTime(parentKomoto.getKoulutuksenAlkamisPvm());
+             try {
+             result.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+             } catch (Exception ex) {
+             result.setKoulutuksenAlkamisPaiva(null);
+             }*/
             result.setKoulutusohjelmanValinta(EntityUtils.copyFields(parentKomoto.getKoulutusohjelmanValinta()));
         }
     }
@@ -644,7 +640,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private String getHakukohdeTulosKoodistoNimi(HakukohdeTulos hakukohdeTulos) {
         String koodistoNimi = null;
 
-        for (MonikielinenTekstiTyyppi.Teksti teksti: hakukohdeTulos.getHakukohde().getNimi().getTeksti())   {
+        for (MonikielinenTekstiTyyppi.Teksti teksti : hakukohdeTulos.getHakukohde().getNimi().getTeksti()) {
             if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
                 koodistoNimi = teksti.getValue();
             }
@@ -665,7 +661,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
         kysely.getKoulutusOids().add(fromKoulutus.getOid());
         kysely.setKoulutuksenAlkamisvuosi(0);
-        HaeHakukohteetVastausTyyppi vastaus =  searchService.haeHakukohteet(kysely);
+        HaeHakukohteetVastausTyyppi vastaus = searchService.haeHakukohteet(kysely);
         if (fromKoulutus.getHakukohdes() != null) {
             for (HakukohdeTulos hakukohde : vastaus.getHakukohdeTulos()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
@@ -737,15 +733,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
-    	//long t = System.currentTimeMillis();
+        //long t = System.currentTimeMillis();
 //		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
-    	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
         HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
         if (hakukohde.getHaku() != null) {
 
             hakukohdeTyyppi.setHakukohteenHaunNimi(mapMonikielinenTekstiToTyyppi(hakukohde.getHaku().getNimi()));
         }
-        
+
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;
@@ -784,6 +780,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             kooste.setOid(curKomo.getOid());
             kooste.setKoulutuskoodiUri(curKomo.getKoulutusKoodi());
             kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
+            kooste.setLukiolinjakoodiUri(curKomo.getLukiolinja());
             tulos.setKoulutusmoduuli(kooste);
 
             vastaus.getKoulutusmoduuliTulos().add(tulos);

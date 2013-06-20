@@ -40,6 +40,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
 import java.io.IOException;
@@ -64,6 +65,8 @@ public class TarjontaKomoData {
     private static final Logger log = LoggerFactory.getLogger(TarjontaKomoData.class);
     private static final boolean USE_UPDATE = true; //unready feature
     private Map<KoulutusasteTyyppi, Map<String, String>> kKoodiToKomoOid;
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private KoodiService koodiService;
     @Autowired(required = true)
@@ -140,10 +143,11 @@ public class TarjontaKomoData {
             switch (koulutusTyyppi) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
-                    log.info("Search : {} {}", komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
+
                     break;
                 case LUKIOKOULUTUS:
                     searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getLukiolinjakoodiUri());
+                    log.info("Search : {} {}", komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
                     break;
             }
 
@@ -277,11 +281,11 @@ public class TarjontaKomoData {
         return (new StringBuffer(koodisto)).append(SEPARATOR).append(value).toString();
     }
 
-    public static MonikielinenTekstiTyyppi createTeksti(String fiTeksti, String svTeskti, String enTeksti) {
+    public static MonikielinenTekstiTyyppi createTeksti(String fiTeksti, String svTeksti, String enTeksti) {
         MonikielinenTekstiTyyppi t = new MonikielinenTekstiTyyppi();
-        addLang("fi", fiTeksti, t);
-        addLang("en", enTeksti, t);
-        addLang("sv", svTeskti, t);
+        addLang("kieli_fi", fiTeksti, t);
+        addLang("kieli_en", enTeksti, t);
+        addLang("kieli_sv", svTeksti, t);
         return t;
     }
 
@@ -289,16 +293,9 @@ public class TarjontaKomoData {
         if (text != null) {
             Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
             teksti.setKieliKoodi(lang);
-            teksti.setValue(strLimitTo4096(text));
+            teksti.setValue(text);
             t.getTeksti().add(teksti);
         }
-    }
-
-    private static String strLimitTo4096(final String str) {
-        if (str != null && str.length() > 4096) {
-            return str.substring(0, 4096);
-        }
-        return str;
     }
 
     public Set<ExcelMigrationDTO> getLoadedData() {
@@ -356,7 +353,7 @@ public class TarjontaKomoData {
                 final String fallbackValue = koulutusohjelmanKoodiarvo.substring(0, 4);
                 List<KoodiMetadataType> koulutusohjelmaMeta = getKoodiMetadataTypes(koulutusohjelmanKoodiarvo, KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue);
 
-                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, koulutusohjelmaMeta));
+                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, koulutusohjelmaMeta, tarjontaKoodistoHelper));
                 koKomo.setKoulutusohjelmakoodiUri(getUriWithVersion(dto.getKoulutusohjelmanKoodiarvo(), KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue));
 
                 /*
@@ -368,7 +365,7 @@ public class TarjontaKomoData {
                 Preconditions.checkNotNull(dto.getLukiolinjaKoodiarvo(), "Lukiolinja koodi uri cannot be null.");
 
                 List<KoodiMetadataType> lukiolinjaMeta = getKoodiMetadataTypes(dto.getLukiolinjaKoodiarvo(), KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI);
-                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, lukiolinjaMeta));
+                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, lukiolinjaMeta, tarjontaKoodistoHelper));
                 koKomo.setLukiolinjakoodiUri(getUriWithVersion(dto.getLukiolinjaKoodiarvo(), KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI));
                 break;
         }
@@ -386,20 +383,20 @@ public class TarjontaKomoData {
         return new LOS(tutkintoKomo, koKomo);
     }
 
-    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final String koodi) {
+    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final String lukiolinjaOrKoulutusohjelma) {
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(koulutusasteTyyppi);
         kysely.setKoulutuskoodiUri(koulutuskoodi);
 
         switch (koulutusasteTyyppi) {
             case AMMATILLINEN_PERUSKOULUTUS:
-                kysely.setKoulutusohjelmakoodiUri(koodi);
+                kysely.setKoulutusohjelmakoodiUri(lukiolinjaOrKoulutusohjelma);
                 break;
             case LUKIOKOULUTUS:
-                kysely.setLukiolinjakoodiUri(koodi);
+                kysely.setLukiolinjakoodiUri(lukiolinjaOrKoulutusohjelma);
                 break;
         }
-        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), koodi);
+        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), lukiolinjaOrKoulutusohjelma);
 
 
         HaeKoulutusmoduulitVastausTyyppi result = tarjontaPublicService.haeKoulutusmoduulit(kysely);
@@ -410,12 +407,27 @@ public class TarjontaKomoData {
                 for (KoulutusmoduuliTulos t : koulutusmoduuliTulos) {
                     log.warn("KoulutusmoduuliTulos : {} {}", t.getKoulutusmoduuli().getKoulutuskoodiUri(), t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
 
-                    if (koodi == null && t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri() == null) {
-                        //a quick hack: as there is no way to search only 'TUTKINTO' -type of komos.
-                        return t;
+                    //TODO: add TutktintoTyyppi param to HaeKoulutusmoduulitKyselyTyyppi.
+                    //a quick hack: as there is other way to filter the result to parent 'TUTKINTO' -type of komos.
+                    if (lukiolinjaOrKoulutusohjelma == null) {
+                        //program have tried to search parent TUTKINTO-type of komo, not a child komo.
+
+                        switch (koulutusasteTyyppi) {
+                            case AMMATILLINEN_PERUSKOULUTUS:
+                                if (t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri() == null) {
+                                    return t;
+                                }
+                                break;
+                            case LUKIOKOULUTUS:
+                                if (t.getKoulutusmoduuli().getLukiolinjakoodiUri() == null) {
+                                    return t;
+                                }
+                                break;
+                            default:
+                                throw new RuntimeException("Unsupported koulutusasteTyyppi : '" + koulutusasteTyyppi + "'");
+                        }
                     }
                 }
-
                 throw new RuntimeException("Search found too many KOMOs - single KOMO was expected. Result size : " + koulutusmoduuliTulos.size());
             }
 

@@ -205,7 +205,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     join(komoto.koulutusmoduuli).fetch().
                     where(criteria).list(komoto);
         } catch (Exception ex) {
-            log.debug("Exception: " + ex.getMessage());
+            log.error("Exception: " + ex.getMessage());
         }
         return komotoRes;
     }

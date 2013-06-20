@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -112,9 +113,10 @@ public class TarjontaLukioPresenterTest {
     private KoulutusLukioPerustiedotViewModel perustiedot;
     private KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot;
     private OrganisaatioDTO orgDto;
-    private TarjontaUIHelper tarjontaUiHelper;
+    private TarjontaUIHelper tarjontaUiHelperMock;
     private YhteyshenkiloModel yhteyshenkiloModel;
     private TarjontaPresenter tarjontaPresenter;
+    private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
 
     public TarjontaLukioPresenterTest() {
     }
@@ -159,10 +161,12 @@ public class TarjontaLukioPresenterTest {
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         koulutusKoodisto = new KoulutusKoodistoConverter();//createMock(KoulutusKoodistoConverter.class);
-        tarjontaUiHelper = createMock(TarjontaUIHelper.class);
+        tarjontaUiHelperMock = createMock(TarjontaUIHelper.class);
 
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
+        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
 
+        Whitebox.setInternalState(koulutusKoodisto, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(koulutusLukioConverter, "oidService", oidServiceMock);
@@ -174,7 +178,7 @@ public class TarjontaLukioPresenterTest {
         Whitebox.setInternalState(tarjontaPresenter, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
-        Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelper);
+        Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelperMock);
 
         tarjontaPresenter.getTarjoaja().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
 
@@ -280,8 +284,8 @@ public class TarjontaLukioPresenterTest {
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
 
         /*
          * replay
@@ -290,7 +294,7 @@ public class TarjontaLukioPresenterTest {
         replay(tarjontaAdminServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
 
         /*
          * Presenter method call
@@ -381,8 +385,8 @@ public class TarjontaLukioPresenterTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
 
 
         /*
@@ -392,7 +396,7 @@ public class TarjontaLukioPresenterTest {
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(organisaatioServiceMock);
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
 
         /*
          * Presenter method call
@@ -536,23 +540,27 @@ public class TarjontaLukioPresenterTest {
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
 
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiType(LUKIOLINJA));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiType(KOULUTUSASTE));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiType(OPINTOALA));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiType(LUKIOLINJA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiType(KOULUTUSASTE));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiType(OPINTOALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiType(KOULUTUSLAJI));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiType(LAAJUUS_YKSIKKO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiType(LAAJUUS_YKSIKKO));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiType(LAAJUUS_ARVO));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiType(KOULUTUSALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiType(KOULUTUSALA));
+
+
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
 
         /*
          * replay
          */
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
         replay(oidServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
+        replay(tarjontaKoodistoHelperMock);
 
         /*
          * Presenter method call
@@ -563,10 +571,11 @@ public class TarjontaLukioPresenterTest {
         /*
          * verify
          */
-        verify(tarjontaUiHelper);
+        verify(tarjontaUiHelperMock);
         verify(oidServiceMock);
         verify(organisaatioServiceMock);
         verify(tarjontaPublicServiceMock);
+        verify(tarjontaKoodistoHelperMock);
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = instance.getPerustiedotModel();
         assertEquals(KOMOTO_OID, perustiedotModel.getKomotoOid());

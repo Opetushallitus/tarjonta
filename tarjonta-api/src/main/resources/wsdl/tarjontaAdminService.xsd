@@ -80,9 +80,6 @@
     <xs:element name="poistaHakukohdeLiite" type="tns:PoistaHakukohdeLiiteTyyppi"/>
     <xs:element name="poistaHakukohdeLiiteVastaus" type="tns:PoistaHakukohdeLiiteVastausTyyppi"/>
     
-    <xs:element name="kopioiKoulutus" type="tns:KopioiKoulutusTyyppi"/>
-    <xs:element name="kopioiKoulutusVastaus" type="tns:KopioiKoulutusVastausTyyppi" />
-
     <xs:element name="emptyString" type="xs:string"/>
 
     <xs:complexType name="PoistaHakukohdeType">
@@ -175,17 +172,6 @@
 
     <xs:complexType name="PoistaHakuVastausType">
         <xs:sequence/>
-    </xs:complexType>
-
-    <xs:complexType name="KopioiKoulutusTyyppi">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="kopioitavaKoulutus" type="tarjonta:KoulutusTyyppi"/>
-            <xs:element minOccurs="1" maxOccurs="unbounded" name="organisaatioOids" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="KopioiKoulutusVastausTyyppi">
-        <xs:sequence></xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="LisaaKoulutusTyyppi">

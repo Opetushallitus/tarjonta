@@ -178,6 +178,7 @@ public class TarjontaRootView extends Window {
         LOG.debug("showMainView()");
         //Add UI components to root layout
         addToEmptyContent(buildMainLayoutComponents());
+        this.searchResultsView.getKoulutusList().synchronizeKoulutusSelections();
         
     }
 

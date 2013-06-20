@@ -534,10 +534,7 @@ public class TarjontaUIHelper {
      * @return
      */
     public static String[] splitKoodiURI(final String koodiUriWithVersion) {
-        if (koodiUriWithVersion == null) {
-            throw new IllegalArgumentException("Koodi uri with version string object cannot be null.");
-        }
-
+       Preconditions.checkNotNull(koodiUriWithVersion, "Koodi uri with version string object cannot be null.");
         String[] result = new String[2];
 
         int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
@@ -623,7 +620,7 @@ public class TarjontaUIHelper {
 
         return teksti;
     }
-    
+
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *
@@ -687,6 +684,25 @@ public class TarjontaUIHelper {
 
         LOG.debug("  --> no text found by locale : " + locale.getLanguage());
 
+        return null;
+    }
+
+    public static MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final String kieliKoodiUri) {
+        Preconditions.checkNotNull(kieliKoodiUri, "Language Koodisto koodi URI cannot be null");
+        LOG.debug("locale : " + kieliKoodiUri + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
+        return searchKieliByString(tekstis, kieliKoodiUri.toUpperCase());
+    }
+
+    private static MonikielinenTekstiTyyppi.Teksti searchKieliByString(List<MonikielinenTekstiTyyppi.Teksti> tekstis, String langCode) {
+        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
+
+            if (teksti.getKieliKoodi() != null
+                    && teksti.getKieliKoodi().toUpperCase().equals(langCode)) {
+                return teksti;
+            } else if (teksti.getKieliKoodi() == null) {
+                LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
+            }
+        }
         return null;
     }
 
@@ -899,7 +915,6 @@ public class TarjontaUIHelper {
 
         return result;
     }
-    
 
     public String getKoulutusNimi(KoulutusTulos curKoulutus) {
 
@@ -912,6 +927,8 @@ public class TarjontaUIHelper {
         }
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
             return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        }  else if (curKoulutus.getKoulutus().getNimi() != null) {
+            return getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getNimi()).getValue();
         } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
             return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
         }
@@ -1034,7 +1051,7 @@ public class TarjontaUIHelper {
     public Collection<KoodiType> getKoulutusalaRelatedKoulutuskoodis(final String koulutusala) {
         Preconditions.checkNotNull(koulutusala, "Koulutusaste URI cannot be null.");
         LOG.debug("getKoulutusalaRelatedKoulutuskoodis({})", koulutusala);
-       
+
         return getKoodistoRelations(koulutusala,
                 new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
@@ -1043,5 +1060,16 @@ public class TarjontaUIHelper {
         LOG.debug("getKoulutusasteRelatedKoulutuskoodis({})", koulutusastes);
         return getKoodistoRelationsForUris(koulutusastes,
                 new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
+    }
+    
+     /**
+     * Remove version information ('#X') from Koodisto uri.
+     *
+     * @param uriWithVersion
+     * @return
+     */
+    public static String noVersionUri(String uriWithVersion) {
+        String[] splitKoodiURI = TarjontaUIHelper.splitKoodiURI(uriWithVersion);
+        return splitKoodiURI[TarjontaUIHelper.PLAIN_URI];
     }
 }

@@ -189,6 +189,14 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
 
         return vl;
     }
+    
+    public void clearData() {
+        osoiteRiviTxt.setValue(null);
+        postinumeroCombo.setValue(null);
+        postitoimiPaikka.setValue(null);
+        alkupvm.setValue(null);
+        loppuPvm.setValue(null);
+    }
 
     private String T(String key) {
         return I18N.getMessage(key);

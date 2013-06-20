@@ -171,23 +171,9 @@ import java.util.List;
             koulutusOidNameViewModels = presenter.getModel().getHakukohdeTitleKoulutukses();
         }
         String labelTitle = "";
-        StringBuilder sb = new StringBuilder();
-        sb.append(getI18n().getMessage("valitutKoulutuksetTitle"));
-        sb.append(" ");
-        if (koulutusOidNameViewModels != null) {
-            int counter = 0;
-           for (KoulutusOidNameViewModel oidNameViewModel : koulutusOidNameViewModels) {
-               if (counter != 0) {
-                  sb.append("; ");
-               }
-               sb.append(oidNameViewModel.getKoulutusNimi());
-               counter++;
-           }
-        }
-        labelTitle = sb.toString();
-        Label lbl = new Label(labelTitle);
-        lbl.setStyleName(Oph.LABEL_SMALL);
-        vl.addComponent(lbl);
+
+
+        vl.addComponent(buildKoulutuksetInfo(koulutusOidNameViewModels));
         vl.setMargin(false,false,true,false);
         super.setTopInfoLayout(vl);
         } catch (Exception exp) {
@@ -196,6 +182,41 @@ import java.util.List;
 
         }
 
+    }
+
+    private AbstractLayout buildKoulutuksetInfo(List<KoulutusOidNameViewModel> koulutukses) {
+        GridLayout gl = new GridLayout(2,1);
+        gl.setSizeFull();
+        gl.setColumnExpandRatio(0,0.13f);
+        gl.setColumnExpandRatio(1,0.87f);
+        if (koulutukses != null) {
+            Label firstLine = new Label(getI18n().getMessage("valitutKoulutuksetTitle") + " ");
+            firstLine.setStyleName(Oph.LABEL_SMALL);
+            gl.addComponent(firstLine);
+            Label firstName = new Label(koulutukses.get(0).getKoulutusNimi());
+            firstName.setStyleName(Oph.LABEL_SMALL);
+            gl.addComponent(firstName);
+
+
+            gl.newLine();
+            int counter = 0;
+            for (KoulutusOidNameViewModel oidNameViewModel : koulutukses) {
+               if (counter == 0) {
+
+                   counter++;
+               } else {
+                Label empty = new Label("");
+                gl.addComponent(empty);
+                Label nameLbl = new Label(oidNameViewModel.getKoulutusNimi());
+                nameLbl.setStyleName(Oph.LABEL_SMALL);
+                gl.addComponent(nameLbl);
+
+                gl.newLine();
+                counter++;
+               }
+            }
+        }
+        return gl;
     }
 
     public void enableValintakokeetTab() {
@@ -299,7 +320,7 @@ import java.util.List;
                     valintakokeet.actionSave(null,null);
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));
-                    return null;
+                    throw e;
                 }
             }
         }

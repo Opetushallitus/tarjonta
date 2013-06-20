@@ -205,9 +205,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanCreateHaku() {
-        System.out.println(String.format("target permission:%s", wrapped.ROLE_CRUD));
-        System.out.println(String.format("authorities:%s", SecurityContextHolder.getContext().getAuthentication().getAuthorities()));
-
         boolean userCanCreateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
         LOGGER.debug("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
@@ -245,6 +242,14 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanEditValintaperustekuvaus(){
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
+
+    /**
+     * This is used by the "luo koulutusmoduulit" button in the ui.
+     * @return
+     */
+    public boolean userCanCreateKoulutusmoduuli() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 }

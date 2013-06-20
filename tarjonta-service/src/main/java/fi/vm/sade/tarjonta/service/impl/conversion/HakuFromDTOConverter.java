@@ -22,15 +22,20 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 import java.util.Date;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author Tuomas Katva
  */
 public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, Haku> {
+
+    @Autowired
+    private TarjontaKoodistoHelper koodistoHelpper;
 
     @Override
     public Haku convert(HakuTyyppi s) {
@@ -65,7 +70,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         MonikielinenTeksti mt = new MonikielinenTeksti();
         if (haunNimet != null) {
             for (HaunNimi nimi : haunNimet) {
-                mt.addTekstiKaannos(nimi.getKielikoodi(), nimi.getNimi());
+                mt.addTekstiKaannos(koodistoHelpper.convertKielikoodiToKieliUri(nimi.getKielikoodi()), nimi.getNimi());
             }
         }
         return mt;
@@ -73,9 +78,9 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
 
     private void convertSisaisetHaunAlkamisAjat(Haku mm, List<SisaisetHakuAjat> sisAjat) {
         if (sisAjat != null) {
-        	for (SisaisetHakuAjat curHA : sisAjat) {
-        		mm.addHakuaika(CommonFromDTOConverter.convertSisaisetHakuAjatToHakuaika(curHA));
-        	}
+            for (SisaisetHakuAjat curHA : sisAjat) {
+                mm.addHakuaika(CommonFromDTOConverter.convertSisaisetHakuAjatToHakuaika(curHA));
+            }
         }
     }
 }

@@ -9,8 +9,9 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" />
-    <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
+    <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/> <!-- TODO : change to LoggerJms -->
+	<context:annotation-config/>
+    <context:component-scan base-package="fi.vm.sade.security" />
 
     <!--
       ### Conversion service
@@ -21,12 +22,6 @@
             <list>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>
-
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromDTOConverter"/>
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToDTOConverter"/>
@@ -48,6 +43,7 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.PisterajaToValintakoePisterajaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToValintakoeRDTOConverter"/>
+       
             </list>
         </property>
         

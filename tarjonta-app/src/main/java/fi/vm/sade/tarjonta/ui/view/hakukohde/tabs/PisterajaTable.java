@@ -20,13 +20,18 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.TextField;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -59,6 +64,8 @@ public class PisterajaTable extends GridLayout {
 
     private CheckBox pkCb;
     
+    TarjontaDialogWindow removalDialog;
+    
 
 
     public PisterajaTable(ValintakoeViewModel valintakoe) {
@@ -77,9 +84,9 @@ public class PisterajaTable extends GridLayout {
     
     private void buildLayout() {
         //Header labels
-        addComponent(UiUtil.label(null, T("alinPistemaaraHdr")), 1,0);
-        addComponent(UiUtil.label(null, T("ylinPistemaaraHdr")), 3,0);
-        addComponent(UiUtil.label(null, T("alinHyvaksyttyPistemaaraHdr")), 4,0);
+        addComponent(UiUtil.label(null, T("alinPistemaaraHdr").toUpperCase(I18N.getLocale())), 1,0);
+        addComponent(UiUtil.label(null, T("ylinPistemaaraHdr").toUpperCase(I18N.getLocale())), 3,0);
+        addComponent(UiUtil.label(null, T("alinHyvaksyttyPistemaaraHdr").toUpperCase(I18N.getLocale())), 4,0);
         
         
         //Paasykoe row
@@ -91,8 +98,12 @@ public class PisterajaTable extends GridLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                adjustTextFields(PisterajaEvent.PAASYKOE, pkCb);
-                fireEvent(pkCb, PisterajaEvent.PAASYKOE);
+                if (!pkCb.booleanValue()) {
+                    createPkRemovalConfirmationDialog();
+                } else {
+                    adjustTextFields(PisterajaEvent.PAASYKOE, pkCb, false);
+                    fireEvent(pkCb, PisterajaEvent.PAASYKOE);
+                }
             }
             
         });
@@ -124,8 +135,13 @@ public class PisterajaTable extends GridLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb);
-                fireEvent(lpCb, PisterajaEvent.LISAPISTEET);
+                if (!lpCb.booleanValue()) {
+                    createLpRemovalConfirmationDialog();
+                    //removalDialog = new TarjontaDialogWindow();
+                } else {
+                    adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb, false);
+                    fireEvent(lpCb, PisterajaEvent.LISAPISTEET);
+                }
             }
             
         });
@@ -160,14 +176,99 @@ public class PisterajaTable extends GridLayout {
         
         if (isPaasykokeet()) {
             pkCb.setValue(Boolean.TRUE);
-            adjustTextFields(PisterajaEvent.PAASYKOE, pkCb);
+            adjustTextFields(PisterajaEvent.PAASYKOE, pkCb, false);
+        } else {
+            pkCb.setValue(Boolean.FALSE);
+            adjustTextFields(PisterajaEvent.PAASYKOE, pkCb, false);
         }
         if (isLisapisteet()) {
             lpCb.setValue(Boolean.TRUE);
-            adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb);
+            adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb, false);
         }
     }
     
+    protected void createLpRemovalConfirmationDialog() {
+        String lpLableStr = T("lisapisteetSmall");
+        String questionStr = T("removalQuestion", lpLableStr);
+        lpCb.setValue(Boolean.TRUE);
+        Button.ClickListener removeListener = new Button.ClickListener() {
+
+            private static final long serialVersionUID = -812378107447747350L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeDialogWindow();
+                lpCb.setValue(Boolean.FALSE);
+                adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb, true);
+                fireEvent(lpCb, PisterajaEvent.LISAPISTEET);
+                
+            }
+        };
+        
+        Button.ClickListener cancelListener = new Button.ClickListener() {
+
+            private static final long serialVersionUID = 8262437722011639660L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeDialogWindow();
+                
+            }
+        };
+        RemovalConfirmationDialog rcd = new RemovalConfirmationDialog(questionStr, null, T("remove"), T("cancel"), 
+                                                                        removeListener, cancelListener);
+        
+        String windowCaption = T("removalCaption", lpLableStr);
+        this.removalDialog = new TarjontaDialogWindow(rcd, windowCaption);
+        this.getWindow().addWindow(removalDialog);   
+    }
+    
+    protected void createPkRemovalConfirmationDialog() {
+        String pkLableStr = T("paasykoe");
+        String pkLableStrGen = T("paasykokeen");
+        String questionStr = T("removalQuestion", pkLableStrGen);
+        pkCb.setValue(Boolean.TRUE);
+        Button.ClickListener removeListener = new Button.ClickListener() {
+
+            private static final long serialVersionUID = 6202574198281231872L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeDialogWindow();
+                pkCb.setValue(Boolean.FALSE);
+                adjustTextFields(PisterajaEvent.PAASYKOE, pkCb, true);
+                fireEvent(pkCb, PisterajaEvent.PAASYKOE);
+                
+            }
+        };
+        
+        Button.ClickListener cancelListener = new Button.ClickListener() {
+
+            private static final long serialVersionUID = -1738347798661780556L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeDialogWindow();
+                
+            }
+        };
+        RemovalConfirmationDialog rcd = new RemovalConfirmationDialog(questionStr, null, T("remove"), T("cancel"), 
+                                                                        removeListener, cancelListener);
+        
+        String windowCaption = T("removalCaption", pkLableStr);
+        this.removalDialog = new TarjontaDialogWindow(rcd, windowCaption);
+        this.getWindow().addWindow(removalDialog);   
+    }
+    
+    
+    
+    public void closeDialogWindow() {
+        if (removalDialog != null) {
+            this.getWindow().removeWindow(removalDialog);
+            removalDialog = null;
+        }
+    }
+
     public void bindData(ValintakoeViewModel valintakoe) {
         valintakoe.setPkAlinPM((String)(pkAlinPM.getValue()));
         valintakoe.setPkYlinPM((String)(pkYlinPM.getValue()));
@@ -178,22 +279,48 @@ public class PisterajaTable extends GridLayout {
         valintakoe.setKpAlinHyvaksyttyPM((String)(kpAlinHyvaksyttyPM.getValue()));
     }
     
-    private boolean isLisapisteet() {
+    public boolean isLisapisteet() {
        return (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty())
                || (valintakoe.getLpAlinPM() != null && !valintakoe.getLpAlinPM().isEmpty())
-               || (valintakoe.getLpYlinPM() != null && !valintakoe.getLpYlinPM().isEmpty())
-               || (valintakoe.getLisanayttoKuvaukset() != null && !valintakoe.getLisanayttoKuvaukset().isEmpty());
+               || (valintakoe.getLpYlinPM() != null && !valintakoe.getLpYlinPM().isEmpty());
+    }
+    
+    public boolean isLisapisteetPisterajat() {
+        return (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty())
+                || (valintakoe.getLpAlinPM() != null && !valintakoe.getLpAlinPM().isEmpty())
+                || (valintakoe.getLpYlinPM() != null && !valintakoe.getLpYlinPM().isEmpty());
+    }
+    
+    public boolean isLisapisteetSpecified() {
+        if (valintakoe.getLisanayttoKuvaukset() == null || valintakoe.getLisanayttoKuvaukset().isEmpty()) {
+            return false;
+        }
+        for (KielikaannosViewModel kaannos : valintakoe.getLisanayttoKuvaukset()) {
+            if (kaannos.getNimi() != null && !kaannos.getNimi().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isPaasykokeet() {
+    public boolean isPaasykokeet() {
         return (valintakoe.getPkAlinHyvaksyttyPM() != null && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty())
                 || (valintakoe.getPkAlinPM() != null && !valintakoe.getPkAlinPM().isEmpty())
-                || (valintakoe.getPkYlinPM() != null && !valintakoe.getPkYlinPM().isEmpty())
-                || (valintakoe.getSanallisetKuvaukset() != null && !valintakoe.getSanallisetKuvaukset().isEmpty())
-                || (valintakoe.getValintakoeAjat() != null && !valintakoe.getValintakoeAjat().isEmpty());
+                || (valintakoe.getPkYlinPM() != null && !valintakoe.getPkYlinPM().isEmpty());
+                //|| (valintakoe.getValintakoeAjat() != null && !valintakoe.getValintakoeAjat().isEmpty());
     }
 
-    protected void adjustTextFields(String tyyppi,CheckBox cb) {
+    public boolean isValintakoePisterajat() {
+        return (valintakoe.getPkAlinHyvaksyttyPM() != null && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty())
+                || (valintakoe.getPkAlinPM() != null && !valintakoe.getPkAlinPM().isEmpty())
+                || (valintakoe.getPkYlinPM() != null && !valintakoe.getPkYlinPM().isEmpty());
+    }
+    
+    public boolean isValintakoeSpecified() {
+        return (valintakoe.getValintakoeAjat() != null && !valintakoe.getValintakoeAjat().isEmpty());
+    }
+
+    protected void adjustTextFields(String tyyppi,CheckBox cb, boolean isRemoval) {
         if (tyyppi.equals(PisterajaEvent.LISAPISTEET)) {
             lpAlinPM.setEnabled(cb.booleanValue());
             lpYlinPM.setEnabled(cb.booleanValue());
@@ -204,6 +331,26 @@ public class PisterajaTable extends GridLayout {
             pkAlinHyvaksyttyPM.setEnabled(cb.booleanValue());
         }
         kpAlinHyvaksyttyPM.setEnabled(pkCb.booleanValue() || lpCb.booleanValue());
+        
+        if (isRemoval && tyyppi.equals(PisterajaEvent.LISAPISTEET)) {
+            clearLisapisteet();
+        } else if (isRemoval && tyyppi.equals(PisterajaEvent.PAASYKOE)) {
+            clearPaasykokeet();
+        }
+    }
+
+    private void clearPaasykokeet() {
+        pkAlinPM.setValue(null);
+        pkYlinPM.setValue(null);
+        pkAlinHyvaksyttyPM.setValue(null);
+        kpAlinHyvaksyttyPM.setValue(null);
+    }
+
+    private void clearLisapisteet() {
+        lpAlinPM.setValue(null);
+        lpYlinPM.setValue(null);
+        lpAlinHyvaksyttyPM.setValue(null);
+        kpAlinHyvaksyttyPM.setValue(null);
     }
 
     public boolean validateInputTypes() {
@@ -330,5 +477,25 @@ public class PisterajaTable extends GridLayout {
        
         
     }
+
+    public void bindValintakoeData(ValintakoeViewModel selectedValintaKoe) {
+        selectedValintaKoe.setPkAlinPM(pkAlinPM.getValue() != null ? (String)(pkAlinPM.getValue()) : null);
+        selectedValintaKoe.setPkYlinPM(pkYlinPM.getValue() != null ? (String)(pkYlinPM.getValue()) : null);
+        selectedValintaKoe.setPkAlinHyvaksyttyPM(pkAlinHyvaksyttyPM.getValue() != null ? (String)(pkAlinHyvaksyttyPM.getValue()) : null);
+        selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+    }
+
+    public void bindLisapisteData(ValintakoeViewModel selectedValintaKoe) {
+        selectedValintaKoe.setLpAlinPM(lpAlinPM.getValue() != null ? (String)(lpAlinPM.getValue()) : null);
+        selectedValintaKoe.setLpYlinPM(lpYlinPM.getValue() != null ? (String)(lpYlinPM.getValue()) : null);
+        selectedValintaKoe.setLpAlinHyvaksyttyPM(lpAlinHyvaksyttyPM.getValue() != null ? (String)(lpAlinHyvaksyttyPM.getValue()) : null);
+        selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+    }
+    
+    
+    public ValintakoeViewModel getValintakoe() {
+        return valintakoe;
+    }
+
 
 }

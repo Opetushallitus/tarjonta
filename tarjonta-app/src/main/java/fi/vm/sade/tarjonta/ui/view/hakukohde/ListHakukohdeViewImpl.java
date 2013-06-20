@@ -135,6 +135,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             this.removeComponent(categoryTree);
             categoryTree = null;
         }
+        
+        
 
         categoryTree = new CategoryTreeView();
         categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
@@ -371,6 +373,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         //this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
         setPageLength(categoryTree.getItemIds().size());
+        
     }
 
     @Override

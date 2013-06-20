@@ -336,8 +336,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
-        getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
-        addOrReplaceSelectedValintakoe();
+        if (!kuvaukset.isEmpty()) {
+            getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
+        }
+        if (!getModel().getSelectedValintaKoe().isEmpty()) {
+            addOrReplaceSelectedValintakoe();
+        }
         List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
         for (ValintakoeViewModel valintakoeViewModel : getModel().getHakukohde().getValintaKokees()) {
             valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
