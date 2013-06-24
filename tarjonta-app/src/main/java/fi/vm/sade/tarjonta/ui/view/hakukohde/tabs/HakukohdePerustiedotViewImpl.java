@@ -16,14 +16,21 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.google.common.collect.Sets;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -99,9 +106,20 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         for(TextField tf: formView.getPainotettavat()){
             tf.validate();
         }
-        
-        //XXXX validoi painotettavat
-
+        Set<Object> usedOppiaineet = Sets.newHashSet();
+        GridLayout painotettavat = formView.getPainotettavatOppiaineet();
+        for(int i=0;i<painotettavat.getRows();i++){
+            Object component = painotettavat.getComponent(0, i);
+            if(component instanceof KoodistoComponent) {
+                Object oppiaine = ((KoodistoComponent)component).getValue();
+                if(oppiaine!=null) {
+                    if(usedOppiaineet.contains(oppiaine)) {
+                        throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+                    }
+                    usedOppiaineet.add(oppiaine);
+                }
+            }
+        }
         
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
