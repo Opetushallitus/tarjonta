@@ -15,10 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import com.google.common.collect.Sets;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -27,6 +30,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
@@ -41,6 +45,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -285,6 +290,7 @@ import java.util.List;
 
 
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+
         Date today = new Date();
         if (hakukohde.getLiitteidenToimitusPvm() != null && hakukohde.getLiitteidenToimitusPvm().before(today)) {
             errorView.addError(T("hakukohdeLiiteToimPvmMenneessa"));
@@ -301,13 +307,30 @@ import java.util.List;
         // formView.validateExtraData();
 
         HakukohdeNameUriModel selectedHakukohde = perustiedot.getSelectedHakukohde();
+        if (selectedHakukohde == null || selectedHakukohde.getHakukohdeNimi().trim().length() < 1) {
+            errorView.addError(T("hakukohteenNimi.notNull"));
+            throw new RuntimeException();
+        }
         hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
 
         for(TextField tf: perustiedot.getPainotettavat()){
             tf.validate();
         }
 
-        //XXXX validoi painotettavat
+        Set<Object> usedOppiaineet = Sets.newHashSet();
+        GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
+        for(int i=0;i<painotettavat.getRows();i++){
+            Object component = painotettavat.getComponent(0, i);
+            if(component instanceof KoodistoComponent) {
+                Object oppiaine = ((KoodistoComponent)component).getValue();
+                if(oppiaine!=null) {
+                    if(usedOppiaineet.contains(oppiaine)) {
+                        throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+                    }
+                    usedOppiaineet.add(oppiaine);
+                }
+            }
+        }
 
         presenter.saveHakuKohde(tila);
         

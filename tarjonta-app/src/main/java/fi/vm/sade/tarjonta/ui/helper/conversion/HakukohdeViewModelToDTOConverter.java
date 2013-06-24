@@ -105,7 +105,8 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttävä keskiarvo
-        if (hakukohdevm.getAlinHyvaksyttavaKeskiarvo() != null) {
+        if (hakukohdevm.getAlinHyvaksyttavaKeskiarvo() != null
+                && hakukohdevm.getAlinHyvaksyttavaKeskiarvo().trim().length() > 0) {
             hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(hakukohdevm.getAlinHyvaksyttavaKeskiarvo()));
         }
 

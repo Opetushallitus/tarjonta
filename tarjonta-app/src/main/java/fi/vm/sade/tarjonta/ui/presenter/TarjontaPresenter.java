@@ -708,6 +708,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         criteriaDTO.getOidResctrictionList().addAll(organisaatioOids);
         criteriaDTO.setMaxResults(400);
+        criteriaDTO.setSuunnitellut(true);
 
         return getOrganisaatioService().searchBasicOrganisaatios(criteriaDTO);
 
@@ -1791,7 +1792,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param organisaatioOid - the organisaatio oid to select
      * @param organisaatioName - the organisaatio name to select
      */
-    public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
+    public void selectOrganisaatio(String organisaatioOid, String organisaatioName, boolean active) {
         NavigationModel navigaatioModel = getNavigationOrganisation();
         navigaatioModel.setOrganisation(organisaatioOid, organisaatioName);
 
@@ -1809,9 +1810,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         // Updating koulutuslista to show only komotos with tarjoaja matching
         // the selected org or one of its descendants
-
+        
         reloadMainView(false);
-        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(organisaatioOid, true);
+        getRootView().getListKoulutusView().toggleCreateKoulutusB(organisaatioOid, active);
     }
 
     public void unSelectOrganisaatio() {
@@ -1828,8 +1829,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
 
         reloadMainView();
-        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(getModel().getRootOrganisaatioOid(), false);
-        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(getModel().getRootOrganisaatioOid(), false);
+        getRootView().getListKoulutusView().toggleCreateKoulutusB(getModel().getRootOrganisaatioOid(), false);
+        getRootView().getListKoulutusView().toggleCreateHakukohdeB(getModel().getRootOrganisaatioOid(), false);
     }
 
     /**

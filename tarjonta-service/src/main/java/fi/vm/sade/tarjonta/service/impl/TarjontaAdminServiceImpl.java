@@ -140,7 +140,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
         try {
             if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-                log.info("in logAuditTapahtuma : {}", tapahtuma.getTapahtumatyyppi());
+                System.out.println("LOG AUDIT CLASS : " + this.auditLogger.getClass().getName());
                 auditLogger.log(tapahtuma);
             }
 

@@ -52,6 +52,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private Date viimeisinPaivitysPvm;
 
 
+
+
     public List<PainotettavaOppiaineViewModel> getPainotettavat() {
         return painotettavat;
     }
@@ -389,4 +391,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
         this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
     }
+
+
 }

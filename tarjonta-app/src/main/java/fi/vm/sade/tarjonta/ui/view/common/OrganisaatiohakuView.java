@@ -15,6 +15,18 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -29,8 +41,6 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -39,6 +49,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -57,17 +68,6 @@ import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
 
 /**
  * Component for searching and selecting organisaatios.
@@ -462,7 +462,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private void organisaatioSelected(final OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
-            presenter.selectOrganisaatio(item.getOid(), getOrganisaatioNimi(item));
+            presenter.selectOrganisaatio(item.getOid(), getOrganisaatioNimi(item),
+            		item.getLakkautusPvm()==null || item.getLakkautusPvm().after(new Date()));
         } else {
             presenter.unSelectOrganisaatio();
         }
