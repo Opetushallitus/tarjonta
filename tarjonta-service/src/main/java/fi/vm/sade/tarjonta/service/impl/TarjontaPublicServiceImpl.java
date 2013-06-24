@@ -770,17 +770,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         HaeKoulutusmoduulitVastausTyyppi vastaus = new HaeKoulutusmoduulitVastausTyyppi();
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
             KoulutusmoduuliTulos tulos = new KoulutusmoduuliTulos();
-            KoulutusmoduuliKoosteTyyppi kooste = new KoulutusmoduuliKoosteTyyppi();
             Koulutusmoduuli findParentKomo = this.koulutusmoduuliDAO.findParentKomo(curKomo);
+            KoulutusmoduuliKoosteTyyppi kooste = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(curKomo); //no description data.
             if (findParentKomo != null) {
                 kooste.setParentOid(findParentKomo.getOid());
             }
-            kooste.setOid(curKomo.getOid());
-            kooste.setKoulutuskoodiUri(curKomo.getKoulutusKoodi());
-            kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
-            kooste.setLukiolinjakoodiUri(curKomo.getLukiolinja());
             tulos.setKoulutusmoduuli(kooste);
-
             vastaus.getKoulutusmoduuliTulos().add(tulos);
         }
         return vastaus;

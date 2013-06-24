@@ -714,7 +714,27 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 				
 			}
 		});
-        alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
+        alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(
+                T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")) {
+            @Override
+            protected boolean isValidString(String value) {
+                if (value.indexOf(".") != -1) {
+                    int decimals = value.length() - (value.indexOf(".") + 1);
+                    if (decimals > 2) {
+                        return false;
+                    }
+                }
+                boolean isValidDouble = super.isValidString(value);
+                if (isValidDouble) {
+                    double d = Double.parseDouble(value);
+                    if (d <= 4 || d > 10)
+                        return false;
+                }
+
+                return isValidDouble;
+            }
+        });
+        
         return alinHyvaksyttavaKeskiarvoText;
     }
 
