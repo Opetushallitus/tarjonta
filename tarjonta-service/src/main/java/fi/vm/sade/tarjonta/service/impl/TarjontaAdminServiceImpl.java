@@ -74,6 +74,8 @@ import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.log.model.Tapahtuma;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 
 /**
  * @author Tuomas Katva
@@ -697,13 +699,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi komokoosteTyyppi) throws GenericFault {
+    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi komoKoosteTyyppi) throws GenericFault {
         permissionChecker.checkCreateKoulutusmoduuli();
-        Preconditions.checkNotNull(komokoosteTyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
-        Preconditions.checkNotNull(komokoosteTyyppi.getKoulutustyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(komokoosteTyyppi.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutustyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
 
-        final String koulutuskoodiUri = komokoosteTyyppi.getKoulutuskoodiUri();
+        final String koulutuskoodiUri = komoKoosteTyyppi.getKoulutuskoodiUri();
         Preconditions.checkNotNull(koulutuskoodiUri, "Koulutuskoodi URI cannot be null.");
 
         Koulutusmoduuli komo = null;
@@ -711,29 +713,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         /*
          * Check type and fetch an existing KOMO, if any.
          */
-        switch (komokoosteTyyppi.getKoulutustyyppi()) {
+        switch (komoKoosteTyyppi.getKoulutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 //fetch children or parent
-                komo = koulutusmoduuliDAO.findTutkintoOhjelma(koulutuskoodiUri, komokoosteTyyppi.getKoulutusohjelmakoodiUri());
+                komo = koulutusmoduuliDAO.findTutkintoOhjelma(koulutuskoodiUri, komoKoosteTyyppi.getKoulutusohjelmakoodiUri());
                 break;
             case LUKIOKOULUTUS:
                 //fetch children or parent
-                komo = koulutusmoduuliDAO.findLukiolinja(koulutuskoodiUri, komokoosteTyyppi.getLukiolinjakoodiUri());
+                komo = koulutusmoduuliDAO.findLukiolinja(koulutuskoodiUri, komoKoosteTyyppi.getLukiolinjakoodiUri());
                 break;
             default:
-                throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komokoosteTyyppi.getKoulutustyyppi());
+                throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());
         }
 
         Koulutusmoduuli komoParent = null;
 
         if (komo == null) {
             //persist new KOMO
-            komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(komokoosteTyyppi));
+            komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi));
         }
 
-        if (komokoosteTyyppi.getParentOid() != null) {
+        if (komoKoosteTyyppi.getParentOid() != null) {
             //added KOMO was a child, not parent.
-            komoParent = handleParentKomo(komo, komokoosteTyyppi.getParentOid());
+            komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
         }
 
         Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
@@ -742,19 +744,39 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+    public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi komoKoosteTyyppi) throws GenericFault {
         permissionChecker.checkUpdateKoulutusmoduuli();
-        if (koulutusmoduuli == null || koulutusmoduuli.getOid() == null) {
-            throw new IllegalArgumentException("OID cannot be null.");
-        }
-        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(koulutusmoduuli.getOid());
+        Preconditions.checkNotNull(komoKoosteTyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getOid(), "OID object cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutustyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutuskoodiUri(), "Koulutuskoodi URI cannot be null.");
+
+        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(komoKoosteTyyppi.getOid());
         if (komo == null) {
-            throw new RuntimeException("No result found by OID " + koulutusmoduuli.getOid() + ".");
+            throw new RuntimeException("No KOMO found by OID '" + komoKoosteTyyppi.getOid() + "'.");
         }
 
-        koulutusmoduuliDAO.update(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli, komo));
+        /*
+         * Pre-validate the input data.
+         */
+        if (komoKoosteTyyppi.getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+            switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+                case AMMATILLINEN_PERUSKOULUTUS:
+                    //fetch children or parent
+                    Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusohjelmakoodiUri(), "Koulutusohjelma URI cannot be null.");
+                    break;
+                case LUKIOKOULUTUS:
+                    Preconditions.checkNotNull(komoKoosteTyyppi.getLukiolinjakoodiUri(), "Lukiolinja URI cannot be null.");
+                    break;
+                default:
+                    throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());
+            }
+        }
 
-        return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo);
+        final Koulutusmoduuli convertedKomo = EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi, komo);
+        koulutusmoduuliDAO.update(convertedKomo);
+        return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(convertedKomo);
     }
 
     /**

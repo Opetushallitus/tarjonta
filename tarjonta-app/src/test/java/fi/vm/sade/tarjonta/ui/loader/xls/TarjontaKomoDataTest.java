@@ -168,8 +168,8 @@ public class TarjontaKomoDataTest {
 
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
         assertEquals("31", next.getKoulutusasteKoodiarvo());
-        assertEquals("70", next.getLaajuusKoodiarvo());
-        assertEquals("2", next.getLaajuusyksikkoKoodiarvo());
+        assertEquals("75", next.getLaajuusKoodiarvo());
+        assertEquals("4", next.getLaajuusyksikkoKoodiarvo());
         assertEquals("3", next.getEqfKoodiarvo());
 
         next = excelDataMap.get("0014");

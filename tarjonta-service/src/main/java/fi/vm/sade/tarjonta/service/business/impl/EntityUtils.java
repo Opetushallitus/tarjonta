@@ -60,7 +60,7 @@ import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
  *
  */
 public final class EntityUtils {
-    
+
     private EntityUtils() {
     }
     public static final String STR_ARRAY_SEPARATOR = "|";
@@ -78,48 +78,48 @@ public final class EntityUtils {
         if (from == null) {
             return null;
         }
-        
+
         MonikielinenTekstiTyyppi to = new MonikielinenTekstiTyyppi();
-        
+
         for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
             Teksti teksti = new Teksti();
             teksti.setValue(tekstiKaannos.getArvo());
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
             to.getTeksti().add(teksti);
         }
-        
+
         return to;
     }
-    
+
     public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi source, MonikielinenTeksti target) {
         return MonikielinenTeksti.merge(target, CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(source));
     }
-    
+
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
-        
+
         to.setVersion(from.getVersion()); //optimistic locking
         to.setTila(convertTila(from.getTila()));
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
-        
+
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
-        
+
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
         to.setPainotus(copyFields(from.getPainotus(), to.getPainotus()));
-        
+
         if (from.getKoulutusaste() != null) {
             to.setKoulutusaste(from.getKoulutusaste().getUri());
         }
-        
+
         if (from.getPohjakoulutusvaatimus() != null) {
             to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
         }
-        
+
         to.setTarjoaja(from.getTarjoaja());
-        
+
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (from.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : from.getLinkki()) {
@@ -128,7 +128,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         to.setLinkkis(toLinkkis);
-        
+
         HashSet<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
         if (!from.getYhteyshenkiloTyyppi().isEmpty()) {
             Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
@@ -136,16 +136,16 @@ public final class EntityUtils {
             yhteyshenkilos.add(newYhteyshenkilo);
         }
         to.setYhteyshenkilos(yhteyshenkilos);
-        
+
         Date today = Calendar.getInstance().getTime();
         to.setLastUpdateDate(today);
         to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
-        
+
         copyLisatiedotFields(from, to);
     }
-    
+
     public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
-        
+
         toKoulutus.setTila(convertTila(fromKoulutus.getTila()));
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
@@ -157,24 +157,24 @@ public final class EntityUtils {
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
         toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus(), toKoulutus.getPainotus()));
-        
+
         copyLisatiedotFields(fromKoulutus, toKoulutus);
-        
+
         if (fromKoulutus.getKoulutusaste() != null) {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
-        
-        
+
+
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
-        
+
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
             Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
             copyFields(henkiloFrom, henkiloTo);
             toKoulutus.addYhteyshenkilo(henkiloTo);
         }
-        
+
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (fromKoulutus.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : fromKoulutus.getLinkki()) {
@@ -183,7 +183,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
-        
+
         toKoulutus.setLastUpdatedByOid(fromKoulutus.getViimeisinPaivittajaOid());
         toKoulutus.setLastUpdateDate(Calendar.getInstance().getTime());
     }
@@ -196,7 +196,7 @@ public final class EntityUtils {
      * @param toKoulutus
      */
     private static void copyLisatiedotFields(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
-        
+
         copyKielivalikoima(fromKoulutus, toKoulutus);
 
         //
@@ -210,7 +210,7 @@ public final class EntityUtils {
             }
         }
         toKoulutus.setAmmattinimikes(ammattinimikes);
-        
+
         Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
         if (fromKoulutus.getLukiodiplomit() != null) {
             for (KoodistoKoodiTyyppi koodistoKoodiTyyppi : fromKoulutus.getLukiodiplomit()) {
@@ -219,14 +219,14 @@ public final class EntityUtils {
             }
         }
         toKoulutus.setLukiodiplomit(lukiodiplomit);
-        
+
         toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot(), toKoulutus.getKuvailevatTiedot()));
         toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen()));
         toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan()));
         toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), toKoulutus.getSisalto()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
     }
-    
+
     private static void copyKielivalikoima(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
         copyTarjottuKieli(fromKoulutus.getA1A2Kieli(), toKoulutus, Kieliaine.A1A2KIELI);
         copyTarjottuKieli(fromKoulutus.getB1Kieli(), toKoulutus, Kieliaine.B1KIELI);
@@ -234,7 +234,7 @@ public final class EntityUtils {
         copyTarjottuKieli(fromKoulutus.getB3Kieli(), toKoulutus, Kieliaine.B3KIELI);
         copyTarjottuKieli(fromKoulutus.getMuutKielet(), toKoulutus, Kieliaine.MUUT_KIELET);
     }
-    
+
     private static void copyTarjottuKieli(List<KoodistoKoodiTyyppi> koodit, KoulutusmoduuliToteutus toKoulutus, Kieliaine aine) {
         if (koodit != null && !koodit.isEmpty()) {
             Set<String> lcs = new HashSet<String>();
@@ -246,9 +246,9 @@ public final class EntityUtils {
             toKoulutus.setKieliValikoima(aine.name(), null);
         }
     }
-    
+
     public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
-        
+
         to.setHenkioOid(from.getHenkiloOid());
         to.setEtunimis(from.getEtunimet());
         if (from.getSukunimi() == null) {
@@ -260,30 +260,46 @@ public final class EntityUtils {
         to.setSahkoposti(from.getSahkoposti());
         to.setKielis(from.getKielet());
         to.setTitteli(from.getTitteli());
-        
+
     }
-    
+
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
-        
+
         to.setEtunimet(from.getEtunimis());
         to.setHenkiloOid(from.getHenkioOid());
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
         to.setSukunimi(from.getSukunimi());
         to.setTitteli(from.getTitteli());
-        
+
         for (String kieliUri : from.getKielis()) {
             to.getKielet().add(kieliUri);
         }
     }
-    
+
+    /*
+     * Simple KOMO data converter, no description data.
+     */
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(final Koulutusmoduuli komo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
+
+        /*
+         * Required type data:
+         */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
+
+        /*
+         * OID and other keys:
+         */
         tyyppi.setOid(komo.getOid());
         tyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
         tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
+
+        /*
+         * Optional data
+         */
         tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
@@ -294,21 +310,27 @@ public final class EntityUtils {
         tyyppi.setEqfLuokitus(komo.getEqfLuokitus());
         tyyppi.setNqfLuokitus(komo.getNqfLuokitus());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
-        
+
         return tyyppi;
     }
-    
+
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(komo);
+
+        /*
+         * Descriptions
+         */
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
-        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
-        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
-        
+        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //ammatilliset-tavoitteet
+
+        //names for KOMOTO search 
+        tyyppi.setKoulutusmoduulinNimi(copyFields(komo.getNimi()));
+
         return tyyppi;
     }
 
     /*
-     * Merging fields from parent and komo to create the result KoulutusmoduuliKoosteTyyppi.
+     * Merge parent data to child KOMO, return compined KoulutusmoduuliKoosteTyyppi object.
      */
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
@@ -327,7 +349,7 @@ public final class EntityUtils {
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(parentKomo.getOppilaitostyyppi()));
         tyyppi.setEqfLuokitus(parentKomo.getEqfLuokitus());
         tyyppi.setNqfLuokitus(parentKomo.getNqfLuokitus());
-        
+
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //child KOMO: ammatilliset-tavoitteet
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
@@ -335,16 +357,17 @@ public final class EntityUtils {
 
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
         tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
-        
+
         return tyyppi;
     }
-    
+
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuliSimple(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
-        target.setVersion(1L);
+        target.setVersion(1L); //TODO fix this
         target.setOid(source.getOid());
         target.setKoulutustyyppi(source.getKoulutustyyppi().value());
         target.setKoulutusKoodi(source.getKoulutuskoodiUri());
         target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());
+        target.setLukiolinja(source.getLukiolinjakoodiUri());
         target.setLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
         target.setTutkintonimike(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
@@ -355,7 +378,7 @@ public final class EntityUtils {
         target.setEqfLuokitus(source.getEqfLuokitus());
         target.setNqfLuokitus(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
-        
+
         return target;
     }
 
@@ -364,59 +387,33 @@ public final class EntityUtils {
      */
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
         copyFieldsToKoulutusmoduuliSimple(source, target);
-        
+
+        //multilanguage objects
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
-        
-        return target;
-    }
-    
-    public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
-        Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
-        komo.setOid(tyyppi.getOid());
-        
-        if (tyyppi.getKoulutustyyppi() != null) {
-            komo.setKoulutustyyppi(tyyppi.getKoulutustyyppi().value());
-        }
-
-        //URIs
-        komo.setKoulutusKoodi(tyyppi.getKoulutuskoodiUri());
-        komo.setKoulutusohjelmaKoodi(tyyppi.getKoulutusohjelmakoodiUri());
-        komo.setLaajuus(tyyppi.getLaajuusyksikkoUri(), tyyppi.getLaajuusarvoUri());
-        komo.setTutkintonimike(tyyppi.getTutkintonimikeUri());
-        komo.setUlkoinenTunniste(tyyppi.getUlkoinenTunniste());
-        komo.setKoulutusAste(tyyppi.getKoulutusasteUri());
-        komo.setKoulutusala(tyyppi.getKoulutusalaUri());
-        komo.setOpintoala(tyyppi.getOpintoalaUri());
-        komo.setLukiolinja(tyyppi.getLukiolinjakoodiUri());
-        komo.setOppilaitostyyppi(joinListToString(tyyppi.getOppilaitostyyppi()));
-        komo.setEqfLuokitus(tyyppi.getEqfLuokitus());
-        komo.setNqfLuokitus(tyyppi.getNqfLuokitus());
-
-        //multilanguage objects
-        komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne(), komo.getKoulutuksenRakenne()));
-        komo.setTavoitteet(copyFields(tyyppi.getTavoitteet(), komo.getTavoitteet()));
-        komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet(), komo.getJatkoOpintoMahdollisuudet()));
-
-
 
         //names for KOMOTO search 
-        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi(), komo.getNimi()));
-        
-        return komo;
+        target.setNimi(copyFields(source.getKoulutusmoduulinNimi(), target.getNimi()));
+
+        return target;
     }
-    
+
+    public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
+        Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
+        return copyFieldsToKoulutusmoduuli(tyyppi, komo);
+    }
+
     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
-        
+
         for (Yhteyshenkilo fromHenkilo : fromList) {
             YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
             copyFields(fromHenkilo, toHenkilo);
             toList.add(toHenkilo);
         }
-        
+
     }
-    
+
     public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();
         for (KoodistoKoodiTyyppi koodi : koodit) {
@@ -424,7 +421,7 @@ public final class EntityUtils {
         }
         return set;
     }
-    
+
     public static Set<KoodistoUri> toKoodistoUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<KoodistoUri> set = new HashSet<KoodistoUri>();
         for (KoodistoKoodiTyyppi koodi : koodit) {
@@ -433,9 +430,9 @@ public final class EntityUtils {
         }
         return set;
     }
-    
+
     public static void copyKoodistoUris(Collection<KoodistoUri> from, Collection<KoodistoKoodiTyyppi> to) {
-        
+
         if (from != null) {
             for (KoodistoUri fromUri : from) {
                 KoodistoKoodiTyyppi toKoodi = new KoodistoKoodiTyyppi();
@@ -443,11 +440,11 @@ public final class EntityUtils {
                 to.add(toKoodi);
             }
         }
-        
+
     }
-    
+
     public static void copyWebLinkkis(Collection<WebLinkki> from, Collection<WebLinkkiTyyppi> to) {
-        
+
         for (WebLinkki fromLinkki : from) {
             WebLinkkiTyyppi toLinkki = new WebLinkkiTyyppi();
             toLinkki.setKieli(fromLinkki.getKieli());
@@ -455,7 +452,7 @@ public final class EntityUtils {
             toLinkki.setUri(fromLinkki.getUrl());
             to.add(toLinkki);
         }
-        
+
     }
 
     /**
@@ -467,7 +464,7 @@ public final class EntityUtils {
     public static fi.vm.sade.tarjonta.model.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
         Preconditions.checkNotNull(tila, "TarjontaTila enum cannot be null.");
         return fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
-        
+
     }
 
     /**
@@ -477,9 +474,9 @@ public final class EntityUtils {
      * @return
      */
     public static fi.vm.sade.tarjonta.service.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.model.TarjontaTila tila) {
-        
+
         return fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(tila.name());
-        
+
     }
 
     /**
@@ -493,7 +490,7 @@ public final class EntityUtils {
         if (from == null) {
             return null;
         }
-        
+
         MonikielinenTekstiTyyppi to = new MonikielinenTekstiTyyppi();
         for (MonikielinenMetadata mtt : getMonikielinenMetadata(from, categoryKey)) {
             Teksti teksti = new Teksti();
@@ -501,7 +498,7 @@ public final class EntityUtils {
             teksti.setKieliKoodi(mtt.getKieli());
             to.getTeksti().add(teksti);
         }
-        
+
         return to;
     }
 
@@ -516,14 +513,14 @@ public final class EntityUtils {
         final List<MonikielinenMetadata> list = getMonikielinenMetadata(metadata).get(categoryKey.toString());
         return Collections.unmodifiableList(list != null ? list : new ArrayList<MonikielinenMetadata>(0));
     }
-    
+
     private static Map<String, List<MonikielinenMetadata>> getMonikielinenMetadata(final Collection<MonikielinenMetadata> kuvaus) {
         //Map<category,  MonikielinenMetadata>>
         Map<String, List<MonikielinenMetadata>> map = new HashMap<String, List<MonikielinenMetadata>>();
-        
+
         for (MonikielinenMetadata meta : kuvaus) {
             final String category = meta.getKategoria();
-            
+
             if (map.containsKey(category)) {
                 map.get(category).add(meta);
             } else {
@@ -532,10 +529,10 @@ public final class EntityUtils {
                 map.put(category, list);
             }
         }
-        
+
         return map;
     }
-    
+
     public static List<KoodistoKoodiTyyppi> copyFields(Collection<Kielivalikoima> tarjotutKielet, Kieliaine aine) {
         List<KoodistoKoodiTyyppi> kielet = new ArrayList<KoodistoKoodiTyyppi>();
         for (Kielivalikoima curKielivalikoima : tarjotutKielet) {
@@ -543,10 +540,10 @@ public final class EntityUtils {
                 kielet.addAll(createKieliUris(curKielivalikoima.getKielet()));
             }
         }
-        
+
         return kielet;
     }
-    
+
     private static List<KoodistoKoodiTyyppi> createKieliUris(Set<KoodistoUri> kieliKoodit) {
         List<KoodistoKoodiTyyppi> kielet = new ArrayList<KoodistoKoodiTyyppi>();
         for (KoodistoUri curUri : kieliKoodit) {
@@ -556,7 +553,7 @@ public final class EntityUtils {
         }
         return kielet;
     }
-    
+
     public static String joinListToString(Collection<String> list) {
         if (list == null || list.isEmpty()) {
             return null;
@@ -568,15 +565,15 @@ public final class EntityUtils {
         //return |str1#str2| ...
         return STR_ARRAY_SEPARATOR + StringUtils.join(list, STR_ARRAY_SEPARATOR) + STR_ARRAY_SEPARATOR;
     }
-    
+
     public static List<String> splitStringToList(String str) {
         if (str == null) {
             return new ArrayList<String>(0);
         }
-        
+
         return new ArrayList<String>(Arrays.asList(StringUtils.split(str, STR_ARRAY_SEPARATOR)));
     }
-    
+
     public static KoulutusmoduuliKoosteTyyppi convertToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
         return parentKomo != null ? EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo) : EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo);
     }
