@@ -73,12 +73,11 @@ import javax.persistence.OptimisticLockException;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
-
+    
     @Autowired
     private TarjontaAdminService adminService;
     @Autowired
     private TarjontaPublicService publicService;
-
     @Autowired
     private TarjontaFixtures fixtures;
     @Autowired
@@ -90,18 +89,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutuksenKestoTyyppi kesto3Vuotta;
-
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceTest.class);
 
     /* Known koulutus that is inserted for each test. */
     private static final String SAMPLE_KOULUTUS_OID = "1.2.3.4.5";
-
     private static final String SAMPLE_TARJOAJA = "1.2.3.4.5";
-
     private static final String KOULUTUSKOODI = "uri:koodi1";
-
     private static final String KOKOODI = "uri:kokoodi1";
-
+    
     @Before
     @Override
     public void before() {
@@ -111,60 +106,58 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         kesto3Vuotta.setYksikko("kesto/vuosi");
         insertSampleKoulutus();
     }
-
-
-
+    
     @Test(expected = Exception.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
-
+        
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
-
+        
         lisaaKoulutus.setKoulutusKoodi(createKoodi("unknown-uri"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("unknown-uri"));
-
+        
         adminService.lisaaKoulutus(lisaaKoulutus);
-
+        
     }
-
+    
     @Test
     public void testCreateKoulutusHappyPath() throws Exception {
 
         // sample koulutus has been inserted before this test, check that data is correct
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertNotNull(toteutus);
-
+        
         Set<Yhteyshenkilo> yhteyshenkilos = toteutus.getYhteyshenkilos();
         assertEquals(1, yhteyshenkilos.size());
-
+        
         Yhteyshenkilo actualHenkilo = yhteyshenkilos.iterator().next();
         YhteyshenkiloTyyppi expectedHenkilo = createYhteyshenkilo();
-
+        
         assertMatch(expectedHenkilo, actualHenkilo);
         assertTrue(toteutus.getKoulutusaste().contains("koulutusaste/lukio"));
     }
-
+    
     @Test
     public void testUpdateKoulutusHappyPath() {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
-        PaivitaKoulutusTyyppi update= createPaivitaKoulutusTyyppi();
+        PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
         update.setVersion(toteutus.getVersion());
-
+        
         System.out.println("tarjoajaOid:" + toteutus.getTarjoaja());
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
-        assertEquals( fi.vm.sade.tarjonta.model.TarjontaTila.VALMIS, toteutus.getTila());
+        assertEquals(fi.vm.sade.tarjonta.model.TarjontaTila.VALMIS, toteutus.getTila());
     }
-
+    
     @Test
     public void testOptimisticLockingKoulutus() {
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
         kysely.setOid(SAMPLE_KOULUTUS_OID);
         LueKoulutusVastausTyyppi vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
-
+        
         PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
 
         //update with illegal version
@@ -172,7 +165,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         try {
             adminService.paivitaKoulutus(update);
             fail("Should throw exception!");
-        } catch (OptimisticLockException ole){
+        } catch (OptimisticLockException ole) {
             //all is good...
         }
         //update with proper version
@@ -186,24 +179,24 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
     }
-
+    
     @Test
     public void testUpdateKoulutusYhteyshenkilo() {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
         assertEquals("Kalle Matti", toteutus.getYhteyshenkilos().iterator().next().getEtunimis());
-
+        
         PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi = createPaivitaKoulutusTyyppi();
         createPaivitaKoulutusTyyppi.setVersion(toteutus.getVersion());
         createPaivitaKoulutusTyyppi.getYhteyshenkiloTyyppi().add(createAnotherYhteyshenkilo());
         EntityUtils.copyFields(createPaivitaKoulutusTyyppi, toteutus);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
-
+        
         koulutusmoduuliToteutusDAO.update(toteutus);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals(1, toteutus.getYhteyshenkilos().size());
     }
-
+    
     @Test
     public void testPoistaKoulutusHappyPath() throws Exception {
 
@@ -214,7 +207,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         // removal should succeed
         int komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll()
                 .size();
-
+        
         this.adminService.poistaKoulutus(SAMPLE_KOULUTUS_OID);
         assertTrue(komotosOriginalSize == (this.koulutusmoduuliToteutusDAO
                 .findAll().size() + 1));
@@ -224,13 +217,13 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
         lisaaKoulutus.setOid(oid);
         LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
-
+        
         Hakukohde hakukohde = fixtures.createHakukohde();
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
         hakukohde.addKoulutusmoduuliToteutus(komoto);
-
+        
         Haku haku = fixtures.createHaku();
-
+        
         Hakuaika hakuaika = new Hakuaika();
         Calendar alkuPvm = Calendar.getInstance();//.getTime();
         hakuaika.setAlkamisPvm(alkuPvm.getTime());
@@ -243,25 +236,25 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakukohde = this.hakukohdeDAO.insert(hakukohde);
         komoto.addHakukohde(hakukohde);
         this.koulutusmoduuliToteutusDAO.update(komoto);
-
+        
         komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
         try {
-        	this.adminService.poistaKoulutus(oid);
-        	fail();
+            this.adminService.poistaKoulutus(oid);
+            fail();
         } catch (Exception ex) {
-        	log.debug("Exception thrown: " + ex.getMessage());
+            log.debug("Exception thrown: " + ex.getMessage());
         }
         assertTrue(this.koulutusmoduuliToteutusDAO.findAll().size() == komotosOriginalSize);
     }
-
+    
     @Test
     public void testValintakoeUpdate() {
         Hakukohde hakukohde = fixtures.createHakukohde();
-
-
-
+        
+        
+        
         Haku haku = fixtures.createHaku();
-
+        
         Hakuaika hakuaika = new Hakuaika();
         Calendar alkuPvm = Calendar.getInstance();//.getTime();
         hakuaika.setAlkamisPvm(alkuPvm.getTime());
@@ -271,41 +264,41 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         haku.addHakuaika(hakuaika);
         this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
-
-
+        
+        
         Valintakoe valintakoe = getValintakoe();
-
+        
         hakukohde.getValintakoes().add(valintakoe);
-
-
+        
+        
         hakukohde = this.hakukohdeDAO.insert(hakukohde);
-
+        
         Hakukohde hk = this.hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
-
+        
         List<Valintakoe> valintakoes = new ArrayList<Valintakoe>(hk.getValintakoes());
-
+        
         Long valintaKoeId = valintakoes.get(0).getId();
-
+        
         if (valintaKoeId == null) {
             fail("Valintakoe id was null");
         }
-
+        
         Valintakoe updatedValintaKoe = getValintakoe();
         updatedValintaKoe.setId(valintaKoeId);
         final String muokattuUri = "uri:muokattu";
         updatedValintaKoe.setTyyppiUri(muokattuUri);
         List<Valintakoe> valintakoeList = new ArrayList<Valintakoe>();
         valintakoeList.add(updatedValintaKoe);
-        hakukohdeDAO.updateValintakoe(valintakoeList,hakukohde.getOid());
-
+        hakukohdeDAO.updateValintakoe(valintakoeList, hakukohde.getOid());
+        
         hk = this.hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
-
+        
         valintakoes = new ArrayList<Valintakoe>(hk.getValintakoes());
         log.info("Tyyppi uri : {}", valintakoes.get(0).getTyyppiUri());
         assertTrue(valintakoes.get(0).getTyyppiUri().equalsIgnoreCase(muokattuUri));
-
+        
     }
-
+    
     private Valintakoe getValintakoe() {
         ValintakoeAjankohta aika = new ValintakoeAjankohta();
         Osoite valOsoite = new Osoite();
@@ -320,25 +313,25 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         aika.setLisatietoja("TIETOA");
         Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
         ajankohtas.add(aika);
-
+        
         Valintakoe valintakoe = new Valintakoe();
         MonikielinenTeksti mo = new MonikielinenTeksti();
-        mo.setTekstiKaannos("fi","TESTIA");
+        mo.setTekstiKaannos("fi", "TESTIA");
         valintakoe.setKuvaus(mo);
         valintakoe.setTyyppiUri("uri:valintakoe");
         valintakoe.setAjankohtas(ajankohtas);
-
+        
         return valintakoe;
     }
-
+    
     @Test
     public void testCRUDHakukohde() {
-
-    	String oid = "56.56.56.57.57.57";
-    	String oid2 = "56.56.56.57.57.58";
-    	//Creating a hakukohde with an ongoing hakuaika. Removal should fail
-    	Hakukohde hakukohde = fixtures.createHakukohde();
-    	hakukohde.setOid(oid);
+        
+        String oid = "56.56.56.57.57.57";
+        String oid2 = "56.56.56.57.57.58";
+        //Creating a hakukohde with an ongoing hakuaika. Removal should fail
+        Hakukohde hakukohde = fixtures.createHakukohde();
+        hakukohde.setOid(oid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         hakukohde.addKoulutusmoduuliToteutus(komoto);
         Haku haku = fixtures.createHaku();
@@ -353,16 +346,16 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         haku = this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
         this.hakukohdeDAO.insert(hakukohde);
-
+        
         int originalSize = this.hakukohdeDAO.findAll().size();
-
+        
         try {
-        	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
-        	hakukohdeT.setOid(oid);
-        	this.adminService.poistaHakukohde(hakukohdeT);
-        	fail();
+            HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
+            hakukohdeT.setOid(oid);
+            this.adminService.poistaHakukohde(hakukohdeT);
+            fail();
         } catch (Exception ex) {
-        	log.debug("Exception thrown");
+            log.debug("Exception thrown");
         }
         assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
 
@@ -383,27 +376,27 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         haku = this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
         this.hakukohdeDAO.insert(hakukohde);
-
+        
         originalSize = this.hakukohdeDAO.findAll().size();
-
+        
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(oid2);
         LueHakukohdeVastausTyyppi vastaus = this.publicService.lueHakukohde(kysely);
         assertNotNull(vastaus);
-
+        
         HakukohdeTyyppi dto = vastaus.getHakukohde();
-        assertEquals(0,dto.getPainotettavatOppiaineet().size());
+        assertEquals(0, dto.getPainotettavatOppiaineet().size());
         PainotettavaOppiaineTyyppi oppiaine = new PainotettavaOppiaineTyyppi();
         oppiaine.setOppiaine("foo");
         oppiaine.setPainokerroin(1);
         dto.getPainotettavatOppiaineet().add(oppiaine);
         dto.setVersion(dto.getVersion());
-        dto=this.adminService.paivitaHakukohde(dto);
-        assertEquals(1,dto.getPainotettavatOppiaineet().size());
-        assertEquals("foo",dto.getPainotettavatOppiaineet().get(0).getOppiaine());
-        assertEquals(1,dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        dto = this.adminService.paivitaHakukohde(dto);
+        assertEquals(1, dto.getPainotettavatOppiaineet().size());
+        assertEquals("foo", dto.getPainotettavatOppiaineet().get(0).getOppiaine());
+        assertEquals(1, dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
-        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion() == 0);
 
 
         //edit oppiaineet
@@ -411,40 +404,40 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         oppiaine2.setOppiaine("bar");
         oppiaine2.setPainokerroin(9);
         dto.getPainotettavatOppiaineet().add(oppiaine2);
-        dto=this.adminService.paivitaHakukohde(dto);
-        assertEquals(2,dto.getPainotettavatOppiaineet().size());
-
+        dto = this.adminService.paivitaHakukohde(dto);
+        assertEquals(2, dto.getPainotettavatOppiaineet().size());
+        
         assertTrue(dto.getPainotettavatOppiaineet().get(0).getOppiaine().equals(oppiaine.getOppiaine())
                 || dto.getPainotettavatOppiaineet().get(1).getOppiaine().equals(oppiaine.getOppiaine()));
         assertTrue(oppiaine.getPainokerroin() == dto.getPainotettavatOppiaineet().get(0).getPainokerroin()
                 || oppiaine.getPainokerroin() == dto.getPainotettavatOppiaineet().get(1).getPainokerroin());
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
-        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
-
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion() == 0);
+        
         dto.getPainotettavatOppiaineet().remove(0);
-        dto=this.adminService.paivitaHakukohde(dto);
-        assertEquals(1,dto.getPainotettavatOppiaineet().size());
+        dto = this.adminService.paivitaHakukohde(dto);
+        assertEquals(1, dto.getPainotettavatOppiaineet().size());
 
 //        assertEquals(oppiaine2.getOppiaine(),dto.getPainotettavatOppiaineet().get(0).getOppiaine());
 //        assertEquals(oppiaine2.getPainokerroin(),dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
-        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
-
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion() == 0);
+        
         dto.getPainotettavatOppiaineet().remove(0);
-        dto=this.adminService.paivitaHakukohde(dto);
-        assertEquals(0,dto.getPainotettavatOppiaineet().size());
-
+        dto = this.adminService.paivitaHakukohde(dto);
+        assertEquals(0, dto.getPainotettavatOppiaineet().size());
+        
         HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
         hakukohdeT.setOid(oid2);
         this.adminService.poistaHakukohde(hakukohdeT);
         assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
-
+        
     }
-
+    
     @Test
     public void testLisaaKoulutusmoduuliHappyPath() {
         String oid = "oid:" + System.currentTimeMillis();
-
+        
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliT.setOid(oid);
         koulutusmoduuliT.setKoulutuskoodiUri(KOULUTUSKOODI);
@@ -452,22 +445,22 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliT.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
-
+        
         SearchCriteria sc = new SearchCriteria();
         sc.setKoulutusKoodi(KOULUTUSKOODI);
         sc.setKoulutusohjelmaKoodi(KOKOODI);
         Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
         assertEquals(KOULUTUSKOODI, komo.getKoulutusKoodi());
-
+        
     }
-
+    
     @Test
     public void testLisaaLukiokoulutusmoduuliHappyPath() {
         String oidParent = "oid:" + System.currentTimeMillis();
         String oidChild = oidParent + 2;
         String LUKIOTUTKINTO = "yoTutkinto11";
         String LUKIOLINJA = "jokuMediaLinja";
-
+        
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliParentT.setOid(oidParent);
         koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
@@ -475,7 +468,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
-
+        
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliChildT.setOid(oidChild);
         koulutusmoduuliChildT.setParentOid(oidParent);
@@ -484,20 +477,20 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
-
+        
         Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
         assertTrue(child.getOid().equals(oidChild));
     }
-
+    
     @Test
     public void testLisaaLukiokoulutusHappyPath() {
         String oidParent = "oid:" + System.currentTimeMillis();
         String oidChild = oidParent + 2;
         String komotoOid = oidChild + 2;
-
+        
         String LUKIOTUTKINTO = "yoTutkinto11";
         String LUKIOLINJA = "jokuMediaLinja";
-
+        
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliParentT.setOid(oidParent);
         koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
@@ -505,7 +498,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
-
+        
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliChildT.setOid(oidChild);
         koulutusmoduuliChildT.setParentOid(oidParent);
@@ -514,10 +507,10 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
-
+        
         Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
         assertTrue(child.getOid().equals(oidChild));
-
+        
         LisaaKoulutusTyyppi koulutusTyyppi = createSampleKoulutus();
         koulutusTyyppi.setOid(komotoOid);
         koulutusTyyppi.setKoulutusKoodi(createKoodi(LUKIOTUTKINTO));
@@ -525,13 +518,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         koulutusTyyppi.setLukiolinjaKoodi(createKoodi(LUKIOLINJA));
         koulutusTyyppi.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         adminService.lisaaKoulutus(koulutusTyyppi);
-
+        
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
         assertTrue(komoto != null);
     }
-
-
-
+    
     private Date getDateFromString(String dateStr) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         try {
@@ -540,25 +531,25 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             return new Date();
         }
     }
-
+    
     @Test
     public void testKoulutusKopiointiTarkistus() {
-
-
-
-       TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
-
+        
+        
+        
+        TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
+        
         kysely1.setKoulutusAlkamisPvm(getDateFromString("01.02.2013"));
-
+        
         kysely1.setKoulutusLuokitusKoodi("321101");
         kysely1.setKoulutusohjelmaKoodi("1603");
         kysely1.setPohjakoulutus("koulutusaste/lukio");
         kysely1.getKoulutuslajis().add("koulutuslaji/lahiopetus");
         kysely1.getOpetuskielis().add("opetuskieli/fi");
         kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
-
-        boolean kopiointiSallittu =  adminService.tarkistaKoulutuksenKopiointi(kysely1);
-
+        
+        boolean kopiointiSallittu = adminService.tarkistaKoulutuksenKopiointi(kysely1);
+        
         TarkistaKoulutusKopiointiTyyppi kysely2 = new TarkistaKoulutusKopiointiTyyppi();
         kysely2.setKoulutusLuokitusKoodi("321101");
         kysely2.setKoulutusohjelmaKoodi("1603");
@@ -567,57 +558,57 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         kysely2.setKoulutusAlkamisPvm(getDateFromString("02.08.2013"));
         kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);
         kysely2.setPohjakoulutus("koulutusaste/lukio");
-
-        boolean  kopiontiSallittu2 = adminService.tarkistaKoulutuksenKopiointi(kysely2);
-
+        
+        boolean kopiontiSallittu2 = adminService.tarkistaKoulutuksenKopiointi(kysely2);
+        
         assertFalse(kopiointiSallittu);
         assertTrue(kopiontiSallittu2);
     }
-
+    
     private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {
-
+        
         assertEquals(expected.getEtunimet(), actual.getEtunimis());
         assertEquals(expected.getSukunimi(), actual.getSukunimi());
         assertEquals(expected.getHenkiloOid(), actual.getHenkioOid());
         assertEquals(expected.getPuhelin(), actual.getPuhelin());
         assertEquals(expected.getSahkoposti(), actual.getSahkoposti());
         assertEquals(expected.getTitteli(), actual.getTitteli());
-
+        
     }
-
+    
     private void insertSampleKoulutus() {
-
+        
         Koulutusmoduuli moduuli = fixtures.createTutkintoOhjelma();
         moduuli.setKoulutusKoodi("321101");
         moduuli.setKoulutusohjelmaKoodi("1603");
         koulutusmoduuliDAO.insert(moduuli);
-
+        
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
         adminService.lisaaKoulutus(lisaaKoulutus);
-
+        
         flush();
-
+        
         KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertNotNull("koulutus was not inserted by lisaaKoulutus", loaded);
-
+        
         assertKoulutusEquals(lisaaKoulutus, loaded);
-
-
+        
+        
     }
-
+    
     private void assertKoulutusEquals(LisaaKoulutusTyyppi expected, KoulutusmoduuliToteutus actual) {
-
+        
         assertEquals(expected.getYhteyshenkilo().size(), actual.getYhteyshenkilos().size());
-
+        
     }
-
+    
     private LisaaKoulutusTyyppi createSampleKoulutus() {
-
+        
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
         lisaaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
-
+        
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
@@ -630,11 +621,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
         lisaaKoulutus.getLinkki().add(createLinkki("google", null, "http://google.com"));
         lisaaKoulutus.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-
-
+        
+        
         return lisaaKoulutus;
     }
-
+    
     private YhteyshenkiloTyyppi createYhteyshenkilo() {
         YhteyshenkiloTyyppi h = new YhteyshenkiloTyyppi();
         h.setEtunimet("Kalle Matti"); // required
@@ -646,7 +637,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         h.getKielet().add("fi"); // min 1 required (for now)
         return h;
     }
-
+    
     private YhteyshenkiloTyyppi createAnotherYhteyshenkilo() {
         YhteyshenkiloTyyppi h = new YhteyshenkiloTyyppi();
         h.setEtunimet("John"); // required
@@ -658,18 +649,18 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         h.getKielet().add("en"); // min 1 required (for now)
         return h;
     }
-
+    
     @Test
     public void testInitSample() {
         adminService.initSample(new String());
     }
-
+    
     private static KoodistoKoodiTyyppi createKoodi(String uri) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         return koodi;
     }
-
+    
     private static WebLinkkiTyyppi createLinkki(String tyyppi, String kieli, String uri) {
         WebLinkkiTyyppi linkki = new WebLinkkiTyyppi();
         linkki.setTyyppi(tyyppi);
@@ -677,16 +668,16 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         linkki.setUri(uri);
         return linkki;
     }
-
+    
     private void flush() {
         ((KoulutusmoduuliToteutusDAOImpl) koulutusmoduuliToteutusDAO).getEntityManager().flush();
     }
-
+    
     private PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi() {
         PaivitaKoulutusTyyppi paivitaKoulutus = new PaivitaKoulutusTyyppi();
         paivitaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
         paivitaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
-
+        
         KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
         kesto.setArvo("new-value");
         kesto.setYksikko("new-units");
@@ -697,12 +688,12 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.getOpetusmuoto().add(createKoodi("new-opetusmuoto"));
         paivitaKoulutus.getOpetuskieli().add(createKoodi("updated-kieli"));
-
+        
         return paivitaKoulutus;
     }
-
+    
     private KoulutusmoduuliToteutus createKomotoWithKomoTarjoajaPohjakoulutus(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid, String pohjakoulutusvaatimus) {
-
+        
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid(komotoOid);
         komoto.setTila(fi.vm.sade.tarjonta.model.TarjontaTila.LUONNOS);
@@ -718,13 +709,12 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         komoto.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return komoto;
     }
-
+    
     private List<KoodistoKoodiTyyppi> createKoodistoList(String koodiUri) {
         List<KoodistoKoodiTyyppi> opetusmuotos = new ArrayList<KoodistoKoodiTyyppi>();
         opetusmuotos.add(createKoodi(koodiUri));
         return opetusmuotos;
     }
-    
     
     @Test
     public void testProtectedResources() {
@@ -736,14 +726,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
         lisaaKoulutus.setOid(oid);
         LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
-
+        
         
         Hakukohde hakukohde = fixtures.createHakukohde();
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
         hakukohde.addKoulutusmoduuliToteutus(komoto);
-
+        
         Haku haku = fixtures.createHaku();
-
+        
         Hakuaika hakuaika = new Hakuaika();
         Calendar alkuPvm = Calendar.getInstance();//.getTime();
         hakuaika.setAlkamisPvm(alkuPvm.getTime());
@@ -765,20 +755,20 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakukohde = hakukohdeDAO.read(hakukohde.getId());
         String hakukohdeTunniste = Long.toString(hakukohde.getLiites().iterator().next().getId());
         String valintakoeTunniste = Long.toString(hakukohde.getValintakoes().iterator().next().getId());
-
+        
         komoto.addHakukohde(hakukohde);
         this.koulutusmoduuliToteutusDAO.update(komoto);
 
         //unauthenticated user
         setAuthentication(null);
-
+        
         try {
             adminService.lisaaHaku(null);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             HakukohdeTyyppi newHakukohde = new HakukohdeTyyppi();
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
@@ -789,7 +779,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             LisaaKoulutusTyyppi koulutus = new LisaaKoulutusTyyppi();
             koulutus.setTarjoaja("tarjoaja-oid");
@@ -798,14 +788,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
-            adminService.lisaaKoulutusmoduuli(null);
+            adminService.lisaaKoulutusmoduuli( new KoulutusmoduuliKoosteTyyppi());
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             LisaaKoulutusHakukohteelleTyyppi q = new LisaaKoulutusHakukohteelleTyyppi();
             q.setHakukohdeOid(hakukohde.getOid());
@@ -814,14 +804,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.paivitaHaku(null);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
             kysely.setOid(hakukohde.getOid());
@@ -859,21 +849,21 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.paivitaValintakokeitaHakukohteelle(hakukohde.getOid(), new ArrayList());
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.poistaHaku(null);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
             hakukohdeTyyppi.setOid(hakukohde.getOid());
@@ -882,14 +872,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.poistaHakukohdeLiite(hakukohdeTunniste);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.poistaKoulutus(komoto.getOid());
             fail("unauthenticated user should not be able to access the service");
@@ -903,21 +893,21 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.tallennaLiitteitaHakukohteelle(hakukohde.getOid(), new ArrayList());
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
-            adminService.tallennaMetadata(null,  null,  null,  null);
+            adminService.tallennaMetadata(null, null, null, null);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {
             assertNoPermission(rte);
         }
-
+        
         try {
             adminService.tallennaValintakokeitaHakukohteelle(hakukohde.getOid(), new ArrayList());
             fail("unauthenticated user should not be able to access the service");
@@ -925,8 +915,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             assertNoPermission(rte);
         }
     }
-
+    
     private void assertNoPermission(RuntimeException rte) {
-        assertTrue(rte.getClass().getName(), rte.getMessage()!=null && rte.getMessage().equals("no.permission"));
+        assertTrue(rte.getClass().getName(), rte.getMessage() != null && rte.getMessage().equals("no.permission"));
     }
 }
