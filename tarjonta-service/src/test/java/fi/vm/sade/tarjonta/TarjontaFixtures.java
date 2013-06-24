@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.Calendar;
@@ -215,6 +216,22 @@ public class TarjontaFixtures {
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohde.setYlinValintaPistemaara(200);
         hakukohde.setLastUpdateDate(new Date());
+
+        return hakukohde;
+
+    }
+
+    public HakukohdeTyyppi createHakukohdeTyyppi() {
+
+        HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+        hakukohde.setOid(randomOid("hakukohde"));
+        hakukohde.setHakukohdeNimi(randomUri("hakukohde"));
+//        hakukohde.setAlinValintaPistemaara(10);
+        hakukohde.setAloituspaikat(100);
+        hakukohde.setHakukelpoisuusVaatimukset(randomUri("koulutustaso"));
+        hakukohde.setHakukohteenTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
+//        hakukohde.setYlinValintaPistemaara(200);
+//        hakukohde.setLastUpdateDate(new Date());
 
         return hakukohde;
 
