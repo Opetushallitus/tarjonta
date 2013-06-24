@@ -285,6 +285,7 @@ import java.util.List;
 
 
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+
         Date today = new Date();
         if (hakukohde.getLiitteidenToimitusPvm() != null && hakukohde.getLiitteidenToimitusPvm().before(today)) {
             errorView.addError(T("hakukohdeLiiteToimPvmMenneessa"));
@@ -301,6 +302,10 @@ import java.util.List;
         // formView.validateExtraData();
 
         HakukohdeNameUriModel selectedHakukohde = perustiedot.getSelectedHakukohde();
+        if (selectedHakukohde == null || selectedHakukohde.getHakukohdeNimi().trim().length() < 1) {
+            errorView.addError(T("hakukohteenNimi.notNull"));
+            throw new RuntimeException();
+        }
         hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
 
         for(TextField tf: perustiedot.getPainotettavat()){

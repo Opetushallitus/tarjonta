@@ -9,7 +9,8 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-    <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/> <!-- TODO : change to LoggerJms -->
+     <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/>  <!-- TODO : change to LoggerJms -->
+    <!--<bean id="auditLogger" class="fi.vm.sade.log.client.LoggerJms"/>-->
 	<context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.security" />
 

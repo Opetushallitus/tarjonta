@@ -108,9 +108,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
     //Fields
-    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
-//    @PropertyId("hakukohdeNimi")
+
+
 //    KoodistoComponent hakukohteenNimiCombo;
+
+    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
     private ComboBox hakukohteenNimiCombo;
 //    @PropertyId("tunnisteKoodi")
     private TextField tunnisteKoodiText;
@@ -122,7 +124,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox hakuAikaCombo;
 
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
-    @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
+    @NotNull(message = "{validation.Hakukohde.aloitusPaikat.notNull}")
     @PropertyId("aloitusPaikat")
     private TextField aloitusPaikatText;
     @Min(value = 0, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
