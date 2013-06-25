@@ -142,8 +142,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         assertEquals(1, toteutus.getYhteyshenkilos().size());
         PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
         update.setVersion(toteutus.getVersion());
-        
-        System.out.println("tarjoajaOid:" + toteutus.getTarjoaja());
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
@@ -608,7 +606,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         lisaaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
-        
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));

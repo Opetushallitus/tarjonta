@@ -164,6 +164,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
+    public GridLayout getPainotettavatOppiaineet() {
+        return painotettavatOppiaineet;
+    }
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private List<TextField> painotettavat = Lists.newArrayList();
 
