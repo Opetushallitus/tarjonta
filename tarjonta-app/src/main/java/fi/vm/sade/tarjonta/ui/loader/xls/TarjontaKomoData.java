@@ -334,7 +334,7 @@ public class TarjontaKomoData {
          * LUKIO and AMMATILLINEN koulutus
          */
         tutkintoParentKomo.setKoulutuksenRakenne(dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
-        tutkintoParentKomo.setTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
+        tutkintoParentKomo.setTutkinnonTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
         tutkintoParentKomo.setJatkoOpintoMahdollisuudet(dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
 
         /*

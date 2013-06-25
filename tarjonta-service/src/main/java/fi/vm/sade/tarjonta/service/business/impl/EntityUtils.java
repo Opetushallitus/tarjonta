@@ -164,7 +164,6 @@ public final class EntityUtils {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
 
-
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
@@ -321,7 +320,18 @@ public final class EntityUtils {
          * Descriptions
          */
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
-        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //ammatilliset-tavoitteet
+        tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
+
+        switch (komo.getModuuliTyyppi()) {
+            case TUTKINTO:
+                //parent KOMO: tutkinnon-tavoitteet
+                tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTavoitteet()));
+                break;
+            case TUTKINTO_OHJELMA:
+                //ammatilliset-tavoitteet
+                tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
+                break;
+        }
 
         //names for KOMOTO search 
         tyyppi.setKoulutusmoduulinNimi(copyFields(komo.getNimi()));
@@ -390,8 +400,16 @@ public final class EntityUtils {
 
         //multilanguage objects
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
-        target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
+
+        switch (source.getKoulutusmoduuliTyyppi()) {
+            case TUTKINTO:
+                target.setTavoitteet(copyFields(source.getTutkinnonTavoitteet(), target.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
+                break;
+            case TUTKINTO_OHJELMA:
+                target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
+                break;
+        }
 
         //names for KOMOTO search 
         target.setNimi(copyFields(source.getKoulutusmoduulinNimi(), target.getNimi()));
