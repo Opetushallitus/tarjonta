@@ -608,7 +608,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         lisaaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
-        
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));

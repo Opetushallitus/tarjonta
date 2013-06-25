@@ -280,6 +280,10 @@ public final class EntityUtils {
      * Simple KOMO data converter, no description data.
      */
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(final Koulutusmoduuli komo) {
+        Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null.");
+        Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
         /*
@@ -290,6 +294,7 @@ public final class EntityUtils {
 
         /*
          * OID and other keys:
+         * No parent OID convesion.
          */
         tyyppi.setOid(komo.getOid());
         tyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
@@ -343,12 +348,31 @@ public final class EntityUtils {
      * Merge parent data to child KOMO, return compined KoulutusmoduuliKoosteTyyppi object.
      */
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
+        Preconditions.checkNotNull(komo, "Koulutusmoduuli child object cannot be null.");
+        Preconditions.checkNotNull(parentKomo, "Koulutusmoduuli parent object cannot be null.");
+        Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
+
+        //tyyppi.setVersion(1L); //TODO: missing.
+        /*
+         * Required type data:
+         */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
+        /*
+         * OID and other keys:
+         */
         tyyppi.setOid(komo.getOid());
         tyyppi.setParentOid(parentKomo.getOid());
         tyyppi.setKoulutuskoodiUri(parentKomo.getKoulutusKoodi());
         tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
+
+        /*
+         * Optional data
+         */
         tyyppi.setLaajuusarvoUri(parentKomo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
@@ -356,28 +380,45 @@ public final class EntityUtils {
         tyyppi.setKoulutusasteUri(parentKomo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(parentKomo.getKoulutusala());
         tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
-        tyyppi.getOppilaitostyyppi().addAll(splitStringToList(parentKomo.getOppilaitostyyppi()));
         tyyppi.setEqfLuokitus(parentKomo.getEqfLuokitus());
         tyyppi.setNqfLuokitus(parentKomo.getNqfLuokitus());
-
+        tyyppi.getOppilaitostyyppi().addAll(splitStringToList(parentKomo.getOppilaitostyyppi()));
+        /*
+         * Description data
+         */
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //child KOMO: ammatilliset-tavoitteet
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet())); //parent KOMO: jatko-opintomahdollisuudet
 
-        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
-        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
-
         return tyyppi;
     }
 
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuliSimple(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
+        Preconditions.checkNotNull(source, "KoulutusmoduuliKoosteTyyppi object cannot be null.");
+        Preconditions.checkNotNull(target, "Koulutusmoduuli object cannot be null.");
+        Preconditions.checkNotNull(source.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(source.getKoulutustyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(source.getKoulutuskoodiUri(), "Koulutuskoodi URI cannot be null.");
+
         target.setVersion(1L); //TODO fix this
-        target.setOid(source.getOid());
+
+        /*
+         * Required type data:
+         */
+        target.setModuuliTyyppi( fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
         target.setKoulutustyyppi(source.getKoulutustyyppi().value());
+        /*
+         * OID and other keys:
+         */
+        target.setOid(source.getOid());
         target.setKoulutusKoodi(source.getKoulutuskoodiUri());
         target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());
         target.setLukiolinja(source.getLukiolinjakoodiUri());
+
+        /*
+         * Optional data
+         */
         target.setLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
         target.setTutkintonimike(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
@@ -398,6 +439,10 @@ public final class EntityUtils {
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
         copyFieldsToKoulutusmoduuliSimple(source, target);
 
+        if (target.getJatkoOpintoMahdollisuudet() != null) {
+            System.out.println("jatko start : " + target.getJatkoOpintoMahdollisuudet().getId());
+        }
+
         //multilanguage objects
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
@@ -411,15 +456,26 @@ public final class EntityUtils {
                 break;
         }
 
+        if (target.getJatkoOpintoMahdollisuudet() != null) {
+            System.out.println("jatko end : " + target.getJatkoOpintoMahdollisuudet().getId());
+        }
+
+        if (target.getNimi() != null) {
+            System.out.println("nimi start : " + target.getNimi().getId());
+        }
+
         //names for KOMOTO search 
         target.setNimi(copyFields(source.getKoulutusmoduulinNimi(), target.getNimi()));
+       
+        if (target.getNimi() != null) {
+            System.out.println("nimi end : " + target.getNimi().getId());
+        }
 
         return target;
     }
 
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
-        Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
-        return copyFieldsToKoulutusmoduuli(tyyppi, komo);
+        return copyFieldsToKoulutusmoduuli(tyyppi, new Koulutusmoduuli());
     }
 
     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {

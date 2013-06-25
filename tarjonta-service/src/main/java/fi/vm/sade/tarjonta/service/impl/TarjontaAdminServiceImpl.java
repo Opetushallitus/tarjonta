@@ -737,8 +737,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             //added KOMO was a child, not parent.
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
         }
-
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
         return EntityUtils.convertToKoulutusmoduuliKoosteTyyppi(komo, komoParent);
     }
 
