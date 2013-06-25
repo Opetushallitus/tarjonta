@@ -142,8 +142,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         assertEquals(1, toteutus.getYhteyshenkilos().size());
         PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
         update.setVersion(toteutus.getVersion());
-        
-        System.out.println("tarjoajaOid:" + toteutus.getTarjoaja());
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());

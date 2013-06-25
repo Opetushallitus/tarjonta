@@ -406,7 +406,7 @@ public final class EntityUtils {
         /*
          * Required type data:
          */
-        target.setModuuliTyyppi( fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
+        target.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
         target.setKoulutustyyppi(source.getKoulutustyyppi().value());
         /*
          * OID and other keys:
@@ -439,10 +439,6 @@ public final class EntityUtils {
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
         copyFieldsToKoulutusmoduuliSimple(source, target);
 
-        if (target.getJatkoOpintoMahdollisuudet() != null) {
-            System.out.println("jatko start : " + target.getJatkoOpintoMahdollisuudet().getId());
-        }
-
         //multilanguage objects
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
@@ -456,20 +452,8 @@ public final class EntityUtils {
                 break;
         }
 
-        if (target.getJatkoOpintoMahdollisuudet() != null) {
-            System.out.println("jatko end : " + target.getJatkoOpintoMahdollisuudet().getId());
-        }
-
-        if (target.getNimi() != null) {
-            System.out.println("nimi start : " + target.getNimi().getId());
-        }
-
         //names for KOMOTO search 
-        target.setNimi(copyFields(source.getKoulutusmoduulinNimi(), target.getNimi()));
-       
-        if (target.getNimi() != null) {
-            System.out.println("nimi end : " + target.getNimi().getId());
-        }
+        target.setNimi(null);
 
         return target;
     }

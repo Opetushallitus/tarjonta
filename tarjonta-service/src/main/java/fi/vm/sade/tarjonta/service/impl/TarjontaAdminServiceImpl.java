@@ -140,7 +140,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
         try {
             if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-                System.out.println("LOG AUDIT CLASS : " + this.auditLogger.getClass().getName());
+                log.info("LOG AUDIT CLASS : " + this.auditLogger.getClass().getName());
                 auditLogger.log(tapahtuma);
             }
 
@@ -773,7 +773,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         final Koulutusmoduuli convertedKomo = EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi, komo);
+        convertedKomo.setNimi(null);
+        
         koulutusmoduuliDAO.update(convertedKomo);
+        
+        
+        
+        
         return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(convertedKomo);
     }
 
