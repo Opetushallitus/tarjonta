@@ -138,11 +138,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
         try {
             if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-                System.out.println("LOG AUDIT CLASS : " + this.auditLogger.getClass().getName());
                 auditLogger.log(tapahtuma);
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
+
             log.warn("Unable to send audit log message {}", e.toString());
         }
     }
@@ -403,12 +404,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        if (hakukohde.getOid() != null) {
-            tapahtuma.setUusiArvo(hakukohde.getOid() + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "");
-        } else {
-            tapahtuma.setUusiArvo(hakukohde.getHakukohdeKoodistoNimi());
-        }
+        tapahtuma.setUusiArvo(constructUusiArvo(hakukohde));
         return tapahtuma;
+    }
+
+    private String constructUusiArvo(Hakukohde hakukohde) {
+        String uusiArvo;
+        if (hakukohde.getOid() != null) {
+            uusiArvo =  "Hakukohde oid : "  +  hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
+        } else {
+            uusiArvo = "Hakukohde nimi:  " + hakukohde.getHakukohdeKoodistoNimi();
+        }
+        return uusiArvo;
     }
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
@@ -621,7 +628,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } catch (Exception exp) {
         }
         if (toteutus.getOid() != null) {
-            tapahtuma.setUusiArvo(toteutus.getOid() + " " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
+            tapahtuma.setUusiArvo( "OID : "  + toteutus.getOid() + ", KOULUTUSKOODI :  " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
         }
 
         return tapahtuma;

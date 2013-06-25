@@ -10,7 +10,9 @@
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
      <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/>  <!-- TODO : change to LoggerJms -->
-    <!--<bean id="auditLogger" class="fi.vm.sade.log.client.LoggerJms"/>-->
+    <!--<bean id="auditLogger" class="fi.vm.sade.log.client.LoggerJms">
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>-->
 	<context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.security" />
 
