@@ -21,6 +21,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
@@ -34,6 +35,8 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -57,6 +60,8 @@ import java.util.List;
 public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     public static final String LANGUAGE_TAB_SHEET_WIDTH = "600px";
+
+    private transient I18NHelper i18n = new I18NHelper(this);
 
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     @Autowired
@@ -94,6 +99,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private OptionGroup osoiteValinta;
 
+    private HakukohdeLiiteViewModel selectedLiite;
+
+    private TarjontaDialogWindow dialogWindow;
+
     public HakukohteenLiitteetViewImpl(ErrorMessage errorMessage, TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
@@ -123,7 +132,14 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         initForm();
     }
 
+    private void closeDialogWindow() {
+        if (dialogWindow != null) {
+            getWindow().getApplication().getMainWindow().removeWindow(dialogWindow);
+        }
+    }
+
     private void initForm() {
+        selectedLiite = presenter.getSelectedHakuliite();
         BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(presenter.getSelectedHakuliite());
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakukohdeLiiteBean);
@@ -254,6 +270,25 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return osoiteLayout;
     }
 
+    private boolean isLiiteEdited() {
+
+        if (selectedLiite.getLiitteenTyyppi() != null && selectedLiite.getLiitteenTyyppi().trim().length() > 0) {
+            return true;
+        }
+        if (selectedLiite.getToimitettavaMennessa() != null) {
+            return true;
+        }
+        if (selectedLiite.getSahkoinenToimitusOsoite() != null && selectedLiite.getSahkoinenToimitusOsoite().trim().length() > 0) {
+            return true;
+        }
+
+        if (selectedLiite.getLiitteenSanallinenKuvaus() != null && selectedLiite.getLiitteenSanallinenKuvaus().size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private VerticalLayout buildSahkoinenToimitusOsoite() {
         VerticalLayout sahkoinenToimitusOsoiteLayout = new VerticalLayout();
 
@@ -284,7 +319,28 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         cancelButton = UiBuilder.button(null, T("HakukohteenLiitteetViewImpl.cancelBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                presenter.closeCancelHakukohteenEditView();
+                if (isLiiteEdited()) {
+                RemovalConfirmationDialog removalDialog = new RemovalConfirmationDialog(i18n.getMessage("modelEditedVarmistusMsg"),null,i18n.getMessage("yesBtn"),i18n.getMessage("noBtn"),
+                        new Button.ClickListener() {
+                            @Override
+                            public void buttonClick(Button.ClickEvent clickEvent) {
+                                closeDialogWindow();
+                                presenter.closeCancelHakukohteenEditView();
+
+                            }
+                        }, new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        closeDialogWindow();
+                    }
+                });
+
+                dialogWindow = new TarjontaDialogWindow(removalDialog,i18n.getMessage("varmistusMsg"));
+                getApplication().getMainWindow().addWindow(dialogWindow);
+                } else {
+                    presenter.closeCancelHakukohteenEditView();
+                }
+
             }
         });
         horizontalButtonLayout.addComponent(cancelButton);
