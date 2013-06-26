@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
@@ -130,7 +131,7 @@ public class TarjontaFixtures {
     }
 
     public Koulutusmoduuli createTutkintoOhjelma(KoulutusmoduuliTyyppi tyyppi) {
-
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi object cannot be null.");
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");

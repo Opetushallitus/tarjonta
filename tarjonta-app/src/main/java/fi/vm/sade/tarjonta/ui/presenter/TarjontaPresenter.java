@@ -1181,6 +1181,22 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return hakukohdeNameUriModel;
     }
 
+    public Window getValintakoeTab() {
+        if (editHakukohdeView != null) {
+           return editHakukohdeView.getValintakoeTab().getWindow();
+        } else {
+            return null;
+        }
+    }
+
+    public Window getLiitteetTabImpl() {
+        if (editHakukohdeView != null) {
+           return editHakukohdeView.getLiitteetTab().getWindow();
+        }  else {
+            return null;
+        }
+    }
+
     public void setModelSelectedKoulutusOidAndNames(List<KoulutusOidNameViewModel> koulutusOidAndNames) {
 
           getModel().setHakukohdeTitleKoulutukses(koulutusOidAndNames);

@@ -108,9 +108,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
     //Fields
-    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
-//    @PropertyId("hakukohdeNimi")
+
+
 //    KoodistoComponent hakukohteenNimiCombo;
+
+    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
     private ComboBox hakukohteenNimiCombo;
 //    @PropertyId("tunnisteKoodi")
     private TextField tunnisteKoodiText;
@@ -122,7 +124,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox hakuAikaCombo;
 
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
-    @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
+    @NotNull(message = "{validation.Hakukohde.aloitusPaikat.notNull}")
     @PropertyId("aloitusPaikat")
     private TextField aloitusPaikatText;
     @Min(value = 0, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
@@ -162,6 +164,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
+    public GridLayout getPainotettavatOppiaineet() {
+        return painotettavatOppiaineet;
+    }
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private List<TextField> painotettavat = Lists.newArrayList();
 
@@ -712,7 +717,27 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 				
 			}
 		});
-        alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
+        alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(
+                T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")) {
+            @Override
+            protected boolean isValidString(String value) {
+                if (value.indexOf(".") != -1) {
+                    int decimals = value.length() - (value.indexOf(".") + 1);
+                    if (decimals > 2) {
+                        return false;
+                    }
+                }
+                boolean isValidDouble = super.isValidString(value);
+                if (isValidDouble) {
+                    double d = Double.parseDouble(value);
+                    if (d < 4 || d > 10)
+                        return false;
+                }
+
+                return isValidDouble;
+            }
+        });
+        
         return alinHyvaksyttavaKeskiarvoText;
     }
 
