@@ -730,7 +730,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 boolean isValidDouble = super.isValidString(value);
                 if (isValidDouble) {
                     double d = Double.parseDouble(value);
-                    if (d <= 4 || d > 10)
+                    if (d < 4 || d > 10)
                         return false;
                 }
 
