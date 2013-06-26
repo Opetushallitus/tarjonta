@@ -227,12 +227,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         saveHakuKohdePerustiedot();
         editHakukohdeView.enableLiitteetTab();
         editHakukohdeView.enableValintakokeetTab();
+        
     }
 
-    public void saveHakuKohdePerustiedot() {
+    private void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         //checkHakuLiitetoimitusPvm();
         String userOid = userContext.getUserOid();
+
+        // OVT-4911
+        getModel().setHakukohde(editHakukohdeView.getModel());
+        
         if (getModel().getHakukohde().getOid() == null) {
 
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
@@ -240,7 +245,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             hakukohdeTyyppi.setViimeisinPaivittajaOid(userOid);
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
-
 
             KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(getModel().getHakukohde().getHakukohdeNimi());
             List<KoodiType> listKoodiByRelation = getKoodiService().listKoodiByRelation(uriType, true, SuhteenTyyppiType.SISALTYY);
@@ -261,8 +265,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
             refreshHakukohdeUIModel(fresh);
         }
-
-        refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
     }
 
     /*private void checkHakuLiitetoimitusPvm() {
@@ -276,6 +278,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      }
 
      }*/
+    
     public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
         HakukohdeLiiteViewModelToDtoConverter converter = new HakukohdeLiiteViewModelToDtoConverter();
@@ -442,7 +445,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         ListHakuVastausTyyppi haut = getTarjontaPublicService().listHaku(hakuKyselyTyyppi);
 
-        this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
+        this.hakuKohdePerustiedotView.initForm();
+        
         HakuViewModel hakuView = null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuOid() != null) {
             hakuView = getModel().getHakukohde().getHakuOid();

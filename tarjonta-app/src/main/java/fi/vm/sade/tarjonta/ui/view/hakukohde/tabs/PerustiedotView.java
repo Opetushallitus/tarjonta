@@ -16,11 +16,11 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 
+import java.util.List;
+
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import java.util.List;
 
 /**
  *
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface PerustiedotView {
 
-    void initForm(HakukohdeViewModel model);
+    void initForm();
 
     List<KielikaannosViewModel> getLisatiedot();
     
