@@ -108,6 +108,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         }
         Set<Object> usedOppiaineet = Sets.newHashSet();
         GridLayout painotettavat = formView.getPainotettavatOppiaineet();
+        if (painotettavat != null) {
         for(int i=0;i<painotettavat.getRows();i++){
             Object component = painotettavat.getComponent(0, i);
             if(component instanceof KoodistoComponent) {
@@ -119,6 +120,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
                     usedOppiaineet.add(oppiaine);
                 }
             }
+        }
         }
         
         presenter.saveHakuKohde(tila);

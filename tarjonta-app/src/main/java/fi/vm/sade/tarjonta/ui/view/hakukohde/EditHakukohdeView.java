@@ -319,6 +319,7 @@ import java.util.Set;
 
         Set<Object> usedOppiaineet = Sets.newHashSet();
         GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
+        if (painotettavat != null) {
         for(int i=0;i<painotettavat.getRows();i++){
             Object component = painotettavat.getComponent(0, i);
             if(component instanceof KoodistoComponent) {
@@ -330,6 +331,7 @@ import java.util.Set;
                     usedOppiaineet.add(oppiaine);
                 }
             }
+        }
         }
 
         presenter.saveHakuKohde(tila);
@@ -406,6 +408,14 @@ import java.util.Set;
 
             tabs.setSelectedTab(valintakokeetTab);
         }
+    }
+
+    public HakukohteenLiitteetTabImpl getLiitteetTab() {
+        return liitteet;
+    }
+
+    public HakukohdeValintakoeTabImpl getValintakoeTab() {
+        return valintakokeet;
     }
 
     public void setLiitteetTabSelected() {
