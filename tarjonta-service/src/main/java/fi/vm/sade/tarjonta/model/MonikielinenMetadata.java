@@ -6,6 +6,8 @@ import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import java.util.Date;
 
 /**
@@ -29,6 +31,7 @@ public class MonikielinenMetadata extends BaseEntity {
     // For example: "uri: Finnish 358#1"
     private String kieli = null;
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Basic(fetch = FetchType.EAGER)
     @FilterXss
     private String arvo = null;
