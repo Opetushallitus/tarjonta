@@ -24,6 +24,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
@@ -35,6 +36,8 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -56,6 +59,8 @@ import java.util.List;
 @Configurable(preConstruction = true)
 public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
+    private transient I18NHelper i18n = new I18NHelper(this);
+
     private ErrorMessage errorView;
     private transient UiBuilder uiBuilder;
     private TarjontaPresenter presenter;
@@ -76,8 +81,10 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     private HakukohdeValintaKoeAikaEditView valintaKoeAikaEditView;
     private Form valintaKoeAikaForm;
     private KoulutusasteTyyppi koulutustyyppi;
+    private ValintakoeViewModel editableValintakoe;
+    private boolean aikaAdded = false;
 
-
+    private TarjontaDialogWindow dialogWindow;
 
     public HakukohdeValintakoeViewImpl(ErrorMessage errorView, TarjontaPresenter presenter, UiBuilder uiBuilder, KoulutusasteTyyppi koulutustyyppi) {
         super();
@@ -89,6 +96,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     }
 
     private void initForm() {
+        editableValintakoe = presenter.getSelectedValintakoe();
         BeanItem<ValintakoeViewModel> valintakoeViewModel = new BeanItem<ValintakoeViewModel>(presenter.getSelectedValintakoe());
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(valintakoeViewModel);
@@ -107,6 +115,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     public void setEditableValintakoeAika(ValintakoeAikaViewModel valintakoeAika) {
         if (valintaKoeAikaEditView != null && valintaKoeAikaForm != null) {
+
             BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(valintakoeAika);
             valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
         }
@@ -276,7 +285,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                             presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().add(valintakoeAika);
                             presenter.getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
                             createNewModelToValintakoeAika();
-
+                            aikaAdded = true;
                             loadTableData();
                         } else if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)){
                             errorView.addError(T("HakukohdeValintakoeViewImpl.dateValidationFailed"));
@@ -370,6 +379,34 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         }
     }
 
+    private boolean isModelEdited() {
+        if (editableValintakoe.getSanallisetKuvaukset() != null && editableValintakoe.getSanallisetKuvaukset().size() > 0) {
+            return true;
+        }
+        if (editableValintakoe.getValintakoeTyyppi() != null && editableValintakoe.getValintakoeTyyppi().trim().length() > 1 ) {
+            return true;
+        }
+        if (editableValintakoe.getLisanayttoKuvaukset() != null && editableValintakoe.getLisanayttoKuvaukset().size() > 0) {
+            return true;
+        }
+
+
+
+        if (aikaAdded) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private void closeDialogWindow() {
+        if (dialogWindow != null) {
+            getWindow().getApplication().getMainWindow().removeWindow(dialogWindow);
+
+        }
+    }
+
     private HorizontalLayout buildSaveCancelButtonLayout() {
 
         HorizontalLayout horizontalButtonLayout = UiUtil.horizontalLayout();
@@ -377,7 +414,32 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         cancelButton = UiBuilder.button(null, T("HakukohdeValintakoeViewImpl.cancelBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                presenter.closeValintakoeEditWindow();
+
+                if (isModelEdited()) {
+
+                    RemovalConfirmationDialog removalDialog = new RemovalConfirmationDialog(i18n.getMessage("modelEditedVarmistusMsg"),null,i18n.getMessage("yesBtn"),i18n.getMessage("noBtn"),
+                            new Button.ClickListener() {
+                                @Override
+                                public void buttonClick(Button.ClickEvent clickEvent) {
+                                    closeDialogWindow();
+                                    presenter.closeValintakoeEditWindow();
+
+                                }
+                            }, new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent clickEvent) {
+                            closeDialogWindow();
+                        }
+                    });
+
+                    dialogWindow = new TarjontaDialogWindow(removalDialog,i18n.getMessage("varmistusMsg"));
+                    getWindow().getApplication().getMainWindow().addWindow(dialogWindow);
+
+                } else {
+
+                    presenter.closeValintakoeEditWindow();
+
+                }
             }
         });
         horizontalButtonLayout.addComponent(cancelButton);
