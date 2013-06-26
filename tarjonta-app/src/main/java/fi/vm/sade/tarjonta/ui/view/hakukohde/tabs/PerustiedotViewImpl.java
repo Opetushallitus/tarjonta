@@ -227,7 +227,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     @Override
-    public void initForm(HakukohdeViewModel model) {
+    public void initForm() {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         hakukohteenNimiCombo.setImmediate(true);
 

@@ -15,9 +15,28 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.google.common.collect.Sets;
 import com.vaadin.data.Validator;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
@@ -30,22 +49,12 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
-import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.*;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeTabImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -175,8 +184,6 @@ import java.util.Set;
         } else {
             koulutusOidNameViewModels = presenter.getModel().getHakukohdeTitleKoulutukses();
         }
-        String labelTitle = "";
-
 
         vl.addComponent(buildKoulutuksetInfo(koulutusOidNameViewModels));
         vl.setMargin(false,false,true,false);
@@ -335,6 +342,7 @@ import java.util.Set;
         }
 
         presenter.saveHakuKohde(tila);
+        setModel(presenter.getModel().getHakukohde());
         
         if (presenter.getModel().getHakukohde().getKoulukses() != null
                 || !presenter.getModel().getHakukohde().getKoulukses().isEmpty()

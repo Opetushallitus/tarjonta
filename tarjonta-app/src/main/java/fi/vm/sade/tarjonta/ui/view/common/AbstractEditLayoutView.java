@@ -16,6 +16,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
@@ -27,10 +32,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.koodisto.service.GenericFault;
-//import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -44,12 +48,7 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+//import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 
 /**
  *
@@ -266,6 +265,15 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         layout.addComponent(form);
     }
+    
+    public void setModel(MODEL model) {
+		this.model = model;
+		form.setItemDataSource(new BeanItem<MODEL>(model));
+	}
+    
+    public MODEL getModel() {
+		return model;
+	}
 
     private void buildErrorLayoutWrapper(AbstractLayout layout) {
     	layout.addComponent(errorView);

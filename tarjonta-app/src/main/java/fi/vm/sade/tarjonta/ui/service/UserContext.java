@@ -87,7 +87,9 @@ public class UserContext implements InitializingBean, Serializable {
     //Sami USE THIS!!!
     public String getUserOid() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
+        // TODO FIXME väliaikainen älä committaa
+        return auth==null ? rootOrgOid : auth.getName();
+        // TODO FIXME väliaikainen älä committaa
     }
 
     /**
