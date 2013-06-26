@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta-data</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Tarjonta :: Data</name>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>5.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
