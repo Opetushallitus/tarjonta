@@ -499,7 +499,6 @@ public class TestTarjontaSavu {
         			, doit.textElement(driver, a_text));
         	t01 = doit.millisDiff(t01);
         	t01 = doit.millis();
-        	doit.sendPageToFile(driver);
         	doit.textClick(driver, "Jatka");
         }
         if (c_scenario)
@@ -508,7 +507,6 @@ public class TestTarjontaSavu {
         			, doit.textElement(driver, c_text));
         	t01 = doit.millisDiff(t01);
         	t01 = doit.millis();
-        	doit.sendPageToFile(driver);
         	doit.textClick(driver, "Jatka");
         }
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
