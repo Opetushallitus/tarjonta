@@ -117,7 +117,6 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">OPH</div>"
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box\" style=\"width: 26.px;\""
 				+ ".*<span class=\"v-button-caption\">Hae</span>"
-        		+ ".*<div class=\"v-captiontext\" style=\"width: " 
         		+ ".*>Koulutuksen alkamisvuosi</div>"
         		+ ".*<div class=\"v-captiontext\" style=\"width: 20.px;\">Koulutuksen alkamiskausi</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
