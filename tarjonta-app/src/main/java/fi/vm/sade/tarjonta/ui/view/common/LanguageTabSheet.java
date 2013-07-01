@@ -22,13 +22,13 @@ import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +83,7 @@ public abstract class LanguageTabSheet extends VerticalLayout {
         setWidth(TABSHEET_WIDTH);
         setHeight(TABSHEET_HEIGHT);
 
-        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, _uiHelper, uiBuilder) {
+        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURI.KOODISTO_KIELI_URI, _uiHelper, uiBuilder) {
             private static final long serialVersionUID = 7641598427815355362L;
 
             @Override

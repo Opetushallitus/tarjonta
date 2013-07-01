@@ -9,7 +9,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -172,7 +172,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         List<String> oppilaitosTyyppis = this.presenter.getOppilaitostyyppiUris(org.getOid());
         Collection<KoodiType> koodis = new ArrayList<KoodiType>();
         for (String oppilaitosTyyppi : oppilaitosTyyppis) {
-            Collection<KoodiType> curKoodis = helper.getKoodistoRelations(oppilaitosTyyppi, KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSTYYPPI, false, SuhteenTyyppiType.SISALTYY);
+            Collection<KoodiType> curKoodis = helper.getKoodistoRelations(oppilaitosTyyppi, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, false, SuhteenTyyppiType.SISALTYY);
             koodis.addAll(curKoodis);
         }
         String[] tyyppiUriParts = TarjontaUIHelper.splitKoodiURI(tyyppiUri);
@@ -212,7 +212,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
         //koulutuksenTyyppiLbl = new Label(_i18n.getMessage("koulutuksenTyyppi"));
         //gridLayout.addComponent(koulutuksenTyyppiLbl);
-        koulutuksenTyyppiCombo = uiBuilder.comboBox(null, null, null);//buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSTYYPPI);
+        koulutuksenTyyppiCombo = uiBuilder.comboBox(null, null, null);//buildKoodistoCombobox(KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI);
 
         koulutuksenTyyppiCombo.setImmediate(true);
         List<String> oppilaitostyypit = super.presenter.getOppilaitostyyppiUris();
@@ -225,7 +225,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         gridLayout.addComponent(pohjakoulutusvaatimusLbl,0,1);
 
         //gridLayout.setComponentAlignment(pohjakoulutusvaatimusLbl, Alignment.MIDDLE_RIGHT);
-        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
         kcPohjakoulutusvaatimus.setVisible(false);
 
         koulutuksenTyyppiCombo.addListener(new Property.ValueChangeListener() {
@@ -288,7 +288,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private void buildKoulutustyyppiCombo(List<String> oppilaitostyyppiUrit) {
         Set<KoodiType> koodis = new HashSet<KoodiType>();
         for (String oppilaitosTyyppi : oppilaitostyyppiUrit) {
-            Collection<KoodiType> curKoodis = helper.getKoodistoRelations(oppilaitosTyyppi, KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSTYYPPI, false, SuhteenTyyppiType.SISALTYY);
+            Collection<KoodiType> curKoodis = helper.getKoodistoRelations(oppilaitosTyyppi, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, false, SuhteenTyyppiType.SISALTYY);
             koodis.addAll(curKoodis);
         }
         

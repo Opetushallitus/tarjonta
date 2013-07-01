@@ -83,7 +83,7 @@ public class KoodistoURI {
      * Lukiotutkinto URIs
      */
     public static String KOODISTO_LUKIOLINJA_URI;
-    public static String LUKIO_KOODI_KOULUTUSLAJI_URI;
+    public static String KOODI_KOULUTUSLAJI_NUORTEN_KOULUTUS_URI;
     public static String LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI;
     public static String KOODISTO_LUKIODIPLOMIT_URI;
     /**
@@ -94,7 +94,6 @@ public class KoodistoURI {
      * Hakukohde / valintakoe
      */
     public static String KOODISTO_VALINTAKOE_TYYPPI_URI;
-
 //    /*
 //     * For tutkinto dialog
 //     */
@@ -103,10 +102,11 @@ public class KoodistoURI {
      * For korkeakoulu
      */
     public static String KOODISTO_TEEMAT_URI;
-
     public static String KOODISTO_HAKUKELPOISUUSVAATIMUS_URI;
-
-
+    /*
+     * For tutkinto dialog
+     */
+    public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
 
     @Value("${koodisto.language.fi.uri:kieli_fi}")
     public void setKoodiLangFiUri(String uri) {
@@ -132,7 +132,6 @@ public class KoodistoURI {
 //    public void setKoodistoTarjontaKoulutusaste(String uri) {
 //        KOODISTO_TARJONTA_KOULUTUSASTE = uri;
 //    }
-
     @Value("${koodisto-uris.hakutyyppi}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;
@@ -263,9 +262,9 @@ public class KoodistoURI {
         LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI = pohjakoulutusvaatimus;
     }
 
-    @Value("${koodi-uri.lukio.koulutuslaji}")
-    public void setLukioKoodiKoulutuslaji(String koulutuslaji) {
-        LUKIO_KOODI_KOULUTUSLAJI_URI = koulutuslaji;
+    @Value("${koodi-uri.koulutuslaji.nuortenKoulutus}")
+    public void setKoodiKoulutuslajiNuortenKoulutus(String koulutuslaji) {
+        KOODI_KOULUTUSLAJI_NUORTEN_KOULUTUS_URI = koulutuslaji;
     }
 
     @Value("${koodisto-uris.oppiaineet}")
@@ -286,5 +285,10 @@ public class KoodistoURI {
     @Value("${koodisto-uris.hakukelpoisuusvaatimus}")
     public void setKoodistoHakukelpoisuusvaatimusUri(String uri) {
         KOODISTO_HAKUKELPOISUUSVAATIMUS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tarjontakoulutustyyppi}")
+    public void setKoodistoTarjontaKoulutustyyppi(String uri) {
+        KOODISTO_TARJONTA_KOULUTUSTYYPPI = uri;
     }
 }

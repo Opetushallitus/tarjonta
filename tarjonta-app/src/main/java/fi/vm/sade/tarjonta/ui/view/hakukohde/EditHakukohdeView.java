@@ -292,10 +292,19 @@ import fi.vm.sade.vaadin.Oph;
         return presenter.getModel().getHakukohde() != null ? presenter.getModel().getHakukohde().getOid() : null;
     }
 
+    /**
+     * Handle lukio hakukohde save action.
+     * Tabs:
+     * - attachments
+     * - exam points
+     * 
+     * @param tila
+     * @param event
+     * @return
+     * @throws Exception 
+     */
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception {
-
-
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
 
         Date today = new Date();

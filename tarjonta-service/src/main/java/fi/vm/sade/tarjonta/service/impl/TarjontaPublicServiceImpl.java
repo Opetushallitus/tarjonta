@@ -245,7 +245,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
         //long t = System.currentTimeMillis();
         HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(parameters.getHakukohdeOid());
 
         ArrayList<HakukohdeLiiteTyyppi> liiteTyyppis = new ArrayList<HakukohdeLiiteTyyppi>();
 
@@ -733,7 +733,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
         //long t = System.currentTimeMillis();
 //		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(kysely.getOid());
         HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
         if (hakukohde.getHaku() != null) {
 

@@ -59,27 +59,25 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author Timo Santasalo / Teknokala Ky
  */
 @Configurable(preConstruction = true)
-public class ShowHakukohdeTab extends CustomComponent {
+public class ShowHakukohdeTab extends VerticalLayout {
 
     private static final long serialVersionUID = 1L;
+    private final String language;
+    private final String datePattern = "dd.MM.yyyy HH:mm";
     @Autowired
     private TarjontaPresenter presenter;
     @Autowired
-    TarjontaUIHelper uiHelper;
+    private TarjontaUIHelper uiHelper;
     private I18NHelper i18n = new I18NHelper("ShowHakukohdeTab.");
-    private final String language;
     private OrganisaatioContext context;
-    private final String datePattern = "dd.MM.yyyy HH:mm";
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
 
     public ShowHakukohdeTab(String language) {
         Preconditions.checkNotNull(language, "Language cannot be null");
         this.language = language;
-        VerticalLayout mainLayout = new VerticalLayout();
-        mainLayout.setMargin(true);
-        setCompositionRoot(mainLayout);
-        buildPage(mainLayout);
+        this.setMargin(true);
+        buildPage(this);
     }
 
     private OrganisaatioContext getContext() {
@@ -91,8 +89,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private boolean checkHaunAlkaminen() {
         presenter.loadHakukohdeHakuPvm();
-        Date haunPaattymisPvm = presenter.getModel().getHakukohde().getHakuOid().getPaattymisPvm();
-        Date haunAlkamisPvm = presenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
+        Date haunAlkamisPvm = presenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         Date tanaan = new Date();
         if (tanaan.after(haunAlkamisPvm)) {
             return false;
@@ -117,14 +114,16 @@ public class ShowHakukohdeTab extends CustomComponent {
         if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().size() > 0) {
             VerticalLayout valintaperusteetLayout = new VerticalLayout();
             valintaperusteetLayout.setMargin(true);
-            if (checkHaunAlkaminen())  {
-            valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintaPerusteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                    new ClickListener() {
-                @Override
-                public void buttonClick(ClickEvent clickEvent) {
-                    getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
-                }
-            }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
+            if (checkHaunAlkaminen()) {
+                valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintaPerusteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                        new ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
+                    }
+                }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
             }
 
             final GridLayout grid = new GridLayout(2, 1);
@@ -153,18 +152,17 @@ public class ShowHakukohdeTab extends CustomComponent {
             }
         }
 
-         
-        
         if (checkHaunAlkaminen()) {
-        liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent clickEvent) {
-                presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                        presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
-            }
-        }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
+            liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                    new ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent clickEvent) {
+                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                            presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
+                }
+            }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
         }
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -287,14 +285,16 @@ public class ShowHakukohdeTab extends CustomComponent {
             }
         }
         if (checkHaunAlkaminen()) {
-        valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent clickEvent) {
-                presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                        presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
-            }
-        }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
+            valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                    new ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent clickEvent) {
+                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                            presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
+                }
+            }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
         }
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
@@ -404,25 +404,25 @@ public class ShowHakukohdeTab extends CustomComponent {
     private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
         Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null, i18n.getMessage("liitaUusiKoulutusPainike"));
         if (checkHaunAlkaminen()) {
-        liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+            liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                addlKoulutusDialog = presenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
-                createButtonListenersForDialog();
-                addlKoulutusDialog.setWidth("700px");
-                addlKoulutusDialogWindow = new Window();
-                addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
-                addlKoulutusDialogWindow.setModal(true);
-                addlKoulutusDialogWindow.center();
-                addlKoulutusDialogWindow.setCaption(i18n.getMessage("liitaUusiKoulutusDialogTitle"));
-                getWindow().addWindow(addlKoulutusDialogWindow);
-            }
-        });
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    addlKoulutusDialog = presenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
+                    createButtonListenersForDialog();
+                    addlKoulutusDialog.setWidth("700px");
+                    addlKoulutusDialogWindow = new Window();
+                    addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
+                    addlKoulutusDialogWindow.setModal(true);
+                    addlKoulutusDialogWindow.center();
+                    addlKoulutusDialogWindow.setCaption(i18n.getMessage("liitaUusiKoulutusDialogTitle"));
+                    getWindow().addWindow(addlKoulutusDialogWindow);
+                }
+            });
 
-        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(getContext()));
-        verticalLayout.addComponent(liitaUusiKoulutusBtn);
+            liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(getContext()));
+            verticalLayout.addComponent(liitaUusiKoulutusBtn);
         }
     }
 
@@ -482,7 +482,6 @@ public class ShowHakukohdeTab extends CustomComponent {
             lisaNaytotRow.setAlinPistemaara(valintakoeV.getLpAlinPM());
             lisaNaytotRow.setYlinPistemaara(valintakoeV.getLpYlinPM());
             lisaNaytotRow.setAlinHyvaksyttyPistemaara(valintakoeV.getLpAlinHyvaksyttyPM());
-
             pisterajaRows.add(lisaNaytotRow);
 
             PisterajaRow kokonaisPisteet = new PisterajaRow();
@@ -508,13 +507,11 @@ public class ShowHakukohdeTab extends CustomComponent {
     private List<ShowHakukohdeKoulutusRow> getRows(List<KoulutusOidNameViewModel> koulutukses) {
         List<ShowHakukohdeKoulutusRow> rows = new ArrayList<ShowHakukohdeKoulutusRow>();
         for (KoulutusOidNameViewModel koulutus : koulutukses) {
-            ShowHakukohdeKoulutusRow row = new ShowHakukohdeKoulutusRow(koulutus,checkHaunAlkaminen());
+            ShowHakukohdeKoulutusRow row = new ShowHakukohdeKoulutusRow(koulutus, checkHaunAlkaminen());
             rows.add(row);
         }
         return rows;
     }
-
-
 
     private Label buildTallennettuLabel(Date date) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
@@ -526,21 +523,23 @@ public class ShowHakukohdeTab extends CustomComponent {
         VerticalLayout hdrLayout = new VerticalLayout();
         hdrLayout.setMargin(true);
         if (checkHaunAlkaminen()) {
-        hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent clickEvent) {
-                presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                        presenter.getModel().getHakukohde().getOid(), null, null);
-            }
-        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext())));
+            hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                    new ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent clickEvent) {
+                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                            presenter.getModel().getHakukohde().getOid(), null, null);
+                }
+            }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext())));
         }
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
         addItemToGrid(grid, "hakukohdeNimi", uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null));
         addItemToGrid(grid, "yhteishaunKoulutustunnus", uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo());
-        addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuOid()));
+        addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuViewModel()));
         addItemToGrid(grid, "hakuaika", presenter.getModel().getHakukohde().getHakuaika());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());

@@ -219,62 +219,7 @@ public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaMod
         for (KielikaannosViewModel kieli : model.getKuvaus()) {
             tarjontaAdminService.tallennaMetadata(kuvausRyhmaUri, category, kieli.getKielikoodi(), kieli.getNimi());
         }
-
-//        if (false) {
-//            KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kuvausRyhmaUri);
-//
-//            List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, false, SuhteenTyyppiType.SISALTYY);
-//
-//            if (koodiService != null && listKoodiByRelation != null) {
-//                Set<String> koodiUris = new HashSet<String>();
-//                //search all koodis related to descrption group
-//                for (KoodiType koodi : listKoodiByRelation) {
-//                    final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
-//
-//                    if (KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI.equals(koodistoUri)) {
-//                        koodiUris.add(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
-//                    }
-//                }
-//
-//                //update all Application Options with metadata description
-//                for (String koodiUri : koodiUris) {
-//                    HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
-//                    kysely.setNimiKoodiUri(koodiUri);
-//                    HaeHakukohteetVastausTyyppi haeHakukohteet = tarjontaPublicService.haeHakukohteet(kysely);
-//                    for (HaeHakukohteetVastausTyyppi.HakukohdeTulos result : haeHakukohteet.getHakukohdeTulos()) {
-//
-//                        HakukohdeListausTyyppi hakukohde = result.getHakukohde();
-//
-//                        if (hakukohde != null && hakukohde.getOid() != null) {
-//                            LueHakukohdeKyselyTyyppi lueHakukohdeKyselyTyyppi = new LueHakukohdeKyselyTyyppi();
-//                            lueHakukohdeKyselyTyyppi.setOid(hakukohde.getOid());
-//                            LueHakukohdeVastausTyyppi lueHakukohde = tarjontaPublicService.lueHakukohde(lueHakukohdeKyselyTyyppi);
-//                            HakukohdeTyyppi updateHakukohde = lueHakukohde.getHakukohde();
-//
-//                            if (updateHakukohde != null) {
-//                                if (MetaCategory.SORA_KUVAUS.equals(metaCategory)) {
-//                                    updateHakukohde.setSoraKuvausKoodiUri(kuvausRyhmaUri);
-//                                } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
-//                                    updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
-//                                }
-//
-//                                tarjontaAdminService.paivitaHakukohde(updateHakukohde);
-//                                if (LOG.isDebugEnabled()) {
-//                                    LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());
-//                                }
-//                            }
-//                        } else {
-//                            LOG.debug("Search result was missing data?");
-//
-//                        }
-//                    }
-//                }
-//            } else {
-//                LOG.warn("No koodisto relatios found!");
-//            }
-//        }
     }
-
     /**
      * Load selected metadata to valinta model.
      *

@@ -25,7 +25,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.vaadin.Oph;
@@ -142,20 +142,20 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbVuosi.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
-        kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
+        kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setCaption(T(I18N_KAUSI));
         kcKausi.setSizeUndefined();
         kcKausi.setWidth("200px");
         kcKausi.getField().setNullSelectionAllowed(false);
 
 //        //TODO: no application logic, only for Christmas demo
-//        kcHakutyyppi = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
+//        kcHakutyyppi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
 //        kcHakutyyppi.setCaption(T(I18N_HAKUTYYPPI));
 //        kcHakutyyppi.setReadOnly(true);
 //        kcHakutyyppi.setSizeUndefined();
 //
 //        //TODO: no application logic, only for Christmas demo
-//        kcKohdejoukko = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T(I18N_KOHDEJOUKKO + I18N_PROMPT));
+//        kcKohdejoukko = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T(I18N_KOHDEJOUKKO + I18N_PROMPT));
 //        kcKohdejoukko.setCaption(T(I18N_KOHDEJOUKKO));
 //        kcKohdejoukko.setReadOnly(true);
 //        kcKohdejoukko.setSizeUndefined();

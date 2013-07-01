@@ -32,7 +32,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -151,19 +151,19 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         // Init fields
         //
 
-        _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
         koulutuksenAlkamisvuosi.setSizeUndefined();
-        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
+        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
         _hakuKohdejoukko.setWidth("350px");//_hakuKohdejoukko.setSizeUndefined();
-        _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
+        _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
         _hakutapa.setWidth("350px");//.setSizeUndefined();
         _hakutapa.setImmediate(true);
         _hakutapa.addListener(new Property.ValueChangeListener() {

@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
+import static fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel.OPPIAINEET_MAX;
 
 /**
  *
@@ -60,10 +62,10 @@ public class HakukohdeViewModelToDTOConverter {
         User usr = UserFeature.get();
         hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
-        if (hakukohdevm.getHakuaika()!=null) {
-        	hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
+        if (hakukohdevm.getHakuaika() != null) {
+            hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
         }
-        
+
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
         if (hakukohdevm.getHakukohdeNimi() != null) {
@@ -72,7 +74,7 @@ public class HakukohdeViewModelToDTOConverter {
             throw new RuntimeException("Hakukohde koodisto koodi cannot be null!");
         }
 
-        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
+        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuViewModel().getHakuOid());
         hakukohde.setHakukohteenTila(hakukohdevm.getTila());
         if (hakukohdevm.getOid() == null) {
             try {
@@ -146,23 +148,24 @@ public class HakukohdeViewModelToDTOConverter {
         return haku;
     }
 
-    public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeTyyppi hakukohdeTyyppi) {
-        HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
+    public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeViewModel hakukohdeVM, HakukohdeTyyppi hakukohdeTyyppi) {
+        Preconditions.checkNotNull(hakukohdeVM, "HakukohdeViewModel object cannot be null.");
+        Preconditions.checkNotNull(hakukohdeTyyppi, "HakukohdeTyyppi object cannot be null.");
         hakukohdeVM.setVersion(hakukohdeTyyppi.getVersion());
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
         hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
-        
+
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
 
-        if (hakukohdeTyyppi.getSisaisetHakuajat()!=null) {
-        	hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
+        if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
+            hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
         }
-        
+
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());
-        hakukohdeVM.setHakuOid(haku);
+        hakukohdeVM.setHakuViewModel(haku);
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
         hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
@@ -189,18 +192,15 @@ public class HakukohdeViewModelToDTOConverter {
         }
         //painotettavat oppiaineet
         int visible = hakukohdeTyyppi.getPainotettavatOppiaineet() != null ? hakukohdeTyyppi.getPainotettavatOppiaineet().size() : 0;
-
         if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null) {
+            hakukohdeVM.getPainotettavat().clear();
             for (PainotettavaOppiaineTyyppi pot : hakukohdeTyyppi.getPainotettavatOppiaineet()) {
                 PainotettavaOppiaineViewModel painotettava = new PainotettavaOppiaineViewModel(pot.getOppiaine(),
                         pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste(), pot.getVersion());
                 hakukohdeVM.addPainotettavaOppiaine(painotettava);
             }
         }
-        visible = 3 - Math.min(3, visible);
-        for (int i = 0; i < visible; i++) {
-            hakukohdeVM.addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
-        }
+        hakukohdeVM.addPainotettavaOppiainees( HakukohdeViewModel.OPPIAINEET_MAX - Math.min(HakukohdeViewModel.OPPIAINEET_MAX, visible));
 
         //alin hyväksyttava keskiarvo
         if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo() != null) {

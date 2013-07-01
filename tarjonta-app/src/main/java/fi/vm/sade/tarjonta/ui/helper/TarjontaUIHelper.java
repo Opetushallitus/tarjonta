@@ -51,6 +51,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -130,7 +131,7 @@ public class TarjontaUIHelper {
      * {komoto.koulutus.[lukiolinjakoodi, koulutusohjelmakoodi]}* list.
      *
      * @param komotoOids
-     * @return collection of codes from KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI
+     * @return collection of codes from KoodistoURI.KOODISTO_HAKUKOHDE_URI
      * koodisto.
      */
     public Collection<KoodiType> getRelatedHakukohdeKoodisByKomotoOids(List<String> komotoOids) {
@@ -158,7 +159,7 @@ public class TarjontaUIHelper {
             }
         }
 
-        return getKoodistoRelationsForUris(sourceKoodiUris, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
+        return getKoodistoRelationsForUris(sourceKoodiUris, KoodistoURI.KOODISTO_HAKUKOHDE_URI);
     }
 
     /**
@@ -336,11 +337,11 @@ public class TarjontaUIHelper {
      */
     public Collection<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
         LOG.debug("getOlRelatedKoulutuskoodit({})", olTyyppiUris);
-        // return getKoodistoRelationsForUris(olTyyppiUris, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+        // return getKoodistoRelationsForUris(olTyyppiUris, KoodistoURI.KOODISTO_KOULUTUSASTE_URI, KoodistoURI.KOODISTO_TUTKINTO_URI);
 
         return getKoodistoRelationsForUris(olTyyppiUris,
-                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, false, SuhteenTyyppiType.SISALTYY),
-                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
+                new KoodistoRelationTraversal(KoodistoURI.KOODISTO_KOULUTUSASTE_URI, false, SuhteenTyyppiType.SISALTYY),
+                new KoodistoRelationTraversal(KoodistoURI.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
 
     /**
@@ -1053,13 +1054,13 @@ public class TarjontaUIHelper {
         LOG.debug("getKoulutusalaRelatedKoulutuskoodis({})", koulutusala);
 
         return getKoodistoRelations(koulutusala,
-                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
+                new KoodistoRelationTraversal(KoodistoURI.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
 
     public Collection<KoodiType> getKoulutusasteRelatedKoulutuskoodis(final Set<String> koulutusastes) {
         LOG.debug("getKoulutusasteRelatedKoulutuskoodis({})", koulutusastes);
         return getKoodistoRelationsForUris(koulutusastes,
-                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
+                new KoodistoRelationTraversal(KoodistoURI.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
     
      /**

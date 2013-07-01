@@ -313,8 +313,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     private void openHakukohdeView() {
         tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
-
-
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
     }

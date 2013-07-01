@@ -33,6 +33,7 @@
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-shared</artifactId>
             <version>${project.version}</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>

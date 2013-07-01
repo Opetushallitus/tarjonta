@@ -15,26 +15,22 @@ package fi.vm.sade.tarjonta.ui.model;/*
  * European Union Public Licence for more details.
  */
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * Created by: Tuomas Katva
- * Date: 23.1.2013
+ * Created by: Tuomas Katva Date: 23.1.2013
  */
 public class ValintakoeViewModel {
 
-   
-
     private String valintakoeTunniste;
-
     private String valintakoeTyyppi;
-
     private List<KielikaannosViewModel> sanallisetKuvaukset;
-
     private List<ValintakoeAikaViewModel> valintakoeAjat;
-
     private String pkAlinPM;
     private String pkYlinPM;
     private String pkAlinHyvaksyttyPM;
@@ -42,10 +38,8 @@ public class ValintakoeViewModel {
     private String lpYlinPM;
     private String lpAlinHyvaksyttyPM;
     private String kpAlinHyvaksyttyPM;
-
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
-    
     private List<KielikaannosViewModel> lisanayttoKuvaukset;
 
     public String getValintakoeTyyppi() {
@@ -66,7 +60,7 @@ public class ValintakoeViewModel {
     public void setSanallisetKuvaukset(List<KielikaannosViewModel> sanallisetKuvaukset) {
         this.sanallisetKuvaukset = sanallisetKuvaukset;
     }
-    
+
     public List<KielikaannosViewModel> getLisanayttoKuvaukset() {
         if (lisanayttoKuvaukset == null) {
             lisanayttoKuvaukset = new ArrayList<KielikaannosViewModel>();
@@ -97,31 +91,79 @@ public class ValintakoeViewModel {
         this.valintakoeTunniste = valintakoeTunniste;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        ValintakoeViewModel that = (ValintakoeViewModel) o;
+//
+//        if (valintakoeAjat != null ? !valintakoeAjat.equals(that.valintakoeAjat) : that.valintakoeAjat != null)
+//            return false;
+//        if (valintakoeTunniste != null ? !valintakoeTunniste.equals(that.valintakoeTunniste) : that.valintakoeTunniste != null)
+//            return false;
+//        if (valintakoeTyyppi != null ? !valintakoeTyyppi.equals(that.valintakoeTyyppi) : that.valintakoeTyyppi != null)
+//            return false;
+//
+//        return true;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = valintakoeTunniste != null ? valintakoeTunniste.hashCode() : 0;
+//        result = 31 * result + (valintakoeTyyppi != null ? valintakoeTyyppi.hashCode() : 0);
+//        result = 31 * result + (valintakoeAjat != null ? valintakoeAjat.hashCode() : 0);
+//        return result;
+//    }
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ValintakoeViewModel that = (ValintakoeViewModel) o;
-
-        if (valintakoeAjat != null ? !valintakoeAjat.equals(that.valintakoeAjat) : that.valintakoeAjat != null)
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
-        if (valintakoeTunniste != null ? !valintakoeTunniste.equals(that.valintakoeTunniste) : that.valintakoeTunniste != null)
-            return false;
-        if (valintakoeTyyppi != null ? !valintakoeTyyppi.equals(that.valintakoeTyyppi) : that.valintakoeTyyppi != null)
-            return false;
+        }
+        final ValintakoeViewModel other = (ValintakoeViewModel) obj;
 
-        return true;
+        EqualsBuilder eb = new EqualsBuilder();
+        eb.append(valintakoeTunniste, other.valintakoeTunniste);
+        eb.append(valintakoeTyyppi, other.valintakoeTyyppi);
+        eb.append(sanallisetKuvaukset, other.sanallisetKuvaukset);
+        eb.append(valintakoeAjat, other.valintakoeAjat);
+        eb.append(pkAlinPM, other.pkAlinPM);
+        eb.append(pkYlinPM, other.pkYlinPM);
+        eb.append(pkAlinHyvaksyttyPM, other.pkAlinHyvaksyttyPM);
+        eb.append(lpAlinPM, other.lpAlinPM);
+        eb.append(lpYlinPM, other.lpYlinPM);
+        eb.append(lpAlinHyvaksyttyPM, other.lpAlinHyvaksyttyPM);
+        eb.append(kpAlinHyvaksyttyPM, other.kpAlinHyvaksyttyPM);
+        eb.append(viimeisinPaivittaja, other.viimeisinPaivittaja);
+        eb.append(viimeisinPaivitysPvm, other.viimeisinPaivitysPvm);
+        eb.append(lisanayttoKuvaukset, other.lisanayttoKuvaukset);
+
+        return eb.isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = valintakoeTunniste != null ? valintakoeTunniste.hashCode() : 0;
-        result = 31 * result + (valintakoeTyyppi != null ? valintakoeTyyppi.hashCode() : 0);
-        result = 31 * result + (valintakoeAjat != null ? valintakoeAjat.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(valintakoeTunniste)
+                .append(valintakoeTyyppi)
+                .append(sanallisetKuvaukset)
+                .append(valintakoeAjat)
+                .append(pkAlinPM)
+                .append(pkYlinPM)
+                .append(pkAlinHyvaksyttyPM)
+                .append(lpAlinPM)
+                .append(lpYlinPM)
+                .append(lpAlinHyvaksyttyPM)
+                .append(kpAlinHyvaksyttyPM)
+                .append(viimeisinPaivittaja)
+                .append(viimeisinPaivitysPvm)
+                .append(lisanayttoKuvaukset)
+                .toHashCode();
     }
-    
+
     public String getPkAlinPM() {
         return pkAlinPM;
     }

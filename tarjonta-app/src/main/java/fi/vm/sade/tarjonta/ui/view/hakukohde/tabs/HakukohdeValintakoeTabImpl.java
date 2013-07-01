@@ -214,9 +214,16 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         return isLoaded();
     }
 
+    /**
+     * Form validation & save for lukio hakukohde exam points.
+     * 
+     * @param tila
+     * @param event
+     * @return
+     * @throws Exception 
+     */
     @Override
-    public String actionSave(SaveButtonState tila, ClickEvent event)
-            throws Exception {
+    public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
         if (formView.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             try {
                 errorView.resetErrors();

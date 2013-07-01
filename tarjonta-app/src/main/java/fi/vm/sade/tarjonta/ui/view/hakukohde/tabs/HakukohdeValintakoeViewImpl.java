@@ -19,7 +19,6 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
-import static com.vaadin.terminal.Sizeable.UNITS_EM;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Window.Notification;
 
@@ -30,7 +29,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
@@ -38,7 +37,6 @@ import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -58,6 +56,7 @@ import java.util.List;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class HakukohdeValintakoeViewImpl extends CustomComponent {
+    private static final long serialVersionUID = -3141387197879909448L;
 
     private transient I18NHelper i18n = new I18NHelper(this);
 
@@ -355,7 +354,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     }
 
     private KoodistoComponent buildValintakokeenTyyppi() {
-        valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_VALINTAKOE_TYYPPI_URI);
+        valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_VALINTAKOE_TYYPPI_URI);
         return valintakoeTyyppi;
     }
 

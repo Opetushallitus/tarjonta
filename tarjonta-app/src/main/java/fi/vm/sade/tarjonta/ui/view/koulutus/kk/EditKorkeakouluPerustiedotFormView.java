@@ -44,7 +44,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -318,7 +318,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
-        kcSuunniteltuKestoTyyppi = uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
+        kcSuunniteltuKestoTyyppi = uiBuilder.koodistoComboBox(hl, KoodistoURI.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
         kcSuunniteltuKestoTyyppi.setImmediate(true);
         kcSuunniteltuKestoTyyppi.setCaptionFormatter(koodiNimiFormatter);
 
@@ -328,7 +328,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcOpetusmuodos = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, true);
+        kcOpetusmuodos = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURI.KOODISTO_OPETUSMUOTO_URI, true);
         kcOpetusmuodos.setCaptionFormatter(koodiNimiFormatter);
         kcOpetusmuodos.setImmediate(true);
         addGridRowItems(grid, kcOpetusmuodos);
@@ -337,7 +337,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridTeematRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcTeemas = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_TEEMAT_URI, true);
+        kcTeemas = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURI.KOODISTO_TEEMAT_URI, true);
         kcTeemas.setCaptionFormatter(koodiNimiFormatter);
         kcTeemas.setImmediate(true);
         addGridRowItems(grid, kcTeemas);
@@ -346,7 +346,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridPohjakoulutusvaatimuksetRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcPohjakoulutusvaatimus = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
+        kcPohjakoulutusvaatimus = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
         kcPohjakoulutusvaatimus.setCaptionFormatter(koodiNimiFormatter);
         kcPohjakoulutusvaatimus.setImmediate(true);
         addGridRowItems(grid, kcPohjakoulutusvaatimus);
@@ -489,7 +489,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private void buildGridOpetuskieletRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
         final PropertysetItem psi = new BeanItem(tarjontaPresenter.getModel().getKorkeakouluPerustiedot());
-        opetuskielet = uiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "opetuskielis");
+        opetuskielet = uiBuilder.koodistoTokenField(null, KoodistoURI.KOODISTO_KIELI_URI, psi, "opetuskielis");
         opetuskielet.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override
             public String formatToken(Object selectedToken) {

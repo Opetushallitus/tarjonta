@@ -29,7 +29,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
@@ -182,7 +182,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private KoodistoComponent buildLiitteenTyyppiCombo() {
-        liitteenTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
+        liitteenTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_LIITTEEN_TYYPPI_URI);
 
         return liitteenTyyppi;
     }
@@ -218,7 +218,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         osoiteLayout.addComponent(osoiteRivi2, 0, 1, 1, 1);
 
-        postinumero = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
+        postinumero = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_POSTINUMERO_URI);
         osoiteLayout.addComponent(postinumero, 0, 2);
         postinumero.setSizeUndefined();
 

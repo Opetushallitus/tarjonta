@@ -69,7 +69,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-
         layout.removeAllComponents();
 
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
@@ -92,8 +91,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
            }
         }
         vl.addComponent(tabs);
-
-
     }
 
     public void showErrorMsg(String msg) {
@@ -215,8 +212,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     private boolean checkHaunAlkaminen() {
         tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
-        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getPaattymisPvm();
-        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
+        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
+        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         Date tanaan = new Date();
         if (tanaan.after(haunAlkamisPvm) && tanaan.before(haunPaattymisPvm)) {
             return false;

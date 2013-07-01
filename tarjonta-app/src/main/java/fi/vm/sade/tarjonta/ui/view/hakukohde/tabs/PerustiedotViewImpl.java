@@ -74,7 +74,8 @@ import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -117,7 +118,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 //    @PropertyId("tunnisteKoodi")
     private TextField tunnisteKoodiText;
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
-    @PropertyId("hakuOid")
+    @PropertyId("hakuViewModel")
     private ComboBox hakuCombo;
 
     private Label hakuAikaLabel;
@@ -250,7 +251,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         	if (presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
                 hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
         	}
-        	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), presenter.getModel().getHakukohde().getHakuOid(), true);
+        	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), presenter.getModel().getHakukohde().getHakuViewModel(), true);
 
         }
     }
@@ -358,7 +359,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void addOppiaine(final PainotettavaOppiaineViewModel painotettava) {
         final PropertysetItem psi = new BeanItem(painotettava);
         //TODO change koodisto to oppiaine
-        final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPIAINEET_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
+        final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_OPPIAINEET_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
@@ -637,7 +638,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         liitteidenOsoiteRivi2Text.setImmediate(true);
         osoiteLayout.addComponent(liitteidenOsoiteRivi2Text, 0, 1, 1, 1);
 
-        liitteidenPostinumeroText = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
+        liitteidenPostinumeroText = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_POSTINUMERO_URI);
         liitteidenPostinumeroText.setImmediate(true);
 
 
@@ -829,7 +830,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private ComboBox buildHaku() {
 
-        //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
+        //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUKOHDE_URI);
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(presenter.getModel().getHakukohde().getKomotoOids());
@@ -840,7 +841,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 && !presenter.getModel().getSelectedKoulutukset().isEmpty() 
                 && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getPohjakoulutusVaatimus();
-            Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
+            Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus,KoodistoURI.KOODISTO_HAKUKOHDE_URI,false, SuhteenTyyppiType.SISALTYY);
             hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
         }
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();

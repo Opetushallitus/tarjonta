@@ -7,25 +7,20 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 1L;
+    public transient static final int OPPIAINEET_MAX = 3;
     private Long version;
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
     private String oid;
     private String organisaatioOid;
     private String hakukohdeNimi;
     private String hakukohdeKoodistoNimi;
     private String tunnisteKoodi;
-    private HakuViewModel haku;
+    private HakuViewModel hakuViewModel; //selected haku
     private HakuaikaViewModel hakuaika;
     private int aloitusPaikat;
     private int valinnoissaKaytettavatPaikat;
@@ -45,14 +40,148 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<KoulutusOidNameViewModel> koulukses;
     private List<HakukohdeLiiteViewModel> liites;
     private List<ValintakoeViewModel> valintaKokees;
-    private List<PainotettavaOppiaineViewModel> painotettavat = Lists.newArrayList();
+    private List<PainotettavaOppiaineViewModel> painotettavat;
     private HakukohdeNameUriModel selectedHakukohdeNimi;
     private String alinHyvaksyttavaKeskiarvo;
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
 
+    public HakukohdeViewModel() {
+        super();
+        initialize();
+    }
 
+    public void clearModel() {
+        initialize();
+    }
 
+    private void initialize() {
+        setVersion(null);
+        setOid(null);
+        setOrganisaatioOid(null);
+        setHakukohdeNimi(null);
+        setHakukohdeKoodistoNimi(null);
+        setTunnisteKoodi(null);
+        setHakuaika(null);
+        setHakukelpoisuusVaatimus(null);
+        setSahkoinenToimitusSallittu(false);
+        setKaytaHaunPaattymisenAikaa(false);
+        setLiitteidenSahkoinenToimitusOsoite(null);
+        setLiitteidenToimitusPvm(null);
+        setOsoiteRivi1(null);
+        setOsoiteRivi2(null);
+        setPostinumero(null);
+        setPostitoimipaikka(null);
+        setKomotoOids(null);
+        setSelectedHakukohdeNimi(null);
+        setAlinHyvaksyttavaKeskiarvo(null);
+        setViimeisinPaivittaja(null);
+        setViimeisinPaivitysPvm(null);
+
+        /*
+         * Not null values.
+         */
+        setAloitusPaikat(0);
+        setValinnoissaKaytettavatPaikat(0);
+        setTila(TarjontaTila.LUONNOS);
+        setHakuViewModel(new HakuViewModel());
+        this.valintaPerusteidenKuvaus = Lists.<KielikaannosViewModel>newArrayList();
+        this.lisatiedot = Lists.<KielikaannosViewModel>newArrayList();
+        this.koulukses = Lists.<KoulutusOidNameViewModel>newArrayList();
+        this.liites = Lists.<HakukohdeLiiteViewModel>newArrayList();
+        this.valintaKokees = Lists.<ValintakoeViewModel>newArrayList();
+        this.painotettavat = Lists.<PainotettavaOppiaineViewModel>newArrayList();
+
+        addPainotettavaOppiainees(OPPIAINEET_MAX);
+    }
+
+    public void addPainotettavaOppiainees(int visibleObjects) {
+        for (int i = 0; i < visibleObjects; i++) {
+            addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        HakukohdeViewModel other = (HakukohdeViewModel) obj;
+
+        EqualsBuilder eb = new EqualsBuilder();
+        eb.append(version, other.version);
+        eb.append(oid, other.oid);
+        eb.append(organisaatioOid, other.organisaatioOid);
+        eb.append(hakukohdeNimi, other.hakukohdeNimi);
+        eb.append(hakukohdeKoodistoNimi, other.hakukohdeKoodistoNimi);
+        eb.append(tunnisteKoodi, other.tunnisteKoodi);
+        eb.append(hakuViewModel, other.hakuViewModel);
+        eb.append(hakuaika, other.hakuaika);
+        eb.append(aloitusPaikat, other.aloitusPaikat);
+        eb.append(valinnoissaKaytettavatPaikat, other.valinnoissaKaytettavatPaikat);
+        eb.append(tila, other.tila);
+        eb.append(hakukelpoisuusVaatimus, other.hakukelpoisuusVaatimus);
+        eb.append(sahkoinenToimitusSallittu, other.sahkoinenToimitusSallittu);
+        eb.append(kaytaHaunPaattymisenAikaa, other.kaytaHaunPaattymisenAikaa);
+        eb.append(liitteidenSahkoinenToimitusOsoite, other.liitteidenSahkoinenToimitusOsoite);
+        eb.append(liitteidenToimitusPvm, other.liitteidenToimitusPvm);
+        eb.append(osoiteRivi1, other.osoiteRivi1);
+        eb.append(osoiteRivi2, other.osoiteRivi2);
+        eb.append(postinumero, other.postinumero);
+        eb.append(postitoimipaikka, other.postitoimipaikka);
+        eb.append(valintaPerusteidenKuvaus, other.valintaPerusteidenKuvaus);
+        eb.append(lisatiedot, other.lisatiedot);
+        eb.append(komotoOids, other.komotoOids);
+        eb.append(koulukses, other.koulukses);
+        eb.append(liites, other.liites);
+        eb.append(valintaKokees, other.valintaKokees);
+        eb.append(painotettavat, other.painotettavat);
+        eb.append(selectedHakukohdeNimi, other.selectedHakukohdeNimi);
+        eb.append(alinHyvaksyttavaKeskiarvo, other.alinHyvaksyttavaKeskiarvo);
+        eb.append(viimeisinPaivittaja, other.viimeisinPaivittaja);
+        eb.append(viimeisinPaivitysPvm, other.viimeisinPaivitysPvm);
+        return eb.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(version)
+                .append(oid)
+                .append(organisaatioOid)
+                .append(hakukohdeNimi)
+                .append(hakukohdeKoodistoNimi)
+                .append(tunnisteKoodi)
+                .append(hakuViewModel)
+                .append(hakuaika)
+                .append(aloitusPaikat)
+                .append(valinnoissaKaytettavatPaikat)
+                .append(tila)
+                .append(hakukelpoisuusVaatimus)
+                .append(sahkoinenToimitusSallittu)
+                .append(kaytaHaunPaattymisenAikaa)
+                .append(liitteidenSahkoinenToimitusOsoite)
+                .append(liitteidenToimitusPvm)
+                .append(osoiteRivi1)
+                .append(osoiteRivi2)
+                .append(postinumero)
+                .append(postitoimipaikka)
+                .append(valintaPerusteidenKuvaus)
+                .append(lisatiedot)
+                .append(komotoOids)
+                .append(koulukses)
+                .append(liites)
+                .append(valintaKokees)
+                .append(painotettavat)
+                .append(selectedHakukohdeNimi)
+                .append(alinHyvaksyttavaKeskiarvo)
+                .append(viimeisinPaivittaja)
+                .append(viimeisinPaivitysPvm)
+                .toHashCode();
+    }
 
     public List<PainotettavaOppiaineViewModel> getPainotettavat() {
         return painotettavat;
@@ -64,10 +193,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public String getAlinHyvaksyttavaKeskiarvo() {
         return alinHyvaksyttavaKeskiarvo;
-    }
-
-    public HakukohdeViewModel() {
-        super();
     }
 
     public HakukohdeViewModel(String hakukohdeNimi, String organisaatioOid) {
@@ -105,26 +230,26 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     }
 
     /**
-     * @return the hakuOid
+     * @return the hakuViewModel
      */
-    public HakuViewModel getHakuOid() {
-        return haku;
+    public HakuViewModel getHakuViewModel() {
+        return hakuViewModel;
     }
 
     /**
-     * @param hakuOid the hakuOid to set
+     * @param hakuViewModel the hakuViewModel to set
      */
-    public void setHakuOid(HakuViewModel hakuOid) {
-        this.haku = hakuOid;
+    public void setHakuViewModel(HakuViewModel hakuViewModel) {
+        this.hakuViewModel = hakuViewModel;
     }
-    
+
     public HakuaikaViewModel getHakuaika() {
-		return hakuaika;
-	}
-    
+        return hakuaika;
+    }
+
     public void setHakuaika(HakuaikaViewModel hakuaika) {
-		this.hakuaika = hakuaika;
-	}
+        this.hakuaika = hakuaika;
+    }
 
     /**
      * @return the aloitusPaikat
@@ -362,20 +487,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
     }
 
-    /**
-     * Create new (empty) model
-     */
-    public static HakukohdeViewModel create() {
-        final HakukohdeViewModel model = new HakukohdeViewModel();
-        for(int i=0;i<3;i++) {
-            model.addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
-        }
-
-        
-        return model;
-    }
-
-
     public String getViimeisinPaivittaja() {
         return viimeisinPaivittaja;
     }
@@ -392,5 +503,11 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
     }
 
+    public Long getVersion() {
+        return version;
+    }
 
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }

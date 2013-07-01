@@ -33,7 +33,7 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
@@ -120,7 +120,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         comboBox.setNullSelectionAllowed(false);
         comboBox.setCaption(T("koulutusala.caption"));
 
-        kcKoulutusalas = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI, T("koulutusala.prompt"), comboBox, true);
+        kcKoulutusalas = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_KOULUTUSALA_URI, T("koulutusala.prompt"), comboBox, true);
         kcKoulutusalas.setImmediate(true);
         kcKoulutusalas.setCaptionFormatter(koodiNimiFormatter);
         addHL(kcKoulutusalas);

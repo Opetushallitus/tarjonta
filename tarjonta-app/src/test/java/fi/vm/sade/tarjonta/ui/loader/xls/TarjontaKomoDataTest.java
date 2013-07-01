@@ -34,8 +34,8 @@ import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.ExcelMigrationDTO;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
@@ -94,15 +94,15 @@ public class TarjontaKomoDataTest {
         dataReader.getData().clear(); //remove all items
         dataReader.getData().add(find); //add only item
 
-        KoodistoURIHelper.KOODISTO_TUTKINTO_URI = "uri_tutkinto";
-        KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI = "uri_koulutusohjelma";
-        KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI = "uri_koulutusaste";
-        KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI = "uri_koulutusala";
-        KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI = "uri_tutkintonimike";
-        KoodistoURIHelper.KOODISTO_OPINTOALA_URI = "uri_opintoala";
-        KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = "uri_laajuusyksikko";
-        KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI = "uri_lukiolinja";
-        KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI = "uri_oppilaitostyyppi";
+        KoodistoURI.KOODISTO_TUTKINTO_URI = "uri_tutkinto";
+        KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI = "uri_koulutusohjelma";
+        KoodistoURI.KOODISTO_KOULUTUSASTE_URI = "uri_koulutusaste";
+        KoodistoURI.KOODISTO_KOULUTUSALA_URI = "uri_koulutusala";
+        KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI = "uri_tutkintonimike";
+        KoodistoURI.KOODISTO_OPINTOALA_URI = "uri_opintoala";
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = "uri_laajuusyksikko";
+        KoodistoURI.KOODISTO_LUKIOLINJA_URI = "uri_lukiolinja";
+        KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI = "uri_oppilaitostyyppi";
 
         List<String> readLines = FileUtils.readLines(FileUtils.getFile("src", "test", "resources", "test_resource_koodis.csv"), "UTF8");
         Map<String, KoodiType> map = new HashMap<String, KoodiType>();

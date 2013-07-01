@@ -72,7 +72,6 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private String selectedKoulutusOid;
     public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
-
     private List<KoulutusOidNameViewModel> hakukohdeTitleKoulutukses;
     private boolean selectedHakuStarted = false;
 
@@ -247,8 +246,9 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public HakukohdeViewModel getHakukohde() {
         if (hakukohde == null) {
-            hakukohde = HakukohdeViewModel.create();
+            hakukohde = new HakukohdeViewModel();
         }
+
         return hakukohde;
     }
 

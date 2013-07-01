@@ -19,7 +19,7 @@ import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -75,7 +75,7 @@ public class SelectPohjakoulutusVaatimusDialog extends Window {
     private VerticalLayout buildPkVaatimusLayout() {
         VerticalLayout layout = new VerticalLayout();
 
-        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
         layout.addComponent(kcPohjakoulutusvaatimus);
         layout.setComponentAlignment(kcPohjakoulutusvaatimus, Alignment.MIDDLE_CENTER);
 
@@ -114,7 +114,7 @@ public class SelectPohjakoulutusVaatimusDialog extends Window {
     }
 
     private KoodistoComponent buildKoodistoCombobox(String koodistoUri) {
-        return uiBuilder.koodistoComboBox(null, koodistoUri, null);//KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE,null);
+        return uiBuilder.koodistoComboBox(null, koodistoUri, null);//KoodistoURI.KOODISTO_TARJONTA_KOULUTUSASTE,null);
     }
 
 

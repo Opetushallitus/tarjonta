@@ -18,9 +18,8 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;/*
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +87,7 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
 
             Label caption = new Label(_i18n.getMessage("valitsePohjakoulutus"));
             pkVaatimusLayout.addComponent(caption);
-            kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+            kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
 
             pkVaatimusLayout.addComponent(kcPohjakoulutusvaatimus);
 
@@ -159,6 +158,6 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
     }
 
     private KoodistoComponent buildKoodistoCombobox(String koodistoUri) {
-        return uiBuilder.koodistoComboBox(null, koodistoUri, null);//KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE,null);
+        return uiBuilder.koodistoComboBox(null, koodistoUri, null);//KoodistoURI.KOODISTO_TARJONTA_KOULUTUSASTE,null);
     }
 }
