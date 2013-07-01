@@ -549,6 +549,8 @@ public class TestTarjontaSavu {
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
+        	if (! doit.isPresentText(driver, "julkaistu"))
+        	{
         	t01 = doit.millis();
         	doit.textClick(driver, "muokkaa");
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
@@ -625,15 +627,14 @@ public class TestTarjontaSavu {
         		doit.textClick(driver, "Peruuta");
         		doit.tauko(1);
         	}
-
-        	// HAKUKOHTEEN POISTO
-        	t01 = doit.millis();
         	doit.textClick(driver, "Hakukohteen perustiedot");
         	doit.tauko(1);
+        	}
+
+        	// HAKUKOHTEEN POISTO
         	driver.findElement(By.className("v-button-back")).click();
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
         			, doit.textElement(driver, "Hakukohteet ("));
-        	t01 = doit.millisDiff(t01);
         	doit.getTriangleForLastHakukohde(driver).click();
         	doit.tauko(1);
         	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
