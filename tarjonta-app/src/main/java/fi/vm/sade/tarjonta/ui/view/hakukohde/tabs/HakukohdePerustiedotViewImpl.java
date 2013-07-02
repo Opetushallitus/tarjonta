@@ -33,25 +33,21 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 
 /**
  * Created by: Tuomas Katva Date: 15.1.2013
+ *
  * @author Timo Santasalo / Teknokala Ky
  */
 @Configurable(preConstruction = true)
 public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Autowired(required = true)
+    private static final long serialVersionUID = 1L;
+    @Autowired(required = true)
     private TarjontaPresenter presenter;
-    @Autowired
-    private TarjontaUIHelper tarjontaUIHelper;
     private PerustiedotViewImpl formView;
 
     public HakukohdePerustiedotViewImpl(String oid) {
@@ -64,7 +60,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
         formView = new PerustiedotViewImpl(presenter, getUiBuilder());
-        buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
+        buildFormLayout(presenter, layout, presenter.getModel().getHakukohde(), formView);
     }
 
     @Override
@@ -75,7 +71,6 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public void actionNext(ClickEvent event) {
-
         if (getHakukohdeOid() != null) {
             presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
@@ -88,47 +83,37 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
-        
-        
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
         hakukohde.setHakuaika(formView.getSelectedHakuaika());
         if (!formView.isSahkoinenToimOsoiteChecked()) {
-           hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
+            hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
         }
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
         // formView.validateExtraData();
-
-        HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
-        hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
-
-        for(TextField tf: formView.getPainotettavat()){
+        for (TextField tf : formView.getPainotettavat()) {
             tf.validate();
         }
         Set<Object> usedOppiaineet = Sets.newHashSet();
         GridLayout painotettavat = formView.getPainotettavatOppiaineet();
         if (painotettavat != null) {
-        for(int i=0;i<painotettavat.getRows();i++){
-            Object component = painotettavat.getComponent(0, i);
-            if(component instanceof KoodistoComponent) {
-                Object oppiaine = ((KoodistoComponent)component).getValue();
-                if(oppiaine!=null) {
-                    if(usedOppiaineet.contains(oppiaine)) {
-                        throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+            for (int i = 0; i < painotettavat.getRows(); i++) {
+                Object component = painotettavat.getComponent(0, i);
+                if (component instanceof KoodistoComponent) {
+                    Object oppiaine = ((KoodistoComponent) component).getValue();
+                    if (oppiaine != null) {
+                        if (usedOppiaineet.contains(oppiaine)) {
+                            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+                        }
+                        usedOppiaineet.add(oppiaine);
                     }
-                    usedOppiaineet.add(oppiaine);
                 }
             }
         }
-        }
-        
+
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
-    }
-
-    private String getUriWithVersion(HakukohdeNameUriModel hakukohdeNameUriModel) {
-        return hakukohdeNameUriModel.getHakukohdeUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + hakukohdeNameUriModel.getUriVersio();
     }
 
     private String getHakukohdeOid() {

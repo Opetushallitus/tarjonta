@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel, VIEW extends AbstractLayout> extends AbstractVerticalNavigationLayout {
     
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSimpleEditLayoutView.class);
+    private static final long serialVersionUID = -8560356865522997778L;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)

@@ -16,12 +16,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import javax.jws.WebParam;
 
@@ -39,7 +38,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Kieliaine;
@@ -76,7 +74,6 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
@@ -341,101 +338,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
         HaeHakukohteetVastausTyyppi vastaus = this.searchService.haeHakukohteet(kysely);
-//        if (vastaus != null && vastaus.getHakukohdeTulos() != null) {
-//            for (HakukohdeTulos tulos : vastaus.getHakukohdeTulos()) {
-//                HaeKoulutuksetKyselyTyyppi koulutusKysely = new HaeKoulutuksetKyselyTyyppi();
-//                koulutusKysely.getHakukohdeOids().add(tulos.getHakukohde().getOid());
-//                HaeKoulutuksetVastausTyyppi koulutusVastaus = searchService.haeKoulutukset(koulutusKysely);
-//                log.info("GOT KOULUTUS : {0}", koulutusVastaus.getKoulutusTulos());
-//                if (koulutusVastaus != null && koulutusVastaus.getKoulutusTulos() != null && koulutusVastaus.getKoulutusTulos().size() > 0) {
-//                    log.info("GETTING KOULUTUSLAJI : {0}", koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
-//                    //Get the first koulutuslaji because hakukohde should not have koulutukses with other koulutuslajis attached to it.
-//                    tulos.getHakukohde().setHakukohteenKoulutuslaji(koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
-//                }
-//            }
-//        }
         return vastaus;
-
-        //return new HaeHakukohteetVastausTyyppi();
-        /*
-         List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
-         HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
-
-         List<HaeHakukohteetVastausTyyppi.HakukohdeTulos> rivit = vastaus.getHakukohdeTulos();
-
-         for (Hakukohde hakukohdeModel : hakukohteet) {
-
-         HakukohdeTulos tulos = new HakukohdeTulos();
-
-         HakukohdeKoosteTyyppi hakukohde = new HakukohdeKoosteTyyppi();
-         HakuKoosteTyyppi haku = new HakuKoosteTyyppi();
-         KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
-
-         hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
-         hakukohde.setTila(EntityUtils.convertTila(hakukohdeModel.getTila()));
-         hakukohde.setAloituspaikat((hakukohdeModel.getAloituspaikatLkm() != null) ? hakukohdeModel.getAloituspaikatLkm().toString() : "" + 0);
-         hakukohde.setOid(hakukohdeModel.getOid());
-
-         Haku hakuModel = hakukohdeModel.getHaku();
-         haku.setNimi(hakuModel.getNimiFi());
-         haku.setHakutapa(hakuModel.getHakutapaUri());
-         haku.setOid(hakuModel.getOid());
-         haku.setHakukausiUri(hakuModel.getHakukausiUri());
-         haku.setHakuvuosi(hakuModel.getHakukausiVuosi().toString());
-         haku.setKoulutuksenAlkamiskausiUri(hakuModel.getKoulutuksenAlkamiskausiUri());
-         haku.setKoulutuksenAlkamisvuosi(hakuModel.getKoulutuksenAlkamisVuosi().toString());
-         haku.setHakuAlkamisPvm(getStartDate(hakukohdeModel.getHaku().getHakuaikas()));
-         haku.setHakuPaattymisPvm(getEndDate(hakukohdeModel.getHaku().getHakuaikas()));
-
-         KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
-         koulutus.setTarjoaja(toteutus.getTarjoaja());
-
-
-         tulos.setHakukohde(hakukohde);
-         tulos.setHaku(haku);
-         tulos.setKoulutus(koulutus);
-         rivit.add(tulos);
-            
-
-         }
-
-         return vastaus;*/
-
-    }
-
-    private Date getStartDate(Set<Hakuaika> hakuaikas) {
-        Date startDate = null;
-        for (Hakuaika aika : hakuaikas) {
-            if (startDate == null) {
-                startDate = aika.getAlkamisPvm();
-            } else if (aika.getAlkamisPvm().before(startDate)) {
-                startDate = aika.getAlkamisPvm();
-            }
-        }
-        return startDate;
-    }
-
-    private Date getEndDate(Set<Hakuaika> hakuaikas) {
-        Date endDate = null;
-        for (Hakuaika aika : hakuaikas) {
-            if (endDate == null) {
-                endDate = aika.getPaattymisPvm();
-            } else if (aika.getPaattymisPvm().after(endDate)) {
-                endDate = aika.getPaattymisPvm();
-            }
-        }
-        return endDate;
     }
 
     @Override
     public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
-        /* Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
-         List<KoulutusmoduuliToteutus> komotos = new ArrayList<KoulutusmoduuliToteutus>();
-         if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
-         komotos.addAll(hakukohde.getKoulutusmoduuliToteutuses());
-         }*/
-
-
         HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setOid(hakukohdeKysely.getHakukohdeOid());
 
@@ -471,57 +378,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     }
 
-    private List<KoulutusKoosteTyyppi> mapKomotoListToKoulutusKoosteTyyppiList(List<KoulutusmoduuliToteutus> komotos) {
-        List<KoulutusKoosteTyyppi> koulutusKoostees = new ArrayList<KoulutusKoosteTyyppi>();
-        for (KoulutusmoduuliToteutus komoto : komotos) {
-            koulutusKoostees.add(getKoulutusTulosFromKoulutusmoduuliToteutus(komoto));
-        }
-        return koulutusKoostees;
-    }
-
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-
         return this.searchService.haeKoulutukset(kysely);
-        /*
-         //If a list of oids is provided the komotos matching those oids are returned
-         if (kysely.getKoulutusOids() != null && kysely.getKoulutusOids().size() > 0) {
-         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
-
-         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(kysely.getKoulutusOids());
-         vastaus.getKoulutusTulos().addAll(mapKomotoListToKoulutusTulosList(komotos));
-         return vastaus;
-         //If the search specifies a koulutuskoodi and tarjoaja, the komoto matching those is returned.
-         } else if (kysely.getKoulutusKoodi() != null && kysely.getTarjoajaOids() != null && !kysely.getTarjoajaOids().isEmpty()) {
-         Koulutusmoduuli tutkintoKomo = this.koulutusmoduuliDAO.findTutkintoOhjelma(kysely.getKoulutusKoodi(), null);
-         log.debug("TutkintoKomo: {}", (tutkintoKomo != null) ? tutkintoKomo.getOid() : null);
-         List<KoulutusmoduuliToteutus> komotoRes = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(tutkintoKomo, kysely.getTarjoajaOids().get(0));
-         log.debug("komotoRes size: {}", (komotoRes != null) ? komotoRes.size() : 0);
-         KoulutusmoduuliToteutus komoto = (komotoRes != null && !komotoRes.isEmpty()) ? komotoRes.get(0) : null;
-         log.debug("TutkintoKomoto: {}", (komoto != null) ? komoto.getOid() : null);
-         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
-         if (komoto != null) {
-         KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-         vastaus.getKoulutusTulos().add(tulos);
-         }
-         return vastaus;
-         } else {
-         //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
-         int koulutusAlkuvuosi = kysely.getKoulutuksenAlkamisvuosi() != null ? kysely.getKoulutuksenAlkamisvuosi().intValue() : -1;
-
-         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi(), koulutusAlkuvuosi, getAlkuKuukaudet(kysely.getKoulutuksenAlkamiskausi()));
-
-         //Creating the answer type
-         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
-
-         //Populating the answer with required data
-         for (KoulutusmoduuliToteutus komoto : komotos) {
-
-         KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-         vastaus.getKoulutusTulos().add(tulos);
-         }
-         return vastaus;
-         }*/
     }
 
     private List<Integer> getAlkuKuukaudet(String kausi) {
@@ -545,38 +404,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return kuukaudet;
     }
 
-    private KoulutusKoosteTyyppi getKoulutusTulosFromKoulutusmoduuliToteutus(KoulutusmoduuliToteutus komoto) {
-        //KoulutusTulos tulos = new KoulutusTulos();
-        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-
-        KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
-        koulutusKooste.setTarjoaja(komoto.getTarjoaja());
-        koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi()));
-        koulutusKooste.setTila(EntityUtils.convertTila(komoto.getTila()));
-        koulutusKooste.setKoulutusmoduuli((komo != null) ? komo.getOid() : null);
-        koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
-        koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
-        koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
-        koulutusKooste.setPohjakoulutusVaatimus(komoto.getPohjakoulutusvaatimus());
-        koulutusKooste.setAjankohta(parseAjankohtaString(komoto.getKoulutuksenAlkamisPvm()));
-        koulutusKooste.setKomotoOid(komoto.getOid());
-        koulutusKooste.setTutkintonimike((komo != null) ? komo.getTutkintonimike() : null);
-        koulutusKooste.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
-        koulutusKooste.setLukiolinjakoodi(komo.getLukiolinja());
-        //tulos.setKoulutus(koulutusKooste);
-        return koulutusKooste;
-    }
-
-    private String parseAjankohtaString(Date koulutuksenAlkamisPvm) {
-        if (koulutuksenAlkamisPvm == null) {
-            return null;
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(koulutuksenAlkamisPvm);
-        String pvmStr = cal.get(Calendar.MONTH) < 7 ? KEVAT : SYKSY;
-        return pvmStr + " " + cal.get(Calendar.YEAR);
-    }
-
+    @Override
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
         //long t = System.currentTimeMillis();
         log.debug("in LueKoulutusVastausTyyppi");
@@ -731,12 +559,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
-        //long t = System.currentTimeMillis();
-//		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
+        Preconditions.checkNotNull(kysely, "LueHakukohdeKyselyTyyppi object cannot be null.");
+        Preconditions.checkNotNull(kysely.getOid(), "Hakukohde OID cannot be null.");
+
+        
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(kysely.getOid());
         HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
         if (hakukohde.getHaku() != null) {
-
             hakukohdeTyyppi.setHakukohteenHaunNimi(mapMonikielinenTekstiToTyyppi(hakukohde.getHaku().getNimi()));
         }
 

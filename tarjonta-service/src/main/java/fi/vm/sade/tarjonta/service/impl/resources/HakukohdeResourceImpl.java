@@ -196,7 +196,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return result;
     }
 
-    private String resolveDateToKausiUri(Date d) {
+    private String resolveDateToKausiUri(final Date d) {
         if (d == null) {
             return null;
         }
@@ -209,13 +209,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         if (cal.get(Calendar.MONTH) < 6) {
             return "kausi_k";
         } else {
-            return "kaus_s";
+            return "kausi_s";
         }
     }
 
-    private int resolveDateToYear(Date d) {
-        LOG.warn("resolveDateToKausiUri({}) -- NOT IMPLEMENTED", d);
-
+    private int resolveDateToYear(final Date d) {
         if (d == null) {
             return -1;
         }

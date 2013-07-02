@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -17,7 +18,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private Long version;
     private String oid;
     private String organisaatioOid;
-    private String hakukohdeNimi;
     private String hakukohdeKoodistoNimi;
     private String tunnisteKoodi;
     private HakuViewModel hakuViewModel; //selected haku
@@ -41,11 +41,12 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<HakukohdeLiiteViewModel> liites;
     private List<ValintakoeViewModel> valintaKokees;
     private List<PainotettavaOppiaineViewModel> painotettavat;
-    private HakukohdeNameUriModel selectedHakukohdeNimi;
+    private HakukohdeNameUriModel selectedHakukohdeNimi; //combobox
     private String alinHyvaksyttavaKeskiarvo;
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
-
+    private KoulutusasteTyyppi koulutusasteTyyppi;
+    
     public HakukohdeViewModel() {
         super();
         initialize();
@@ -59,7 +60,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         setVersion(null);
         setOid(null);
         setOrganisaatioOid(null);
-        setHakukohdeNimi(null);
         setHakukohdeKoodistoNimi(null);
         setTunnisteKoodi(null);
         setHakuaika(null);
@@ -115,7 +115,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         eb.append(version, other.version);
         eb.append(oid, other.oid);
         eb.append(organisaatioOid, other.organisaatioOid);
-        eb.append(hakukohdeNimi, other.hakukohdeNimi);
         eb.append(hakukohdeKoodistoNimi, other.hakukohdeKoodistoNimi);
         eb.append(tunnisteKoodi, other.tunnisteKoodi);
         eb.append(hakuViewModel, other.hakuViewModel);
@@ -152,7 +151,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
                 .append(version)
                 .append(oid)
                 .append(organisaatioOid)
-                .append(hakukohdeNimi)
                 .append(hakukohdeKoodistoNimi)
                 .append(tunnisteKoodi)
                 .append(hakuViewModel)
@@ -197,7 +195,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public HakukohdeViewModel(String hakukohdeNimi, String organisaatioOid) {
         super();
-        this.hakukohdeNimi = hakukohdeNimi;
         this.organisaatioOid = organisaatioOid;
     }
 
@@ -205,14 +202,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
      * @return the hakukohdeNimi
      */
     public String getHakukohdeNimi() {
-        return hakukohdeNimi;
-    }
-
-    /**
-     * @param hakukohdeNimi the hakukohdeNimi to set
-     */
-    public void setHakukohdeNimi(String hakukohdeNimi) {
-        this.hakukohdeNimi = hakukohdeNimi;
+        return selectedHakukohdeNimi.getKoodiUriWithVersion();
     }
 
     /**
@@ -509,5 +499,19 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
     }
 }

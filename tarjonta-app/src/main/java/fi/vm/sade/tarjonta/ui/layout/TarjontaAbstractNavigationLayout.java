@@ -35,6 +35,7 @@ import java.util.Set;
 public abstract class TarjontaAbstractNavigationLayout <ABSTRACT_LAYOUT extends AbstractLayout> extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaAbstractNavigationLayout.class);
+    private static final long serialVersionUID = -5561020680485740912L;
     private HorizontalLayout hlTopButtons = UiUtil.horizontalLayout(true, UiMarginEnum.NONE, UiConstant.DEFAULT_RELATIVE_SIZE, "40px");
     private VerticalLayout topInfoLayout = null;
     private ABSTRACT_LAYOUT layout;

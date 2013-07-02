@@ -290,7 +290,7 @@ public final class EntityUtils {
          * Required type data:
          */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
-        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
+        tyyppi.setKoulutustyyppi(KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi()));
 
         /*
          * OID and other keys:
@@ -634,5 +634,9 @@ public final class EntityUtils {
 
     public static KoulutusmoduuliKoosteTyyppi convertToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
         return parentKomo != null ? EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo) : EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo);
+    }
+    
+    public static KoulutusasteTyyppi KoulutusTyyppiStrToKoulutusAsteTyyppi(String koulutustyyppi){
+        return KoulutusasteTyyppi.fromValue(koulutustyyppi);
     }
 }

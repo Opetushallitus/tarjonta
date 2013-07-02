@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditValintakuvausView.class);
+    private static final long serialVersionUID = 7150512914130889822L;
     private transient UiBuilder uiBuilder;
     private MetaCategory category;
     private ValintaperustekuvausPresenter presenter;

@@ -1,4 +1,9 @@
-package fi.vm.sade.tarjonta.ui.model;/*
+package fi.vm.sade.tarjonta.ui.model;
+
+import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+
+/*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
@@ -14,21 +19,15 @@ package fi.vm.sade.tarjonta.ui.model;/*
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 /**
- * @author: Tuomas Katva
- * Date: 18.2.2013
+ * @author: Tuomas Katva Date: 18.2.2013
  */
 public class HakukohdeNameUriModel {
 
     private String hakukohdeNimi;
-
     private String hakukohdeUri;
-
     private String hakukohdeArvo;
-
     private Integer uriVersio;
-
 
     public String getHakukohdeNimi() {
         return hakukohdeNimi;
@@ -67,19 +66,35 @@ public class HakukohdeNameUriModel {
         this.uriVersio = uriVersio;
     }
 
+    public String getKoodiUriWithVersion() {
+        Preconditions.checkNotNull(this.getHakukohdeUri(), "Hakukohde koodi URI cannot be null.");
+        Preconditions.checkNotNull(this.getUriVersio(), "Hakukohde koodi version cannot be null.");
+        return TarjontaUIHelper.createVersionUri(this.getHakukohdeUri(), this.getUriVersio());
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         HakukohdeNameUriModel that = (HakukohdeNameUriModel) o;
 
-        if (hakukohdeArvo != null ? !hakukohdeArvo.equals(that.hakukohdeArvo) : that.hakukohdeArvo != null)
+        if (hakukohdeArvo != null ? !hakukohdeArvo.equals(that.hakukohdeArvo) : that.hakukohdeArvo != null) {
             return false;
-        if (hakukohdeNimi != null ? !hakukohdeNimi.equals(that.hakukohdeNimi) : that.hakukohdeNimi != null)
+        }
+        if (hakukohdeNimi != null ? !hakukohdeNimi.equals(that.hakukohdeNimi) : that.hakukohdeNimi != null) {
             return false;
-        if (hakukohdeUri != null ? !hakukohdeUri.equals(that.hakukohdeUri) : that.hakukohdeUri != null) return false;
-        if (uriVersio != null ? !uriVersio.equals(that.uriVersio) : that.uriVersio != null) return false;
+        }
+        if (hakukohdeUri != null ? !hakukohdeUri.equals(that.hakukohdeUri) : that.hakukohdeUri != null) {
+            return false;
+        }
+        if (uriVersio != null ? !uriVersio.equals(that.uriVersio) : that.uriVersio != null) {
+            return false;
+        }
 
         return true;
     }

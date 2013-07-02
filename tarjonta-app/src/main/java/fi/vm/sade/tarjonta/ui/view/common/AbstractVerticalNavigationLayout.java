@@ -20,7 +20,6 @@ import com.vaadin.ui.VerticalLayout;
 //import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.layout.TarjontaAbstractNavigationLayout;
-import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 
 /**
  *

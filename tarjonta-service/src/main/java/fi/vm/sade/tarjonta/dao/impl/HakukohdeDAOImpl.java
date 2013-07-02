@@ -135,6 +135,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     }
 
+    @Override
     public Hakukohde findHakukohdeByOid(String oid) {
     	return (Hakukohde) getEntityManager().createQuery("FROM "+Hakukohde.class.getName()+" WHERE oid=?")
     			.setParameter(1, oid)

@@ -60,8 +60,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
     private Window confirmationWindow;
+    private @Value("${koodisto.suomi.uri:suomi}")
+    String suomiUri;
 
-    private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
         LOG.debug(this.getClass().getName() + "()");
@@ -80,15 +81,15 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         //Build the layout
 
         //XXX oid not set
-        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
+        addNavigationButtons(OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
         Set<String> allLangs = getAllKielet();
         final TabSheet tabs = new TabSheet();
-        for (String lang:allLangs) {
-           ShowHakukohdeTab hakukohdeTab = new ShowHakukohdeTab(lang);
-           tabs.addTab(hakukohdeTab, tarjontaUIHelper.getKoodiNimi(lang));
-           if (lang.trim().equalsIgnoreCase(suomiUri)) {
-               tabs.setSelectedTab(hakukohdeTab);
-           }
+        for (String lang : allLangs) {
+            ShowHakukohdeTab hakukohdeTab = new ShowHakukohdeTab(lang);
+            tabs.addTab(hakukohdeTab, tarjontaUIHelper.getKoodiNimi(lang));
+            if (lang.trim().equalsIgnoreCase(suomiUri)) {
+                tabs.setSelectedTab(hakukohdeTab);
+            }
         }
         vl.addComponent(tabs);
     }
@@ -104,15 +105,14 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             kielet.add(kieli.getKielikoodi());
         }
         List<KielikaannosViewModel> valintakoeKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getValintaPerusteidenKuvaus();
-        for (KielikaannosViewModel kieli:valintakoeKielet) {
+        for (KielikaannosViewModel kieli : valintakoeKielet) {
             kielet.add(kieli.getKielikoodi());
         }
 
         return kielet;
     }
 
-
-    private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
+    private void addNavigationButtons(OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -137,13 +137,13 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         /*Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
         poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context));
@@ -160,11 +160,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 getWindow().removeWindow(confirmationWindow);
                 tarjontaPresenterPresenter.removeSelectedHakukohde();
-
-
             }
-        },
-                new Button.ClickListener() {
+        }, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -195,8 +192,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
                 getWindow().removeWindow(koulutusRemovalDialog);
                 tarjontaPresenterPresenter.removeKoulutusFromHakukohde(koulutus);
             }
-        },
-                new Button.ClickListener() {
+        }, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -222,8 +218,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         }
     }
 
-
-
     public void addLayoutSplit(VerticalLayout layout) {
         VerticalSplitPanel split = new VerticalSplitPanel();
         split.setImmediate(false);
@@ -233,14 +227,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
         layout.addComponent(split);
     }
-
-    /*private void backFired() {
-        fireEvent(new BackEvent(this));
-    }
-
-    private void editFired() {
-        fireEvent(new EditEvent(this));
-    }*/
 
     /**
      * Fired when Back is pressed.

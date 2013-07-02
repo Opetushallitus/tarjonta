@@ -61,7 +61,7 @@ import fi.vm.sade.vaadin.Oph;
  * @author Tuomas Katva
  */
 @Configurable(preConstruction = true)
-    public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
+public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakukohdeView.class);
     private static final long serialVersionUID = 8806220426371090907L;
@@ -81,9 +81,8 @@ import fi.vm.sade.vaadin.Oph;
     private HakukohdeValintakoeTabImpl valintakokeet;
     private PerustiedotViewImpl perustiedot;
     private VerticalLayout hl;
-
     public static final String DATE_PATTERN = "dd.MM.yyyy HH:mm";
-    
+
     public EditHakukohdeView(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
         addTopInfoMessage(oid);
@@ -93,64 +92,65 @@ import fi.vm.sade.vaadin.Oph;
     /*
      *  Prints out the hakukohde name and last update date and updater
      */
+
     private void addTitleLayout() {
         try {
-        boolean addLayout = false;
-        if (hl != null) {
-            hl.removeAllComponents();
-            addLayout = false;
-        }  else {
-        hl = new VerticalLayout();
+            boolean addLayout = false;
+            if (hl != null) {
+                hl.removeAllComponents();
+                addLayout = false;
+            } else {
+                hl = new VerticalLayout();
 
-            addLayout = true;
-        }
-        hl.setWidth("100%");
-        hl.setSizeFull();
-        if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
-           Label hakukohdeNameLbl = new Label(uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi()));
-            hakukohdeNameLbl.setStyleName(Oph.LABEL_H1);
-
-            StringBuilder tilaSb = new StringBuilder();
-            tilaSb.append("( ");
-            tilaSb.append(presenter.getModel().getHakukohde().getTila().value());
-            tilaSb.append(" ,tallennettu ");
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-            tilaSb.append(sdf.format(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm()));
-            tilaSb.append(", ");
-
-
-            tilaSb.append(tryGetViimPaivittaja(presenter.getModel().getHakukohde().getViimeisinPaivittaja()));
-            tilaSb.append(")");
-            Label tilaLbl = new Label(tilaSb.toString());
-
-            HorizontalLayout hll = new HorizontalLayout();
-            hl.setMargin(true,false,false,false);
-            hll.setSizeFull();
-
-            hll.addComponent(tilaLbl);
-
-
-            hl.addComponent(hakukohdeNameLbl);
-            hl.addComponent(hll);
-            hl.setComponentAlignment(hakukohdeNameLbl, Alignment.MIDDLE_LEFT);
-            hl.setComponentAlignment(hll,Alignment.MIDDLE_RIGHT);
-            hl.setMargin(false,false,true,false);
-            if (addLayout) {
-            addComponent(hl);
+                addLayout = true;
             }
-            hll.setWidth("100%");
-            hll.setComponentAlignment(tilaLbl,Alignment.MIDDLE_RIGHT);
-        } else {
-            Label uusiHakukohdeLbl = new Label(T("uusiHakukohdeLbl"));
-            uusiHakukohdeLbl.setStyleName(Oph.LABEL_H1);
-            hl.addComponent(uusiHakukohdeLbl);
-            hl.setMargin(false,false,true,false);
-            addComponent(hl);
-        }
+            hl.setWidth("100%");
+            hl.setSizeFull();
+            if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
+                Label hakukohdeNameLbl = new Label(uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi()));
+                hakukohdeNameLbl.setStyleName(Oph.LABEL_H1);
+
+                StringBuilder tilaSb = new StringBuilder();
+                tilaSb.append("( ");
+                tilaSb.append(presenter.getModel().getHakukohde().getTila().value());
+                tilaSb.append(" ,tallennettu ");
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+                tilaSb.append(sdf.format(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm()));
+                tilaSb.append(", ");
+
+
+                tilaSb.append(tryGetViimPaivittaja(presenter.getModel().getHakukohde().getViimeisinPaivittaja()));
+                tilaSb.append(")");
+                Label tilaLbl = new Label(tilaSb.toString());
+
+                HorizontalLayout hll = new HorizontalLayout();
+                hl.setMargin(true, false, false, false);
+                hll.setSizeFull();
+
+                hll.addComponent(tilaLbl);
+
+
+                hl.addComponent(hakukohdeNameLbl);
+                hl.addComponent(hll);
+                hl.setComponentAlignment(hakukohdeNameLbl, Alignment.MIDDLE_LEFT);
+                hl.setComponentAlignment(hll, Alignment.MIDDLE_RIGHT);
+                hl.setMargin(false, false, true, false);
+                if (addLayout) {
+                    addComponent(hl);
+                }
+                hll.setWidth("100%");
+                hll.setComponentAlignment(tilaLbl, Alignment.MIDDLE_RIGHT);
+            } else {
+                Label uusiHakukohdeLbl = new Label(T("uusiHakukohdeLbl"));
+                uusiHakukohdeLbl.setStyleName(Oph.LABEL_H1);
+                hl.addComponent(uusiHakukohdeLbl);
+                hl.setMargin(false, false, true, false);
+                addComponent(hl);
+            }
 
         } catch (Exception exp) {
             //No worries unable to create info layout, who cares. Log the exception and move on with your life
-            LOG.warn("Unable to create hakukohde update info layout: {}",exp.toString());
+            LOG.warn("Unable to create hakukohde update info layout: {}", exp.toString());
         }
     }
 
@@ -160,47 +160,48 @@ import fi.vm.sade.vaadin.Oph;
             HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
             if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
                 userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
-            }  else {
+            } else {
                 userName = henkilo.getKayttajatunnus();
             }
             return userName;
         } catch (Exception exp) {
-            LOG.warn("Unable to get user with oid : {} exception : {}",viimPaivittajaOid,exp.toString());
+            LOG.warn("Unable to get user with oid : {} exception : {}", viimPaivittajaOid, exp.toString());
             return viimPaivittajaOid;
         }
     }
-     /*
-      * Prints out the hakukohde's attached koulutukset.
-      */
+    /*
+     * Prints out the hakukohde's attached koulutukset.
+     */
+
     private void addTopInfoMessage(String oid) {
 
         try {
-        VerticalLayout vl = new VerticalLayout();
+            VerticalLayout vl = new VerticalLayout();
 
             vl.setMargin(true);
-        List<KoulutusOidNameViewModel> koulutusOidNameViewModels  = null;
-        if (oid != null) {
-            koulutusOidNameViewModels =   presenter.getHakukohdeKoulutukses(oid);
-        } else {
-            koulutusOidNameViewModels = presenter.getModel().getHakukohdeTitleKoulutukses();
-        }
+            List<KoulutusOidNameViewModel> koulutusOidNameViewModels = null;
+            if (oid != null) {
+                koulutusOidNameViewModels = presenter.getHakukohdeKoulutukses(oid);
+            } else {
+                koulutusOidNameViewModels = presenter.getModel().getHakukohdeTitleKoulutukses();
+            }
 
-        vl.addComponent(buildKoulutuksetInfo(koulutusOidNameViewModels));
-        vl.setMargin(false,false,true,false);
-        super.setTopInfoLayout(vl);
+            vl.addComponent(buildKoulutuksetInfo(koulutusOidNameViewModels));
+            vl.setMargin(false, false, true, false);
+            super.setTopInfoLayout(vl);
         } catch (Exception exp) {
             //No worries unable to create info layout, who cares. Log the exception and move on with your life
-            LOG.warn("Unable to create hakukohde koulutus info layout: {}",exp.toString());
+            LOG.warn("Unable to create hakukohde koulutus info layout: {}", exp.toString());
 
         }
 
     }
 
     private AbstractLayout buildKoulutuksetInfo(List<KoulutusOidNameViewModel> koulutukses) {
-        GridLayout gl = new GridLayout(2,1);
+        GridLayout gl = new GridLayout(2, 1);
         gl.setSizeFull();
-        gl.setColumnExpandRatio(0,0.13f);
-        gl.setColumnExpandRatio(1,0.87f);
+        gl.setColumnExpandRatio(0, 0.13f);
+        gl.setColumnExpandRatio(1, 0.87f);
         if (koulutukses != null) {
             Label firstLine = new Label(getI18n().getMessage("valitutKoulutuksetTitle") + " ");
             firstLine.setStyleName(Oph.LABEL_SMALL);
@@ -213,19 +214,19 @@ import fi.vm.sade.vaadin.Oph;
             gl.newLine();
             int counter = 0;
             for (KoulutusOidNameViewModel oidNameViewModel : koulutukses) {
-               if (counter == 0) {
+                if (counter == 0) {
 
-                   counter++;
-               } else {
-                Label empty = new Label("");
-                gl.addComponent(empty);
-                Label nameLbl = new Label(oidNameViewModel.getKoulutusNimi());
-                nameLbl.setStyleName(Oph.LABEL_SMALL);
-                gl.addComponent(nameLbl);
+                    counter++;
+                } else {
+                    Label empty = new Label("");
+                    gl.addComponent(empty);
+                    Label nameLbl = new Label(oidNameViewModel.getKoulutusNimi());
+                    nameLbl.setStyleName(Oph.LABEL_SMALL);
+                    gl.addComponent(nameLbl);
 
-                gl.newLine();
-                counter++;
-               }
+                    gl.newLine();
+                    counter++;
+                }
             }
         }
         return gl;
@@ -236,13 +237,13 @@ import fi.vm.sade.vaadin.Oph;
             valintakokeetTab.setEnabled(true);
         }
     }
-    
+
     public void enableLiitteetTab() {
         if (liitteetTab != null) {
             liitteetTab.setEnabled(true);
         }
     }
-    
+
     public void loadLiiteTableWithData() {
         if (liitteet != null) {
             liitteet.loadTableWithData();
@@ -260,7 +261,7 @@ import fi.vm.sade.vaadin.Oph;
             valintakokeet.getFormView().closeValintakoeEditWindow();
         }
     }
-    
+
     public void closeHakukohdeLiiteEditWindow() {
         if (liitteet != null) {
             liitteet.closeEditWindow();
@@ -272,7 +273,7 @@ import fi.vm.sade.vaadin.Oph;
             valintakokeet.getFormView().showValintakoeEditWithId(valintakoeId);
         }
     }
-    
+
     public void showHakukohdeEditWindow(String liiteId) {
         if (liitteet != null) {
             liitteet.showHakukohdeEditWindow(liiteId);
@@ -293,15 +294,12 @@ import fi.vm.sade.vaadin.Oph;
     }
 
     /**
-     * Handle lukio hakukohde save action.
-     * Tabs:
-     * - attachments
-     * - exam points
-     * 
+     * Handle lukio hakukohde save action. Tabs: - attachments - exam points
+     *
      * @param tila
      * @param event
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception {
@@ -322,59 +320,48 @@ import fi.vm.sade.vaadin.Oph;
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
         // formView.validateExtraData();
 
-        HakukohdeNameUriModel selectedHakukohde = perustiedot.getSelectedHakukohde();
-        if (selectedHakukohde == null || selectedHakukohde.getHakukohdeNimi().trim().length() < 1) {
-            errorView.addError(T("hakukohteenNimi.notNull"));
-            throw new RuntimeException();
-        }
-        hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
-
-        for(TextField tf: perustiedot.getPainotettavat()){
+        for (TextField tf : perustiedot.getPainotettavat()) {
             tf.validate();
         }
 
         Set<Object> usedOppiaineet = Sets.newHashSet();
         GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
         if (painotettavat != null) {
-        for(int i=0;i<painotettavat.getRows();i++){
-            Object component = painotettavat.getComponent(0, i);
-            if(component instanceof KoodistoComponent) {
-                Object oppiaine = ((KoodistoComponent)component).getValue();
-                if(oppiaine!=null) {
-                    if(usedOppiaineet.contains(oppiaine)) {
-                        throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+            for (int i = 0; i < painotettavat.getRows(); i++) {
+                Object component = painotettavat.getComponent(0, i);
+                if (component instanceof KoodistoComponent) {
+                    Object oppiaine = ((KoodistoComponent) component).getValue();
+                    if (oppiaine != null) {
+                        if (usedOppiaineet.contains(oppiaine)) {
+                            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+                        }
+                        usedOppiaineet.add(oppiaine);
                     }
-                    usedOppiaineet.add(oppiaine);
                 }
             }
-        }
         }
 
         presenter.saveHakuKohde(tila);
         setModel(presenter.getModel().getHakukohde());
-        
+
         if (presenter.getModel().getHakukohde().getKoulukses() != null
                 || !presenter.getModel().getHakukohde().getKoulukses().isEmpty()
                 || presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
 
             if (valintakokeetTab.isEnabled()) {
                 try {
-                    valintakokeet.actionSave(null,null);
+                    valintakokeet.actionSave(null, null);
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));
                     throw e;
                 }
             }
         }
-        
+
         presenter.refreshHakukohdeUIModel(hakukohde.getOid());
         addTitleLayout();
         requestRepaintAll();
         return getHakukohdeOid();
-    }
-
-    private String getUriWithVersion(HakukohdeNameUriModel hakukohdeNameUriModel) {
-        return hakukohdeNameUriModel.getHakukohdeUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + hakukohdeNameUriModel.getUriVersio();
     }
 
     @Override
@@ -390,7 +377,7 @@ import fi.vm.sade.vaadin.Oph;
             presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
     }
-    
+
     @Override
     protected void buildLayout(VerticalLayout layout) {
 
@@ -401,19 +388,19 @@ import fi.vm.sade.vaadin.Oph;
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
             hakukohdeOid = presenter.getModel().getHakukohde().getOid();
         }
-        
+
 
         tabs = UiBuilder.tabSheet(layout);
-        layout.setMargin(false,false,true,false);
+        layout.setMargin(false, false, true, false);
         VerticalLayout wrapperVl = new VerticalLayout();
-        perustiedot = new PerustiedotViewImpl(presenter,uiBuilder);
-        buildFormLayout(new HorizontalLayout(), presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
+        perustiedot = new PerustiedotViewImpl(presenter, uiBuilder);
+        buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
-        
+
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid);
         perustiedotTab = tabs.addTab(wrapperVl, T("tabNimi"));
-        valintakokeetTab = tabs.addTab(valintakokeet,T("valintakoeTab"));
+        valintakokeetTab = tabs.addTab(valintakokeet, T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
