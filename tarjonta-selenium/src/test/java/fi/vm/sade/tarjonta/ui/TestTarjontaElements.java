@@ -768,7 +768,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: "
         		+ ".*px;\">Ammattinimikkeet</div>"
         		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
-        		+ ".*px;\">Valitse valikosta ne ammattinimikkeet, joissa koulutuksesta valmistuva yleensä toimii.</div>"
+        		+ ".*px;\">Valitse valikosta ne ammattinimikkeet, joissa koulutuksesta valmistuva"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-caption\" style=\"width: 18px;\"><img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/oph/../../themes/oph/img/icon-add-black.png\""
