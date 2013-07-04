@@ -31,7 +31,7 @@ public interface PerustiedotView {
 
     public void initForm();
 
-    public List<KielikaannosViewModel> getLisatiedot();
+    public  void reloadLisatiedot(List<KielikaannosViewModel> lisatiedot);
 
     public HakuaikaViewModel getSelectedHakuaika();
 
@@ -46,4 +46,6 @@ public interface PerustiedotView {
     public void removeOppiaineRow(PainotettavaOppiaineViewModel painotettava);
     
     public void refreshOppiaineet();
+    
+    public List<KielikaannosViewModel> getLisatiedot();
 }

@@ -327,13 +327,14 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             Set<Object> usedOppiaineet = Sets.newHashSet();
             GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
             if (painotettavat != null) {
-                for (int i = 0; i < painotettavat.getRows(); i++) {
-                    final Object kc = painotettavat.getComponent(0, i);
-                    final Object tf = painotettavat.getComponent(1, i);
+                for (int i = 1; i < painotettavat.getRows(); i++) {
+                    //the first row item is a label object, skip it or data type conversion fails.
+                    final KoodistoComponent kc = (KoodistoComponent) painotettavat.getComponent(0, i);
+                    final TextField tf = (TextField) painotettavat.getComponent(1, i);
                     if (kc instanceof KoodistoComponent) {
-                        final Object oppiaine = ((KoodistoComponent) kc).getValue();
-                        final Object painokerroin = ((TextField) tf).getValue();
-                        if (oppiaine == null && painokerroin != null) {
+                        final String oppiaine = (String) kc.getValue();
+                        final String painokerroin = (String) tf.getValue();
+                        if ((oppiaine == null && painokerroin != null) || (oppiaine != null && oppiaine.isEmpty() && painokerroin != null)) {
                             throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.invalidCombination"));
                         } else if (oppiaine != null) {
                             if (usedOppiaineet.contains(oppiaine)) {

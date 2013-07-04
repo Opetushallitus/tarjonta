@@ -51,7 +51,7 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
     private static final long serialVersionUID = -185022467161014683L;
     private boolean attached = false;
-    @Autowired
+    @Autowired(required = true)
     protected TarjontaUIHelper _uiHelper;
     protected KoodistoSelectionTabSheet _languageTabsheet;
     @Autowired(required = true)

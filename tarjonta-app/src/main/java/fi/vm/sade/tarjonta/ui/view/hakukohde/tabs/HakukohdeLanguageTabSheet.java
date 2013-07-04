@@ -27,7 +27,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public abstract class HakukohdeLanguageTabSheet extends LanguageTabSheet {
 
-    @Autowired
+    private static final long serialVersionUID = 2446321089355166704L;
+    @Autowired(required = true)
     protected TarjontaPresenter presenter;
 
     public HakukohdeLanguageTabSheet() {
@@ -41,6 +42,4 @@ public abstract class HakukohdeLanguageTabSheet extends LanguageTabSheet {
         super(useRichText, width, height);
         this.presenter = presenter;
     }
-
-    
 }

@@ -44,48 +44,47 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
  */
 @Configurable(preConstruction = true)
 public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
-
+    
     private static final long serialVersionUID = 1L;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private PerustiedotViewImpl formView;
-
+    
     public HakukohdePerustiedotViewImpl(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
-
+    
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
         formView = new PerustiedotViewImpl(presenter, getUiBuilder());
         buildFormLayout(presenter, layout, presenter.getModel().getHakukohde(), formView);
     }
-
+    
     @Override
     protected void eventBack(Button.ClickEvent event) {
         presenter.showMainDefaultView();
         presenter.getHakukohdeListView().reload();
     }
-
+    
     @Override
     public void actionNext(ClickEvent event) {
         if (getHakukohdeOid() != null) {
             presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
     }
-
+    
     @Override
     public boolean isformDataLoaded() {
         return isLoaded();
     }
-
+    
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
-        hakukohde.getLisatiedot().clear();
-        hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
+        formView.reloadLisatiedot(hakukohde.getLisatiedot());
         hakukohde.setHakuaika(formView.getSelectedHakuaika());
         if (!formView.isSahkoinenToimOsoiteChecked()) {
             hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
@@ -111,15 +110,15 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
                 }
             }
         }
-
+        
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
     }
-
+    
     private String getHakukohdeOid() {
         return presenter.getModel().getHakukohde() != null ? presenter.getModel().getHakukohde().getOid() : null;
     }
-
+    
     private boolean isLoaded() {
         return getHakukohdeOid() != null ? true : false;
     }

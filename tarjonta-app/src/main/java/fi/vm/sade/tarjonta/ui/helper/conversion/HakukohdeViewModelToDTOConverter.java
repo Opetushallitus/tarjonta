@@ -183,6 +183,8 @@ public class HakukohdeViewModelToDTOConverter {
 
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
         hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
+
+        hakukohdeVM.getLisatiedot().clear();
         hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
 
         hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());

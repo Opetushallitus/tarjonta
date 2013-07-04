@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class HakukohdeLisatiedotTabSheet extends HakukohdeLanguageTabSheet {
 
+    private static final long serialVersionUID = 475764986358325438L;
+
     public HakukohdeLisatiedotTabSheet(boolean useRichText, String width, String height) {
         super(useRichText, width, height);
     }

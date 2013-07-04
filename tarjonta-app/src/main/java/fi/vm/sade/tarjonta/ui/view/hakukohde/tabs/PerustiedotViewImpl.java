@@ -318,12 +318,15 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public void refreshOppiaineet() {
         painotettavat.clear();
-        while (painotettavatOppiaineet.getRows() > 1) {
-            painotettavatOppiaineet.removeRow(1);
-        }
+        if (painotettavatOppiaineet != null) {
 
-        for (PainotettavaOppiaineViewModel painotettava : model.getPainotettavat()) {      
-            addOppiaine(painotettava);
+            while (painotettavatOppiaineet.getRows() > 1) {
+                painotettavatOppiaineet.removeRow(1);
+            }
+
+            for (PainotettavaOppiaineViewModel painotettava : model.getPainotettavat()) {
+                addOppiaine(painotettava);
+            }
         }
     }
 
@@ -837,6 +840,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public List<KielikaannosViewModel> getLisatiedot() {
         return this.lisatiedotTabs.getKieliKaannokset();
+    }
+
+    @Override
+    public void reloadLisatiedot(final List<KielikaannosViewModel> lisatiedot) {
+        Preconditions.checkNotNull(lisatiedot, "List of KielikaannosViewModel objects cannot be null");
+        getLisatiedot().clear();
+        getLisatiedot().addAll(lisatiedot);
     }
 
     private VerticalLayout buildBottomAreaLanguageTab() {
