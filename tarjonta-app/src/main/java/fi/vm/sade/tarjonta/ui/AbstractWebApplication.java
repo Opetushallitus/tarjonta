@@ -17,11 +17,7 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
 import com.vaadin.service.ApplicationContext;
-import com.vaadin.terminal.gwt.server.WebApplicationContext;
-import com.vaadin.terminal.gwt.server.WebBrowser;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

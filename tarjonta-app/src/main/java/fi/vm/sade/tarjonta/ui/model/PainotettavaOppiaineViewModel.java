@@ -6,7 +6,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class PainotettavaOppiaineViewModel {
 
     private String oppiaine;
-    private Integer painokerroin;
+    private Double painokerroin;
     private String painotettavaOppiaineTunniste;
     private Long version;
 
@@ -21,12 +21,10 @@ public class PainotettavaOppiaineViewModel {
     public PainotettavaOppiaineViewModel() {
     }
 
-    public PainotettavaOppiaineViewModel(final String oppiaine, final int painokerroin,
+    public PainotettavaOppiaineViewModel(final String oppiaine, final Double painokerroin,
             final String painotettavaOppiaineTunniste, final Long version) {
-        this.oppiaine = oppiaine;
-        this.painokerroin = painokerroin;
+        update(oppiaine, painokerroin, version);
         this.painotettavaOppiaineTunniste = painotettavaOppiaineTunniste;
-        this.version = version;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class PainotettavaOppiaineViewModel {
         return oppiaine;
     }
 
-    public Integer getPainokerroin() {
+    public Double getPainokerroin() {
         return painokerroin;
     }
 
@@ -73,11 +71,17 @@ public class PainotettavaOppiaineViewModel {
         this.oppiaine = oppiaine;
     }
 
-    public void setPainokerroin(Integer painokerroin) {
+    public void setPainokerroin(Double painokerroin) {
         this.painokerroin = painokerroin;
     }
 
     public void setPainotettavaOppiaineTunniste(String painotettavaOppiaineTunniste) {
         this.painotettavaOppiaineTunniste = painotettavaOppiaineTunniste;
+    }
+
+    public void update(final String oppiaine, final Double painokerroin, final Long version) {
+        this.oppiaine = oppiaine;
+        this.painokerroin = painokerroin;
+        this.version = version;
     }
 }

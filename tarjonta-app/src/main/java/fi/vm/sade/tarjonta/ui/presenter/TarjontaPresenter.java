@@ -234,7 +234,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         // OVT-4911
         getModel().setHakukohde(editHakukohdeView.getModel());
-
+        HakukohdeTyyppi fresh;
         if (getModel().getHakukohde().getOid() == null) {
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
 
@@ -255,13 +255,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     hakukohdeTyyppi.setSoraKuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                 }
             }
-            HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
-            refreshHakukohdeUIModel(fresh);
+            fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
         } else {
             updateHakukohdeKoulutusasteTyyppi(getModel().getHakukohde());
-            HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
-            refreshHakukohdeUIModel(fresh);
+            fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
         }
+        refreshHakukohdeUIModel(fresh);
     }
 
     // Figure out the type
@@ -1260,7 +1259,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 .lueHakukohde(kysely).getHakukohde();
         refreshHakukohdeUIModel(hakukohde);
         loadHakukohdeValintaKokees();
-
     }
 
     /**
@@ -1276,6 +1274,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         if (hakukohdeVM.getKoulukses() == null || hakukohdeVM.getKoulukses().isEmpty()) {
             hakukohdeVM.setKoulukses(getHakukohdeKoulutukses(hakukohdeVM));
+        }
+
+        switch (hakukohdeTyyppi.getHakukohteenKoulutusaste()) {
+            case LUKIOKOULUTUS:
+                if (hakuKohdePerustiedotView != null) {
+                    hakuKohdePerustiedotView.refreshOppiaineet();
+                }
+                break;
         }
     }
 

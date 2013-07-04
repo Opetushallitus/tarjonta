@@ -15,12 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-
 import java.util.List;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 
 /**
  *
@@ -29,16 +29,21 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
  */
 public interface PerustiedotView {
 
-    void initForm();
+    public void initForm();
 
-    List<KielikaannosViewModel> getLisatiedot();
+    public List<KielikaannosViewModel> getLisatiedot();
+
+    public HakuaikaViewModel getSelectedHakuaika();
+
+    public void addItemsToHakuCombobox(List<HakuViewModel> haut);
+
+    public void setSelectedHaku(HakuViewModel haku);
+
+    public void setTunnisteKoodi(String tunnistekoodi);
+
+    public void addNewOppiaineRow(PainotettavaOppiaineViewModel oppiaine);
+
+    public void removeOppiaineRow(PainotettavaOppiaineViewModel painotettava);
     
-    HakuaikaViewModel getSelectedHakuaika();
-
-    void addItemsToHakuCombobox(List<HakuViewModel> haut);
-
-    void setSelectedHaku(HakuViewModel haku);
-
-    void setTunnisteKoodi(String tunnistekoodi);
-
+    public void refreshOppiaineet();
 }

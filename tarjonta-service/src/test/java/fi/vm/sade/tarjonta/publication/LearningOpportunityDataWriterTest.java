@@ -213,7 +213,7 @@ public class LearningOpportunityDataWriterTest {
 
     	int minExamScore = 3;
     	String oppiaine = "Matematiikka";
-    	int painotus = 2;
+    	double painotus = 2.0;
     	
         Koulutusmoduuli m = createKoulutusmoduuli();
         m.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
@@ -543,7 +543,7 @@ public class LearningOpportunityDataWriterTest {
 
     }
     
-    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, int painotus) {
+    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, Double painotus) {
     	Hakukohde lukioHakukohde = createHakukohde();
     	Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
     	for (Valintakoe vKoe : lukioHakukohde.getValintakoes()) {

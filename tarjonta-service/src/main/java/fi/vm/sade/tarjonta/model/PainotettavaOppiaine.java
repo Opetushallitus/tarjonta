@@ -19,6 +19,7 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
+import java.math.BigDecimal;
 
 import javax.persistence.*;
 
@@ -33,7 +34,7 @@ public class PainotettavaOppiaine extends BaseEntity {
 
     @FilterXss
     private String oppiaine;
-    private Integer painokerroin;
+    private Double painokerroin;
 
     /**
      * @return the oppiaine
@@ -52,14 +53,14 @@ public class PainotettavaOppiaine extends BaseEntity {
     /**
      * @return the painokerroin
      */
-    public Integer getPainokerroin() {
+    public Double getPainokerroin() {
         return painokerroin;
     }
 
     /**
      * @param painokerroin the painokerroin to set
      */
-    public void setPainokerroin(Integer painokerroin) {
+    public void setPainokerroin(Double painokerroin) {
         this.painokerroin = painokerroin;
     }
 

@@ -210,9 +210,10 @@ public class HakukohdeViewModelToDTOConverter {
          */
         if (hakukohdeTyyppi.getHakukohteenKoulutusaste().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             //painotettavat oppiaineet
+            hakukohdeVM.getPainotettavat().clear(); //after the clear, we need to recreate form data binding 
             final int visible = hakukohdeTyyppi.getPainotettavatOppiaineet() != null ? hakukohdeTyyppi.getPainotettavatOppiaineet().size() : 0;
-            if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null) {
-                hakukohdeVM.getPainotettavat().clear();
+
+            if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null && !hakukohdeTyyppi.getPainotettavatOppiaineet().isEmpty()) {
                 for (PainotettavaOppiaineTyyppi pot : hakukohdeTyyppi.getPainotettavatOppiaineet()) {
                     PainotettavaOppiaineViewModel painotettava = new PainotettavaOppiaineViewModel(pot.getOppiaine(),
                             pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste(), pot.getVersion());
@@ -222,10 +223,11 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohdeVM.addPainotettavaOppiainees(HakukohdeViewModel.OPPIAINEET_MAX - Math.min(HakukohdeViewModel.OPPIAINEET_MAX, visible));
         }
         //alin hyväksyttava keskiarvo
-        if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo() != null) {
+
+        if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()
+                != null) {
             hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(new DecimalFormat(NUMBER_FORMAT).format(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()));
         }
-
         return hakukohdeVM;
     }
 

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction=true)
 public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
+    private static final long serialVersionUID = -5600126973923997354L;
 
     private SimpleHakukohdeViewModel hakukohdeViewModel;
     private transient I18NHelper i18n = new I18NHelper(this);
@@ -51,6 +52,7 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
 
     private void buildButtons() {
         nimiBtn = UiUtil.buttonLink(null, hakukohdeViewModel.getHakukohdeNimi(), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 tarjontaPresenter.showHakukohdeViewImpl(hakukohdeViewModel.getHakukohdeOid());
@@ -58,6 +60,7 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
         });
         nimiBtn.setStyleName("link-row");
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 tarjontaPresenter.showRemoveHakukohdeFromKoulutusDialog(hakukohdeViewModel.getHakukohdeOid(), hakukohdeViewModel.getHakukohdeNimi());

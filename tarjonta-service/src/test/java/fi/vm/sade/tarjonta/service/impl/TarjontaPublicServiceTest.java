@@ -150,11 +150,11 @@ public class TarjontaPublicServiceTest {
 
         PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
         painotettavaOppiaine.setOppiaine("Matematiikka");
-        painotettavaOppiaine.setPainokerroin(5);
+        painotettavaOppiaine.setPainokerroin(5.0);
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine);
 
         PainotettavaOppiaine painotettavaOppiaine1 = new PainotettavaOppiaine();
-        painotettavaOppiaine1.setPainokerroin(6);
+        painotettavaOppiaine1.setPainokerroin(6.0);
         painotettavaOppiaine1.setOppiaine("Englanti");
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine1);
 

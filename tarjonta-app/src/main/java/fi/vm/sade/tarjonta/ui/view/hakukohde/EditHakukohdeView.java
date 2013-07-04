@@ -46,9 +46,9 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeTabImpl;
@@ -319,38 +319,35 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         }
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
         // formView.validateExtraData();
+        if (presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            for (TextField tf : perustiedot.getPainotettavat()) {
+                tf.validate();
+            }
 
-        for (TextField tf : perustiedot.getPainotettavat()) {
-            tf.validate();
-        }
-
-        Set<Object> usedOppiaineet = Sets.newHashSet();
-        GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
-        if (painotettavat != null) {
-            for (int i = 0; i < painotettavat.getRows(); i++) {
-                Object component = painotettavat.getComponent(0, i);
-                if (component instanceof KoodistoComponent) {
-                    Object oppiaine = ((KoodistoComponent) component).getValue();
-                    if (oppiaine != null) {
-                        if (usedOppiaineet.contains(oppiaine)) {
-                            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+            Set<Object> usedOppiaineet = Sets.newHashSet();
+            GridLayout painotettavat = perustiedot.getPainotettavatOppiaineet();
+            if (painotettavat != null) {
+                for (int i = 0; i < painotettavat.getRows(); i++) {
+                    final Object kc = painotettavat.getComponent(0, i);
+                    final Object tf = painotettavat.getComponent(1, i);
+                    if (kc instanceof KoodistoComponent) {
+                        final Object oppiaine = ((KoodistoComponent) kc).getValue();
+                        final Object painokerroin = ((TextField) tf).getValue();
+                        if (oppiaine == null && painokerroin != null) {
+                            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.invalidCombination"));
+                        } else if (oppiaine != null) {
+                            if (usedOppiaineet.contains(oppiaine)) {
+                                throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.painotettavat.duplicate"));
+                            }
+                            usedOppiaineet.add(oppiaine);
                         }
-                        usedOppiaineet.add(oppiaine);
                     }
                 }
             }
-        }
-
-        presenter.saveHakuKohde(tila);
-        setModel(presenter.getModel().getHakukohde());
-
-        if (presenter.getModel().getHakukohde().getKoulukses() != null
-                || !presenter.getModel().getHakukohde().getKoulukses().isEmpty()
-                || presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
 
             if (valintakokeetTab.isEnabled()) {
                 try {
-                    valintakokeet.actionSave(null, null);
+                    valintakokeet.validateValintakoeForm();
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));
                     throw e;
@@ -358,9 +355,15 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             }
         }
 
-        presenter.refreshHakukohdeUIModel(hakukohde.getOid());
+        /*
+         * TODO: there should be only one save method with rollback functionality...
+         */
+        presenter.saveHakuKohde(tila);
+        valintakokeet.actionSave(null, null);
+
+        setModel(presenter.getModel().getHakukohde());
+
         addTitleLayout();
-        requestRepaintAll();
         return getHakukohdeOid();
     }
 
@@ -380,7 +383,6 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-
         super.buildLayout(layout);
 
         addTitleLayout();
@@ -389,13 +391,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             hakukohdeOid = presenter.getModel().getHakukohde().getOid();
         }
 
-
         tabs = UiBuilder.tabSheet(layout);
         layout.setMargin(false, false, true, false);
         VerticalLayout wrapperVl = new VerticalLayout();
         perustiedot = new PerustiedotViewImpl(presenter, uiBuilder);
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
-
 
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid);
@@ -404,7 +404,6 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
-
     }
 
     public void setValintakokeetTabSelected() {
@@ -431,6 +430,12 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     public void refreshValintaKokeetLastUpdatedBy() {
         if (valintakokeet != null) {
             valintakokeet.refreshLastUpdatedBy();
+        }
+    }
+
+    public void refreshOppiaineet() {
+        if (perustiedot != null) {
+            perustiedot.refreshOppiaineet();
         }
     }
 }

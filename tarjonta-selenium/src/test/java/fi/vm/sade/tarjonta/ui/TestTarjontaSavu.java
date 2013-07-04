@@ -44,7 +44,7 @@ public class TestTarjontaSavu {
     	}
 
     	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
-    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    	driver.manage().timeouts().implicitlyWait(130, TimeUnit.SECONDS);
     }
 
 	@Test
@@ -499,7 +499,6 @@ public class TestTarjontaSavu {
         			, doit.textElement(driver, a_text));
         	t01 = doit.millisDiff(t01);
         	t01 = doit.millis();
-        	doit.sendPageToFile(driver);
         	doit.textClick(driver, "Jatka");
         }
         if (c_scenario)
@@ -508,7 +507,6 @@ public class TestTarjontaSavu {
         			, doit.textElement(driver, c_text));
         	t01 = doit.millisDiff(t01);
         	t01 = doit.millis();
-        	doit.sendPageToFile(driver);
         	doit.textClick(driver, "Jatka");
         }
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
@@ -549,10 +547,12 @@ public class TestTarjontaSavu {
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
+        	if (! doit.isPresentText(driver, "julkaistu"))
+        	{
         	t01 = doit.millis();
         	doit.textClick(driver, "muokkaa");
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
-        			, doit.textElement(driver, "tietoja hakemisesta"));
+        			, doit.textElement(driver, "voidaan kuvata muuta hakemiseen olennaisesti"));
         	t01 = doit.millisDiff(t01);
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
         			, doit.textElement(driver, "Tallenna valmiina"));
@@ -625,15 +625,14 @@ public class TestTarjontaSavu {
         		doit.textClick(driver, "Peruuta");
         		doit.tauko(1);
         	}
-
-        	// HAKUKOHTEEN POISTO
-        	t01 = doit.millis();
         	doit.textClick(driver, "Hakukohteen perustiedot");
         	doit.tauko(1);
+        	}
+
+        	// HAKUKOHTEEN POISTO
         	driver.findElement(By.className("v-button-back")).click();
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
         			, doit.textElement(driver, "Hakukohteet ("));
-        	t01 = doit.millisDiff(t01);
         	doit.getTriangleForLastHakukohde(driver).click();
         	doit.tauko(1);
         	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();

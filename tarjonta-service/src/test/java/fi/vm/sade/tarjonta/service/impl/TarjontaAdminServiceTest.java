@@ -392,7 +392,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         dto = this.adminService.paivitaHakukohde(dto);
         assertEquals(1, dto.getPainotettavatOppiaineet().size());
         assertEquals("foo", dto.getPainotettavatOppiaineet().get(0).getOppiaine());
-        assertEquals(1, dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        assertEquals("painokerroin", "1.0",  "" + dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
         assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion() == 0);
 

@@ -115,10 +115,10 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tyhjennä</span>"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-vertical-collapse vertical-collapse\" role=\"button\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">OPH</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box\" style=\"width: 268px;\""
+        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box\" style=\"width: 26.px;\""
 				+ ".*<span class=\"v-button-caption\">Hae</span>"
-        		+ ".*<div class=\"v-captiontext\">Koulutuksen alkamisvuosi</div>"
-        		+ ".*<div class=\"v-captiontext\" style=\"width: 200px;\">Koulutuksen alkamiskausi</div>"
+        		+ ".*>Koulutuksen alkamisvuosi</div>"
+        		+ ".*<div class=\"v-captiontext\" style=\"width: 20.px;\">Koulutuksen alkamiskausi</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<span class=\"v-button-caption\">Tyhjennä</span>"
@@ -134,7 +134,7 @@ public class TestTarjontaElements {
         		+ ".*<label for=\"gwt-uid-3\">Valitse kaikki</label>"
         		+ ".*2KPL<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box"
         		+ ".*7KPL<input type=\"text\" class=\"v"
-        		+ ".*4KPL<div class=\"v-captiontext\">"
+        		+ ".*5KPL<div class=\"v-captiontext\""
         		+ ".*10KPL<span class=\"v-button-caption\">"
         		+ ".*5KPL<div class=\"v-filterselect-button\"></div>"
         		+ ".*3KPL<input type=\"checkbox\""
@@ -157,7 +157,7 @@ public class TestTarjontaElements {
         Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", triangle);
     	doit.tauko(1);
     	triangle.click();
-    	WebElement link = doit.textElement(driver, linkki); 
+    	WebElement link = driver.findElement(By.className("v-button-link-row"));
         Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", link);
         link.click();
         Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
@@ -170,114 +170,114 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
         	this.frontPage();
-        	this.TarkasteleKoulutus("ylioppilastutkint", "Ylioppilastutkinto");
+        	this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");
         }
         
         String elements = "<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ ".*<span class=\"v-button-caption\">Poista</span>"
-        		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1162px;\">"
+        		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Organisaatio</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutus</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilastutkinto"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ylioppilastutkinto"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Lukiolinja</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Lukiolinja</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
 				+ ".*" + htmlAbsoluteLeft
 				+ ".*" + htmlAbsoluteLeft
 				+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusaste</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Yleissivistävä koulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Yleissivistävä koulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintoala</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintoala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Lukiokoulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Lukiokoulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Tutikintonimike</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Tutikintonimike</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">Ylioppilas</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ylioppilas</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuusyksikkö</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintojen laajuusyksikkö</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">opintopiste</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuus</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintojen laajuus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">70</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuslaji</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Pohjakoulutusvaatimus</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen rakenne</div>"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksellset tavoitteet</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Jatko-opintomahdollisuudet</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuslaji</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Pohjakoulutusvaatimus</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen rakenne</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksellset tavoitteet</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Jatko-opintomahdollisuudet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetuskieli</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen alkamispäivä</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Suunniteltu kesto</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetuskieli</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetusmuoto</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Linkki opetussuunnitelmaan</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen alkamispäivä</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen yhteyshenkilö</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Suunniteltu kesto</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetusmuoto</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Linkki opetussuunnitelmaan</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen yhteyshenkilö</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">A1-/A2-kieli</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">A1-/A2-kieli</div>"
         		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">englanti</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B1-kieli</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">B1-kieli</div>"
         		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">ruotsi</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B2-kieli</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">B2-kieli</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">B3-kieli</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">B3-kieli</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Muut kielet</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Muut kielet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Lukiodiplomit</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Lukiodiplomit</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen sisältö</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen sisältö</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Kansainvälistyminen</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Kansainvälistyminen</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Yhteistyö muiden toimijoiden kanssa</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Yhteistyö muiden toimijoiden kanssa</div>"
         		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
-        		+ ".*32KPL<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*33KPL<div class=\"v-label\" style=\"width:"
         		+ ".*4KPL<span class=\"v-button-caption\">"
-        		+ ".*32KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">"
+        		+ ".*32KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width:"
 //        		+ ".*54KPLheight: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:"
 		;
 
@@ -293,13 +293,13 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                this.TarkasteleKoulutus("ylioppilastutkint", "Ylioppilastutkinto");
+                this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");
                 doit.textClick(driver, "muokkaa"); // click Muokkaa(1)
                 Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
                 		, doit.textElement(driver, "Puhelinnumero"));
         }
         
-        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet luomassa"
+        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
         		+ ".*<div class=\"v-captiontext\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-captiontext\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
@@ -327,23 +327,23 @@ public class TestTarjontaElements {
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Lukiokoulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Lukiokoulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Yleissivistävä koulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Yleissivistävä koulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Lukiokoulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Lukiokoulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkintonimike</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">Ylioppilas</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ylioppilas</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuusyksikkö</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 8..px;\">opintopiste</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">"
         		+ ".*" + htmlAbsoluteLeft
@@ -414,13 +414,13 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                this.TarkasteleKoulutus("ylioppilastutkint", "Ylioppilastutkinto");                
+                this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");                
                 driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
                 Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
                                 , doit.textElement(driver, "Yritysten nimien mainitsemista"));
         }
         
-        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet luomassa"
+        String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
         		+ ".*<div class=\"v-captiontext\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-captiontext\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
@@ -428,44 +428,54 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">Tallenna valmiina</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1122px;\">Kielivalikoima</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1122px;\">Lukion kielet listataan tässä laajuuksien mukaan. Jos esim. englantia voi opiskella sekä A1- että B3-kielinä, merkitään se molempien laajuuksien kohdalle.</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Kielivalikoima</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Lukion kielet listataan tässä laajuuksien mukaan. Jos esim. englantia voi opiskella sekä A1- että B3-kielinä, merkitään se molempien laajuuksien kohdalle.</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">A1-/A2-kieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 953px;\">Tyypillisesti peruskoulun vuosiluokilla 1.-2. aloitettu vieras kieli</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: ...px;\">Tyypillisesti peruskoulun vuosiluokilla 1.-2. aloitettu vieras kieli</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">B1-kieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 953px;\">Peruskoulun vuosiluokilla 7.-9. aloitettu yhteinen toinen kotimainen kieli tai englanti</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: ...px;\">Peruskoulun vuosiluokilla 7.-9. aloitettu yhteinen toinen kotimainen kieli tai englanti</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">B2-kieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 953px;\">Peruskoulun vuosiluokilla 7.-9. aloitettu valinnainen kieli</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: ...px;\">Peruskoulun vuosiluokilla 7.-9. aloitettu valinnainen kieli</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">B3-kieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 953px;\">Lukiossa aloitettava valinnainen vieras kieli</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: ...px;\">Lukiossa aloitettava valinnainen vieras kieli</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Muut kielet</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 953px;\">Lukiossa aloitettava valinnainen vieras kieli, jonka laajuus on suuppeampi kuin B2/B3</div>"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1122px;\">Lukiodiplomit</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1122px;\">Listaus niistä oppiaineista, joissa on mahdollista suorittaa lukiodiplomi koulutuksen yhteydessä. Lukiodiplomin suorittamisen järjestäminen on lukiolle vapaaehtoista.</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: ...px;\">Lukiossa aloitettava valinnainen vieras kieli, jonka laajuus on suuppeampi kuin B2/B3</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Lukiodiplomit</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Listaus niistä oppiaineista, joissa on mahdollista suorittaa lukiodiplomi koulutuksen yhteydessä. Lukiodiplomin suorittamisen järjestäminen on lukiolle vapaaehtoista.</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/oph/../../themes/oph/img/icon-add-black.png\""
         		+ ".*<div class=\"v-captiontext\">"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen sisältö</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kuvaus lukiolinjan keskeisistä sisällöistä, painotuksista ja toteutustavoista. Henkilökohtaisen opiskelusuunnitelman laatimisesta on hyvä mainita. Verkkotekstissä on hyvä käyttä lyhyitä lauseita ja kappaleita ja tarvittaessa listoja. Vapaa teksti 16.384 merkkiä.</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Koulutuksen sisältö</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Kuvaus lukiolinjan keskeisistä sisällöistä, painotuksista ja toteutustavoista. Henkilökohtaisen opiskelusuunnitelman laatimisesta on hyvä mainita. Verkkotekstissä on hyvä käyttä lyhyitä lauseita ja kappaleita ja tarvittaessa listoja. Vapaa teksti 1500 merkkiä.</div>"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Kansainvälistyminen</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kirjoitetaan jos kansainvälisyyys on keskeinen osa koulutusta. Esim. yhteistyö tai ulkomailla opiskelu / vaihto-opiskelumahdollisuudet. Valitse otsikot itse. Vapaa teksti 16.384 merkkiä.</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Kansainvälistyminen</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Kirjoitetaan jos kansainvälisyyys on keskeinen osa koulutusta. Esim. yhteistyö tai ulkomailla opiskelu / vaihto-opiskelumahdollisuudet. Valitse otsikot itse. Vapaa teksti 1500 merkkiä.</div>"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Yhteistyö muiden toimijoiden kanssa</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tässä voidaan kertoa työelämäyhteistyöstä, oppilaitosten välisestä yhteistyöstä opintopolkujen toteuttamisessa tms. Yritysten nimien mainitsemista on kuitenkin syytä välttää. Vapaa teksti 16.384 merkkiä.</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Yhteistyö muiden toimijoiden kanssa</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Tässä voidaan kertoa työelämäyhteistyöstä, oppilaitosten välisestä yhteistyöstä opintopolkujen toteuttamisessa tms. Yritysten nimien mainitsemista on kuitenkin syytä välttää. Vapaa teksti 1500 merkkiä.</div>"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
@@ -478,7 +488,7 @@ public class TestTarjontaElements {
         		+ ".*10KPL<div class=\"v-label v-label-light light\" style=\"width:"
         		+ ".*3KPLtitle=\"Rich Text Area"
         		+ ".*3KPLtinyMCE.getInstanceById"
-        		+ ".*8KPL<span class=\"v-button-caption\">"
+//        		+ ".*8KPL<span class=\"v-button-caption\">" // vaihtuva maara (x) kielia
                 ;
 
         doit.skipLoading(readPageFromFile);
@@ -507,111 +517,111 @@ public class TestTarjontaElements {
         String elements = "<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ poista
         		+ ".*<span class=\"v-button-caption\">Lisää rinnakkainen toteutus</span>"
-        		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1162px;\">"
+        		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1...px;\">"
         		+ ".*<div class=\"v-captiontext\">suomi</div>"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Organisaatio</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Organisaatio</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutus / tutkinto</div>"
+				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutus / tutkinto</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusohjelma</div>"
+				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusohjelma</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusaste</div>"
+				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+				+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusala</div>"
+				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusala</div>"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+				+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintoala</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintoala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Tutkintonimike</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Tutkintonimike</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opintojen laajuus</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintojen laajuus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuslaji</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuslaji</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Pohjakoulutusvaatimus</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Pohjakoulutusvaatimus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen alkamispäivä</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen alkamispäivä</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Suunniteltu kesto</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Suunniteltu kesto</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetuskieli / -kielet</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetuskieli / -kielet</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Opetusmuoto</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetusmuoto</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Linkki opetussuunnitelmaan</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Linkki opetussuunnitelmaan</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen yhteyshenkilö</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen yhteyshenkilö</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutusohjelman valinta</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusohjelman valinta</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen sisältö</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Koulutuksen rakenne</div>"
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen sisältö</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen rakenne</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
 //        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Kansainvälistyminen</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Kansainvälistyminen</div>"
 //        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
 //        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Sijoittuminen työelämään</div>"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Sijoittuminen työelämään</div>"
         		+ ".*" + htmlAbsoluteLeft
-//        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
-//        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Ammattinimikkeet</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Ammattinimikkeet</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">Jatko-opintomahdollisuudet</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">"
+        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Jatko-opintomahdollisuudet</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Hakuko"
         		+ ".*<span class=\"v-button-caption\">Luo uusi hakukohde</span>"
 //        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
-//        		+ ".*<div class=\"v-label\" style=\"width: 889px;\">" // ylimaarainen debuggia varten
-        		+ ".*25KPL<div class=\"v-label\" style=\"width: 889px;\">"
-        		+ ".*25KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: 223px;\">"
+//        		+ ".*<div class=\"v-label\" style=\"width:" // ylimaarainen debuggia varten
+        		+ ".*26KPL<div class=\"v-label\" style=\"width:"
+        		+ ".*25KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width:"
 //        		+ ".*10KPL<span class=\"v-button-caption\">" // hakukohteita on lopussa vaihteleva maara
 //        		+ ".*42KPLheight: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:" // vaihtuu
 		;
@@ -663,27 +673,27 @@ public class TestTarjontaElements {
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">Ammatillinen koulutus</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ammatillinen koulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintoala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuusyksikkö</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">opintoviikko</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">opintoviikko</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Opintojen laajuus</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">120</div>"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">120</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkintonimike</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: 7..px;\">"
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*" + htmlAbsoluteLeft
@@ -723,7 +733,7 @@ public class TestTarjontaElements {
 //        		+ ".*<input type=\"text\" class=\"v-filterselect-input" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
-        		+ ".*14KPL" + htmlAbsoluteLeft18
+//        		+ ".*14KPL" + htmlAbsoluteLeft18 // rivitys vaihtelee
         		+ ".*9KPL<span class=\"v-button-caption\">"
         		+ ".*6KPLv-required-field-indicator"
         		+ ".*5KPLv-textfield v-textfield-prompt"
@@ -755,32 +765,46 @@ public class TestTarjontaElements {
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ ".*<span class=\"v-button-caption\">Tallenna luonnoksena</span>"
         		+ ".*<span class=\"v-button-caption\">Jatka</span>"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1122px;\">Ammattinimikkeet</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1122px;\">Valitse valikosta ne ammattinimikkeet, joissa koulutuksesta valmistuva yleensä toimii.</div>"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: "
+        		+ ".*px;\">Ammattinimikkeet</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Valitse valikosta ne ammattinimikkeet, joissa koulutuksesta valmistuva"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-caption\" style=\"width: 18px;\"><img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/oph/../../themes/oph/img/icon-add-black.png\""
         		+ ".*<div class=\"v-captiontext\">suomi</div>"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen kuvailevat tiedot</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tarjonnan kentistä osa on pakollisia"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutuksen sisältö</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Lyhyt kuvaus"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Koulutuksen kuvailevat tiedot</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Tarjonnan kentistä osa on pakollisia"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Koulutuksen sisältö</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Lyhyt kuvaus"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Sijoittuminen työelämään</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tässä kentässä kuvataan, millaisiin tehtäviin ja työpaikkoihin koulutuksesta valmistutaan"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Sijoittuminen työelämään</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Tässä kentässä kuvataan, millaisiin tehtäviin ja työpaikkoihin koulutuksesta valmistutaan"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Kansainvälistyminen</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kirjoitetaan jos kansainvälisyyys on keskeinen osa koulutusta"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Kansainvälistyminen</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Kirjoitetaan jos kansainvälisyyys on keskeinen osa koulutusta"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Yhteistyö muoden toimijoiden kanssa</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Tässä voidaan kertoa työelämäyhteistyöstä, työssäoppimisesta, oppilaitosten välisestä yhteistyöstä opintopolkujen toteuttamisessa tms"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Yhteistyö muoden toimijoiden kanssa</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Tässä voidaan kertoa työelämäyhteistyöstä, työssäoppimisesta, oppilaitosten välisestä yhteistyöstä opintopolkujen toteuttamisessa tms"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
-        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: 1084px;\">Koulutusohjelman valinta</div>"
-        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: 1084px;\">Kuvaus siitä, miten valinta koulutusohjelmiin on toteutettu"
+        		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
+        		+ ".*px;\">Koulutusohjelman valinta</div>"
+        		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 
+        		+ ".*px;\">Kuvaus siitä, miten valinta koulutusohjelmiin on toteutettu"
         		+ ".*tinyMCE.getInstanceById"
         		+ ".*title=\"Rich Text Area"
         		+ ".*<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"

@@ -95,8 +95,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         addPainotettavaOppiainees(OPPIAINEET_MAX);
     }
 
-    public void addPainotettavaOppiainees(int visibleObjects) {
-        for (int i = 0; i < visibleObjects; i++) {
+    public void addPainotettavaOppiainees(int createObjects) {
+        for (int i = 0; i < createObjects; i++) {
             addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
         }
     }

@@ -40,7 +40,7 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import java.text.SimpleDateFormat;
 
 /**
- * 
+ *
  * @author Markus
  *
  */
@@ -51,13 +51,11 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
     private ValintakoeViewImpl formView;
-
     @Autowired(required = true)
     private UserService userService;
-
     private HorizontalLayout headerLayout;
 
-    public  HakukohdeValintakoeTabImpl(String oid) {
+    public HakukohdeValintakoeTabImpl(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
@@ -76,12 +74,12 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
         headerLayout.setSizeFull();
         headerLayout.setComponentAlignment(ohjeLabel, Alignment.MIDDLE_LEFT);
-        headerLayout.setComponentAlignment(lastUpdBy,Alignment.MIDDLE_RIGHT);
+        headerLayout.setComponentAlignment(lastUpdBy, Alignment.MIDDLE_RIGHT);
 
         return headerLayout;
     }
 
-    public void refreshLastUpdatedBy()  {
+    public void refreshLastUpdatedBy() {
         if (headerLayout == null) {
             return;
         }
@@ -96,7 +94,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
         headerLayout.setSizeFull();
         headerLayout.setComponentAlignment(ohjeLabel, Alignment.MIDDLE_LEFT);
-        headerLayout.setComponentAlignment(lastUpdBy,Alignment.MIDDLE_RIGHT);
+        headerLayout.setComponentAlignment(lastUpdBy, Alignment.MIDDLE_RIGHT);
     }
 
     private String getLastUpdatedBy() {
@@ -104,24 +102,24 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getValintaKokees() != null) {
             ValintakoeViewModel latestAndGreatest = null;
-            for (ValintakoeViewModel model:presenter.getModel().getHakukohde().getValintaKokees()) {
-                 if (latestAndGreatest == null) {
-                     latestAndGreatest = model;
-                 } else {
+            for (ValintakoeViewModel model : presenter.getModel().getHakukohde().getValintaKokees()) {
+                if (latestAndGreatest == null) {
+                    latestAndGreatest = model;
+                } else {
 
-                     if (model.getViimeisinPaivitysPvm().after(latestAndGreatest.getViimeisinPaivitysPvm())) {
-                         latestAndGreatest = model;
-                     }
+                    if (model.getViimeisinPaivitysPvm().after(latestAndGreatest.getViimeisinPaivitysPvm())) {
+                        latestAndGreatest = model;
+                    }
 
-                 }
+                }
 
             }
 
-         if (latestAndGreatest != null) {
+            if (latestAndGreatest != null) {
 
-             lastUpdatedBy = getLatestUpdaterLabelText(latestAndGreatest);
+                lastUpdatedBy = getLatestUpdaterLabelText(latestAndGreatest);
 
-         }
+            }
 
         } else {
             lastUpdatedBy = "";
@@ -129,7 +127,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         return lastUpdatedBy;
     }
 
-    private String getLatestUpdaterLabelText(ValintakoeViewModel latestAndGreatest ) {
+    private String getLatestUpdaterLabelText(ValintakoeViewModel latestAndGreatest) {
         String latestUpdaterName = tryGetViimPaivittaja(latestAndGreatest.getViimeisinPaivittaja());
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
@@ -139,7 +137,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         sb.append(sdf.format(latestAndGreatest.getViimeisinPaivitysPvm()));
         sb.append(", ");
         sb.append(latestUpdaterName);
-        sb.append( " )" );
+        sb.append(" )");
         return sb.toString();
     }
 
@@ -149,7 +147,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
             HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
             if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
                 userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
-            }  else {
+            } else {
                 userName = henkilo.getKayttajatunnus();
             }
             return userName;
@@ -158,16 +156,16 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
             return viimPaivittajaOid;
         }
     }
-    
+
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
         formView = new ValintakoeViewImpl(presenter, getUiBuilder());
 
         AbstractLayout headerLayout = null;
-        
+
         if (isAmmatillinenHakukohde()) {
-             headerLayout = buildHeaderLayout();
+            headerLayout = buildHeaderLayout();
         }
 
         buildFormLayout(headerLayout, presenter, layout, presenter.getModel().getHakukohde(), formView);
@@ -175,30 +173,25 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
         visibleButtonByListener(clickListenerSaveAsDraft, false);
         visibleButtonByListener(clickListenerSaveAsReady, false);
-        visibleButtonByListener(clickListenerNext,false);
-        visibleButtonByListener(clickListenerBack,false);
+        visibleButtonByListener(clickListenerNext, false);
+        visibleButtonByListener(clickListenerBack, false);
 
-       /* if (presenter.getModel().getHakukohde().getKoulukses() == null
-                || presenter.getModel().getHakukohde().getKoulukses().isEmpty() 
-                || !presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-            visibleButtonByListener(clickListenerSaveAsDraft, false);
-            visibleButtonByListener(clickListenerSaveAsReady, false);
-        }*/
+        /* if (presenter.getModel().getHakukohde().getKoulukses() == null
+         || presenter.getModel().getHakukohde().getKoulukses().isEmpty() 
+         || !presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+         visibleButtonByListener(clickListenerSaveAsDraft, false);
+         visibleButtonByListener(clickListenerSaveAsReady, false);
+         }*/
     }
-    
-    
 
     private boolean isAmmatillinenHakukohde() {
         if (!presenter.getModel().getHakukohde().getKoulukses().isEmpty()) {
             return presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        } else if (!presenter.getSelectedKoulutukset().isEmpty()){
+        } else if (!presenter.getSelectedKoulutukset().isEmpty()) {
             return presenter.getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         }
         return true;
     }
-
-
-
     private static final long serialVersionUID = -6105916942362263403L;
 
     @Override
@@ -206,7 +199,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         if (getHakukohdeOid() != null) {
             presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
-        
+
     }
 
     @Override
@@ -214,84 +207,88 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         return isLoaded();
     }
 
+    public void validateValintakoeForm() throws Exception {
+        errorView.resetErrors();
+        boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
+        boolean pisterajatCorrect = true;
+        this.formView.getValintakoeComponent().getForm().commit();
+        if (pisterajatValidType) {
+            pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions();
+        }
+        if (!pisterajatValidType) {
+            errorView.addError(T("validation.pisterajatNotValidType"));
+            throw new Validator.InvalidValueException("");
+        } else if (!pisterajatCorrect) {
+            errorView.addError(T("validation.pisterajatNotValid"));
+            throw new Validator.InvalidValueException("");
+        }
+
+        if (!this.formView.getValintakoeComponent().getForm().isValid() || !isValintakoeInSync() || !isLisapisteetInSync()) {
+            throw new Validator.InvalidValueException("");
+        }
+    }
+
     /**
      * Form validation & save for lukio hakukohde exam points.
-     * 
+     *
      * @param tila
      * @param event
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
         if (formView.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             try {
-                errorView.resetErrors();
-                boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
-                boolean pisterajatCorrect = true; 
-                this.formView.getValintakoeComponent().getForm().commit();
-                if (pisterajatValidType) {
-                    pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions(); 
-                }
-                if (!pisterajatValidType) {
-                    errorView.addError(T("validation.pisterajatNotValidType"));
-                    throw new Validator.InvalidValueException("");
-                } else if (!pisterajatCorrect) {
-                    errorView.addError(T("validation.pisterajatNotValid"));
-                    throw new Validator.InvalidValueException("");
-                }
-                
-                if (this.formView.getValintakoeComponent().getForm().isValid() && isValintakoeInSync() && isLisapisteetInSync()) {
-                    formView.getPisterajaTable().bindValintakoeData(presenter.getModel().getSelectedValintaKoe());
-                    formView.getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
-                    presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
-                    presenter.getModel().getHakukohde().getValintaKokees().clear();
-                    presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
-                    return getHakukohdeOid();
-                } else {
-                    throw new Validator.InvalidValueException("");
-                }
+                validateValintakoeForm();
+                formView.getPisterajaTable().bindValintakoeData(presenter.getModel().getSelectedValintaKoe());
+                formView.getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
+                presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
+                presenter.getModel().getHakukohde().getValintaKokees().clear();
+                presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
+                return getHakukohdeOid();
+
             } catch (Validator.InvalidValueException e) {
                 errorView.addError(e);
                 throw e;
-            } 
+            }
         }
         return null;
-        
+
     }
-    
+
     private boolean isValintakoeInSync() throws Exception {
         formView.getPisterajaTable().getValintakoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
-        
+
         if (formView.getPisterajaTable().getPkCb().booleanValue() && (!formView.getPisterajaTable().isValintakoePisterajat() || formView.getValintakoeComponent().getValintakoeAikasTable().getItemIds().isEmpty())) {
             errorView.addError(T("validation.valintakoeDataIsMissing"));
             throw new Validator.InvalidValueException("");
         }
         return true;
     }
-        
-   private boolean isLisapisteetInSync() throws Exception {
+
+    private boolean isLisapisteetInSync() throws Exception {
         if (formView.getPisterajaTable().getLpCb().booleanValue() && (!formView.getPisterajaTable().isLisapisteetPisterajat() || !formView.getPisterajaTable().isLisapisteetSpecified())) {
             errorView.addError(T("validation.lisapisteetDataIsMissing"));
             throw new Validator.InvalidValueException("");
         }
         return true;
     }
-    
+
     @Override
     protected void eventBack(Button.ClickEvent event) {
         presenter.showMainDefaultView();
         presenter.getHakukohdeListView().reload();
     }
-    
+
     public ValintakoeViewImpl getFormView() {
         return formView;
     }
-    
+
     private String getUriWithVersion(HakukohdeNameUriModel hakukohdeNameUriModel) {
         return hakukohdeNameUriModel.getHakukohdeUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + hakukohdeNameUriModel.getUriVersio();
     }
-    
+
     private String getHakukohdeOid() {
         return presenter.getModel().getHakukohde() != null ? presenter.getModel().getHakukohde().getOid() : null;
     }
@@ -299,5 +296,4 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     private boolean isLoaded() {
         return getHakukohdeOid() != null ? true : false;
     }
-
 }
