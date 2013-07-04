@@ -34,7 +34,7 @@ public class PainotettavaOppiaine extends BaseEntity {
 
     @FilterXss
     private String oppiaine;
-    private Double painokerroin;
+    private BigDecimal painokerroin;
 
     /**
      * @return the oppiaine
@@ -53,16 +53,14 @@ public class PainotettavaOppiaine extends BaseEntity {
     /**
      * @return the painokerroin
      */
-    public Double getPainokerroin() {
+    public BigDecimal  getPainokerroin() {
         return painokerroin;
     }
 
     /**
      * @param painokerroin the painokerroin to set
      */
-    public void setPainokerroin(Double painokerroin) {
+    public void setPainokerroin(BigDecimal painokerroin) {
         this.painokerroin = painokerroin;
     }
-
-
 }

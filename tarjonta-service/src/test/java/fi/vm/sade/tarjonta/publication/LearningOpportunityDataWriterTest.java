@@ -74,6 +74,7 @@ import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
 import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import java.math.BigDecimal;
 
 /**
  * Smoke tests writing Tarjonta data as "Publication XML". The output still
@@ -543,7 +544,7 @@ public class LearningOpportunityDataWriterTest {
 
     }
     
-    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, Double painotus) {
+    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, double painotus) {
     	Hakukohde lukioHakukohde = createHakukohde();
     	Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
     	for (Valintakoe vKoe : lukioHakukohde.getValintakoes()) {
@@ -557,7 +558,7 @@ public class LearningOpportunityDataWriterTest {
     	}
     	PainotettavaOppiaine painotettavaAine = new PainotettavaOppiaine();
     	painotettavaAine.setOppiaine(oppiaine);
-    	painotettavaAine.setPainokerroin(painotus);
+    	painotettavaAine.setPainokerroin(new BigDecimal( Double.parseDouble(painotus + "")));
     	lukioHakukohde.getPainotettavatOppiaineet().add(painotettavaAine);
     	return lukioHakukohde;
     }

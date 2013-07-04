@@ -343,7 +343,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 		for (PainotettavaOppiaine curOp : hakukohde.getPainotettavatOppiaineet()) {
 			WeightedSubjectType ws = new WeightedSubjectType();
 			ws.setSubject(createExtendedCodeValue(curOp.getOppiaine()));
-			ws.setWeight(BigDecimal.valueOf(curOp.getPainokerroin()));
+			ws.setWeight(curOp.getPainokerroin());
 			applicationOption.getWeightedSubjects().add(ws);
 		}
 	}

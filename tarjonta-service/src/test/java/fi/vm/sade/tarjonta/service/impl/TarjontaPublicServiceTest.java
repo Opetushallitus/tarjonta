@@ -58,6 +58,7 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
+import java.math.BigDecimal;
 
 /**
  *
@@ -150,11 +151,11 @@ public class TarjontaPublicServiceTest {
 
         PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
         painotettavaOppiaine.setOppiaine("Matematiikka");
-        painotettavaOppiaine.setPainokerroin(5.0);
+        painotettavaOppiaine.setPainokerroin( new BigDecimal("5.0"));
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine);
 
         PainotettavaOppiaine painotettavaOppiaine1 = new PainotettavaOppiaine();
-        painotettavaOppiaine1.setPainokerroin(6.0);
+        painotettavaOppiaine1.setPainokerroin( new BigDecimal("6.0") );
         painotettavaOppiaine1.setOppiaine("Englanti");
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine1);
 
