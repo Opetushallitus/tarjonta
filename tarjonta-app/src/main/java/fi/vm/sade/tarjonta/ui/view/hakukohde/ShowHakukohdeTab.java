@@ -362,7 +362,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         valintakoeAikaTable.setColumnExpandRatio("valintakoeSijainti", 40);
         valintakoeAikaTable.setColumnExpandRatio("valintakoeAika", 30);
         valintakoeAikaTable.setColumnExpandRatio("valintakoeLisatiedot", 30);
-        valintakoeAikaTable.setPageLength(valintakoe.getValintakoeAjat().size());
+        valintakoeAikaTable.setPageLength(valintakoe.getValintakoeAjat().size() + 1);
 
         return valintakoeAikaTable;
     }

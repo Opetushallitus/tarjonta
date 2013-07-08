@@ -88,7 +88,6 @@ public class ValintakoeConverter {
 
          for (AjankohtaTyyppi ajankohtaTyyppi:ajankohtaTyyppis) {
              ValintakoeAikaViewModel valintakoeAika = new ValintakoeAikaViewModel();
-
              valintakoeAika.setAlkamisAika(ajankohtaTyyppi.getAlkamisAika());
              valintakoeAika.setPaattymisAika(ajankohtaTyyppi.getPaattymisAika());
              OsoiteTyyppi osoiteTyyppi = ajankohtaTyyppi.getValintakoeAjankohtaOsoite();

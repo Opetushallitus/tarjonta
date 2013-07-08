@@ -15,8 +15,8 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -31,27 +31,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Created by: Tuomas Katva
- * Date: 23.1.2013
+ * Created by: Tuomas Katva Date: 23.1.2013
  */
-
 @Configurable(preConstruction = true)
-public class HakukohdeValintakoeRow extends HorizontalLayout {
+public class HakukohdeValintakoeRow {
 
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
-
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
-
     private ValintakoeViewModel valintakoeViewModel;
     private transient I18NHelper i18n = new I18NHelper(this);
-
     private String valintakokeenTyyppi;
     private String sanallinenKuvaus;
     private Button muokkaaBtn;
     private Button poistaBtn;
-
     private TarjontaDialogWindow removeDialogWindow;
 
     public HakukohdeValintakoeRow(ValintakoeViewModel valintakoe) {
@@ -60,52 +54,57 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
         resolveSanallinenKuvaus();
 
         setMuokkaaBtn(UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                     tarjontaPresenter.getModel().setSelectedValintaKoe(valintakoeViewModel);
-                     tarjontaPresenter.showHakukohdeValintakoeEditView(valintakoeViewModel.getValintakoeTunniste());
+                tarjontaPresenter.getModel().setSelectedValintaKoe(valintakoeViewModel);
+                tarjontaPresenter.showHakukohdeValintakoeEditView(valintakoeViewModel.getValintakoeTunniste());
             }
         }));
 
-        setPoistaBtn(UiUtil.buttonLink(null,i18n.getMessage("poistaBtn"),new Button.ClickListener() {
+        setPoistaBtn(UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(HakukohdeValintakoeRow.this.i18n.getMessage("removeMsg"),null,
-                        HakukohdeValintakoeRow.this.i18n.getMessage("yesBtn"),HakukohdeValintakoeRow.this.i18n.getMessage("noBtn"),new Button.ClickListener() {
+                RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(HakukohdeValintakoeRow.this.i18n.getMessage("removeMsg"), null,
+                        HakukohdeValintakoeRow.this.i18n.getMessage("yesBtn"), HakukohdeValintakoeRow.this.i18n.getMessage("noBtn"), new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent clickEvent) {
                         tarjontaPresenter.removeValintakoeFromHakukohde(valintakoeViewModel);
                         closeRemoveDialog();
                     }
                 }, new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+
                     @Override
                     public void buttonClick(Button.ClickEvent clickEvent) {
                         closeRemoveDialog();
                     }
                 });
-                removeDialogWindow = new TarjontaDialogWindow(removeDialog,i18n.getMessage("varmistusMsg"));
+                removeDialogWindow = new TarjontaDialogWindow(removeDialog, i18n.getMessage("varmistusMsg"));
                 Window dialogWindow = tarjontaPresenter.getValintakoeTab();
                 if (dialogWindow != null) {
                     dialogWindow.addWindow(removeDialogWindow);
                 }
             }
-
         }));
     }
 
     private void resolveSanallinenKuvaus() {
         if (valintakoeViewModel != null && valintakoeViewModel.getSanallisetKuvaukset() != null) {
-            for (KielikaannosViewModel teksti:valintakoeViewModel.getSanallisetKuvaukset()) {
+            for (KielikaannosViewModel teksti : valintakoeViewModel.getSanallisetKuvaukset()) {
                 if (teksti.getKielikoodi().trim().contains("Suomi")) {
                     setSanallinenKuvaus(teksti.getNimi());
                 }
                 if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
                     setSanallinenKuvaus(teksti.getNimi());
                 }
-                if (sanallinenKuvaus == null ||sanallinenKuvaus.trim().length() < 1) {
-                     if (valintakoeViewModel.getSanallisetKuvaukset() != null) {
-                         setSanallinenKuvaus(valintakoeViewModel.getSanallisetKuvaukset().get(0).getNimi());
-                     }
+                if (sanallinenKuvaus == null || sanallinenKuvaus.trim().length() < 1) {
+                    if (valintakoeViewModel.getSanallisetKuvaukset() != null) {
+                        setSanallinenKuvaus(valintakoeViewModel.getSanallisetKuvaukset().get(0).getNimi());
+                    }
                 }
             }
         }
@@ -116,7 +115,6 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
             tarjontaPresenter.getValintakoeTab().removeWindow(removeDialogWindow);
         }
     }
-
 
     public String getValintakokeenTyyppi() {
         return valintakokeenTyyppi;
@@ -141,7 +139,6 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
     public void setMuokkaaBtn(Button muokkaaBtn) {
         this.muokkaaBtn = muokkaaBtn;
     }
-
 
     public Button getPoistaBtn() {
         return poistaBtn;

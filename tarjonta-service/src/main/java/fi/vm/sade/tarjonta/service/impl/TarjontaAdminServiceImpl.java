@@ -172,14 +172,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid);
 
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
-
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
         if (hakukohde != null) {
-
             hakukohdeDAO.updateValintakoe(valintakoes, hakukohde.getOid());
 
-            hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+            hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
             if (hakukohde != null && hakukohde.getValintakoes() != null) {
                 return convertValintakoeTyyppis(hakukohde.getValintakoes());
             } else {
@@ -414,7 +412,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private String constructUusiArvo(Hakukohde hakukohde) {
         String uusiArvo;
         if (hakukohde.getOid() != null) {
-            uusiArvo =  "Hakukohde oid : "  +  hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
+            uusiArvo = "Hakukohde oid : " + hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
         } else {
             uusiArvo = "Hakukohde nimi:  " + hakukohde.getHakukohdeKoodistoNimi();
         }
@@ -516,10 +514,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
 
-        List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
+        Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdePaivitys.getOid());
         //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
-        hakukohde.setId(hakukohdeTemp.get(0).getId());
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp.get(0), "UPDATE"));
+        hakukohde.setId(hakukohdeTemp.getId());
+        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp, "UPDATE"));
         //why do we overwrite version from DTO?
         //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
@@ -527,12 +525,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setHaku(haku);
         hakukohde.setHakuaika(findHakuaika(haku, hakukohdePaivitys.getSisaisetHakuajat()));
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
-        hakukohde.getValintakoes().addAll(hakukohdeTemp.get(0).getValintakoes());
-        hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());
-
+        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
+        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
         hakukohdeDAO.update(hakukohde);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
+
+
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
@@ -631,7 +630,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } catch (Exception exp) {
         }
         if (toteutus.getOid() != null) {
-            tapahtuma.setUusiArvo( "OID : "  + toteutus.getOid() + ", KOULUTUSKOODI :  " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
+            tapahtuma.setUusiArvo("OID : " + toteutus.getOid() + ", KOULUTUSKOODI :  " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
         }
 
         return tapahtuma;
@@ -784,12 +783,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         final Koulutusmoduuli convertedKomo = EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi, komo);
         convertedKomo.setNimi(null);
-        
+
         koulutusmoduuliDAO.update(convertedKomo);
-        
-        
-        
-        
+
+
+
+
         return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(convertedKomo);
     }
 

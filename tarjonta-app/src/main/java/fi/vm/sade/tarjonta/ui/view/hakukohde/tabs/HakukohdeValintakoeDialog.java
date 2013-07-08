@@ -45,7 +45,7 @@ public class HakukohdeValintakoeDialog extends TarjontaWindow {
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-        layout.addComponent(view);
+        layout.addComponent(view.getForm());
     }
 
     public void windowClose() {

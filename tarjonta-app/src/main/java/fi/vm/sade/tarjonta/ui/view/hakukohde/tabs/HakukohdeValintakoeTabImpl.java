@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.ui.*;
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
@@ -31,8 +32,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -46,19 +45,21 @@ import java.text.SimpleDateFormat;
  */
 public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<HakukohdeViewModel, ValintakoeViewImpl> {
 
+    private static final long serialVersionUID = -6105916942362263403L;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    @Autowired
-    private TarjontaUIHelper tarjontaUIHelper;
     private ValintakoeViewImpl formView;
     @Autowired(required = true)
     private UserService userService;
     private HorizontalLayout headerLayout;
+    private KoulutusasteTyyppi koulutusastetyyppi;
 
-    public HakukohdeValintakoeTabImpl(String oid) {
+    public HakukohdeValintakoeTabImpl(String oid, KoulutusasteTyyppi koulutusastetyyppi) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
+        Preconditions.checkNotNull(koulutusastetyyppi, "KoulutusasteTyyppi enum cannot be null.");
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
+        this.koulutusastetyyppi = koulutusastetyyppi;
     }
 
     private AbstractLayout buildHeaderLayout() {
@@ -110,15 +111,11 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                     if (model.getViimeisinPaivitysPvm().after(latestAndGreatest.getViimeisinPaivitysPvm())) {
                         latestAndGreatest = model;
                     }
-
                 }
-
             }
 
             if (latestAndGreatest != null) {
-
                 lastUpdatedBy = getLatestUpdaterLabelText(latestAndGreatest);
-
             }
 
         } else {
@@ -160,46 +157,28 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
-        formView = new ValintakoeViewImpl(presenter, getUiBuilder());
+        final HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+        formView = new ValintakoeViewImpl(presenter, getUiBuilder(), koulutusastetyyppi);
 
         AbstractLayout headerLayout = null;
 
-        if (isAmmatillinenHakukohde()) {
+        if (koulutusastetyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             headerLayout = buildHeaderLayout();
         }
 
-        buildFormLayout(headerLayout, presenter, layout, presenter.getModel().getHakukohde(), formView);
-
+        buildFormLayout(headerLayout, presenter, layout, hakukohde, formView);
 
         visibleButtonByListener(clickListenerSaveAsDraft, false);
         visibleButtonByListener(clickListenerSaveAsReady, false);
         visibleButtonByListener(clickListenerNext, false);
         visibleButtonByListener(clickListenerBack, false);
-
-        /* if (presenter.getModel().getHakukohde().getKoulukses() == null
-         || presenter.getModel().getHakukohde().getKoulukses().isEmpty() 
-         || !presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-         visibleButtonByListener(clickListenerSaveAsDraft, false);
-         visibleButtonByListener(clickListenerSaveAsReady, false);
-         }*/
     }
-
-    private boolean isAmmatillinenHakukohde() {
-        if (!presenter.getModel().getHakukohde().getKoulukses().isEmpty()) {
-            return presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        } else if (!presenter.getSelectedKoulutukset().isEmpty()) {
-            return presenter.getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        }
-        return true;
-    }
-    private static final long serialVersionUID = -6105916942362263403L;
 
     @Override
     public void actionNext(ClickEvent event) {
         if (getHakukohdeOid() != null) {
             presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
-
     }
 
     @Override
@@ -207,11 +186,11 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         return isLoaded();
     }
 
-    public void validateValintakoeForm() throws Exception {
+    public void validateLukioValintakoeForm() throws Exception {
         errorView.resetErrors();
         boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
         boolean pisterajatCorrect = true;
-        this.formView.getValintakoeComponent().getForm().commit();
+        this.formView.getLukioValintakoeView().getForm().commit();
         if (pisterajatValidType) {
             pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions();
         }
@@ -223,7 +202,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
             throw new Validator.InvalidValueException("");
         }
 
-        if (!this.formView.getValintakoeComponent().getForm().isValid() || !isValintakoeInSync() || !isLisapisteetInSync()) {
+        if (!this.formView.getLukioValintakoeView().getForm().isValid() || !isValintakoeInSync() || !isLisapisteetInSync()) {
             throw new Validator.InvalidValueException("");
         }
     }
@@ -238,14 +217,14 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
      */
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
-        if (formView.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+        if (koulutusastetyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             try {
-                validateValintakoeForm();
+                validateLukioValintakoeForm();
                 formView.getPisterajaTable().bindValintakoeData(presenter.getModel().getSelectedValintaKoe());
                 formView.getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
                 presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
                 presenter.getModel().getHakukohde().getValintaKokees().clear();
-                presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
+                presenter.saveHakukohdeValintakoe(formView.getLukioValintakoeView().getValintakokeenKuvaukset());
                 return getHakukohdeOid();
 
             } catch (Validator.InvalidValueException e) {
@@ -260,7 +239,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     private boolean isValintakoeInSync() throws Exception {
         formView.getPisterajaTable().getValintakoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
 
-        if (formView.getPisterajaTable().getPkCb().booleanValue() && (!formView.getPisterajaTable().isValintakoePisterajat() || formView.getValintakoeComponent().getValintakoeAikasTable().getItemIds().isEmpty())) {
+        if (formView.getPisterajaTable().getPkCb().booleanValue() && (!formView.getPisterajaTable().isValintakoePisterajat() || formView.getLukioValintakoeView().getValintakoeAikasTable().getItemIds().isEmpty())) {
             errorView.addError(T("validation.valintakoeDataIsMissing"));
             throw new Validator.InvalidValueException("");
         }
@@ -283,10 +262,6 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
     public ValintakoeViewImpl getFormView() {
         return formView;
-    }
-
-    private String getUriWithVersion(HakukohdeNameUriModel hakukohdeNameUriModel) {
-        return hakukohdeNameUriModel.getHakukohdeUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + hakukohdeNameUriModel.getUriVersio();
     }
 
     private String getHakukohdeOid() {

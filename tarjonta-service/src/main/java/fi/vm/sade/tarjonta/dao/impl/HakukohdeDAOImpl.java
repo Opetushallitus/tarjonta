@@ -47,6 +47,7 @@ import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import java.util.Set;
 
 /**
  */
@@ -54,7 +55,6 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implements HakukohdeDAO {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-
     @Value("${tarjonta-alkamiskausi-syksy}")
     private String tarjontaAlkamiskausiSyksyUri;
 
@@ -75,10 +75,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public void updateValintakoe(List<Valintakoe> valintakoes, String hakukohdeOid) {
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
-
+        for (Valintakoe koe : hakukohde.getValintakoes()) {
+            getEntityManager().remove(koe);
+        }
         hakukohde.getValintakoes().clear();
 
-        for (Valintakoe valintakoe:valintakoes) {
+        for (Valintakoe valintakoe : valintakoes) {
             valintakoe.setHakukohdeId(hakukohde.getId());
         }
 
@@ -136,20 +138,22 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
-    public Hakukohde findHakukohdeByOid(String oid) {
-    	return (Hakukohde) getEntityManager().createQuery("FROM "+Hakukohde.class.getName()+" WHERE oid=?")
-    			.setParameter(1, oid)
-    			.getSingleResult();
+    public Hakukohde findHakukohdeByOid(final String oid) {
+        Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
+        
+        return (Hakukohde) getEntityManager().createQuery("FROM " + Hakukohde.class.getName() + " WHERE oid=?")
+                .setParameter(1, oid)
+                .getSingleResult();
     }
 
     @Override
     public Hakukohde findHakukohdeWithKomotosByOid(String oid) {
-    	return findHakukohdeByOid(oid);
+        return findHakukohdeByOid(oid);
     }
 
     @Override
     public Hakukohde findHakukohdeWithDepenciesByOid(String oid) {
-    	return findHakukohdeByOid(oid);
+        return findHakukohdeByOid(oid);
     }
 
     @Override
@@ -264,7 +268,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return from(hakukohde).where(toteutusesEmpty).list(hakukohde);
     }
 
-
     @Override
     public List<String> findOIDsBy(fi.vm.sade.tarjonta.service.types.TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
@@ -283,7 +286,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         }
 
         // Result selection
-        Expression<?>[] projectionExpr = new Expression<?>[] {hakukohde.oid};
+        Expression<?>[] projectionExpr = new Expression<?>[]{hakukohde.oid};
 
         List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
         return convertToSingleStringList(tmp);
@@ -292,12 +295,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public List<String> findOidsByKoulutusId(long koulutusId) {
         //TODO use constants
-        Query q = getEntityManager().createQuery("select h.oid from Hakukohde h JOIN h.koulutusmoduuliToteutuses kmt where kmt.id= :komotoId").setParameter("komotoId", koulutusId );
+        Query q = getEntityManager().createQuery("select h.oid from Hakukohde h JOIN h.koulutusmoduuliToteutuses kmt where kmt.id= :komotoId").setParameter("komotoId", koulutusId);
 
         List<String> results = (List<String>) q.getResultList();
         return results;
     }
-
 
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
@@ -309,7 +311,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         BooleanExpression whereExpr = hakukohde.haku.oid.eq(hakuOid);
 
         // Result selection
-        Expression<?>[] projectionExpr = new Expression<?>[] {hakukohde.oid};
+        Expression<?>[] projectionExpr = new Expression<?>[]{hakukohde.oid};
 
         if (lastModifiedBefore != null) {
             whereExpr = whereExpr.and(hakukohde.lastUpdateDate.before(lastModifiedBefore));
@@ -322,7 +324,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return convertToSingleStringList(tmp);
     }
-
 
     /**
      * Convert Object[] listo to String list.
@@ -356,7 +357,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
      * @return
      */
     private List<Object[]> findScalars(BooleanExpression whereExpr, int count, int startIndex, Expression<?>... projectionExpr) {
-        log.info("findScalars({}, {}, {}, {})", new Object[] {whereExpr, count, startIndex, projectionExpr});
+        log.info("findScalars({}, {}, {}, {})", new Object[]{whereExpr, count, startIndex, projectionExpr});
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
@@ -390,5 +391,4 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
     }
-
 }

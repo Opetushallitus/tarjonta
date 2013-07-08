@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.ui.model;/*
  */
 
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,10 @@ public class ValintakoeViewModel {
     private Date viimeisinPaivitysPvm;
     private List<KielikaannosViewModel> lisanayttoKuvaukset;
 
+    public ValintakoeViewModel() {
+        clearModel();
+    }
+    
     public String getValintakoeTyyppi() {
         return valintakoeTyyppi;
     }
@@ -162,6 +167,28 @@ public class ValintakoeViewModel {
                 .append(viimeisinPaivitysPvm)
                 .append(lisanayttoKuvaukset)
                 .toHashCode();
+    }
+
+    public void clearModel() {
+        valintakoeTunniste = null;
+        valintakoeTyyppi = null;
+        sanallisetKuvaukset = null;
+        valintakoeAjat = null;
+        pkAlinPM = null;
+        pkYlinPM = null;
+        pkAlinHyvaksyttyPM = null;
+        lpAlinPM = null;
+        lpYlinPM = null;
+        lpAlinHyvaksyttyPM = null;
+
+        kpAlinHyvaksyttyPM = null;
+        viimeisinPaivittaja = null;
+        viimeisinPaivitysPvm = null;
+        lisanayttoKuvaukset = null;
+
+        sanallisetKuvaukset = Lists.<KielikaannosViewModel>newArrayList();
+        valintakoeAjat = Lists.<ValintakoeAikaViewModel>newArrayList();
+        lisanayttoKuvaukset = Lists.<KielikaannosViewModel>newArrayList();
     }
 
     public String getPkAlinPM() {

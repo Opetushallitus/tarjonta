@@ -280,6 +280,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     public ValintakoeViewModel getSelectedValintaKoe() {
+        if (selectedValintaKoe == null) {
+            selectedValintaKoe = new ValintakoeViewModel();
+        }
+
         return selectedValintaKoe;
     }
 

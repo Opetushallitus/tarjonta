@@ -335,6 +335,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
+        Preconditions.checkNotNull(getModel().getHakukohde().getOid(), "Hakukohde OID cannot be null.");
+
         if (!kuvaukset.isEmpty()) {
             getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
         }
@@ -348,9 +350,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         getTarjontaAdminService().tallennaValintakokeitaHakukohteelle(getModel().getHakukohde().getOid(), valintakokeet);
 
-        getModel().setSelectedValintaKoe(new ValintakoeViewModel());
-        editHakukohdeView.loadValintakokees();
+        getModel().getSelectedValintaKoe().clearModel();
         refreshHakukohdeUIModel(getModel().getHakukohde().getOid());
+        
+        editHakukohdeView.loadValintakokees();
         editHakukohdeView.refreshValintaKokeetLastUpdatedBy();
         editHakukohdeView.closeValintakoeEditWindow();
     }
@@ -1003,25 +1006,23 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public List<ValintakoeViewModel> loadHakukohdeValintaKokees() {
-        ArrayList<ValintakoeViewModel> valintaKokeet = new ArrayList<ValintakoeViewModel>();
+        HakukohdeViewModel hakukohde = getModel().getHakukohde();
+        hakukohde.getValintaKokees().clear(); //clear model
 
-        if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
+        if (hakukohde.getOid() != null) {
             HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi kysely = new HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi();
-            kysely.setHakukohteenTunniste(getModel().getHakukohde().getOid());
+            kysely.setHakukohteenTunniste(hakukohde.getOid());
             HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = getTarjontaPublicService().haeHakukohteenValintakokeetHakukohteenTunnisteella(kysely);
-            LOG.debug("haeHakukohteenValintakokeetHakukohteenTunnisteella size {}", vastaus.getHakukohteenValintaKokeet().size());
+            LOG.debug("haeHakukohteenValintakokeetHakukohteenTunnisteella size {}", vastaus != null ? vastaus.getHakukohteenValintaKokeet().size() : null);
             if (vastaus != null && vastaus.getHakukohteenValintaKokeet() != null) {
                 for (ValintakoeTyyppi valintakoeTyyppi : vastaus.getHakukohteenValintaKokeet()) {
                     ValintakoeViewModel valintakoeViewModel = ValintakoeConverter.mapDtoToValintakoeViewModel(valintakoeTyyppi);
-                    valintaKokeet.add(valintakoeViewModel);
+                    hakukohde.getValintaKokees().add(valintakoeViewModel); //add data to model
                 }
-                getModel().getHakukohde().getValintaKokees().clear();
-                getModel().getHakukohde().getValintaKokees().addAll(valintaKokeet);
             }
-
         }
 
-        return valintaKokeet;
+        return hakukohde.getValintaKokees();
     }
     private String cachedLiitteetOid = null;
     private List<HakukohdeLiiteViewModel> cachedLiitteet = null;
@@ -1125,23 +1126,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
 
         return getModel().getSelectedValintaKoe();
-    }
-
-    public ValintakoeAikaViewModel getSelectedAikaView() {
-        ValintakoeAikaViewModel aikaViewModel = new ValintakoeAikaViewModel();
-
-        if (getModel().getSelectedValintakoeAika() != null) {
-            aikaViewModel.setValintakoeAikaTiedot(getModel().getSelectedValintakoeAika().getValintakoeAikaTiedot());
-            aikaViewModel.setOsoiteRivi(getModel().getSelectedValintakoeAika().getOsoiteRivi());
-            aikaViewModel.setPostinumero(getModel().getSelectedValintakoeAika().getPostinumero());
-            aikaViewModel.setPostitoimiPaikka(getModel().getSelectedValintakoeAika().getPostitoimiPaikka());
-            aikaViewModel.setAlkamisAika(getModel().getSelectedValintakoeAika().getAlkamisAika());
-            aikaViewModel.setPaattymisAika(getModel().getSelectedValintakoeAika().getPaattymisAika());
-
-        }
-
-
-        return aikaViewModel;
     }
 
     public void removeValintakoeAikaSelection(ValintakoeAikaViewModel valintakoeAikaViewModel) {
@@ -1258,7 +1242,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         HakukohdeTyyppi hakukohde = getTarjontaPublicService()
                 .lueHakukohde(kysely).getHakukohde();
         refreshHakukohdeUIModel(hakukohde);
-        loadHakukohdeValintaKokees();
     }
 
     /**
@@ -1279,6 +1262,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         switch (hakukohdeTyyppi.getHakukohteenKoulutusaste()) {
             case LUKIOKOULUTUS:
                 if (hakuKohdePerustiedotView != null) {
+                    //update form data binding for oppiaine UI models
                     hakuKohdePerustiedotView.refreshOppiaineet();
                 }
                 break;

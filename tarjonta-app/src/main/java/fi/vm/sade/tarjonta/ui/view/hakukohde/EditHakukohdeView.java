@@ -48,7 +48,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
-import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeTabImpl;
@@ -251,8 +250,9 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     }
 
     public void loadValintakokees() {
-        if (valintakokeet != null) {
-            valintakokeet.getFormView().loadTableData();
+        if (valintakokeet != null && valintakokeet.getFormView() != null) {
+            //reload model data to layout
+            valintakokeet.getFormView().reloadTableDataValintaKokees();
         }
     }
 
@@ -348,7 +348,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
             if (valintakokeetTab.isEnabled()) {
                 try {
-                    valintakokeet.validateValintakoeForm();
+                    valintakokeet.validateLukioValintakoeForm();
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));
                     throw e;
@@ -399,7 +399,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
         liitteet = new HakukohteenLiitteetTabImpl();
-        valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid);
+        valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid, presenter.getModel().getHakukohde().getKoulutusasteTyyppi());
         perustiedotTab = tabs.addTab(wrapperVl, T("tabNimi"));
         valintakokeetTab = tabs.addTab(valintakokeet, T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));

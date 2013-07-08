@@ -35,9 +35,10 @@ import java.util.List;
  * Created by: Tuomas Katva Date: 24.1.2013
  */
 @Configurable(preConstruction = true)
-public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
+public class HakukohdeValintakoeAikaRow {
 
     private static final String SIJAINTI_FORMAT = "%s<br/>%s %s";
+    private static final long serialVersionUID = 6095512919859150709L;
     private final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
@@ -52,31 +53,32 @@ public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
     private ValintakoeAikaViewModel rowValintakoeAika;
     private HakukohdeValintakoeViewImpl parent;
 
-    public  HakukohdeValintakoeAikaRow(ValintakoeAikaViewModel aika) {
-        setHeight("80px");
+    public HakukohdeValintakoeAikaRow(ValintakoeAikaViewModel aika) {
         rowValintakoeAika = aika;
         resolveFields();
 
-        muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
+        muokkaaBtn = UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
-                tarjontaPresenter.getModel().setSelectedValintakoeAika(rowValintakoeAika);
                 parent.setEditableValintakoeAika(rowValintakoeAika);
 
             }
         });
 
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                  tarjontaPresenter.removeValintakoeAikaSelection(rowValintakoeAika);
-                  if (parent != null) {
-                      parent.loadTableData();
-                  }
+                tarjontaPresenter.removeValintakoeAikaSelection(rowValintakoeAika);
+                if (parent != null) {
+                    parent.reloadValintakoeAikasTableData();
+                }
             }
         });
-  
+
 
     }
 
