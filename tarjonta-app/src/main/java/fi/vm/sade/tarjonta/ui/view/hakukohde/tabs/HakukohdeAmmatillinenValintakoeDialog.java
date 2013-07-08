@@ -27,7 +27,7 @@ import static fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow.WINDOW_TITLE_PRO
  *
  * @author Jani Wilén
  */
-public class HakukohdeValintakoeDialog extends TarjontaWindow {
+public class HakukohdeAmmatillinenValintakoeDialog extends TarjontaWindow {
 
     private static final String WINDOW_HEIGHT = "700px";
     private static final String WINDOW_WIDTH = "864px";
@@ -36,7 +36,7 @@ public class HakukohdeValintakoeDialog extends TarjontaWindow {
     private UiBuilder uiBuilder;
     private HakukohdeValintakoeViewImpl view;
 
-    public HakukohdeValintakoeDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
+    public HakukohdeAmmatillinenValintakoeDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
@@ -59,6 +59,8 @@ public class HakukohdeValintakoeDialog extends TarjontaWindow {
 
     public void windowOpen() {
         view = new HakukohdeValintakoeViewImpl(getErrorView(), presenter, uiBuilder, KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        view.reloadValintakoeAikasTableData();
+
         presenter.getRootView().addWindow(this);
     }
 }

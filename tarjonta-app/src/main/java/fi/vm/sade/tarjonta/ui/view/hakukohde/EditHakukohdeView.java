@@ -253,6 +253,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         if (valintakokeet != null && valintakokeet.getFormView() != null) {
             //reload model data to layout
             valintakokeet.getFormView().reloadTableDataValintaKokees();
+           
         }
     }
 

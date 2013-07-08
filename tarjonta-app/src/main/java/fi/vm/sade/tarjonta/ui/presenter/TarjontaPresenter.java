@@ -1181,15 +1181,15 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels, String selectedTab) {
         LOG.info("showHakukohdeEditView()");
+         getModel().getHakukohde().clearModel();
+         
         if (koulutusOids != null) {
             reloadSelectedKoulutuksesModel(koulutusOids);
         }
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView(hakukohdeOid);
         if (hakukohdeOid == null) {
-            getModel().getHakukohde().clearModel();
-
-
+         
             if (koulutusOidNameViewModels != null) {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);

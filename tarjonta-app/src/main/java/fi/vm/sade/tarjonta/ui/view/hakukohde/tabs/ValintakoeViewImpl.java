@@ -49,7 +49,7 @@ public class ValintakoeViewImpl extends VerticalLayout {
     private transient UiBuilder uiBuilder;
     private Table ammValintakoeTable;
     private Button uusiValintakoeBtn;
-    private HakukohdeValintakoeDialog dialog;
+    private HakukohdeAmmatillinenValintakoeDialog dialog;
     private PisterajaTable pisterajaTable;
     private VerticalLayout paasykoeLayout;
     private VerticalLayout lisapisteetLayout;
@@ -68,16 +68,7 @@ public class ValintakoeViewImpl extends VerticalLayout {
 
     protected void buildLayout() {
         Preconditions.checkNotNull(koulutustyyppi, "KoulutusasteTyyppi enum cannot be null.");
-
-        switch (koulutustyyppi) {
-            case AMMATILLINEN_PERUSKOULUTUS:
-                buildToinenAsteLayout(this);
-                buildAmmatillinenValintakoeKoeTable(this);
-                break;
-            case LUKIOKOULUTUS:
-                buildLukioLayout(this);
-                break;
-        }
+        reloadTableDataValintaKokees();
     }
 
     private void buildLukioLayout(VerticalLayout layout) {
@@ -237,7 +228,7 @@ public class ValintakoeViewImpl extends VerticalLayout {
         if (id == null) {
             presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         }
-        dialog = new HakukohdeValintakoeDialog(presenter, uiBuilder);
+        dialog = new HakukohdeAmmatillinenValintakoeDialog(presenter, uiBuilder);
         dialog.windowOpen();
     }
 
@@ -247,29 +238,34 @@ public class ValintakoeViewImpl extends VerticalLayout {
      * - amm
      */
     public void reloadTableDataValintaKokees() {
-         //load data to model
+        //load data to model
         presenter.loadHakukohdeValintaKokees();
-        
-        //use the loaded model
-        List<ValintakoeViewModel> valintaKokees = presenter.getModel().getHakukohde().getValintaKokees();
+
+        //set data to ui components
+        final List<ValintakoeViewModel> valintaKokees = presenter.getModel().getHakukohde().getValintaKokees();
+
         switch (koulutustyyppi) {
             case AMMATILLINEN_PERUSKOULUTUS:
-                if (ammValintakoeTable != null) {
+                if (ammValintakoeTable == null) {
                     //data table in a window dialog
-                    reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
                 }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
                 break;
             case LUKIOKOULUTUS:
                 if (!valintaKokees.isEmpty()) {
+                    //only one exam, just take the first item
                     presenter.getModel().setSelectedValintaKoe(valintaKokees.get(0));
                 } else {
                     presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
                 }
 
-                if (lukioValintakoe != null) {
-                    //data table in a form tab
-                    lukioValintakoe.reloadValintakoeAikasTableData();
+                if (lukioValintakoe == null) {
+                    buildLukioLayout(this);
                 }
+
+                lukioValintakoe.reloadValintakoeAikasTableData();
                 break;
             default:
                 throw new RuntimeException("Reload not implemented for koulutustyyppi " + koulutustyyppi);
@@ -366,12 +362,5 @@ public class ValintakoeViewImpl extends VerticalLayout {
 
     public HakukohdeValintakoeViewImpl getLukioValintakoeView() {
         return lukioValintakoe;
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-
-        reloadTableDataValintaKokees();
     }
 }

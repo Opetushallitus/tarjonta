@@ -21,6 +21,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Window.Notification;
 
@@ -114,8 +115,9 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
     public void setEditableValintakoeAika(ValintakoeAikaViewModel valintakoeAika) {
         if (valintaKoeAikaEditView != null && valintaKoeAikaForm != null) {
             //set as selected
-            presenter.getModel().setSelectedValintakoeAika(valintakoeAika);
-            valintaKoeAikaForm.setItemDataSource(new BeanItem<ValintakoeAikaViewModel>(valintakoeAika));
+            ValintakoeAikaViewModel clone = cloneSelectedModelForForm(valintakoeAika);
+            presenter.getModel().setSelectedValintakoeAika(clone);
+            setFormDataBinding(clone);
         }
     }
 
@@ -140,12 +142,16 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
         }
     }
 
+    private void setFormDataBinding(ValintakoeAikaViewModel model) {
+        BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(model);
+        valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
+    }
+
     private void resetValintakokeenSijaintiAikaFormData() {
         //add new empty object to form pre-selected object
         presenter.getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
         //bind the object to model&form
-        BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(presenter.getModel().getSelectedValintakoeAika());
-        valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
+        setFormDataBinding(presenter.getModel().getSelectedValintakoeAika());
     }
 
     private void buildMainLayout() {
@@ -256,6 +262,8 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
                     boolean clickButtonAddNew = true;
                     for (ValintakoeAikaViewModel m : valintakoeAjat) {
                         if (m.getModelId() == valintakoeAika.getModelId()) {
+                            //copy validated data back to the original model
+                            copyModel(valintakoeAika, m);
                             clickButtonAddNew = false;
                             break;
                         }
@@ -291,21 +299,36 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
         hakukohdeValintakoeAikaTable.setColumnExpandRatio("muokkaaBtn", 8);
         hakukohdeValintakoeAikaTable.setColumnExpandRatio("poistaBtn", 8);
         hakukohdeValintakoeAikaTable.setWidth(100, UNITS_PERCENTAGE);
+        hakukohdeValintakoeAikaTable.setHeight(-1, UNITS_PIXELS);
         hakukohdeValintakoeAikaTable.setImmediate(true);
-        hakukohdeValintakoeAikaTable.setPageLength(0); //0 == show all
         return hakukohdeValintakoeAikaTable;
     }
 
+    private void copyModel(final ValintakoeAikaViewModel source, ValintakoeAikaViewModel target) {
+        target.setModelId(source.getModelId());
+        target.setValintakoeAikaTiedot(source.getValintakoeAikaTiedot());
+        target.setOsoiteRivi(source.getOsoiteRivi());
+        target.setPostinumero(source.getPostinumero());
+        target.setPostitoimiPaikka(source.getPostitoimiPaikka());
+        target.setAlkamisAika(source.getAlkamisAika());
+        target.setPaattymisAika(source.getPaattymisAika());
+    }
+
+    private ValintakoeAikaViewModel cloneSelectedModelForForm(ValintakoeAikaViewModel realModel) {
+        ValintakoeAikaViewModel temp = new ValintakoeAikaViewModel();
+        if (realModel != null) {
+            copyModel(realModel, temp);
+        }
+
+        return temp;
+    }
+
     public void reloadValintakoeAikasTableData() {
-
-
         if (hakukohdeValintakoeAikaTable != null) {
-            List<ValintakoeAikaViewModel> aikas = presenter.getModel().getSelectedValintaKoe() != null ? presenter.getModel().getSelectedValintaKoe().getValintakoeAjat() : new ArrayList<ValintakoeAikaViewModel>();
+            List<ValintakoeAikaViewModel> aikas = presenter.getModel().getSelectedValintaKoe().getValintakoeAjat();
 
             final BeanContainer<String, HakukohdeValintakoeAikaRow> createTableContainer = createTableContainer(aikas);
             hakukohdeValintakoeAikaTable.removeAllItems();
-            hakukohdeValintakoeAikaTable.setWidth(100, UNITS_PERCENTAGE);
-            hakukohdeValintakoeAikaTable.setHeight(-1, UNITS_PIXELS);
             hakukohdeValintakoeAikaTable.setContainerDataSource(createTableContainer);
             hakukohdeValintakoeAikaTable.setPageLength(createTableContainer.size() > 0 ? createTableContainer.size() + 1 : 1);
             hakukohdeValintakoeAikaTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "muokkaaBtn", "poistaBtn"});
