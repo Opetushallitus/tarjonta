@@ -753,7 +753,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakukohde = hakukohdeDAO.read(hakukohde.getId());
         String hakukohdeTunniste = Long.toString(hakukohde.getLiites().iterator().next().getId());
         String valintakoeTunniste = Long.toString(hakukohde.getValintakoes().iterator().next().getId());
-        
         komoto.addHakukohde(hakukohde);
         this.koulutusmoduuliToteutusDAO.update(komoto);
 
@@ -1060,6 +1059,13 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             //"ok"
         }
         
+        
+        try {
+            adminService.poistaValintakoe(valintakoeTunniste);
+        } catch (NotAuthorizedException rte) {
+            fail("virkailija should be able to edit hakukohde");
+        }
+        
         try {
             adminService.paivitaKoulutusmoduuli(null);
             fail("virkailija should not be able to access the service");
@@ -1116,11 +1122,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             //"ok"
         }
         
-        try {
-            adminService.poistaValintakoe(valintakoeTunniste);
-        } catch (NotAuthorizedException rte) {
-            fail("virkailija should be able to edit hakukohde");
-        }
 
         try {
             adminService.tallennaLiitteitaHakukohteelle(hakukohde.getOid(), new ArrayList());

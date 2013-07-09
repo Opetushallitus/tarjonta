@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.auth;
 
+import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Set;
 
@@ -39,22 +40,20 @@ public class PermissionChecker {
 
     @Autowired
     TarjontaPermissionServiceImpl permissionService;
-
     @Autowired
     HakukohdeDAOImpl hakukohdeDaoImpl;
-
     @Autowired
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
 
     /**
-     * 
+     *
      * @param organisaatioOids
      */
     public void checkCopyKoulutus(List<String> organisaatioOids) {
         for (String orgOid : organisaatioOids) {
             checkPermission(permissionService
                     .userCanCopyKoulutusAsNew(OrganisaatioContext
-                            .getContext(orgOid)));
+                    .getContext(orgOid)));
         }
     }
 
@@ -75,7 +74,7 @@ public class PermissionChecker {
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+                    .getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
@@ -88,22 +87,17 @@ public class PermissionChecker {
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+                    .getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
-    public void checkUpdateHakukohdeByValintakoeTunniste(
-            String valintakoeTunniste) {
-        Valintakoe valintakoe = hakukohdeDaoImpl
-                .findValintaKoeById(valintakoeTunniste);
-        Hakukohde hakukohde = hakukohdeDaoImpl
-                .read(valintakoe.getHakukohdeId());
-        Set<KoulutusmoduuliToteutus> komot = hakukohde
-                .getKoulutusmoduuliToteutuses();
+    public void checkUpdateHakukohdeByValintakoeTunniste(String valintakoeTunniste) {
+        Preconditions.checkNotNull(valintakoeTunniste, "Valintakoe tunniste cannot be null.");
+        Valintakoe valintakoe = hakukohdeDaoImpl.findValintaKoeById(valintakoeTunniste);
+        Hakukohde hakukohde = hakukohdeDaoImpl.read(valintakoe.getHakukohdeId());
+        Set<KoulutusmoduuliToteutus> komot = hakukohde.getKoulutusmoduuliToteutuses();
         if (komot.size() > 0) {
-            checkPermission(permissionService
-                    .userCanUpdateHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+            checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
@@ -112,7 +106,7 @@ public class PermissionChecker {
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+                    .getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
@@ -123,7 +117,7 @@ public class PermissionChecker {
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanDeleteHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+                    .getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
@@ -138,20 +132,20 @@ public class PermissionChecker {
     public void checkCreateKoulutus(String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanCreateKoulutus(OrganisaatioContext
-                        .getContext(tarjoajaOid)));
+                .getContext(tarjoajaOid)));
     }
 
     public void checkUpdateKoulutus(String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanUpdateKoulutus(OrganisaatioContext
-                        .getContext(tarjoajaOid)));
+                .getContext(tarjoajaOid)));
     }
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
-                        .getTarjoaja())));
+                .getTarjoaja())));
     }
 
     public void checkCreateKoulutusmoduuli() {
@@ -166,17 +160,17 @@ public class PermissionChecker {
         for (GeneerinenTilaTyyppi tyyppi : tarjontatiedonTila.getTilaOids()) {
             switch (tyyppi.getSisalto()) {
 
-            case HAKU:
-                checkHakuUpdate();
-                break;
-            case HAKUKOHDE:
-                checkUpdateHakukohde(tyyppi.getOid());
-                break;
-            case KOMO:
-                break; // XXX currently no permission check for this
-            case KOMOTO:
-                checkUpdateKoulutus(tyyppi.getOid());
-                break;
+                case HAKU:
+                    checkHakuUpdate();
+                    break;
+                case HAKUKOHDE:
+                    checkUpdateHakukohde(tyyppi.getOid());
+                    break;
+                case KOMO:
+                    break; // XXX currently no permission check for this
+                case KOMOTO:
+                    checkUpdateKoulutus(tyyppi.getOid());
+                    break;
             }
         }
     }
@@ -184,5 +178,4 @@ public class PermissionChecker {
     public void checkUpdateValintaperustekuvaus() {
         checkPermission(permissionService.userCanEditValintaperustekuvaus());
     }
-
 }
