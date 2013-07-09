@@ -37,6 +37,8 @@
 		<!--  ([\p{L}/ 0-9&amp;\#-.?=])*
 		-->
 		<regexp name="offsiteURL" value="(\s)*((ht|f)tp(s?)://|mailto:)[A-Za-z0-9]+[~a-zA-Z0-9-_\.@\#\$%&amp;;:,\?=/\+!\(\)]*(\s)*" />
+                <regexp name="number" value="(-|\+)?([0-9]+(\.[0-9]+)?)"/>
+                <regexp name="numberOrPercent" value="(\d)+(%{0,1})"/>
 	</common-regexps>
 
 	<!--
@@ -81,20 +83,76 @@
 			</regexp-list>
 		</attribute>
 
-		<attribute name="align"
-			description="The 'align' attribute of an HTML element is a direction word, like 'left', 'right' or 'center'">
-
-			<literal-list>
-				<literal value="center" />
-				<literal value="left" />
-				<literal value="right" />
-				<literal value="justify" />
-				<literal value="char" />
-			</literal-list>
-		</attribute>
 		<attribute name="style"
 			description="The 'style' attribute provides the ability for users to change many attributes of the tag's contents using a strict syntax" />
-	</common-attributes>
+	
+        <!--  Table attributes  -->
+
+		<attribute name="border">
+			<regexp-list>
+				<regexp name="number"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="cellpadding">
+			<regexp-list>
+				<regexp name="number"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="cellspacing">
+			<regexp-list>
+				<regexp name="number"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="colspan">
+			<regexp-list>
+				<regexp name="number"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="rowspan">
+			<regexp-list>
+				<regexp name="number"/>
+			</regexp-list>
+		</attribute>
+
+		<!--  Common positioning attributes  -->
+
+		<attribute name="width">
+			<regexp-list>
+				<regexp name="numberOrPercent"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="height">
+			<regexp-list>
+				<regexp name="numberOrPercent"/>
+			</regexp-list>
+		</attribute>
+
+		<attribute name="align" description="The 'align' attribute of an HTML element is a direction word, like 'left', 'right' or 'center'">
+			<literal-list>
+				<literal value="center"/>
+				<literal value="middle"/>
+				<literal value="left"/>
+				<literal value="right"/>
+				<literal value="justify"/>
+				<literal value="char"/>
+			</literal-list>
+		</attribute>
+
+		<attribute name="valign" description="The 'valign' attribute of an HTML attribute is a direction word, like 'baseline','bottom','middle' or 'top'">
+			<literal-list>
+				<literal value="baseline"/>
+				<literal value="bottom"/>
+				<literal value="middle"/>
+				<literal value="top"/>
+			</literal-list>
+		</attribute>
+     
+        </common-attributes>
 
 	<!--
 		This requires normal updates as browsers continue to diverge from the W3C and each other. As long as the browser wars continue
@@ -102,100 +160,135 @@
 		a while?
 
 
-	-->
+    -->
 
-	<global-tag-attributes>
-		<attribute name="title" />
-		<attribute name="lang" />
-		<attribute name="style" />
-	</global-tag-attributes>
+    <global-tag-attributes>
+        <attribute name="title" />
+        <attribute name="lang" />
+        <attribute name="style" />
+    </global-tag-attributes>
 
-	<tags-to-encode>
-		<tag>g</tag>
-		<tag>grin</tag>
-	</tags-to-encode>
+    <tags-to-encode>
+        <tag>g</tag>
+        <tag>grin</tag>
+    </tags-to-encode>
 
-	<tag-rules>
+    <tag-rules>
 
-		<!--  Remove  -->
+        <!--  Remove  -->
 
-		<tag name="script" action="remove" />
-		<tag name="noscript" action="remove" />
-		<tag name="iframe" action="remove" />
-		<tag name="frameset" action="remove" />
-		<tag name="frame" action="remove" />
-		<tag name="noframes" action="remove" />
-		<tag name="head" action="remove" />
-		<tag name="title" action="remove" />
-		<tag name="base" action="remove" />
-		<tag name="style" action="remove" />
-		<tag name="link" action="remove" />
-		<tag name="input" action="remove" />
-		<tag name="textarea" action="remove" />
+        <tag name="script" action="remove" />
+        <tag name="noscript" action="remove" />
+        <tag name="iframe" action="remove" />
+        <tag name="frameset" action="remove" />
+        <tag name="frame" action="remove" />
+        <tag name="noframes" action="remove" />
+        <tag name="head" action="remove" />
+        <tag name="title" action="remove" />
+        <tag name="base" action="remove" />
+        <tag name="style" action="remove" />
+        <tag name="link" action="remove" />
+        <tag name="input" action="remove" />
+        <tag name="textarea" action="remove" />
 
-		<!--  Truncate  -->
-		<tag name="br" action="truncate" />
+        <!--  Truncate  -->
+        <tag name="br" action="truncate" />
 
-		<!--  Validate -->
+        <!--  Validate -->
 
-		<tag name="p" action="validate">
-			<attribute name="align" />
-		</tag>
-		<tag name="div" action="validate" />
-		<tag name="span" action="validate" />
-		<tag name="i" action="validate" />
-		<tag name="b" action="validate" />
-		<tag name="strong" action="validate" />
-		<tag name="s" action="validate" />
-		<tag name="strike" action="validate" />
-		<tag name="u" action="validate" />
-		<tag name="em" action="validate" />
-		<tag name="blockquote" action="validate" />
-		<tag name="tt" action="truncate" />
+        <tag name="p" action="validate">
+            <attribute name="align" />
+        </tag>
+        <tag name="div" action="validate" />
+        <tag name="span" action="validate" />
+        <tag name="i" action="validate" />
+        <tag name="b" action="validate" />
+        <tag name="strong" action="validate" />
+        <tag name="s" action="validate" />
+        <tag name="strike" action="validate" />
+        <tag name="u" action="validate" />
+        <tag name="em" action="validate" />
+        <tag name="blockquote" action="validate" />
+        <tag name="tt" action="truncate" />
 
-		<tag name="a" action="validate">
-			<attribute name="href" onInvalid="filterTag" />
+        <tag name="a" action="validate">
+            <attribute name="href" onInvalid="filterTag" />
 
-			<attribute name="nohref">
+            <attribute name="nohref">
 
-				<literal-list>
-					<literal value="nohref" />
-					<literal value="" />
-				</literal-list>
-			</attribute>
+                <literal-list>
+                    <literal value="nohref" />
+                    <literal value="" />
+                </literal-list>
+            </attribute>
 
-			<attribute name="rel">
+            <attribute name="rel">
 
-				<literal-list>
-					<literal value="nofollow" />
-				</literal-list>
-			</attribute>
-		</tag>
+                <literal-list>
+                    <literal value="nofollow" />
+                </literal-list>
+            </attribute>
+        </tag>
 
-		<!--  List tags
-		-->
-		<tag name="ul" action="validate" />
-		<tag name="ol" action="validate" />
-		<tag name="li" action="validate" />
-		<tag name="dl" action="validate" />
-		<tag name="dt" action="validate" />
-		<tag name="dd" action="validate" />
-	</tag-rules>
+        <!--  List tags
+        -->
+        <tag name="ul" action="validate" />
+        <tag name="ol" action="validate" />
+        <tag name="li" action="validate" />
+        <tag name="dl" action="validate" />
+        <tag name="dt" action="validate" />
+        <tag name="dd" action="validate" />
+                
+        <!--  Table tags-->
+        <tag name="table" action="validate">
+            <attribute name="height"/>
+            <attribute name="width"/>
+            <attribute name="border"/>
+            <attribute name="cellpadding"/>
+            <attribute name="cellspacing"/>
+            <attribute name="align"/>
+        </tag>
 
-	<css-rules>
+        <tag name="td" action="validate">
+            <attribute name="height"/>
+            <attribute name="width"/>
+            <attribute name="align"/>
+            <attribute name="valign"/>
+            <attribute name="colspan"/>
+            <attribute name="rowspan"/>
+        </tag>
 
-		<property name="text-decoration" default="none"
-			description="">
+        <tag name="th" action="validate">
+            <attribute name="height"/>
+            <attribute name="width"/>
+            <attribute name="align"/>
+            <attribute name="valign"/>
+            <attribute name="colspan"/>
+            <attribute name="rowspan"/>
+        </tag>
 
-			<category-list>
-				<category value="visual" />
-			</category-list>
+        <tag name="tr" action="validate">
+            <attribute name="height"/>
+            <attribute name="width"/>
+            <attribute name="align"/>
+            <attribute name="valign"/>
+        </tag>
+    </tag-rules>
 
-			<literal-list>
-				<literal value="underline" />
-				<literal value="overline" />
-				<literal value="line-through" />
-			</literal-list>
-		</property>
-	</css-rules>
+    <css-rules>
+
+        <property name="text-decoration" default="none"
+                          description="">
+
+            <category-list>
+                <category value="visual" />
+            </category-list>
+
+            <literal-list>
+                <literal value="underline" />
+                <literal value="overline" />
+                <literal value="line-through" />
+            </literal-list>
+        </property>
+    </css-rules>
 </anti-samy-rules>
