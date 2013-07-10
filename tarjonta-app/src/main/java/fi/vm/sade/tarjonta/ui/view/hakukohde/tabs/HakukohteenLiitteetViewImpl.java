@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.DateTimeField;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.constants.UiConstant;
@@ -60,9 +61,8 @@ import java.util.List;
 public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     public static final String LANGUAGE_TAB_SHEET_WIDTH = "600px";
-
-    private transient I18NHelper i18n = new I18NHelper(this);
-
+    private static final long serialVersionUID = 8051865706102814333L;
+    private transient I18NHelper i18n;
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     @Autowired
     private TarjontaPresenter presenter;
@@ -77,7 +77,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private LiitteenSanallinenKuvausTabSheet liitteenSanallinenKuvausTxtArea;
     @NotNull(message = "{validation.HakukohdeLiitteet.toimitettavaMennessa.notNull}")
     @PropertyId("toimitettavaMennessa")
-    private DateField toimittettavaMennessa;
+    private DateTimeField toimittettavaMennessa;
     @PropertyId("osoiteRivi1")
     private TextField osoiteRivi1;
     @PropertyId("osoiteRivi2")
@@ -96,11 +96,8 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private String languageTabsheetWidth = "650px";
     private String languageTabsheetHeight = "250px";
     private Button upRightInfoButton;
-
     private OptionGroup osoiteValinta;
-
     private HakukohdeLiiteViewModel selectedLiite;
-
     private TarjontaDialogWindow dialogWindow;
 
     public HakukohteenLiitteetViewImpl(ErrorMessage errorMessage, TarjontaPresenter presenter, UiBuilder uiBuilder) {
@@ -112,7 +109,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private String T(String key) {
-        return I18N.getMessage(key);
+        if (i18n == null) {
+            i18n = new I18NHelper(this);
+        }
+        return i18n.getMessage(key);
     }
 
     private void buildMainLayout() {
@@ -199,8 +199,13 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private DateField buildToimitettavaMennessa() {
-        toimittettavaMennessa = new DateField();
+        toimittettavaMennessa = new DateTimeField();
         toimittettavaMennessa.setResolution(DateField.RESOLUTION_MIN);
+        toimittettavaMennessa.setParseErrorMessage(T("toimitettavaMennessa.dateFormat"));
+        toimittettavaMennessa.setMissingDateMessage(T("toimitettavaMennessa.missingDate"));
+        toimittettavaMennessa.setMissingTimeMessage(T("toimitettavaMennessa.missingTime"));
+        toimittettavaMennessa.setEmptyErrorMessage(T("toimitettavaMennessa.dateFormat"));
+
         return toimittettavaMennessa;
     }
 
@@ -256,6 +261,8 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         postinumero.setImmediate(true);
         postinumero.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 if (tarjontaUIHelper != null) {
@@ -293,9 +300,11 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         VerticalLayout sahkoinenToimitusOsoiteLayout = new VerticalLayout();
 
         voidaanToimittaaSahkoisesti = new CheckBox();
-        voidaanToimittaaSahkoisesti.setCaption(T("HakukohteenLiitteetViewImpl.voidaanToimittaaMyosSahkoisesti"));
+        voidaanToimittaaSahkoisesti.setCaption(T("voidaanToimittaaMyosSahkoisesti"));
         voidaanToimittaaSahkoisesti.setImmediate(true);
         voidaanToimittaaSahkoisesti.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if (clickEvent.getButton().booleanValue()) {
@@ -316,27 +325,33 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         HorizontalLayout horizontalButtonLayout = UiUtil.horizontalLayout();
 
-        cancelButton = UiBuilder.button(null, T("HakukohteenLiitteetViewImpl.cancelBtn"), new Button.ClickListener() {
+        cancelButton = UiBuilder.button(null, T("cancelBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if (isLiiteEdited()) {
-                RemovalConfirmationDialog removalDialog = new RemovalConfirmationDialog(i18n.getMessage("modelEditedVarmistusMsg"),null,i18n.getMessage("yesBtn"),i18n.getMessage("noBtn"),
-                        new Button.ClickListener() {
-                            @Override
-                            public void buttonClick(Button.ClickEvent clickEvent) {
-                                closeDialogWindow();
-                                presenter.closeCancelHakukohteenEditView();
+                    RemovalConfirmationDialog removalDialog = new RemovalConfirmationDialog(i18n.getMessage("modelEditedVarmistusMsg"), null, i18n.getMessage("yesBtn"), i18n.getMessage("noBtn"),
+                            new Button.ClickListener() {
+                        private static final long serialVersionUID = 5019806363620874205L;
 
-                            }
-                        }, new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                        closeDialogWindow();
-                    }
-                });
+                        @Override
+                        public void buttonClick(Button.ClickEvent clickEvent) {
+                            closeDialogWindow();
+                            presenter.closeCancelHakukohteenEditView();
 
-                dialogWindow = new TarjontaDialogWindow(removalDialog,i18n.getMessage("varmistusMsg"));
-                getApplication().getMainWindow().addWindow(dialogWindow);
+                        }
+                    }, new Button.ClickListener() {
+                        private static final long serialVersionUID = 5019806363620874205L;
+
+                        @Override
+                        public void buttonClick(Button.ClickEvent clickEvent) {
+                            closeDialogWindow();
+                        }
+                    });
+
+                    dialogWindow = new TarjontaDialogWindow(removalDialog, i18n.getMessage("varmistusMsg"));
+                    getApplication().getMainWindow().addWindow(dialogWindow);
                 } else {
                     presenter.closeCancelHakukohteenEditView();
                 }
@@ -345,7 +360,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         });
         horizontalButtonLayout.addComponent(cancelButton);
 
-        saveButton = UiBuilder.button(null, T("HakukohteenLiitteetViewImpl.saveBtn"), new Button.ClickListener() {
+        saveButton = UiBuilder.button(null, T("saveBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 errorMessage.resetErrors();
@@ -377,11 +394,11 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         if (osoiteRivi2 != null) {
             osoiteRivi2.setEnabled(toEnableOrNot);
         }
-        if (postinumero != null ) {
+        if (postinumero != null) {
             postinumero.setEnabled(toEnableOrNot);
 
         }
-        if (postitoimipaikka != null ) {
+        if (postitoimipaikka != null) {
             postitoimipaikka.setEnabled(toEnableOrNot);
         }
     }
@@ -390,20 +407,22 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         VerticalLayout osoiteSelectLayout = new VerticalLayout();
 
         List<String> selections = new ArrayList<String>();
-        selections.add(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus"));
-        selections.add(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaMuu"));
+        selections.add(T("toimitusOsoiteValintaOletus"));
+        selections.add(T("toimitusOsoiteValintaMuu"));
 
-        osoiteValinta = new OptionGroup("",selections);
+        osoiteValinta = new OptionGroup("", selections);
         osoiteValinta.setNullSelectionAllowed(false);
-        osoiteValinta.select(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus"));
+        osoiteValinta.select(T("toimitusOsoiteValintaOletus"));
         osoiteValinta.setImmediate(true);
         osoiteValinta.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                if (valueChangeEvent.getProperty().getValue().equals(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus")))  {
-                   deEnableOrEnableOsoite(true);
-                   presenter.setDefaultSelectedLiiteToimitusOsoite();
-                   deEnableOrEnableOsoite(false);
+                if (valueChangeEvent.getProperty().getValue().equals(T("toimitusOsoiteValintaOletus"))) {
+                    deEnableOrEnableOsoite(true);
+                    presenter.setDefaultSelectedLiiteToimitusOsoite();
+                    deEnableOrEnableOsoite(false);
                 } else {
                     deEnableOrEnableOsoite(true);
                     presenter.emptySelectedLiiteOsoite();
@@ -422,10 +441,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
 
-        addItemToGrid("HakukohteenLiitteetViewImpl.liitteenTyyppi", buildLiitteenTyyppiCombo());
-        addItemToGrid("HakukohteenLiitteetViewImpl.liitteenSanallinenKuvaus", buildLiitteenSanallinenKuvaus());
-        addItemToGrid("HakukohteenLiitteetViewImpl.toimitettavaMennessa", buildToimitettavaMennessa());
-        addItemToGrid("HakukohteenLiitteetViewImpl.toimitusOsoite",buildOsoiteSelectionLayout());
+        addItemToGrid("liitteenTyyppi", buildLiitteenTyyppiCombo());
+        addItemToGrid("liitteenSanallinenKuvaus", buildLiitteenSanallinenKuvaus());
+        addItemToGrid("toimitettavaMennessa", buildToimitettavaMennessa());
+        addItemToGrid("toimitusOsoite", buildOsoiteSelectionLayout());
         addItemToGrid("", buildLiitteidenToimitusOsoite());
         addItemToGrid("", buildSahkoinenToimitusOsoite());
 
