@@ -135,8 +135,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             this.removeComponent(categoryTree);
             categoryTree = null;
         }
-        
-        
+
+
 
         categoryTree = new CategoryTreeView();
         categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
@@ -373,7 +373,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         //this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
         setPageLength(categoryTree.getItemIds().size());
-        
+
     }
 
     @Override
@@ -412,6 +412,12 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     public void setPageLength(int pageLength) {
-        categoryTree.setPageLength(pageLength + 1);
+        if (pageLength < 100) {
+            categoryTree.setPageLength(pageLength + 1);
+        } else {
+            //A quick hack, limit visible row items to 100.
+            //Downside of the hack is that the table has now visible the scrollbars..
+            categoryTree.setPageLength(100);
+        }
     }
 }
