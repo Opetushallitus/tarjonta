@@ -24,6 +24,7 @@ public enum TarjontaTila {
     LUONNOS,
     VALMIS,
     JULKAISTU,
-    PERUTTU
+    PERUTTU,
+    KOPIOITU
 }
 

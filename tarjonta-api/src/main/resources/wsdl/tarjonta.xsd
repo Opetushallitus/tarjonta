@@ -84,9 +84,9 @@
                         minOccurs="1"/>
                         
             <xs:element name="sisaisetHakuajat"
-            			minOccurs="0"
-            			maxOccurs="1"
-            			type="tns:SisaisetHakuAjat"/>
+                        minOccurs="0"
+                        maxOccurs="1"
+                        type="tns:SisaisetHakuAjat"/>
             
             <xs:element name="hakukohteenHaunNimi"
                         type="tns:MonikielinenTekstiTyyppi"
@@ -353,7 +353,7 @@
                         minOccurs="0"
                         maxOccurs="1"/>
 
-             <xs:element name="hakukohteet"
+            <xs:element name="hakukohteet"
                          type="tns:HakukohdeTyyppi"
                          minOccurs="0"
                          maxOccurs="unbounded"/>
@@ -628,6 +628,7 @@
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
             <xs:enumeration value="PERUTTU"/>
+            <xs:enumeration value="KOPIOITU"/> 
         </xs:restriction>
     </xs:simpleType>
 
