@@ -30,9 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -114,6 +116,7 @@ public class ListKoulutusView extends VerticalLayout {
     private boolean isAttached = false;
     @Autowired(required = true)
     private transient TarjontaUIHelper uiHelper;
+    private Set<Map.Entry<String, List<KoulutusTulos>>> resultSet;
 
     public ListKoulutusView() {
         setSizeFull();
@@ -183,13 +186,45 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void nodeExpand(Tree.ExpandEvent event) {
-                //update size of the visible parent and children rows 
+                /*
+                 * LAZY CHILD DATA LOADING
+                 */
+                
+                if(resultSet == null || event == null){
+                    LOG.error("An unknown problem in nodeExpand.");
+                    return;
+                }
+               
+                Item item = categoryTree.getItem(event.getItemId());
+                KoulutusResultRow row = (KoulutusResultRow) item.getItemProperty(COLUMN_A).getValue();
+                categoryTree.getParent(event);
+
+                final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
+
+                for (Map.Entry<String, List<KoulutusTulos>> e : resultSet) {
+                    if (e.getKey().equals(row.getRowKey())) {
+                        for (KoulutusTulos curKoulutus : e.getValue()) {
+                            KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
+
+                            categoryTree.addItem(curKoulutus);
+                            categoryTree.setParent(curKoulutus, event.getItemId());
+                            categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
+                            categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
+                            categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
+                            categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
+                            categoryTree.setChildrenAllowed(curKoulutus, false);
+                        }
+                        break;
+                    }
+                }
                 setPageLength(categoryTree.getItemIds().size());
             }
         });
+
         categoryTree.setSizeFull();
         addComponent(categoryTree);
         setExpandRatio(categoryTree, 1f);
+
     }
 
     private void addValitsekaikki() {
@@ -228,7 +263,7 @@ public class ListKoulutusView extends VerticalLayout {
      */
     private Container createDataSource(Map<String, List<KoulutusTulos>> map) {
 
-        Set<Map.Entry<String, List<KoulutusTulos>>> set = map.entrySet();
+        resultSet = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
@@ -238,37 +273,12 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
-
-        // väliaikainen kakku nimille jottei haeta koodistosta moneen kertaan järjestyksen yhteydessä
-        final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
-
-
-        for (Map.Entry<String, List<KoulutusTulos>> e : set) {
+        for (Map.Entry<String, List<KoulutusTulos>> e : resultSet) {
             //LOG.debug("getTreeDataSource()" + e.getKey());
             KoulutusResultRow rowStyle = new KoulutusResultRow();
-
-            Collections.sort(e.getValue(), new Comparator<KoulutusTulos>() {
-                @Override
-                public int compare(KoulutusTulos a, KoulutusTulos b) {
-                    return getKoulutusNimi(a, nimet).compareTo(getKoulutusNimi(b, nimet));
-                }
-            });
-
+            rowStyle.setRowKey(e.getKey());
             Object rootItem = hc.addItem();
-
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
-
-            for (KoulutusTulos curKoulutus : e.getValue()) {
-                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
-
-                hc.addItem(curKoulutus);
-                hc.setParent(curKoulutus, rootItem);
-                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
-                hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
-                hc.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
-                hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
-                hc.setChildrenAllowed(curKoulutus, false);
-            }
         }
         return hc;
     }

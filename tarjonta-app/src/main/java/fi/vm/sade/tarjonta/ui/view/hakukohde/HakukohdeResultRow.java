@@ -71,6 +71,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private CheckBox isSelected;
     private Window removeHakukohdeDialog;
     private boolean hakuStarted = false;
+    private String rowKey;
     /**
      * The presenter object for the component.
      */
@@ -315,5 +316,19 @@ public class HakukohdeResultRow extends HorizontalLayout {
         tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
+    }
+
+    /**
+     * @return the rowKey
+     */
+    public String getRowKey() {
+        return rowKey;
+    }
+
+    /**
+     * @param rowKey the rowKey to set
+     */
+    public void setRowKey(String rowKey) {
+        this.rowKey = rowKey;
     }
 }

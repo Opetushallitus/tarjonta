@@ -1657,7 +1657,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(koulutusKey)) {
-                LOG.info("Adding a new key to the map: " + koulutusKey);
+                //LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusTulos> koulutuksetM = new ArrayList<KoulutusTulos>();
                 koulutuksetM.add(curKoulutus);
                 map.put(koulutusKey, koulutuksetM);

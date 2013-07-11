@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
@@ -51,8 +52,14 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
+import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusResultRow;
+import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_A;
+import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_KOULUTUSLAJI;
+import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_PVM;
+import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_TILA;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.HashMap;
 
 /**
  * Component for listing hakukohde objects.
@@ -101,6 +108,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private boolean attached = false;
+    private Set<Map.Entry<String, List<HakukohdeTulos>>> resultSet;
 
     public ListHakukohdeViewImpl() {
         //Initialization of the view layout
@@ -156,7 +164,36 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
             @Override
             public void nodeExpand(Tree.ExpandEvent event) {
-                //update size of the visible parent and children rows 
+                /*
+                 * LAZY CHILD DATA LOADING
+                 */
+
+                if (resultSet == null || event == null) {
+                    LOG.error("An unknown problem in nodeExpand.");
+                    return;
+                }
+
+                Item item = categoryTree.getItem(event.getItemId());
+                HakukohdeResultRow row = (HakukohdeResultRow) item.getItemProperty(COLUMN_A).getValue();
+                categoryTree.getParent(event);
+
+                for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
+                    if (e.getKey().equals(row.getRowKey())) {
+                        for (HakukohdeTulos curHakukohde : e.getValue()) {
+                            HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
+                            categoryTree.addItem(curHakukohde);
+                            categoryTree.setParent(curHakukohde, event.getItemId());
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
+                            categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
+                            categoryTree.setChildrenAllowed(curHakukohde, false);
+                        }
+                        break;
+                    }
+                }
                 setPageLength(categoryTree.getItemIds().size());
             }
         });
@@ -190,7 +227,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * @return the hierarchical container for Hakukokhde listing.
      */
     private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
-        Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
+        resultSet = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
@@ -200,27 +237,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         hc.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
-        for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
-            LOG.debug("getTreeDataSource()" + e.getKey());
+        for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
+            //LOG.debug("getTreeDataSource()" + e.getKey());
+
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
-
+            rowStyle.setRowKey(e.getKey());
             Object rootItem = hc.addItem();
-
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
-
-            for (HakukohdeTulos curHakukohde : e.getValue()) {
-                HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
-                hc.addItem(curHakukohde);
-                hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
-                hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
-                hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
-                hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                hc.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
-                hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
-
-                hc.setChildrenAllowed(curHakukohde, false);
-            }
         }
         return hc;
     }

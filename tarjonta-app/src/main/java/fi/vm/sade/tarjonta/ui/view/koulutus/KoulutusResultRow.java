@@ -79,6 +79,7 @@ public class KoulutusResultRow extends HorizontalLayout {
      * The name of the koulutus, displayed in removal confirmation dialog.
      */
     private String koulutusNimi;
+    private String rowKey;
     private Window removeKoulutusDialog;
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
@@ -359,4 +360,20 @@ public class KoulutusResultRow extends HorizontalLayout {
                 break;
         }
     }
+
+    /**
+     * @return the rowKey
+     */
+    public String getRowKey() {
+        return rowKey;
+    }
+
+    /**
+     * @param rowKey the rowKey to set
+     */
+    public void setRowKey(String rowKey) {
+        this.rowKey = rowKey;
+    }
+
+
 }
