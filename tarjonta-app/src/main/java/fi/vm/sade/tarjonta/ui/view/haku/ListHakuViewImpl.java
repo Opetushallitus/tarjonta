@@ -268,11 +268,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
-
         return layout;
     }
 

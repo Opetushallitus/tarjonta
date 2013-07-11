@@ -51,7 +51,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -329,11 +328,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
-
         addComponent(layout);
     }
 
@@ -412,12 +406,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     public void setPageLength(int pageLength) {
-        if (pageLength < 100) {
-            categoryTree.setPageLength(pageLength + 1);
-        } else {
-            //A quick hack, limit visible row items to 100.
-            //Downside of the hack is that the table has now visible the scrollbars..
-            categoryTree.setPageLength(100);
-        }
+        categoryTree.setPageLength(pageLength + 1);
     }
 }

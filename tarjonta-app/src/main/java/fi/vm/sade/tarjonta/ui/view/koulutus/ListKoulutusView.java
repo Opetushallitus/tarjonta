@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +58,6 @@ import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -357,6 +354,8 @@ public class ListKoulutusView extends VerticalLayout {
                     if (tuple.getValOne() > 1 || tuple.getValTwo() > tuple.getValOne()) {
                         final Window dialog = new Window();
                         NoKoulutusDialog koulutusDialog = new NoKoulutusDialog("lukioHakukohdeTooMany", new Button.ClickListener() {
+                            private static final long serialVersionUID = 5019806363620874205L;
+
                             @Override
                             public void buttonClick(ClickEvent clickEvent) {
                                 getWindow().removeWindow(dialog);
@@ -386,8 +385,6 @@ public class ListKoulutusView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (presenter.availableKoulutus()) {
-                    List<String> organisaatioOids = new ArrayList<String>();
-                    organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
                     UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "476px");
                     getWindow().addWindow(synchronizer.synchronize(uusiKoulutusDialog));
                 } else {
@@ -402,11 +399,6 @@ public class ListKoulutusView extends VerticalLayout {
         layout.setExpandRatio(luoKoulutusB, 1f);
         layout.setComponentAlignment(luoKoulutusB, Alignment.TOP_RIGHT);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
-
         addComponent(layout);
     }
 
@@ -496,7 +488,7 @@ public class ListKoulutusView extends VerticalLayout {
                 }
 
 
-                if (selectedKoulutukses.size() > 0) {
+                if (selectedKoulutukses != null && selectedKoulutukses.size() > 0) {
                     List<String> validationErrors = presenter.validateKoulutusOidNameViewModel(selectedKoulutukses);
                     if (validationErrors != null && validationErrors.size() > 0) {
                         for (String validationError : validationErrors) {
@@ -565,13 +557,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void setPageLength(int pageLength) {
-        if (pageLength < 100) {
-            categoryTree.setPageLength(pageLength + 1);
-        } else {
-            //A quick hack, limit visible row items to 100.
-            //Downside of the hack is that the table has now visible the scrollbars..
-            categoryTree.setPageLength(100);
-        }
+        categoryTree.setPageLength(pageLength + 1);
     }
 
     private static class IntTuple {

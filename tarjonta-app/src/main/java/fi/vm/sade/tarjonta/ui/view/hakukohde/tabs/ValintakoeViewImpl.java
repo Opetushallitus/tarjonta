@@ -103,7 +103,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
 
         Label pisterajatLabel = UiUtil.label(infoLayout, T("pisterajat"));
         pisterajatLabel.setStyleName(Oph.LABEL_H2);
-        buildInfoButtonLayout(infoLayout);
         lvl.addComponent(infoLayout);
         Label pisterajaOhje = UiUtil.label(lvl, T("pisterajaohje"));
         pisterajaOhje.setStyleName(Oph.LABEL_SMALL);
@@ -155,7 +154,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
         infoLayout.setWidth(UiConstant.PCT100);
         Label lisanaytotLabel = UiUtil.label(infoLayout, T("lisanaytot"));
         lisanaytotLabel.setStyleName(Oph.LABEL_H2);
-        buildInfoButtonLayout(infoLayout);
         layout.addComponent(infoLayout);
         lisapisteetLayout = UiUtil.verticalLayout();
         lisapisteetLayout.setImmediate(true);
@@ -181,7 +179,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
         infoLayout.setWidth(UiConstant.PCT100);
         Label pisterajatLabel = UiUtil.label(infoLayout, T("paasykoe"));
         pisterajatLabel.setStyleName(Oph.LABEL_H2);
-        buildInfoButtonLayout(infoLayout);
         layout.addComponent(infoLayout);
         paasykoeLayout = UiUtil.verticalLayout();
         paasykoeLayout.setImmediate(true);
@@ -193,12 +190,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
         layout.addComponent(paasykoeLayout);
         paasykoeLayout.setVisible(pisterajaTable.getPkCb().booleanValue());
         layout.addComponent(buildSplitPanel());
-    }
-
-    private HorizontalLayout buildInfoButtonLayout(HorizontalLayout layout) {
-        Button upRightInfoButton = UiUtil.buttonSmallInfo(layout);
-        layout.setComponentAlignment(upRightInfoButton, Alignment.TOP_RIGHT);
-        return layout;
     }
 
     private void buildToinenAsteLayout(VerticalLayout layout) {

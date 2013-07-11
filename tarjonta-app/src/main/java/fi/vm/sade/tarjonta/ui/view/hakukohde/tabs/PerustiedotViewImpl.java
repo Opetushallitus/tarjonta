@@ -52,6 +52,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -155,7 +156,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     //private Label serverMessage = new Label("");
     //Info buttons
     private Button upRightInfoButton;
-    private Button downRightInfoButton;
     private String languageTabsheetWidth = "500px";
     private String languageTabsheetHeight = "230px";
     private transient UiBuilder uiBuilder;
@@ -853,11 +853,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label label = UiUtil.label(hl, T("PerustiedotView.lisatiedot"), LabelStyleEnum.H2);
-        downRightInfoButton = UiUtil.buttonSmallInfo(hl);
         hl.setExpandRatio(label, 1l);
-        hl.setExpandRatio(downRightInfoButton, 3l);
         hl.setComponentAlignment(label, Alignment.TOP_LEFT);
-        hl.setComponentAlignment(downRightInfoButton, Alignment.TOP_RIGHT);
         vl.addComponent(hl);
         UiUtil.label(vl, T("PerustiedotView.lisatiedot.help"), LabelStyleEnum.TEXT);
         lisatiedotTabs = buildLanguageTab();

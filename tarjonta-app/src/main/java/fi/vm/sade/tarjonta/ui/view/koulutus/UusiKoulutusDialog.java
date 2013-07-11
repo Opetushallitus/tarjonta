@@ -273,8 +273,6 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         Label ohjeteksti = new Label(_i18n.getMessage("dialog.ohjeTeksti"));
         //labelLayout.addComponent(ohjeteksti);
         labelLayout.addComponent(ohjeteksti, 0, 0);
-        Button ohjeBtn = UiUtil.buttonSmallInfo(null);
-        labelLayout.addComponent(ohjeBtn, 1, 0);
         labelLayout.setSizeFull();
 
         return labelLayout;

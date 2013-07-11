@@ -16,51 +16,51 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.PopupView;
-import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  *
  * @author Tuomas Katva
  */
 public class OhjePopupComponent extends HorizontalLayout {
+
     private static final long serialVersionUID = 5088511817532703892L;
-    
-    private OhjePopup popup;
-    private PopupView popupView;
-    private Button showPopupBtn;
-    
+//    private OhjePopup popup;
+//    private PopupView popupView;
+//    private Button showPopupBtn;
+
     public OhjePopupComponent(String message) {
-        init(message);
+        /*
+         * The code commented because of KJOH-522.
+         */
+        // init(message);
     }
-    
+
     public OhjePopupComponent(String message, String popupWidth, String popupHeight) {
-        init(message);
-        popup.setWidthAndHeight(popupWidth, popupHeight);
+        /*
+         * The code commented because of KJOH-522.
+         */
+        // init(message);
+        //popup.setWidthAndHeight(popupWidth, popupHeight);
     }
-    
-    private void init(String message) {
-        setSpacing(true);
-        setSizeUndefined();
-        
-        popup = new OhjePopup(message);
-        popupView = new PopupView(popup);
-        popupView.setHideOnMouseOut(false);
-        addComponent(popupView);
-        
-        showPopupBtn = UiUtil.buttonSmallInfo(this, new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                if (popupView != null) {
-                    popupView.setPopupVisible(true);
-                }
-            }
-        });
-        
-        setComponentAlignment(showPopupBtn, Alignment.TOP_RIGHT);
-    }
+//    private void init(String message) {
+//        setSpacing(true);
+//        setSizeUndefined();
+//        
+//        popup = new OhjePopup(message);
+//        popupView = new PopupView(popup);
+//        popupView.setHideOnMouseOut(false);
+//        addComponent(popupView);
+//        
+//        showPopupBtn = UiUtil.buttonSmallInfo(this, new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(ClickEvent event) {
+//                if (popupView != null) {
+//                    popupView.setPopupVisible(true);
+//                }
+//            }
+//        });
+//        
+//        setComponentAlignment(showPopupBtn, Alignment.TOP_RIGHT);
+//    }
 }

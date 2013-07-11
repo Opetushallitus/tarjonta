@@ -24,6 +24,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -70,7 +71,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
     private Table table;
     private BeanItemContainer<KoulutuskoodiRowModel> bic;
     private ValitseKoulutusDialog dialog;
-    private Button btClear, btSearch, info, btNext, btPrev;
+    private Button btClear, btSearch, btNext, btPrev;
 
     public ValitseKoulutusFormView(TarjontaKorkeakouluPresenter presenter, UiBuilder uiBuilder, ValitseKoulutusDialog dialog) {
         this.presenter = presenter;
@@ -98,21 +99,16 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         label.setWidth(100, UNITS_PERCENTAGE);
         label.setStyleName(Oph.LABEL_SMALL);
 
-        info = UiUtil.buttonSmallInfo(null, new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                LOG.debug("info event");
-            }
-        });
+        CssLayout removeMe = new CssLayout();
+        
+       
 
         HorizontalLayout hl = addHL();
         hl.addComponent(label);
-        hl.addComponent(info);
+        hl.addComponent(removeMe);
 
         hl.setExpandRatio(label, 1l);
-        hl.setExpandRatio(info, 0l);
+        hl.setExpandRatio(removeMe, 0l);
     }
 
     private void addComponentKoulutusala() {

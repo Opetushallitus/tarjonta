@@ -39,7 +39,6 @@ import fi.vm.sade.tarjonta.ui.view.common.DateTimeField;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.constants.UiConstant;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,14 +157,6 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     public void setMainLayoutSizeFull() {
         mainLayout.setSizeFull();
-    }
-
-    private HorizontalLayout buildInfoButtonLayout() {
-        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
-        layout.setWidth(UiConstant.PCT100);
-        upRightInfoButton = UiUtil.buttonSmallInfo(layout);
-        layout.setComponentAlignment(upRightInfoButton, Alignment.TOP_RIGHT);
-        return layout;
     }
 
     private void addItemToGrid(String captionKey, AbstractComponent component) {
