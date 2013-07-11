@@ -224,14 +224,14 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 errorView.resetErrors();
                 valintaKoeAikaForm.commit();
-                ValintakoeAikaViewModel valintakoeAika = presenter.getModel().getSelectedValintakoeAika();
+                ValintakoeAikaViewModel formCompValintakoeAika = presenter.getModel().getSelectedValintakoeAika();
                 boolean dateValidationFailed = false;
                 if (!valintaKoeAikaForm.isValid()) {
                     errorView.addError(valintaKoeAikaForm.getErrorMessage().toString());
                     dateValidationFailed = true;
                 }
 
-                if (!checkValintakoeAikaOsoite(valintakoeAika)) {
+                if (!checkValintakoeAikaOsoite(formCompValintakoeAika)) {
                     errorView.addError(T("HakukohdeValintakoeViewImpl.valintakoeAikaOsoiteNotNull"));
                     dateValidationFailed = true;
                 }
@@ -248,22 +248,22 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
                     return;
                 }
                 if (valintaKoeAikaEditView.getLisatietoja() != null) {
-                    valintakoeAika.setValintakoeAikaTiedot((String) valintaKoeAikaEditView.getLisatietoja().getValue());
+                    formCompValintakoeAika.setValintakoeAikaTiedot((String) valintaKoeAikaEditView.getLisatietoja().getValue());
                 }
-                valintakoeAika.setAlkamisAika((Date) valintaKoeAikaEditView.getAlkupvm().getValue());
-                valintakoeAika.setPaattymisAika((Date) valintaKoeAikaEditView.getLoppuPvm().getValue());
+                formCompValintakoeAika.setAlkamisAika((Date) valintaKoeAikaEditView.getAlkupvm().getValue());
+                formCompValintakoeAika.setPaattymisAika((Date) valintaKoeAikaEditView.getLoppuPvm().getValue());
 
-                if (valintakoeAika.getAlkamisAika() != null
-                        && valintakoeAika.getPaattymisAika() != null
-                        && valintakoeAika.getAlkamisAika().before(valintakoeAika.getPaattymisAika())) {
+                if (formCompValintakoeAika.getAlkamisAika() != null
+                        && formCompValintakoeAika.getPaattymisAika() != null
+                        && formCompValintakoeAika.getAlkamisAika().before(formCompValintakoeAika.getPaattymisAika())) {
                     //add modified object to list
                     List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe().getValintakoeAjat();
 
                     boolean clickButtonAddNew = true;
-                    for (ValintakoeAikaViewModel m : valintakoeAjat) {
-                        if (m.getModelId() == valintakoeAika.getModelId()) {
+                    for (ValintakoeAikaViewModel modelValitakoeAika : valintakoeAjat) {
+                        if (modelValitakoeAika.getModelId().equals(formCompValintakoeAika.getModelId())) {
                             //copy validated data back to the original model
-                            copyModel(valintakoeAika, m);
+                            copyModel(formCompValintakoeAika, modelValitakoeAika);
                             clickButtonAddNew = false;
                             break;
                         }
@@ -271,7 +271,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
 
                     if (clickButtonAddNew) {
                         //add new object to model
-                        valintakoeAjat.add(valintakoeAika);
+                        valintakoeAjat.add(formCompValintakoeAika);
                     }
 
                     resetValintakokeenSijaintiAikaFormData();
@@ -305,6 +305,9 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
     }
 
     private void copyModel(final ValintakoeAikaViewModel source, ValintakoeAikaViewModel target) {
+        Preconditions.checkNotNull(source, "ValintakoeAikaViewModel source object cannot be null.");
+        Preconditions.checkNotNull(target, "ValintakoeAikaViewModel target object cannot be null.");
+
         target.setModelId(source.getModelId());
         target.setValintakoeAikaTiedot(source.getValintakoeAikaTiedot());
         target.setOsoiteRivi(source.getOsoiteRivi());

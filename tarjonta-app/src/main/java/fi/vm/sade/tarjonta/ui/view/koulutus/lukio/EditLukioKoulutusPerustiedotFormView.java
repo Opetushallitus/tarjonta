@@ -271,6 +271,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         }
         gridLabel(grid, propertyKey);
         final Label label = new Label();
+        label.setContentMode(Label.CONTENT_XHTML);
         grid.addComponent(label);
         grid.newLine();
         buildSpacingGridRow(grid);

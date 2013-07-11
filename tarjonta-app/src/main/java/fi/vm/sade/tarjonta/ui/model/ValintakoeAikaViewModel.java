@@ -17,13 +17,13 @@ package fi.vm.sade.tarjonta.ui.model;/*
 
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by: Tuomas Katva Date: 23.1.2013
  */
 public class ValintakoeAikaViewModel {
-
-    private long modelId;
+    private String modelId; //only for ui use
     private String valintakoeAikaTiedot;
     private String osoiteRivi;
     private String postinumero;
@@ -32,7 +32,7 @@ public class ValintakoeAikaViewModel {
     private Date paattymisAika;
 
     public ValintakoeAikaViewModel() {
-        setModelId((new Date()).getTime());
+        modelId = String.valueOf(UUID.randomUUID());
     }
 
     @Override
@@ -132,7 +132,7 @@ public class ValintakoeAikaViewModel {
      *
      * @return the modelId
      */
-    public long getModelId() {
+    public String getModelId() {
         return modelId;
     }
 
@@ -141,7 +141,7 @@ public class ValintakoeAikaViewModel {
      *
      * @param modelId the modelId to set
      */
-    public void setModelId(long modelId) {
+    public void setModelId(String modelId) {
         this.modelId = modelId;
     }
 }

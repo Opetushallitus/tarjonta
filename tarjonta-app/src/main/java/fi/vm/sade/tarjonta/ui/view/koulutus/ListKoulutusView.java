@@ -85,10 +85,7 @@ public class ListKoulutusView extends VerticalLayout {
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private Window createHakukohdeDialog;
-    
-    
     private final ButtonSynchronizer synchronizer = new ButtonSynchronizer();
-    
     /**
      * Button for creating a hakukohde object.
      */
@@ -320,7 +317,7 @@ public class ListKoulutusView extends VerticalLayout {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
         btnSiirraJaKopioi = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
-        
+
         synchronizer.synchronize(btnSiirraJaKopioi, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -568,7 +565,13 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void setPageLength(int pageLength) {
-        categoryTree.setPageLength(pageLength + 1);
+        if (pageLength < 100) {
+            categoryTree.setPageLength(pageLength + 1);
+        } else {
+            //A quick hack, limit visible row items to 100.
+            //Downside of the hack is that the table has now visible the scrollbars..
+            categoryTree.setPageLength(100);
+        }
     }
 
     private static class IntTuple {
@@ -616,8 +619,8 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void synchronizeKoulutusSelections() {
-       presenter.getSelectedKoulutukset().clear();
-       presenter.getSelectedKoulutukset().addAll(getCheckedKoulutukset());
+        presenter.getSelectedKoulutukset().clear();
+        presenter.getSelectedKoulutukset().addAll(getCheckedKoulutukset());
     }
 
     private List<KoulutusTulos> getCheckedKoulutukset() {
@@ -626,18 +629,16 @@ public class ListKoulutusView extends VerticalLayout {
         if (categoryTree == null || categoryTree.getContainerDataSource() == null) {
             return checkedKoulutukset;
         }
-        for (KoulutusTulos curKoulutus: presenter.getModel().getKoulutukset()) {
+        for (KoulutusTulos curKoulutus : presenter.getModel().getKoulutukset()) {
             if (categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A) == null
                     || categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue() == null) {
                 continue;
-            } 
-            KoulutusResultRow curRow = (KoulutusResultRow)(categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue());
+            }
+            KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue());
             if (curRow.getIsSelected().booleanValue()) {
                 checkedKoulutukset.add(curKoulutus);
             }
         }
         return checkedKoulutukset;
     }
-    
-    
 }
