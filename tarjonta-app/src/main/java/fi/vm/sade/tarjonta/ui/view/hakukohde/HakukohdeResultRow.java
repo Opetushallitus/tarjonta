@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * The component and functionality for showing a hakukohde object in hakukohde
@@ -77,6 +78,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
+    private List<HakukohdeTulos> children;
 
     public HakukohdeResultRow() {
         this.hakukohde = new HakukohdeTulos();
@@ -330,5 +332,19 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     public void setRowKey(String rowKey) {
         this.rowKey = rowKey;
+    }
+
+    /**
+     * @return the children
+     */
+    public List<HakukohdeTulos> getChildren() {
+        return children;
+    }
+
+    /**
+     * @param children the children to set
+     */
+    public void setChildren(List<HakukohdeTulos> children) {
+        this.children = children;
     }
 }

@@ -48,6 +48,7 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -62,6 +63,7 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Iterator;
 
 /**
  *
@@ -78,6 +80,8 @@ public class ListKoulutusView extends VerticalLayout {
     public static final String COLUMN_PVM = "Ajankohta";
     public static final String COLUMN_KOULUTUSLAJI = "Koulutuslaji";
     public static final String COLUMN_TILA = "Tila";
+    private static final int MAX_PARENT_ROWS = 100;
+    private ErrorMessage errorView;
     /**
      * Presenter object for the Hakukohde listing.
      */
@@ -121,6 +125,7 @@ public class ListKoulutusView extends VerticalLayout {
     public ListKoulutusView() {
         setSizeFull();
         setMargin(true);
+
     }
 
     @Override
@@ -134,11 +139,14 @@ public class ListKoulutusView extends VerticalLayout {
         LOG.debug("attach : ListKoulutusView()");
         isAttached = true;
 
+
         //Initialization of the view layout
 
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         buildMiddleResultLayout();
 
+        errorView = new ErrorMessage();
+        addComponent(errorView);
         //Adding the select all checkbox.
         addValitsekaikki();
 
@@ -189,42 +197,32 @@ public class ListKoulutusView extends VerticalLayout {
                 /*
                  * LAZY CHILD DATA LOADING
                  */
-                
-                if(resultSet == null || event == null){
+
+                if (resultSet == null || event == null) {
                     LOG.error("An unknown problem in nodeExpand.");
                     return;
                 }
-               
+
                 Item item = categoryTree.getItem(event.getItemId());
                 KoulutusResultRow row = (KoulutusResultRow) item.getItemProperty(COLUMN_A).getValue();
                 categoryTree.getParent(event);
 
                 final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
-
-                for (Map.Entry<String, List<KoulutusTulos>> e : resultSet) {
-                    if (e.getKey().equals(row.getRowKey())) {
-                        for (KoulutusTulos curKoulutus : e.getValue()) {
-                            KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
-
-                            categoryTree.addItem(curKoulutus);
-                            categoryTree.setParent(curKoulutus, event.getItemId());
-                            categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
-                            categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
-                            categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
-                            categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
-                            categoryTree.setChildrenAllowed(curKoulutus, false);
-                        }
-                        break;
-                    }
+                for (KoulutusTulos curKoulutus : row.getChildren()) {
+                    KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
+                    categoryTree.addItem(curKoulutus);
+                    categoryTree.setParent(curKoulutus, event.getItemId());
+                    categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
+                    categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
+                    categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
+                    categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
+                    categoryTree.setChildrenAllowed(curKoulutus, false);
                 }
                 setPageLength(categoryTree.getItemIds().size());
             }
         });
 
         categoryTree.setSizeFull();
-        addComponent(categoryTree);
-        setExpandRatio(categoryTree, 1f);
-
     }
 
     private void addValitsekaikki() {
@@ -264,7 +262,6 @@ public class ListKoulutusView extends VerticalLayout {
     private Container createDataSource(Map<String, List<KoulutusTulos>> map) {
 
         resultSet = map.entrySet();
-
         HierarchicalContainer hc = new HierarchicalContainer();
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
 
@@ -273,12 +270,21 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
+        int index = 0;
         for (Map.Entry<String, List<KoulutusTulos>> e : resultSet) {
+            if (index > MAX_PARENT_ROWS) {
+                //A quick hack, it would be great, if data was limited in back-end service.
+                errorView.addError(I18N.getMessage("liianMontaHakutulosta"));
+                break;
+            }
+
             //LOG.debug("getTreeDataSource()" + e.getKey());
             KoulutusResultRow rowStyle = new KoulutusResultRow();
             rowStyle.setRowKey(e.getKey());
+            rowStyle.setChildren(e.getValue());
             Object rootItem = hc.addItem();
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
+            index++;
         }
         return hc;
     }
@@ -538,6 +544,7 @@ public class ListKoulutusView extends VerticalLayout {
      * Reloads the data to the Hakukohde list.
      */
     public void reload() {
+        errorView.resetErrors();
         clearAllDataItems();
         //this.btnPoista.setEnabled(false);
         this.btnSiirraJaKopioi.setEnabled(false);
@@ -545,6 +552,13 @@ public class ListKoulutusView extends VerticalLayout {
         Map<String, List<KoulutusTulos>> koulutusDataSource = presenter.getKoulutusDataSource();
         categoryTree.setContainerDataSource(createDataSource(koulutusDataSource));
         setPageLength(categoryTree.getItemIds().size());
+        attachTree();
+    }
+
+    private void attachTree() {
+        //prepare data source unattached and then set it to the treetable 
+        addComponent(categoryTree);
+        setExpandRatio(categoryTree, 1f);
         refreshLayout();
     }
 

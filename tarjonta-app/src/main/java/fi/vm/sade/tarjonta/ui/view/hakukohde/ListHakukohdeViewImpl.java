@@ -44,6 +44,7 @@ import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
@@ -52,14 +53,8 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusResultRow;
-import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_A;
-import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_KOULUTUSLAJI;
-import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_PVM;
-import static fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView.COLUMN_TILA;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.HashMap;
 
 /**
  * Component for listing hakukohde objects.
@@ -69,6 +64,7 @@ import java.util.HashMap;
 @Configurable(preConstruction = false)
 public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukohdeView {
 
+    private static final int MAX_PARENT_ROWS = 100;
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_PVM = "Ajankohta";
@@ -109,6 +105,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private TarjontaPresenter presenter;
     private boolean attached = false;
     private Set<Map.Entry<String, List<HakukohdeTulos>>> resultSet;
+    private ErrorMessage errorView;
 
     public ListHakukohdeViewImpl() {
         //Initialization of the view layout
@@ -128,6 +125,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         addMiddleResultLayout();
 
+        errorView = new ErrorMessage();
+        addComponent(errorView);
         //Adding the select all checkbox.
         addSelectAllButton();
 
@@ -176,23 +175,17 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 Item item = categoryTree.getItem(event.getItemId());
                 HakukohdeResultRow row = (HakukohdeResultRow) item.getItemProperty(COLUMN_A).getValue();
                 categoryTree.getParent(event);
-
-                for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
-                    if (e.getKey().equals(row.getRowKey())) {
-                        for (HakukohdeTulos curHakukohde : e.getValue()) {
-                            HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
-                            categoryTree.addItem(curHakukohde);
-                            categoryTree.setParent(curHakukohde, event.getItemId());
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
-                            categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
-                            categoryTree.setChildrenAllowed(curHakukohde, false);
-                        }
-                        break;
-                    }
+                for (HakukohdeTulos curHakukohde : row.getChildren()) {
+                    HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
+                    categoryTree.addItem(curHakukohde);
+                    categoryTree.setParent(curHakukohde, event.getItemId());
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
+                    categoryTree.setChildrenAllowed(curHakukohde, false);
                 }
                 setPageLength(categoryTree.getItemIds().size());
             }
@@ -237,13 +230,21 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         hc.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
+        int index = 0;
         for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
+            if (index > MAX_PARENT_ROWS) {
+                //A quick hack, it would be great, if data was limited in back-end service.
+                errorView.addError(I18N.getMessage("liianMontaHakutulosta"));
+                break;
+            }
             //LOG.debug("getTreeDataSource()" + e.getKey());
 
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
             rowStyle.setRowKey(e.getKey());
+            rowStyle.setChildren(e.getValue());
             Object rootItem = hc.addItem();
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
+            index++;
         }
         return hc;
     }
@@ -387,10 +388,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void reload() {
         clearAllDataItems();
-        //this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
         setPageLength(categoryTree.getItemIds().size());
-
     }
 
     @Override

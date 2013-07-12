@@ -80,6 +80,8 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     private String koulutusNimi;
     private String rowKey;
+    private List<KoulutusTulos> children;
+    
     private Window removeKoulutusDialog;
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
@@ -373,6 +375,20 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     public void setRowKey(String rowKey) {
         this.rowKey = rowKey;
+    }
+
+    /**
+     * @return the children
+     */
+    public List<KoulutusTulos> getChildren() {
+        return children;
+    }
+
+    /**
+     * @param children the children to set
+     */
+    public void setChildren(List<KoulutusTulos> children) {
+        this.children = children;
     }
 
 
