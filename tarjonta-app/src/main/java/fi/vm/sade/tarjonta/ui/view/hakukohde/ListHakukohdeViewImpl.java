@@ -387,6 +387,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     @Override
     public void reload() {
+        errorView.resetErrors();
         clearAllDataItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
         setPageLength(categoryTree.getItemIds().size());
