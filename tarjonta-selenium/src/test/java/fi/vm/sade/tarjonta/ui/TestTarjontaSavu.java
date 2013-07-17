@@ -26,6 +26,7 @@ public class TestTarjontaSavu {
     private StringBuffer verificationErrors = new StringBuffer();
     private static Kattavuus TarjontaSavuTekstit = new Kattavuus();
     private static Kattavuus TarjontaSavuSelaimet = new Kattavuus();
+    private static String selain = "";
 
     @Before
     public void setUp() throws Exception {
@@ -96,7 +97,7 @@ public class TestTarjontaSavu {
         {
                 qa = true;
         }
-        String selain = doit.palvelimenVersio(driver, baseUrl);
+        selain = doit.palvelimenVersio(driver, baseUrl);
 		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
 		doit.tauko(1);
 		doit.reppuLogin(driver);
@@ -236,8 +237,6 @@ public class TestTarjontaSavu {
         doit.textClick(driver, "Peruuta");
         doit.tauko(1);
         doit.echo("Running TarjontaSavu END OK");
-        TarjontaSavuSelaimet.setKattavuus(selain, Kattavuus.KATTAVUUSOK);
-        TarjontaSavuSelaimet.KattavuusRaportti();
         // END
 	}
 
@@ -1027,6 +1026,11 @@ public class TestTarjontaSavu {
 		
 		// END
         doit.messagesPropertiesSave(TarjontaSavuTekstit);
+        if (selain != null && selain.length() > 0)
+        {
+        	TarjontaSavuSelaimet.setKattavuus(selain, Kattavuus.KATTAVUUSOK);
+        	TarjontaSavuSelaimet.KattavuusRaportti();
+        }
 	}
 	
     @After
