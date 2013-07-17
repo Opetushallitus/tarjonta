@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.ui;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
@@ -27,6 +28,9 @@ public class TestTarjontaElements {
     private Boolean qa = false;
     private Boolean luokka = false;
     private Boolean reppu = false;
+    private static Kattavuus TarjontaElementitTekstit = new Kattavuus();
+    private static Kattavuus TarjontaElementitSelaimet = new Kattavuus();
+    private static String selain = "";
 
     private Boolean readPageFromFile = false;
     
@@ -60,13 +64,20 @@ public class TestTarjontaElements {
         {
         	luokka = true;
         }
-        if (first) { doit.palvelimenVersio(driver, baseUrl); }
+        if (first) { selain = doit.palvelimenVersio(driver, baseUrl); }
     }
     
     public void frontPage() throws Exception
     {
     	if (readPageFromFile) { return; }
-    	if (first) { doit.echo("Running ================================================================="); }
+    	if (first) 
+    	{ 
+    		doit.echo("Running ================================================================="); 
+            doit.messagesPropertiesInit();
+            TarjontaElementitTekstit.alustaKattavuusKohde("TarjontaElementitTekstit");
+            doit.alustaSelaimet(TarjontaElementitSelaimet, "TarjontaElementitSelaimet");
+            TarjontaElementitTekstit.KattavuusRaporttiHiljaa = true;
+    	}
 		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
 		doit.tauko(1);
         // LOGIN REPULLE tai luokka
@@ -90,6 +101,7 @@ public class TestTarjontaElements {
         , doit.textElement(driver, "Valitse kaikki"));
         doit.footerTest(driver, "Running TarjontaElements000 Etusivu footer ei toimi.", true);
         if (first) { doit.echo("Running TarjontaElements000 Etusivu OK"); }
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         first = false;
         doit.tauko(1);
     }
@@ -144,6 +156,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements001 EtuSivu ei toimi."
                         , doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements001 EtuSivu OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
 	public void TarkasteleKoulutus(String haku, String linkki) throws Exception {
@@ -284,6 +297,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements002 TarkasteleLukioKoulutus ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements002 TarkasteleLukioKoulutus OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 	
 	// muokkaaLukioKoulutuksenPerustiedot
@@ -405,6 +419,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements003 MuokkaaLukioKoulutuksenPerustiedot ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements003 MuokkaaLukioKoulutuksenPerustiedot OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
 	// muokkaaLukioKoulutusKuvailevatTiedot
@@ -494,6 +509,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements004 MuokkaaLukioKoulutusKuvailevatTiedot ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements004 MuokkaaLukioKoulutusKuvailevatTiedot OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 	
 	// tarkasteleAmmatillinenKoulutus
@@ -630,6 +646,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
 	// muokkaaAmmatillinenKoulutusKoulutuksenPerustiedot
@@ -745,6 +762,7 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 	// muokkaaAmmatillinenKoulutuksenKuvailevatTiedot
 	@Test
@@ -815,9 +833,22 @@ public class TestTarjontaElements {
         Assert.assertTrue("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot ei toimi."
         		, doit.checkElements(driver, elements, false));
         doit.echo("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
     // TODO here
+	
+	@Test
+	public void testReport() throws IOException
+	{
+		// END
+        doit.messagesPropertiesSaveElements(TarjontaElementitTekstit);
+        if (selain != null && selain.length() > 0)
+        {
+        	TarjontaElementitSelaimet.setKattavuus(selain, Kattavuus.KATTAVUUSOK);
+        	TarjontaElementitSelaimet.KattavuusRaportti();
+        }
+	}
 
 	//@Test
 	public void test01() throws Exception {
@@ -851,6 +882,7 @@ public class TestTarjontaElements {
 		t01 = doit.millisDiff(t01);
 //		doit.footerTest(driver, "Running TarjontaHakukohteetSavu001 Etusivu footer ei toimi.", true);
 		doit.echo("Running TarjontaHakukohteetSavu001 Etusivu OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 		doit.tauko(1);
 		
         // HAE
@@ -863,6 +895,7 @@ public class TestTarjontaElements {
         Assert.assertNotNull("Running TarjontaHakukohteetSavu002 Hae espoo ei toimi.", doit.textElement(driver, "Espoon kaupunki"));
         t01 = doit.millisDiff(t01);
         doit.echo("Running TarjontaHakukohteetSavu002 Hae espoo OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         doit.tauko(1);
 
         // KOULUTUKSET JA HAKUKOHTEET
@@ -873,6 +906,7 @@ public class TestTarjontaElements {
         t01 = doit.millisDiff(t01);
         Assert.assertNotNull("Running TarjontaHakukohteetSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Hakukohteet ("));
         doit.echo("Running TarjontaHakukohteetSavu003 Hae KOULUTUKSET JA HAKUKOHTEET OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         doit.tauko(1);
 
         // LUO UUSI HAKUKOHDE (validialog)
@@ -948,6 +982,7 @@ public class TestTarjontaElements {
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         		, doit.textElement(driver, "Tallenna luonnoksena"));
         doit.echo("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         doit.tauko(1);
         driver.findElement(By.className("v-button-back")).click();
         
@@ -977,6 +1012,7 @@ public class TestTarjontaElements {
         			, doit.textElement(driver, "uusi koulutus"));
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
@@ -988,6 +1024,7 @@ public class TestTarjontaElements {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
         			, doit.textElement(driver, "Tallenna valmiina"));
         	doit.echo("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
@@ -997,6 +1034,7 @@ public class TestTarjontaElements {
         			, doit.textElement(driver, "Toimitusosoite"));
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite)
@@ -1006,6 +1044,7 @@ public class TestTarjontaElements {
         			, doit.textElement(driver, "Voidaan toimittaa my"));
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         	doit.tauko(1);
         	doit.textClick(driver, "Peruuta");
         	doit.tauko(1);
@@ -1041,6 +1080,7 @@ public class TestTarjontaElements {
         	}
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         	doit.tauko(1);
 
         	// UUSI VALINTAKOE
@@ -1052,6 +1092,7 @@ public class TestTarjontaElements {
         				, doit.textElement(driver, "Ajankohta"));
         		t01 = doit.millisDiff(t01);
         		doit.echo("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) OK");
+                doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         		doit.tauko(1);
         		doit.textClick(driver, "Peruuta");
         		doit.tauko(1);
@@ -1104,6 +1145,7 @@ public class TestTarjontaElements {
         	doit.notPresentText(driver, "window_close"
         			, "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy viela. Ei toimi.");
         	doit.echo("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO OK");
+            doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         }
         else
         {
@@ -1112,6 +1154,7 @@ public class TestTarjontaElements {
         
         doit.tauko(1);
         doit.echo("Running TarjontaHakukohteetSavu END OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
     @After
