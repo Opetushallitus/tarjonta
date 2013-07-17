@@ -8,8 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -19,7 +23,9 @@ import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -27,6 +33,8 @@ import org.openqa.selenium.interactions.Actions;
 public class SVTUtils {
     protected final Logger log = LoggerFactory.getLogger("TEST");
     protected static final Logger log2 = LoggerFactory.getLogger("TEST");
+    private static Kattavuus TarjontaSavuTekstit = new Kattavuus();
+    private static Kattavuus TarjontaSavuSelaimet = new Kattavuus();
 
     static {
 		try {
@@ -132,7 +140,42 @@ public class SVTUtils {
 		return passed;
 	}
 
-	public String getGwtId(String organisaatio, String pageText)
+    public int hourInt()
+    {
+            return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+    }
+
+    public int minuteInt()
+    {
+            return Calendar.getInstance().get(Calendar.MINUTE);
+    }
+
+    public String yyyymmString()
+    {
+            String zero = "0";
+            int yyyy = Calendar.getInstance().get(Calendar.YEAR);
+            int mm = Calendar.getInstance().get(Calendar.MONTH) + 1;
+            if (mm > 9) { zero = ""; }
+            String yyyymm = yyyy + zero + mm;
+            return yyyymm;
+    }
+
+    public String ddhhmmssString()
+    {
+            String dzero = "0", hzero = "0", mzero = "0", szero = "0";
+            int dd = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            int hh = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            int mm = Calendar.getInstance().get(Calendar.MINUTE);
+            int ss = Calendar.getInstance().get(Calendar.SECOND);
+            if (dd > 9) { dzero = ""; }
+            if (hh > 9) { hzero = ""; }
+            if (mm > 9) { mzero = ""; }
+            if (ss > 9) { szero = ""; }
+            String ddhhmmss = dzero + dd + hzero + hh + mzero + mm + szero + ss;
+            return ddhhmmss;
+    }
+
+    public String getGwtId(String organisaatio, String pageText)
 	{
 		String gwtuid;
 		gwtuid = pageText.substring(0, pageText.indexOf(organisaatio) + organisaatio.length());
@@ -166,11 +209,21 @@ public class SVTUtils {
         return driver.findElements(By.className("v-treetable-treespacer")).get(0);
 	}	  
 
+	public List<WebElement> getTriangleList(WebDriver driver)
+	{
+        return driver.findElements(By.className("v-treetable-treespacer"));
+	}	  
+
 	public WebElement getTriangleForLastHakukohde(WebDriver driver)
 	{
         return driver.findElements(By.className("v-treetable-treespacer"))
         		.get(driver.findElements(By.className("v-treetable-treespacer")).size() - 1);
 	}	  
+
+	public WebElement getMenuNearestText(WebDriver driver, String text)
+	{
+		return this.findNearestElement(text, "//img[@class='v-icon']", driver);
+	}
 
 	public void tauko(int sec)
 	{
@@ -350,8 +403,11 @@ public class SVTUtils {
 		return page;
 	}
 
-	private String readFile( String file ) throws IOException {
-		BufferedReader reader = new BufferedReader( new FileReader (file));
+	public String readFile( String file ) throws IOException {
+        File tiedosto = new File(file);
+        if (! tiedosto.exists()) { return "";}
+
+        BufferedReader reader = new BufferedReader( new FileReader (file));
 		String         line = null;
 		StringBuilder  stringBuilder = new StringBuilder();
 		String         ls = System.getProperty("line.separator");
@@ -384,7 +440,20 @@ public class SVTUtils {
 		}
 	}
 
-	public void listXpathElements(WebDriver driver, String xpathExpression)
+    public void appendToFile(String fileName, String text)
+    {
+            try {
+                    BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+                    out.write(text + System.getProperty("line.separator"));
+                    out.close();
+            }
+            catch (IOException e)
+            {
+                    echo("Exception ");
+            }
+    }
+
+    public void listXpathElements(WebDriver driver, String xpathExpression)
 	{
 		Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
 		echo("listXpathElements: " + eles.length);
@@ -396,7 +465,7 @@ public class SVTUtils {
 		}
 	}
 
-	public void palvelimenVersio(WebDriver driver, String baseUrl)
+	public String palvelimenVersio(WebDriver driver, String baseUrl)
 	{
 		// palvelin vastaa
 		long t01 = millis();
@@ -457,6 +526,20 @@ public class SVTUtils {
         }
         versio = "Running " + versio.replace("\n", "\nRunning ");
 		echo(versio);
+        // ja selain ja versio ym
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		String selain = js.executeScript(
+				"var N= navigator.appName, ua= navigator.userAgent, tem;"
+						+ "var M= ua.match(/(opera|chrome|safari|firefox|msie)\\/?\\s*(\\.?\\d+(\\.\\d+)*)/i);"
+						+ "if(M && (tem= ua.match(/version\\/([\\.\\d]+)/i))!= null) M[2]= tem[1];"
+						+ "M= M? [M[1], M[2]]: [N, navigator.appVersion, '-?'];"
+						+ "return M;").toString();
+		String platform = js.executeScript("return navigator.platform;").toString();
+		echo("Running browser: " + selain);
+		echo("Running platform: " + platform);
+		//
+		selain = selain.replace(" ", "_").replace(",", "_").replace("[", "").replace("]", "");
+		return selain;
 	}
 
     //////////////// START //////////////////////////////////////
@@ -691,5 +774,286 @@ public class SVTUtils {
     public static void echo2(String text)
     {
     	log2.info(text);
+    }
+    
+    /////////////// RAPORTTI ////////////////////////////
+    static Properties propMessages;
+    static int messagesCount = 0;
+    public void messagesPropertiesInit() throws IOException
+    {
+    	if (propMessages != null && propMessages.size() > 0) { return; }
+    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages.properties";
+    	File mFile = new File(messagesFile);
+    	if (mFile.exists())
+    	{
+    		propMessages = new Properties();
+    		try {
+    			propMessages.load(new FileInputStream(messagesFile));
+    			messagesCount = propMessages.size();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			throw new IOException("ERROR: Can't read message properties file. " + messagesFile);
+    		}
+    	}
+    	else
+    	{
+    		echo2("ERROR: Can't find message properties file. " + messagesFile);
+    	}
+    }
+    
+    static Properties propMessages2;
+    public void messagesProperties2Init() throws IOException
+    {
+    	if (propMessages2 != null && propMessages2.size() > 0) { return; }
+    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages.properties";
+    	File mFile = new File(messagesFile);
+    	if (mFile.exists())
+    	{
+    		propMessages2 = new Properties();
+    		try {
+    			propMessages2.load(new FileInputStream(messagesFile));
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			throw new IOException("ERROR: Can't read message properties2 file. " + messagesFile);
+    		}
+    	}
+    	else
+    	{
+    		echo2("ERROR: Can't find message properties2 file. " + messagesFile);
+    	}
+    }
+
+    public void messagesPropertiesCoverage(WebDriver driver, Kattavuus taulukko)
+    {
+    	String pageSource = driver.getPageSource();
+    	Enumeration mKeys = propMessages.keys();
+    	while (mKeys.hasMoreElements()) {
+    		String msgKey = mKeys.nextElement().toString();
+    		String msg = propMessages.getProperty(msgKey);
+    		if (pageSource.indexOf(msg) > 0)
+    		{
+    			propMessages.remove(msgKey);
+    			taulukko.KattavuusTaulukko.setProperty(msgKey, Kattavuus.KATTAVUUSOK);
+    		}
+    	}
+    }
+    public void messagesPropertiesSave(Kattavuus taulukko) throws IOException
+    {
+        echo("");
+        Enumeration mKeys = propMessages.keys();
+        List<String> list = Collections.list(mKeys);
+        Collections.sort(list);
+
+        String unusedKeys, errKeys, editKeys, ignoreKeys;
+        int errs = 0;
+        int edits = 0;
+        int unused = 0;
+        int ignore = 0;
+        int puuttuu = 0;
+        try {
+            unusedKeys = readFile("src/test/resources/messages.properties.unused");
+            errKeys = readFile("src/test/resources/messages.properties.errmsgs");
+            editKeys = readFile("src/test/resources/messages.properties.editmsgs");
+            ignoreKeys = readFile("src/test/resources/messages.properties.ignore");
+            String ls = System.getProperty("line.separator");
+            unused = unusedKeys.split(ls).length;
+            errs = errKeys.split(ls).length;
+            edits = editKeys.split(ls).length;
+            ignore = ignoreKeys.split(ls).length;
+            for (String msgKey : list) {
+                    if (unusedKeys.indexOf(msgKey) < 0 && errKeys.indexOf(msgKey) < 0
+                                    && editKeys.indexOf(msgKey) < 0 && ignoreKeys.indexOf(msgKey) < 0)
+                    {
+                            String msg = propMessages.getProperty(msgKey);
+                            echo("Hakusessa: " + msgKey + "=" + msg);
+                            puuttuu++;
+                            taulukko.KattavuusTaulukko.setProperty(msgKey, Kattavuus.KATTAVUUSFAILURE);
+                    }
+            }
+    } catch (IOException e) {
+            e.printStackTrace();
+    }
+        taulukko.KattavuusRaportti();
+        int tavoite = messagesCount - errs - edits - unused - ignore;
+        int katselmoin = tavoite - puuttuu;
+        if (tavoite == 0) { tavoite = 1; }
+        double coverage = roundTwoDecimals(100.0 * katselmoin / tavoite);
+        echo("");
+        echo("--------------------------");
+        echo("");
+                echo("Tekstit    " + messagesCount);
+                echo("- errs      " + errs);
+                echo("- edits     " + edits);
+                echo("- ignore     " + ignore);
+                echo("- unused    " + unused);
+                echo("--------------");
+                echo("Tavoite    " + tavoite);
+                echo("Katselmoin " + katselmoin);
+                echo("Hakusessa   " + puuttuu);
+                echo("--------------");
+                echo("Kattavuus:  " + coverage + "%");
+        echo("");
+        echo("--------------------------");
+        echo("");
+    }
+
+    public void messagesPropertiesSaveElements(Kattavuus taulukko) throws IOException
+    {
+        echo("");
+        Enumeration mKeys = propMessages.keys();
+        List<String> list = Collections.list(mKeys);
+        Collections.sort(list);
+
+        String unusedKeys, errKeys, editKeys, ignoreKeys, dialogKeys;
+        int errs = 0, edits = 0, unused = 0, ignore = 0, puuttuu = 0, dialog = 0;
+        try {
+            unusedKeys = readFile("src/test/resources/messages.properties.unused");
+            errKeys = readFile("src/test/resources/messages.properties.errmsgs");
+            editKeys = readFile("src/test/resources/messages.properties.editmsgs");
+            ignoreKeys = readFile("src/test/resources/messages.properties.ignore");
+            dialogKeys = readFile("src/test/resources/messages.properties.dialog");
+            String ls = System.getProperty("line.separator");
+            unused = unusedKeys.split(ls).length;
+            errs = errKeys.split(ls).length;
+            edits = editKeys.split(ls).length;
+            ignore = ignoreKeys.split(ls).length;
+            dialog = dialogKeys.split(ls).length;
+            for (String msgKey : list) {
+                    if (unusedKeys.indexOf(msgKey) < 0 && errKeys.indexOf(msgKey) < 0
+                                    && editKeys.indexOf(msgKey) < 0 && ignoreKeys.indexOf(msgKey) < 0
+                                    && dialogKeys.indexOf(msgKey) < 0)
+                    {
+                            String msg = propMessages.getProperty(msgKey);
+                            echo("Hakusessa: " + msgKey + "=" + msg);
+                            puuttuu++;
+                            taulukko.KattavuusTaulukko.setProperty(msgKey, Kattavuus.KATTAVUUSFAILURE);
+                    }
+            }
+    } catch (IOException e) {
+            e.printStackTrace();
+    }
+        taulukko.KattavuusRaportti();
+        int tavoite = messagesCount - errs - edits - unused - ignore;
+        int katselmoin = tavoite - puuttuu;
+        if (tavoite == 0) { tavoite = 1; }
+        double coverage = roundTwoDecimals(100.0 * katselmoin / tavoite);
+        echo("");
+        echo("--------------------------");
+        echo("");
+                echo("Tekstit    " + messagesCount);
+                echo("- errs      " + errs);
+                echo("- edits     " + edits);
+                echo("- ignore     " + ignore);
+                echo("- unused    " + unused);
+                echo("- dialog    " + dialog);
+                echo("--------------");
+                echo("Tavoite    " + tavoite);
+                echo("Katselmoin " + katselmoin);
+                echo("Hakusessa   " + puuttuu);
+                echo("--------------");
+                echo("Kattavuus:  " + coverage + "%");
+        echo("");
+        echo("--------------------------");
+        echo("");
+    }
+    
+    double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        double n2 = 0.0;
+                try {
+                        n2 = Double.valueOf(twoDForm.format(d));
+                } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                }
+        return n2;
+    }
+    //////////// RAPORTTI END //////////////////////////////
+    WebElement findNearestElement(String label, String xpathExpression, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = this.textElement(driver, label);
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance < minDistance) { minDistance = distance; }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance == minDistance) { input = el; }
+        }
+
+        return input;
+    }
+
+    WebElement findNearestElementPlusY(String label, String xpathExpression, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = this.textElement(driver, label);
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (textElement.getLocation().y < el.getLocation().y && distance < minDistance)
+                {
+                        minDistance = distance;
+                }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (textElement.getLocation().y < el.getLocation().y && distance == minDistance) { input = el; }
+        }
+
+        return input;
+    }
+
+    public int getDistance(Point p1, Point p2)
+    {
+        double distance = Math.sqrt(Math.pow((p2.getX() - p1.getX()), 2) + Math.pow((p2.getY() - p1.getY()), 2));
+        return (int)distance;
+    }
+
+    public void alustaSelaimet(Kattavuus taulukko, String moduli) 
+    {
+    	if (taulukko.KattavuusTaulukko.size() > 0) { return; }
+    	taulukko.KattavuusTaulukko.setProperty(Kattavuus.KATTAVUUSKOHDE, moduli);
+    	taulukko.KattavuusTaulukko.setProperty("Opera", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Safari", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Chrome", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("MSIE8", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("MSIE9", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("MSIE10", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__5.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__6.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__7.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__8.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__9.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__10.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__11.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__12.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__13.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__14.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__15.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__16.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__17.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__18.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__19.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__20.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__21.0", Kattavuus.KATTAVUUSNOTEST);
+    	taulukko.KattavuusTaulukko.setProperty("Firefox__22.0", Kattavuus.KATTAVUUSNOTEST);
     }
 }
