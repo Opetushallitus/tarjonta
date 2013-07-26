@@ -23,7 +23,7 @@ public class TestTarjontaPunainenLanka {
     private SVTUtils doit = new SVTUtils();
     private static Boolean first = true;
     private static Kattavuus TarjontaTapaukset = new Kattavuus();
-    private static Kattavuus TarjontaVaatimukset = new Kattavuus();
+//    private static Kattavuus TarjontaVaatimukset = new Kattavuus();
     private static Kattavuus TarjontaPunainenLankaVaatimukset = new Kattavuus();
 
     @Before
@@ -44,7 +44,7 @@ public class TestTarjontaPunainenLanka {
                     doit.palvelimenVersio(driver, baseUrl);
                     TarjontaTapaukset.alustaKattavuusKohde("TarjontaPunainenLankaTestiTapaukset");
                     TarjontaPunainenLankaVaatimukset.alustaKattavuusKohde("TarjontaPunainenLankaVaatimukset");
-                    TarjontaVaatimukset.alustaKattavuusKohde("TarjontaVaatimukset");
+//                    TarjontaVaatimukset.alustaKattavuusKohde("TarjontaVaatimukset");
 
                     TarjontaTapaukset.setKattavuus("TC0804", Kattavuus.KATTAVUUSNOTEST);
                     TarjontaTapaukset.setKattavuus("TC0807", Kattavuus.KATTAVUUSNOTEST);
@@ -555,8 +555,8 @@ public class TestTarjontaPunainenLanka {
         doit.alustaVaatimukset(TarjontaPunainenLankaVaatimukset);
         TarjontaPunainenLankaVaatimukset.KattavuusRaportti();
 
-        doit.alustaVaatimukset(TarjontaVaatimukset);
-        TarjontaVaatimukset.KattavuusRaportti();
+//        doit.alustaVaatimukset(TarjontaVaatimukset);
+//        TarjontaVaatimukset.KattavuusRaportti();
 
         doit.alustaVaatimukset(TarjontaTapaukset);
         TarjontaTapaukset.KattavuusRaportti();
