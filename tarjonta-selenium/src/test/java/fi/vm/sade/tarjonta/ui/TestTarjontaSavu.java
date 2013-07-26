@@ -51,35 +51,6 @@ public class TestTarjontaSavu {
     	driver.manage().timeouts().implicitlyWait(130, TimeUnit.SECONDS);
     }
 
-	public WebElement TarkasteleKoulutusLuonnosta(String haku) throws Exception {
-		SVTUtils doit = new SVTUtils();
-    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
-    	search.clear();
-    	search.sendKeys(haku);
-    	doit.tauko(1);
-    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
-    	List<WebElement> triangles = doit.getTriangleList(driver);
-    	Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", triangles);
-    	doit.tauko(1);
-    	int i = 0;
-    	Boolean hit = false;
-    	while (triangles.get(i) != null) {
-        	triangles = doit.getTriangleList(driver);
-    		WebElement triangle = triangles.get(i);
-    		triangle.click();
-        	doit.tauko(1);
-        	if (doit.isPresentText(driver, "luonnos")) { hit = true; break; }
-        	triangles = doit.getTriangleList(driver);
-    		triangle = triangles.get(i);
-    		triangle.click();
-        	doit.tauko(1);
-        	i++;
-		}
-    	WebElement link = null;
-    	if (hit) { link = doit.getMenuNearestText(driver, "luonnos"); }
-    	return link;
-    }
-
 	@Test
 	public void testKoulutus() throws Exception {
 		SVTUtils doit = new SVTUtils();
@@ -591,7 +562,7 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "OPH"));
         doit.tauko(1);
-        WebElement menu = this.TarkasteleKoulutusLuonnosta("ylioppilastutkint");
+        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastutkint");
         if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
         {
         	doit.notPresentText(driver, "Koulutukset (0)"
@@ -755,7 +726,7 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Koulutukset ("));
         doit.textClick(driver, "[Poista valinta]");
-        WebElement menu = this.TarkasteleKoulutusLuonnosta("tusohjel");
+        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "tusohjel");
         if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
         {
         	doit.notPresentText(driver, "Koulutukset (0)"

@@ -28,6 +28,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 public class SVTUtils {
@@ -100,6 +101,7 @@ public class SVTUtils {
 
 	public void reppuLogin(WebDriver driver)
 	{
+		if (this.isPresentText(driver, "Kirjaudu ulos")) { return; }
 		driver.manage().window().maximize();
         tauko(1);
         WebElement username = driver.findElement(By.id("username")); 
@@ -382,7 +384,48 @@ public class SVTUtils {
 
 	public void textClick(WebDriver driver, String text)
 	{
-		driver.findElement(By.xpath("//*[contains(text(), '" + text  + "')]")).click();
+        Object[] eles = driver.findElements(By.xpath("//*[contains(text(), '" + text  + "')]")).toArray();
+        WebElement el;
+        for (Object ele : eles)
+        {
+                el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
+                el.click();
+                return;
+        }
+        int a = 1 / 0; // never here
+	}
+	
+	public void doubleclick(WebDriver driver, String text)
+	{
+        Object[] eles = driver.findElements(By.xpath("//*[contains(text(), '" + text  + "')]")).toArray();
+        WebElement el;
+        for (Object ele : eles)
+        {
+                el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
+                this.textClick(driver, text);
+                this.tauko(1);
+                Actions builder = new Actions(driver);
+                Action doubleClick = builder.doubleClick(el).build();
+                doubleClick.perform();
+                return;
+        }
+        int a = 1 / 0; // never here
+	}
+
+	public void textClickLast(WebDriver driver, String text)
+	{
+        Object[] eles = driver.findElements(By.xpath("//*[contains(text(), '" + text  + "')]")).toArray();
+        WebElement el = null;
+        WebElement el2 = null;
+        for (Object ele : eles)
+        {
+                el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
+                el2 = el;
+        }
+        el2.click();
 	}
 
 	public WebElement textElement(WebDriver driver, String text)
@@ -968,7 +1011,7 @@ public class SVTUtils {
         return n2;
     }
     //////////// RAPORTTI END //////////////////////////////
-    WebElement findNearestElement(String label, String xpathExpression, WebDriver driver)
+    public WebElement findNearestElement(String label, String xpathExpression, WebDriver driver)
     {
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
@@ -993,7 +1036,65 @@ public class SVTUtils {
         return input;
     }
 
-    WebElement findNearestElementPlusY(String label, String xpathExpression, WebDriver driver)
+    public WebElement findNearestElementExact(String label, String xpathExpression, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = driver.findElement(By.xpath("//*[text()='" + label  + "']"));
+        String page = driver.getPageSource();
+        if (page.split(label).length != 2) { echo("Warning: ambiquous lables exists. label=" + label); }
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance < minDistance) { minDistance = distance; }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance == minDistance) { input = el; }
+        }
+
+        return input;
+    }
+
+    public WebElement findNearestElementPlusX(String label, String xpathExpression, int x, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = this.textElement(driver, label);
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if ((textElement.getLocation().x + x) < el.getLocation().x 
+                		&& distance < minDistance) // && textElement.getLocation().y < el.getLocation().y 
+                {
+                        minDistance = distance;
+                }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if ((textElement.getLocation().x + x) < el.getLocation().x // && textElement.getLocation().y < el.getLocation().y 
+                		&& distance == minDistance) { input = el; }
+        }
+        if (false) { echo("DEBUG textElement: " + textElement.getLocation() + " input: " + input.getLocation()); }
+        return input;
+    }
+
+    public WebElement findNearestElementPlusY(String label, String xpathExpression, WebDriver driver)
     {
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
@@ -1021,12 +1122,102 @@ public class SVTUtils {
         return input;
     }
 
+    public WebElement findNearestElementPlusY2(String label, String xpathExpression, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = this.textElement(driver, label);
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int minDistance = 100000;
+        int minDistance2 = 200000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (textElement.getLocation().y < el.getLocation().y && distance < minDistance2)
+                {
+                        if (distance > minDistance)
+                        {
+                                minDistance2 = distance;
+                        }
+                        else
+                        {
+                                minDistance2 = minDistance;
+                                minDistance = distance;
+                        }
+                }
+        }
+        for (Object ele : eles)
+        {
+        	WebElement el = (WebElement)ele;
+        	int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+        	if (textElement.getLocation().y < el.getLocation().y && distance == minDistance2) { input = el; }
+        }
+
+        if (input == null) { echo("ERROR: label=" + label + " minDistance=" + minDistance + " minDistance2=" + minDistance2 + " elementloc=" + textElement.getLocation()); }
+        return input;
+    }
+    
+    public WebElement findNearestElementMinusY(String label, String xpathExpression, WebDriver driver)
+    {
+        WebElement input = null;
+        WebElement textElement = this.textElement(driver, label);
+
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (textElement.getLocation().y < el.getLocation().y && distance < minDistance)
+                {
+                        minDistance = distance;
+                }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (textElement.getLocation().y < el.getLocation().y && distance == minDistance) { input = el; }
+        }
+        return input;
+    }
+
     public int getDistance(Point p1, Point p2)
     {
         double distance = Math.sqrt(Math.pow((p2.getX() - p1.getX()), 2) + Math.pow((p2.getY() - p1.getY()), 2));
         return (int)distance;
     }
 
+    public void alustaVaatimukset(Kattavuus taulukko)
+    {
+            if (taulukko.KattavuusTaulukko.size() > 0) { return; }
+            taulukko.KattavuusTaulukko.setProperty(Kattavuus.KATTAVUUSKOHDE, "Vaatimukset");
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_27", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_28", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_29", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_30", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_31", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_32", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_35", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_37", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_67", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_68", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_99", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_100", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_102", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_103", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_111", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_124", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_125", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_126", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_137", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_138", Kattavuus.KATTAVUUSNOTEST);
+            taulukko.KattavuusTaulukko.setProperty("V_KJOH_139", Kattavuus.KATTAVUUSNOTEST);
+    }
+    
     public void alustaSelaimet(Kattavuus taulukko, String moduli) 
     {
     	if (taulukko.KattavuusTaulukko.size() > 0) { return; }
@@ -1056,4 +1247,293 @@ public class SVTUtils {
     	taulukko.KattavuusTaulukko.setProperty("Firefox__21.0", Kattavuus.KATTAVUUSNOTEST);
     	taulukko.KattavuusTaulukko.setProperty("Firefox__22.0", Kattavuus.KATTAVUUSNOTEST);
     }
+
+    public void menuOperaatio(WebDriver driver, String operaatio, String kohde)
+    {
+    	WebElement menu = getMenuNearestText(driver, kohde);
+    	menu.click();
+    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    	tauko(1);
+    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+    	if (! this.isPresentText(driver, htmlOperaatio))
+    	{
+    		// avataan menu uudestaan
+    		WebElement menu2 = getMenuNearestText(driver, kohde);
+    		menu2.click();
+    		tauko(1);
+    		WebElement menu3 = getMenuNearestText(driver, kohde);
+    		menu3.click();
+    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+    		tauko(1);
+    	}
+    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+
+    public void menuOperaatioFirstMenu(WebDriver driver, String operaatio)
+    {
+    	WebElement menu = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    	menu.click();
+    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    	tauko(1);
+    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+    	if (! this.isPresentText(driver, htmlOperaatio))
+    	{
+    		// avataan menu uudestaan
+    		WebElement menu2 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    		menu2.click();
+    		tauko(1);
+    		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    		menu3.click();
+    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+    		tauko(1);
+    	}
+    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+
+    public void menuOperaatioMenu(WebDriver driver, WebElement menu, String operaatio)
+    {
+    	menu.click();
+    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    	tauko(1);
+    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+    	if (! this.isPresentText(driver, htmlOperaatio))
+    	{
+    		// avataan menu uudestaan
+    		WebElement menu2 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    		menu2.click();
+    		tauko(1);
+    		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    		menu3.click();
+    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+    		tauko(1);
+    	}
+    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+
+    public void sendInput(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = findNearestElement(label, "//input", driver);
+        if (value != null && value.equals("SELECTED"))
+        {
+                if (! input.isSelected())
+                {
+                input.click();
+                tauko(1);
+                }
+                return;
+        }
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void sendInputExact(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = findNearestElementExact(label, "//input", driver);
+        if (value != null && value.equals("SELECTED"))
+        {
+                if (! input.isSelected())
+                {
+                input.click();
+                tauko(1);
+                }
+                return;
+        }
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void sendInputPlusX(WebDriver driver, String label, String value, int x)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = this.findNearestElementPlusX(label, "//input", x, driver);
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void sendInputPlusY(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = this.findNearestElementPlusY(label, "//input", driver);
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void sendInputPlusY2(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = this.findNearestElementPlusY2(label, "//input", driver);
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void sendInputMinusY(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = this.findNearestElementMinusY(label, "//input", driver);
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void popupItemClick(WebDriver driver, String text)
+    {
+        WebElement item = driver.findElement(By.xpath("//td[@class='gwt-MenuItem' and span[text()='" + text + "']]"));
+        item.click();
+        this.tauko(1);
+    }
+
+    public String getNthTinyId(WebDriver driver, int nth) throws IOException
+    {
+        String page = this.getPageSourceFromFile();
+        String[] tinys = page.split("tinyMCE.get");
+        for (int i = 0; i < tinys.length; i++) {
+                        String tiny = tinys[i];
+                        tiny = tiny.substring(0, tiny.indexOf("')"));
+                        tiny = tiny.replace("InstanceById('", "");
+                        if (tiny.length() > 100) { tiny = ""; }
+                        if (i == nth) { return tiny; }
+                }
+        String elementID = "";
+        return elementID;
+    }
+
+    public String getNthTinyIdFromText(WebDriver driver, String pagePart, int nth) throws IOException
+    {
+        String page = pagePart;
+        String[] tinys = page.split("tinyMCE.get");
+        for (int i = 0; i < tinys.length; i++) {
+                        String tiny = tinys[i];
+                        if (tiny.indexOf("')") == -1) { continue; }
+                        tiny = tiny.substring(0, tiny.indexOf("')"));
+                        tiny = tiny.replace("InstanceById('", "");
+                        if (tiny.length() > 100) { tiny = ""; }
+                        if (i == nth) { return tiny; }
+                }
+        String elementID = "";
+        return elementID;
+    }
+
+    public void sendInputTiny(WebDriver driver, String beforeText, String value) throws IOException
+    {
+    	String page = driver.getPageSource();
+    	Assert.assertNotNull("Running Missing: " + beforeText, textElement(driver, beforeText));
+    	if (page.indexOf(beforeText) == -1) { int a = 1 / 0; }
+    	String pagePart = page.split(beforeText)[page.split(beforeText).length - 1];
+    	String elementID = getNthTinyIdFromText(driver, pagePart, 1);
+    	JavascriptExecutor exec = (JavascriptExecutor) driver;
+    	try {
+    		exec.executeScript("var _tmp = tinymce.get('" + elementID
+    				+ "'); _tmp.setContent('" + value + "'); _tmp.save();");
+    		tauko(1);
+    	} catch (Exception e) {
+
+    	}
+    }
+
+    public void printMyStackTrace(Exception e)
+    {
+    	int hit = 0;
+    	StackTraceElement[] stack = e.getStackTrace();
+    	for (int i = 0; i < stack.length; i++) {
+    		StackTraceElement stackTraceElement = stack[i];
+    		String line = stackTraceElement.toString();
+    		if (hit > 0)
+    		{
+    			this.echo(line);
+    			hit = 0;
+    		}
+    		else
+    		{
+    			if (line.indexOf("fi.vm.sade") > -1)
+    			{
+    				this.echo(line);
+    				hit = 1;
+    			}
+    		}
+    	}
+    }
+
+	public Boolean PoistaKoulutus(WebDriver driver, String haku) throws Exception {
+    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
+    	search.clear();
+    	search.sendKeys(haku);
+    	tauko(1);
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+    	tauko(5);
+    	if (this.isPresentText(driver, "Koulutukset (0)")) { return false; }
+    	WebElement triangle = getTriangleForFirstItem(driver);
+        Assert.assertNotNull("Running koulutushaku triangle ei toimi.", triangle);
+    	tauko(1);
+    	triangle.click();
+    	WebElement link = driver.findElement(By.className("v-button-link-row"));
+        Assert.assertNotNull("Running koulutushaku link ei toimi.", link);
+        this.menuOperaatio(driver, "Poista", haku);
+    	Assert.assertNotNull("Running poistaa koulutus ei toimi."
+    			, this.textElement(driver, "Haluatko varmasti poistaa alla olevan koulutuksen?"));
+        this.tauko(1);
+        this.textClick(driver, "Kyllä");
+        this.tauko(1);
+        return true;
+	}
+
+	public WebElement TarkasteleKoulutusLuonnosta(WebDriver driver, String haku) throws Exception {
+    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
+    	search.clear();
+    	search.sendKeys(haku);
+    	this.tauko(1);
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+    	List<WebElement> triangles = this.getTriangleList(driver);
+    	Assert.assertNotNull("Running koulutushaku triangles ei esiinny.", triangles);
+    	this.tauko(1);
+    	int i = 0;
+    	Boolean hit = false;
+    	while (triangles.get(i) != null) {
+        	triangles = this.getTriangleList(driver);
+    		WebElement triangle = triangles.get(i);
+    		triangle.click();
+    		this.tauko(1);
+        	if (this.isPresentText(driver, "luonnos")) { hit = true; break; }
+        	triangles = this.getTriangleList(driver);
+    		triangle = triangles.get(i);
+    		triangle.click();
+    		this.tauko(1);
+        	i++;
+		}
+    	WebElement link = null;
+    	if (hit) { link = this.getMenuNearestText(driver, "luonnos"); }
+    	return link;
+    }
+
+	public void ValikotHakukohteidenYllapito(WebDriver driver, String baseUrl)
+	{
+		this.textClick(driver, "Suunnittelu ja tarjonta");
+		this.tauko(1);
+		this.textClick(driver, "Koulutusten ja hakukohteiden ylläpito");
+		this.tauko(1);
+		try {
+			Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 valikot ei toimi."
+					, this.textElement(driver, "Koulutuksen alkamisvuosi"));
+		} catch (Exception e) {
+			driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-url") + "?restartApplication");
+			Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 valikot ei toimi."
+					, this.textElement(driver, "Koulutuksen alkamisvuosi"));
+		}
+		this.tauko(1);
+	}
 }

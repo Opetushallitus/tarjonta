@@ -45,6 +45,7 @@ public class Kattavuus {
             String yyyymm = doit.yyyymmString();
             String fileName = System.getProperty("user.home") + "/kattavuus/" + kohde + "." + yyyymm + ".txt";
             String text = kohde + " " + yyyymm + " " + doit.ddhhmmssString() + " " + key;
+            if (kohde == null || kohde.length() == 0) { int a = 1 / 0; }
             if (useFiles) { doit.appendToFile(fileName, text); }
             }
     }
@@ -52,11 +53,17 @@ public class Kattavuus {
     public Boolean KattavuusRaporttiHiljaa = false;
     public void KattavuusRaportti() throws IOException
     {
+	String otsikko = KattavuusTaulukko.getProperty(KATTAVUUSKOHDE);
+	if (otsikko == null || otsikko.length() == 0) { int a = 1 / 0; }
     	SVTUtils doit = new SVTUtils();
     	String metriikkaMode = SVTUtils.prop.getProperty("tarjonta-selenium.metriikka");
     	if (metriikkaMode != null && metriikkaMode.equals("true")) { useFiles = true; }
     	doit.echo("");
     	doit.echo("-----------------------------------------");
+    	doit.echo("-----------------------------------------");
+    	doit.echo("-----------------------------------------");
+    	doit.echo("");
+    	doit.echo(otsikko);
     	doit.echo("");
     	Enumeration vKeys = KattavuusTaulukko.keys();
     	int test = 0, notest = 0, error = 0, failure = 0, ok = 0;
@@ -101,7 +108,7 @@ public class Kattavuus {
     		if (status == KATTAVUUSFAILURE && ! KattavuusRaporttiHiljaa) { doit.echo("Testi ei toteutunut kohteelle " + testi); }
     	}
     	// kirjoita raportti
-    	int tavoite = KattavuusTaulukko.size();
+    	int tavoite = KattavuusTaulukko.size() - 1;
     	if (tavoite == 0) { tavoite = 1; }
     	double coverage = doit.roundTwoDecimals(100.0 * ok / tavoite);
 
@@ -110,6 +117,8 @@ public class Kattavuus {
     		doit.echo("");
     		doit.echo("-----------------------------------------");
     		doit.echo("");
+                doit.echo(otsikko);
+                doit.echo("");
     		doit.echo(                   "Testikohteita       " + (KattavuusTaulukko.size() - 1));
     		doit.echo(                   "Testi puuttuu       " + notest);
     		if (test > 0)    { doit.echo("Testi on toteutettu " + test); }
@@ -131,6 +140,7 @@ public class Kattavuus {
     		String ddhhmmss = doit.ddhhmmssString();
     		String info = testiajo + " " + yyyymm + " " + ddhhmmss + " " + tavoite + " " + ok;
     		String fileName = System.getProperty("user.home") + "/kattavuus/kattavuus.db.txt";
+    		if (testiajo == null || testiajo.length() == 0) { int a = 1 / 0; }
     		doit.appendToFile(fileName, info);
     		// KERATAAN SUMMA ONNISTUNEIDEN LUKEMISTA ERI AJOISTA SAMALTA KUUKAUDELTA
     		String fileName2 = System.getProperty("user.home") + "/kattavuus/" + testiajo + "." + yyyymm + ".txt";
@@ -167,7 +177,7 @@ public class Kattavuus {
     	SVTUtils doit = new SVTUtils();
     	String htmlFileName = fileName + ".html";
     	// backup
-    	FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".backup"));
+    	// FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".backup"));
     	//            Files.copy(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".backup"));
     	doit.writeToFile(htmlFileName, "");
     	//
@@ -237,12 +247,13 @@ public class Kattavuus {
     		int height = Integer.parseInt(kuukausiLkm) * 40;
     		if (height < 120) { height = 120; }
 
-    		FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".height.backup"));
+    		// FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".height.backup"));
     		//            Files.copy(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".height.backup"));
     		String tokenHtml = doit.readFile(htmlFileName);
     		line = tokenHtml.replace("%HEIGHT:" + moduli +"%", height + "");
     		doit.writeToFile(htmlFileName, line);
     	}
+        FileUtils.copyFile(new File(fileName), new File("target/kattavuus.db.txt"));
     	// Artifact
     	FileUtils.copyFile(new File(htmlFileName), new File("target/kattavuus.db.txt.html"));
     	//            Files.copy(new File(htmlFileName), new File("target/kattavuus.db.txt.html"));
@@ -276,7 +287,18 @@ public class Kattavuus {
 
     			int tavoite_x =  100 * tavoite / maxTavoite;
     			int ok_x =  100 * ok / maxTavoite;
-    			if (ok_x < 5) { ok_x = 5; }
+    			if (ok > 0 && ok_x < 5) { ok_x = 5; }
+
+    			monthsInRow++;
+    			if (monthsInRow > 7)
+    			{
+    				coordinates(htmlFileName, countMonth, maxTavoite);
+    				// end svg, start svg
+    				line = "</svg></div><div style='height:140;left:20px;width:700px;float:left;'>" + svgStart;
+    				doit.appendToFile(htmlFileName, line);
+    				monthsInRow = 0;
+    				x = 90;
+    			}
 
     			line = "<rect x='" + x + "' y='" + (100 - tavoite_x) + "' width='90' height='" + tavoite_x + "' style='fill:orange;stroke-width:1;stroke:orange' />";
     			doit.appendToFile(htmlFileName, line);                  // rgb(0,0,0)
@@ -291,16 +313,6 @@ public class Kattavuus {
 
     			x = x + 90;
 
-    			monthsInRow++;
-    			if (monthsInRow >= 7)
-    			{
-    				coordinates(htmlFileName, countMonth, maxTavoite);
-    				// end svg, start svg
-    				line = "</svg></div><div style='height:140;left:20px;width:700px;float:left;'>" + svgStart;
-    				doit.appendToFile(htmlFileName, line);
-    				monthsInRow = 0;
-    				x = 90;
-    			}
     		}
     	}
 
