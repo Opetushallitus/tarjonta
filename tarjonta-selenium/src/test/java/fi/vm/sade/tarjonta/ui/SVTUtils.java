@@ -1022,6 +1022,7 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+            	if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (distance < minDistance) { minDistance = distance; }
         }
