@@ -326,6 +326,10 @@ public class ShowHakukohdeTab extends VerticalLayout {
         for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
             final GridLayout grid = new GridLayout(2, 1);
             grid.setWidth("100%");
+            Label piesykoeLbl = new Label(i18n.getMessage("paasykoeTitle"));
+            piesykoeLbl.setStyleName(Oph.LABEL_H2);
+            addTwoColumnRowToGrid(grid,piesykoeLbl);
+
             addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(valintakoe.getValintakoeTyyppi(), I18N.getLocale())));
             addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(valintakoe.getSanallisetKuvaukset())));
 
