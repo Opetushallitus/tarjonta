@@ -72,6 +72,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private OrganisaatioContext context;
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
+    private boolean showPisterajaTable = true;
 
     public ShowHakukohdeTab(String language) {
         Preconditions.checkNotNull(language, "Language cannot be null");
@@ -303,7 +304,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         if (checkLukioKoulutus()) {
             Label pisterajaLbl = new Label(i18n.getMessage("valinnoissaKaytettavatPisterajatLbl"));
             pisterajaLbl.setStyleName(Oph.LABEL_H2);
-            yetAnotherLayout.addComponent(pisterajaLbl);
+
 
             Table pisterajatTable = new Table();
             pisterajatTable.setContainerDataSource(createPisterajatContainer());
@@ -315,11 +316,13 @@ public class ShowHakukohdeTab extends VerticalLayout {
             pisterajatTable.setColumnHeader("ylinPistemaara", i18n.getMessage("ylinPistemaaraLbl"));
             pisterajatTable.setColumnHeader("alinHyvaksyttyPistemaara", i18n.getMessage("alinHyvaksyttyPistemaaraLbl"));
             pisterajatTable.setPageLength(pisterajatTable.getContainerDataSource().size());
-
+            if (showPisterajaTable) {
+            yetAnotherLayout.addComponent(pisterajaLbl);
             yetAnotherLayout.addComponent(pisterajatTable);
+            }
         }
 
-
+        if (checkValintakoeAjat(loadHakukohdeValintaKokees))  {
         for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
             final GridLayout grid = new GridLayout(2, 1);
             grid.setWidth("100%");
@@ -344,11 +347,31 @@ public class ShowHakukohdeTab extends VerticalLayout {
             yetAnotherLayout.addComponent(grid);
 
         }
+        }
 
         valintakoeLayout.addComponent(yetAnotherLayout);
         layout.addComponent(valintakoeLayout);
 
     }
+
+    private boolean checkValintakoeAjat(List<ValintakoeViewModel> hakukohdeValintaKokees) {
+        boolean returnVal = true;
+        if (hakukohdeValintaKokees != null ) {
+
+            for (ValintakoeViewModel valintakoeViewModel:hakukohdeValintaKokees) {
+                if (valintakoeViewModel.getValintakoeAjat() != null && valintakoeViewModel.getValintakoeAjat().size() > 0) {
+                    returnVal = true;
+                } else {
+                    returnVal = false;
+                }
+            }
+
+        } else {
+            returnVal = false;
+        }
+        return returnVal;
+    }
+
 
     private Table buildValintakoeAikaTable(ValintakoeViewModel valintakoe) {
         Table valintakoeAikaTable = new Table();
@@ -469,6 +492,12 @@ public class ShowHakukohdeTab extends VerticalLayout {
         List<PisterajaRow> pisterajaRows = new ArrayList<PisterajaRow>();
 
         for (ValintakoeViewModel valintakoeV : valintakokees) {
+            if (valintakoeV.getPkAlinPM() != null && valintakoeV.getPkYlinPM() != null || valintakoeV.getLpAlinPM() != null && valintakoeV.getLpYlinPM() != null) {
+                showPisterajaTable = true;
+            }
+            else {
+                showPisterajaTable = false;
+            }
             PisterajaRow paasyKoePisteraja = new PisterajaRow();
             paasyKoePisteraja.setPisteRajaTyyppi(i18n.getMessage("paasykoe"));
             paasyKoePisteraja.setAlinPistemaara(valintakoeV.getPkAlinPM());
