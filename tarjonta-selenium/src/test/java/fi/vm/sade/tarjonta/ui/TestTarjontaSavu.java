@@ -48,7 +48,7 @@ public class TestTarjontaSavu {
     	}
 
     	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
-    	driver.manage().timeouts().implicitlyWait(130, TimeUnit.SECONDS);
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
 	@Test
@@ -98,18 +98,19 @@ public class TestTarjontaSavu {
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
         haeKentta.clear();
-        haeKentta.sendKeys("espoon");
+        haeKentta.sendKeys("optima");
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
-        Assert.assertNotNull("Running TarjontaSavu002 Hae espoo ei toimi.", doit.textElement(driver, "Espoon kaupunki"));
+        Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
+        		, doit.textElement(driver, "Optima samkommun"));
         t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu002 Hae espoo OK");
+        doit.echo("Running TarjontaSavu002 Hae Optima samkommun OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
 
         // KOULUTUKSET JA HAKUKOHTEET
-        WebElement espoo = driver.findElement(By.xpath("//span[contains(text(), 'Espoon kaupunki')]"));
+        WebElement espoo = driver.findElement(By.xpath("//span[contains(text(), 'Optima samkommun')]"));
         t01 = doit.millis();
         espoo.click();
         Assert.assertNotNull("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Koulutukset ("));
@@ -138,7 +139,7 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         doit.textClick(driver, "Peruskoulu");
         doit.tauko(1);
-        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Espoon kaupunki']")).click();
+        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Jatka");
@@ -152,6 +153,22 @@ public class TestTarjontaSavu {
         driver.findElement(By.className("v-button-back")).click();
 
         // LUO UUSI LUKIOKOULUTUS (validialog)
+        // hae kerttulin lukio
+        WebElement haeKentta2 = driver.findElement(By.className("v-textfield-search-box"));
+        haeKentta2.clear();
+        haeKentta2.sendKeys("kerttulin");
+        doit.tauko(1);
+        t01 = doit.millis();
+        driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
+                        , doit.textElement(driver, "Kerttulin lukio"));
+        t01 = doit.millisDiff(t01);
+        doit.echo("Running TarjontaSavu002 Hae Kerttulin lukio OK");
+        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+        doit.tauko(1);
+
+        doit.textClick(driver, "Kerttulin lukio");
+        doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Luo uusi koulutus");
         Assert.assertNotNull("Running TarjontaSavu005a Luo uusi lukiokoulutus ei toimi."
@@ -166,7 +183,7 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         doit.textClick(driver, "Lukiokoulutus");
         doit.tauko(1);
-        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Espoon kaupunki']")).click();
+        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Kerttulin lukio']")).click();
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Jatka");
@@ -303,7 +320,7 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi.", checkBoxId.isSelected());
         doit.tauko(1);
         t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi hakukohde");
+        doit.textClick(driver, "Luo uusi hakukohde"); // <=================================== 1 / 2
         Boolean skip2 = true;
         while (skip2)
         {
@@ -317,11 +334,15 @@ public class TestTarjontaSavu {
         {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         			, doit.textElement(driver, a_text));
+        	doit.textClick(driver, "Peruuta");
+        	doit.tauko(1);
         }
         if (b_scenario)
         {
             Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
             		, doit.textElement(driver, b_text));
+        	doit.textClick(driver, "Sulje");
+        	doit.tauko(1);
         }        	
         if (c_scenario)
         {
@@ -331,13 +352,6 @@ public class TestTarjontaSavu {
             driver.findElement(By.className("v-button-back")).click();
             doit.tauko(1);
         }        	
-        else
-        {
-        	doit.tauko(1);
-        	String closeId = doit.idLike(driver, "window_close");
-        	driver.findElement(By.id(closeId)).click();
-        	doit.tauko(1);
-        }
     	t01 = doit.millis();
     	checkBox3.click();
     	while (checkBoxId.isSelected()) { doit.tauko(1); }
@@ -349,8 +363,8 @@ public class TestTarjontaSavu {
         checkBoxId.click();
         doit.tauko(1);
         t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi hakukohde");
-        if (a_scenario)
+        doit.textClick(driver, "Luo uusi hakukohde"); // <=================================== 2 / 2
+        if (a_scenario || b_scenario)
         {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         			, doit.textElement(driver, a_text));
@@ -363,8 +377,8 @@ public class TestTarjontaSavu {
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         			, doit.textElement(driver, c_text));
         	t01 = doit.millisDiff(t01);
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Jatka");
+//        	t01 = doit.millis();
+//        	doit.textClick(driver, "Jatka");
         }
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         		, doit.textElement(driver, "tietoja hakemisesta"));
