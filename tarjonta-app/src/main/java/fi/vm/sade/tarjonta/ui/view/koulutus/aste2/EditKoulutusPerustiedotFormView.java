@@ -122,6 +122,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * Used for add text like 5 + 2.
      */
     @NotNull(message = "{validation.Koulutus.suunniteltuKesto.notNull}")
+    @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
     @PropertyId("suunniteltuKesto")
     private TextField tfSuunniteltuKesto;
     /*
