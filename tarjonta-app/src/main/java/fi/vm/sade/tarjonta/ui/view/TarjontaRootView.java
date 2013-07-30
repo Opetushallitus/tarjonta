@@ -60,7 +60,7 @@ public class TarjontaRootView extends Window {
     private static final long serialVersionUID = -1669758858870001028L;
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    @Value("${root.organisaatio.oid}")
+    @Value("${root.organisaatio.oid:}")
     private String rootOphOid;
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView organisationSearchView;
