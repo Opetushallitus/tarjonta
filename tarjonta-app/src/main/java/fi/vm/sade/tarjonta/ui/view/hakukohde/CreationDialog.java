@@ -86,8 +86,9 @@ public class CreationDialog<T> extends CustomComponent {
     }
 
     public void buildLayout(List<T> thingsModel) {
-        rootLayout.addComponent(createTitleLayout());
         rootLayout.addComponent(errorView);
+        rootLayout.addComponent(createTitleLayout());
+
         rootLayout.addComponent(createOptionGroupLayout(thingsModel));
         rootLayout.addComponent(createButtonLayout());
     }
