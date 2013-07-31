@@ -387,7 +387,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         kcOpetusmuoto.setCaptionFormatter(koodiNimiFormatter);
         kcOpetusmuoto.setImmediate(true);
 
-        //((TwinColSelect)kcOpetusmuoto.getField()).setColumns(50);
+
         ((TwinColSelect)kcOpetusmuoto.getField()).setWidth("600px");
         grid.addComponent(kcOpetusmuoto);
         grid.newLine();

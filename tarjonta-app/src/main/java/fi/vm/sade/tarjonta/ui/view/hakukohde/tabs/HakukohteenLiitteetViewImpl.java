@@ -50,6 +50,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -364,7 +365,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                 errorMessage.resetErrors();
                 try {
                     form.commit();
-                    if (form.isValid() && validateSahkoinenOsoite()) {
+                    if (form.isValid() && validateExtras()) {
                         presenter.getModel().getSelectedLiite().setLiitteenSanallinenKuvaus(getLiitteenSanallisetKuvaukset());
                         presenter.saveHakukohteenEditView();
                     }
@@ -383,19 +384,30 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return horizontalButtonLayout;
     }
 
-    private boolean validateSahkoinenOsoite() {
+    private boolean validateExtras() {
+
+        boolean retval = true;
          if ((Boolean)voidaanToimittaaSahkoisesti.getValue()) {
               String sahkOsoite = (String)sahkoinenToimitusOsoite.getValue();
               if (sahkOsoite != null && sahkOsoite.trim().length() > 0) {
-                 return true;
+                  retval = true;
               } else {
                  errorMessage.addError(T("sahkoinenToimitusOsoite.valueMissing"));
-                 return false;
+                  retval = false;
               }
 
          }  else {
-             return true;
+             retval = true;
          }
+
+        Date now = new Date();
+
+        if (((Date)toimittettavaMennessa.getValue()).before(now)) {
+            errorMessage.addError(T("toimPvmMenneessa"));
+            retval = false;
+        }
+
+        return retval;
     }
 
     private void deEnableOrEnableOsoite(boolean toEnableOrNot) {
