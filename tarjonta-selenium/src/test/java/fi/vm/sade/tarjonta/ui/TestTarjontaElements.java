@@ -523,7 +523,7 @@ public class TestTarjontaElements {
             Assert.assertNotNull("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus ei toimi."
                             , doit.textElement(driver, "Jatko-opintomahdollisuudet"));
             
-            if (doit.isPresentText(driver, "JULKAISTU</span>")) 
+            if (doit.isPresentText(driver, "Poista koulutuksesta")) 
             {
             	poista = ""; 
             }

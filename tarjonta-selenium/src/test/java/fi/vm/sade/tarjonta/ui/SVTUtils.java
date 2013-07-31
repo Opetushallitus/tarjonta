@@ -1050,6 +1050,7 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (distance < minDistance) { minDistance = distance; }
         }
@@ -1057,6 +1058,7 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (distance == minDistance) { input = el; }
         }
@@ -1504,17 +1506,20 @@ public class SVTUtils {
     	this.tauko(1);
     	int i = 0;
     	Boolean hit = false;
-    	while (triangles.get(i) != null) {
-        	triangles = this.getTriangleList(driver);
-    		WebElement triangle = triangles.get(i);
-    		triangle.click();
-    		this.tauko(1);
-        	if (this.isPresentText(driver, "luonnos")) { hit = true; break; }
-        	triangles = this.getTriangleList(driver);
-    		triangle = triangles.get(i);
-    		triangle.click();
-    		this.tauko(1);
-        	i++;
+    	try {
+			while (triangles.get(i) != null) {
+				triangles = this.getTriangleList(driver);
+				WebElement triangle = triangles.get(i);
+				triangle.click();
+				this.tauko(1);
+				if (this.isPresentText(driver, "luonnos")) { hit = true; break; }
+				triangles = this.getTriangleList(driver);
+				triangle = triangles.get(i);
+				triangle.click();
+				this.tauko(1);
+				i++;
+			}
+		} catch (Exception e) {
 		}
     	WebElement link = null;
     	if (hit) { link = this.getMenuNearestText(driver, "luonnos"); }
