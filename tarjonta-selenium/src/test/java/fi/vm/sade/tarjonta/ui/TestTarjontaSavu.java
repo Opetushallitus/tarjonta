@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.ui;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class TestTarjontaSavu {
@@ -35,6 +37,7 @@ public class TestTarjontaSavu {
     		FirefoxProfile firefoxProfile = new FirefoxProfile();
     		firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
     		driver = new FirefoxDriver(firefoxProfile);
+//    		driver = new FirefoxDriver(new FirefoxBinary(new File("c:/Selaimet/Firefox17/firefox.exe")), firefoxProfile);
     	}
     	else
     	{
@@ -350,8 +353,13 @@ public class TestTarjontaSavu {
             		, doit.textElement(driver, c_text));
             doit.tauko(1);
             driver.findElement(By.className("v-button-back")).click();
+            Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE back ei toimi.", doit.textElement(driver, "Hakukohteet ("));
             doit.tauko(1);
+            checkBox3 = doit.findNearestElementExact("Valitse kaikki", "//input[@type='checkbox']", driver);
+            gwtId = doit.getGwtIdForFirstHakukohde(driver);
+            checkBoxId = driver.findElement(By.id(gwtId));
         }        	
+//        checkBox3 = driver.findElement(By.id("gwt-uid-3"));
     	t01 = doit.millis();
     	checkBox3.click();
     	while (checkBoxId.isSelected()) { doit.tauko(1); }
@@ -729,7 +737,7 @@ public class TestTarjontaSavu {
         }
         else
         {
-        	doit.echo("Running Ei ollut lainkaan lukiokoulutuksia valmiina.");
+        	doit.echo("Running Ei ollut lainkaan lukiokoulutuksia luonnostilassa valmiina.");
         }
 	}
 
@@ -897,7 +905,7 @@ public class TestTarjontaSavu {
         }
         else
         {
-        	doit.echo("Running Ei ollut lainkaan ammatillisia koulutuksia valmiina.");
+        	doit.echo("Running Ei ollut lainkaan ammatillisia koulutuksia luonnostilassa valmiina.");
         }
 	}
 
