@@ -29,10 +29,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -127,10 +131,22 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     private transient I18NHelper _i18n;
     private boolean attached = false;
 
+    private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
+        @Override
+        public String formatCaption(KoodiType dto) {
+            if (dto == null) {
+                return "";
+            }
+
+            return TarjontaUIHelper.getKoodiMetadataForLanguage(dto, I18N.getLocale()).getNimi();
+        }
+    };
+
     public EditHakuFormImpl() {
         super();
         HakuViewModel haku = new HakuViewModel();
         initialize(haku);
+
     }
 
     @Override
@@ -152,18 +168,23 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         //
 
         _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi.setCaptionFormatter(koodiNimiFormatter);
         _hakutyyppi.setSizeUndefined();
         _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi.setCaptionFormatter(koodiNimiFormatter);
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
         _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi.setCaptionFormatter(koodiNimiFormatter);
         _koulutusAlkamiskausi.setSizeUndefined();
         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
         koulutuksenAlkamisvuosi.setSizeUndefined();
         _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
+        _hakuKohdejoukko.setCaptionFormatter(koodiNimiFormatter);
         _hakuKohdejoukko.setWidth("350px");//_hakuKohdejoukko.setSizeUndefined();
         _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
+        _hakutapa.setCaptionFormatter(koodiNimiFormatter);
         _hakutapa.setWidth("350px");//.setSizeUndefined();
         _hakutapa.setImmediate(true);
         _hakutapa.addListener(new Property.ValueChangeListener() {

@@ -19,9 +19,20 @@ public class SolrServerFactory implements InitializingBean {
     
     @Value("${tarjonta.solr.baseurl:}")
     protected String solrBaseUrl;
+    
+    @Value("${organisaatio.solr.url:}")
+    protected String organisaatioSolrUrl;
+
+    public SolrServer getOrganisaatioSolrServer() {
+        return getSolr(organisaatioSolrUrl);
+    }
 
     public SolrServer getSolrServer(final String coreName) {
         final String url = solrBaseUrl + "/" + coreName;
+        return getSolr(url);
+    }
+
+    private SolrServer getSolr(final String url) {
         logger.info("instantiating new solr client with url {}", url);
         return new HttpSolrServer(url);
     }

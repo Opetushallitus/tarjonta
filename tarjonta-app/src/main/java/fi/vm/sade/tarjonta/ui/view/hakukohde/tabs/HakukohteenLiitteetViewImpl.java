@@ -162,7 +162,12 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private void addItemToGrid(String captionKey, AbstractComponent component) {
 
         if (itemContainer != null) {
-            Label label = UiUtil.label(null, T(captionKey));
+            Label label;
+            if (captionKey != null && captionKey.trim().length() > 0) {
+            label = UiUtil.label(null, T(captionKey));
+            } else {
+            label = UiUtil.label(null,"");
+            }
             label.setContentMode(Label.CONTENT_XHTML);
             itemContainer.addComponent(label);
             itemContainer.setComponentAlignment(label, Alignment.TOP_RIGHT);
@@ -359,7 +364,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                 errorMessage.resetErrors();
                 try {
                     form.commit();
-                    if (form.isValid()) {
+                    if (form.isValid() && validateSahkoinenOsoite()) {
                         presenter.getModel().getSelectedLiite().setLiitteenSanallinenKuvaus(getLiitteenSanallisetKuvaukset());
                         presenter.saveHakukohteenEditView();
                     }
@@ -376,6 +381,21 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         horizontalButtonLayout.setComponentAlignment(saveButton, Alignment.BOTTOM_RIGHT);
 
         return horizontalButtonLayout;
+    }
+
+    private boolean validateSahkoinenOsoite() {
+         if ((Boolean)voidaanToimittaaSahkoisesti.getValue()) {
+              String sahkOsoite = (String)sahkoinenToimitusOsoite.getValue();
+              if (sahkOsoite != null && sahkOsoite.trim().length() > 0) {
+                 return true;
+              } else {
+                 errorMessage.addError(T("sahkoinenToimitusOsoite.valueMissing"));
+                 return false;
+              }
+
+         }  else {
+             return true;
+         }
     }
 
     private void deEnableOrEnableOsoite(boolean toEnableOrNot) {

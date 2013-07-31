@@ -31,9 +31,11 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
@@ -96,6 +98,7 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
+
     /**
      * Default field value as uri and versio formatter for koodisto components
      * NOTE: Value is object of type "KoodiUriAndVersioType".

@@ -180,7 +180,18 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Date lastUpdateDate;
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+    
+    @Column(name="viimIndeksointiPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date viimIndeksointiPvm = null;
 
+    public Date getViimIndeksointiPvm() {
+        return viimIndeksointiPvm;
+    }
+
+    public void setViimIndeksointiPvm(Date viimIndeksointiPvm) {
+        this.viimIndeksointiPvm = viimIndeksointiPvm;
+    }
 
     public KoulutusmoduuliToteutus() {
         super();

@@ -49,12 +49,14 @@ public class SearchService {
     private String rootOrganisaatioOid;
     private final SolrServer koulutusSolr;
     private final SolrServer hakukohdeSolr;
+    private final SolrServer organisaatioSolr;
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public SearchService(SolrServerFactory factory) {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
+        this.organisaatioSolr = factory.getOrganisaatioSolrServer();
     }
 
     public HaeHakukohteetVastausTyyppi haeHakukohteet(
@@ -126,8 +128,8 @@ public class SearchService {
         String orgQuery = String.format("%s:(%s)", Organisaatio.OID, Joiner.on(" ").join(orgOids));
         orgQ.setQuery(orgQuery);
         orgQ.setRows(Integer.MAX_VALUE);
-
-        QueryResponse orgResponse = solr.query(orgQ, METHOD.POST);
+        //TODO limit fields
+        QueryResponse orgResponse = organisaatioSolr.query(orgQ, METHOD.POST);
         return orgResponse;
     }
 
