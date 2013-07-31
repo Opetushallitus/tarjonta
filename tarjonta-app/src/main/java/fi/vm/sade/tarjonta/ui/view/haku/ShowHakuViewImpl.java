@@ -140,8 +140,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         buildLayoutMiddleTop(layout);
         //addLayoutSplit();
         //buildLayoutMiddleMid2(layout);
-        addLayoutSplit();
-        buildLayoutMiddleBottom(layout);
+        //addLayoutSplit();
+        //buildLayoutMiddleBottom(layout);
         addLayoutSplit();
     }
 
