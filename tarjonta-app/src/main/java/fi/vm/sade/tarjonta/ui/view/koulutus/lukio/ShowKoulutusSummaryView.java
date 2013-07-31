@@ -104,11 +104,16 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         Set<String> langs = getLanguages();
         addNavigationButtons(layout, context);
-
-        if (langs.size()==1) {
+        
+        if (langs.size() < 1) {
+            LOG.debug("buildLayout(): No languages, this should happen only for imported koulutukset");
+            Panel panel = new Panel();
+            panel.setContent(buildMainLayout(perustiedot, T("lang.fi")));
+                layout.addComponent(panel);
+        } else if (langs.size()==1) {
+            LOG.debug("buildLayout(): Only one lang");
             Panel panel = new Panel();
             panel.setContent(buildMainLayout(perustiedot, langs.iterator().next()));
-
         	layout.addComponent(panel);
         } else {
         	TabSheet ts = new TabSheet();
