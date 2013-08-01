@@ -234,10 +234,11 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         addItemToGrid(grid, "HaunTunniste", model.getHaunTunniste());
         addItemToGrid(grid ,"Hakuaika", _tarjontaUIHelper.formatDate(model.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(model.getPaattymisPvm()));
         if (model.getSisaisetHakuajat() != null && model.getSisaisetHakuajat().size() > 1) {
-            addItemToGrid(grid,"Hakuajat","");
+            VerticalLayout hakuajatArea = UiUtil.verticalLayout();
             for (HakuaikaViewModel hakuaika: model.getSisaisetHakuajat()) {
-                addItemToGrid(grid,null,((hakuaika.getHakuajanKuvaus() != null) ? hakuaika.getHakuajanKuvaus() + ", " : "") + _tarjontaUIHelper.formatDate(hakuaika.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(hakuaika.getPaattymisPvm()));
+                UiUtil.label(hakuajatArea, ((hakuaika.getHakuajanKuvaus() != null) ? hakuaika.getHakuajanKuvaus() + ", " : "") + _tarjontaUIHelper.formatDate(hakuaika.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(hakuaika.getPaattymisPvm()));
             }
+            addItemToGrid(grid, "Hakuajat", hakuajatArea);
         }
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()
                 ? T("KaytetaanJarjestelmanHakulomaketta")

@@ -235,7 +235,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.newLine();
 
         {
-            Label fieldL = UiUtil.label(null, T("KoulutuksenAlkamiskausi"));
+            Label fieldL = UiUtil.label(null, T("HakukausiJaVuosi"));
             grid.addComponent(fieldL);
             grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
@@ -299,6 +299,9 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             grid.setComponentAlignment(hakuaikaL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
+            vl.setSpacing(true);
+            vl.setMargin(new MarginInfo(false, false, true, false));
+            
             //vl.setWidth(850, Sizeable.UNITS_PIXELS);
 
 
@@ -350,10 +353,10 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
         this.sisaisetHakuajatTable.setPageLength((this.getSisaisetHakuajatContainer().size() > 5) ? this.getSisaisetHakuajatContainer().size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
-        /*this.sisaisetHakuajatTable.setColumnWidth("kuvaus", 180);
-         this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 250);
-         this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 250);
-         this.sisaisetHakuajatTable.setColumnWidth("poistaB", 160);*/
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[0], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[1], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[2], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[3], Table.ALIGN_LEFT);
 
     }
 
