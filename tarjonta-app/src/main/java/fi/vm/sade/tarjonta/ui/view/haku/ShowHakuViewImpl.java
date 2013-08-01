@@ -43,7 +43,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -52,7 +51,6 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -79,7 +77,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
     private final String datePattern = "dd.MM.yyyy HH:mm";
 
     public ShowHakuViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
-        super(VerticalLayout.class, pageTitle, message, dto);
+        super(VerticalLayout.class, pageTitle, "", dto);
     }
 
     private void addItemToGrid(final GridLayout grid,

@@ -639,7 +639,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
-        permissionChecker.checkUpdateKoulutus(koulutus.getTarjoaja());
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, UPDATE_OPERATION));
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
