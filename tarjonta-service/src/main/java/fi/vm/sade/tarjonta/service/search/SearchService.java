@@ -183,6 +183,8 @@ public class SearchService {
         String nimi = kysely.getNimi();
         final String kausi = kysely.getKoulutuksenAlkamiskausi();
         final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
+
+        final String koulutuksenTila = kysely.getKoulutuksenTila() != null ? kysely.getKoulutuksenTila().value() : null;
         final List<String> tarjoajaOids = kysely.getTarjoajaOids();
         final List<String> koulutusOids = kysely.getKoulutusOids();
         final List<String> hakukohdeOids = kysely.getHakukohdeOids();
@@ -197,6 +199,10 @@ public class SearchService {
                     nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
+        }
+
+        if (koulutuksenTila != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.TILA_EN, koulutuksenTila));
         }
 
         if (kysely.getKoulutusKoodi() != null) {
@@ -253,6 +259,8 @@ public class SearchService {
             }
 
         } catch (SolrServerException e) {
+            System.out.println("haku.error : " + e.toString());
+            LOG.error("haku.error : " + e.toString());
             throw new RuntimeException("haku.error", e);
         }
         return response;

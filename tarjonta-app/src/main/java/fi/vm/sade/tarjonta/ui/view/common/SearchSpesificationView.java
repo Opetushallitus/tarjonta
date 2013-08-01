@@ -25,6 +25,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
@@ -39,6 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
+
+import java.util.HashMap;
 
 /**
  * This is the search controller and spesification component used to search Haku
@@ -63,11 +66,15 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private Button btnHae;
     //private ComboBox cbKaudenTarkenne;
     private ComboBox cbVuosi;
+
+    private ComboBox cbTilat;
     private KoodistoComponent kcKausi;
     // private KoodistoComponent kcHakutyyppi;
     // private KoodistoComponent kcKohdejoukko;
     private Button btnTyhjenna;
     private boolean attached = false;
+
+    private HashMap<String,String> tilaMap;
     /* Model for search spesifications */
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
     @Autowired(required = true)
@@ -132,14 +139,22 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 //        cbKaudenTarkenne.setSizeUndefined();
 //        cbKaudenTarkenne.setWidth("200px");
 
+        cbTilat = UiUtil.comboBox(null,T("koulutuksenTilat"),getKoulutuksenTilat());
+        addComponent(cbTilat);
+        cbTilat.setSizeUndefined();
+        cbTilat.setWidth("200px");
+
         //TODO: no application logic, only for Christmas demo
-        cbVuosi = UiUtil.comboBox(null, T(I18N_VUOSI), new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"});
+        cbVuosi = UiUtil.comboBox(null, T(I18N_VUOSI), new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022","2023","2024","2025"});
         cbVuosi.setNullSelectionAllowed(true);
         cbVuosi.setNullSelectionItemId(T(I18N_VUOSI + I18N_PROMPT));
         //cbVuosi.setInputPrompt(T(I18N_VUOSI + I18N_PROMPT));
         addComponent(cbVuosi);
         cbVuosi.setSizeUndefined();
         cbVuosi.setWidth("200px");
+
+
+
 
         //TODO: no application logic, only for Christmas demo
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
@@ -175,14 +190,32 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
         // this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
+        this.setComponentAlignment(cbTilat, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(cbVuosi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(kcKausi, Alignment.BOTTOM_RIGHT);
+
         this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
-        this.setExpandRatio(cbVuosi, 1f);
+        //this.setExpandRatio(cbVuosi, 1f);
+        this.setExpandRatio(cbTilat, 1f);
     }
 
     private String T(String key) {
         return i18nHelper.getMessage(key);
+    }
+
+    private String[] getKoulutuksenTilat() {
+        String[] tilat = new String[TarjontaTila.values().length +1];
+        tilat[0] = T("kaikkiTilat");
+        tilaMap = new HashMap<String, String>();
+        int counter = 1;
+        for (TarjontaTila tila:TarjontaTila.values()) {
+            String localizedTila = T(tila.value());
+            tilaMap.put(localizedTila,tila.value());
+            tilat[counter] = localizedTila;
+            counter++;
+        }
+
+        return tilat;
     }
 
     /**
@@ -194,6 +227,12 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null 
                                         && !cbVuosi.getNullSelectionItemId().equals(cbVuosi.getValue()) 
                                         ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
+
+        String valittuTila = (String)cbTilat.getValue();
+        if (valittuTila != null && !valittuTila.equalsIgnoreCase(T("koulutuksenTilat"))) {
+            model.setKoulutuksenTila(tilaMap.get(valittuTila));
+        }
+
         fireEvent(new SearchEvent(model));
     }
 
