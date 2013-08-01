@@ -19,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -227,12 +228,16 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.setSizeUndefined();
         _layout.addComponent(grid);
 
-        grid.addComponent(UiUtil.label(null, T("Hakutyyppi")));
+        Label hakutyyppiL = UiUtil.label(null, T("Hakutyyppi")); 
+        grid.addComponent(hakutyyppiL);
+        grid.setComponentAlignment(hakutyyppiL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakutyyppi);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("HakukausiJaVuosi")));
+            Label fieldL = UiUtil.label(null, T("KoulutuksenAlkamiskausi"));
+            grid.addComponent(fieldL);
+            grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             hl.setSpacing(true);
@@ -243,7 +248,9 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         }
 
         {
-            grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
+            Label fieldL = UiUtil.label(null, T("KoulutuksenAlkamiskausi"));
+            grid.addComponent(fieldL);
+            grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             hl.setSpacing(true);
@@ -252,17 +259,23 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             grid.addComponent(hl);
             grid.newLine();
         }
-
-        grid.addComponent(UiUtil.label(null, T("HakuKohdejoukko")));
+        
+        Label kohdejoukkoL = UiUtil.label(null, T("HakuKohdejoukko"));
+        grid.addComponent(kohdejoukkoL);
+        grid.setComponentAlignment(kohdejoukkoL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakuKohdejoukko);
         grid.newLine();
 
-        grid.addComponent(UiUtil.label(null, T("Hakutapa")));
+        Label hakutapaL = UiUtil.label(null, T("Hakutapa"));
+        grid.addComponent(hakutapaL);
+        grid.setComponentAlignment(hakutapaL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakutapa);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("HaunNimi")));
+            Label nimiL = UiUtil.label(null, T("HaunNimi"));
+            grid.addComponent(nimiL);
+            grid.setComponentAlignment(nimiL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
             vl.setSizeUndefined();
 
@@ -273,13 +286,17 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             grid.newLine();
         }
 
-        grid.addComponent(UiUtil.label(null, T("HaunTunniste")));
+        Label tunnisteL = UiUtil.label(null, T("HaunTunniste"));
+        grid.addComponent(tunnisteL);
+        grid.setComponentAlignment(tunnisteL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_haunTunniste);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("Hakuaika")));
+            Label hakuaikaL = UiUtil.label(null, T("Hakuaika"));
+            grid.addComponent(hakuaikaL);
 
+            grid.setComponentAlignment(hakuaikaL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
             //vl.setWidth(850, Sizeable.UNITS_PIXELS);
@@ -306,7 +323,9 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("Hakulomake")));
+            Label hakulomakeL = UiUtil.label(null, T("Hakulomake"));
+            grid.addComponent(hakulomakeL);
+            grid.setComponentAlignment(hakulomakeL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
             vl.setSpacing(true);
