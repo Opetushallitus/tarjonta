@@ -235,7 +235,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.newLine();
 
         {
-            Label fieldL = UiUtil.label(null, T("KoulutuksenAlkamiskausi"));
+            Label fieldL = UiUtil.label(null, T("HakukausiJaVuosi"));
             grid.addComponent(fieldL);
             grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
