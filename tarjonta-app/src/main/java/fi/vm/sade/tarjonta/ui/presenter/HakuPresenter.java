@@ -399,8 +399,8 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
         this.setHakuViewModel(haku);
 
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.getHakuModel().getNimiFi(),
-                this.getHakuModel().getNimiFi(),
+        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
+                TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 null);
         showHaku.addListener(new com.vaadin.ui.Component.Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
