@@ -759,6 +759,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private String tryGetLocalizedHakuNimi(HakuViewModel hakuViewModel) {
         Preconditions.checkNotNull(hakuViewModel, "HakuviewModel cannot be null");
         Preconditions.checkNotNull(this.language, "Language cannot be null");
-        return hakuViewModel.toString();
+        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), hakuViewModel);
     }
 }
