@@ -306,11 +306,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception {
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
 
-        Date today = new Date();
+        /*Date today = new Date();
         if (hakukohde.getLiitteidenToimitusPvm() != null && hakukohde.getLiitteidenToimitusPvm().before(today)) {
             errorView.addError(T("hakukohdeLiiteToimPvmMenneessa"));
             return null;
-        }
+        }*/
 
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());

@@ -33,6 +33,9 @@ public class KoulutusSearchSpecificationViewModelToDTOConverter {
 		kysely.setNimi(viewModel.getSearchStr());
 		kysely.getTarjoajaOids().addAll(viewModel.getOrganisaatioOids());
 		kysely.setKoulutuksenAlkamiskausi(viewModel.getKoulutuksenAlkamiskausi());
+        if (viewModel.getKoulutuksenTila() != null) {
+            kysely.setTilat(TarjontaTila.fromValue(viewModel.getKoulutuksenTila()));
+        }
 		kysely.setKoulutuksenAlkamisvuosi(viewModel.getKoulutuksenAlkamisvuosi());
 		return kysely;
 	}

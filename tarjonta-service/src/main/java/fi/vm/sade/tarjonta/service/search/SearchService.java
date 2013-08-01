@@ -69,7 +69,7 @@ public class SearchService {
         final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
-
+        final String tila = kysely.getTilat() != null ? kysely.getTilat().value() : null;
         final SolrQuery q = new SolrQuery("*:*");
 
         nimi = escape(nimi);
@@ -80,6 +80,11 @@ public class SearchService {
                     Hakukohde.TEKSTIHAKU, nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
+        }
+
+        if (tila != null ) {
+
+            q.addFilterQuery(String.format("%s:%s", Hakukohde.TILA, tila));
         }
 
         // vuosi & kausi
