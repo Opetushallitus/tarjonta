@@ -135,7 +135,7 @@ public class PermissionChecker {
                 .getContext(tarjoajaOid)));
     }
 
-    public void checkUpdateKoulutus(String tarjoajaOid) {
+    public void checkUpdateKoulutusByTarjoajaOid(String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanUpdateKoulutus(OrganisaatioContext
                 .getContext(tarjoajaOid)));
@@ -169,10 +169,15 @@ public class PermissionChecker {
                 case KOMO:
                     break; // XXX currently no permission check for this
                 case KOMOTO:
-                    checkUpdateKoulutus(tyyppi.getOid());
+                    checkUpdateKoulutusByKoulutusOid(tyyppi.getOid());
                     break;
             }
         }
+    }
+
+    private void checkUpdateKoulutusByKoulutusOid(String oid) {
+        final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(oid);
+        checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
     }
 
     public void checkUpdateValintaperustekuvaus() {
