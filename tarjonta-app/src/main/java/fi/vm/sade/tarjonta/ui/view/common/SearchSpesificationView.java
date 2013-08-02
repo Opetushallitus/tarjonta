@@ -108,7 +108,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tfSearch.addStyleName(Oph.TEXTFIELD_SEARCH);
         tfSearch.setNullRepresentation("");
         tfSearch.setPropertyDataSource(new NestedMethodProperty(model, "searchStr"));
-        tfSearch.setWidth(250, UNITS_PIXELS);
+        tfSearch.setWidth(245, UNITS_PIXELS);
 
         tfSearch.setImmediate(true);
         tfSearch.addListener(new Property.ValueChangeListener() {
@@ -156,7 +156,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbTilat.setSizeUndefined();
         //cbTilat.setWidth("150px");
         tilatLayout.addComponent(cbTilat);
-        tilatLayout.setWidth("165px");
+        tilatLayout.setWidth("170px");
         searchSpecLayout.addComponent(tilatLayout);
 
         //TODO: no application logic, only for Christmas demo
