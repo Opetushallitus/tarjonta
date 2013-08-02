@@ -244,12 +244,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String getKoulutusNimi(KoulutusTulos koulutus, Map<KoulutusTulos, String> cache) {
-        String ret = cache.get(koulutus);
-        if (ret == null) {
-            ret = uiHelper.getKoulutusNimi(koulutus);
-            cache.put(koulutus, ret);
-        }
-        return ret;
+        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getKoulutus().getNimi()).getValue();
     }
 
     /**
