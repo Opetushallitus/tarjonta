@@ -108,7 +108,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tfSearch.addStyleName(Oph.TEXTFIELD_SEARCH);
         tfSearch.setNullRepresentation("");
         tfSearch.setPropertyDataSource(new NestedMethodProperty(model, "searchStr"));
-        tfSearch.setWidth(245, UNITS_PIXELS);
+        tfSearch.setWidth(240, UNITS_PIXELS);
 
         tfSearch.setImmediate(true);
         tfSearch.addListener(new Property.ValueChangeListener() {
