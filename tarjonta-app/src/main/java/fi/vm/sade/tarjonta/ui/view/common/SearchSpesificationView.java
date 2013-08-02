@@ -156,7 +156,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbTilat.setSizeUndefined();
         //cbTilat.setWidth("150px");
         tilatLayout.addComponent(cbTilat);
-        tilatLayout.setWidth("173px");
+        tilatLayout.setWidth("170px");
         searchSpecLayout.addComponent(tilatLayout);
 
         //TODO: no application logic, only for Christmas demo
@@ -171,7 +171,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbVuosi.setSizeUndefined();
         //cbVuosi.setWidth("180px");
         vuosiLayout.addComponent(cbVuosi);
-        vuosiLayout.setWidth("173px");
+        vuosiLayout.setWidth("170px");
         searchSpecLayout.addComponent(vuosiLayout);
 
         //TODO: no application logic, only for Christmas demo
