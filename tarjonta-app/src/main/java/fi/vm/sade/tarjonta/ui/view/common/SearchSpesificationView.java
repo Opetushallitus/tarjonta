@@ -142,7 +142,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbTilat = UiUtil.comboBox(null,T("koulutuksenTilat"),getKoulutuksenTilat());
         addComponent(cbTilat);
         cbTilat.setSizeUndefined();
-        cbTilat.setWidth("200px");
+        cbTilat.setWidth("150px");
 
         //TODO: no application logic, only for Christmas demo
         cbVuosi = UiUtil.comboBox(null, T(I18N_VUOSI), new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022","2023","2024","2025"});
@@ -151,7 +151,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         //cbVuosi.setInputPrompt(T(I18N_VUOSI + I18N_PROMPT));
         addComponent(cbVuosi);
         cbVuosi.setSizeUndefined();
-        cbVuosi.setWidth("200px");
+        cbVuosi.setWidth("180px");
 
 
 
@@ -160,7 +160,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setCaption(T(I18N_KAUSI));
         kcKausi.setSizeUndefined();
-        kcKausi.setWidth("200px");
+        kcKausi.setWidth("180px");
         kcKausi.getField().setNullSelectionAllowed(false);
 
 //        //TODO: no application logic, only for Christmas demo
