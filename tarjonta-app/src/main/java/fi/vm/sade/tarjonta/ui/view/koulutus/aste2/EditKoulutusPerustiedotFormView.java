@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,6 +155,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private TextField linkki;
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
+    @Size(min=1, max=20, message="{validation.koulutus.yhthenktitteli.length}")
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
