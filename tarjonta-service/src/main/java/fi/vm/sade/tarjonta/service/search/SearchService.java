@@ -45,6 +45,8 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 @Component
 public class SearchService {
 
+    private static final String QUERY_ALL = "*:*";
+    private static final String TEKSTIHAKU_TEMPLATE = "{!lucene q.op=AND df=%s}%s";
     @Value("${root.organisaatio.oid}")
     private String rootOrganisaatioOid;
     private final SolrServer koulutusSolr;
@@ -70,13 +72,13 @@ public class SearchService {
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
         final String tila = kysely.getTilat() != null ? kysely.getTilat().value() : null;
-        final SolrQuery q = new SolrQuery("*:*");
+        final SolrQuery q = new SolrQuery(QUERY_ALL);
 
         nimi = escape(nimi);
 
         // nimihaku
         if (nimi != null && nimi.length() > 0) {
-            addQuery(nimi, queryParts, "%s:*%s*",
+            addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE,
                     Hakukohde.TEKSTIHAKU, nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
@@ -195,12 +197,12 @@ public class SearchService {
         final List<String> hakukohdeOids = kysely.getHakukohdeOids();
         nimi = escape(nimi);
 
-        final SolrQuery q = new SolrQuery("*:*");
+        final SolrQuery q = new SolrQuery(QUERY_ALL);
         final List<String> queryParts = Lists.newArrayList();
 
         // nimihaku
         if (nimi != null && nimi.length() > 0) {
-            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.TEKSTIHAKU,
+            addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE, Koulutus.TEKSTIHAKU,
                     nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
