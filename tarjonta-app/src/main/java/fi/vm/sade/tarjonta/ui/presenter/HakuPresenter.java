@@ -160,7 +160,17 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
         Map<String, List<HakuViewModel>> returnVal = new HashMap<String, List<HakuViewModel>>();
         ListaaHakuTyyppi req = new ListaaHakuTyyppi();
         req.setHakuSana(searchVm.getSearchStr());
+        if (searchVm.getKoulutuksenTila() != null) {
+            req.setTila(TarjontaTila.fromValue(searchVm.getKoulutuksenTila().trim()));
+        }
         req.setHakuSanaKielikoodi(I18N.getLocale().getLanguage());
+        if (searchVm.getKoulutuksenAlkamiskausi() != null) {
+            req.setKoulutuksenAlkamisKausi(searchVm.getKoulutuksenAlkamiskausi());
+        }
+        if (searchVm.getKoulutuksenAlkamisvuosi() != 0 && searchVm.getKoulutuksenAlkamisvuosi() != -1) {
+            req.setKoulutuksenAlkamisVuosi(searchVm.getKoulutuksenAlkamisvuosi());
+        }
+
         List<HakuViewModel> hakuses = retrieveHaut(req);
         returnVal = groupHakus(hakuses);
         return returnVal;
@@ -437,7 +447,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     /**
      * Displays the edit form of Haku.
      *
-     * @param haku
+     * @param model
      */
     public void showHakuEdit(HakuViewModel model) {
         LOG.info("showHakuEdit()");

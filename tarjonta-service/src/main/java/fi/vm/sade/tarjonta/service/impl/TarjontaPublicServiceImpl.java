@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,7 +179,21 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         return vastaus;
     }
-    
+
+    private ListHakuSearchParam convertWsParamToDaoParam(ListaaHakuTyyppi parameters) {
+        ListHakuSearchParam daoParam = new ListHakuSearchParam();
+        // Convert Enums from API enum to DB enum
+        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        if (parameters.getTila() != null) {
+            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(parameters.getTila().name());
+        }
+        daoParam.setTila(dbTarjontaTila);
+        daoParam.setKoulutuksenAlkamisKausi(parameters.getKoulutuksenAlkamisKausi());
+        daoParam.setKoulutuksenAlkamisVuosi(parameters.getKoulutuksenAlkamisVuosi());
+
+        return daoParam;
+
+    }
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi hakuVastaus = new ListHakuVastausTyyppi();
@@ -187,7 +202,33 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             Haku findHakuWithOid = hakuDao.findByOid(parameters.getHakuOid());
             haut.add(findHakuWithOid);
             hakuVastaus.getResponse().addAll(convert(haut, false));
-        } else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {   
+        } else if (parameters.getHakuSana() != null || parameters.getKoulutuksenAlkamisVuosi() != null || parameters.getKoulutuksenAlkamisKausi() != null) {
+            List<Haku> hakus = null;
+            try {
+            hakus = hakuDao.findBySearchCriteria(convertWsParamToDaoParam(parameters));
+            } catch (Exception exp) {
+                exp.printStackTrace();
+                log.error("Error querying listHaku : " + exp.toString());
+                System.out.println("ERROR : "  +exp.toString());
+            }
+            if (parameters.getHakuSana() != null && parameters.getHakuSana().trim().length() > 0)  {
+               List<Haku> filteredHakus = filterByHakusana(parameters.getHakuSana(),parameters.getHakuSanaKielikoodi(),hakus);
+                hakuVastaus.getResponse().addAll(convert(filteredHakus,false));
+            } else {
+               hakuVastaus.getResponse().addAll(convert(hakus,false));
+            }
+
+        } else {
+            SearchCriteriaType allCriteria = new SearchCriteriaType();
+            allCriteria.setMeneillaan(true);
+            allCriteria.setPaattyneet(true);
+            allCriteria.setTulevat(true);
+            hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria), false));
+        }
+
+
+        /*
+        else if (parameters.getKoulutuksenAlkamisKausi() != null && parameters.getKoulutuksenAlkamisVuosi() != null) {
             List<Haku> foundHaut = hakuDao.findByKoulutuksenKausi(parameters.getKoulutuksenAlkamisKausi(), parameters.getKoulutuksenAlkamisVuosi());
             hakuVastaus.getResponse().addAll(convert(foundHaut, false));
         } else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
@@ -208,7 +249,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             allCriteria.setPaattyneet(true);
             allCriteria.setTulevat(true);
             hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria), false));
-        }
+        } */
         return hakuVastaus;
     }
     

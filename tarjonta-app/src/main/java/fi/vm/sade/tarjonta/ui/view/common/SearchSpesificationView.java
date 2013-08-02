@@ -204,6 +204,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 tfSearch.setValue("");
+                cbTilat.select(T("kaikkiTilat"));
                 cbVuosi.select(cbVuosi.getNullSelectionItemId());
                 kcKausi.setValue(null);
             }
