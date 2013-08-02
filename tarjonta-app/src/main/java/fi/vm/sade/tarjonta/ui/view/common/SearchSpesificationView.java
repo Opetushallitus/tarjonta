@@ -156,7 +156,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbTilat.setSizeUndefined();
         //cbTilat.setWidth("150px");
         tilatLayout.addComponent(cbTilat);
-        tilatLayout.setWidth("170px");
+        tilatLayout.setWidth("165px");
         searchSpecLayout.addComponent(tilatLayout);
 
         //TODO: no application logic, only for Christmas demo
@@ -184,7 +184,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         //kcKausi.setWidth("180px");
         kcKausi.getField().setNullSelectionAllowed(false);
         kausiLayout.addComponent(kcKausi);
-        kausiLayout.setWidth("173px");
+        kausiLayout.setWidth("170px");
         searchSpecLayout.addComponent(kausiLayout);
 //        //TODO: no application logic, only for Christmas demo
 //        kcHakutyyppi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
