@@ -21,7 +21,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
@@ -121,6 +120,22 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      */
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context) {
         final boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
+        LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
+        return result;
+    }
+
+    /**
+     * Checks if user can update hakukohde when haku started status is known
+     * @param context
+     * @return
+     */
+    public boolean userCanUpdateHakukohde(final OrganisaatioContext context, final boolean hakuStarted) {
+        boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU) && !hakuStarted;
+        
+        //OPH user can edit even if haku has started
+        if(!result) {
+            result = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
+        }
         LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
         return result;
     }

@@ -119,8 +119,15 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context) && !hakuStarted) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
+        //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
+        //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
+        if ((tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)
+                && (this.hakukohde.getHakukohde().getTila() == TarjontaTila.KOPIOITU || this.hakukohde
+                .getHakukohde().getTila() == TarjontaTila.LUONNOS))
+                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(
+                        context, hakuStarted)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key),
+                    menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
