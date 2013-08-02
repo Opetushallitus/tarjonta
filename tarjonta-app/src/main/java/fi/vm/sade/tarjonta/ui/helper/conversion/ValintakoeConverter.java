@@ -70,15 +70,22 @@ public class ValintakoeConverter {
             }
         }
         if (valintakoeRajat != null) {
-            valintakoeViewModel.setPkAlinHyvaksyttyPM("" + valintakoeRajat.getAlinHyvaksyttyPistemaara());
+            if (valintakoeRajat.getAlinHyvaksyttyPistemaara() > -1) {
+                valintakoeViewModel.setPkAlinHyvaksyttyPM("" + valintakoeRajat.getAlinHyvaksyttyPistemaara());
+            } 
             valintakoeViewModel.setPkAlinPM("" + valintakoeRajat.getAlinPistemaara());
             valintakoeViewModel.setPkYlinPM("" + valintakoeRajat.getYlinPistemaara());
+            
         } 
         if (lisapisteRajat != null) {
-            valintakoeViewModel.setLpAlinHyvaksyttyPM("" + lisapisteRajat.getAlinHyvaksyttyPistemaara());
+            if (lisapisteRajat.getAlinHyvaksyttyPistemaara() > -1) {
+                valintakoeViewModel.setLpAlinHyvaksyttyPM("" + lisapisteRajat.getAlinHyvaksyttyPistemaara());
+            }
             valintakoeViewModel.setLpAlinPM("" + lisapisteRajat.getAlinPistemaara());
             valintakoeViewModel.setLpYlinPM("" + lisapisteRajat.getYlinPistemaara());
-        } if (kokonaispisteRajat != null) {
+            
+        } 
+        if (kokonaispisteRajat != null) {
             valintakoeViewModel.setKpAlinHyvaksyttyPM("" + kokonaispisteRajat.getAlinHyvaksyttyPistemaara());
         }
     }
@@ -122,7 +129,11 @@ public class ValintakoeConverter {
         if (valintakoeViewModel.getPkAlinHyvaksyttyPM() != null || valintakoeViewModel.getPkAlinPM() != null || valintakoeViewModel.getPkYlinPM() != null) {
             PisterajaTyyppi pkTyyppi = new PisterajaTyyppi();
             pkTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.PAASYKOE);
-            pkTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getPkAlinHyvaksyttyPM()));
+            if (valintakoeViewModel.getPkAlinHyvaksyttyPM() != null && !valintakoeViewModel.getPkAlinHyvaksyttyPM().isEmpty()) { 
+                pkTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getPkAlinHyvaksyttyPM()));
+            } else {
+                pkTyyppi.setAlinHyvaksyttyPistemaara(-1);
+            }
             pkTyyppi.setAlinPistemaara(Integer.parseInt(valintakoeViewModel.getPkAlinPM()));
             pkTyyppi.setYlinPistemaara(Integer.parseInt(valintakoeViewModel.getPkYlinPM()));
             pisterajat.add(pkTyyppi);
@@ -130,17 +141,21 @@ public class ValintakoeConverter {
         if (valintakoeViewModel.getLpAlinHyvaksyttyPM() != null || valintakoeViewModel.getLpAlinPM() != null || valintakoeViewModel.getLpYlinPM() != null) {
             PisterajaTyyppi lpTyyppi = new PisterajaTyyppi();
             lpTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.LISAPISTEET);
-            lpTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinHyvaksyttyPM()));
+            if (valintakoeViewModel.getLpAlinHyvaksyttyPM() != null && !valintakoeViewModel.getLpAlinHyvaksyttyPM().isEmpty()) {
+                lpTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinHyvaksyttyPM()));
+            } else {
+                lpTyyppi.setAlinHyvaksyttyPistemaara(-1);
+            }
             lpTyyppi.setAlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinPM()));
             lpTyyppi.setYlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpYlinPM()));
             pisterajat.add(lpTyyppi);
         }
-        if (valintakoeViewModel.getKpAlinHyvaksyttyPM() != null) {
+        if (valintakoeViewModel.getKpAlinHyvaksyttyPM() != null && !valintakoeViewModel.getKpAlinHyvaksyttyPM().isEmpty()) {
             PisterajaTyyppi kpTyyppi = new PisterajaTyyppi();
             kpTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.KOKONAISPISTEET);
             kpTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getKpAlinHyvaksyttyPM()));
             pisterajat.add(kpTyyppi);
-        }
+        } 
         return pisterajat;
     }
 

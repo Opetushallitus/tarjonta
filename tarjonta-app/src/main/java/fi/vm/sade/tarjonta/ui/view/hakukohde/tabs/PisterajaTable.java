@@ -355,13 +355,13 @@ public class PisterajaTable extends GridLayout {
 
     public boolean validateInputTypes() {
         try {
-            Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM() != null ? valintakoe.getKpAlinHyvaksyttyPM() : "0");
-            Integer.parseInt(valintakoe.getPkAlinHyvaksyttyPM() != null ? valintakoe.getPkAlinHyvaksyttyPM() : "0");
+            Integer.parseInt((valintakoe.getKpAlinHyvaksyttyPM() != null && !valintakoe.getKpAlinHyvaksyttyPM().isEmpty()) ? valintakoe.getKpAlinHyvaksyttyPM() : "0");//"0"
+            Integer.parseInt((valintakoe.getPkAlinHyvaksyttyPM() != null  && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty()) ? valintakoe.getPkAlinHyvaksyttyPM() : "0");
             Integer.parseInt(valintakoe.getPkAlinPM() != null ? valintakoe.getPkAlinPM() : "0");
             Integer.parseInt(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM() : "0");
             Integer.parseInt(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM() : "0");
             Integer.parseInt(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM() : "0");
-            Integer.parseInt(valintakoe.getLpAlinHyvaksyttyPM() != null ? valintakoe.getLpAlinHyvaksyttyPM() : "0");
+            Integer.parseInt(valintakoe.getLpAlinHyvaksyttyPM() != null &&  !valintakoe.getLpAlinHyvaksyttyPM().isEmpty() ? valintakoe.getLpAlinHyvaksyttyPM() : "0");
         } catch (Exception ex) {
             return false;
         }
@@ -370,15 +370,16 @@ public class PisterajaTable extends GridLayout {
     
     public boolean validateInputRestrictions() {
         try {
-            int kpAlinH = Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM() != null ? valintakoe.getKpAlinHyvaksyttyPM() : "0");
-            int pkAlinH = Integer.parseInt(valintakoe.getPkAlinHyvaksyttyPM() != null ? valintakoe.getPkAlinHyvaksyttyPM() : "0");
+           
             int pkAlin = Integer.parseInt(valintakoe.getPkAlinPM() != null ? valintakoe.getPkAlinPM() : "0");
             int pkYlin = Integer.parseInt(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM() : "0");
             int lpAlin = Integer.parseInt(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM() : "0");
             int lpYlin = Integer.parseInt(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM() : "0");
-            int lpAlinH = Integer.parseInt(valintakoe.getLpAlinHyvaksyttyPM() != null ? valintakoe.getLpAlinHyvaksyttyPM() : "0");
+
             
-            if (isOutOfRange(kpAlinH, pkAlinH, pkAlin, pkYlin, lpAlin, lpYlin, lpAlinH)) {
+            
+            
+            if (isOutOfRange(pkAlin, pkYlin, lpAlin, lpYlin)) {
                 return false;
             }
             
@@ -386,14 +387,30 @@ public class PisterajaTable extends GridLayout {
                 return false;
             }
             
-            if (rowRestrictionsViolated(pkAlin, pkYlin, pkAlinH)) {
+            if (valintakoe.getPkAlinHyvaksyttyPM() != null && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty()) {
+                int pkAlinH = Integer.parseInt(valintakoe.getPkAlinHyvaksyttyPM());
+                if (rowRestrictionsViolated(pkAlin, pkYlin, pkAlinH)) {
+                    return false;
+                }
+            } else if (rowRestrictionsViolated(pkAlin, pkYlin)) {
                 return false;
             }
             
-            if (rowRestrictionsViolated(lpAlin, lpYlin, lpAlinH)) {
+            if (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty()) { 
+                int lpAlinH = Integer.parseInt(valintakoe.getLpAlinHyvaksyttyPM());
+                if (rowRestrictionsViolated(lpAlin, lpYlin, lpAlinH)) {
+                    return false;
+                }
+            } else if (rowRestrictionsViolated(lpAlin, lpYlin)) {
                 return false;
             }
             
+            if (valintakoe.getKpAlinHyvaksyttyPM() != null && !valintakoe.getKpAlinHyvaksyttyPM().isEmpty()) {
+                int kpAlinH = Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM());
+                if (kpAlinHViolates(kpAlinH, pkAlin, pkYlin, lpAlin, lpYlin)) {
+                    return false;
+                }
+            }
             
         } catch (Exception ex) {
             return false;
@@ -401,8 +418,17 @@ public class PisterajaTable extends GridLayout {
         return true;
     }
     
+    private boolean kpAlinHViolates(int kpAlinH, int pkAlin, int pkYlin,
+            int lpAlin, int lpYlin) {
+        return (kpAlinH < (pkAlin + lpAlin)) || kpAlinH > (pkYlin + lpYlin);
+    }
+
     private boolean rowRestrictionsViolated(int pkAlin, int pkYlin, int pkAlinH) {
         return (pkAlin > pkYlin) || (pkAlinH < pkAlin) || (pkAlinH > pkYlin);
+    }
+    
+    private boolean rowRestrictionsViolated(int pkAlin, int pkYlin) {
+        return (pkAlin > pkYlin);
     }
 
     private boolean sumsExceedMaximum(int pkYlin, int lpYlin) {
@@ -410,10 +436,10 @@ public class PisterajaTable extends GridLayout {
         return pkYlin + lpYlin > 10;
     }
 
-    private boolean isOutOfRange(int kpAlinH, int pkAlinH, int pkAlin,
-            int pkYlin, int lpAlin, int lpYlin, int lpAlinH) {
-        return kpAlinH < 0 || kpAlinH > 10 || pkAlinH < 0 || pkAlinH > 10 || pkAlin < 0 || pkAlin > 10 || pkYlin < 0 || pkYlin > 10 
-                || lpAlinH < 0 || lpAlinH > 10 || lpAlin < 0 || lpAlin > 10 || lpYlin < 0 || lpYlin > 10;      
+    private boolean isOutOfRange(int pkAlin,
+            int pkYlin, int lpAlin, int lpYlin) {
+        return pkAlin < 0 || pkAlin > 10 || pkYlin < 0 || pkYlin > 10 
+                || lpAlin < 0 || lpAlin > 10 || lpYlin < 0 || lpYlin > 10;      
     }
 
     private void fireEvent(CheckBox cb, String type) {
