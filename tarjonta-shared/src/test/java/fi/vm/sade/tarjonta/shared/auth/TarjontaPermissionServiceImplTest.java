@@ -104,6 +104,8 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertTrue(permissionService.userCanCreateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1));
+        Assert.assertFalse(permissionService.userCanUpdateHakukohde(c1, true));
+
         Assert.assertTrue(permissionService.userCanDeleteHakukohde(c1));
         Assert.assertTrue(permissionService.userCanCreateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanUpdateKoulutus(c1));
@@ -125,6 +127,7 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertTrue(permissionService.userCanCreateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1));
+        Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1, true));
         Assert.assertTrue(permissionService.userCanDeleteHakukohde(c1));
         Assert.assertTrue(permissionService.userCanCreateHaku());
         Assert.assertTrue(permissionService.userCanUpdateHaku());
