@@ -23,7 +23,7 @@ public class PisterajaRow {
 
     public String getAlinPistemaara() {
         if (alinPistemaara == null) {
-            alinPistemaara = "0";
+            alinPistemaara = "";//Oli "0"
         }
 
         return alinPistemaara;
@@ -35,7 +35,7 @@ public class PisterajaRow {
 
     public String getYlinPistemaara() {
         if (ylinPistemaara == null) {
-            ylinPistemaara = "0";
+            ylinPistemaara = "";
         }
 
         return ylinPistemaara;
@@ -47,7 +47,7 @@ public class PisterajaRow {
 
     public String getAlinHyvaksyttyPistemaara() {
         if (alinHyvaksyttyPistemaara == null) {
-            alinHyvaksyttyPistemaara = "0";
+            alinHyvaksyttyPistemaara = "";
         }
         return alinHyvaksyttyPistemaara;
     }

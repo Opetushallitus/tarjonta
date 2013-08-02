@@ -507,7 +507,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
             paasyKoePisteraja.setAlinPistemaara(valintakoeV.getPkAlinPM());
             paasyKoePisteraja.setYlinPistemaara(valintakoeV.getPkYlinPM());
             paasyKoePisteraja.setAlinHyvaksyttyPistemaara(valintakoeV.getPkAlinHyvaksyttyPM());
-
+            
             pisterajaRows.add(paasyKoePisteraja);
 
             PisterajaRow lisaNaytotRow = new PisterajaRow();
@@ -515,12 +515,15 @@ public class ShowHakukohdeTab extends VerticalLayout {
             lisaNaytotRow.setAlinPistemaara(valintakoeV.getLpAlinPM());
             lisaNaytotRow.setYlinPistemaara(valintakoeV.getLpYlinPM());
             lisaNaytotRow.setAlinHyvaksyttyPistemaara(valintakoeV.getLpAlinHyvaksyttyPM());
+            
+            
             pisterajaRows.add(lisaNaytotRow);
 
             PisterajaRow kokonaisPisteet = new PisterajaRow();
             kokonaisPisteet.setPisteRajaTyyppi(i18n.getMessage("kokonaispisteet"));
             kokonaisPisteet.setYlinPistemaara(i18n.getMessage("ylinPisteMaara"));
             kokonaisPisteet.setAlinHyvaksyttyPistemaara(valintakoeV.getKpAlinHyvaksyttyPM());
+            
             pisterajaRows.add(kokonaisPisteet);
 
             pisterajaRows.add(lisaNaytotRow);
