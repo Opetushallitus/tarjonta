@@ -161,7 +161,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
-    @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
+    @Pattern(regexp = "(\\+|\\-| |\\(|\\)|[0-9]){3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
     private String initialYhtHenkTitteli;
