@@ -202,6 +202,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
             OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
             OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
         });
+        organisaatioTyyppi.setNullSelectionAllowed(true);
+        organisaatioTyyppi.setNullSelectionItemId(null);
         setOrgTyyppiItemCaptions();
         organisaatioTyyppi.setSizeUndefined();
         organisaatioTyyppi.setInputPrompt(T("organisaatioTyyppi.prompt"));
