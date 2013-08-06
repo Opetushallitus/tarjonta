@@ -21,23 +21,23 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
 
     @Override
     public List<MonikielinenMetadata> findByAvain(String avain) {
-        LOG.info("findByAvain({})", avain);
+        LOG.debug("findByAvain({})", avain);
         List<MonikielinenMetadata> result = findBy("avain", avain);
-        LOG.info("  result = {}", result);
+        LOG.debug("  result = {}", result);
         return result;
     }
 
     @Override
     public List<MonikielinenMetadata> findByKategoria(String kategoria) {
-        LOG.info("findByKategoria({})", kategoria);
+        LOG.debug("findByKategoria({})", kategoria);
         List<MonikielinenMetadata> result = findBy("kategoria", kategoria);
-        LOG.info("  result = {}", result);
+        LOG.debug("  result = {}", result);
         return result;
     }
 
     @Override
     public List<MonikielinenMetadata> findByAvainAndKategoria(String avain, String kategoria) {
-        LOG.info("findByAvainAndKategoria({}, {})", avain, kategoria);
+        LOG.debug("findByAvainAndKategoria({}, {})", avain, kategoria);
 
         List<MonikielinenMetadata> result = null;
 
@@ -48,14 +48,14 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
         query.setMaxResults(Integer.MAX_VALUE);
 
         result = query.getResultList();
-        LOG.info("  result = {}", result);
+        LOG.debug("  result = {}", result);
 
         return result;
     }
 
     @Override
     public MonikielinenMetadata createOrUpdate(String avain, String kategoria, String kieli, String arvo) {
-        LOG.info("createOrUpdate({}, {}, {}, {})", new Object[]{avain, kategoria, kieli, truncate(arvo)});
+        LOG.debug("createOrUpdate({}, {}, {}, {})", new Object[]{avain, kategoria, kieli, truncate(arvo)});
 
         MonikielinenMetadata result = findOrCreateByAvainKategoriaKieli(avain, kategoria, kieli);
         if (arvo == null) {
@@ -87,7 +87,7 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
     }
 
     private MonikielinenMetadata findOrCreateByAvainKategoriaKieli(String avain, String kategoria, String kieli) {
-        LOG.info("findOrCreateByAvainKategoriaKieli({}, {}, {})", new Object[]{avain, kategoria, kieli});
+        LOG.debug("findOrCreateByAvainKategoriaKieli({}, {}, {})", new Object[]{avain, kategoria, kieli});
 
         MonikielinenMetadata result = null;
 
@@ -119,7 +119,7 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
             throw new IllegalStateException("MonikielinenMetadata database uniqueness constraint violation!");
         }
 
-        LOG.info("  result = {}", result);
+        LOG.debug("  result = {}", result);
 
         return result;
     }

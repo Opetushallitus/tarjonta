@@ -37,7 +37,7 @@ public class ValintakoeToValintakoeRDTOConverter extends BaseRDTOConverter<Valin
 
     @Override
     public ValintakoeRDTO convert(Valintakoe s) {
-        LOG.info("convert({})", s);
+        LOG.debug("convert({})", s);
 
         if (s == null) {
             return null;

@@ -60,7 +60,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // /hakukohde?...
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+        LOG.debug("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -77,7 +77,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // /hakukohde/OID
     @Override
     public HakukohdeDTO getByOID(String oid) {
-        LOG.info("/hakukohde/{} -- getByOID()", oid);
+        LOG.debug("/hakukohde/{} -- getByOID()", oid);
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
         HakukohdeDTO result = conversionService.convert(hakukohde, HakukohdeDTO.class);
@@ -88,7 +88,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // /hakukohde/OID/haku
     @Override
     public HakuDTO getHakuByHakukohdeOID(String oid) {
-        LOG.info("/hakukohde/{}/haku -- getHakuByHakukohdeOID()", oid);
+        LOG.debug("/hakukohde/{}/haku -- getHakuByHakukohdeOID()", oid);
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
         HakuDTO result = conversionService.convert(hakukohde.getHaku(), HakuDTO.class);
@@ -99,7 +99,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // /hakukohde/OID/komoto
     @Override
     public List<OidRDTO> getKomotosByHakukohdeOID(String oid) {
-        LOG.info("/hakukohde/{}/komoto -- getKomotosByHakukohdeOID()", oid);
+        LOG.debug("/hakukohde/{}/komoto -- getKomotosByHakukohdeOID()", oid);
 
         List<OidRDTO> result = new ArrayList<OidRDTO>();
 
@@ -115,14 +115,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // GET /hakukohde/{oid}/paasykoe
     @Override
     public List<String> getPaasykoesByHakukohdeOID(String oid) {
-        LOG.info("/hakukohde/{}/paasykoe -- getPaasykoesByHakukohdeOID()", oid);
+        LOG.debug("/hakukohde/{}/paasykoe -- getPaasykoesByHakukohdeOID()", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     // GET /hakukohde/{oid}/valintakoe
     @Override
     public List<String> getValintakoesByHakukohdeOID(String oid) {
-        LOG.info("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
+        LOG.debug("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -205,7 +205,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         cal.setTime(d);
 
         // FIXME hardcoded kausi uris
-        // check logic
+        // TODO check logic for kausi uris, hardcoded!
         if (cal.get(Calendar.MONTH) < 6) {
             return "kausi_k";
         } else {

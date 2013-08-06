@@ -356,7 +356,7 @@ public class TarjontaKoodistoHelper {
      * @return
      */
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String targetKoodistoName, SuhteenTyyppiType suhteenTyyppiType, boolean alasuhde) {
-        LOG.info("getKoodistoRelations(kuri={}, tkn={}, stt={}, as={})", new Object[]{koodiUri, targetKoodistoName, suhteenTyyppiType, alasuhde});
+        LOG.debug("getKoodistoRelations(kuri={}, tkn={}, stt={}, as={})", new Object[]{koodiUri, targetKoodistoName, suhteenTyyppiType, alasuhde});
 
         Collection<KoodiType> result = new HashSet<KoodiType>();
 
@@ -384,11 +384,11 @@ public class TarjontaKoodistoHelper {
         }
 
         if (result.isEmpty()) {
-            LOG.info("  --> result, NO RELATIONS for koodi {} to koodisto {}", koodiUri, targetKoodistoName);
+            LOG.debug("  --> result, NO RELATIONS for koodi {} to koodisto {}", koodiUri, targetKoodistoName);
         } else {
-            LOG.info("  --> result, koodi {} has following relations to koodisto {}", koodiUri, targetKoodistoName);
+            LOG.debug("  --> result, koodi {} has following relations to koodisto {}", koodiUri, targetKoodistoName);
             for (KoodiType koodiType : result) {
-                LOG.info("-->     {}#{}", koodiType.getKoodiUri(), koodiType.getVersio());
+                LOG.debug("-->     {}#{}", koodiType.getKoodiUri(), koodiType.getVersio());
             }
         }
 
