@@ -122,11 +122,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox hakuCombo;
     private Label hakuAikaLabel;
     private ComboBox hakuAikaCombo;
-    @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
+    @Min(value = 1, message = "{validation.Hakukohde.aloituspaikat.num}")
     @NotNull(message = "{validation.Hakukohde.aloitusPaikat.notNull}")
     @PropertyId("aloitusPaikat")
     private TextField aloitusPaikatText;
-    @Min(value = 0, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
+    @Min(value = 1, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
     @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
     private TextField valinnoissaKaytettavatPaikatText;
