@@ -183,9 +183,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private ListHakuSearchParam convertWsParamToDaoParam(ListaaHakuTyyppi parameters) {
         ListHakuSearchParam daoParam = new ListHakuSearchParam();
         // Convert Enums from API enum to DB enum
-        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        fi.vm.sade.tarjonta.shared.types.TarjontaTila dbTarjontaTila = null;
         if (parameters.getTila() != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(parameters.getTila().name());
+            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(parameters.getTila().name());
         }
         daoParam.setTila(dbTarjontaTila);
         daoParam.setKoulutuksenAlkamisKausi(parameters.getKoulutuksenAlkamisKausi());

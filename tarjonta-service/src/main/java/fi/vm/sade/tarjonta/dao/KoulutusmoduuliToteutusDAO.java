@@ -19,7 +19,8 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;

@@ -146,7 +146,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
-        assertEquals(fi.vm.sade.tarjonta.model.TarjontaTila.VALMIS, toteutus.getTila());
+        assertEquals(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS, toteutus.getTila());
     }
     
     @Test
@@ -694,7 +694,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid(komotoOid);
-        komoto.setTila(fi.vm.sade.tarjonta.model.TarjontaTila.LUONNOS);
+        komoto.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.LUONNOS);
         komoto.setKoulutusmoduuli(komo);
         komoto.setKoulutusaste("koulutusaste/lukio");
         komoto.setOpetusmuoto(EntityUtils.toKoodistoUriSet(createKoodistoList("opetusmuoto/aikuisopetus")));

@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Date;

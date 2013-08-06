@@ -29,6 +29,8 @@ import java.util.Locale;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -40,11 +42,11 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 
 /**
  * 
@@ -52,6 +54,8 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
  *
  */
 public class IndexingUtils {
+	
+	private static final Logger log = LoggerFactory.getLogger(IndexingUtils.class);
 
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
@@ -174,19 +178,12 @@ public class IndexingUtils {
         if (tila.isEmpty()) {
             return null;
         }
-        if (tila.equals(TarjontaTila.JULKAISTU.name())) {
-            return TarjontaTila.JULKAISTU;
-        }
-        if (tila.equals(TarjontaTila.LUONNOS.name())) {
-            return TarjontaTila.LUONNOS;
-        }
-        if (tila.equals(TarjontaTila.VALMIS.name())) {
-            return TarjontaTila.VALMIS;
-        }
-        if (tila.equals(TarjontaTila.PERUTTU.name())) {
-            return TarjontaTila.PERUTTU;
-        }
-        return null;
+        try {
+			return TarjontaTila.valueOf(tila);
+		} catch (Exception e) {
+			log.debug("Ignored unknown state: "+tila, e);
+			return null;
+		}
     }
     
     public static TarjoajaTyyppi createTarjoaja(SolrDocument koulutusDoc,

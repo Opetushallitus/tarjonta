@@ -24,13 +24,6 @@
 
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-shared</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

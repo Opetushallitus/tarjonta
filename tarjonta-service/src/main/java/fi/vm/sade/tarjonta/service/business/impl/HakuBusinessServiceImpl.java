@@ -1,15 +1,14 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 
 /**
  * @author Antti
@@ -52,7 +51,7 @@ public class HakuBusinessServiceImpl implements HakuBusinessService {
             throw new IllegalArgumentException("cannot delete Haku, no such oid " + oid);
         }
 
-        if (!haku.getTila().equals(TarjontaTila.LUONNOS)) {
+        if (!haku.getTila().isRemovable()) {
             throw new IllegalArgumentException("cannot delete Haku, bad state: " + haku.getTila());
         }
 

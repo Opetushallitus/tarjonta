@@ -38,10 +38,10 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -205,9 +205,9 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     	//check permissions
     	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
-    	poista.setVisible((presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.VALMIS) 
-    						|| presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.LUONNOS)) 
-    					    && permissions.userCanDeleteKoulutus(context));
+    	poista.setVisible(TarjontaTila.valueOf(presenter.getModel().getKoulutusPerustiedotModel().getTila()).isRemovable()
+    			&& permissions.userCanDeleteKoulutus(context));
+    	
 //    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
     	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
     	lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));

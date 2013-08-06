@@ -15,40 +15,56 @@
  */
 package fi.vm.sade.tarjonta.publication.impl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
-import fi.vm.sade.events.Event;
-import fi.vm.sade.events.EventSender;
-import fi.vm.sade.generic.model.BaseEntity;
-
-
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
+
+import fi.vm.sade.events.Event;
+import fi.vm.sade.events.EventSender;
+import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.QHaku;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKielivalikoima;
+import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.QPisteraja;
+import fi.vm.sade.tarjonta.model.QValintakoe;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * See {@link PublicationDataService} for documentation.
@@ -60,8 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PublicationDataServiceImpl implements PublicationDataService {
 
     private static final Logger log = LoggerFactory.getLogger(PublicationDataServiceImpl.class);
-    private TarjontaTila[] CANCELLABLE_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.VALMIS};
-    private TarjontaTila[] PUBLIC_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU};
+    
     @Autowired(required = true)
     private EventSender eventSender;
     @Autowired
@@ -86,7 +101,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QKoulutusSisaltyvyys sl = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
         QKielivalikoima kielivalikoima = QKielivalikoima.kielivalikoima;
 
-        final BooleanExpression criteria = komoto.tila.in(PUBLIC_DATA).and(komo.tila.eq(TarjontaTila.JULKAISTU));
+        final BooleanExpression criteria = komoto.tila.in(TarjontaTila.publicValues()).and(komo.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(komoto).
                 leftJoin(komoto.ammattinimikes).fetch().
@@ -122,7 +137,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QPisteraja pisterajat = QPisteraja.pisteraja;
         QMonikielinenTeksti lisanaytto = new QMonikielinenTeksti("lisanaytto");
 
-        final BooleanExpression criteria = hakukohde.tila.in(PUBLIC_DATA);
+        final BooleanExpression criteria = hakukohde.tila.in(TarjontaTila.publicValues());
 
         return from(hakukohde).
                 leftJoin(hakukohde.valintakoes, valintakoe).fetch().
@@ -146,7 +161,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QHaku haku = QHaku.haku;
         QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
 
-        BooleanExpression criteria = haku.tila.in(PUBLIC_DATA);
+        BooleanExpression criteria = haku.tila.in(TarjontaTila.publicValues());
 
         return from(haku).
                 leftJoin(haku.nimi, nimi).fetch().
@@ -217,21 +232,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         }
 
         //the business rules for status codes.
-        switch (toStatus) {
-            //to state
-            case LUONNOS:
-                //check if a step is allowed from A state to B state
-                return TarjontaTila.LUONNOS.equals(fromStatus) ? true : false;
-            case VALMIS:
-                return TarjontaTila.LUONNOS.equals(fromStatus) || TarjontaTila.VALMIS.equals(fromStatus) ? true : false;
-            case PERUTTU:
-                return TarjontaTila.JULKAISTU.equals(fromStatus) ? true : false;
-            case JULKAISTU:
-                return TarjontaTila.VALMIS.equals(fromStatus) || TarjontaTila.JULKAISTU.equals(fromStatus) || TarjontaTila.PERUTTU.equals(fromStatus) ? true : false;
-            default:
-                return false;
-        }
-
+        return fromStatus.acceptsTransitionTo(toStatus);
 
         //An parent object check is not implemented, but now we can 
         //manage with the simple status check.
@@ -284,13 +285,13 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @param action
      */
     @Override
-    public void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String dataType, final String action) {
+    public void sendEvent(final fi.vm.sade.tarjonta.shared.types.TarjontaTila tila, final String oid, final String dataType, final String action) {
         log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
 
         /*
          * Filter all unpublished (delete, insert and update) actions. 
          */
-        if (eventSender != null && PUBLIC_DATA[0].equals(tila) || PUBLIC_DATA[1].equals(tila)) {
+        if (eventSender != null && tila.isPublic()) {
             /*
              * TODO: Add more information for Oppijan Verkkopalvelu event.
              */
@@ -345,7 +346,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 if (TarjontaTila.JULKAISTU.equals(toStatus)) {
                     updateAllStatusesRelatedToHaku(oids, toStatus, TarjontaTila.VALMIS);
                 } else if (TarjontaTila.PERUTTU.equals(toStatus)) {
-                    updateAllStatusesRelatedToHakuCancel(oids, CANCELLABLE_DATA);
+                    updateAllStatusesRelatedToHakuCancel(oids, TarjontaTila.cancellableValues());
                 }
 
                 break;
@@ -381,7 +382,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 if (TarjontaTila.JULKAISTU.equals(toStatus)) {
                     updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
                 } else if (TarjontaTila.PERUTTU.equals(toStatus)) {
-                    updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, CANCELLABLE_DATA);
+                    updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.cancellableValues());
                 }
                 break;
         }

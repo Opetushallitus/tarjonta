@@ -3,9 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fi.vm.sade.tarjonta</groupId>
+    <parent>
+        <artifactId>tarjonta</artifactId>
+        <groupId>fi.vm.sade.tarjonta</groupId>
+        <version>6.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
     <artifactId>tarjonta-data</artifactId>
-    <version>6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Tarjonta :: Data</name>

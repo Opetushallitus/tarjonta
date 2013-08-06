@@ -199,9 +199,9 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
         // Convert Enums from API enum to DB enum
-        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        fi.vm.sade.tarjonta.shared.types.TarjontaTila dbTarjontaTila = null;
         if (tila != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name());
         }
 
         QHaku haku = QHaku.haku;

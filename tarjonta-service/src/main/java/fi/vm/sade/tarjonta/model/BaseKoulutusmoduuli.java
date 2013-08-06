@@ -20,6 +20,8 @@ import java.util.Date;
 import javax.persistence.*;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.io.Serializable;
 
 /**

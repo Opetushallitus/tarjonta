@@ -519,9 +519,9 @@ public final class EntityUtils {
      * @param tila
      * @return
      */
-    public static fi.vm.sade.tarjonta.model.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
+    public static fi.vm.sade.tarjonta.shared.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
         Preconditions.checkNotNull(tila, "TarjontaTila enum cannot be null.");
-        return fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+        return fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name());
 
     }
 
@@ -531,7 +531,7 @@ public final class EntityUtils {
      * @param tila
      * @return
      */
-    public static fi.vm.sade.tarjonta.service.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.model.TarjontaTila tila) {
+    public static fi.vm.sade.tarjonta.service.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila tila) {
 
         return fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(tila.name());
 

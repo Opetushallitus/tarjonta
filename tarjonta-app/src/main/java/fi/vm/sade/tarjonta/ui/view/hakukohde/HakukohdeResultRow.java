@@ -30,8 +30,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -115,28 +115,23 @@ public class HakukohdeResultRow extends HorizontalLayout {
         final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        final TarjontaTila tila = hakukohde.getHakukohde().getTila();
+        final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
-        if ((tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)
-                && (this.hakukohde.getHakukohde().getTila() == TarjontaTila.KOPIOITU || this.hakukohde
-                .getHakukohde().getTila() == TarjontaTila.LUONNOS))
-                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(
-                        context, hakuStarted)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key),
-                    menuCommand);
+        if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
+                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
 
-        if ((tila.equals(TarjontaTila.LUONNOS) || tila.equals(TarjontaTila.VALMIS)) 
-        		&& tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
-
+        
         if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {

@@ -15,7 +15,7 @@ package fi.vm.sade.tarjonta.model.searchParams;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * @author: Tuomas Katva

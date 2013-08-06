@@ -30,7 +30,7 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
@@ -83,7 +83,7 @@ public class HakuResultRow extends HorizontalLayout {
 
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        final TarjontaTila tila = haku.getHakuDto().getHaunTila();
+        final TarjontaTila tila = TarjontaTila.valueOf(haku.getHakuDto().getHaunTila());
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
@@ -93,7 +93,7 @@ public class HakuResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKohteet"), menuCommand);
 
-        if (tila.equals(TarjontaTila.LUONNOS) && hakuPresenter.getPermission().userCanDeleteHaku()) {
+        if (tila.isRemovable() && hakuPresenter.getPermission().userCanDeleteHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 

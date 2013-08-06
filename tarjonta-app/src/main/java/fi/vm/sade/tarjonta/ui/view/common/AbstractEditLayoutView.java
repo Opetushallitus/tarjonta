@@ -59,8 +59,10 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW extends AbstractLayout> extends AbstractVerticalNavigationLayout {
     
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEditLayoutView.class);
-    private static final TarjontaTila TO_STATE_LUONNOS = TarjontaTila.LUONNOS;
-    private static final TarjontaTila[] TO_STATE_VALMIS = {TO_STATE_LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
+
+    private static final TarjontaTila[] TO_STATE_LUONNOS = {TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU};
+    private static final TarjontaTila[] TO_STATE_VALMIS = {TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
+    
     private static final long serialVersionUID = 6843368378990612314L;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;

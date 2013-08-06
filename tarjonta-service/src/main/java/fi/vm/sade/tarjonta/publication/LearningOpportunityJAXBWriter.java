@@ -71,7 +71,6 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.model.Pisteraja;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
@@ -126,6 +125,7 @@ import fi.vm.sade.tarjonta.publication.types.WeightedSubjectType;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * Implements {@link PublicationCollector.EventHandler} by writing all
