@@ -83,7 +83,7 @@ public class HakuResultRow extends HorizontalLayout {
 
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        final TarjontaTila tila = hakuPresenter.getHakuModel().getHakuDto().getHaunTila();
+        final TarjontaTila tila = haku.getHakuDto().getHaunTila();
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
