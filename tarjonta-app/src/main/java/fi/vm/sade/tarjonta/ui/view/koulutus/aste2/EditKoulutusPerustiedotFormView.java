@@ -150,20 +150,28 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     /*@NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
      @PropertyId("pohjakoulutusvaatimus")
      private KoodistoComponent kcPohjakoulutusvaatimus;*/
+    @Size(min=1, max=255, message="{validation.koulutus.tooLong.opsuLink}")
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
-    @Size(min=1, max=20, message="{validation.koulutus.yhthenktitteli.length}")
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.email}")
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
+    
     @Pattern(regexp = "(\\+|\\-| |\\(|\\)|[0-9]){3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
+    
     private String initialYhtHenkTitteli;
     private String initialYhtHenkEmail;
     private String initialYhtHenkPuhelin;

@@ -39,6 +39,8 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -105,6 +107,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * Used for add text like 5 + 2.
      */
     @NotNull(message = "{validation.Koulutus.suunniteltuKesto.notNull}")
+    @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
     @PropertyId("suunniteltuKesto")
     private TextField tfSuunniteltuKesto;
     /*
@@ -121,6 +124,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     @NotNull(message = "{validation.Koulutus.opetusmuoto.notNull}")
     @PropertyId("opetusmuoto")
     private KoodistoComponent kcOpetusmuoto;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.tooLong.opsuLink}")
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
