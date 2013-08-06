@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
+
 /**
  * REST: /komo , /komo/hello, /komo/OID, /komo/OID/komoto
  *
