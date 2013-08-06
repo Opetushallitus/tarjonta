@@ -49,6 +49,8 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication imp
 
     @Override
     public void transactionStart(Application application, Object transactionData) {
+        super.transactionStart(application, transactionData);
+
         if (application == this) {
             tl.set(this);
         }
@@ -59,6 +61,8 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication imp
         if (application == this) {
             tl.remove();
         }
+
+        super.transactionEnd(application, transactionData);
     }
 
     public static Application getInstance() {
