@@ -512,7 +512,7 @@ public class UiBuilder extends UiUtil {
                     return false;
                 }
 
-                return (Double.compare(minValue, v) <= 0 && Double.compare(v, maxValue) <= 0);
+                return (Double.compare(minValue, v) < 0 && Double.compare(v, maxValue) <= 0);
             }
         });
         tf.addValidator(cv);
