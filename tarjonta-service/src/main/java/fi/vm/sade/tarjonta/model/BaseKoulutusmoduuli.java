@@ -44,6 +44,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
     private TarjontaTila tila = TarjontaTila.LUONNOS;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="viimPaivitysPvm")
     private Date updated;
 
     @PreUpdate

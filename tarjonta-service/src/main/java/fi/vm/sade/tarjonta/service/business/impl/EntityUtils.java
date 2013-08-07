@@ -48,7 +48,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
@@ -138,7 +137,6 @@ public final class EntityUtils {
         to.setYhteyshenkilos(yhteyshenkilos);
 
         Date today = Calendar.getInstance().getTime();
-        to.setLastUpdateDate(today);
         to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
 
         copyLisatiedotFields(from, to);
@@ -184,7 +182,6 @@ public final class EntityUtils {
         toKoulutus.setLinkkis(toLinkkis);
 
         toKoulutus.setLastUpdatedByOid(fromKoulutus.getViimeisinPaivittajaOid());
-        toKoulutus.setLastUpdateDate(Calendar.getInstance().getTime());
     }
 
     /**
