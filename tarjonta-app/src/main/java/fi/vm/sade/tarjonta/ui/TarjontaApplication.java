@@ -36,6 +36,7 @@ public class TarjontaApplication extends AbstractWebApplication {
 
     @Override
     protected void initApplication() {
+        ((String)null).length();
         window = new TarjontaRootView();
         window.init();
         setMainWindow(window);
