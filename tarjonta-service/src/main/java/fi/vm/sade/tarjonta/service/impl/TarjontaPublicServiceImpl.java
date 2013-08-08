@@ -268,11 +268,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         for (TekstiKaannos curKaannos : haku.getNimi().getTekstis()) {
             if (kielikoodi.equals(curKaannos.getKieliKoodi())
                     && (curKaannos.getArvo() != null)
-                    && curKaannos.getArvo().contains(hakusana)) {
+                    && curKaannos.getArvo().toLowerCase().contains(hakusana.toLowerCase())) {
                 return true;
             }
             if ((curKaannos.getArvo() != null)
-                    && curKaannos.getArvo().toLowerCase().contains(hakusana)) {
+                    && curKaannos.getArvo().toLowerCase().contains(hakusana.toLowerCase())) {
                 otherLanguageMatch = true;
             }
         }

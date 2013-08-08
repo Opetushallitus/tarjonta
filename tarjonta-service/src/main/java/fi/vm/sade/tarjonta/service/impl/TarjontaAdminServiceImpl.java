@@ -986,7 +986,38 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         result.setAvain(md.getAvain());
         result.setArvo(md.getArvo());
 
+        logAuditTapahtuma(constructMetadataTapahtuma(result));
+
         return result;
+    }
+
+    private Tapahtuma constructMetadataTapahtuma(MonikielinenMetadataTyyppi meta) {
+        Tapahtuma tapahtuma = new Tapahtuma();
+        tapahtuma.setAikaleima(new Date());
+        tapahtuma.setMuutoksenKohde("Valintaperustekuvaus/Sora-vaatimukset");
+
+        try {
+            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } catch (Exception exp) {
+        }
+
+        tapahtuma.setTapahtumatyyppi(UPDATE_OPERATION);
+
+        tapahtuma.setUusiArvo(constructValintaPerusteKuvausArvo(meta));
+
+
+        return tapahtuma;
+    }
+
+    private String constructValintaPerusteKuvausArvo(MonikielinenMetadataTyyppi meta) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Tyyppi : " + meta.getKategoria() + ", ");
+        sb.append("Uri/avain : " + meta.getAvain() + ", ");
+        sb.append("Kieli : " + meta.getKieli() +", ");
+        sb.append("Arvo : "+ meta.getArvo());
+
+        return sb.toString();
     }
 
     @Override
