@@ -504,6 +504,9 @@ public class UiBuilder extends UiUtil {
                     final String strValue = (String) value;
                     try {
                         v = df.parse(strValue).doubleValue();
+                        if (tooManyDigits(strValue)) {
+                            return false;
+                        }
                     } catch (Exception e) {
                         LOG.debug("Validation failed for an object {}", strValue, e);
                         return false;
@@ -544,5 +547,14 @@ public class UiBuilder extends UiUtil {
         });
 
         return tf;
+    }
+    
+    private static boolean tooManyDigits(String strVal) {
+        int index = strVal.indexOf(',');
+        if (index < 0) {
+            index = strVal.indexOf('.');
+        }
+        return index < strVal.length() - 3;
+        
     }
 }
