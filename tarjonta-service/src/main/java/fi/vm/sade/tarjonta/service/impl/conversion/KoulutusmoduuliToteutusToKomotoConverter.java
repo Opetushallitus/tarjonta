@@ -64,7 +64,7 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
         t.setKoulutusohjelmanValinta(convertMonikielinenTekstiToMap(s.getKoulutusohjelmanValinta()));
         t.setKuvailevatTiedot(convertMonikielinenTekstiToMap(s.getKuvailevatTiedot()));
-        t.setModified(s.getLastUpdateDate()); // TODO vai getUpdated() ???
+        t.setModified(s.getUpdated());
         t.setModifiedBy(s.getLastUpdatedByOid());
         t.setWebLinkkis(convertWebLinkkisToMap(s.getLinkkis()));
         t.setLoppukoeVaatimukset(convertMonikielinenTekstiToMap(s.getLoppukoeVaatimukset()));

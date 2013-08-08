@@ -308,6 +308,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                     sahkoinenToimitusOsoite.setEnabled(true);
                 } else {
                     sahkoinenToimitusOsoite.setEnabled(false);
+                    sahkoinenToimitusOsoite.setValue(null);
                 }
             }
         });

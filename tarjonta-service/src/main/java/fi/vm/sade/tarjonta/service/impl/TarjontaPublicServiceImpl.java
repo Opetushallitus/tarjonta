@@ -185,7 +185,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         // Convert Enums from API enum to DB enum
         fi.vm.sade.tarjonta.shared.types.TarjontaTila dbTarjontaTila = null;
         if (parameters.getTila() != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(parameters.getTila().name());
+            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(parameters.getTila().value());
         }
         daoParam.setTila(dbTarjontaTila);
         daoParam.setKoulutuksenAlkamisKausi(parameters.getKoulutuksenAlkamisKausi());
@@ -202,7 +202,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             Haku findHakuWithOid = hakuDao.findByOid(parameters.getHakuOid());
             haut.add(findHakuWithOid);
             hakuVastaus.getResponse().addAll(convert(haut, false));
-        } else if (parameters.getHakuSana() != null || parameters.getKoulutuksenAlkamisVuosi() != null || parameters.getKoulutuksenAlkamisKausi() != null) {
+        } else if (parameters.getHakuSana() != null || parameters.getKoulutuksenAlkamisVuosi() != null || parameters.getKoulutuksenAlkamisKausi() != null || parameters.getTila() != null) {
             List<Haku> hakus = null;
             try {
             hakus = hakuDao.findBySearchCriteria(convertWsParamToDaoParam(parameters));
