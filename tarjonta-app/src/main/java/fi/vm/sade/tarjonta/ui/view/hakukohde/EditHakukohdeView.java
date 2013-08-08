@@ -349,6 +349,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
             if (valintakokeetTab.isEnabled()) {
                 try {
+                    this.valintakokeet.getFormView().getPisterajaTable().bindValintakoeData(null);
+                    this.valintakokeet.getFormView().getPisterajaTable().bindLisapisteData(null);
                     valintakokeet.validateLukioValintakoeForm();
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(T("tarkistaValintakoe"));

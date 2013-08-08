@@ -405,13 +405,27 @@ public class PisterajaTable extends GridLayout {
                 return false;
             }
             
+            
+            
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean validateKpAlinH() {
+        try {
+            int pkAlin = Integer.parseInt(valintakoe.getPkAlinPM() != null ? valintakoe.getPkAlinPM() : "0");
+            int pkYlin = Integer.parseInt(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM() : "0");
+            int lpAlin = Integer.parseInt(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM() : "0");
+            int lpYlin = Integer.parseInt(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM() : "0");
+
             if (valintakoe.getKpAlinHyvaksyttyPM() != null && !valintakoe.getKpAlinHyvaksyttyPM().isEmpty()) {
                 int kpAlinH = Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM());
                 if (kpAlinHViolates(kpAlinH, pkAlin, pkYlin, lpAlin, lpYlin)) {
                     return false;
                 }
             }
-            
         } catch (Exception ex) {
             return false;
         }
@@ -440,6 +454,65 @@ public class PisterajaTable extends GridLayout {
             int pkYlin, int lpAlin, int lpYlin) {
         return pkAlin < 0 || pkAlin > 10 || pkYlin < 0 || pkYlin > 10 
                 || lpAlin < 0 || lpAlin > 10 || lpYlin < 0 || lpYlin > 10;      
+    }
+    
+    public String getPkAlinVal() {
+        if (this.pkAlinPM != null) {
+            return (String)(this.pkAlinPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getPkYlinVal() {
+        if (this.pkYlinPM != null) {
+            return (String)(this.pkYlinPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getPkAlinHyvVal() {
+        if (this.pkAlinHyvaksyttyPM != null) {
+            return (String)(this.pkAlinHyvaksyttyPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getLpAlinVal() {
+        if (this.lpAlinPM != null) {
+            return (String)(this.lpAlinPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getLpYlinVal() {
+        if (this.lpYlinPM != null) {
+            return (String)(this.lpYlinPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getLpAlinHyvVal() {
+        if (this.lpAlinHyvaksyttyPM != null) {
+            return (String)(this.lpAlinHyvaksyttyPM.getValue());
+        }
+        return null;
+    }
+    
+    public String getKpAlinHyvVal() {
+        if (this.kpAlinHyvaksyttyPM != null) {
+            return (String)(this.kpAlinHyvaksyttyPM.getValue());
+        }
+        return null;
+    }
+    
+    public void setValues(String pkAlin, String pkYlin, String pkAlinH, String lpAlin, String lpYlin, String lpAlinH, String kpAlinH) {
+        valintakoe.setPkAlinPM(pkAlin);
+        valintakoe.setPkYlinPM(pkYlin);
+        valintakoe.setPkAlinHyvaksyttyPM(pkAlinH);
+        valintakoe.setLpAlinPM(lpAlin);
+        valintakoe.setLpYlinPM(lpYlin);
+        valintakoe.setLpAlinHyvaksyttyPM(lpAlinH);
+        valintakoe.setKpAlinHyvaksyttyPM(kpAlinH);
     }
 
     private void fireEvent(CheckBox cb, String type) {
@@ -505,17 +578,31 @@ public class PisterajaTable extends GridLayout {
     }
 
     public void bindValintakoeData(ValintakoeViewModel selectedValintaKoe) {
-        selectedValintaKoe.setPkAlinPM(pkAlinPM.getValue() != null ? (String)(pkAlinPM.getValue()) : null);
-        selectedValintaKoe.setPkYlinPM(pkYlinPM.getValue() != null ? (String)(pkYlinPM.getValue()) : null);
-        selectedValintaKoe.setPkAlinHyvaksyttyPM(pkAlinHyvaksyttyPM.getValue() != null ? (String)(pkAlinHyvaksyttyPM.getValue()) : null);
-        selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        if (selectedValintaKoe == null) {
+            valintakoe.setPkAlinPM(pkAlinPM.getValue() != null ? (String)(pkAlinPM.getValue()) : null);
+            valintakoe.setPkYlinPM(pkYlinPM.getValue() != null ? (String)(pkYlinPM.getValue()) : null);
+            valintakoe.setPkAlinHyvaksyttyPM(pkAlinHyvaksyttyPM.getValue() != null ? (String)(pkAlinHyvaksyttyPM.getValue()) : null);
+            valintakoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        } else {
+            selectedValintaKoe.setPkAlinPM(pkAlinPM.getValue() != null ? (String)(pkAlinPM.getValue()) : null);
+            selectedValintaKoe.setPkYlinPM(pkYlinPM.getValue() != null ? (String)(pkYlinPM.getValue()) : null);
+            selectedValintaKoe.setPkAlinHyvaksyttyPM(pkAlinHyvaksyttyPM.getValue() != null ? (String)(pkAlinHyvaksyttyPM.getValue()) : null);
+            selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        }
     }
 
     public void bindLisapisteData(ValintakoeViewModel selectedValintaKoe) {
-        selectedValintaKoe.setLpAlinPM(lpAlinPM.getValue() != null ? (String)(lpAlinPM.getValue()) : null);
-        selectedValintaKoe.setLpYlinPM(lpYlinPM.getValue() != null ? (String)(lpYlinPM.getValue()) : null);
-        selectedValintaKoe.setLpAlinHyvaksyttyPM(lpAlinHyvaksyttyPM.getValue() != null ? (String)(lpAlinHyvaksyttyPM.getValue()) : null);
-        selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        if (selectedValintaKoe == null) {
+            valintakoe.setLpAlinPM(lpAlinPM.getValue() != null ? (String)(lpAlinPM.getValue()) : null);
+            valintakoe.setLpYlinPM(lpYlinPM.getValue() != null ? (String)(lpYlinPM.getValue()) : null);
+            valintakoe.setLpAlinHyvaksyttyPM(lpAlinHyvaksyttyPM.getValue() != null ? (String)(lpAlinHyvaksyttyPM.getValue()) : null);
+            valintakoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        } else {
+            selectedValintaKoe.setLpAlinPM(lpAlinPM.getValue() != null ? (String)(lpAlinPM.getValue()) : null);
+            selectedValintaKoe.setLpYlinPM(lpYlinPM.getValue() != null ? (String)(lpYlinPM.getValue()) : null);
+            selectedValintaKoe.setLpAlinHyvaksyttyPM(lpAlinHyvaksyttyPM.getValue() != null ? (String)(lpAlinHyvaksyttyPM.getValue()) : null);
+            selectedValintaKoe.setKpAlinHyvaksyttyPM(kpAlinHyvaksyttyPM.getValue() != null ? (String)(kpAlinHyvaksyttyPM.getValue()) : null);
+        }
     }
     
     
