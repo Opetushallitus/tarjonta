@@ -248,7 +248,7 @@ public class PublicationDataServiceImplTest {
 
         quickObjectStatusChange(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(false, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
     }
 
     /**

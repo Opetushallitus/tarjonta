@@ -69,7 +69,7 @@ public enum TarjontaTila {
      */
     public boolean acceptsTransitionTo(TarjontaTila tt) {
     	if (tt==this) {
-    		return this!=PERUTTU;
+    		return true;
     	}
     	switch (tt) {
     	case VALMIS:
