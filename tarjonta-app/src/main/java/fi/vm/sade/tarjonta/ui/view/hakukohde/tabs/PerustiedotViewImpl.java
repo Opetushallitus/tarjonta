@@ -718,10 +718,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
+
         hakuContainer.addAll(haut);
         hakuCombo.setContainerDataSource(hakuContainer);
+        hakuCombo.setNullSelectionAllowed(true);
         hakuCombo.setRequired(true);
         hakuCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
+        hakuCombo.setValue(null);
+
     }
 
     @Override

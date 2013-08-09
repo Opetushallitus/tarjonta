@@ -84,7 +84,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         setAloitusPaikat(0);
         setValinnoissaKaytettavatPaikat(0);
         setTila(TarjontaTila.LUONNOS);
-        setHakuViewModel(new HakuViewModel());
+        setHakuViewModel(null);
         this.valintaPerusteidenKuvaus = Lists.<KielikaannosViewModel>newArrayList();
         this.lisatiedot = Lists.<KielikaannosViewModel>newArrayList();
         this.koulukses = Lists.<KoulutusOidNameViewModel>newArrayList();
