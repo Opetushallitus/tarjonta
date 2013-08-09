@@ -32,7 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.UserService;
@@ -383,19 +385,24 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         }
     }
-
-    public void emptySelectedLiiteOsoite() {
-        getSelectedHakuliite().setOsoiteRivi1("");
-        getSelectedHakuliite().setOsoiteRivi2("");
-        getSelectedHakuliite().setPostinumero(null);
-        getSelectedHakuliite().setPostitoimiPaikka("");
+    
+    /**
+     * Asettaa/tutkii liitteen toimitusosoitteen tilan (oletus vai muu).
+     */
+    public void setCustomLiiteOsoiteSelected(boolean enabled) {
+    	if (!enabled) {
+            getSelectedHakuliite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
+            getSelectedHakuliite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
+            getSelectedHakuliite().setPostinumero(getModel().getHakukohde().getPostinumero());
+            getSelectedHakuliite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
+    	}
     }
-
-    public void setDefaultSelectedLiiteToimitusOsoite() {
-        getSelectedHakuliite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
-        getSelectedHakuliite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
-        getSelectedHakuliite().setPostinumero(getModel().getHakukohde().getPostinumero());
-        getSelectedHakuliite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
+    
+    public boolean isCustomLiiteOsoiteSelected() {
+    	return !Objects.equal(getSelectedHakuliite().getOsoiteRivi1(), getModel().getHakukohde().getOsoiteRivi1())
+			|| !Objects.equal(getSelectedHakuliite().getOsoiteRivi2(), getModel().getHakukohde().getOsoiteRivi2())
+			|| !Objects.equal(getSelectedHakuliite().getPostinumero(), getModel().getHakukohde().getPostinumero())
+			|| !Objects.equal(getSelectedHakuliite().getPostitoimiPaikka(), getModel().getHakukohde().getPostitoimipaikka());
     }
 
     public void saveHakukohteenEditView() {
@@ -1097,18 +1104,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public HakukohdeLiiteViewModel getSelectedHakuliite() {
-
-
-        //Set default fields
-        if (getModel().getHakukohde() != null) {
-
-            getModel().getSelectedLiite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
-            getModel().getSelectedLiite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
-            getModel().getSelectedLiite().setPostinumero(getModel().getHakukohde().getPostinumero());
-            getModel().getSelectedLiite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
-
-        }
-
         return getModel().getSelectedLiite();
     }
 
