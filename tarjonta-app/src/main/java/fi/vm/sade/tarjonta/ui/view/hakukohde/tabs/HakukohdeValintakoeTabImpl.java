@@ -190,15 +190,22 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         errorView.resetErrors();
         boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
         boolean pisterajatCorrect = true;
+        boolean alinHKokonaispisteCorrect = true;
         this.formView.getLukioValintakoeView().getForm().commit();
         if (pisterajatValidType) {
             pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions();
+            alinHKokonaispisteCorrect = formView.getPisterajaTable().validateKpAlinH();
         }
+        
         if (!pisterajatValidType) {
             errorView.addError(T("validation.pisterajatNotValidType"));
             throw new Validator.InvalidValueException("");
         } else if (!pisterajatCorrect) {
             errorView.addError(T("validation.pisterajatNotValid"));
+            throw new Validator.InvalidValueException("");
+        } 
+        if (!alinHKokonaispisteCorrect) {
+            errorView.addError(T("validation.pisterajatAlinHyvNotValid"));
             throw new Validator.InvalidValueException("");
         }
 
@@ -224,7 +231,15 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                 formView.getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
                 presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
                 presenter.getModel().getHakukohde().getValintaKokees().clear();
+                String pkAlinVal = formView.getPisterajaTable().getPkAlinVal();
+                String pkYlinVal = formView.getPisterajaTable().getPkYlinVal();
+                String pkAlinHyvVal = formView.getPisterajaTable().getPkAlinHyvVal();
+                String lpAlinVal = formView.getPisterajaTable().getLpAlinVal();
+                String lpYlinVal = formView.getPisterajaTable().getLpYlinVal();
+                String lpAlinHyvVal = formView.getPisterajaTable().getLpAlinHyvVal();
+                String kpAlinHyvVal = formView.getPisterajaTable().getKpAlinHyvVal();
                 presenter.saveHakukohdeValintakoe(formView.getLukioValintakoeView().getValintakokeenKuvaukset());
+                formView.getPisterajaTable().setValues(pkAlinVal, pkYlinVal, pkAlinHyvVal, lpAlinVal, lpYlinVal, lpAlinHyvVal, kpAlinHyvVal);
                 return getHakukohdeOid();
 
             } catch (Validator.InvalidValueException e) {

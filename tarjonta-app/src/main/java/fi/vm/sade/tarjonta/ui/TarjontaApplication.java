@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.ui.Window;
-
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.vaadin.Oph;
 
