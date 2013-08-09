@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 
 /**
  * For editing "Haku" in the UI.
@@ -420,7 +421,7 @@ public class HakuViewModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
-        return getKielistettyNimiFromDto(BasicLanguage.toLanguageEnum(I18N.getLocale().getLanguage()));
+        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(),this);
     }
 
     @Override
@@ -488,6 +489,7 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     private String getKielistettyNimiFromDto(BasicLanguage kieliKoodi) {
+
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
 
             if (haunNimi.getKielikoodi().equals(kieliKoodi.getLowercaseLanguageCode())) {
