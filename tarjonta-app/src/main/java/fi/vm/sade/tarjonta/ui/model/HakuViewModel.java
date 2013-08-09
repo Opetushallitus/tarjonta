@@ -421,6 +421,7 @@ public class HakuViewModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
+
         return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(),this);
     }
 
