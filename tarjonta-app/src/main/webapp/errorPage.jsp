@@ -12,8 +12,11 @@
 </jsp:useBean>              
 
 <jsp:setProperty name="handler" property="message" value="unexpectedErrorPage"/>
+
+<jsp:setProperty name="handler" property="code" value="unexpectedErrorCode"/>
        
 <h2><jsp:getProperty name="handler" property="message"/></h2>
+<p><jsp:getProperty name="handler" property="code"/></p>
 <%
 handler.logError(exception);
 %>
