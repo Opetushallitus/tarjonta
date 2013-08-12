@@ -16,10 +16,37 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.OptionGroup;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -40,18 +67,6 @@ import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author: Tuomas Katva Date: 14.1.2013
@@ -107,7 +122,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         this.errorMessage = errorMessage;
         buildMainLayout();
     }
-
+    
     private String T(String key) {
         if (i18n == null) {
             i18n = new I18NHelper(this);
@@ -411,47 +426,45 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return retval;
     }
 
-    private void deEnableOrEnableOsoite(boolean toEnableOrNot) {
+    private void setCustomOsoiteEnabled(boolean enabled) {
+    	presenter.setCustomLiiteOsoiteSelected(enabled);
         if (osoiteRivi1 != null) {
-            osoiteRivi1.setEnabled(toEnableOrNot);
+            osoiteRivi1.setEnabled(enabled);
         }
         if (osoiteRivi2 != null) {
-            osoiteRivi2.setEnabled(toEnableOrNot);
+            osoiteRivi2.setEnabled(enabled);
         }
         if (postinumero != null) {
-            postinumero.setEnabled(toEnableOrNot);
+            postinumero.setEnabled(enabled);
 
         }
         if (postitoimipaikka != null) {
-            postitoimipaikka.setEnabled(toEnableOrNot);
+            postitoimipaikka.setEnabled(enabled);
         }
     }
 
     private VerticalLayout buildOsoiteSelectionLayout() {
         VerticalLayout osoiteSelectLayout = new VerticalLayout();
+        
+        final String oletus = T("toimitusOsoiteValintaOletus");
+        final String muu = T("toimitusOsoiteValintaMuu");
 
         List<String> selections = new ArrayList<String>();
-        selections.add(T("toimitusOsoiteValintaOletus"));
-        selections.add(T("toimitusOsoiteValintaMuu"));
+        selections.add(oletus);
+        selections.add(muu);
 
         osoiteValinta = new OptionGroup("", selections);
         osoiteValinta.setNullSelectionAllowed(false);
-        osoiteValinta.select(T("toimitusOsoiteValintaOletus"));
+        osoiteValinta.select(presenter.isCustomLiiteOsoiteSelected() ? muu : oletus);
         osoiteValinta.setImmediate(true);
         osoiteValinta.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
 
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                if (valueChangeEvent.getProperty().getValue().equals(T("toimitusOsoiteValintaOletus"))) {
-                    deEnableOrEnableOsoite(true);
-                    presenter.setDefaultSelectedLiiteToimitusOsoite();
-                    deEnableOrEnableOsoite(false);
-                } else {
-                    deEnableOrEnableOsoite(true);
-                    presenter.emptySelectedLiiteOsoite();
-                }
+            	setCustomOsoiteEnabled(valueChangeEvent.getProperty().getValue().equals(muu));
             }
+            
         });
 
         osoiteSelectLayout.addComponent(osoiteValinta);
@@ -472,11 +485,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         addItemToGrid("", buildLiitteidenToimitusOsoite());
         addItemToGrid("", buildSahkoinenToimitusOsoite());
 
-
-        presenter.setDefaultSelectedLiiteToimitusOsoite();
-        deEnableOrEnableOsoite(false);
+        setCustomOsoiteEnabled(presenter.isCustomLiiteOsoiteSelected());
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
         return itemContainer;
     }
+
 }
