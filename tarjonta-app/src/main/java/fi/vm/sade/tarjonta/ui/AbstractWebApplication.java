@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
-import com.vaadin.service.ApplicationContext;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +25,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public abstract class AbstractWebApplication extends AbstractSadeApplication implements ApplicationContext.TransactionListener {
+public abstract class AbstractWebApplication extends AbstractSadeApplication {
 
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-    private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
 
     public AbstractWebApplication() {
         super();
@@ -47,25 +45,4 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication imp
 
     protected abstract void initApplication();
 
-    @Override
-    public void transactionStart(Application application, Object transactionData) {
-        super.transactionStart(application, transactionData);
-
-        if (application == this) {
-            tl.set(this);
-        }
-    }
-
-    @Override
-    public void transactionEnd(Application application, Object transactionData) {
-        if (application == this) {
-            tl.remove();
-        }
-
-        super.transactionEnd(application, transactionData);
-    }
-
-    public static Application getInstance() {
-        return tl.get();
-    }
 }
