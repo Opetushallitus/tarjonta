@@ -250,6 +250,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         if (titleProperty != null) {
             Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
             pageLabel.setSizeUndefined();
+            header.setComponentAlignment(pageLabel, Alignment.BOTTOM_LEFT);
             
             
             labelDocumentStatus = UiUtil.label(layout, ""); //show document status
@@ -259,7 +260,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
             header.addComponent(labelDocumentStatus);
             
             header.setExpandRatio(labelDocumentStatus, 1l);
-            header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
+            header.setComponentAlignment(labelDocumentStatus, Alignment.BOTTOM_RIGHT);
             layout.addComponent(header);
             UiUtil.hr(layout);
         }
