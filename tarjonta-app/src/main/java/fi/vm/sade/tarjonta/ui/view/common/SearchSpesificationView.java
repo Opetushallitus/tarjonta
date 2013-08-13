@@ -15,11 +15,27 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -31,15 +47,6 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphHorizontalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-
-import java.util.HashMap;
-
 /**
  * This is the search controller and spesification component used to search Haku
  * and Tarjonta.
@@ -49,7 +56,7 @@ import java.util.HashMap;
 @Configurable
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class SearchSpesificationView extends OphHorizontalLayout {
-
+	
     private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
     private static final String I18N_PROMPT = ".prompt";
     private static final String I18N_KAUDEN_TARKENNE = "kaudenTarkenne";
@@ -152,51 +159,39 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         Label tilatLabel = UiUtil.label(null,T("koulutuksenTilat"));
         tilatLayout.addComponent(tilatLabel);
         cbTilat = UiUtil.comboBox(null,null,getKoulutuksenTilat());
-        //addComponent(cbTilat);
         cbTilat.setSizeUndefined();
-        //cbTilat.setWidth("150px");
         tilatLayout.addComponent(cbTilat);
+        
+        // HUOM! leveys asetettava molemmille koska vaadin-bugi
         tilatLayout.setWidth("165px");
+        cbTilat.setWidth("165px");
         searchSpecLayout.addComponent(tilatLayout);
 
-        //TODO: no application logic, only for Christmas demo
         VerticalLayout vuosiLayout = new VerticalLayout();
         Label vuosiLabel = UiUtil.label(null,T(I18N_VUOSI));
         vuosiLayout.addComponent(vuosiLabel);
         cbVuosi = UiUtil.comboBox(null, null, new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022","2023","2024","2025"});
         cbVuosi.setNullSelectionAllowed(true);
         cbVuosi.setNullSelectionItemId(T(I18N_VUOSI + I18N_PROMPT));
-        //cbVuosi.setInputPrompt(T(I18N_VUOSI + I18N_PROMPT));
-        //addComponent(cbVuosi);
         cbVuosi.setSizeUndefined();
-        //cbVuosi.setWidth("180px");
         vuosiLayout.addComponent(cbVuosi);
+        // HUOM! leveys asetettava molemmille koska vaadin-bugi
         vuosiLayout.setWidth("165px");
+        cbVuosi.setWidth("165px");
         searchSpecLayout.addComponent(vuosiLayout);
 
-        //TODO: no application logic, only for Christmas demo
         VerticalLayout kausiLayout = new VerticalLayout();
         Label kausiLabel = UiUtil.label(null,T(I18N_KAUSI));
         kausiLayout.addComponent(kausiLabel);
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
-        //kcKausi.setCaption(T(I18N_KAUSI));
         kcKausi.setSizeUndefined();
-        //kcKausi.setWidth("180px");
         kcKausi.getField().setNullSelectionAllowed(false);
         kausiLayout.addComponent(kcKausi);
-        kausiLayout.setWidth("165px");
+        // HUOM! leveys asetettava molemmille koska vaadin-bugi JA oltava leveämpi kuin edelliset, koska
+        // vaadin bugittaa eri tavoin firefoxilla ja chromella
+        kausiLayout.setWidth("195px");
+        kcKausi.setWidth("195px");
         searchSpecLayout.addComponent(kausiLayout);
-//        //TODO: no application logic, only for Christmas demo
-//        kcHakutyyppi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
-//        kcHakutyyppi.setCaption(T(I18N_HAKUTYYPPI));
-//        kcHakutyyppi.setReadOnly(true);
-//        kcHakutyyppi.setSizeUndefined();
-//
-//        //TODO: no application logic, only for Christmas demo
-//        kcKohdejoukko = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T(I18N_KOHDEJOUKKO + I18N_PROMPT));
-//        kcKohdejoukko.setCaption(T(I18N_KOHDEJOUKKO));
-//        kcKohdejoukko.setReadOnly(true);
-//        kcKohdejoukko.setSizeUndefined();
 
         btnTyhjenna = UiBuilder.buttonSmallSecodary(null, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -213,18 +208,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         searchSpecLayout.setComponentAlignment(btnTyhjenna,Alignment.BOTTOM_RIGHT);
         addComponent(searchSpecLayout);
 
-        this.setComponentAlignment(searchSpecLayout,Alignment.BOTTOM_LEFT);
-        //this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
-        //this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
-        // this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
-        //this.setComponentAlignment(tilatLayout, Alignment.BOTTOM_RIGHT);
-        //this.setComponentAlignment(vuosiLayout, Alignment.BOTTOM_RIGHT);
-        //this.setComponentAlignment(kausiLayout, Alignment.BOTTOM_RIGHT);
+        this.setComponentAlignment(searchTextLayout,Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(searchSpecLayout,Alignment.BOTTOM_RIGHT);
 
-        //this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
-        //this.setExpandRatio(cbVuosi, 1f);
-        //this.setExpandRatio(tilatLayout, 1f);
     }
 
     private String T(String key) {

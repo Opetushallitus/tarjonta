@@ -7,6 +7,14 @@
 
     <display-name>Tarjonta Web Application</display-name>
 
+    <!--
+        Adjust session timeout to be really short - saves memeory by cleaning "unused" session quickly.
+        See "MainWindow.java" / refresher in init() which creates poller to keep active sessions alive.
+    -->
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
+
     <context-param>
         <description>Vaadin production mode</description>
         <param-name>productionMode</param-name>
@@ -21,7 +29,7 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    
+
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
@@ -34,7 +42,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-    
+
     <!-- add top javascript navigation stuff -->
     <filter>
         <filter-name>sitemesh</filter-name>
@@ -53,7 +61,7 @@
         <url-pattern>/valintaapp/*</url-pattern>
         <url-pattern>/adminaapp/*</url-pattern>
     </filter-mapping>
-    
+
     <!-- Tarjonta standalone -->
     <servlet>
         <servlet-name>tarjontaapp</servlet-name>
@@ -69,12 +77,12 @@
             <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
         <!-- should help with jmeter testing -->
-        <!-- 
-            Vaadin uses a protection mechanism to prevent malicious cross-site request forgery (XSRF or CSRF), 
-            also called one-click attacks or session riding, which is a security exploit for executing unauthorized 
-            commands in a web server. This protection is normally enabled. However, it prevents some forms of testing 
-            of Vaadin applications, such as with JMeter. In such cases, you can disable the protection by 
-            setting the disable-xsrf-protection parameter to true. 
+        <!--
+            Vaadin uses a protection mechanism to prevent malicious cross-site request forgery (XSRF or CSRF),
+            also called one-click attacks or session riding, which is a security exploit for executing unauthorized
+            commands in a web server. This protection is normally enabled. However, it prevents some forms of testing
+            of Vaadin applications, such as with JMeter. In such cases, you can disable the protection by
+            setting the disable-xsrf-protection parameter to true.
         -->
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
@@ -91,11 +99,16 @@
             <param-value>fi.vm.sade.tarjonta.ui.HakuApplication</param-value>
         </init-param>
         <init-param>
+            <description>Widget Set to Use</description>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
+        </init-param>
+        <init-param>
             <param-name>disable-xsrf-protection</param-name>
             <param-value>true</param-value>
         </init-param>
     </servlet>
-   
+
     <!-- Valinta standalone -->
     <servlet>
         <servlet-name>valintaapp</servlet-name>
@@ -110,11 +123,16 @@
             <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
         <init-param>
+            <description>Widget Set to Use</description>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
+        </init-param>
+        <init-param>
             <param-name>disable-xsrf-protection</param-name>
             <param-value>true</param-value>
         </init-param>
     </servlet>
-     
+
     <!-- Valinta standalone -->
     <servlet>
         <servlet-name>adminapp</servlet-name>
@@ -124,16 +142,21 @@
             <param-value>fi.vm.sade.tarjonta.ui.AdminApplication</param-value>
         </init-param>
         <init-param>
+            <description>Widget Set to Use</description>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
+        </init-param>
+        <init-param>
             <param-name>disable-xsrf-protection</param-name>
             <param-value>true</param-value>
         </init-param>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
     </servlet-mapping>
-   
+
     <servlet-mapping>
         <servlet-name>hakuapp</servlet-name>
         <url-pattern>/hakuapp/*</url-pattern>
@@ -149,15 +172,15 @@
         <url-pattern>/adminapp/*</url-pattern>
     </servlet-mapping>
 
-    <!-- 
-    If you have multiple servlets, you should specify only one /VAADIN/* mapping. 
+    <!--
+    If you have multiple servlets, you should specify only one /VAADIN/* mapping.
     It does not matter which servlet you map the pattern to, as long as it is a Vaadin servlet.
     -->
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-    
+
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
         <location>/errorPage.jsp</location>

@@ -16,9 +16,13 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
+import com.vaadin.ui.Component;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.wolfie.refresher.Refresher;
+import com.github.wolfie.refresher.Refresher.RefreshListener;
 
 /**
  * The Application's "main" class for servlet and portlet implementation.
@@ -39,10 +43,28 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication {
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
-
         initApplication();
     }
 
     protected abstract void initApplication();
+
+
+    /**
+     * Helper to create simple refresher component to keep session alive.
+     *
+     * @return
+     */
+    public static Component createRefersh(final String id) {
+        LOG.info("createRefresh() - id = {}", id);
+        final Refresher refresher = new Refresher();
+        refresher.setRefreshInterval(1000L * 30L);
+        refresher.addListener(new RefreshListener() {
+            public void refresh(Refresher source) {
+                LOG.info("refresher() - id = {}", id);
+            }
+        });
+
+        return refresher;
+    }
 
 }

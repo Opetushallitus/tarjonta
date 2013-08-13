@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
@@ -74,5 +75,8 @@ public class ValintaperustekuvausRootView extends Window {
 
         appRootLayout.removeAllComponents();
         appRootLayout.addComponent(layout);
+
+        // Make session to stay alive with small timeout
+        appRootLayout.addComponent(AbstractWebApplication.createRefersh("ValintaperustekuvausRootView.addToWin()"));
     }
 }

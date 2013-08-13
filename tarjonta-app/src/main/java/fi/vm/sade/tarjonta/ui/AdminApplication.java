@@ -90,7 +90,7 @@ public class AdminApplication extends AbstractWebApplication {
 
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
@@ -129,7 +129,7 @@ public class AdminApplication extends AbstractWebApplication {
         });
 
         hl.addComponent(btnIndexHakukohteet);
-        
+
         final Button btnIndexOrganisaatiot = new Button("Indeksoi organisaatiot", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -150,6 +150,9 @@ public class AdminApplication extends AbstractWebApplication {
         });
 
         hl.addComponent(btnIndexOrganisaatiot);
+
+        // Make session to stay alive with small timeout
+        hl.addComponent(AbstractWebApplication.createRefersh("AdminApplication.initApplization()"));
     }
 
 }
