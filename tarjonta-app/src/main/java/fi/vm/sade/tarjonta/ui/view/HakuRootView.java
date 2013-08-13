@@ -26,6 +26,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
+import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -64,7 +65,7 @@ public class HakuRootView extends Window {
         if (hakuPresenter == null) {
             hakuPresenter = new HakuPresenter();
         }
-        
+
         //
         // Create components
         //
@@ -106,6 +107,9 @@ public class HakuRootView extends Window {
         layout.setHeight(-1, UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
+
+        // Make session to stay alive with small timeout
+        layout.addComponent(AbstractWebApplication.createRefersh("HakuRootView.init()"));
 
         // Create application layout and add to root
         appRootLayout = UiBuilder.horizontalLayout();
