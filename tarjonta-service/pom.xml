@@ -128,7 +128,12 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
             <version>${antisamy.version}</version>
-            <!-- autentikaatiossa excludaavat xerceksen, pitäisikö tässäkin? -->
+            <exclusions>
+              <exclusion>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -155,15 +160,6 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>3.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- todo: tartteeks oikeesti servicessä vaadin depsuja? -->
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>dependencies-vaadin</artifactId>
-            <version>${generic.version}</version>
-            <type>pom</type>
             <scope>test</scope>
         </dependency>
 
@@ -206,18 +202,6 @@
             <version>2.2</version>
         </dependency>
 
-<!--        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-    -->
-<!--        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xerces</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-    -->
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
