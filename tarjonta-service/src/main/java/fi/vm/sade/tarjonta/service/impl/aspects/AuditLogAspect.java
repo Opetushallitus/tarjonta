@@ -227,13 +227,19 @@ public class AuditLogAspect {
         }
     }
 
+    private String getTekija() {
+        String tekija = SecurityContextHolder.getContext().getAuthentication().getName();
+        tekija = tekija + "/" + SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return tekija;
+    }
+
     private Tapahtuma constructHakuTapahtuma(HakuTyyppi haku, String tapahtumaTyyppi) {
         Tapahtuma tapahtuma = new Tapahtuma();
         tapahtuma.setAikaleima(new Date());
         tapahtuma.setMuutoksenKohde(HAKU_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
         if (haku.getOid() != null) {
@@ -257,7 +263,7 @@ public class AuditLogAspect {
         tapahtuma.setAikaleima(new Date());
         tapahtuma.setMuutoksenKohde(HAKUKOHDE_TYPE);
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
 
@@ -286,7 +292,7 @@ public class AuditLogAspect {
         tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
         if (toteutus.getOid() != null) {
@@ -310,7 +316,7 @@ public class AuditLogAspect {
         tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
         tapahtuma.setUusiArvo("OID : " + oid);
@@ -324,7 +330,7 @@ public class AuditLogAspect {
         tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
         if (toteutus.getOid() != null) {
@@ -347,7 +353,7 @@ public class AuditLogAspect {
         tapahtuma.setMuutoksenKohde(VALINTAPERUSTEKUVAUS_TYPE);
 
         try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            tapahtuma.setTekija(getTekija());
         } catch (Exception exp) {
         }
 
