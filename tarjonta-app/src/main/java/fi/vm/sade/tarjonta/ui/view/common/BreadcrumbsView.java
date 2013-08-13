@@ -59,6 +59,9 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         hl.setSpacing(true);
         organisaatioNimi = UiUtil.label(hl, "OPH", LabelStyleEnum.H2);
         organisaatioNimi.setSizeUndefined();
+        hl.setExpandRatio(organisaatioNimi, 0.99f);
+        
+        organisaatioNimi.setContentMode(Label.CONTENT_XHTML);
         poistaValintaB = UiUtil.buttonLink(hl, T("poistaOrganisaatioValinta"));
         poistaValintaB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -71,7 +74,7 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
             }
         });
         hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_LEFT);
+        hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_RIGHT);
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
         addComponent(hl);
 
@@ -83,7 +86,8 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
      * @param organisaatioNimi the organisaatio to set
      */
     public void setOrganisaatio(String organisaatioNimi) {
-        this.organisaatioNimi.setValue(organisaatioNimi);
+    	// OVT-4891 span-haxorointi koska vaadin ei osaa rivittää teksti(kentti)ä jonka leveyttä ei tiedetä etukäteen.
+        this.organisaatioNimi.setValue("<span style=\"white-space: normal;\">"+organisaatioNimi+"</span>");
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
     }
 
