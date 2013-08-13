@@ -116,9 +116,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private fi.vm.sade.log.client.Logger auditLogger;
     @Autowired
     private PermissionChecker permissionChecker;
-    public static final String INSERT_OPERATION = "Insert";
-    public static final String UPDATE_OPERATION = "Update";
-    public static final String DELETE_OPERATION = "Delete";
+
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -129,7 +127,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
             foundHaku = hakuBusinessService.update(foundHaku);
-            logAuditTapahtuma(constructHakuTapahtuma(foundHaku, UPDATE_OPERATION));
+
             publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
             return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
@@ -137,19 +135,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
 
-    private void logAuditTapahtuma(Tapahtuma tapahtuma) {
-        try {
-            if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-                log.info("LOG AUDIT CLASS : " + this.auditLogger.getClass().getName());
-                auditLogger.log(tapahtuma);
-            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            log.warn("Unable to send audit log message {}", e.toString());
-        }
-    }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -386,7 +372,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
         })));
 
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakuk, INSERT_OPERATION));
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -395,29 +380,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
-    private Tapahtuma constructHakukohdeAddTapahtuma(Hakukohde hakukohde, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Hakukohde");
-        try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        } catch (Exception exp) {
-        }
 
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        tapahtuma.setUusiArvo(constructUusiArvo(hakukohde));
-        return tapahtuma;
-    }
 
-    private String constructUusiArvo(Hakukohde hakukohde) {
-        String uusiArvo;
-        if (hakukohde.getOid() != null) {
-            uusiArvo = "Hakukohde oid : " + hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
-        } else {
-            uusiArvo = "Hakukohde nimi:  " + hakukohde.getHakukohdeKoodistoNimi();
-        }
-        return uusiArvo;
-    }
+
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
         Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
@@ -487,7 +452,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohde, "DELETE"));
+
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
@@ -517,7 +482,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdePaivitys.getOid());
         //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.getId());
-        logAuditTapahtuma(constructHakukohdeAddTapahtuma(hakukohdeTemp, "UPDATE"));
+
         //why do we overwrite version from DTO?
         //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
@@ -546,35 +511,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
-        logAuditTapahtuma(constructHakuTapahtuma(haku, INSERT_OPERATION));
+
         publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
         return conversionService.convert(haku, HakuTyyppi.class);
     }
 
-    private Tapahtuma constructHakuTapahtuma(Haku haku, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Haku");
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        } catch (Exception exp) {
-        }
-        if (haku.getOid() != null) {
-            StringBuilder uusiArvo = new StringBuilder();
-            uusiArvo.append(haku.getHaunTunniste() != null ? haku.getHaunTunniste() : haku.getOid());
-            uusiArvo.append(", ");
-            uusiArvo.append(haku.getNimiFi() != null ? haku.getNimiFi() : haku.getNimiSv());
-            uusiArvo.append(", ");
-            uusiArvo.append(haku.getNimiSv() == null && haku.getNimiFi() == null ? haku.getNimiEn() : "");
 
-
-            tapahtuma.setUusiArvo(uusiArvo.toString());
-        }
-
-        return tapahtuma;
-    }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -587,7 +530,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } else {
             hakuDAO.remove(haku);
         }
-        logAuditTapahtuma(constructHakuTapahtuma(haku, DELETE_OPERATION));
+
     }
 
     private boolean checkHakuDepencies(Haku haku) {
@@ -614,34 +557,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
-        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, INSERT_OPERATION));
+
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
     }
 
-    private Tapahtuma constructKoulutusTapahtuma(KoulutusmoduuliToteutus toteutus, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Koulutus");
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        } catch (Exception exp) {
-        }
-        if (toteutus.getOid() != null) {
-            tapahtuma.setUusiArvo("OID : " + toteutus.getOid() + ", KOULUTUSKOODI :  " + toteutus.getKoulutusmoduuli().getKoulutusKoodi() != null ? toteutus.getKoulutusmoduuli().getKoulutusKoodi() : "");
-        }
 
-        return tapahtuma;
-    }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-        logAuditTapahtuma(constructKoulutusTapahtuma(toteutus, UPDATE_OPERATION));
+
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
@@ -672,7 +601,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             } catch (IOException e) {
                 throw new TarjontaBusinessException("indexing.error", e);
             }
-            logAuditTapahtuma(constructKoulutusTapahtuma(komoto, DELETE_OPERATION));
+
         } else {
             throw new KoulutusUsedException();
         }
@@ -986,39 +915,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         result.setAvain(md.getAvain());
         result.setArvo(md.getArvo());
 
-        logAuditTapahtuma(constructMetadataTapahtuma(result));
 
         return result;
     }
 
-    private Tapahtuma constructMetadataTapahtuma(MonikielinenMetadataTyyppi meta) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Valintaperustekuvaus/Sora-vaatimukset");
-
-        try {
-            tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        } catch (Exception exp) {
-        }
-
-        tapahtuma.setTapahtumatyyppi(UPDATE_OPERATION);
-
-        tapahtuma.setUusiArvo(constructValintaPerusteKuvausArvo(meta));
 
 
-        return tapahtuma;
-    }
 
-    private String constructValintaPerusteKuvausArvo(MonikielinenMetadataTyyppi meta) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Tyyppi : " + meta.getKategoria() + ", ");
-        sb.append("Uri/avain : " + meta.getAvain() + ", ");
-        sb.append("Kieli : " + meta.getKieli() +", ");
-        sb.append("Arvo : "+ meta.getArvo());
-
-        return sb.toString();
-    }
 
     @Override
     public List<MonikielinenMetadataTyyppi> haeMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria) {
