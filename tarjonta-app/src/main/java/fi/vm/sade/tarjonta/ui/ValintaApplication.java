@@ -30,39 +30,10 @@ public class ValintaApplication extends AbstractWebApplication {
 
     private static final long serialVersionUID = -812459990170115083L;
     private Window window;
-    private static ThreadLocal<ValintaApplication> tl = new ThreadLocal<ValintaApplication>();
-
-    @Override
-    public synchronized void init() {
-        super.init();
-        this.transactionStart(this, null);
-        initApplication();
-    }
-
     @Override
     protected void initApplication() {
         window = new ValintaperustekuvausRootView();
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
-    }
-
-    @Override
-    public void transactionStart(Application application, Object transactionData) {
-        super.transactionStart(application, transactionData);
-        if (application == this) {
-            tl.set(this);
-        }
-    }
-
-    @Override
-    public void transactionEnd(Application application, Object transactionData) {
-        super.transactionEnd(application, transactionData);
-        if (application == this) {
-            tl.remove();
-        }
-    }
-
-    public static ValintaApplication getInstance() {
-        return tl.get();
     }
 }

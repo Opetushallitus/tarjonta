@@ -22,6 +22,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -140,6 +141,9 @@ public class TarjontaRootView extends Window {
             _appRootLayout.removeAllComponents();
         }
 
+        // Make session to stay alive with small timeout
+        _appRootLayout.addComponent(AbstractWebApplication.createRefersh("TarjontaRootView.getEmptyAppRootLayout()"));
+
         return _appRootLayout;
     }
 
@@ -179,7 +183,7 @@ public class TarjontaRootView extends Window {
         //Add UI components to root layout
         addToEmptyContent(buildMainLayoutComponents());
         this.searchResultsView.getKoulutusList().synchronizeKoulutusSelections();
-        
+
     }
 
     private HorizontalLayout buildMainLayoutComponents() {
@@ -224,7 +228,7 @@ public class TarjontaRootView extends Window {
                     }
                     organisationSearchView.setWidth("100%");
 
-                    searchResultsView.refreshTabs();//reset width to 100%                  
+                    searchResultsView.refreshTabs();//reset width to 100%
                 }
             });
         }
@@ -253,17 +257,17 @@ public class TarjontaRootView extends Window {
         if (hlMainLayout == null) {
             hlMainLayout = new HorizontalLayout();
 
-           
-            
+
+
             hlMainLayout.addComponent(organisationSearchView);
             hlMainLayout.addComponent(borderView);
             hlMainLayout.addComponent(vlMainRight);
-            
+
             hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
             hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
             hlMainLayout.setSizeFull();
         }
-        
+
         return hlMainLayout;
     }
 
