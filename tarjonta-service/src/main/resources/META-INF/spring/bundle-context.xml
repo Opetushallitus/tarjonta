@@ -30,9 +30,12 @@
     <!-- Configure AOP and aspect to handle and wrap exceptions to GenericFault -->
     <aop:aspectj-autoproxy>
         <aop:include name="serviceExceptionWrapper"/>
+        <aop:include name="auditLogAspect"/>
     </aop:aspectj-autoproxy>
 
     <bean id="serviceExceptionWrapper" class="fi.vm.sade.tarjonta.service.impl.exceptionwrapper.ExceptionWrappingAspect"/>
+
+    <bean id="auditLogAspect" class="fi.vm.sade.tarjonta.service.impl.aspects.AuditLogAspect"/>
 
     <!-- Get configuration for generic/generic-events system -->
     <import resource="classpath:META-INF/spring/events-context.xml" />
@@ -54,11 +57,11 @@
       #### Audit logger configuration
   -->
 
-    <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/>
+    <!-- <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/>  -->
     <!-- TODO : change to LoggerJms -->
-    <!-- <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerJms">
+     <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerJms">
         <property name="jmsTemplate" ref="jmsTemplate" />
-    </bean> -->
+    </bean>
 
 
 </beans>

@@ -53,6 +53,7 @@ public class AuditLogAspect {
     public static final String HAKU_TYPE = "Haku";
     public static final String HAKUKOHDE_TYPE = "Hakukohde";
     public static final String KOULUTUS_TYPE = "Koulutus";
+    public static final String VALINTAPERUSTEKUVAUS_TYPE = "Valintaperustekuvaus/Sora-vaatimukset";
 
     //Haku pointcuts -->
     @AfterReturning(
@@ -96,6 +97,7 @@ public class AuditLogAspect {
             pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHakukohde(..))",
             returning= "result")
     private void deleteHakukohdeAudit(JoinPoint pjp, Object result) throws Throwable {
+
        logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
     }
 
@@ -107,6 +109,7 @@ public class AuditLogAspect {
             pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaKoulutus(..))",
             returning= "result")
     private void insertKoulutusAudit(JoinPoint pjp, Object result) throws Throwable{
+
         logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
     }
 
@@ -115,6 +118,13 @@ public class AuditLogAspect {
             returning= "result")
     private void updateKoulutusAudit(JoinPoint pjp, Object result) throws Throwable {
         logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+    }
+
+    @AfterReturning(
+            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaKoulutus(..))",
+            returning= "result")
+    private void deleteKoulutusAudit(JoinPoint pjp, Object result) throws Throwable {
+        logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
     }
 
     //<--
@@ -180,11 +190,13 @@ public class AuditLogAspect {
 
                 if (pjp.getArgs()[0] instanceof HakuTyyppi) {
                     HakuTyyppi hakuTyyppi = (HakuTyyppi)pjp.getArgs()[0];
+
                   logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi,DELETE_OPERATION));
                 }
 
                 if (pjp.getArgs()[0] instanceof HakukohdeTyyppi) {
                     HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi)pjp.getArgs()[0];
+
                     logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi,DELETE_OPERATION));
                 }
 
@@ -202,6 +214,7 @@ public class AuditLogAspect {
 
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
         try {
+
             if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
 
                 auditLogger.log(tapahtuma);
@@ -228,7 +241,7 @@ public class AuditLogAspect {
             uusiArvo.append(haku.getHaunTunniste() != null ? haku.getHaunTunniste() : haku.getOid());
             uusiArvo.append(", ");
             for (HaunNimi haunNimi:haku.getHaunKielistetytNimet()) {
-                uusiArvo.append(haunNimi.getKielikoodi() + " : " + haunNimi.getNimi());
+                uusiArvo.append(haunNimi.getKielikoodi() + " : " + haunNimi.getNimi() + " ");
             }
 
 
@@ -250,21 +263,25 @@ public class AuditLogAspect {
 
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         tapahtuma.setUusiArvo(constructUusiArvo(hakukohde));
+
         return tapahtuma;
     }
 
     private String constructUusiArvo(HakukohdeTyyppi hakukohde) {
         String uusiArvo;
-        if (hakukohde.getOid() != null) {
+        if (hakukohde.getOid() != null && hakukohde.getHakukohdeKoodistoNimi() != null) {
             uusiArvo = "Hakukohde oid : " + hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
         } else {
-            uusiArvo = "Hakukohde nimi:  " + hakukohde.getHakukohdeKoodistoNimi();
+            uusiArvo = "Hakukohde oid:  " + hakukohde.getOid();
         }
+
         return uusiArvo;
     }
 
     private Tapahtuma constructAddKoulutusTapahtuma(LisaaKoulutusTyyppi toteutus, String tapahtumaTyyppi) {
         Tapahtuma tapahtuma = new Tapahtuma();
+
+
         tapahtuma.setAikaleima(new Date());
         tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
@@ -275,12 +292,14 @@ public class AuditLogAspect {
         if (toteutus.getOid() != null) {
           StringBuilder stb = new StringBuilder();
           stb.append("Koulutus oid : " + toteutus.getOid());
-
+          if (toteutus.getNimi() != null && toteutus.getNimi().getTeksti() != null) {
           for (MonikielinenTekstiTyyppi.Teksti teksti : toteutus.getNimi().getTeksti()) {
               stb.append(" " + teksti.getKieliKoodi() + " " + teksti.getValue());
           }
+          }
          tapahtuma.setUusiArvo(stb.toString());
         }
+
 
         return tapahtuma;
     }
@@ -288,7 +307,7 @@ public class AuditLogAspect {
     private Tapahtuma constructRemoveKoulutusTapahtuma(String oid, String tapahtumaTyyppi) {
         Tapahtuma tapahtuma = new Tapahtuma();
         tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Koulutus");
+        tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
             tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -302,7 +321,7 @@ public class AuditLogAspect {
     private Tapahtuma constructUpdateKoulutusTapahtuma(PaivitaKoulutusTyyppi toteutus, String tapahtumaTyyppi) {
         Tapahtuma tapahtuma = new Tapahtuma();
         tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Koulutus");
+        tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
         tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
         try {
             tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -311,9 +330,10 @@ public class AuditLogAspect {
         if (toteutus.getOid() != null) {
             StringBuilder stb = new StringBuilder();
             stb.append("Koulutus oid : " + toteutus.getOid());
-
+            if (toteutus.getNimi() != null && toteutus.getNimi().getTeksti() != null ) {
             for (MonikielinenTekstiTyyppi.Teksti teksti : toteutus.getNimi().getTeksti()) {
                 stb.append(" " + teksti.getKieliKoodi() + " " + teksti.getValue());
+            }
             }
             tapahtuma.setUusiArvo(stb.toString());
         }
@@ -324,7 +344,7 @@ public class AuditLogAspect {
     private Tapahtuma constructMetadataTapahtuma(MonikielinenMetadataTyyppi meta) {
         Tapahtuma tapahtuma = new Tapahtuma();
         tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde("Valintaperustekuvaus/Sora-vaatimukset");
+        tapahtuma.setMuutoksenKohde(VALINTAPERUSTEKUVAUS_TYPE);
 
         try {
             tapahtuma.setTekija((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
