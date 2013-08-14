@@ -18,9 +18,12 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,6 +87,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusPerustiedotFormView extends GridLayout {
+
+	/**
+	 * Kieli-urit, jotka näytetään valintalistalla ensimmäisinä.
+	 */
+    private static final List<String> PRIORITIZED_LANG_URIS = Arrays.asList("kieli_fi", "kieli_sv", "kieli_en");
+
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
@@ -474,13 +483,31 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, cbKoulutusohjelma);
     }
-
+    
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         // final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey);
         kcOpetuskieli = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_KIELI_URI, true);
         kcOpetuskieli.setCaptionFormatter(koodiNimiFormatter);
         kcOpetuskieli.setImmediate(true);
+        
+        kcOpetuskieli.setComparator(new Comparator<KoodiType>() {
+			@Override
+			public int compare(KoodiType o1, KoodiType o2) {
+				final int p1 = PRIORITIZED_LANG_URIS.indexOf(o1.getKoodiUri());
+				final int p2 = PRIORITIZED_LANG_URIS.indexOf(o2.getKoodiUri());
+				if (p1==-1 && p2==-1) {
+					return o1.getKoodiArvo().compareTo(o2.getKoodiArvo());
+				} else if (p1==-1) {
+					return 1;
+				} else if (p2==-1) {
+					return -1;
+				} else {
+					return new Integer(p1).compareTo(p2);
+				}
+			}
+		});
+        
         grid.addComponent(kcOpetuskieli);
         grid.newLine();
         buildSpacingGridRow(grid);
