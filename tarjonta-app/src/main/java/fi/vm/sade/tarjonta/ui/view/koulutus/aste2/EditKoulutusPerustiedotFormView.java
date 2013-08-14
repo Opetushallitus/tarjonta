@@ -276,6 +276,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void initializeLayout() {
         buildGridKoulutusRow(this, "KoulutusTaiTutkinto");
         buildGridKoulutusohjelmaRow(this, "Koulutusohjelma");
+        buildEmptyGridRow(this);
 
         //Build a label section, the data for labels are
         //received from koodisto (KOMO).
@@ -285,18 +286,21 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
         opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
         tutkintonimike = buildLabel(this, "tutkintonimike");
-        koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
+        buildEmptyGridRow(this);
         tavoitteet = buildLabel(this, "tavoitteet");
-        jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
         koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
+        buildEmptyGridRow(this);
+        koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
+        jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
 
-        buildGridOpetuskieliRow(this, "Opetuskieli");
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
         buildGridKestoRow(this, "SuunniteltuKesto");
-
+        buildGridOpetuskieliRow(this, "Opetuskieli");
+        
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
         //Removed because not needed... -> OVT-4560
         //buildGridPainotus(this, "painotus");
+        
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
         //buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
@@ -491,7 +495,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildSpacingGridRow(grid);
     }
 
-    private void buildGridPainotus(GridLayout grid, final String propertyKey) {
+    @SuppressWarnings("unused") // OVT-4560
+	private void buildGridPainotus(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
 
         gridLabel(grid, propertyKey, type);
@@ -572,6 +577,13 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         CssLayout cssLayout = new CssLayout();
         cssLayout.setHeight(4, UNITS_PIXELS);
         grid.addComponent(cssLayout);
+        grid.newLine();
+    }
+    
+    private void buildEmptyGridRow(GridLayout grid) {
+        Label lbl = new Label();
+        lbl.addStyleName(Oph.SPACING_BOTTOM_30);
+        grid.addComponent(lbl);
         grid.newLine();
     }
 
@@ -661,7 +673,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         kcOpetusmuoto.setEnabled(active);
         //kcPohjakoulutusvaatimus.setEnabled(active);
     }
-    private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
+    private CaptionFormatter<KoodiType> koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
         @Override
         public String formatCaption(KoodiType dto) {
             if (dto == null) {
