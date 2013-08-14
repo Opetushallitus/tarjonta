@@ -107,7 +107,7 @@ public class HakuResultRow extends HorizontalLayout {
     }
 
     private void menuItemClicked(String selection) {
-        final String hakuOid = hakuPresenter.getHakuModel().getHakuOid();
+        final String hakuOid = haku.getHakuOid();
 
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.VIEW));
