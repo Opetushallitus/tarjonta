@@ -169,7 +169,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(getKoodiNimi(e.getKey()) + " (" + e.getValue().size() + ")", false));
 
             for (HakuViewModel curHaku : e.getValue()) {
                 HakuResultRow rowStyleInner = new HakuResultRow(curHaku, getListHakuName(curHaku));
