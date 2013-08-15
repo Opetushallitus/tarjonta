@@ -121,7 +121,6 @@ public class CreationDialog<T> extends CustomComponent {
         middleLayout.setMargin(true, false, false, false);
         BeanItemContainer<T> beanValues = new BeanItemContainer<T>(typeClazz, values);
 
-        LOG.debug("values : " + values);
 
         optionGroup = new OptionGroup(null, beanValues);
         getOptionGroup().setMultiSelect(true);
@@ -129,10 +128,17 @@ public class CreationDialog<T> extends CustomComponent {
         for (Object obj : getOptionGroup().getItemIds()) {
             getOptionGroup().select(obj);
         }
+        if (this.dialogOptionGroupTitleKey != null) {
         Label lbl = new Label(I18N.getMessage(this.dialogOptionGroupTitleKey));
         middleLayout.addComponent(lbl);
+        }
         middleLayout.addComponent(getOptionGroup());
+        if (this.dialogOptionGroupTitleKey != null) {
+            middleLayout.setMargin(true,false,true,false);
 
+        } else {
+            middleLayout.setMargin(true,false,true,true);
+        }
         return middleLayout;
     }
 
