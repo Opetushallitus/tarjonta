@@ -1,0 +1,29 @@
+/* 
+    Vaadin-tarjonta-theme: Used in the app to fix small layout issues.
+TODO:please merge small changes to the OPH vaadin-theme.
+*/
+/* 
+    Created on : Aug 12, 2013, 4:04:13 PM
+    Author     : jani
+*/
+@import url(../oph/styles.css);
+
+/*
+Alternative for Vaadin horizontal layout: 
+- component wrapping allow
+*/
+
+.v-csslayout-wrap{   
+    text-align: right;
+}
+
+.v-csslayout-wrap-debug{   
+    background-color: aqua;
+    text-align: right;
+}
+
+.v-csslayout-wrap-container{    
+    /*background-color: aqua;*/
+    display:inline-block;
+}
+

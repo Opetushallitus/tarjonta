@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.ButtonBorderView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
+import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
 
@@ -227,7 +228,6 @@ public class TarjontaRootView extends Window {
                         hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
                     }
                     organisationSearchView.setWidth("100%");
-
                     searchResultsView.refreshTabs();//reset width to 100%
                 }
             });
@@ -244,6 +244,7 @@ public class TarjontaRootView extends Window {
 
         if (vlMainRight == null) {
             vlMainRight = new VerticalLayout();
+            vlMainRight.setMargin(false, true, false, true);
             vlMainRight.addComponent(breadcrumbsView);
             vlMainRight.addComponent(searchSpesificationView);
             vlMainRight.addComponent(searchResultsView);
@@ -256,8 +257,6 @@ public class TarjontaRootView extends Window {
 
         if (hlMainLayout == null) {
             hlMainLayout = new HorizontalLayout();
-
-
 
             hlMainLayout.addComponent(organisationSearchView);
             hlMainLayout.addComponent(borderView);
