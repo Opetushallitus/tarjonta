@@ -30,7 +30,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
@@ -290,11 +289,11 @@ public class ShowKoulutusViewTab extends CustomComponent {
         return lastUpdLbl;
     }
     
-    private String resolveOpintojenLaajuusYksikko(KoodiModel opintojenLaajuusyksikko) {
+    /*private String resolveOpintojenLaajuusYksikko(KoodiModel opintojenLaajuusyksikko) {
     	KoodiType kt = uiHelper.getKoodis(opintojenLaajuusyksikko.getKoodistoUri()).iterator().next();
     	String ret = TarjontaUIHelper.getKoodiMetadataForLanguage(kt, locale).getLyhytNimi();
     	return ret!=null ? ret : uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
-    }
+    }*/
 
     private void insertKoulutuksenmPerustiedot(FormGridBuilder layout) {
 
@@ -341,10 +340,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
         layout.addSpace();
         
+        String str = uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
+
         if (opintojenLaajuusArvo != null) {
-            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " +resolveOpintojenLaajuusYksikko(opintojenLaajuusyksikko)));
+            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " +str));
         } else {
-            layout.add(getTextRow("opintojenLaajuus", resolveOpintojenLaajuusYksikko(opintojenLaajuusyksikko)));
+            layout.add(getTextRow("opintojenLaajuus", str));
         }
 
         layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuslaji(), locale)));

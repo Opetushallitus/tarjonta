@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,6 +220,14 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         
         FormGridBuilder grid = new FormGridBuilder(getClass());
         
+        
+        String opintojenLaajuus;
+        if (model.getOpintojenLaajuus()==null) {
+        	opintojenLaajuus = "";
+        } else {        	
+        	opintojenLaajuus = model.getOpintojenLaajuus() + " "+_tarjontaUIHelper.getKoodiLyhytNimi(model.getOpintojenLaajuusyksikko().getKoodistoUri(), I18N.getLocale());
+        }
+        
         grid.addText("organisaatio", _presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName())
         	.addText("tutkinto", modelToStr(model.getKoulutuskoodiModel()))
 	        .addText(otherCbLabel, modelToStr(otherCbKoodi))
@@ -227,8 +236,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 	        .addText("koulutusala", modelToStr(model.getKoulutusala()))
 	        .addText("opintoala", modelToStr(model.getOpintoala()))
 	        .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
-	        .addText("opintojenLaajuusyksikko", modelToStr(model.getOpintojenLaajuusyksikko()))
-	        .addText("opintojenLaajuus", model.getOpintojenLaajuus() != null ? model.getOpintojenLaajuus() : "")
+	        .addText("opintojenLaajuus", opintojenLaajuus)
 	        .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
 	        .addText("pohjakoulutusvaatimus", modelToStr(model.getPohjakoulutusvaatimus()))
 	        .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))

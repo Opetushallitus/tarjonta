@@ -15,26 +15,17 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
-import com.google.common.base.Preconditions;
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.common.*;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
-import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import net.sf.ehcache.CacheManager;
 
@@ -48,10 +39,34 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ComparisonChain;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -281,6 +296,15 @@ public class TarjontaUIHelper {
 
         Collections.sort(values);
         return values.get(0).value;
+    }
+    
+    public String getKoodiLyhytNimi(String koodiUri, Locale locale) {
+    	KoodiType kt = getKoodis(koodiUri).iterator().next();
+    	if (kt==null) {
+    		return null;
+    	}
+    	String ret = getKoodiMetadataForLanguage(kt, locale).getLyhytNimi();
+    	return ret!=null ? ret : getKoodiNimi(kt, locale);
     }
 
     /**
