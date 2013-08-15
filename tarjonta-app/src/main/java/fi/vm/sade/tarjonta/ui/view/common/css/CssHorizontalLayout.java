@@ -28,14 +28,15 @@ public class CssHorizontalLayout extends CssLayout {
 
     public enum StyleEnum {
 
+        LEFT("component-left"),
+        PADDING_RIGHT_5PX("component-spacing-right-extra-1"),
         PADDING_RIGHT_10PX("component-spacing-right-1"),
         PADDING_RIGHT_20PX("component-spacing-right-2"),
         PADDING_RIGHT_30PX("component-spacing-right-3"),
-        
+        PADDING_LEFT_5PX("component-spacing-left-extra-1"),
         PADDING_LEFT_10PX("component-spacing-left-1"),
         PADDING_LEFT_20PX("component-spacing-left-2"),
         PADDING_LEFT_30PX("component-spacing-left-3");
-
         private final String padding;
 
         StyleEnum(String padding) {
@@ -52,19 +53,11 @@ public class CssHorizontalLayout extends CssLayout {
         this.setSizeUndefined();
     }
 
-    public CssHorizontalLayout addComponent(Component component, StyleEnum[] styles, int containerWidth, int containerHeight) {
+    public CssLayout addComponent(Component component, StyleEnum[] styles) {
         CssLayout subContainer = new CssLayout();
         subContainer.setSizeUndefined();
         subContainer.addStyleName("wrap-container");
         subContainer.addComponent(component);
-
-        if (containerWidth != NO_PARAMETER) {
-            subContainer.setWidth(containerWidth, UNITS_PIXELS);
-        }
-
-        if (containerHeight != NO_PARAMETER) {
-            subContainer.setHeight(containerHeight, UNITS_PIXELS);
-        }
 
         if (styles != null && styles.length > 0) {
             for (StyleEnum s : styles) {
@@ -79,15 +72,11 @@ public class CssHorizontalLayout extends CssLayout {
 
     @Override
     public void addComponent(Component component) {
-        this.addComponent(component, null, NO_PARAMETER, NO_PARAMETER);
+        this.addComponent(component, (StyleEnum) null);
     }
 
-    public void addComponent(Component component, StyleEnum style) {
-        this.addComponent(component, new StyleEnum[]{style}, NO_PARAMETER, NO_PARAMETER);
-    }
-
-    public void addComponent(Component component, StyleEnum[] styles) {
-        this.addComponent(component, styles, NO_PARAMETER, NO_PARAMETER);
+    public CssLayout addComponent(Component component, StyleEnum style) {
+        return this.addComponent(component, style != null ? new StyleEnum[]{style} : null);
     }
 
     public void setDebug(boolean on) {
@@ -97,5 +86,4 @@ public class CssHorizontalLayout extends CssLayout {
             this.setStyleName("wrap");
         }
     }
-
 }

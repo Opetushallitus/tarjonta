@@ -58,8 +58,6 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         hl.setSpacing(true);
         organisaatioNimi = UiUtil.label(hl, "OPH", LabelStyleEnum.H2);
         organisaatioNimi.setSizeUndefined();
-        hl.setExpandRatio(organisaatioNimi, 0.99f);
-        
         organisaatioNimi.setContentMode(Label.CONTENT_XHTML);
         poistaValintaB = UiUtil.buttonLink(hl, T("poistaOrganisaatioValinta"));
         poistaValintaB.addListener(new Button.ClickListener() {
@@ -73,7 +71,7 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
             }
         });
         hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_RIGHT);
+        hl.setComponentAlignment(poistaValintaB, Alignment.MIDDLE_LEFT);
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
         addComponent(hl);
 

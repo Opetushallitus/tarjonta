@@ -19,7 +19,6 @@ import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
@@ -31,7 +30,6 @@ import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.ButtonBorderView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
-import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
 
@@ -184,7 +182,6 @@ public class TarjontaRootView extends Window {
         //Add UI components to root layout
         addToEmptyContent(buildMainLayoutComponents());
         this.searchResultsView.getKoulutusList().synchronizeKoulutusSelections();
-
     }
 
     private HorizontalLayout buildMainLayoutComponents() {
