@@ -48,7 +48,6 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
 
     public BreadcrumbsView(TarjontaPresenter presenter) {
         super();
-        this.setMargin(false, false, false, true);
         this.setSizeUndefined();
         this.presenter = presenter;
     }

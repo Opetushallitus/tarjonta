@@ -19,6 +19,7 @@ import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class SearchResultsView extends TabSheet {
 
     public SearchResultsView() {
         super();
+
         setSizeFull();
     }
 

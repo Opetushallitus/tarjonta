@@ -37,6 +37,6 @@ public class TarjontaApplication extends AbstractWebApplication {
         window = new TarjontaRootView();
         window.init();
         setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        setTheme("tarjonta");
     }
 }
