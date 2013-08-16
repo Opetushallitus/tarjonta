@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.UserService;
@@ -478,7 +477,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             ListHakuVastausTyyppi hakuVastaus = getTarjontaPublicService().listHaku(hakuKysely);
             HakuViewModel hakuModel = new HakuViewModel(hakuVastaus.getResponse().get(0));
             hakuModel.getHakuOid();
-            hakuModel.getNimiFi();
+            hakuModel.getMlNimiFi();
             getModel().getHakukohde().setHakuViewModel(hakuModel);
             this.hakuKohdePerustiedotView.setSelectedHaku(hakuView);
         }

@@ -14,12 +14,10 @@ Alternative for Vaadin horizontal layout:
 */
 
 .v-csslayout-wrap{   
-    text-align: right;
 }
 
 .v-csslayout-wrap-debug{   
     background-color: aqua;
-    text-align: right;
 }
 
 .v-csslayout-wrap-container{    
@@ -36,6 +34,15 @@ Alternative for Vaadin horizontal layout:
     padding-left: 5px;
 }
 
-.component-left{
+.component-float-left{
     float:left;
+}
+
+.label-white-space-none{
+    white-space: normal;
+}
+
+.component-vertical-align-bottom{
+    padding-top: 10px !important;
+    vertical-align:bottom;
 }

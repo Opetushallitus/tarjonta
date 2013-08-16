@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
@@ -60,6 +61,7 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiFi;
     private String nimiSe;
     private String nimiEn;
+    private transient MultiLingualTextImpl mlNimi = new MultiLingualTextImpl(this, "mlNimi");
     private HakuTyyppi hakuDto;
     private String haunTila;
     private Date viimeisinPaivitysPvm;
@@ -366,7 +368,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiFi
      */
-    public String getNimiFi() {
+    public String getMlNimiFi() {
         nimiFi = this.getKielistettyNimiFromDto(BasicLanguage.FI);
         return nimiFi;
     }
@@ -374,7 +376,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiFi the nimiFi to set
      */
-    public void setNimiFi(String nimiFi) {
+    public void setMlNimiFi(String nimiFi) {
         setKielistettyNimiToDto(nimiFi, BasicLanguage.FI);
         this.nimiFi = nimiFi;
     }
@@ -382,7 +384,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiSe
      */
-    public String getNimiSe() {
+    public String getMlNimiSv() {
         nimiSe = getKielistettyNimiFromDto(BasicLanguage.SV);
         return nimiSe;
     }
@@ -390,7 +392,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiSe the nimiSe to set
      */
-    public void setNimiSe(String nimiSe) {
+    public void setMlNimiSv(String nimiSe) {
         setKielistettyNimiToDto(nimiSe, BasicLanguage.SV);
         this.nimiSe = nimiSe;
     }
@@ -398,7 +400,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiEn
      */
-    public String getNimiEn() {
+    public String getMlNimiEn() {
         nimiEn = getKielistettyNimiFromDto(BasicLanguage.EN);
         return nimiEn;
     }
@@ -406,11 +408,19 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiEn the nimiEn to set
      */
-    public void setNimiEn(String nimiEn) {
+    public void setMlNimiEn(String nimiEn) {
 
         setKielistettyNimiToDto(nimiEn, BasicLanguage.EN);
         this.nimiEn = nimiEn;
     }
+    
+    public void setMlNimi(MultiLingualTextImpl mlNimi) {
+		this.mlNimi = mlNimi;
+	}
+    
+    public MultiLingualTextImpl getMlNimi() {
+		return mlNimi;
+	}
 
     /**
      * @param hakuValmis the hakuValmis to set

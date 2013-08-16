@@ -25,10 +25,16 @@ import com.vaadin.ui.CssLayout;
 public class CssHorizontalLayout extends CssLayout {
 
     private final static int NO_PARAMETER = -1;
+    private static final long serialVersionUID = 5774409533321614488L;
 
     public enum StyleEnum {
 
-        LEFT("component-left"),
+        VERTICAL_ALIGN_BOTTOM("component-vertical-align-bottom"),
+        LABEL_ALLOW_WRAP("label-white-space-none"),
+        FLOAT_LEFT("component-float-left"),
+        TEXT_ALIGN_LEFT("text-align-left"),
+        TEXT_ALIGN_RIGHT("text-align-right"),
+        TEXT_ALIGN_CENTER("text-align-center"),
         PADDING_RIGHT_5PX("component-spacing-right-extra-1"),
         PADDING_RIGHT_10PX("component-spacing-right-1"),
         PADDING_RIGHT_20PX("component-spacing-right-2"),

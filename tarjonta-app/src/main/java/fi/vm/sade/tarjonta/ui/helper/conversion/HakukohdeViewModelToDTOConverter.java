@@ -144,11 +144,11 @@ public class HakukohdeViewModelToDTOConverter {
 
             for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
                 if (teksti.getKieliKoodi().trim().contains(BasicLanguage.FI.getLowercaseLanguageCode())) {
-                    haku.setNimiFi(teksti.getValue());
+                    haku.setMlNimiFi(teksti.getValue());
                 } else if (teksti.getKieliKoodi().trim().contains(BasicLanguage.EN.getLowercaseLanguageCode())) {
-                    haku.setNimiEn(teksti.getValue());
+                    haku.setMlNimiEn(teksti.getValue());
                 } else if (teksti.getKieliKoodi().trim().contains(BasicLanguage.SV.getLowercaseLanguageCode())) {
-                    haku.setNimiSe(teksti.getValue());
+                    haku.setMlNimiSv(teksti.getValue());
                 }
             }
         }
