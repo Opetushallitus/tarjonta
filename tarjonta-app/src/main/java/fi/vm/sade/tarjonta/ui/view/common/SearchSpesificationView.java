@@ -18,7 +18,12 @@ package fi.vm.sade.tarjonta.ui.view.common;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.event.FieldEvents.BlurEvent;
+import com.vaadin.event.FieldEvents.BlurListener;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -108,7 +113,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tfSearch.setNullRepresentation("");
         tfSearch.setPropertyDataSource(new NestedMethodProperty(model, "searchStr"));
         tfSearch.setWidth(230, UNITS_PIXELS);
-        tfSearch.setImmediate(true);
+        tfSearch.setImmediate(false);
+
         texFieldLayout.addComponent(new Label("&nbsp;", Label.CONTENT_XHTML));
         texFieldLayout.addComponent(tfSearch);
         searchSpecLayout.addComponent(texFieldLayout, CssHorizontalLayout.StyleEnum.LEFT);
@@ -169,10 +175,27 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 doSearch();
+                //Remove textfield enter-click listener, if any.
+                btnHae.removeClickShortcut();
             }
         });
 
-        btnHae.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        tfSearch.addListener(new FocusListener() {
+            private static final long serialVersionUID = -5924587297708382318L;
+
+            @Override
+            public void focus(FocusEvent event) {
+                btnHae.setClickShortcut(KeyCode.ENTER);
+            }
+        });
+        tfSearch.addListener(new BlurListener() {
+            private static final long serialVersionUID = 7429378966840902444L;
+
+            @Override
+            public void blur(BlurEvent event) {
+                btnHae.removeClickShortcut();
+            }
+        });
 
         buttons.addComponent(btnHae);
         searchSpecLayout.addComponent(buttons);
