@@ -88,6 +88,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
     @Override
     public void attach() {
+        if (btnHae != null) {
+            btnHae.removeClickShortcut();
+        }
         super.attach();
         if (attached) {
             return;
@@ -175,8 +178,6 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 doSearch();
-                //Remove textfield enter-click listener, if any.
-                btnHae.removeClickShortcut();
             }
         });
 
@@ -193,6 +194,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
             @Override
             public void blur(BlurEvent event) {
+                //Remove textfield enter-click listener, if any.
                 btnHae.removeClickShortcut();
             }
         });
