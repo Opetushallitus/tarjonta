@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -123,10 +124,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private Label hakuAikaLabel;
     private ComboBox hakuAikaCombo;
     @Min(value = 1, message = "{validation.Hakukohde.aloituspaikat.num}")
+    @Max(value = Integer.MAX_VALUE, message = "{validation.Hakukohde.aloituspaikat.max}")
     @NotNull(message = "{validation.Hakukohde.aloitusPaikat.notNull}")
     @PropertyId("aloitusPaikat")
     private TextField aloitusPaikatText;
     @Min(value = 1, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
+    @Max(value = Integer.MAX_VALUE, message = "{validation.Hakukohde.aloituspaikat.max}")
     @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
     private TextField valinnoissaKaytettavatPaikatText;
