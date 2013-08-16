@@ -15,6 +15,25 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
+
+import com.google.common.base.Strings;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
@@ -30,9 +49,12 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.common.validation.MultiLingualText;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -44,21 +66,6 @@ import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Min;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
 
 /**
  * And editor for "Haku" object.
@@ -103,12 +110,16 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     @NotNull(message = "{validation.Haku.hakutapaNull}")
     @PropertyId("hakutapa")
     private KoodistoComponent _hakutapa;
-    @PropertyId("nimiFi")
+    /*@PropertyId("nimiFi")
     private TextField _haunNimiFI;
     @PropertyId("nimiSe")
     private TextField _haunNimiSE;
     @PropertyId("nimiEn")
-    private TextField _haunNimiEN;
+    private TextField _haunNimiEN;*/
+    
+    @PropertyId("mlNimi")
+    private MultiLingualTextField haunNimi;
+    
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
     // TODO hakuaika
@@ -199,12 +210,15 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                 }
             }
         });
-        _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
+        haunNimi = new MultiLingualTextField();
+        /*_haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setWidth("450px");
         _haunNimiSE = UiUtil.textField(null, "", T("HaunNimiSE.prompt"), false);
         _haunNimiSE.setWidth("450px");
         _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
-        _haunNimiEN.setWidth("450px");
+        _haunNimiEN.setWidth("450px");*/
+        
+        
         _haunTunniste = UiUtil.label((AbstractLayout) null, hakuViewModel.getHaunTunniste());
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
@@ -279,10 +293,10 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
             vl.setSizeUndefined();
 
-            vl.addComponent(_haunNimiFI);
+            /*vl.addComponent(_haunNimiFI);
             vl.addComponent(_haunNimiSE);
-            vl.addComponent(_haunNimiEN);
-            grid.addComponent(vl);
+            vl.addComponent(_haunNimiEN);*/
+            grid.addComponent(haunNimi);
             grid.newLine();
         }
 
@@ -361,13 +375,14 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     }
 
     public List<String> checkNimi() {
-        List<String> errorMessages = new ArrayList<String>();
-        if (fieldEmpty(_haunNimiFI) 
-                && fieldEmpty(_haunNimiSE)
-                && fieldEmpty(_haunNimiEN)) {
-            errorMessages.add(T("validation.nimiNull"));
-        }
-        return errorMessages;
+    	MultiLingualText mt = (MultiLingualText) haunNimi.getValue();    	
+    	if (Strings.isNullOrEmpty(mt.getTextFi())
+    		&& Strings.isNullOrEmpty(mt.getTextSv())
+    		&& Strings.isNullOrEmpty(mt.getTextEn())) {
+    		return Collections.singletonList("EditHakuFormImpl.validation.nimiNull"); 
+    	} else {
+    		return Collections.emptyList();
+    	}
     }
     
     public boolean fieldEmpty(TextField textField) {
