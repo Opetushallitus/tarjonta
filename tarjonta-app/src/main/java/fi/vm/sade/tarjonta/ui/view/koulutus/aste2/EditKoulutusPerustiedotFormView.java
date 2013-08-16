@@ -186,7 +186,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private String initialYhtHenkPuhelin;
     private Label koulutusaste;
     private Label opintoala;
-    private Label opintojenLaajuusyksikko;
     private Label opintojenLaajuus;
     private Label koulutuksenRakenne;
     private Label tutkintonimike;
@@ -292,7 +291,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutusaste = buildLabel(this, "koulutusaste");
         opintoala = buildLabel(this, "opintoala");
         koulutusala = buildLabel(this, "koulutusala");
-        opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
         opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
         tutkintonimike = buildLabel(this, "tutkintonimike");
         buildEmptyGridRow(this);
@@ -732,14 +730,15 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             koulutusala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusala(), KoulutusKoodistoModel.MODEL_NAME_PROPERY));
         }
 
+        String lySuffix = "";
         if (koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
             koulutusModel.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
-            opintojenLaajuusyksikko.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintojenLaajuusyksikko(), KoulutusKoodistoModel.MODEL_NAME_PROPERY));
+            lySuffix = " "+new TarjontaUIHelper().getKoodiLyhytNimi(koulutuskoodi.getOpintojenLaajuusyksikko().getKoodistoUri(), I18N.getLocale());
         }
 
         if (koulutuskoodi.getOpintojenLaajuus() != null) {
             koulutusModel.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
-            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(koulutusModel, "opintojenLaajuus"));
+            opintojenLaajuus.setValue(koulutuskoodi.getOpintojenLaajuus() + lySuffix);
         }
 
         if (koulutuskoodi.getKoulutuksenRakenne() != null) {
@@ -779,7 +778,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         opintoala.setValue("");
         koulutusaste.setValue("");
         koulutusala.setValue("");
-        opintojenLaajuusyksikko.setValue("");
         opintojenLaajuus.setValue("");
         koulutuksenRakenne.setValue("");
         tavoitteet.setValue("");

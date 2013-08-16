@@ -511,7 +511,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
 
 
-        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", null);
         List<String> validationMessages = validateKoulutukses(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
         if (validationMessages != null && validationMessages.size() > 0) {
             for (String validationMessage : validationMessages) {

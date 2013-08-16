@@ -19,7 +19,6 @@ import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
@@ -183,7 +182,6 @@ public class TarjontaRootView extends Window {
         //Add UI components to root layout
         addToEmptyContent(buildMainLayoutComponents());
         this.searchResultsView.getKoulutusList().synchronizeKoulutusSelections();
-
     }
 
     private HorizontalLayout buildMainLayoutComponents() {
@@ -227,7 +225,6 @@ public class TarjontaRootView extends Window {
                         hlMainLayout.setExpandRatio(vlMainRight, 0.8f);
                     }
                     organisationSearchView.setWidth("100%");
-
                     searchResultsView.refreshTabs();//reset width to 100%
                 }
             });
@@ -244,6 +241,7 @@ public class TarjontaRootView extends Window {
 
         if (vlMainRight == null) {
             vlMainRight = new VerticalLayout();
+            vlMainRight.setMargin(false, true, false, true);
             vlMainRight.addComponent(breadcrumbsView);
             vlMainRight.addComponent(searchSpesificationView);
             vlMainRight.addComponent(searchResultsView);
@@ -256,8 +254,6 @@ public class TarjontaRootView extends Window {
 
         if (hlMainLayout == null) {
             hlMainLayout = new HorizontalLayout();
-
-
 
             hlMainLayout.addComponent(organisationSearchView);
             hlMainLayout.addComponent(borderView);

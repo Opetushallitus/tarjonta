@@ -288,6 +288,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
         Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
         return lastUpdLbl;
     }
+    
+    /*private String resolveOpintojenLaajuusYksikko(KoodiModel opintojenLaajuusyksikko) {
+    	KoodiType kt = uiHelper.getKoodis(opintojenLaajuusyksikko.getKoodistoUri()).iterator().next();
+    	String ret = TarjontaUIHelper.getKoodiMetadataForLanguage(kt, locale).getLyhytNimi();
+    	return ret!=null ? ret : uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
+    }*/
 
     private void insertKoulutuksenmPerustiedot(FormGridBuilder layout) {
 
@@ -334,12 +340,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
         layout.addSpace();
         
-        final String opintojenLaajuusYksikko = uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
-        
+        String str = uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
+
         if (opintojenLaajuusArvo != null) {
-            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + "/" +opintojenLaajuusYksikko));
+            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " +str));
         } else {
-            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusYksikko));
+            layout.add(getTextRow("opintojenLaajuus", str));
         }
 
         layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuslaji(), locale)));
