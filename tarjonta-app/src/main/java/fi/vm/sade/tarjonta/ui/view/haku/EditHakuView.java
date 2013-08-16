@@ -21,6 +21,8 @@ import java.util.List;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -38,7 +40,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHakuFormImpl> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditHakuView.class);
+	private static final long serialVersionUID = 1L;
+	
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(EditHakuView.class);
+	
     private HakuViewModel model;
     private EditHakuFormImpl formView;
     @Autowired(required = true)
@@ -78,7 +84,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
         errorMessages.addAll(formView.checkNimi());
         if (!errorMessages.isEmpty()) {
             for (String curMessage : errorMessages) {
-                this.errorView.addError(curMessage);
+                this.errorView.addError(I18N.getMessage(curMessage));
             }
             form.commit();
             throw new Validator.InvalidValueException("");

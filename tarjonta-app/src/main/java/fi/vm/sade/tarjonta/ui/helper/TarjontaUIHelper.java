@@ -656,31 +656,31 @@ public class TarjontaUIHelper {
     public static String getClosestHakuName(Locale locale, HakuViewModel haku) {
         String lang = locale != null && locale.getLanguage() != null ? locale.getLanguage().toLowerCase() : "";
 
-        if ("fi".equals(lang) && haku.getNimiFi() != null) {
-            return haku.getNimiFi();
+        if ("fi".equals(lang) && haku.getMlNimiFi() != null) {
+            return haku.getMlNimiFi();
         }
 
-        if ("sv".equals(lang) && haku.getNimiSe() != null) {
-            return haku.getNimiSe();
+        if ("sv".equals(lang) && haku.getMlNimiSv() != null) {
+            return haku.getMlNimiSv();
         }
 
-        if ("en".equals(lang) && haku.getNimiEn() != null) {
-            return haku.getNimiEn();
+        if ("en".equals(lang) && haku.getMlNimiEn() != null) {
+            return haku.getMlNimiEn();
         }
 
         return getAvailableHakuName(haku);
     }
 
     private static String getAvailableHakuName(HakuViewModel haku) {
-        if (haku.getNimiFi() != null) {
-            return haku.getNimiFi();
+        if (haku.getMlNimiFi() != null) {
+            return haku.getMlNimiFi();
         }
-        if (haku.getNimiSe() != null) {
-            return haku.getNimiSe();
+        if (haku.getMlNimiSv() != null) {
+            return haku.getMlNimiSv();
         }
 
-        if (haku.getNimiEn() != null) {
-            return haku.getNimiEn();
+        if (haku.getMlNimiEn() != null) {
+            return haku.getMlNimiEn();
         }
 
         return "";
