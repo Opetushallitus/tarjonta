@@ -76,6 +76,10 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    private static final CssHorizontalLayout.StyleEnum[] COMPONENT_STYLE = {
+        //a style for CssLayout components
+        CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX
+    };
 
     public SearchSpesificationView() {
         super(true, UiMarginEnum.BOTTOM);
@@ -104,7 +108,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         setSizeFull();
 
         CssHorizontalLayout searchSpecLayout = new CssHorizontalLayout();
-
+        searchSpecLayout.addStyleName(CssHorizontalLayout.StyleEnum.TEXT_ALIGN_RIGHT.getStyleName());
 
         //without the height parameter result area would be hidden.
         //
@@ -120,7 +124,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
         texFieldLayout.addComponent(new Label("&nbsp;", Label.CONTENT_XHTML));
         texFieldLayout.addComponent(tfSearch);
-        searchSpecLayout.addComponent(texFieldLayout, CssHorizontalLayout.StyleEnum.LEFT);
+        searchSpecLayout.addComponent(texFieldLayout, CssHorizontalLayout.StyleEnum.FLOAT_LEFT);
         VerticalLayout tilatLayout = new VerticalLayout();
         tilatLayout.setSizeUndefined();
         Label tilatLabel = UiUtil.label(null, T("koulutuksenTilat"));
@@ -128,7 +132,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbTilat = UiUtil.comboBox(null, null, getKoulutuksenTilat());
         cbTilat.setWidth("80px");
         tilatLayout.addComponent(cbTilat);
-        searchSpecLayout.addComponent(tilatLayout, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
+        searchSpecLayout.addComponent(tilatLayout, COMPONENT_STYLE);
 
         VerticalLayout vuosiLayout = new VerticalLayout();
         vuosiLayout.setSizeUndefined();
@@ -141,7 +145,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbVuosi.setWidth("140px");
         vuosiLayout.addComponent(cbVuosi);
 
-        searchSpecLayout.addComponent(vuosiLayout, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
+        searchSpecLayout.addComponent(vuosiLayout, COMPONENT_STYLE);
 
         VerticalLayout kausiLayout = new VerticalLayout();
         kausiLayout.setSizeUndefined();
@@ -153,7 +157,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         kcKausi.getField().setWidth("140px");
         kausiLayout.addComponent(kcKausi);
 
-        searchSpecLayout.addComponent(kausiLayout, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
+        searchSpecLayout.addComponent(kausiLayout, COMPONENT_STYLE);
 
         HorizontalLayout buttons = new HorizontalLayout();
 
@@ -169,7 +173,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             }
         });
         CssHorizontalLayout cssPadding5PxHae = new CssHorizontalLayout();
-        cssPadding5PxHae.addComponent(btnTyhjenna, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
+        cssPadding5PxHae.addComponent(btnTyhjenna, COMPONENT_STYLE);
         buttons.addComponent(cssPadding5PxHae);
 
         btnHae = UiBuilder.buttonSmallPrimary(null, T("hae"), new Button.ClickListener() {
