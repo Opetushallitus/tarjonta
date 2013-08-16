@@ -196,12 +196,12 @@ public class OrganisaatiohakuView extends VerticalLayout {
 
         organisaatioTyyppi = UiUtil.comboBox(panelTop, null,
                 new String[]{
-            OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
-            OrganisaatioTyyppi.OPPILAITOS.value(),
-            OrganisaatioTyyppi.OPETUSPISTE.value(),
-            OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
-            OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
-        });
+                    OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
+                    OrganisaatioTyyppi.OPPILAITOS.value(),
+                    OrganisaatioTyyppi.OPETUSPISTE.value(),
+                    OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
+                    OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
+                });
         organisaatioTyyppi.setNullSelectionAllowed(true);
         organisaatioTyyppi.setNullSelectionItemId(null);
         setOrgTyyppiItemCaptions();
@@ -217,18 +217,9 @@ public class OrganisaatiohakuView extends VerticalLayout {
 
         panelTop.addComponent(oppilaitosTyyppi);
 
-
         lakkautetut = UiUtil.checkbox(panelTop, T("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, T("naytaMyosSuunnitellut"));
         HorizontalLayout buttonsL = UiUtil.horizontalLayout();
-        searchB = UiUtil.buttonSmallSecodary(buttonsL, T("hae"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                searchOrganisaatios();
-            }
-        });
 
         tyhjennaB = UiUtil.buttonSmallSecodary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -246,6 +237,15 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 }
                 bind();
                 //initializeData();
+            }
+        });
+
+        searchB = UiUtil.buttonSmallPrimary(buttonsL, T("hae"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                searchOrganisaatios();
             }
         });
 
@@ -287,11 +287,11 @@ public class OrganisaatiohakuView extends VerticalLayout {
                     OrganisaatioPerustietoType tooltipOrg = (OrganisaatioPerustietoType) itemId;
                     return getClosestNimi(I18N.getLocale(), tooltipOrg);
                 }
-                
+
                 return null;
             }
         });
-        
+
         tree.addListener(new ItemClickEvent.ItemClickListener() {
             private static final long serialVersionUID = -2318797984292753676L;
 
@@ -364,7 +364,6 @@ public class OrganisaatiohakuView extends VerticalLayout {
         });
         //sort
         organisaatios = ordering.immutableSortedCopy(organisaatios);
-
 
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
             hc.addItem(curOrg);
@@ -465,7 +464,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
             presenter.selectOrganisaatio(item.getOid(), getOrganisaatioNimi(item),
-            		item.getLakkautusPvm()==null || item.getLakkautusPvm().after(new Date()));
+                    item.getLakkautusPvm() == null || item.getLakkautusPvm().after(new Date()));
         } else {
             presenter.unSelectOrganisaatio();
         }
@@ -474,10 +473,10 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private String getOrganisaatioNimi(final OrganisaatioPerustietoType item) {
         if (item.getNimiFi() != null) {
             return item.getNimiFi();
-        } else if (item.getNimiSv() != null ) {
+        } else if (item.getNimiSv() != null) {
             return item.getNimiSv();
 
-        }   else if (item.getNimiEn() != null) {
+        } else if (item.getNimiEn() != null) {
             return item.getNimiEn();
         }
         return null;
