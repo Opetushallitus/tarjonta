@@ -17,13 +17,11 @@
 </jsp:useBean>              
 
 <jsp:setProperty name="handler" property="message" value="unexpectedErrorPage"/>
-<jsp:setProperty name="handler" property="code" value="unexpectedErrorCode"/>
 <jsp:setProperty name="handler" property="toFrontPage" value="toFrontPage"/>
 
 <div class="notification">       
 <h3><jsp:getProperty name="handler" property="message"/></h3>
 <h3><a href="/"><jsp:getProperty name="handler" property="toFrontPage"/></a></h3>
-<p><jsp:getProperty name="handler" property="code"/></p>
 <%
 handler.logError(exception);
 %>

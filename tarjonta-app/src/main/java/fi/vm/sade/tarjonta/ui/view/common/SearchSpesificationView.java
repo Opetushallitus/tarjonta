@@ -15,11 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.event.ShortcutAction;
-import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
+import com.vaadin.event.FieldEvents.BlurEvent;
+import com.vaadin.event.FieldEvents.BlurListener;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -108,7 +111,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tfSearch.setNullRepresentation("");
         tfSearch.setPropertyDataSource(new NestedMethodProperty(model, "searchStr"));
         tfSearch.setWidth(230, UNITS_PIXELS);
-        tfSearch.setImmediate(true);
+        tfSearch.setImmediate(false);
+
         texFieldLayout.addComponent(new Label("&nbsp;", Label.CONTENT_XHTML));
         texFieldLayout.addComponent(tfSearch);
         searchSpecLayout.addComponent(texFieldLayout, CssHorizontalLayout.StyleEnum.LEFT);
@@ -118,6 +122,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tilatLayout.addComponent(tilatLabel);
         cbTilat = UiUtil.comboBox(null, null, getKoulutuksenTilat());
         cbTilat.setWidth("80px");
+        allowNulls(cbTilat, T("kaikkiTilat"));
         tilatLayout.addComponent(cbTilat);
         searchSpecLayout.addComponent(tilatLayout, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
 
@@ -125,9 +130,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         vuosiLayout.setSizeUndefined();
         Label vuosiLabel = UiUtil.label(null, T(I18N_VUOSI));
         vuosiLayout.addComponent(vuosiLabel);
-        cbVuosi = UiUtil.comboBox(null, null, new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"});
-        cbVuosi.setNullSelectionAllowed(true);
-        cbVuosi.setNullSelectionItemId(T(I18N_VUOSI + I18N_PROMPT));
+        cbVuosi = UiUtil.comboBox(null, null, new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"});
+        allowNulls(cbVuosi,  T(I18N_VUOSI + I18N_PROMPT));
         cbVuosi.setSizeUndefined();
         cbVuosi.setWidth("140px");
         vuosiLayout.addComponent(cbVuosi);
@@ -139,8 +143,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         Label kausiLabel = UiUtil.label(null, T(I18N_KAUSI));
         kausiLayout.addComponent(kausiLabel);
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
+        allowNulls(((ComboBox)kcKausi.getField()), T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setSizeUndefined();
-        kcKausi.getField().setNullSelectionAllowed(false);
         kcKausi.getField().setWidth("140px");
         kausiLayout.addComponent(kcKausi);
 
@@ -154,10 +158,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 tfSearch.setValue("");
-                cbTilat.select(T("kaikkiTilat"));
-                cbVuosi.select(cbVuosi.getNullSelectionItemId());
-                kcKausi.setValue(null);
-            }
+                cbTilat.select(null);
+                cbVuosi.select(null);
+                kcKausi.setValue(null);            }
         });
         CssHorizontalLayout cssPadding5PxHae = new CssHorizontalLayout();
         cssPadding5PxHae.addComponent(btnTyhjenna, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
@@ -169,10 +172,27 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 doSearch();
+                //Remove textfield enter-click listener, if any.
+                btnHae.removeClickShortcut();
             }
         });
 
-        btnHae.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        tfSearch.addListener(new FocusListener() {
+            private static final long serialVersionUID = -5924587297708382318L;
+
+            @Override
+            public void focus(FocusEvent event) {
+                btnHae.setClickShortcut(KeyCode.ENTER);
+            }
+        });
+        tfSearch.addListener(new BlurListener() {
+            private static final long serialVersionUID = 7429378966840902444L;
+
+            @Override
+            public void blur(BlurEvent event) {
+                btnHae.removeClickShortcut();
+            }
+        });
 
         buttons.addComponent(btnHae);
         searchSpecLayout.addComponent(buttons);
@@ -184,12 +204,28 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private String T(String key) {
         return i18nHelper.getMessage(key);
     }
+    
+    private void allowNulls(final ComboBox combo, String prompt) {
+        combo.setNullSelectionAllowed(true);
+        combo.setInputPrompt(prompt);
+        combo.setValue(null);
+        combo.addListener((ValueChangeListener) new ValueChangeListener() {
+            // this seems to make prompt visible immediately when "null" is selected
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                if (event.getProperty().getValue() == null) {
+                    combo.requestRepaint();
+                }
+
+            }
+        });
+        combo.setImmediate(true);
+    }
 
     private String[] getKoulutuksenTilat() {
-        String[] tilat = new String[TarjontaTila.values().length + 1];
-        tilat[0] = T("kaikkiTilat");
+        String[] tilat = new String[TarjontaTila.values().length];
         tilaMap = new HashMap<String, String>();
-        int counter = 1;
+        int counter = 0;
         for (TarjontaTila tila : TarjontaTila.values()) {
             String localizedTila = T(tila.value());
             tilaMap.put(localizedTila, tila.value());
@@ -206,15 +242,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private void doSearch() {
         LOG.info("doSearch()");
         model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ? (String) kcKausi.getValue() : null);
-        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null
-                && !cbVuosi.getNullSelectionItemId().equals(cbVuosi.getValue())
-                ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
-
-        String valittuTila = (String) cbTilat.getValue();
-        if (valittuTila != null && !valittuTila.equalsIgnoreCase(T("koulutuksenTilat"))) {
-            model.setKoulutuksenTila(tilaMap.get(valittuTila));
-        }
-
+        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
+        model.setKoulutuksenTila(cbTilat.getValue()!=null?tilaMap.get(cbTilat.getValue()):null);
+        
         fireEvent(new SearchSpesificationView.SearchEvent(model));
     }
 
