@@ -76,6 +76,7 @@ public class TarjontaLukioPresenter {
     public EditLukioKoulutusPerustiedotView perustiedotView;
     private EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView;
     private EditLukioKoulutusView editLukioKoulutusView;
+    private ShowKoulutusSummaryView summaryView;
 
     public TarjontaLukioPresenter() {
     }
@@ -193,7 +194,7 @@ public class TarjontaLukioPresenter {
      *
      * Open lukiokoulutus summary page with current komoto OID.
      *
-     * @param komotoOid
+
      */
     public void showSummaryKoulutusView() {
         final String komotoOid = getPerustiedotModel().getKomotoOid();
@@ -208,8 +209,14 @@ public class TarjontaLukioPresenter {
     public void showSummaryKoulutusView(final String komotoOid) {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID object cannot be null.");
         loadKomoto(komotoOid);
-        getPresenter().getRootView().changeView(new ShowKoulutusSummaryView(getPerustiedotModel().getLukiolinja().getNimi(), null));
+        summaryView = new ShowKoulutusSummaryView(getPerustiedotModel().getLukiolinja().getNimi(), null);
+        getPresenter().getRootView().changeView(summaryView);
     }
+
+    public void showRemoveHakukohdeFromLukioKoulutusDialog(String hakukohdeOid, String hakukohdeNimi) {
+       summaryView.showHakukohdeRemovalDialog(hakukohdeOid,hakukohdeNimi);
+    }
+
 
     private void loadKomoto(final String komotoOid) {
         if (komotoOid != null) {

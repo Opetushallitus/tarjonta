@@ -642,6 +642,25 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
     }
 
+    public void removeLukioHakukohdeFromKoulutus(String hakukohdeOid) {
+        try {
+            LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
+            req.setLisaa(false);
+            req.setHakukohdeOid(hakukohdeOid);
+            req.getKoulutusOids().add(getModel().getKoulutusLukioPerustiedot().getKomotoOid());
+            getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
+            HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+            hakukohde.setOid(hakukohdeOid);
+        } catch (Exception exp) {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
+                showKoulutusView.addErrorMsg("hakukohdeRemovalErrorMsg");
+            }
+        }
+        //getTarjontaAdminService().poistaHakukohde(hakukohde);
+        getLukioPresenter().showSummaryKoulutusView(getModel().getKoulutusLukioPerustiedot().getKomotoOid());
+        //showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
+    }
+
     public void removeKoulutusFromHakukohde(KoulutusOidNameViewModel koulutus) {
         int hakukohdeKoulutusCount = getModel().getHakukohde().getKoulukses().size();
         List<String> poistettavatKoulutukses = new ArrayList<String>();
@@ -1272,7 +1291,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     /**
      * TODO rename.
      *
-     * @param model
+
      * @return
      */
     public String resolveHakukohdeKoodistonimiFields() {
@@ -1706,6 +1725,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void showRemoveHakukohdeFromKoulutusDialog(String hakukohdeOid, String hakukohdeNimi) {
         showKoulutusView.showHakukohdeRemovalDialog(hakukohdeOid, hakukohdeNimi);
     }
+
 
     /**
      * Removal of a komoto object.

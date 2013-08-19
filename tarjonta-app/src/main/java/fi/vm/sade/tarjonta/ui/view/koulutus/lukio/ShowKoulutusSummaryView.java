@@ -16,12 +16,15 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.view.common.*;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusHakukohdeRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +58,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewM
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
-import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
-import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
-import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
@@ -137,9 +136,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         addLayoutSplit(vl);
         buildKuvailevatTiedot(vl);*/
         
-        //addLayoutSplit(vl);
-        //buildKoulutuksenHakukohteet(vl);
-        //addLayoutSplit(vl);
+
     }
     
     private VerticalLayout buildMainLayout(KoulutusLukioPerustiedotViewModel perustiedot, String lang) {
@@ -148,6 +145,9 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         buildPerustiedot(vl, perustiedot, "lukiolinja", perustiedot.getLukiolinja());
         addLayoutSplit(vl);
         buildKuvailevatTiedot(vl, lang);
+        addLayoutSplit(vl);
+        buildKoulutuksenHakukohteet(vl);
+        addLayoutSplit(vl);
         return vl;
     }
 
@@ -337,30 +337,30 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     }
 
 
-//    private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
-//        int numberOfApplicationTargets = _presenter.getModel().getKoulutusLukioPerustiedot().getKoulutuksenHakukohteet().size();
-//
-//        layout.addComponent(buildHeaderLayout(T("hakukohteet", numberOfApplicationTargets), T("luoUusiHakukohdeBtn"), new Button.ClickListener() {
-//            private static final long serialVersionUID = 5019806363620874205L;
-//
-//            @Override
-//            public void buttonClick(ClickEvent event) {
-//                List<String> koulutus = new ArrayList<String>();
-//                koulutus.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
-//                _presenter.showHakukohdeEditView(koulutus, null, null);
-//            }
-//        }));
-//
-//        CategoryTreeView categoryTree = new CategoryTreeView();
-//        categoryTree.setHeight("100px");
-//        categoryTree.setContainerDataSource(createHakukohdelistContainer(_presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet()));
-//        String[] visibleColumns = {"nimiBtn", "poistaBtn"};
-//        categoryTree.setVisibleColumns(visibleColumns);
-//        for (Object item : categoryTree.getItemIds()) {
-//            categoryTree.setChildrenAllowed(item, false);
-//        }
-//        layout.addComponent(categoryTree);
-//    }
+    private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
+        int numberOfApplicationTargets = _presenter.getModel().getKoulutusLukioPerustiedot().getKoulutuksenHakukohteet().size();
+
+        layout.addComponent(buildHeaderLayout(T("hakukohteet", numberOfApplicationTargets), T("luoUusiHakukohdeBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                List<String> koulutus = new ArrayList<String>();
+                koulutus.add(_presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid());
+                _presenter.showHakukohdeEditView(koulutus, null, null, null);
+            }
+        }));
+
+        CategoryTreeView categoryTree = new CategoryTreeView();
+        categoryTree.setHeight("100px");
+        categoryTree.setContainerDataSource(createHakukohdelistContainer(_presenter.getModel().getKoulutusLukioPerustiedot().getKoulutuksenHakukohteet()));
+        String[] visibleColumns = {"nimiBtn", "poistaBtn"};
+        categoryTree.setVisibleColumns(visibleColumns);
+        for (Object item : categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item, false);
+        }
+        layout.addComponent(categoryTree);
+    }
 
     public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
         final Window hakukohdeRemovalDialog = new Window();
@@ -370,7 +370,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 getWindow().removeWindow(hakukohdeRemovalDialog);
-                _presenter.removeHakukohdeFromKoulutus(hakukohdeOid);
+                _presenter.removeLukioHakukohdeFromKoulutus(hakukohdeOid);
 
             }
         }, new Button.ClickListener() {
@@ -388,20 +388,20 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
     }
 
-//    private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
-//        BeanItemContainer<ShowKoulutusHakukohdeRow> hakukohdeRows = new BeanItemContainer<ShowKoulutusHakukohdeRow>(ShowKoulutusHakukohdeRow.class);
-//        hakukohdeRows.addAll(getKoulutusHakukohdeRows(hakukohdes));
-//        return hakukohdeRows;
-//    }
+    private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
+        BeanItemContainer<ShowKoulutusHakukohdeRow> hakukohdeRows = new BeanItemContainer<ShowKoulutusHakukohdeRow>(ShowKoulutusHakukohdeRow.class);
+        hakukohdeRows.addAll(getKoulutusHakukohdeRows(hakukohdes));
+        return hakukohdeRows;
+    }
 
-//    private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
-//        List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
-//        for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-//            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
-//            rows.add(row);
-//        }
-//        return rows;
-//    }
+    private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
+        List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
+        for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
+            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel,OrganisaatioContext.getContext(_presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()),true);
+            rows.add(row);
+        }
+        return rows;
+    }
 
     private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
