@@ -35,7 +35,7 @@ public class HakuApplication extends AbstractWebApplication {
     protected void initApplication() {
         window = new HakuRootView();
         setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        setTheme("tarjonta");
     }
 
 }
