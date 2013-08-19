@@ -20,6 +20,7 @@ import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -42,12 +43,21 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private TarjontaPresenter tarjontaPresenter;
     private OrganisaatioContext context;
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusHakukohdeRow.class);
+    private boolean lukioKoulutus = false;
 
     public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context) {
         super();
         this.context = context;
         hakukohdeViewModel = model;
         buildButtons();
+    }
+
+    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context, boolean lukio) {
+        super();
+        this.context = context;
+        hakukohdeViewModel = model;
+        buildButtons();
+        lukioKoulutus = lukio;
     }
 
     private void buildButtons() {
@@ -63,7 +73,11 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                if (lukioKoulutus) {
+                tarjontaPresenter.getLukioPresenter().showRemoveHakukohdeFromLukioKoulutusDialog(hakukohdeViewModel.getHakukohdeOid(), hakukohdeViewModel.getHakukohdeNimi());
+                }else {
                 tarjontaPresenter.showRemoveHakukohdeFromKoulutusDialog(hakukohdeViewModel.getHakukohdeOid(), hakukohdeViewModel.getHakukohdeNimi());
+                }
             }
         });
         
