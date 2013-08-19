@@ -289,10 +289,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         //Build a label section, the data for labels are
         //received from koodisto (KOMO).
         koulutusaste = buildLabel(this, "koulutusaste");
-        opintoala = buildLabel(this, "opintoala");
         koulutusala = buildLabel(this, "koulutusala");
-        opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
+        opintoala = buildLabel(this, "opintoala");
         tutkintonimike = buildLabel(this, "tutkintonimike");
+        opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
         buildEmptyGridRow(this);
         tavoitteet = buildLabel(this, "tavoitteet");
         koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
