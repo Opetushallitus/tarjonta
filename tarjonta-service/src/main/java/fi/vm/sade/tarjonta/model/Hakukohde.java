@@ -112,13 +112,37 @@ public class Hakukohde extends BaseEntity {
     @ManyToOne(optional=true, fetch=FetchType.LAZY)
     private Hakuaika hakuaika;
     
+    @Column(name="hakuaikaAlkuPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date hakuaikaAlkuPvm;
+    
+    @Column(name="hakuaikaLoppuPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date hakuaikaLoppuPvm;
+    
     public Hakuaika getHakuaika() {
 		return hakuaika;
 	}
     
     public void setHakuaika(Hakuaika hakuaika) {
 		this.hakuaika = hakuaika;
-	}    
+	}
+    
+    public Date getHakuaikaAlkuPvm() {
+		return hakuaikaAlkuPvm;
+	}
+    
+    public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
+		this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+	}
+    
+    public Date getHakuaikaLoppuPvm() {
+		return hakuaikaLoppuPvm;
+	}
+    
+    public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
+		this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+	}
 
     /**
      * @return the koulutuses
