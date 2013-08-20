@@ -23,7 +23,7 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -42,7 +42,8 @@ import javax.validation.constraints.NotNull;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
+public class HakukohdeValintaKoeAikaEditView extends VerticalLayout {
+    private static final long serialVersionUID = 219009982510580340L;
 
 
     @Autowired
@@ -73,23 +74,13 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
 
     private Button lisaaBtn;
 
-    private VerticalLayout mainLayout;
-
     public HakukohdeValintaKoeAikaEditView() {
          buildLayout();
 
     }
 
     private void buildLayout() {
-        mainLayout = new VerticalLayout();
-
-        mainLayout.addComponent(buildOsoiteEditLayout());
-        //mainLayout.addComponent(buildValintakoeAikaLayout());
-
-
-
-
-        setCompositionRoot(mainLayout);
+        this.addComponent(buildOsoiteEditLayout());
     }
 
     private HorizontalLayout buildLisatietoLayout() {
@@ -114,7 +105,7 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         osoiteRiviTxt.setInputPrompt(T("HakukohdeValintakoeViewImpl.osoiteRivi"));
         osoiteAddLayout.addComponent(osoiteRiviTxt);
 
-        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
+        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_POSTINUMERO_URI);
         osoiteAddLayout.addComponent(postinumeroCombo);
 
         postitoimiPaikka = UiUtil.textField(null);
@@ -146,6 +137,7 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         });
 
         postinumeroCombo.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 if (tarjontaUIHelper != null) {

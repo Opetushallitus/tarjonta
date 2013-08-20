@@ -5,9 +5,7 @@
            xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
-
+	<xs:include schemaLocation="tarjonta.xsd"/>
 
     <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
     <xs:element name="listaaHakuVastaus" type="tns:ListHakuVastausTyyppi" />
@@ -72,6 +70,7 @@
             <xs:element minOccurs="0" maxOccurs="1" name="loppuen" type="xs:date" />
             <xs:element minOccurs="0" maxOccurs="1" name="hakuOid" type="xs:string"/>
             <xs:element minOccurs="0" maxOccurs="1" name="hakuSana" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="tila" type="tns:TarjontaTila"/>
             <xs:element minOccurs="0" maxOccurs="1" name="hakuSanaKielikoodi" type="xs:string" />
             <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenAlkamisKausi" type="xs:string"/>
             <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenAlkamisVuosi" type="xs:int"/>
@@ -115,6 +114,7 @@
             <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
             <xs:element name="koulutusOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
             <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:int"/>
+            <xs:element name="tilat" minOccurs="0" maxOccurs="1" type="tns:TarjontaTila"/>
             <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
@@ -148,12 +148,15 @@
             <xs:element name="nimi" minOccurs="0" maxOccurs="1" type="xs:string"/>
             <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
             <xs:element name="koulutusOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+            <xs:element name="koulutuksenTila" minOccurs="0" maxOccurs="1" type="tns:TarjontaTila"/>
             <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:int"/>
             <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
             <xs:element name="koulutusKoodi" minOccurs="0" maxOccurs="1" type="xs:string"/>
             <xs:element name="hakukohdeOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+
+
 
     <xs:complexType name="HaeKoulutuksetVastausTyyppi">
         <xs:annotation>

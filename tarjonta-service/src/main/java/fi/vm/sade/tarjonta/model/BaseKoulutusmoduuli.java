@@ -20,6 +20,8 @@ import java.util.Date;
 import javax.persistence.*;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.io.Serializable;
 
 /**
@@ -42,6 +44,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
     private TarjontaTila tila = TarjontaTila.LUONNOS;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="viimPaivitysPvm")
     private Date updated;
 
     @PreUpdate

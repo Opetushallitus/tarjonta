@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
+import java.math.BigDecimal;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
             hakukohde.setAlinHyvaksyttavaKeskiarvo(from.getAlinHyvaksyttavaKeskiarvo().doubleValue());
         }
 
-        if(from.getPainotettavatOppiaineet() != null) {
+        if (from.getPainotettavatOppiaineet() != null) {
             hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(from.getPainotettavatOppiaineet()));
         }
 
@@ -70,7 +71,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
             hakukohde.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
         }
         hakukohde.setLastUpdateDate(Calendar.getInstance().getTime());
-        
+
         return hakukohde;
     }
 
@@ -80,7 +81,9 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         for (PainotettavaOppiaineTyyppi oppiaineTyyppi : oppiaineet) {
             PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
             painotettavaOppiaine.setOppiaine(oppiaineTyyppi.getOppiaine());
-            painotettavaOppiaine.setPainokerroin(oppiaineTyyppi.getPainokerroin());
+
+
+            painotettavaOppiaine.setPainokerroin(new BigDecimal(Double.toString(oppiaineTyyppi.getPainokerroin()))); //use string
             painotettavaOppiaine.setVersion(oppiaineTyyppi.getVersion());
             if (oppiaineTyyppi.getPainotettavaOppiaineTunniste() != null) {
                 painotettavaOppiaine.setId(new Long(oppiaineTyyppi.getPainotettavaOppiaineTunniste()));
@@ -90,7 +93,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
 
         return painotettavatOppiaineet;
     }
-    
+
     private Osoite convertOsoite(OsoiteTyyppi osoiteTyyppi) {
         Osoite osoite = new Osoite();
 

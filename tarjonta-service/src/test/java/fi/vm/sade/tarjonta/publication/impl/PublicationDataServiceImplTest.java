@@ -41,10 +41,10 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  *
@@ -248,7 +248,7 @@ public class PublicationDataServiceImplTest {
 
         quickObjectStatusChange(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(false, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
     }
 
     /**

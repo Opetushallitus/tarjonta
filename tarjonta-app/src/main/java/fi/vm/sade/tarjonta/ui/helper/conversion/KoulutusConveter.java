@@ -466,6 +466,7 @@ public class KoulutusConveter {
         return model;
     }
 
+<<<<<<< HEAD
     public static MonikielinenTekstiModel convertToMonikielinenTekstiModel(final MonikielinenTekstiTyyppi tyyppi, final Locale locale) {
         MonikielinenTekstiModel m = new MonikielinenTekstiModel();
 
@@ -512,6 +513,8 @@ public class KoulutusConveter {
         return m;
     }
 
+=======
+>>>>>>> master
     public static Map<String, List<KoulutusmoduuliKoosteTyyppi>> komoCacheMapByKoulutuskoodi(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<String, List<KoulutusmoduuliKoosteTyyppi>> hashMap = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
 
@@ -531,6 +534,7 @@ public class KoulutusConveter {
 
     }
 
+<<<<<<< HEAD
     public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final List<KoodiMetadataType> languageMetaData) {
         Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
 
@@ -543,5 +547,15 @@ public class KoulutusConveter {
         }
 
         return teksti;
+=======
+    public static Set<KielikaannosViewModel> convertToKielikaannosViewModel(final MonikielinenTekstiTyyppi tyyppi) {
+        Set<KielikaannosViewModel> model = new HashSet<KielikaannosViewModel>();
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti : tyyppi.getTeksti()) {
+            model.add(new KielikaannosViewModel(teksti.getKieliKoodi(), teksti.getValue()));
+        }
+
+        return model;
+>>>>>>> master
     }
 }

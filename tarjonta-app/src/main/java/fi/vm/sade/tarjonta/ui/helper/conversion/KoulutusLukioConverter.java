@@ -20,9 +20,8 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+<<<<<<< HEAD
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -41,6 +41,8 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
+=======
+>>>>>>> master
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertListToSet;
@@ -89,7 +91,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
     /**
      * Full data copy from UI model to tyyppi.
      *
-     * @param model
+     * @param tarjontaModel
      * @return
      * @throws ExceptionMessage
      */
@@ -113,8 +115,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
+        perustiedot.setKoulutuksenHakukohteet(getKoulutusHakukohdes(koulutus));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
-            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
         }
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);
         KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus);
@@ -123,6 +126,24 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         //clear and set the loaded lukiolinja to combobox field data list
         perustiedot.getLukiolinjas().clear();
         perustiedot.getLukiolinjas().add(perustiedot.getLukiolinja());
+    }
+
+    private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi) {
+        List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
+
+        if (koulutusVastausTyyppi.getHakukohteet() != null) {
+            for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi:koulutusVastausTyyppi.getHakukohteet()) {
+                SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
+                hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
+                hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
+                hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
+                hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                hakukohteet.add(hakukohdeViewModel);
+            }
+
+        }
+
+        return hakukohteet;
     }
 
     private void convertToLukioKoulutusLisatiedotTyyppi(KoulutusTyyppi target, KoulutusLukioKuvailevatTiedotViewModel source) {
@@ -296,7 +317,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         }
 
         perustiedot.setKoulutuksenAlkamisPvm(
-                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva() : null);
 
         if (koulutus.getKesto() != null) {
             perustiedot.setSuunniteltuKesto(koulutus.getKesto().getArvo());

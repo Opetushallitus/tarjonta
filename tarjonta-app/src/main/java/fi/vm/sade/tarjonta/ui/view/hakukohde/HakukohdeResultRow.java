@@ -30,10 +30,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * The component and functionality for showing a hakukohde object in hakukohde
@@ -71,11 +72,13 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private CheckBox isSelected;
     private Window removeHakukohdeDialog;
     private boolean hakuStarted = false;
+    private String rowKey;
     /**
      * The presenter object for the component.
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
+    private List<HakukohdeTulos> children;
 
     public HakukohdeResultRow() {
         this.hakukohde = new HakukohdeTulos();
@@ -112,24 +115,26 @@ public class HakukohdeResultRow extends HorizontalLayout {
         final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        final TarjontaTila tila = hakukohde.getHakukohde().getTila();
+        final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context) && !hakuStarted) {
+        //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
+        //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
+        if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
+                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
 
-        if ((tila.equals(TarjontaTila.LUONNOS) || tila.equals(TarjontaTila.VALMIS)) 
-        		&& tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
-
+        
         if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelPublish(context)) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
         	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
@@ -313,9 +318,35 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     private void openHakukohdeView() {
         tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
-
-
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
+    }
+
+    /**
+     * @return the rowKey
+     */
+    public String getRowKey() {
+        return rowKey;
+    }
+
+    /**
+     * @param rowKey the rowKey to set
+     */
+    public void setRowKey(String rowKey) {
+        this.rowKey = rowKey;
+    }
+
+    /**
+     * @return the children
+     */
+    public List<HakukohdeTulos> getChildren() {
+        return children;
+    }
+
+    /**
+     * @param children the children to set
+     */
+    public void setChildren(List<HakukohdeTulos> children) {
+        this.children = children;
     }
 }

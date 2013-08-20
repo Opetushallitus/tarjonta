@@ -33,12 +33,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.constants.StyleEnum;
@@ -60,8 +60,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
     private Window confirmationWindow;
+    private @Value("${koodisto.suomi.uri:suomi}")
+    String suomiUri;
 
-    private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
         LOG.debug(this.getClass().getName() + "()");
@@ -69,7 +70,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-
         layout.removeAllComponents();
 
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
@@ -81,19 +81,21 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         //Build the layout
 
         //XXX oid not set
-        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
+        addNavigationButtons(OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
         Set<String> allLangs = getAllKielet();
         final TabSheet tabs = new TabSheet();
-        for (String lang:allLangs) {
-           ShowHakukohdeTab hakukohdeTab = new ShowHakukohdeTab(lang);
-           tabs.addTab(hakukohdeTab, tarjontaUIHelper.getKoodiNimi(lang));
-           if (lang.trim().equalsIgnoreCase(suomiUri)) {
-               tabs.setSelectedTab(hakukohdeTab);
-           }
+        for (String lang : allLangs) {
+            ShowHakukohdeTab hakukohdeTab = new ShowHakukohdeTab(lang);
+            tabs.addTab(hakukohdeTab, tarjontaUIHelper.getKoodiNimi(lang));
+            if (lang.trim().equalsIgnoreCase(suomiUri)) {
+                tabs.setSelectedTab(hakukohdeTab);
+            }
         }
         vl.addComponent(tabs);
+    }
 
-
+    public void showErrorMsg(String msg) {
+        getWindow().showNotification(T(msg), Window.Notification.TYPE_ERROR_MESSAGE);
     }
 
     private Set<String> getAllKielet() {
@@ -103,15 +105,14 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             kielet.add(kieli.getKielikoodi());
         }
         List<KielikaannosViewModel> valintakoeKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getValintaPerusteidenKuvaus();
-        for (KielikaannosViewModel kieli:valintakoeKielet) {
+        for (KielikaannosViewModel kieli : valintakoeKielet) {
             kielet.add(kieli.getKielikoodi());
         }
 
         return kielet;
     }
 
-
-    private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
+    private void addNavigationButtons(OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -136,13 +137,13 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         /*Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
         poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context));
@@ -159,11 +160,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 getWindow().removeWindow(confirmationWindow);
                 tarjontaPresenterPresenter.removeSelectedHakukohde();
-
-
             }
-        },
-                new Button.ClickListener() {
+        }, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -194,8 +192,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
                 getWindow().removeWindow(koulutusRemovalDialog);
                 tarjontaPresenterPresenter.removeKoulutusFromHakukohde(koulutus);
             }
-        },
-                new Button.ClickListener() {
+        }, new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -211,8 +208,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     private boolean checkHaunAlkaminen() {
         tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
-        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getPaattymisPvm();
-        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
+        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
+        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         Date tanaan = new Date();
         if (tanaan.after(haunAlkamisPvm) && tanaan.before(haunPaattymisPvm)) {
             return false;
@@ -220,8 +217,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             return true;
         }
     }
-
-
 
     public void addLayoutSplit(VerticalLayout layout) {
         VerticalSplitPanel split = new VerticalSplitPanel();
@@ -232,14 +227,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
         layout.addComponent(split);
     }
-
-    /*private void backFired() {
-        fireEvent(new BackEvent(this));
-    }
-
-    private void editFired() {
-        fireEvent(new EditEvent(this));
-    }*/
 
     /**
      * Fired when Back is pressed.

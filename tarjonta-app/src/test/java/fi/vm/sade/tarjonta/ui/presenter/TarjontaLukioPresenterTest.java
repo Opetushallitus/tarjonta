@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -73,9 +74,10 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
     private KoulutusLukioPerustiedotViewModel perustiedot;
     private KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot;
     private OrganisaatioDTO orgDto;
-    private TarjontaUIHelper tarjontaUiHelper;
+    private TarjontaUIHelper tarjontaUiHelperMock;
     private YhteyshenkiloModel yhteyshenkiloModel;
     private TarjontaPresenter tarjontaPresenter;
+    private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
 
     public TarjontaLukioPresenterTest() {
     }
@@ -101,7 +103,10 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
 
         tarjontaPresenter = new TarjontaPresenter();
         tarjontaPresenter.getNavigationOrganisation().setOrganisationOid(ORGANISAATIO_OID);
-        tarjontaPresenter.setRootView(new TarjontaRootView());
+        TarjontaRootView tarjontaRootView = new TarjontaRootView();
+        Whitebox.setInternalState(tarjontaRootView, "_presenter", tarjontaPresenter);
+        tarjontaPresenter.setRootView(tarjontaRootView);
+
         instance = new TarjontaLukioPresenter();
 
         koulutusLukioConverter = new KoulutusLukioConverter();
@@ -117,10 +122,12 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         koulutusKoodisto = new KoulutusKoodistoConverter();//createMock(KoulutusKoodistoConverter.class);
-        tarjontaUiHelper = createMock(TarjontaUIHelper.class);
+        tarjontaUiHelperMock = createMock(TarjontaUIHelper.class);
 
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
+        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
 
+        Whitebox.setInternalState(koulutusKoodisto, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(koulutusLukioConverter, "oidService", oidServiceMock);
@@ -132,7 +139,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         Whitebox.setInternalState(tarjontaPresenter, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
-        Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelper);
+        Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelperMock);
 
         tarjontaPresenter.getTarjoaja().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
 
@@ -238,8 +245,13 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+<<<<<<< HEAD
         expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
         expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
+=======
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
+>>>>>>> master
 
         /*
          * replay
@@ -248,7 +260,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         replay(tarjontaAdminServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
 
         /*
          * Presenter method call
@@ -333,13 +345,18 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         /*
          * Expect
          */
-        
+
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+<<<<<<< HEAD
         expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
         expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
+=======
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
+>>>>>>> master
 
 
         /*
@@ -349,7 +366,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(organisaatioServiceMock);
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
 
         /*
          * Presenter method call
@@ -493,6 +510,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
 
+<<<<<<< HEAD
         expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiTypes(LUKIOLINJA));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiTypes(KOULUTUSASTE));
@@ -502,14 +520,29 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
+=======
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiType(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiType(LUKIOLINJA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiType(KOULUTUSASTE));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiType(OPINTOALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
+        //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiType(KOULUTUSLAJI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiType(LAAJUUS_YKSIKKO));
+        //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiType(LAAJUUS_ARVO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiType(KOULUTUSALA));
+
+
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
+>>>>>>> master
 
         /*
          * replay
          */
-        replay(tarjontaUiHelper);
+        replay(tarjontaUiHelperMock);
         replay(oidServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
+        replay(tarjontaKoodistoHelperMock);
 
         /*
          * Presenter method call
@@ -520,10 +553,11 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         /*
          * verify
          */
-        verify(tarjontaUiHelper);
+        verify(tarjontaUiHelperMock);
         verify(oidServiceMock);
         verify(organisaatioServiceMock);
         verify(tarjontaPublicServiceMock);
+        verify(tarjontaKoodistoHelperMock);
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = instance.getPerustiedotModel();
         assertEquals(KOMOTO_OID, perustiedotModel.getKomotoOid());

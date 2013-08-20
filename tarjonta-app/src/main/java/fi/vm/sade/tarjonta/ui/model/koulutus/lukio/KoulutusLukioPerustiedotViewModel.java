@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -57,6 +58,9 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     protected String opsuLinkki;
     protected YhteyshenkiloModel yhteyshenkilo;
+
+
+    private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
 
     /*
      * cache maps
@@ -176,7 +180,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     /**
      * Initialize model with all default values.
      *
-     * @param status of koulutus document
+
      */
     public void clearModel() {
 
@@ -403,4 +407,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         this.lukiolinja = lukiolinja;
     }
 
+    public List<SimpleHakukohdeViewModel> getKoulutuksenHakukohteet() {
+        return koulutuksenHakukohteet;
+    }
+
+    public void setKoulutuksenHakukohteet(List<SimpleHakukohdeViewModel> koulutuksenHakukohteet) {
+        this.koulutuksenHakukohteet = koulutuksenHakukohteet;
+    }
 }

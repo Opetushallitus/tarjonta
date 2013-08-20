@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
@@ -30,6 +31,7 @@ import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 
 /**
  * For editing "Haku" in the UI.
@@ -59,6 +61,7 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiFi;
     private String nimiSe;
     private String nimiEn;
+    private transient MultiLingualTextImpl mlNimi = new MultiLingualTextImpl(this, "mlNimi");
     private HakuTyyppi hakuDto;
     private String haunTila;
     private Date viimeisinPaivitysPvm;
@@ -285,6 +288,7 @@ public class HakuViewModel extends BaseUIViewModel {
         Collections.sort(sisaisetHakuajat, new Comparator<HakuaikaViewModel>() {
         	@Override
         	public int compare(HakuaikaViewModel o1, HakuaikaViewModel o2) {
+                if (o1 != null && o2 != null) {
         		int ret = o1.getAlkamisPvm().compareTo(o2.getAlkamisPvm());
         		if (ret==0) {
         			return ret;
@@ -299,7 +303,15 @@ public class HakuViewModel extends BaseUIViewModel {
             			return ret;
             		}
         		}
+
+                if (o1.getHakuaikaOid() != null && o2.getHakuaikaOid() != null) {
         		return o1.getHakuaikaOid().compareTo(o2.getHakuaikaOid());
+                }else {
+                    return 0;
+                }
+                } else {
+                    return 0;
+                }
         	}
 		});
 
@@ -356,7 +368,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiFi
      */
-    public String getNimiFi() {
+    public String getMlNimiFi() {
         nimiFi = this.getKielistettyNimiFromDto(BasicLanguage.FI);
         return nimiFi;
     }
@@ -364,7 +376,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiFi the nimiFi to set
      */
-    public void setNimiFi(String nimiFi) {
+    public void setMlNimiFi(String nimiFi) {
         setKielistettyNimiToDto(nimiFi, BasicLanguage.FI);
         this.nimiFi = nimiFi;
     }
@@ -372,7 +384,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiSe
      */
-    public String getNimiSe() {
+    public String getMlNimiSv() {
         nimiSe = getKielistettyNimiFromDto(BasicLanguage.SV);
         return nimiSe;
     }
@@ -380,7 +392,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiSe the nimiSe to set
      */
-    public void setNimiSe(String nimiSe) {
+    public void setMlNimiSv(String nimiSe) {
         setKielistettyNimiToDto(nimiSe, BasicLanguage.SV);
         this.nimiSe = nimiSe;
     }
@@ -388,7 +400,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the nimiEn
      */
-    public String getNimiEn() {
+    public String getMlNimiEn() {
         nimiEn = getKielistettyNimiFromDto(BasicLanguage.EN);
         return nimiEn;
     }
@@ -396,11 +408,19 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @param nimiEn the nimiEn to set
      */
-    public void setNimiEn(String nimiEn) {
+    public void setMlNimiEn(String nimiEn) {
 
         setKielistettyNimiToDto(nimiEn, BasicLanguage.EN);
         this.nimiEn = nimiEn;
     }
+    
+    public void setMlNimi(MultiLingualTextImpl mlNimi) {
+		this.mlNimi = mlNimi;
+	}
+    
+    public MultiLingualTextImpl getMlNimi() {
+		return mlNimi;
+	}
 
     /**
      * @param hakuValmis the hakuValmis to set
@@ -411,7 +431,8 @@ public class HakuViewModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
-        return getKielistettyNimiFromDto(BasicLanguage.toLanguageEnum(I18N.getLocale().getLanguage()));
+
+        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(),this);
     }
 
     @Override
@@ -479,6 +500,7 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     private String getKielistettyNimiFromDto(BasicLanguage kieliKoodi) {
+
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
 
             if (haunNimi.getKielikoodi().equals(kieliKoodi.getLowercaseLanguageCode())) {

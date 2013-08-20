@@ -5,13 +5,14 @@
        xmlns:cxf="http://cxf.apache.org/core"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-           http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+           http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
            http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
     <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade" />
+    <context:component-scan base-package="fi.vm.sade.tarjonta.data" />
 
     <context:property-placeholder
         location="classpath:tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
@@ -63,9 +64,6 @@ DISABLED    <jaxws:client id="oidService" serviceClass="fi.vm.sade.oid.service.O
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${OrganisaatioService.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>         
-    <jaxws:client id="userService"
-                  serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${UserService.uri:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 
     <http-conf:conduit name="*.http-conduit">
         <!-- extended receive timeout due to koodisto updates take a long time if there are lots of koodis -->

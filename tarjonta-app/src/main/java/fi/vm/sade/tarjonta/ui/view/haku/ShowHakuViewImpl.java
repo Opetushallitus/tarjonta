@@ -43,7 +43,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -52,7 +51,6 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -79,7 +77,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
     private final String datePattern = "dd.MM.yyyy HH:mm";
 
     public ShowHakuViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
-        super(VerticalLayout.class, pageTitle, message, dto);
+        super(VerticalLayout.class, pageTitle, "", dto);
     }
 
     private void addItemToGrid(final GridLayout grid,
@@ -140,8 +138,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         buildLayoutMiddleTop(layout);
         //addLayoutSplit();
         //buildLayoutMiddleMid2(layout);
-        addLayoutSplit();
-        buildLayoutMiddleBottom(layout);
+        //addLayoutSplit();
+        //buildLayoutMiddleBottom(layout);
         addLayoutSplit();
     }
 
@@ -220,7 +218,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                          hakuPresenter.showHakuEdit(hakuPresenter.getHakuModel());
                     }
                 }
-                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanEditHaku()));
+                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanUpdateHaku()));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -234,10 +232,11 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         addItemToGrid(grid, "HaunTunniste", model.getHaunTunniste());
         addItemToGrid(grid ,"Hakuaika", _tarjontaUIHelper.formatDate(model.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(model.getPaattymisPvm()));
         if (model.getSisaisetHakuajat() != null && model.getSisaisetHakuajat().size() > 1) {
-            addItemToGrid(grid,"Hakuajat","");
+            VerticalLayout hakuajatArea = UiUtil.verticalLayout();
             for (HakuaikaViewModel hakuaika: model.getSisaisetHakuajat()) {
-                addItemToGrid(grid,null,((hakuaika.getHakuajanKuvaus() != null) ? hakuaika.getHakuajanKuvaus() + ", " : "") + _tarjontaUIHelper.formatDate(hakuaika.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(hakuaika.getPaattymisPvm()));
+                UiUtil.label(hakuajatArea, ((hakuaika.getHakuajanKuvaus() != null) ? hakuaika.getHakuajanKuvaus() + ", " : "") + _tarjontaUIHelper.formatDate(hakuaika.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(hakuaika.getPaattymisPvm()));
             }
+            addItemToGrid(grid, "Hakuajat", hakuajatArea);
         }
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()
                 ? T("KaytetaanJarjestelmanHakulomaketta")
@@ -281,7 +280,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                           ShowHakuViewImpl.this.getWindow().showNotification("Ei toteutettu");
                     }
                 }
-                ,null , hakuPresenter.getPermission().userCanEditHaku()));
+                ,null , hakuPresenter.getPermission().userCanUpdateHaku()));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");

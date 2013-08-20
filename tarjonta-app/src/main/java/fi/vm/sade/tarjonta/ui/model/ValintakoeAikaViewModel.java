@@ -15,39 +15,55 @@ package fi.vm.sade.tarjonta.ui.model;/*
  * European Union Public Licence for more details.
  */
 
+
 import java.util.Date;
+import java.util.UUID;
 
 /**
- * Created by: Tuomas Katva
- * Date: 23.1.2013
+ * Created by: Tuomas Katva Date: 23.1.2013
  */
 public class ValintakoeAikaViewModel {
-
+    private String modelId; //only for ui use
     private String valintakoeAikaTiedot;
-
     private String osoiteRivi;
     private String postinumero;
     private String postitoimiPaikka;
-
     private Date alkamisAika;
     private Date paattymisAika;
 
+    public ValintakoeAikaViewModel() {
+        modelId = String.valueOf(UUID.randomUUID());
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ValintakoeAikaViewModel that = (ValintakoeAikaViewModel) o;
 
-        if (alkamisAika != null ? !alkamisAika.equals(that.alkamisAika) : that.alkamisAika != null) return false;
-        if (osoiteRivi != null ? !osoiteRivi.equals(that.osoiteRivi) : that.osoiteRivi != null) return false;
-        if (paattymisAika != null ? !paattymisAika.equals(that.paattymisAika) : that.paattymisAika != null)
+        if (alkamisAika != null ? !alkamisAika.equals(that.alkamisAika) : that.alkamisAika != null) {
             return false;
-        if (postinumero != null ? !postinumero.equals(that.postinumero) : that.postinumero != null) return false;
-        if (postitoimiPaikka != null ? !postitoimiPaikka.equals(that.postitoimiPaikka) : that.postitoimiPaikka != null)
+        }
+        if (osoiteRivi != null ? !osoiteRivi.equals(that.osoiteRivi) : that.osoiteRivi != null) {
             return false;
-        if (valintakoeAikaTiedot != null ? !valintakoeAikaTiedot.equals(that.valintakoeAikaTiedot) : that.valintakoeAikaTiedot != null)
+        }
+        if (paattymisAika != null ? !paattymisAika.equals(that.paattymisAika) : that.paattymisAika != null) {
             return false;
+        }
+        if (postinumero != null ? !postinumero.equals(that.postinumero) : that.postinumero != null) {
+            return false;
+        }
+        if (postitoimiPaikka != null ? !postitoimiPaikka.equals(that.postitoimiPaikka) : that.postitoimiPaikka != null) {
+            return false;
+        }
+        if (valintakoeAikaTiedot != null ? !valintakoeAikaTiedot.equals(that.valintakoeAikaTiedot) : that.valintakoeAikaTiedot != null) {
+            return false;
+        }
 
         return true;
     }
@@ -109,5 +125,23 @@ public class ValintakoeAikaViewModel {
 
     public void setPaattymisAika(Date paattymisAika) {
         this.paattymisAika = paattymisAika;
+    }
+
+    /**
+     * Only for ui use.
+     *
+     * @return the modelId
+     */
+    public String getModelId() {
+        return modelId;
+    }
+
+    /**
+     * Only for ui use.
+     *
+     * @param modelId the modelId to set
+     */
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
     }
 }

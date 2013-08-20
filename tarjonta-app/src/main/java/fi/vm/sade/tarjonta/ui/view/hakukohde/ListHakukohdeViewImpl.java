@@ -27,36 +27,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Tree;
+import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.tarjonta.ui.view.koulutus.MultipleKoulutusRemovalDialog;
-import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -68,6 +64,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = false)
 public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukohdeView {
 
+    private static final int MAX_PARENT_ROWS = 100;
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_PVM = "Ajankohta";
@@ -94,28 +91,26 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * TreeTable component to display the Hakukohde objects in a
      * grouped/hierarchical manner.
      */
-    private CategoryTreeView categoryTree;
+    private TreeTable categoryTree;
     /**
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
-    
     private TarjontaDialogWindow hakukohdeDialog;
-    
     private transient I18NHelper i18n = new I18NHelper(this);
     /**
      * Presenter object for the Hakukohde listing.
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    @Autowired(required = true)
-    private TarjontaUIHelper _tarjontaUIHelper;
     private boolean attached = false;
+    private Set<Map.Entry<String, List<HakukohdeTulos>>> resultSet;
+    private ErrorMessage errorView;
 
     public ListHakukohdeViewImpl() {
         //Initialization of the view layout
-        setWidth(UiConstant.PCT100);
-
+        setSizeFull();
+        setMargin(true);
     }
 
     @Override
@@ -128,10 +123,85 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         attached = true;
 
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
-        HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
-        addComponent(buildMiddleResultLayout);
+        addMiddleResultLayout();
 
+        errorView = new ErrorMessage();
+        addComponent(errorView);
         //Adding the select all checkbox.
+        addSelectAllButton();
+
+        presenter.setHakukohdeListView(this);
+    }
+
+    /*
+     *  Adding the actual hakukohde-listing component.
+     */
+    private void addAndRebuildTutkintoResultList() {
+        if (categoryTree != null) {
+            this.removeComponent(categoryTree);
+            categoryTree = null;
+        }
+
+
+
+        categoryTree = new CategoryTreeView();
+        categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
+        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
+
+        categoryTree.setColumnExpandRatio(COLUMN_A, 1.9f);
+        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.4f);
+        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
+        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
+        categoryTree.addListener(new Tree.ExpandListener() {
+            private static final long serialVersionUID = 7555216006146778964L;
+
+            @Override
+            public void nodeExpand(Tree.ExpandEvent event) {
+                /*
+                 * LAZY CHILD DATA LOADING
+                 */
+
+                if (resultSet == null || event == null) {
+                    LOG.error("An unknown problem in nodeExpand.");
+                    return;
+                }
+
+                Item item = categoryTree.getItem(event.getItemId());
+                
+                if (item.getItemProperty(COLUMN_A)==null) {
+                	return;
+                }
+                
+                HakukohdeResultRow row = (HakukohdeResultRow) item.getItemProperty(COLUMN_A).getValue();
+                categoryTree.getParent(event);
+                for (HakukohdeTulos curHakukohde : row.getChildren()) {
+                    HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
+                    categoryTree.addItem(curHakukohde);
+                    categoryTree.setParent(curHakukohde, event.getItemId());
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
+                    categoryTree.setChildrenAllowed(curHakukohde, false);
+                }
+                setPageLength(categoryTree.getItemIds().size());
+            }
+        });
+        categoryTree.setSizeFull();
+        addComponent(categoryTree);
+        setExpandRatio(categoryTree, 1f);
+
+    }
+
+    private void addSelectAllButton() {
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
         valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
@@ -140,49 +210,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-
                 toggleHakuSelections(valKaikki.booleanValue());
-
             }
         });
         wrapper.addComponent(valKaikki);
-
         addComponent(wrapper);
-
-        //Adding the actual Hakukohde-listing component.
-        categoryTree = new CategoryTreeView();
-        addComponent(categoryTree);
-        setHeight(Sizeable.SIZE_UNDEFINED, 0);
-
-        categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
-        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
-        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
-
-        categoryTree.setColumnExpandRatio(COLUMN_A, 1.9f);
-        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.4f);
-        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
-        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
-
-
-        setExpandRatio(wrapper, 0.07f);
-        setExpandRatio(categoryTree, 0.93f);
-        setMargin(true);
-
-        presenter.setHakukohdeListView(this);
-    }
-
-    /**
-     * Sets the datasource for the hierarchical listing of Hakukohde objects.
-     */
-    public void setDataSource() {
-        presenter.setHakukohdeListView(this);
-        categoryTree.removeAllItems();
-        categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
     /**
@@ -193,37 +225,31 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * @return the hierarchical container for Hakukokhde listing.
      */
     private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
-        Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
+        resultSet = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
         hc.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
-        hc.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
+        hc.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
-        for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
-            LOG.debug("getTreeDataSource()" + e.getKey());
-            HakukohdeResultRow rowStyle = new HakukohdeResultRow();
-
-            Object rootItem = hc.addItem();
-
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
-
-            for (HakukohdeTulos curHakukohde : e.getValue()) {
-                HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
-                hc.addItem(curHakukohde);
-                hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
-                hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
-                hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
-                hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                hc.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
-                hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
-
-                hc.setChildrenAllowed(curHakukohde, false);
+        int index = 0;
+        for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
+            if (index > MAX_PARENT_ROWS) {
+                //A quick hack, it would be great, if data was limited in back-end service.
+                errorView.addError(I18N.getMessage("liianMontaHakutulosta"));
+                break;
             }
+            //LOG.debug("getTreeDataSource()" + e.getKey());
+
+            HakukohdeResultRow rowStyle = new HakukohdeResultRow();
+            rowStyle.setRowKey(e.getKey());
+            rowStyle.setChildren(e.getValue());
+            Object rootItem = hc.addItem();
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
+            index++;
         }
         return hc;
     }
@@ -238,7 +264,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                     retval = teksti.getValue();
                 }
             }
-            return  retval;
+            return retval;
         } else if (country.trim().equalsIgnoreCase("sv")) {
             for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
                 if (teksti.getKieliKoodi().equalsIgnoreCase("sv")) {
@@ -246,8 +272,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 }
             }
             return retval;
-        }
-        else if (country.trim().equalsIgnoreCase("en")) {
+        } else if (country.trim().equalsIgnoreCase("en")) {
             for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
                 if (teksti.getKieliKoodi().equalsIgnoreCase("en")) {
                     retval = teksti.getValue();
@@ -263,7 +288,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 }
             }
             if (retval.trim().equalsIgnoreCase("")) {
-              retval =  monikielinenTekstiTyyppi.getTeksti().get(0).getValue();
+                retval = monikielinenTekstiTyyppi.getTeksti().get(0).getValue();
             }
         }
 
@@ -298,7 +323,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
         String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
-        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+        for (Nimi curNimi : koodistoKoodiTyyppi.getNimi()) {
             if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
                 return curNimi.getValue();
             }
@@ -318,6 +343,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(item, COLUMN_A).getValue());
             curRow.getIsSelected().setValue(selected);
         }
+        setPageLength(hc.getItemIds().size());
     }
 
     /**
@@ -325,34 +351,29 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      *
      * @return
      */
-    private HorizontalLayout buildMiddleResultLayout() {
+    private void addMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
-
-        return layout;
+        addComponent(layout);
     }
-    
+
     /**
      * Showing the confirmation dialog for removing multiple hakukohde objects.
      *
      */
     private void showRemoveDialog() {
-        MultipleHakukohdeRemovalDialog removeDialog = new  MultipleHakukohdeRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
+        MultipleHakukohdeRemovalDialog removeDialog = new MultipleHakukohdeRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
         hakukohdeDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
         getWindow().addWindow(hakukohdeDialog);
     }
-    
+
     public void closeRemoveDialog() {
-    	if (hakukohdeDialog != null) {
-    		getWindow().removeWindow(hakukohdeDialog);
-    	}
+        if (hakukohdeDialog != null) {
+            getWindow().removeWindow(hakukohdeDialog);
+        }
     }
 
     /**
@@ -371,9 +392,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     @Override
     public void reload() {
+        errorView.resetErrors();
         clearAllDataItems();
-        //this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
+        setPageLength(categoryTree.getItemIds().size());
     }
 
     @Override
@@ -386,13 +408,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     @Override
     public void clearAllDataItems() {
-        categoryTree.removeAllItems();
+        addAndRebuildTutkintoResultList();
     }
-    /*
-    public void togglePoistaB(boolean b) {
-    	poistaB.setEnabled(b);
-    }*/
-    
+
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
@@ -403,5 +421,19 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             getWindow().removeWindow(hakukohdeDialog);
             hakukohdeDialog = null;
         }
+    }
+
+    /**
+     * Refresh layout view.
+     */
+    public void refreshLayout() {
+        if (categoryTree != null) {
+            setWidth("100%");
+            categoryTree.setWidth("100%");
+        }
+    }
+
+    public void setPageLength(int pageLength) {
+        categoryTree.setPageLength(pageLength + 1);
     }
 }

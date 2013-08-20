@@ -19,9 +19,9 @@ import com.google.common.base.Preconditions;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +42,11 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
     private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeKoulutusRow.class);
+    private boolean canRemoveKoulutus;
 
-    public ShowHakukohdeKoulutusRow(KoulutusOidNameViewModel koulutusOidNameViewModel) {
+    public ShowHakukohdeKoulutusRow(KoulutusOidNameViewModel koulutusOidNameViewModel, boolean canRemoveKoulutus) {
         this.koulutusOidNameViewModel = koulutusOidNameViewModel;
+        this.canRemoveKoulutus = canRemoveKoulutus;
         buildBtns();
     }
 
@@ -58,7 +60,7 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
             }
         });
         nimiBtn.setStyleName("link-row");
-        
+        if (canRemoveKoulutus) {
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -68,11 +70,13 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
             }
         });
         poistaBtn.setStyleName("link-row");
-        
+        }
         //button permissions:
         Preconditions.checkNotNull(tarjontaPresenter, "Tarjonta presenter cannot be null");
         final OrganisaatioContext context = OrganisaatioContext.getContext(tarjontaPresenter.getTarjoaja().getSelectedOrganisationOid());
+        if (poistaBtn != null) {
         poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanUpdateHakukohde(context));
+        }
     }
     //TODO: Remove this when button logic is implemented
 

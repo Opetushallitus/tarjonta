@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.mysema.query.annotations.QueryProjection;
 
-import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * Entity containing all fields from database needed for indexing

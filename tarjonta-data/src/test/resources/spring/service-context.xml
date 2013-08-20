@@ -101,8 +101,5 @@ DISABLED <jaxws:client id="oidService" serviceClass="fi.vm.sade.oid.service.OIDS
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${OrganisaatioService.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>         
-    <jaxws:client id="userService"
-                  serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${UserService.uri:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 
 </beans>

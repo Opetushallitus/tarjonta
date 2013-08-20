@@ -15,10 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.PropertyFormatter;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.AbstractValidator;
 import com.vaadin.data.validator.CompositeValidator;
+import com.vaadin.data.validator.DoubleValidator;
 import com.vaadin.data.validator.IntegerValidator;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.AbstractLayout;
@@ -28,19 +31,24 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import static fi.vm.sade.vaadin.util.UiUtil.textField;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +60,14 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author jani
  * @author mlyly
  */
-
 @Configurable
 public class UiBuilder extends UiUtil {
 
+    private static final String TWO_DIGIT_FORMAT = "#0.##";
+    private static final char FALLBACK_DECIMAL_CHAR = '.';
+    private static final String FALLBACK_DECIMAL_MARK = FALLBACK_DECIMAL_CHAR + "";
     @Autowired
-    private WidgetFactory bean;
-
+    private transient WidgetFactory bean;
     public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             + "Donec molestie neque non enim lobortis sed scelerisque ante lacinia. Donec ut "
             + "justo non lectus ultricies porttitor. Praesent ultrices eros eget nulla "
@@ -89,6 +98,7 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
+
     /**
      * Default field value as uri and versio formatter for koodisto components
      * NOTE: Value is object of type "KoodiUriAndVersioType".
@@ -157,27 +167,27 @@ public class UiBuilder extends UiUtil {
         }
     };
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, true);
     }
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, uriWithVersion);
     }
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, true);
     }
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, uriWithVersion);
     }
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, true);
     }
 
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, uriWithVersion);
     }
 
@@ -197,7 +207,7 @@ public class UiBuilder extends UiUtil {
      * @param uriWithVersion
      * @return
      */
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, boolean uriWithVersion) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, uriWithVersion);
     }
 
@@ -211,7 +221,7 @@ public class UiBuilder extends UiUtil {
      * @param prompt
      * @return
      */
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, true);
     }
 
@@ -226,7 +236,7 @@ public class UiBuilder extends UiUtil {
      * @param cb
      * @return
      */
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, cb, true);
     }
 
@@ -247,7 +257,7 @@ public class UiBuilder extends UiUtil {
      * @param uriWithVersion
      * @return
      */
-    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
+    public KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
         // Koodisto displayed in ComboBox
 
         ComboBox combo = (cb == null) ? comboBox(null, null, null) : cb;
@@ -297,7 +307,7 @@ public class UiBuilder extends UiUtil {
      * value
      * @return created component
      */
-    public  KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
+    public KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
 
         // Koodisto displayed in TwinColSelect
         TwinColSelect c = twinColSelect();
@@ -305,7 +315,7 @@ public class UiBuilder extends UiUtil {
         // Only multiple (Set<String>) values allowed!
         c.setMultiSelect(true);
 
-        final KoodistoComponent kc =bean.createComponent(koodistoUri);
+        final KoodistoComponent kc = bean.createComponent(koodistoUri);
 
         // Wire koodisto to combobox
         kc.setField(c);
@@ -329,7 +339,7 @@ public class UiBuilder extends UiUtil {
      * @param koodistoUri
      * @return
      */
-    public  KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
+    public KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
         return koodistoTwinColSelectUri(layout, koodistoUri, true);
     }
 
@@ -345,7 +355,7 @@ public class UiBuilder extends UiUtil {
      * value
      * @return
      */
-    public  KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
+    public KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
 
         final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri, uriWithVersion);
 
@@ -364,7 +374,7 @@ public class UiBuilder extends UiUtil {
      * @param expression
      * @return
      */
-    public  KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+    public KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
         return koodistoTwinColSelect(layout, koodistoUri, psi, expression, true);
     }
 
@@ -377,7 +387,7 @@ public class UiBuilder extends UiUtil {
      * @param expression
      * @return
      */
-    public  OphTokenField koodistoTokenField(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+    public OphTokenField koodistoTokenField(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
 
         KoodistoComponent kc = koodistoComboBox(null, koodistoUri);
         kc.setImmediate(true);
@@ -416,13 +426,13 @@ public class UiBuilder extends UiUtil {
     }
 
     public static TextField integerField(final AbstractComponentContainer layout,
-                                         final PropertysetItem psi,
-                                         final String expression,
-                                         final String caption,
-                                         final String prompt,
-                                         final int minValue,
-                                         final int maxValue,
-                                         final String errorMessage) {
+            final PropertysetItem psi,
+            final String expression,
+            final String caption,
+            final String prompt,
+            final int minValue,
+            final int maxValue,
+            final String errorMessage) {
 
         TextField tf = textField(layout, psi, expression, caption, prompt);
 
@@ -432,13 +442,15 @@ public class UiBuilder extends UiUtil {
         }
 
         cv.addValidator(new IntegerValidator(errorMessage));
-        cv.addValidator(new AbstractValidator(errorMessage){
+        cv.addValidator(new AbstractValidator(errorMessage) {
+            private static final long serialVersionUID = -7750387119487308450L;
+
             @Override
             public boolean isValid(Object value) {
                 Integer v;
                 if (value instanceof Integer) {
                     v = (Integer) value;
-                } else if(value instanceof String) {
+                } else if (value instanceof String) {
                     v = Integer.parseInt((String) value);
                 } else {
                     return false;
@@ -453,4 +465,96 @@ public class UiBuilder extends UiUtil {
         return tf;
     }
 
+    public static TextField doubleField(final AbstractComponentContainer layout,
+            final PropertysetItem psi,
+            final String expression,
+            final String caption,
+            final String prompt,
+            final double minValue,
+            final double maxValue,
+            final String errorMessage,
+            final Locale locale) {
+        Preconditions.checkNotNull(expression, "PropertysetItem object cannot be null.");
+        Preconditions.checkNotNull(expression, "Expression (property field name) cannot be null.");
+        Preconditions.checkNotNull(errorMessage, "Error message cannot be null.");
+        Preconditions.checkNotNull(locale, "Locale object cannot be null.");
+
+        final DecimalFormat df = new DecimalFormat(TWO_DIGIT_FORMAT, new DecimalFormatSymbols(locale));
+
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator(FALLBACK_DECIMAL_CHAR);
+        final DecimalFormat dfFallback = new DecimalFormat(TWO_DIGIT_FORMAT);
+        dfFallback.setDecimalFormatSymbols(dfs);
+
+        TextField tf = textField(layout);
+        CompositeValidator cv = new CompositeValidator();
+        if (errorMessage != null) {
+            cv.setErrorMessage(errorMessage);
+        }
+
+        cv.addValidator(new AbstractValidator(errorMessage) {
+            private static final long serialVersionUID = -7750387119487308450L;
+
+            @Override
+            public boolean isValid(Object value) {
+                Double v;
+                if (value instanceof Double) {
+                    v = (Double) value;
+                } else if (value instanceof String) {
+                    final String strValue = (String) value;
+                    try {
+                        v = df.parse(strValue).doubleValue();
+                        if (tooManyDigits(strValue)) {
+                            return false;
+                        }
+                    } catch (Exception e) {
+                        LOG.debug("Validation failed for an object {}", strValue, e);
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+
+                return (Double.compare(minValue, v) < 0 && Double.compare(v, maxValue) <= 0);
+            }
+        });
+        tf.addValidator(cv);
+
+        tf.setPropertyDataSource(new PropertyFormatter(psi.getItemProperty(expression)) {
+            private static final long serialVersionUID = -1024644297269795524L;
+
+            @Override
+            public String format(Object value) {
+                if (value == null) {
+                    return "";
+                } else {
+                    return df.format(value);
+                }
+            }
+
+            @Override
+            public Object parse(String formattedValue) throws Exception {
+                if (formattedValue != null && formattedValue.trim().length() != 0) {
+
+                    if (formattedValue.contains(FALLBACK_DECIMAL_MARK)) {
+                        return (Double) dfFallback.parse(formattedValue).doubleValue();
+                    } else {
+                        return (Double) df.parse(formattedValue).doubleValue();
+                    }
+                }
+                return null;
+            }
+        });
+
+        return tf;
+    }
+    
+    private static boolean tooManyDigits(String strVal) {
+        int index = strVal.indexOf(',');
+        if (index < 0) {
+            index = strVal.indexOf('.');
+        }
+        return index < strVal.length() - 3;
+        
+    }
 }

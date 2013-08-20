@@ -59,6 +59,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction =  true)
 public abstract class OrganisaatioSelectDialog extends Window {
     
+    private static final long serialVersionUID = 1L;
+
     @Autowired(required = true)
     protected transient UiBuilder uiBuilder;
     
@@ -79,37 +81,17 @@ public abstract class OrganisaatioSelectDialog extends Window {
     
     public OrganisaatioSelectDialog(String width,String height) {
         super();
-        _i18n = new I18NHelper(this);
-        setWidth(width);
-        setHeight(height);
-        setContent(buildMainLayout());
-        addElementsToTree(getOrganisaatioOids());
-        setModal(true);
-        setButtonListeners();
+        init(width, height);
     }
 
     public OrganisaatioSelectDialog(String width,String height,boolean limitToOne) {
-        super();
+        this(width, height);
         this.limitToOne = limitToOne;
-        _i18n = new I18NHelper(this);
-        setWidth(width);
-        setHeight(height);
-        setContent(buildMainLayout());
-        addElementsToTree(getOrganisaatioOids());
-        setModal(true);
-        setButtonListeners();
     }
 
     public OrganisaatioSelectDialog(String width,String height, KoulutusasteTyyppi tyyppi) {
-        super();
         koulutusTyyppi = tyyppi;
-        _i18n = new I18NHelper(this);
-        setWidth(width);
-        setHeight(height);
-        setContent(buildMainLayout());
-        addElementsToTree(getOrganisaatioOids());
-        setModal(true);
-        setButtonListeners();
+        init(width, height);
     }
     
     protected abstract Collection<String> getOrganisaatioOids();
@@ -117,6 +99,16 @@ public abstract class OrganisaatioSelectDialog extends Window {
     protected abstract VerticalLayout buildTopLayout();
     
     protected abstract void setButtonListeners();
+    
+    private void init(String width, String height) {
+        _i18n = new I18NHelper(this);
+        setWidth(width);
+        setHeight(height);
+        setContent(buildMainLayout());
+        addElementsToTree(getOrganisaatioOids());
+        setModal(true);
+        setButtonListeners();
+    }
 
     private VerticalLayout buildMainLayout() {
        VerticalLayout mainLayout = new VerticalLayout();

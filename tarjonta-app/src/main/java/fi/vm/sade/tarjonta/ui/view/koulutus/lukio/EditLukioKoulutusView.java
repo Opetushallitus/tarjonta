@@ -61,16 +61,16 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
         
         String organisaatioName = getOrganisaationNames();
         
-        if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
+        if (presenter.getModel().getKoulutusLukioPerustiedot().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,
-                    LABEL_TITLE,
+                    T(LABEL_TITLE),
                     organisaatioName);
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
                     LabelStyleEnum.TEXT_RAW,
-                    LABEL_TITLE,
+                    T(LABEL_TITLE),
                     organisaatioName);
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();

@@ -19,6 +19,8 @@ import java.util.Date;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 /**
  *
  * @author Jukka Raanamo

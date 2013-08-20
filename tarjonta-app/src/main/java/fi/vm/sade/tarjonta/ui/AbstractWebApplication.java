@@ -16,21 +16,23 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
-import com.vaadin.service.ApplicationContext;
+import com.vaadin.ui.Component;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.wolfie.refresher.Refresher;
+import com.github.wolfie.refresher.Refresher.RefreshListener;
 
 /**
  * The Application's "main" class for servlet and portlet implementation.
  *
  * @author jani
  */
-public abstract class AbstractWebApplication extends AbstractSadeApplication implements ApplicationContext.TransactionListener {
+public abstract class AbstractWebApplication extends AbstractSadeApplication {
 
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-    private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
 
     public AbstractWebApplication() {
         super();
@@ -41,27 +43,28 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication imp
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
-
         initApplication();
     }
 
     protected abstract void initApplication();
 
-    @Override
-    public void transactionStart(Application application, Object transactionData) {
-        if (application == this) {
-            tl.set(this);
-        }
+
+    /**
+     * Helper to create simple refresher component to keep session alive.
+     *
+     * @return
+     */
+    public static Component createRefersh(final String id) {
+        LOG.info("createRefresh() - id = {}", id);
+        final Refresher refresher = new Refresher();
+        refresher.setRefreshInterval(1000L * 30L);
+        refresher.addListener(new RefreshListener() {
+            public void refresh(Refresher source) {
+                LOG.info("refresher() - id = {}", id);
+            }
+        });
+
+        return refresher;
     }
 
-    @Override
-    public void transactionEnd(Application application, Object transactionData) {
-        if (application == this) {
-            tl.remove();
-        }
-    }
-
-    public static Application getInstance() {
-        return tl.get();
-    }
 }

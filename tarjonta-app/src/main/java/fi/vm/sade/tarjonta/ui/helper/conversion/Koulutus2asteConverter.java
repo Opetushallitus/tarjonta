@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -57,8 +58,6 @@ public class Koulutus2asteConverter extends KoulutusConveter {
     private static final Logger LOG = LoggerFactory.getLogger(Koulutus2asteConverter.class);
     @Autowired(required = true)
     private OIDService oidService;
-    @Autowired(required = true)
-    private KoulutusKoodistoConverter koulutusKoodisto;
 
     public Koulutus2asteConverter() {
         super();
@@ -155,21 +154,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
     public static KoulutusTyyppi mapToKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusToisenAsteenPerustiedotViewModel model, final String komotoOid,
             OrganisaatioDTO organisatio) {
-        if (tyyppi == null) {
-            throw new RuntimeException(INVALID_DATA + "KoulutusTyyppi object cannot be null.");
-        }
+        Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
+        Preconditions.checkNotNull(model, INVALID_DATA + "KoulutusToisenAsteenPerustiedotViewModel object cannot be null.");
+        Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisation DTO cannot be null.");
+        Preconditions.checkNotNull(organisatio.getOid(), INVALID_DATA + "Organisation OID cannot be null.");
 
-        if (model == null) {
-            throw new RuntimeException(INVALID_DATA + "KoulutusToisenAsteenPerustiedotViewModel object cannot be null.");
-        }
-
-        if (komotoOid == null) {
-            throw new RuntimeException(INVALID_DATA + "KOMOTO OID cannot be null.");
-        }
-
-        if (organisatio == null) {
-            throw new RuntimeException(INVALID_DATA + "Organisatio DTO cannot be null.");
-        }
 
         tyyppi.setTarjoaja(organisatio.getOid());
         tyyppi.setOid(komotoOid);
@@ -205,21 +195,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
     private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
             OrganisaatioDTO organisatio, Locale locale) {
-        if (koulutus == null) {
-            throw new RuntimeException(INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
-        }
-
-        if (status == null) {
-            throw new RuntimeException(INVALID_DATA + "DocumentStatus enum cannot be null.");
-        }
-
-        if (organisatio == null) {
-            throw new RuntimeException(INVALID_DATA + "Organisatio DTO cannot be null.");
-        }
-
-        if (organisatio.getOid() == null) {
-            throw new RuntimeException(INVALID_DATA + "Organisatio OID cannot be null.");
-        }
+        Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
+        Preconditions.checkNotNull(status, INVALID_DATA + "DocumentStatus enum cannot be null.");
+        Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisation DTO cannot be null.");
+        Preconditions.checkNotNull(organisatio.getOid(), INVALID_DATA + "Organisation OID cannot be null.");
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setTila(koulutus.getTila());
@@ -231,11 +210,15 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
+<<<<<<< HEAD
             model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+=======
+            model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
+>>>>>>> master
         }
         model2Aste.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         model2Aste.setKoulutuksenAlkamisPvm(
-                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+                koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva() : null);
 
 
         if (koulutus.getKesto() != null) {
@@ -243,7 +226,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
 
+<<<<<<< HEAD
         model2Aste.setKoulutusaste(convert(koulutus.getKoulutusmoduuli().getKoulutusasteUri()));
+=======
+        model2Aste.setKoulutusaste(convert(koulutus.getKoulutusaste()));
+>>>>>>> master
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
@@ -349,17 +336,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      *  Sanity check for the data.
      */
     public void validateSaveData(KoulutusTyyppi lisaa, KoulutusToisenAsteenPerustiedotViewModel model) {
-        if (lisaa.getTarjoaja() == null) {
-            throw new RuntimeException("Data validation failed - organisation OID is required!");
-        }
+        Preconditions.checkNotNull(lisaa.getTarjoaja(), "Data validation failed - organisation OID is required!");
+        Preconditions.checkNotNull(lisaa.getKoulutusKoodi(), "Data validation failed - koulutuskoodi URI is required!");
 
-        if (lisaa.getTarjoaja().length() == 0) {
+        if (lisaa.getTarjoaja().length() != 0) {
+        } else {
             throw new RuntimeException("Data validation failed - organisation OID value is empty!");
-        }
-
-        if (lisaa.getKoulutusKoodi() == null || lisaa.getKoulutusKoodi().getUri() == null) {
-            throw new RuntimeException("Data validation failed - koulutuskoodi URI is required!");
-
         }
 
         final KoodistoKoodiTyyppi koulutusohjelmaKoodi = lisaa.getKoulutusohjelmaKoodi();

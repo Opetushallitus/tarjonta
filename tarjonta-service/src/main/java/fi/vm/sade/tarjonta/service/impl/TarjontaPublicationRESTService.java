@@ -16,10 +16,11 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.publication.ExportParams;
 import fi.vm.sade.tarjonta.publication.LearningOpportunityJAXBWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.persistence.EntityManager;

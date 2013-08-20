@@ -46,7 +46,6 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.model.Pisteraja;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
@@ -58,6 +57,9 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
+import java.math.BigDecimal;
 
 /**
  *
@@ -150,11 +152,11 @@ public class TarjontaPublicServiceTest {
 
         PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
         painotettavaOppiaine.setOppiaine("Matematiikka");
-        painotettavaOppiaine.setPainokerroin(5);
+        painotettavaOppiaine.setPainokerroin( new BigDecimal("5.0"));
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine);
 
         PainotettavaOppiaine painotettavaOppiaine1 = new PainotettavaOppiaine();
-        painotettavaOppiaine1.setPainokerroin(6);
+        painotettavaOppiaine1.setPainokerroin( new BigDecimal("6.0") );
         painotettavaOppiaine1.setOppiaine("Englanti");
         hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine1);
 

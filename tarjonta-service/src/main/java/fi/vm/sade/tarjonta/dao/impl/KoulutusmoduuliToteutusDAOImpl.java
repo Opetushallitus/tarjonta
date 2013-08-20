@@ -26,15 +26,14 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.LockModeType;
 import javax.persistence.Query;
 
-import org.hibernate.LockMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -205,7 +204,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     join(komoto.koulutusmoduuli).fetch().
                     where(criteria).list(komoto);
         } catch (Exception ex) {
-            log.debug("Exception: " + ex.getMessage());
+            log.error("Exception: " + ex.getMessage());
         }
         return komotoRes;
     }

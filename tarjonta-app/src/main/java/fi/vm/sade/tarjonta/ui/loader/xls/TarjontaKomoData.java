@@ -40,7 +40,8 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,8 +63,9 @@ import org.springframework.stereotype.Component;
 public class TarjontaKomoData {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaKomoData.class);
-    private static final boolean USE_UPDATE = true; //unready feature
     private Map<KoulutusasteTyyppi, Map<String, String>> kKoodiToKomoOid;
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private KoodiService koodiService;
     @Autowired(required = true)
@@ -76,18 +78,19 @@ public class TarjontaKomoData {
     private static String SEPARATOR = "#";
     private List<String> komoOids; //updated, inserted
     //a tempate for lukio or ammatillinen koulutus
+    private DataReader dataReader;
     private Map<String, KoodiType> map = new HashMap<String, KoodiType>();
 
     public void preLoadAllKoodistot() {
-        String[] koodistot = new String[]{KoodistoURIHelper.KOODISTO_TUTKINTO_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI,
-            KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI,
-            KoodistoURIHelper.KOODISTO_OPINTOALA_URI,
-            KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
-            KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI,
-            KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI
+        String[] koodistot = new String[]{KoodistoURI.KOODISTO_TUTKINTO_URI,
+            KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI,
+            KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
+            KoodistoURI.KOODISTO_KOULUTUSALA_URI,
+            KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
+            KoodistoURI.KOODISTO_OPINTOALA_URI,
+            KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+            KoodistoURI.KOODISTO_LUKIOLINJA_URI,
+            KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI
         };
 
         for (String koodisto : koodistot) {
@@ -104,7 +107,6 @@ public class TarjontaKomoData {
                 } else {
                     //make unique key by koodisto and koodi
                     //log.debug("Add koodi : '" + type.getKoodiArvo() + "', uri:'" + type.getKoodiUri() + "', koodisto : '" + koodisto + "'");
-
                     map.put(createKey, type);
                 }
             }
@@ -115,7 +117,9 @@ public class TarjontaKomoData {
 
     public void createData(boolean saveChanges) throws IOException, ExceptionMessage {
         log.info("Starting to load KOMOs from Excel file");
-        DataReader dataReader = new DataReader();
+        if (dataReader == null) {
+            dataReader = new DataReader();
+        }
         loadedData = dataReader.getData();
         komoOids = new ArrayList<String>();
 
@@ -132,42 +136,54 @@ public class TarjontaKomoData {
             if (count % 10 == 1) {
                 log.info("Processing... {}", count);
             }
-            LOS komo = createKomo(dto);
-
-            KoulutusmoduuliTulos searchChildKomo = null;
+            LOS komos = createKomos(dto);
             final KoulutusasteTyyppi koulutusTyyppi = dto.getKoulutusTyyppi();
+            KoulutusmoduuliTulos searchChildKomo = searchKomo(koulutusTyyppi, komos.getChildren().getKoulutuskoodiUri(), komos.getChildren());
 
-            switch (koulutusTyyppi) {
-                case AMMATILLINEN_PERUSKOULUTUS:
-                    searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
-                    log.info("Search : {} {}", komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getKoulutusohjelmakoodiUri());
-                    break;
-                case LUKIOKOULUTUS:
-                    searchChildKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), komo.getChildren().getLukiolinjakoodiUri());
-                    break;
-            }
+            if (saveChanges && searchChildKomo != null) {
+                String parentKomoOid = searchChildKomo.getKoulutusmoduuli().getParentOid();
+                final String childKomoOid = searchChildKomo.getKoulutusmoduuli().getOid();
+                log.info("Update : {} {}", komos.getChildren().getKoulutuskoodiUri(), childKomoOid);
 
-            if (USE_UPDATE && saveChanges && searchChildKomo != null) {
-                log.info("Update : {} {}", komo.getChildren().getKoulutuskoodiUri(), searchChildKomo.getKoulutusmoduuli().getOid());
-                //update parent
-                komo.getParent().setOid(searchChildKomo.getKoulutusmoduuli().getParentOid());
-                tarjontaAdminService.paivitaKoulutusmoduuli(komo.getParent());
+                if (komos.getChildren().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                    final String tempParentOid = parentKomoOid;
+                    //remove this code block after all environments has been update.
+                    //Update lukiolinja child's parent relations.
+                    KoulutusmoduuliTulos searchKomo = searchKomo(KoulutusasteTyyppi.LUKIOKOULUTUS, searchChildKomo.getKoulutusmoduuli().getKoulutuskoodiUri(), null);
+                    parentKomoOid = searchKomo.getKoulutusmoduuli().getOid();
+                    log.warn("Changed an invalid parent relation from OID {} to point OID {}", tempParentOid, parentKomoOid);
+                }
 
-                //update children
-                komo.getChildren().setOid(searchChildKomo.getKoulutusmoduuli().getOid());
-                tarjontaAdminService.paivitaKoulutusmoduuli(komo.getChildren());
+                if (komos.getParent().getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO)) {
+                    //update KOMO parent
+                    komos.getParent().setOid(parentKomoOid);
+                    tarjontaAdminService.paivitaKoulutusmoduuli(komos.getParent());
+                } else {
+                    throw new RuntimeException("An invalid data exception - KOMO tutkinto type expected, but was " + komos.getParent().getKoulutusmoduuliTyyppi() + ".");
+                }
+
+                if (komos.getChildren().getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+                    //update KOMO children
+                    komos.getChildren().setOid(childKomoOid);
+                    tarjontaAdminService.paivitaKoulutusmoduuli(komos.getChildren());
+                } else {
+                    throw new RuntimeException("An invalid data exception - KOMO tutkinto_ohjelma type expected, but was " + komos.getParent().getKoulutusmoduuliTyyppi() + ".");
+                }
+
             } else if (saveChanges) {
+                //persist new KOMO (child and parent) to database 
+                komos.getParent();
 
+                Preconditions.checkNotNull(komos.getParent().getKoulutuskoodiUri(), "Parent KOMO koulutuskoodi cannot be null.");
+                KoulutusmoduuliKoosteTyyppi tKomo = tarjontaAdminService.lisaaKoulutusmoduuli(komos.getParent());
+                Preconditions.checkNotNull(tKomo.getKoulutuskoodiUri(), "Parent KOMO koulutuskoodi cannot be null.");
 
-                KoulutusmoduuliKoosteTyyppi tKomo = tarjontaAdminService.lisaaKoulutusmoduuli(komo.getParent());
                 if (tKomo.getOid() != null) {
                     //create komo and update oid to map
                     getKoodiToKomoOid(koulutusTyyppi).put(tKomo.getKoulutuskoodiUri(), tKomo.getOid());
                 } else {
                     //NO OID! I guess the KOMO was created earlier and this was a batch update...
-                    log.info("koulutusTyyppi : {}", koulutusTyyppi);
-
-                    final KoulutusmoduuliTulos resultTutkintoKomo = searchKomo(koulutusTyyppi, komo.getChildren().getKoulutuskoodiUri(), null);
+                    final KoulutusmoduuliTulos resultTutkintoKomo = searchKomo(koulutusTyyppi, komos.getChildren().getKoulutuskoodiUri(), null);
                     final String parentOid = resultTutkintoKomo.getKoulutusmoduuli().getOid();
                     final String koulutuskoodiUri = resultTutkintoKomo.getKoulutusmoduuli().getKoulutuskoodiUri();
 
@@ -175,15 +191,16 @@ public class TarjontaKomoData {
                     getKoodiToKomoOid(koulutusTyyppi).put(koulutuskoodiUri, parentOid);
                 }
 
-                final String mapParentOid = getKoodiToKomoOid(koulutusTyyppi).get(komo.getParent().getKoulutuskoodiUri());
+                final String mapParentOid = getKoodiToKomoOid(koulutusTyyppi).get(komos.getParent().getKoulutuskoodiUri());
+                Preconditions.checkNotNull(mapParentOid, "Parent KOMO OID cannot be null.");
                 log.info("Map parent OID : {}", mapParentOid);
-                komo.getChildren().setParentOid(mapParentOid);
-                tarjontaAdminService.lisaaKoulutusmoduuli(komo.getChildren());
-                log.info("Add : {} {}", komo.getParent(), tKomo.getOid());
+                komos.getChildren().setParentOid(mapParentOid);
+                tarjontaAdminService.lisaaKoulutusmoduuli(komos.getChildren());
+                log.info("Add : {} {}", komos.getParent(), tKomo.getOid());
             }
             //add oids to list, the oids will be used for change udate status to published
-            komoOids.add(komo.getParent().getOid());
-            komoOids.add(komo.getChildren().getOid());
+            komoOids.add(komos.getParent().getOid());
+            komoOids.add(komos.getChildren().getOid());
             count++;
         }
         log.info("Total count of the imported KOMOs : {}", count);
@@ -249,15 +266,8 @@ public class TarjontaKomoData {
     }
 
     private List<KoodiMetadataType> getKoodiMetadataTypes(final String koodiArvo, final String koodisto, final String fallbackKey) {
-
-
-        if (koodiArvo == null) {
-            throw new IllegalArgumentException("Koodi value cannot be null in koodisto '" + koodisto + "'");
-        }
-
-        if (koodisto == null) {
-            throw new IllegalArgumentException("Koodisto cannot be null!");
-        }
+        Preconditions.checkNotNull(koodiArvo, "Koodi value cannot be null in koodisto '" + koodisto + "'");
+        Preconditions.checkNotNull(koodisto, "Koodisto cannot be null!");
 
         final KoodiType koodiType = getKoodiType(koodiArvo, koodisto, fallbackKey);
         //search and create the real koodi uri  
@@ -269,19 +279,16 @@ public class TarjontaKomoData {
         return null;
     }
 
-    private static String createUniqueKey(final String value, final String koodisto) {
-        if (koodisto == null) {
-            throw new IllegalArgumentException("Koodisto uri cannot be null! Koodi value was " + value + ".");
-        }
-
+    public static String createUniqueKey(final String value, final String koodisto) {
+        Preconditions.checkNotNull(koodisto, "Koodisto uri cannot be null! Koodi value was " + value + ".");
         return (new StringBuffer(koodisto)).append(SEPARATOR).append(value).toString();
     }
 
-    public static MonikielinenTekstiTyyppi createTeksti(String fiTeksti, String svTeskti, String enTeksti) {
+    public static MonikielinenTekstiTyyppi createTeksti(String fiTeksti, String svTeksti, String enTeksti) {
         MonikielinenTekstiTyyppi t = new MonikielinenTekstiTyyppi();
-        addLang("fi", fiTeksti, t);
-        addLang("en", enTeksti, t);
-        addLang("sv", svTeskti, t);
+        addLang("kieli_fi", fiTeksti, t);
+        addLang("kieli_en", enTeksti, t);
+        addLang("kieli_sv", svTeksti, t);
         return t;
     }
 
@@ -289,16 +296,9 @@ public class TarjontaKomoData {
         if (text != null) {
             Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
             teksti.setKieliKoodi(lang);
-            teksti.setValue(strLimitTo4096(text));
+            teksti.setValue(text);
             t.getTeksti().add(teksti);
         }
-    }
-
-    private static String strLimitTo4096(final String str) {
-        if (str != null && str.length() > 4096) {
-            return str.substring(0, 4096);
-        }
-        return str;
     }
 
     public Set<ExcelMigrationDTO> getLoadedData() {
@@ -312,117 +312,138 @@ public class TarjontaKomoData {
      * @return
      * @throws ExceptionMessage
      */
-    private LOS createKomo(final ExcelMigrationDTO dto) throws ExceptionMessage {
+    private LOS createKomos(final ExcelMigrationDTO dto) throws ExceptionMessage {
         //base values
         Preconditions.checkNotNull(dto.getKoulutuskoodiKoodiarvo(), "Import data error - koulutuskoodi value cannot be null!");
-        final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+        final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTO_URI);
 
-        KoulutusmoduuliKoosteTyyppi tutkintoKomo = new KoulutusmoduuliKoosteTyyppi();
-        tutkintoKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
-        tutkintoKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        KoulutusmoduuliKoosteTyyppi tutkintoParentKomo = new KoulutusmoduuliKoosteTyyppi();
+        tutkintoParentKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
+        tutkintoParentKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         //search Uris from Koodisto for komo
-        tutkintoKomo.setKoulutuskoodiUri(koulutuskoodiUri);
-        tutkintoKomo.setOpintoalaUri(getUriWithVersion(dto.getOpintoalaKoodi(), KoodistoURIHelper.KOODISTO_OPINTOALA_URI));  //Automaalari
-        tutkintoKomo.setKoulutusalaUri(getUriWithVersion(dto.getKoulutusalaKoodi(), KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI));
-        tutkintoKomo.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI));
-        tutkintoKomo.setLaajuusyksikkoUri(getUriWithVersion(dto.getLaajuusyksikko(), KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)); //OV,OP           
-        tutkintoKomo.setLaajuusarvoUri(dto.getLaajuusUri()); //120, not a koodisto value
-        tutkintoKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
+        tutkintoParentKomo.setKoulutuskoodiUri(koulutuskoodiUri);
+        tutkintoParentKomo.setOpintoalaUri(getUriWithVersion(dto.getOpintoalaKoodi(), KoodistoURI.KOODISTO_OPINTOALA_URI));  //Automaalari
+        tutkintoParentKomo.setKoulutusalaUri(getUriWithVersion(dto.getKoulutusalaKoodi(), KoodistoURI.KOODISTO_KOULUTUSALA_URI));
+        tutkintoParentKomo.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURI.KOODISTO_KOULUTUSASTE_URI));
+        tutkintoParentKomo.setLaajuusyksikkoUri(getUriWithVersion(dto.getLaajuusyksikko(), KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)); //OV,OP           
+        tutkintoParentKomo.setLaajuusarvoUri(dto.getLaajuusUri()); //120, not a koodisto value
+        tutkintoParentKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
         /*
          * Description data for tutkinto (nothing to do with the Koodisto service)
          * LUKIO and AMMATILLINEN koulutus
          */
-        tutkintoKomo.setKoulutuksenRakenne(dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
-        tutkintoKomo.setTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
-        tutkintoKomo.setJatkoOpintoMahdollisuudet(dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
+        tutkintoParentKomo.setKoulutuksenRakenne(dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
+        tutkintoParentKomo.setTutkinnonTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
+        tutkintoParentKomo.setJatkoOpintoMahdollisuudet(dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
 
         /*
          * Oppilaitostyyppi
          */
-        tutkintoKomo.getOppilaitostyyppi().clear();
+        tutkintoParentKomo.getOppilaitostyyppi().clear();
         for (String codeValue : dto.getOppilaitostyyppis()) {
-            tutkintoKomo.getOppilaitostyyppi().add(getUriWithVersion(codeValue, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI));
+            tutkintoParentKomo.getOppilaitostyyppi().add(getUriWithVersion(codeValue, KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI));
         }
         //create search words from Koodisto meta data 
-        List<KoodiMetadataType> koulutuskoodiMeta = getKoodiMetadataTypes(dto.getKoulutuskoodiKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+        List<KoodiMetadataType> koulutuskoodiMeta = getKoodiMetadataTypes(dto.getKoulutuskoodiKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTO_URI);
 
-        KoulutusmoduuliKoosteTyyppi koKomo = new KoulutusmoduuliKoosteTyyppi();
+        KoulutusmoduuliKoosteTyyppi koChildKomo = new KoulutusmoduuliKoosteTyyppi();
         switch (dto.getKoulutusTyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 final String koulutusohjelmanKoodiarvo = dto.getKoulutusohjelmanKoodiarvo();
                 Preconditions.checkNotNull(koulutusohjelmanKoodiarvo, "Koulutusohjelma koodi uri cannot be null.");
 
                 final String fallbackValue = koulutusohjelmanKoodiarvo.substring(0, 4);
-                List<KoodiMetadataType> koulutusohjelmaMeta = getKoodiMetadataTypes(koulutusohjelmanKoodiarvo, KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue);
+                List<KoodiMetadataType> koulutusohjelmaMeta = getKoodiMetadataTypes(koulutusohjelmanKoodiarvo, KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue);
 
-                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, koulutusohjelmaMeta));
-                koKomo.setKoulutusohjelmakoodiUri(getUriWithVersion(dto.getKoulutusohjelmanKoodiarvo(), KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue));
+                koChildKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, koulutusohjelmaMeta, tarjontaKoodistoHelper));
+                koChildKomo.setKoulutusohjelmakoodiUri(getUriWithVersion(dto.getKoulutusohjelmanKoodiarvo(), KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI, fallbackValue));
 
                 /*
                  * Description data for koulutusohjelma (nothing to do with the Koodisto service)
                  */
-                koKomo.setTavoitteet(dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
+                koChildKomo.setTavoitteet(dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
                 break;
             case LUKIOKOULUTUS:
                 Preconditions.checkNotNull(dto.getLukiolinjaKoodiarvo(), "Lukiolinja koodi uri cannot be null.");
 
-                List<KoodiMetadataType> lukiolinjaMeta = getKoodiMetadataTypes(dto.getLukiolinjaKoodiarvo(), KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI);
-                koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, lukiolinjaMeta));
-                koKomo.setLukiolinjakoodiUri(getUriWithVersion(dto.getLukiolinjaKoodiarvo(), KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI));
+                List<KoodiMetadataType> lukiolinjaMeta = getKoodiMetadataTypes(dto.getLukiolinjaKoodiarvo(), KoodistoURI.KOODISTO_LUKIOLINJA_URI);
+                koChildKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, lukiolinjaMeta, tarjontaKoodistoHelper));
+                koChildKomo.setLukiolinjakoodiUri(getUriWithVersion(dto.getLukiolinjaKoodiarvo(), KoodistoURI.KOODISTO_LUKIOLINJA_URI));
                 break;
         }
 
-        koKomo.setKoulutuskoodiUri(koulutuskoodiUri);
-        koKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
-        koKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koChildKomo.setKoulutuskoodiUri(koulutuskoodiUri);
+        koChildKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
+        koChildKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
         Preconditions.checkNotNull(dto.getTutkintonimikkeenKoodiarvo(), "Tutkintonimike koodi uri cannot be null. Obj : " + dto);
-        koKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
-        koKomo.setParentOid(tutkintoKomo.getOid());
-        koKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
-        koKomo.setEqfLuokitus(dto.getEqfUri());
+        koChildKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
+        koChildKomo.setParentOid(tutkintoParentKomo.getOid());
+        koChildKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
+        koChildKomo.setEqfLuokitus(dto.getEqfUri());
 
-        return new LOS(tutkintoKomo, koKomo);
+        return new LOS(tutkintoParentKomo, koChildKomo);
     }
 
-    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final String koodi) {
+    private KoulutusmoduuliTulos searchKomo(final KoulutusasteTyyppi koulutusasteTyyppi, final String koulutuskoodi, final KoulutusmoduuliKoosteTyyppi komoChild) {
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(koulutusasteTyyppi);
         kysely.setKoulutuskoodiUri(koulutuskoodi);
 
-        switch (koulutusasteTyyppi) {
-            case AMMATILLINEN_PERUSKOULUTUS:
-                kysely.setKoulutusohjelmakoodiUri(koodi);
-                break;
-            case LUKIOKOULUTUS:
-                kysely.setLukiolinjakoodiUri(koodi);
-                break;
+        String check = null;
+
+        if (komoChild != null) {
+            switch (koulutusasteTyyppi) {
+                case AMMATILLINEN_PERUSKOULUTUS:
+                    check = komoChild.getKoulutusohjelmakoodiUri();
+                    kysely.setKoulutusohjelmakoodiUri(komoChild.getKoulutusohjelmakoodiUri());
+                    break;
+                case LUKIOKOULUTUS:
+                    check = komoChild.getLukiolinjakoodiUri();
+                    kysely.setLukiolinjakoodiUri(komoChild.getLukiolinjakoodiUri());
+                    break;
+            }
         }
-        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), koodi);
+        log.info(koulutusasteTyyppi + " - search KOMO by '{}' and '{}'", kysely.getKoulutuskoodiUri(), check);
 
+        final HaeKoulutusmoduulitVastausTyyppi result = tarjontaPublicService.haeKoulutusmoduulit(kysely);
+        final List<KoulutusmoduuliTulos> tulos = result.getKoulutusmoduuliTulos();
 
-        HaeKoulutusmoduulitVastausTyyppi result = tarjontaPublicService.haeKoulutusmoduulit(kysely);
-        List<KoulutusmoduuliTulos> koulutusmoduuliTulos = result.getKoulutusmoduuliTulos();
+        if (tulos != null && !tulos.isEmpty()) {
+            if (tulos.size() > 1) {
+                //SEARCH PARENT KOMO
+                for (KoulutusmoduuliTulos t : tulos) {
+                    //TODO: add TutktintoTyyppi param to HaeKoulutusmoduulitKyselyTyyppi.
+                    //a quick hack: as there is other way to filter the result to parent 'TUTKINTO' -type of komos.
+                    Preconditions.checkNotNull(t.getKoulutusmoduuli().getKoulutusmoduuliTyyppi(), "Koulutustyyppi object cannot be null.");
 
-        if (koulutusmoduuliTulos != null && !koulutusmoduuliTulos.isEmpty()) {
-            if (koulutusmoduuliTulos.size() > 1) {
-                for (KoulutusmoduuliTulos t : koulutusmoduuliTulos) {
-                    log.warn("KoulutusmoduuliTulos : {} {}", t.getKoulutusmoduuli().getKoulutuskoodiUri(), t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
+                    if (t.getKoulutusmoduuli().getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO)) {
+                        //program have tried to search parent TUTKINTO-type of komo, not a child komo.
 
-                    if (koodi == null && t.getKoulutusmoduuli().getKoulutusohjelmakoodiUri() == null) {
-                        //a quick hack: as there is no way to search only 'TUTKINTO' -type of komos.
+                        if (check != null) {
+                            throw new RuntimeException("Tried to search a child KOMO, but result was parent?");
+                        }
+
                         return t;
                     }
                 }
+                throw new RuntimeException("Parent KOMO not found, result size of komos was " + tulos.size() + ".");
+            } else {
+                //SEARCH CHILD KOMO
+                final KoulutusmoduuliTulos childKomo = tulos.get(0);
+                Preconditions.checkNotNull(childKomo.getKoulutusmoduuli().getOid(), "Koulutustyyppi OID cannot be null.");
+                Preconditions.checkNotNull(childKomo.getKoulutusmoduuli().getKoulutuskoodiUri(), "Koulutuskoodi URI cannot be null.");
+                Preconditions.checkNotNull(childKomo.getKoulutusmoduuli().getKoulutusmoduuliTyyppi(), "Koulutustyyppi object cannot be null.");
+                Preconditions.checkNotNull(check, "Tried to search a parent KOMO, but result was child?");
 
-                throw new RuntimeException("Search found too many KOMOs - single KOMO was expected. Result size : " + koulutusmoduuliTulos.size());
+                if (childKomo.getKoulutusmoduuli().getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+                    return childKomo;
+                } else {
+                    throw new RuntimeException("Not a child KOMO, OID : " + childKomo.getKoulutusmoduuli().getOid() + ".");
+                }
             }
-
-            //log.info("Founded : {}, {}", koulutusmoduuliTulos.get(0).getKoulutusmoduuli().getKoulutuskoodiUri(), koulutusmoduuliTulos.get(0).getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
-            return koulutusmoduuliTulos.get(0);
         }
-
 
         return null;
     }

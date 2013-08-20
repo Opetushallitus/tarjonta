@@ -36,10 +36,12 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
@@ -50,8 +52,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -88,7 +88,7 @@ public class ShowKorkeakouluSummaryView extends AbstractVerticalInfoLayout {
     @Override
     protected void buildLayout(VerticalLayout layout) {
         context = OrganisaatioContext.getContext(_presenter.getTarjoaja().getSelectedOrganisationOid());
-        LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
+        LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURI.KOODISTO_HAKUTYYPPI_URI);
         final KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotViewModel();
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
@@ -377,8 +377,8 @@ public class ShowKorkeakouluSummaryView extends AbstractVerticalInfoLayout {
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
-            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter)));
-
+            //XXX why navigationContext? should be tarjoaja oid from current koulutus?
+            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter.getNavigationOrganisation().getOrganisationOid())));
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
                 btn.addListener(new Button.ClickListener() {

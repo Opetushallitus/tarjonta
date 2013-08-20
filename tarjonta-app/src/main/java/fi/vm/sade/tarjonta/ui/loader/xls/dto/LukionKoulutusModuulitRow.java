@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class LukionKoulutusModuulitRow extends AbstractKoulutuskoodiField {
 
-    public static final String FILENAME = "LUKION_MODUULIT_konversio";
+    public static final String FILENAME = "LUKION_MODUULIT_konversio_html_final";
     public static final Column[] COLUMNS = {
         new Column(KOULUTUSKOODI_PROPERTY, "koulutus", InputColumnType.INTEGER),
         new Column("koulutuksellisetTeksti", "Koulutukselliset tavoitteet", InputColumnType.STRING),

@@ -16,8 +16,12 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.base.Preconditions;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -34,12 +38,16 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 
 /**
  *
@@ -49,6 +57,8 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTe
 @Component
 public class HakukohdeViewModelToDTOConverter {
 
+    @Autowired(required = true)
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired(required = true)
     private OIDService oidService;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
@@ -60,10 +70,10 @@ public class HakukohdeViewModelToDTOConverter {
         User usr = UserFeature.get();
         hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
-        if (hakukohdevm.getHakuaika()!=null) {
-        	hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
+        if (hakukohdevm.getHakuaika() != null) {
+            hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
         }
-        
+
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
         if (hakukohdevm.getHakukohdeNimi() != null) {
@@ -72,7 +82,7 @@ public class HakukohdeViewModelToDTOConverter {
             throw new RuntimeException("Hakukohde koodisto koodi cannot be null!");
         }
 
-        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
+        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuViewModel().getHakuOid());
         hakukohde.setHakukohteenTila(hakukohdevm.getTila());
         if (hakukohdevm.getOid() == null) {
             try {
@@ -105,7 +115,8 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttävä keskiarvo
-        if (hakukohdevm.getAlinHyvaksyttavaKeskiarvo() != null) {
+        if (hakukohdevm.getAlinHyvaksyttavaKeskiarvo() != null
+                && hakukohdevm.getAlinHyvaksyttavaKeskiarvo().trim().length() > 0) {
             hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(hakukohdevm.getAlinHyvaksyttavaKeskiarvo()));
         }
 
@@ -132,12 +143,12 @@ public class HakukohdeViewModelToDTOConverter {
         if (monikielinenTekstiTyyppi != null) {
 
             for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                if (teksti.getKieliKoodi().trim().equalsIgnoreCase(BasicLanguage.FI.getLowercaseLanguageCode())) {
-                    haku.setNimiFi(teksti.getValue());
-                } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase(BasicLanguage.EN.getLowercaseLanguageCode())) {
-                    haku.setNimiEn(teksti.getValue());
-                } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase(BasicLanguage.SV.getLowercaseLanguageCode())) {
-                    haku.setNimiSe(teksti.getValue());
+                if (teksti.getKieliKoodi().trim().contains(BasicLanguage.FI.getLowercaseLanguageCode())) {
+                    haku.setMlNimiFi(teksti.getValue());
+                } else if (teksti.getKieliKoodi().trim().contains(BasicLanguage.EN.getLowercaseLanguageCode())) {
+                    haku.setMlNimiEn(teksti.getValue());
+                } else if (teksti.getKieliKoodi().trim().contains(BasicLanguage.SV.getLowercaseLanguageCode())) {
+                    haku.setMlNimiSv(teksti.getValue());
                 }
             }
         }
@@ -145,28 +156,37 @@ public class HakukohdeViewModelToDTOConverter {
         return haku;
     }
 
-    public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeTyyppi hakukohdeTyyppi) {
-        HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
+    public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeViewModel hakukohdeVM, HakukohdeTyyppi hakukohdeTyyppi) {
+        Preconditions.checkNotNull(hakukohdeVM, "HakukohdeViewModel object cannot be null.");
+        Preconditions.checkNotNull(hakukohdeTyyppi, "HakukohdeTyyppi object cannot be null.");
+        Preconditions.checkNotNull(hakukohdeTyyppi.getHakukohdeNimi(), "Hakukohde koodi URI cannot be null.");
+        Preconditions.checkNotNull(hakukohdeTyyppi.getHakukohteenKoulutusaste(), "KoulutusasteTyyppi enum cannot be null.");
+        hakukohdeVM.setKoulutusasteTyyppi(hakukohdeTyyppi.getHakukohteenKoulutusaste());
+
         hakukohdeVM.setVersion(hakukohdeTyyppi.getVersion());
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
-        hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
-        hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
+        hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());;
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
-        
+
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
 
-        if (hakukohdeTyyppi.getSisaisetHakuajat()!=null) {
-        	hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
+        if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
+            hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
         }
-        
+
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());
-        hakukohdeVM.setHakuOid(haku);
+        hakukohdeVM.setHakuViewModel(haku);
+
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
+        hakukohdeVM.setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(tarjontaKoodistoHelper.getKoodiByUri(hakukohdeTyyppi.getHakukohdeNimi())));
+
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
         hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
+
+        hakukohdeVM.getLisatiedot().clear();
         hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
-//        hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));
+
         hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());
         hakukohdeVM.setLiitteidenSahkoinenToimitusOsoite(hakukohdeTyyppi.getSahkoinenToimitusOsoite());
         hakukohdeVM.setLiitteidenToimitusPvm(hakukohdeTyyppi.getLiitteidenToimitusPvm());
@@ -186,26 +206,30 @@ public class HakukohdeViewModelToDTOConverter {
         if (hakukohdeTyyppi.getViimeisinPaivitysPvm() != null) {
             hakukohdeVM.setViimeisinPaivitysPvm(hakukohdeTyyppi.getViimeisinPaivitysPvm());
         }
-        //painotettavat oppiaineet
-        int visible = hakukohdeTyyppi.getPainotettavatOppiaineet() != null ? hakukohdeTyyppi.getPainotettavatOppiaineet().size() : 0;
 
-        if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null) {
-            for (PainotettavaOppiaineTyyppi pot : hakukohdeTyyppi.getPainotettavatOppiaineet()) {
-                PainotettavaOppiaineViewModel painotettava = new PainotettavaOppiaineViewModel(pot.getOppiaine(),
-                        pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste(), pot.getVersion());
-                hakukohdeVM.addPainotettavaOppiaine(painotettava);
+        /*
+         * only for lukio
+         */
+        if (hakukohdeTyyppi.getHakukohteenKoulutusaste().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            //painotettavat oppiaineet
+            hakukohdeVM.getPainotettavat().clear(); //after the clear, we need to recreate form data binding 
+            final int visible = hakukohdeTyyppi.getPainotettavatOppiaineet() != null ? hakukohdeTyyppi.getPainotettavatOppiaineet().size() : 0;
+
+            if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null && !hakukohdeTyyppi.getPainotettavatOppiaineet().isEmpty()) {
+                for (PainotettavaOppiaineTyyppi pot : hakukohdeTyyppi.getPainotettavatOppiaineet()) {
+                    PainotettavaOppiaineViewModel painotettava = new PainotettavaOppiaineViewModel(pot.getOppiaine(),
+                            pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste(), pot.getVersion());
+                    hakukohdeVM.addPainotettavaOppiaine(painotettava);
+                }
             }
+            hakukohdeVM.addPainotettavaOppiainees(HakukohdeViewModel.OPPIAINEET_MAX - Math.min(HakukohdeViewModel.OPPIAINEET_MAX, visible));
         }
-        visible = 3 - Math.min(3, visible);
-        for (int i = 0; i < visible; i++) {
-            hakukohdeVM.addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
-        }
-
         //alin hyväksyttava keskiarvo
-        if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo() != null) {
+
+        if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()
+                != null) {
             hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(new DecimalFormat(NUMBER_FORMAT).format(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()));
         }
-
         return hakukohdeVM;
     }
 
@@ -234,5 +258,24 @@ public class HakukohdeViewModelToDTOConverter {
      */
     public void setOidService(OIDService oidService) {
         this.oidService = oidService;
+    }
+
+    public static HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(final KoodiType koodiType) {
+        Preconditions.checkNotNull(koodiType, "Hakukohde KoodiType object not found?");
+
+        HakukohdeNameUriModel hakukohdeNameUriModel = new HakukohdeNameUriModel();
+        hakukohdeNameUriModel.setUriVersio(koodiType.getVersio());
+        hakukohdeNameUriModel.setHakukohdeUri(koodiType.getKoodiUri());
+        hakukohdeNameUriModel.setHakukohdeArvo(koodiType.getKoodiArvo());
+
+        KoodiMetadataType meta = TarjontaUIHelper.getKoodiMetadataForLanguage(koodiType, I18N.getLocale());
+        if (meta != null) {
+            hakukohdeNameUriModel.setHakukohdeNimi(meta.getNimi());
+        } else {
+            //no text found for any language, so only way to show something is to show a koodiuri.
+            hakukohdeNameUriModel.setHakukohdeNimi(TarjontaUIHelper.createVersionUri(koodiType.getKoodiUri(), koodiType.getVersio()));
+        }
+
+        return hakukohdeNameUriModel;
     }
 }

@@ -16,6 +16,8 @@ package fi.vm.sade.tarjonta.ui.layout;/*
  */
 
 import com.vaadin.ui.*;
+
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -34,7 +36,10 @@ import java.util.Set;
  */
 public abstract class TarjontaAbstractNavigationLayout <ABSTRACT_LAYOUT extends AbstractLayout> extends VerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaAbstractNavigationLayout.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(TarjontaAbstractNavigationLayout.class);
+    
+    private static final long serialVersionUID = -5561020680485740912L;
     private HorizontalLayout hlTopButtons = UiUtil.horizontalLayout(true, UiMarginEnum.NONE, UiConstant.DEFAULT_RELATIVE_SIZE, "40px");
     private VerticalLayout topInfoLayout = null;
     private ABSTRACT_LAYOUT layout;
@@ -47,7 +52,9 @@ public abstract class TarjontaAbstractNavigationLayout <ABSTRACT_LAYOUT extends 
         if (layoutClass == null) {
             throw new RuntimeException("An invalid constructor argument - layout class argument cannot be null.");
         }
+
         setMargin(true);
+        hlBottomButtons.addStyleName(Oph.SPACING_TOP_20);
 
         this.layoutClass = layoutClass;
     }

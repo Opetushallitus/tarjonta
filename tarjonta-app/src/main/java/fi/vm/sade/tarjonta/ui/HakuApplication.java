@@ -30,39 +30,12 @@ public class HakuApplication extends AbstractWebApplication {
     private static final long serialVersionUID = -5438300477469075L;
 
     private Window window;
-    private static ThreadLocal<HakuApplication> tl = new ThreadLocal<HakuApplication>();
-
-    @Override
-    public synchronized void init() {
-        super.init();
-        this.transactionStart(this, null);
-        initApplication();
-    }
 
     @Override
     protected void initApplication() {
         window = new HakuRootView();
         setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        setTheme("tarjonta");
     }
 
-    @Override
-    public void transactionStart(Application application, Object transactionData) {
-        super.transactionStart(application, transactionData);
-        if (application == this) {
-            tl.set(this);
-        }
-    }
-
-    @Override
-    public void transactionEnd(Application application, Object transactionData) {
-        super.transactionEnd(application, transactionData);
-        if (application == this) {
-            tl.remove();
-        }
-    }
-
-    public static HakuApplication getInstance() {
-        return tl.get();
-    }
 }

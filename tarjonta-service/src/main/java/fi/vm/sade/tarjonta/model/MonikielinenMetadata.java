@@ -1,8 +1,13 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
+
 import java.util.Date;
 
 /**
@@ -14,17 +19,21 @@ import java.util.Date;
 @Table(name = "monikielinen_metadata", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
 })
+@EntityListeners(XssFilterListener.class)
 public class MonikielinenMetadata extends BaseEntity {
 
     // Make translated texts behave more like "metadata".
     // For example: "uri: Sosiaali- ja Terveysala"
     private String avain = null;
     // For example: "SORA", "Valintaperustekuvaus"
+    @FilterXss
     private String kategoria = null;
     // For example: "uri: Finnish 358#1"
     private String kieli = null;
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Basic(fetch = FetchType.EAGER)
+    @FilterXss
     private String arvo = null;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false, nullable = false)

@@ -1,0 +1,14 @@
+EditHakuFormImpl.HakuTallennettuLuonnoksena
+EditHakuFormImpl.HakuTallennettuValmiina
+EditHakuFormImpl.TallennaEnsin
+notification.deleted.hakukohteet
+notification.deleted.haut
+notification.deleted.koulutukset
+notification.success
+notification.success.copy
+notification.success.delete
+notification.success.save
+notification.success.saveDraft
+notification.success.saveEdited
+PerustiedotView.tallennusOnnistui
+HakukohteenLiitteetViewImpl.modelEditedVarmistusMsg

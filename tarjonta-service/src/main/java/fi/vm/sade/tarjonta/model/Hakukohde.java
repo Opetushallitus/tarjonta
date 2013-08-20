@@ -16,11 +16,13 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,6 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "hakukohde")
+@EntityListeners(XssFilterListener.class)
 public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
@@ -64,6 +67,7 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
     @Column(name = "hakukelpoisuusvaatimus")
+    @FilterXss
     private String hakukelpoisuusvaatumus;
 
     /* todo: double check if this is koodisto uri. */
@@ -100,7 +104,11 @@ public class Hakukohde extends BaseEntity {
     private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
-    
+
+    @Column(name="viimIndeksointiPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date viimIndeksointiPvm = null;
+
     @ManyToOne(optional=true, fetch=FetchType.LAZY)
     private Hakuaika hakuaika;
     
@@ -453,4 +461,13 @@ public class Hakukohde extends BaseEntity {
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
     }
+
+    public Date getViimIndeksointiPvm() {
+        return viimIndeksointiPvm;
+    }
+
+    public void setViimIndeksointiPvm(Date viimIndeksointiPvm) {
+        this.viimIndeksointiPvm = viimIndeksointiPvm;
+    }
+
 }

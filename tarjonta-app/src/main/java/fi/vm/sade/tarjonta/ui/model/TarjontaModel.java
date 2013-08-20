@@ -40,7 +40,6 @@ public class TarjontaModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 6216606779350260527L;
     // Show label that shows last modification
-    private Boolean _showIdentifier;
     private String _identifier;
     private String rootOrganisaatioOid;//OPH's root oid.
     private NavigationModel navigationModel; //data instance of selected organisation
@@ -73,7 +72,6 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private String selectedKoulutusOid;
     public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
-
     private List<KoulutusOidNameViewModel> hakukohdeTitleKoulutukses;
     private boolean selectedHakuStarted = false;
 
@@ -175,14 +173,6 @@ public class TarjontaModel extends BaseUIViewModel {
         this._identifier = _identifier;
     }
 
-    public boolean isShowIdentifier() {
-        return _showIdentifier;
-    }
-
-    public void setShowIdentifier(boolean _showIdentifier) {
-        this._showIdentifier = _showIdentifier;
-    }
-
     public KoulutusSearchSpesificationViewModel getSearchSpec() {
         return _searchSpec;
     }
@@ -256,8 +246,9 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public HakukohdeViewModel getHakukohde() {
         if (hakukohde == null) {
-            hakukohde = HakukohdeViewModel.create();
+            hakukohde = new HakukohdeViewModel();
         }
+
         return hakukohde;
     }
 
@@ -289,6 +280,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     public ValintakoeViewModel getSelectedValintaKoe() {
+        if (selectedValintaKoe == null) {
+            selectedValintaKoe = new ValintakoeViewModel();
+        }
+
         return selectedValintaKoe;
     }
 

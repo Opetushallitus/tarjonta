@@ -169,7 +169,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(getKoodiNimi(e.getKey()) + " (" + e.getValue().size() + ")", false));
 
             for (HakuViewModel curHaku : e.getValue()) {
                 HakuResultRow rowStyleInner = new HakuResultRow(curHaku, getListHakuName(curHaku));
@@ -213,7 +213,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     }
     
     private String getAjankohtaStr(HakuViewModel curHaku) {
-        return  getKoodiNimi(curHaku.getHakukausi()) + " " + curHaku.getHakuvuosi();
+        return  getKoodiNimi(curHaku.getKoulutuksenAlkamisKausi()) + " " + curHaku.getKoulutuksenAlkamisvuosi();
     }
     
     private String getHakutapaStr(HakuViewModel curHaku) {
@@ -268,11 +268,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
-
         return layout;
     }
 

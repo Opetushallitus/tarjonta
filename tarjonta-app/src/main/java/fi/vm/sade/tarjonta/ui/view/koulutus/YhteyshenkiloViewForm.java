@@ -24,6 +24,8 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -40,11 +42,17 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
     private static transient final Logger LOG = LoggerFactory
             .getLogger(YhteyshenkiloViewForm.class);
     private static final long serialVersionUID = -3571709365318709818L;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
+    
+    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
     @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")

@@ -20,20 +20,15 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
-import java.util.HashSet;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -69,8 +64,10 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
 
 
         hlAmmattinimike = new HorizontalLayout();
+        hlAmmattinimike.setMargin(false, false, true, false);
+
         PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
-        f = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+        f = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURI.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
         f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override
             public String formatToken(Object selectedToken) {
@@ -100,7 +97,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         // Build tabsheet for languages with koodisto select languages
         //
         tabs = new EditLisatiedotTabSheet(_presenter.getModel(), uiHelper, uiBuilder);
-        addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
+        // OVT-4727 addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
     }
 

@@ -11,9 +11,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class DataUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataUtils.class);
@@ -52,33 +55,51 @@ public final class DataUtils {
             return StringUtils.EMPTY;
         }
 
-        String localNimi = koodistoNimi.toUpperCase();
-        localNimi = localNimi.replaceAll("\\s", "");
-        localNimi = localNimi.replace('Ý', 'Y');
-        localNimi = localNimi.replaceAll("Ù|Ú|Û|Ü", "U");
-        localNimi = localNimi.replaceAll("Ò|Ó|Ô|Õ|Ö", "O");
-        localNimi = localNimi.replaceAll("Ì|Í|Î|Ï", "I");
-        localNimi = localNimi.replaceAll("È|É|Ê|Ë", "E");
-        localNimi = localNimi.replace('Ç', 'C');
-        localNimi = localNimi.replaceAll("À|Á|Â|Ã|Ä|Æ", "A");
-        localNimi = localNimi.replaceAll("Å", "O");
-        localNimi = localNimi.replaceAll("_", "");
-        localNimi = localNimi.replaceAll("-", "");
+        return transliterate(koodistoNimi);
+    }
 
-        return localNimi.toLowerCase();
+    private static final Map<Character, Character> transliteration = new HashMap<Character, Character>();
+
+    static {
+        Character[][] specialCharacters = new Character[][]{{'å', 'o'}, {'ä', 'a'}, {'ö', 'o'}};
+        Character[] allowedCharacters = new Character[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
+                '6', '7', '8', '9'};
+        for (Character c : allowedCharacters) {
+            transliteration.put(c, c);
+        }
+        for (Character[] c : specialCharacters) {
+            transliteration.put(c[0], c[1]);
+        }
+    }
+
+    private static String transliterate(final String value) {
+        StringBuilder b = new StringBuilder();
+
+        final String localValue = value.toLowerCase();
+        for (int i = 0; i < localValue.length(); ++i) {
+            char c = localValue.charAt(i);
+
+            if (transliteration.containsKey(c)) {
+                b.append(transliteration.get(c));
+            }
+        }
+
+        return b.toString();
     }
 
     public static CreateKoodiDataType createCreateKoodiDataType(final Koodi koodiData) {
         final CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiData.getKoodiArvo());
 
-        if (koodiData.getKoodiNimiFi() != null) {
+        final String koodiNimiFi = StringUtils.defaultIfBlank(koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo());
+        if (koodiNimiFi != null) {
             final KoodiMetadataType metadataType = new KoodiMetadataType();
-            metadataType.setNimi(koodiData.getKoodiNimiFi());
+            metadataType.setNimi(koodiNimiFi);
             metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null
-                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
+                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiNimiFi);
             metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null
-                    && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
+                    && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiNimiFi);
             metadataType.setKieli(KieliType.FI);
             koodiDataType.getMetadata().add(metadataType);
         }

@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Date;
@@ -34,5 +35,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 
     List<Haku> findByKoulutuksenKausi(String kausi,Integer alkamisVuosi);
+
+    List<Haku> findBySearchCriteria(ListHakuSearchParam param);
 }
 

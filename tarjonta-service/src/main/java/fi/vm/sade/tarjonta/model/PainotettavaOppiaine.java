@@ -17,6 +17,10 @@ package fi.vm.sade.tarjonta.model;
  * European Union Public Licence for more details.
  */
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
+import java.math.BigDecimal;
+
 import javax.persistence.*;
 
 /**
@@ -25,12 +29,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "painotettavaoppiaine")
+@EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends BaseEntity {
 
-    
-  
+    @FilterXss
     private String oppiaine;
-    private Integer painokerroin;
+    private BigDecimal painokerroin;
 
     /**
      * @return the oppiaine
@@ -49,16 +53,14 @@ public class PainotettavaOppiaine extends BaseEntity {
     /**
      * @return the painokerroin
      */
-    public Integer getPainokerroin() {
+    public BigDecimal  getPainokerroin() {
         return painokerroin;
     }
 
     /**
      * @param painokerroin the painokerroin to set
      */
-    public void setPainokerroin(Integer painokerroin) {
+    public void setPainokerroin(BigDecimal painokerroin) {
         this.painokerroin = painokerroin;
     }
-
-
 }

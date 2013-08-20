@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Component.Event;
-import com.vaadin.ui.Component.Listener;
 
+import fi.vm.sade.tarjonta.ui.AbstractWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
@@ -64,6 +63,8 @@ public class HakuRootView extends Window {
         if (hakuPresenter == null) {
             hakuPresenter = new HakuPresenter();
         }
+
+        setWidth("100%");
         
         //
         // Create components
@@ -71,8 +72,11 @@ public class HakuRootView extends Window {
         //BreadcrumbsView otettu pois
         //breadcrumbsView = new BreadcrumbsView();
         searchSpesificationView = new SearchSpesificationView();
+        searchSpesificationView.setMargin(true, true, false, true);
+        
         searchResultsView = new HakuSearchResultView();
-
+        searchResultsView.setMargin(true, true, false, true);
+        
         searchSpesificationView.addListener(new Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
 
@@ -106,6 +110,9 @@ public class HakuRootView extends Window {
         layout.setHeight(-1, UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
+
+        // Make session to stay alive with small timeout
+        layout.addComponent(AbstractWebApplication.createRefersh("HakuRootView.init()"));
 
         // Create application layout and add to root
         appRootLayout = UiBuilder.horizontalLayout();

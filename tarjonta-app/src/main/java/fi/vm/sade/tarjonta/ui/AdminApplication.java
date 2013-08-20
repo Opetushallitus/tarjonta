@@ -155,7 +155,8 @@ public class AdminApplication extends AbstractWebApplication {
 
         hl.addComponent(btnIndexOrganisaatiot);
 
-        //buildTest(hl);
+        // Make session to stay alive with small timeout
+        hl.addComponent(AbstractWebApplication.createRefersh("AdminApplication.initApplization()"));
     }
 
 //    private void buildTest(AbstractLayout l) {

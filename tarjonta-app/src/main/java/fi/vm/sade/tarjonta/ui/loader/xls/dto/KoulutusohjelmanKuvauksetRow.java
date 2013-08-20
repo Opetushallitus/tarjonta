@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class KoulutusohjelmanKuvauksetRow {
 
-    public static final String FILENAME = "Kouutusohjelman_kuvaukset_KONVERSIO";
+    public static final String FILENAME = "Kouutusohjelman_kuvaukset_KONVERSIO_taydennetty_html_final";
     public static final Column[] COLUMNS = {
         new Column("koulutusohjelmaKoodiarvo", "KOUOLUTUSOHJELMA", InputColumnType.INTEGER),
         new Column("koulutusohjelmanSeliteTeksti", "KOK_SSELITE", InputColumnType.STRING),

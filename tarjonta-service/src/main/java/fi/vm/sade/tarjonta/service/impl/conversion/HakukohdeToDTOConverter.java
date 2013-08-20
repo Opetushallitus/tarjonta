@@ -27,7 +27,9 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 
@@ -49,16 +51,22 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
-        
-        if (s.getHakuaika()==null && s.getHaku().getHakuaikas().size()==1) {
-        	// jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
+
+        if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {
+            // jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
             hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHaku().getHakuaikas().iterator().next()));
         } else {
             hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
         }
-        
+
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
+
+        if (s.getKoulutusmoduuliToteutuses() != null && !s.getKoulutusmoduuliToteutuses().isEmpty()) {
+            final String koulutustyyppi = s.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getKoulutustyyppi();
+            hakukohde.setHakukohteenKoulutusaste(KoulutusTyyppiStrToKoulutusAsteTyyppi(koulutustyyppi));
+        }
+
         hakukohde.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setValinnanAloituspaikat(s.getValintojenAloituspaikatLkm());
         hakukohde.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
@@ -69,10 +77,10 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
             hakukohde.setLiitteidenToimitusOsoite(osoiteTyyppiFromOsoite(s.getLiitteidenToimitusOsoite()));
         }
         if (s.getAlinHyvaksyttavaKeskiarvo() != null) {
-        hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(s.getAlinHyvaksyttavaKeskiarvo()));
+            hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(s.getAlinHyvaksyttavaKeskiarvo()));
         }
         if (s.getPainotettavatOppiaineet() != null) {
-        hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(s.getPainotettavatOppiaineet()));
+            hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(s.getPainotettavatOppiaineet()));
         }
 
         if (s.getLastUpdatedByOid() != null) {
@@ -84,19 +92,19 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
 
         return hakukohde;
     }
-    
+
     private List<PainotettavaOppiaineTyyppi> convertPainotettavatOppiaineet(Set<PainotettavaOppiaine> oppiaineet) {
         List<PainotettavaOppiaineTyyppi> painotettavatOppiaineet = new ArrayList<PainotettavaOppiaineTyyppi>();
-        
-        for (PainotettavaOppiaine oppiaine:oppiaineet) {
+
+        for (PainotettavaOppiaine oppiaine : oppiaineet) {
             PainotettavaOppiaineTyyppi painotettavaOppiaine = new PainotettavaOppiaineTyyppi();
             painotettavaOppiaine.setOppiaine(oppiaine.getOppiaine());
-            painotettavaOppiaine.setPainokerroin(oppiaine.getPainokerroin());
+            painotettavaOppiaine.setPainokerroin(oppiaine.getPainokerroin().doubleValue());
             painotettavaOppiaine.setPainotettavaOppiaineTunniste(oppiaine.getId().toString());
             painotettavaOppiaine.setVersion(oppiaine.getVersion());
             painotettavatOppiaineet.add(painotettavaOppiaine);
         }
-        
+
         return painotettavatOppiaineet;
     }
 
@@ -120,6 +128,4 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
 
         return osoiteTyyppi;
     }
-
 }
-

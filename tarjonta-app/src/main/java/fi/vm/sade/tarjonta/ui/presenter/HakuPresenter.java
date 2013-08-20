@@ -53,10 +53,10 @@ import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
@@ -160,7 +160,17 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
         Map<String, List<HakuViewModel>> returnVal = new HashMap<String, List<HakuViewModel>>();
         ListaaHakuTyyppi req = new ListaaHakuTyyppi();
         req.setHakuSana(searchVm.getSearchStr());
+        if (searchVm.getKoulutuksenTila() != null) {
+            req.setTila(TarjontaTila.fromValue(searchVm.getKoulutuksenTila().trim()));
+        }
         req.setHakuSanaKielikoodi(I18N.getLocale().getLanguage());
+        if (searchVm.getKoulutuksenAlkamiskausi() != null) {
+            req.setKoulutuksenAlkamisKausi(searchVm.getKoulutuksenAlkamiskausi());
+        }
+        if (searchVm.getKoulutuksenAlkamisvuosi() != 0 && searchVm.getKoulutuksenAlkamisvuosi() != -1) {
+            req.setKoulutuksenAlkamisVuosi(searchVm.getKoulutuksenAlkamisvuosi());
+        }
+
         List<HakuViewModel> hakuses = retrieveHaut(req);
         returnVal = groupHakus(hakuses);
         return returnVal;
@@ -399,8 +409,8 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
         this.setHakuViewModel(haku);
 
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.getHakuModel().getNimiFi(),
-                this.getHakuModel().getNimiFi(),
+        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
+                TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 null);
         showHaku.addListener(new com.vaadin.ui.Component.Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
@@ -437,7 +447,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     /**
      * Displays the edit form of Haku.
      *
-     * @param haku
+     * @param model
      */
     public void showHakuEdit(HakuViewModel model) {
         LOG.info("showHakuEdit()");

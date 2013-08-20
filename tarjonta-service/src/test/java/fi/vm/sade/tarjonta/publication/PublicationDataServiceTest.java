@@ -19,6 +19,8 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.List;
 
 import org.junit.Before;

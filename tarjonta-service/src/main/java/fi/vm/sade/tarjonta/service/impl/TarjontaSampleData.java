@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -179,7 +181,8 @@ public class TarjontaSampleData {
 
     private Koulutusmoduuli createKoulutusmoduuli() {
 
-        Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        Koulutusmoduuli m = new Koulutusmoduuli();
+        m.setKoulutustyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA.name());
         m.setOid(randomOid("koulutusmoduuli"));
         m.setNimi(createTeksti("Nimi (fi)", "Nimi (sv)", "Nimi (en)"));
         m.setKoulutusKoodi(randomKoodiUri("koulutus"));

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -25,6 +26,8 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -51,6 +54,8 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
     private Button muokkaaBtn;
     private Button poistaBtn;
 
+    private TarjontaDialogWindow removeDialogWindow;
+
     public HakukohdeLiiteRow(HakukohdeLiiteViewModel param) {
         setHakukohdeLiiteViewModel(param);
         liiteId = param.getHakukohdeLiiteId();
@@ -68,10 +73,36 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                tarjontaPresenter.removeLiiteFromHakukohde(hakukohdeLiiteViewModel);
+
+               RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(HakukohdeLiiteRow.this.i18n.getMessage("removeMsg"),null,
+                       HakukohdeLiiteRow.this.i18n.getMessage("yesBtn"),HakukohdeLiiteRow.this.i18n.getMessage("noBtn"),new Button.ClickListener() {
+                   @Override
+                   public void buttonClick(Button.ClickEvent clickEvent) {
+                       tarjontaPresenter.removeLiiteFromHakukohde(hakukohdeLiiteViewModel);
+                       closeRemovalDialogWindow();
+                   }
+               }, new Button.ClickListener() {
+                   @Override
+                   public void buttonClick(Button.ClickEvent clickEvent) {
+                      closeRemovalDialogWindow();
+                   }
+               });
+                removeDialogWindow = new TarjontaDialogWindow(removeDialog,HakukohdeLiiteRow.this.i18n.getMessage("varmistusMsg"));
+                Window liitteetWindow = tarjontaPresenter.getLiitteetTabImpl();
+                if (liitteetWindow != null) {
+                    liitteetWindow.addWindow(removeDialogWindow);
+
+                }
             }
+
         });
 
+    }
+
+    protected void closeRemovalDialogWindow() {
+        if(removeDialogWindow != null && tarjontaPresenter.getLiitteetTabImpl() != null) {
+            tarjontaPresenter.getLiitteetTabImpl().removeWindow(removeDialogWindow);
+        }
     }
 
     private void tryGetLocalizedSanallinenKuvaus(HakukohdeLiiteViewModel param) {
@@ -86,18 +117,23 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
                 liitteenSanallinenKuvaus = teksti.getNimi();
             }
         }
+        if (liitteenSanallinenKuvaus != null && liitteenSanallinenKuvaus.length() > 50) {
+            liitteenSanallinenKuvaus = liitteenSanallinenKuvaus.substring(0,47) + "...";
+        }
     }
 
     private String getStringConcat() {
         StringBuilder stringBuilder = new StringBuilder();
         if (hakukohdeLiiteViewModel != null) {
             stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
-            stringBuilder.append("\n");
+            stringBuilder.append(System.getProperty("line.separator"));
+
             List<KoodiType> postinumeroKoodis = tarjontaUIHelper.getKoodis(hakukohdeLiiteViewModel.getPostinumero());
             if (postinumeroKoodis != null) {
                 stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
             }
-            stringBuilder.append("\n");
+
+            stringBuilder.append(System.getProperty("line.separator"));
             stringBuilder.append(tarjontaUIHelper.getKoodiNimi(hakukohdeLiiteViewModel.getPostinumero(), I18N.getLocale()));
         }
         return stringBuilder.toString();

@@ -22,19 +22,8 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -42,7 +31,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
@@ -50,6 +39,8 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -116,6 +107,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * Used for add text like 5 + 2.
      */
     @NotNull(message = "{validation.Koulutus.suunniteltuKesto.notNull}")
+    @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
     @PropertyId("suunniteltuKesto")
     private TextField tfSuunniteltuKesto;
     /*
@@ -132,6 +124,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     @NotNull(message = "{validation.Koulutus.opetusmuoto.notNull}")
     @PropertyId("opetusmuoto")
     private KoodistoComponent kcOpetusmuoto;
+    
+    @Size(min=1, max=255, message="{validation.koulutus.tooLong.opsuLink}")
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
@@ -272,6 +266,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         }
         gridLabel(grid, propertyKey);
         final Label label = new Label();
+        label.setContentMode(Label.CONTENT_XHTML);
         grid.addComponent(label);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -322,7 +317,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        kcOpetuskieli = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcOpetuskieli = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_KIELI_URI, true);
         kcOpetuskieli.setCaptionFormatter(koodiNimiFormatter);
         kcOpetuskieli.setImmediate(true);
         grid.addComponent(kcOpetuskieli);
@@ -343,7 +338,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * Builds the yhteyshenkilo part of the form.
      *
      * @param grid
-     * @param propertyKey
+
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
         yhteyshenkiloForm = new YhteyshenkiloViewForm(tarjontaPresenter, model.getYhteyshenkilo());
@@ -382,7 +377,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
-        kcSuunniteltuKestoTyyppi = uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
+        kcSuunniteltuKestoTyyppi = uiBuilder.koodistoComboBox(hl, KoodistoURI.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
         kcSuunniteltuKestoTyyppi.setImmediate(true);
         kcSuunniteltuKestoTyyppi.setCaptionFormatter(koodiNimiFormatter);
         grid.addComponent(hl);
@@ -393,9 +388,12 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcOpetusmuoto = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, true);
+        kcOpetusmuoto = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURI.KOODISTO_OPETUSMUOTO_URI, true);
         kcOpetusmuoto.setCaptionFormatter(koodiNimiFormatter);
         kcOpetusmuoto.setImmediate(true);
+
+
+        ((TwinColSelect)kcOpetusmuoto.getField()).setWidth("600px");
         grid.addComponent(kcOpetusmuoto);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -508,6 +506,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                 closeNoKoulutusDialog();
             }
         });
+        noKoulutusDialog.setWidth("120px");
+        noKoulutusDialog.setHeight("60px");
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
         getWindow().addWindow(noKoulutusDialog);
     }

@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -92,7 +93,7 @@ public class KomoExcelReader<T extends Object> {
             log.info("Max rows available : " + sheet.getLastRowNum());
         }
 
-        Set<T> list = new HashSet<T>();
+        Set<T> list = new LinkedHashSet<T>();
         boolean stop = false;
 
         for (int rowNumber = 1; rowNumber < maxReadRows; rowNumber++) {

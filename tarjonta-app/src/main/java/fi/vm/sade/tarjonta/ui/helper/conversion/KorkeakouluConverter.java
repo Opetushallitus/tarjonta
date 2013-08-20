@@ -117,7 +117,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         KorkeakouluPerustiedotViewModel perustiedot = createKorkeakouluPerustiedotViewModel(koulutus, locale);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         if (koulutus.getViimeisinPaivitysPvm() != null) {
-            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
         }
         tarjontaModel.setKorkeakouluPerustiedot(perustiedot);
         KorkeakouluKuvailevatTiedotViewModel kuvailevatTiedot = createKorkeakouluKuvailevatTiedotViewModel(koulutus);
@@ -327,17 +327,15 @@ public class KorkeakouluConverter extends KoulutusConveter {
         /*
          * Other UI fields
          */
-        perustiedotModel.setKoulutuksenAlkamisPvm(
-                vastaus.getKoulutuksenAlkamisPaiva() != null ? vastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+        perustiedotModel.setKoulutuksenAlkamisPvm(vastaus.getKoulutuksenAlkamisPaiva() != null ? vastaus.getKoulutuksenAlkamisPaiva() : null);
 
         if (vastaus.getKesto() != null) {
             perustiedotModel.setSuunniteltuKesto(vastaus.getKesto().getArvo());
             perustiedotModel.setSuunniteltuKestoTyyppi(vastaus.getKesto().getYksikko());
         }
 
-        if (vastaus.getOpetuskieli() != null && !vastaus.getOpetuskieli().isEmpty()) {
-            perustiedotModel.setOpetuskielis(convertListToSet(vastaus.getOpetuskieli()));
-        }
+
+ 
 
         if (vastaus.getOpetusmuoto() != null && !vastaus.getOpetusmuoto().isEmpty()) {
             perustiedotModel.setOpetusmuodos(convertListToSet(vastaus.getOpetusmuoto()));

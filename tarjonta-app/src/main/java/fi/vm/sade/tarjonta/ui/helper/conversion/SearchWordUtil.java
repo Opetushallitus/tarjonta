@@ -19,9 +19,8 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +37,7 @@ public class SearchWordUtil {
     private static final int MAX_SIZE_CHARACTERS = 255;
     private static final String SUFFIX = ", ";
 
-    public static MonikielinenTekstiTyyppi createSearchKeywords(final List<KoodiMetadataType> koulutuskoodi, List<KoodiMetadataType> koulutusohjelma) {
+    public static MonikielinenTekstiTyyppi createSearchKeywords(final List<KoodiMetadataType> koulutuskoodi, List<KoodiMetadataType> koulutusohjelma, TarjontaKoodistoHelper tarjontaKoodistoHelper) {
         //add all multilanguage strings as search keywords
         if (koulutuskoodi == null) {
             throw new RuntimeException("koulutuskoodi list object cannot be null.");
@@ -62,7 +61,7 @@ public class SearchWordUtil {
             }
 
             Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-            teksti.setKieliKoodi(e.getKey().value().toLowerCase());
+            teksti.setKieliKoodi(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(e.getKey().value().toLowerCase()));
             teksti.setValue(str);
             monikielinenTekstiTyyppi.getTeksti().add(teksti);
         }

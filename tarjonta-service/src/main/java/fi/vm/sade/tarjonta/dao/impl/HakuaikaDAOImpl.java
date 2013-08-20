@@ -15,16 +15,9 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
-import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.QHaku;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import java.util.Date;
-import java.util.List;
 import org.springframework.stereotype.Repository;
 
 /**

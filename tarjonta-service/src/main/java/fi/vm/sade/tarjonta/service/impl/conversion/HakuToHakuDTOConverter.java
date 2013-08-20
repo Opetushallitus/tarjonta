@@ -21,9 +21,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuaikaRDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.convert.ConversionService;
 
 /**
  * Convert domain Haku to REST API DTO.
@@ -31,18 +28,6 @@ import org.springframework.core.convert.ConversionService;
  * @author mlyly
  */
 public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
-
-    @Autowired
-    private ApplicationContext _applicationContext;
-    // @Autowired -- cannot do this since this bean is created in the scope of ConversionSerices initalization...
-    private ConversionService _conversionService;
-
-    private ConversionService getConversionService() {
-        if (_conversionService == null) {
-            _conversionService = _applicationContext.getBean(ConversionService.class);
-        }
-        return _conversionService;
-    }
 
     @Override
     public HakuDTO convert(Haku s) {

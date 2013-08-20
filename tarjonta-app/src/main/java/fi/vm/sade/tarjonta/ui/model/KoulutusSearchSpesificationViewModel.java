@@ -17,6 +17,7 @@ public class KoulutusSearchSpesificationViewModel extends BaseUIViewModel {
     private List<String> organisaatioOids = new ArrayList<String>();
     private String koulutuksenAlkamiskausi;
     private int koulutuksenAlkamisvuosi;
+    private String koulutuksenTila;
     private String hakukausi;
     
     
@@ -51,8 +52,13 @@ public class KoulutusSearchSpesificationViewModel extends BaseUIViewModel {
     public void setKoulutuksenAlkamisvuosi(int koulutuksenAlkamisvuosi) {
         this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
     }
-    
-    
 
 
+    public String getKoulutuksenTila() {
+        return koulutuksenTila;
+    }
+
+    public void setKoulutuksenTila(String koulutuksenTila) {
+        this.koulutuksenTila = koulutuksenTila;
+    }
 }

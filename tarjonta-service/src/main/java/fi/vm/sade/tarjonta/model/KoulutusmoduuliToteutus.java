@@ -29,6 +29,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -44,9 +45,11 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.xssfilter.FilterXss;
+import fi.vm.sade.security.xssfilter.XssFilterListener;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
  * Koulutusmoduuli:n tietoja ja antaa moduulille aika seka paikka ulottuvuuden.
@@ -54,6 +57,7 @@ import java.math.BigInteger;
  */
 @Entity
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
+@EntityListeners(XssFilterListener.class)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
@@ -119,8 +123,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
     @Column(name = "ulkoinentunniste")
+    @FilterXss
     private String ulkoinenTunniste;
     @Column(name = "koulutusaste")
+    @FilterXss
     private String koulutusaste;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "arviointikriteerit")
@@ -129,6 +135,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
     @Column(name = "pohjakoulutusvaatimus")
+    @FilterXss
     private String pohjakoulutusvaatimus;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "painotus")
@@ -170,11 +177,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
 
-    @Column(name="viimPaivitysPvm")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+    
+    @Column(name="viimIndeksointiPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date viimIndeksointiPvm = null;
+
  
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_pohjakoulutusvaatimus", joinColumns =
@@ -185,6 +194,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name="hinta")
     private BigDecimal hinta;
     
+    public Date getViimIndeksointiPvm() {
+        return viimIndeksointiPvm;
+    }
+
+    public void setViimIndeksointiPvm(Date viimIndeksointiPvm) {
+        this.viimIndeksointiPvm = viimIndeksointiPvm;
+    }
+
     public KoulutusmoduuliToteutus() {
         super();
     }
@@ -717,14 +734,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void removeLukiodiplomi(KoodistoUri lukiodiplomi) {
         lukiodiplomit.remove(lukiodiplomi);
-    }
-
-    public Date getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public void setLastUpdateDate(Date lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
     }
 
     public String getLastUpdatedByOid() {

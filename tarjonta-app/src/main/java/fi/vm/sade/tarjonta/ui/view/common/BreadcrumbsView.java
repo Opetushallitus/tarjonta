@@ -15,17 +15,17 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.ui.AbstractLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
+import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -38,31 +38,35 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @Configurable
 public class BreadcrumbsView extends AbstractVerticalLayout {
-
+    
     private static final long serialVersionUID = 2254224099223350768L;
     private Label organisaatioNimi;
     private Button poistaValintaB;
     @Autowired
     UserContext userContext;
     TarjontaPresenter presenter;
-
+    
     public BreadcrumbsView(TarjontaPresenter presenter) {
         super();
-        this.setMargin(false, false, false, true);
         this.setSizeUndefined();
         this.presenter = presenter;
     }
-
+    
     @Override
     protected void buildLayout() {
-        HorizontalLayout hl = UiUtil.horizontalLayout();
-        hl.setSpacing(true);
-        organisaatioNimi = UiUtil.label(hl, "OPH", LabelStyleEnum.H2);
+        CssHorizontalLayout cssLayout = new CssHorizontalLayout();
+        cssLayout.setWidth("100%");
+        organisaatioNimi = UiUtil.label((AbstractLayout) null, "OPH", LabelStyleEnum.H2);
         organisaatioNimi.setSizeUndefined();
-        poistaValintaB = UiUtil.buttonLink(hl, T("poistaOrganisaatioValinta"));
+        organisaatioNimi.addStyleName(CssHorizontalLayout.StyleEnum.LABEL_ALLOW_WRAP.getStyleName());
+        organisaatioNimi.setContentMode(Label.CONTENT_XHTML);
+        poistaValintaB = UiUtil.buttonLink(null, T("poistaOrganisaatioValinta"));
+        cssLayout.addComponent(organisaatioNimi, CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX);
+        cssLayout.addComponent(poistaValintaB);
+        
         poistaValintaB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(ClickEvent event) {
                 ///XXX how to restore use restriction??
@@ -70,21 +74,24 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
                 presenter.unSelectOrganisaatio();
             }
         });
-        hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(poistaValintaB, Alignment.TOP_RIGHT);
+        
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
-        addComponent(hl);
+        poistaValintaB.addStyleName(CssHorizontalLayout.StyleEnum.VERTICAL_ALIGN_BOTTOM.getStyleName());
+        addComponent(cssLayout);
+        
+        cssLayout.setSizeFull();
     }
 
     /**
      * @param organisaatioNimi the organisaatio to set
      */
     public void setOrganisaatio(String organisaatioNimi) {
-        this.organisaatioNimi.setValue(organisaatioNimi);
+        // OVT-4891 span-haxorointi koska vaadin ei osaa rivittää teksti(kentti)ä jonka leveyttä ei tiedetä etukäteen.
+        this.organisaatioNimi.setValue("<span style=\"white-space: normal;\">" + organisaatioNimi + "</span>");
         poistaValintaB.setVisible(isNavigationOrganisationSelected());
     }
     
-    private boolean isNavigationOrganisationSelected(){
+    private boolean isNavigationOrganisationSelected() {
         return presenter.getNavigationOrganisation().isOrganisationSelected();
     }
 }

@@ -273,11 +273,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                 .append(koulutusLinkit).toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
     /**
      * @return the tila
      */

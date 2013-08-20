@@ -33,12 +33,12 @@ import fi.vm.sade.koodisto.util.KoodistoHelper;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.ValintaperustekuvausPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +60,7 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditValintakuvausForm.class);
     private transient UiBuilder uiBuilder;
-    private ValintaPresenter presenter;
+    private ValintaperustekuvausPresenter presenter;
     //MainLayout element
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
@@ -75,7 +75,7 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
     /*
      * Init view with new model
      */
-    public EditValintakuvausForm(MetaCategory category, ValintaPresenter presenter, UiBuilder uiBuilder) {
+    public EditValintakuvausForm(MetaCategory category, ValintaperustekuvausPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
@@ -186,9 +186,9 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
 
     private KoodistoComponent createKoodistoComponentRyhma() {
         if (category.equals(MetaCategory.SORA_KUVAUS)) {
-            kcRyhma = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_SORA_KUVAUSRYHMA_URI);
+            kcRyhma = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_SORA_KUVAUSRYHMA_URI);
         } else if (category.equals(MetaCategory.VALINTAPERUSTEKUVAUS)) {
-            kcRyhma = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI);
+            kcRyhma = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI);
         } else {
             throw new RuntimeException("An unknown meta category. Meta : " + category);
         }

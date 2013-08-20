@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.ui.AbstractComponent;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -38,7 +38,7 @@ public abstract class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
     private transient I18NHelper _i18n;
 
     public LisatiedotTabSheet(TarjontaModel tarjontaModel, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
-        super(KoodistoURIHelper.KOODISTO_KIELI_URI, uiHelper, uiBuilder);
+        super(KoodistoURI.KOODISTO_KIELI_URI, uiHelper, uiBuilder);
         this.tarjontaModel = tarjontaModel;
 
         // Initialize with all preselected languages

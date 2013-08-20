@@ -37,7 +37,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
@@ -84,7 +84,7 @@ public class EditKorkeakouluKuvailevatTiedotFormView extends VerticalLayout {
     private void addRow(final GridLayout kielivalinnat, final String name) {
         buildLabel(kielivalinnat, name);
         final VerticalLayout vl = new VerticalLayout();
-        buildTokenField(name, vl, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        buildTokenField(name, vl, KoodistoURI.KOODISTO_KIELI_URI);
 
         kielivalinnat.addComponent(vl, 1, kielivalinnat.getCursorY() - 1);
         Label help = UiBuilder.label(this, T(name + ".help"), LabelStyleEnum.TEXT);
@@ -137,7 +137,7 @@ public class EditKorkeakouluKuvailevatTiedotFormView extends VerticalLayout {
         VerticalLayout kielivalinnat = new VerticalLayout();
         UiBuilder.label(kielivalinnat, T("lukiodiplomit.label"), LabelStyleEnum.H2);
         UiBuilder.label(kielivalinnat, T("lukiodiplomit.help"), LabelStyleEnum.TEXT);
-        buildTokenField("diplomit", kielivalinnat, KoodistoURIHelper.KOODISTO_LUKIODIPLOMIT_URI);
+        buildTokenField("diplomit", kielivalinnat, KoodistoURI.KOODISTO_LUKIODIPLOMIT_URI);
         return kielivalinnat;
     }
 

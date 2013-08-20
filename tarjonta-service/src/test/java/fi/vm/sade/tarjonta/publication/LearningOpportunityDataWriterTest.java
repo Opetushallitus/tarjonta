@@ -55,7 +55,6 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.model.Pisteraja;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.publication.types.ApplicationOptionType;
@@ -74,6 +73,9 @@ import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
 import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
+import java.math.BigDecimal;
 
 /**
  * Smoke tests writing Tarjonta data as "Publication XML". The output still
@@ -213,7 +215,7 @@ public class LearningOpportunityDataWriterTest {
 
     	int minExamScore = 3;
     	String oppiaine = "Matematiikka";
-    	int painotus = 2;
+    	double painotus = 2.0;
     	
         Koulutusmoduuli m = createKoulutusmoduuli();
         m.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
@@ -543,7 +545,7 @@ public class LearningOpportunityDataWriterTest {
 
     }
     
-    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, int painotus) {
+    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, double painotus) {
     	Hakukohde lukioHakukohde = createHakukohde();
     	Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
     	for (Valintakoe vKoe : lukioHakukohde.getValintakoes()) {
@@ -557,7 +559,7 @@ public class LearningOpportunityDataWriterTest {
     	}
     	PainotettavaOppiaine painotettavaAine = new PainotettavaOppiaine();
     	painotettavaAine.setOppiaine(oppiaine);
-    	painotettavaAine.setPainokerroin(painotus);
+    	painotettavaAine.setPainokerroin(new BigDecimal( Double.parseDouble(painotus + "")));
     	lukioHakukohde.getPainotettavatOppiaineet().add(painotettavaAine);
     	return lukioHakukohde;
     }

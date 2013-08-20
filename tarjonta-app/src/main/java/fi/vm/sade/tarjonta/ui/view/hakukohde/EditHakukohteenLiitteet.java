@@ -45,7 +45,7 @@ public class EditHakukohteenLiitteet extends AbstractEditLayoutView<HakukohdeVie
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
         HakukohteenLiitteetTabImpl formView = new HakukohteenLiitteetTabImpl();
-        buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
+        buildFormLayout( presenter, layout, presenter.getModel().getHakukohde(), formView);
     }
 
     @Override

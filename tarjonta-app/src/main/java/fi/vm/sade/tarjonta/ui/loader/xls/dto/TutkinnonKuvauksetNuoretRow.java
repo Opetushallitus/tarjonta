@@ -25,7 +25,7 @@ import static fi.vm.sade.tarjonta.ui.loader.xls.dto.AbstractKoulutuskoodiField.K
  */
 public class TutkinnonKuvauksetNuoretRow extends AbstractKoulutuskoodiField {
 
-    public static final String FILENAME = "Tutkinnon_kuvaukset_nuoret_KONVERTOINTI";
+    public static final String FILENAME = "Tutkinnon_kuvaukset_nuoret_KONVERTOINTI_taydennetty_html_final";
     public static final Column[] COLUMNS = {
         new Column(KOULUTUSKOODI_PROPERTY, "TUT_KOUKOODI", InputColumnType.INTEGER),
         new Column("tukinnonNimiFiTeksti", "TUTN_NIMI", InputColumnType.STRING),

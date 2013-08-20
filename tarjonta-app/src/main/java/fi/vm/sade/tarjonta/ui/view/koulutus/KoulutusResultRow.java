@@ -15,46 +15,43 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import java.util.List;
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -79,6 +76,9 @@ public class KoulutusResultRow extends HorizontalLayout {
      * The name of the koulutus, displayed in removal confirmation dialog.
      */
     private String koulutusNimi;
+    private String rowKey;
+    private List<KoulutusTulos> children;
+    
     private Window removeKoulutusDialog;
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
@@ -89,8 +89,9 @@ public class KoulutusResultRow extends HorizontalLayout {
     private TarjontaPresenter tarjontaPresenter;
 
     public KoulutusResultRow() {
-
         this.koulutus = new KoulutusTulos();
+        this.setHeight(-1, UNITS_PIXELS);
+        this.setWidth(-1, UNITS_PIXELS);
     }
 
     public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
@@ -132,14 +133,13 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            //DEBUGSAWAY:LOG.debug(selectedItem.getText());
             menuItemClicked(selectedItem.getText());
         }
     };
     OphRowMenuBar rowMenuBar;
 
     private OphRowMenuBar newMenuBar() {
-        final TarjontaTila tila = koulutus.getKoulutus().getTila();
+        final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
@@ -152,14 +152,13 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
-        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
-                && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
         if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelPublish(context)) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
@@ -291,8 +290,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         });
 
         //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
-        setWidth(-1, Sizeable.UNITS_PIXELS);
-        setHeight(-1, Sizeable.UNITS_PIXELS);
+
 
         addComponent(isSelected);
         if (withMenuBar) {
@@ -324,6 +322,19 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         return this;
     }
+    
+    private void removeKoulutusSelection() {
+        KoulutusTulos selectionToRemove = null;
+        for (KoulutusTulos curKoul : tarjontaPresenter.getModel().getSelectedKoulutukset()) {
+            if (curKoul.getKoulutus().getKomotoOid().equals(koulutus.getKoulutus().getKomotoOid())) {
+                selectionToRemove = curKoul;
+                break;
+            }
+        }
+        if (selectionToRemove != null) {
+            tarjontaPresenter.getSelectedKoulutukset().remove(selectionToRemove);
+        }
+    }
 
     /**
      * Gets the isSelected checkbox component.
@@ -353,4 +364,34 @@ public class KoulutusResultRow extends HorizontalLayout {
                 break;
         }
     }
+
+    /**
+     * @return the rowKey
+     */
+    public String getRowKey() {
+        return rowKey;
+    }
+
+    /**
+     * @param rowKey the rowKey to set
+     */
+    public void setRowKey(String rowKey) {
+        this.rowKey = rowKey;
+    }
+
+    /**
+     * @return the children
+     */
+    public List<KoulutusTulos> getChildren() {
+        return children;
+    }
+
+    /**
+     * @param children the children to set
+     */
+    public void setChildren(List<KoulutusTulos> children) {
+        this.children = children;
+    }
+
+
 }

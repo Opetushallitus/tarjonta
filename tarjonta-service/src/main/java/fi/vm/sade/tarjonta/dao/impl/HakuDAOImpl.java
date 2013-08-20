@@ -22,6 +22,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 
+import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -163,14 +164,44 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         }
         return orderBy;
     }
+    @Override
+    public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
+
+
+        QHaku haku = QHaku.haku;
+
+
+
+        BooleanExpression whereExpr = null;
+
+        if (param.getTila() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,haku.tila.eq(param.getTila()));
+        }
+
+        if (param.getKoulutuksenAlkamisKausi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,haku.koulutuksenAlkamiskausiUri.eq(param.getKoulutuksenAlkamisKausi()));
+        }
+
+        if (param.getKoulutuksenAlkamisVuosi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,haku.koulutuksenAlkamisVuosi.eq(param.getKoulutuksenAlkamisVuosi()));
+
+        }
+
+        JPAQuery q = from(haku);
+        if (whereExpr != null) {
+        q = q.where(whereExpr);
+        }
+
+        return q.list(haku);
+    }
 
     @Override
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
         // Convert Enums from API enum to DB enum
-        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        fi.vm.sade.tarjonta.shared.types.TarjontaTila dbTarjontaTila = null;
         if (tila != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name());
         }
 
         QHaku haku = QHaku.haku;

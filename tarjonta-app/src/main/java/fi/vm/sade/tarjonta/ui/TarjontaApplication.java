@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.ui.Window;
-
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.vaadin.Oph;
 
@@ -39,6 +37,6 @@ public class TarjontaApplication extends AbstractWebApplication {
         window = new TarjontaRootView();
         window.init();
         setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        setTheme("tarjonta");
     }
 }

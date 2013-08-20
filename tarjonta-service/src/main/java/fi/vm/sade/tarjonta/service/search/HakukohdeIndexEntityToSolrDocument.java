@@ -231,14 +231,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
     private boolean handleOrganisaatio(String tarjoaja, SolrInputDocument hakukohdeDoc,
             List<SolrInputDocument> docs) {
-        final SolrInputDocument orgDoc = new SolrInputDocument();
+        //final SolrInputDocument orgDoc = new SolrInputDocument();
 
         OrganisaatioDTO org = organisaatioService.findByOid(tarjoaja);
         if (org == null) {
             return false;
         }
-        add(orgDoc, OID, org.getOid());
-        add(orgDoc, Organisaatio.TYPE, "ORG");
+//        add(orgDoc, OID, org.getOid());
+//        add(orgDoc, Organisaatio.TYPE, "ORG");
 
         add(hakukohdeDoc, ORG_OID, org.getOid());
 
@@ -247,17 +247,17 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
         add(hakukohdeDoc, ORG_PATH, org.getOid());
 
-        for (Teksti curTeksti : org.getNimi().getTeksti()) {
-            String kielikoodi = curTeksti.getKieliKoodi();// .equals("fi");
-            if (kielikoodi.equals("fi")) {
-               add(orgDoc, ORG_NAME_FI, curTeksti.getValue());
-            } else if (kielikoodi.equals("sv")) {
-                add(orgDoc, ORG_NAME_SV, curTeksti.getValue());
-            } else if (kielikoodi.equals("en")) {
-                add(orgDoc, ORG_NAME_EN, curTeksti.getValue());
-            }
-        }
-        docs.add(orgDoc);
+//        for (Teksti curTeksti : org.getNimi().getTeksti()) {
+//            String kielikoodi = curTeksti.getKieliKoodi();// .equals("fi");
+//            if (kielikoodi.equals("fi")) {
+//               add(orgDoc, ORG_NAME_FI, curTeksti.getValue());
+//            } else if (kielikoodi.equals("sv")) {
+//                add(orgDoc, ORG_NAME_SV, curTeksti.getValue());
+//            } else if (kielikoodi.equals("en")) {
+//                add(orgDoc, ORG_NAME_EN, curTeksti.getValue());
+//            }
+//        }
+//        docs.add(orgDoc);
         return true;
     }
 

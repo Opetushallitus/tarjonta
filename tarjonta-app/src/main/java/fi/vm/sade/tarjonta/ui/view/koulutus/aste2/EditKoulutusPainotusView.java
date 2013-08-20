@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
-import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -23,17 +22,14 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -72,7 +68,7 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
         tfNimi.setRequiredError(i18n.getMessage("painotus.tyhja"));
 
         UiUtil.label(this, i18n.getMessage("Kielelle"));
-        kcKieli = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcKieli = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_KIELI_URI, true);
         kcKieli.getField().setRequired(true);
         kcKieli.getField().setNullSelectionAllowed(false);
         kcKieli.getField().setRequiredError(i18n.getMessage("kieli.tyhja"));
@@ -82,6 +78,7 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
         this.addComponent(hl);
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.debug("fire : SaveEvent");
@@ -90,6 +87,7 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
         });
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPainotusView.this));

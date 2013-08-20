@@ -16,6 +16,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
@@ -27,10 +32,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.koodisto.service.GenericFault;
-//import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -44,12 +48,7 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+//import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 
 /**
  *
@@ -58,10 +57,12 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW extends AbstractLayout> extends AbstractVerticalNavigationLayout {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEditLayoutView.class);
-    private static final TarjontaTila TO_STATE_LUONNOS = TarjontaTila.LUONNOS;
-    private static final TarjontaTila[] TO_STATE_VALMIS = {TO_STATE_LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
+
+    private static final TarjontaTila[] TO_STATE_LUONNOS = {TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU};
+    private static final TarjontaTila[] TO_STATE_VALMIS = {TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
+    
     private static final long serialVersionUID = 6843368378990612314L;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
@@ -74,7 +75,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private String modelOid;
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;
-    protected ErrorMessage errorView;
+    protected final ErrorMessage errorView = new ErrorMessage();
     protected Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.
@@ -82,31 +83,39 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private Label labelDocumentStatus;
     private boolean manualFormAttach = false;
     private Panel formPanel;
-
+    
     public AbstractEditLayoutView(String oid, SisaltoTyyppi sisalto) {
         super();
-        setFormDataObject(oid, sisalto, null);
+        initilize(oid, sisalto, null);
     }
-
+    
     public AbstractEditLayoutView(final String oid, final SisaltoTyyppi sisalto, final MODEL model) {
         super();
-        setFormDataObject(oid, sisalto, model);
+        initilize(oid, sisalto, model);
     }
-
+    
     public AbstractEditLayoutView(final String oid, final SisaltoTyyppi sisalto, final MODEL model, final boolean manualFormAttach) {
         super();
-        setFormDataObject(oid, sisalto, model);
+        initilize(oid, sisalto, model);
         this.manualFormAttach = manualFormAttach; //do not add form layout to the navigation parent layout
     }
-
-    public void setFormDataObject(final String oid, final SisaltoTyyppi sisalto, final MODEL model) {
+    
+    private void initilize(final String oid, final SisaltoTyyppi sisalto, final MODEL model) {
         this.sisalto = sisalto;
         this.modelOid = oid;
         if (model != null) {
             setFormDataHashcode(model);
         }
     }
-
+    
+    public void setFormDataObject(final String oid, final SisaltoTyyppi sisalto, final MODEL model) {
+        initilize(oid, sisalto, model);
+    }
+    
+    public void buildFormLayout(final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+        buildFormLayout((String) null, presenter, layout, model, view);
+    }
+    
     public void buildFormLayout(final String titleProperty, final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
         //check arguments
         validArg(presenter, "the presenter object has not been set correctly");
@@ -116,7 +125,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //set data
         this.model = model;
-        this.errorView = new ErrorMessage();
+        //this.errorView = new ErrorMessage();
 
         //set presenter reference
         setPresenter(presenter);
@@ -126,26 +135,50 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
 
         //build whole layout
         buildValidationLayout(titleProperty, layout, view);
-
+        
     }
+    
+    public void buildFormLayout(final AbstractLayout titleLayout, final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+        //check arguments
+        validArg(presenter, "the presenter object has not been set correctly");
+        validArg(model, "the form data model has not been set correctly");
+        validArg(view, "the form data view has not been set correctly");
+        validArg(layout, "the form base layout view has not been set correctly");
 
-    private void buildValidationLayout(final String titleProperty, final AbstractLayout layout, final VIEW view) {
+        //set data
+        this.model = model;
+        //this.errorView = new ErrorMessage();
+
+        //set presenter reference
+        setPresenter(presenter);
+
+        //build buttons
+        buildNavigationButtons();
+
+        //build whole layout
+        buildValidationLayout(titleLayout, layout, view);
+    }
+    
+    private void buildValidationLayout(final AbstractLayout titleLayout, final AbstractLayout layout, final VIEW view) {
+        LOG.debug("buildValidationLayout({})", titleLayout);
         //create panel inside navigation layout
         formPanel = new Panel();
 
         //create layout inside of the panel
         VerticalLayout vlBaseFormLayout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         getFormPanel().setContent(vlBaseFormLayout);
-
+        
         if (!manualFormAttach) {
             //some cases it's better to make manual attach to parent layout.
             layout.addComponent(formPanel);
         }
 
         /*
-         * TOP TITLE AND STATUS LAYOUT 
+         * TOP TITLE AND STATUS LAYOUT
          */
-        buildInformationLayout(titleProperty, vlBaseFormLayout);
+        if (titleLayout != null) {
+            buildInformationLayout(titleLayout, vlBaseFormLayout);
+        }
 
         /*
          * MIDDLE ERROR LAYOUT (only visible when is has validation errors)
@@ -156,9 +189,42 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
          * THE GIVEN VIEW FORM
          */
         bindModelToViewForm(vlBaseFormLayout, view);
-
+        
     }
+    
+    private void buildValidationLayout(final String titleProperty, final AbstractLayout layout, final VIEW view) {
+        LOG.debug("buildValidationLayout({})", titleProperty);
 
+        //create panel inside navigation layout
+        formPanel = new Panel();
+
+        //create layout inside of the panel
+        VerticalLayout vlBaseFormLayout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+        getFormPanel().setContent(vlBaseFormLayout);
+        
+        if (!manualFormAttach) {
+            //some cases it's better to make manual attach to parent layout.
+            layout.addComponent(formPanel);
+        }
+
+        /*
+         * TOP TITLE AND STATUS LAYOUT
+         */
+        if (titleProperty != null) {
+            buildInformationLayout(titleProperty, vlBaseFormLayout);
+        }
+        /*
+         * MIDDLE ERROR LAYOUT (only visible when is has validation errors)
+         */
+        buildErrorLayoutWrapper(vlBaseFormLayout);
+
+        /*
+         * THE GIVEN VIEW FORM
+         */
+        bindModelToViewForm(vlBaseFormLayout, view);
+        
+    }
+    
     private void buildNavigationButtons() {
         //add buttons to layout
         addNavigationButton("", clickListenerBack, StyleEnum.STYLE_BUTTON_BACK);
@@ -169,7 +235,12 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         //enable or disable the save button states
         updateNavigationButtonStates(modelOid, sisalto);
     }
-
+    
+    private void buildInformationLayout(final AbstractLayout titleLayout, final AbstractLayout layout) {
+        layout.addComponent(titleLayout);
+        UiUtil.hr(layout);
+    }
+    
     private void buildInformationLayout(final String titleProperty, final AbstractLayout layout) {
         /*
          *  PAGE HEADLINE
@@ -177,23 +248,24 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         HorizontalLayout header = UiUtil.horizontalLayout();
         header.setSizeFull();
         if (titleProperty != null) {
-        Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
-        pageLabel.setSizeUndefined();
-
-
-        labelDocumentStatus = UiUtil.label(layout, ""); //show document status
-        labelDocumentStatus.setSizeUndefined();
-        labelDocumentStatus.setImmediate(true);
-        labelDocumentStatus.setPropertyDataSource(new NestedMethodProperty(model, tilaNestedProperty));
-        header.addComponent(labelDocumentStatus);
-
-        header.setExpandRatio(labelDocumentStatus, 1l);
-        header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
-        layout.addComponent(header);
+            Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
+            pageLabel.setSizeUndefined();
+            header.setComponentAlignment(pageLabel, Alignment.BOTTOM_LEFT);
+            
+            
+            labelDocumentStatus = UiUtil.label(layout, ""); //show document status
+            labelDocumentStatus.setSizeUndefined();
+            labelDocumentStatus.setImmediate(true);
+            labelDocumentStatus.setPropertyDataSource(new NestedMethodProperty(model, tilaNestedProperty));
+            header.addComponent(labelDocumentStatus);
+            
+            header.setExpandRatio(labelDocumentStatus, 1l);
+            header.setComponentAlignment(labelDocumentStatus, Alignment.BOTTOM_RIGHT);
+            layout.addComponent(header);
+            UiUtil.hr(layout);
         }
-        UiUtil.hr(layout);
     }
-
+    
     private void bindModelToViewForm(AbstractLayout layout, VIEW view) {
 
         //bind data to form
@@ -202,41 +274,41 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
-
+        
         setFormDataHashcode(model);
-
+        
         layout.addComponent(form);
     }
-
-    private void buildErrorLayoutWrapper(AbstractLayout layout) {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
-
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
-
-        layout.addComponent(topErrorArea);
+    
+    public void setModel(MODEL model) {
+        this.model = model;
+        form.setItemDataSource(new BeanItem<MODEL>(model));
     }
-
+    
+    public MODEL getModel() {
+        return model;
+    }
+    
+    private void buildErrorLayoutWrapper(AbstractLayout layout) {
+        layout.addComponent(errorView);
+    }
+    
     @Override
     protected void buildLayout(VerticalLayout layout) {
         //INIT listeners
 
         clickListenerBack = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventBack(event);
             }
         };
-
+        
         clickListenerSaveAsDraft = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventSaveAsDraft(event);
@@ -244,16 +316,16 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         };
         clickListenerSaveAsReady = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventSaveAsReady(event);
             }
         };
-
+        
         clickListenerNext = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventNext(event);
@@ -262,14 +334,14 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     }
 
     /*
-     * 
+     *
      * Methods for tarjonta states for buttons.
-     * 
+     *
      */
     protected void addNavigationSaveButton(final String property, final Button.ClickListener listener, final TarjontaTila... tila) {
         addNavigationButton(T(property), listener, StyleEnum.STYLE_BUTTON_PRIMARY);
     }
-
+    
     protected void updateNavigationButtonStates(final Button.ClickListener listener, final String oid, final TarjontaTila... tila) {
         LOG.debug("updateNavigationButtonStates, {}, {}", oid, sisalto);
         enableButtonByListener(listener,
@@ -278,29 +350,29 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
                 sisalto, tila));
         visibleButtonByListener(listener, true);
     }
-
+    
     protected void updateNavigationButtonStates(final String oid, final SisaltoTyyppi sisalto) {
         updateNavigationButtonStates(clickListenerSaveAsDraft, oid, TO_STATE_LUONNOS);
         updateNavigationButtonStates(clickListenerSaveAsReady, oid, TO_STATE_VALMIS);
     }
 
     /*
-     * 
+     *
      * Navigation button events.
-     * 
+     *
      */
     protected void eventBack(Button.ClickEvent event) {
         presenter.showMainDefaultView();
     }
-
+    
     protected void eventSaveAsDraft(Button.ClickEvent event) {
         save(SaveButtonState.SAVE_AS_DRAFT, event);
     }
-
+    
     protected void eventSaveAsReady(Button.ClickEvent event) {
         save(SaveButtonState.SAVE_AS_READY, event);
     }
-
+    
     protected void eventNext(Button.ClickEvent event) {
         if (!isSaved()) {
             try {
@@ -308,11 +380,11 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
             } catch (Validator.InvalidValueException e) {
                 errorView.addError(e);
             }
-
+            
             presenter.showNotification(UserNotification.UNSAVED);
             return;
         }
-
+        
         try {
             validateFormData();
             actionNext(event);
@@ -321,9 +393,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
             presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
         }
     }
-
+    
     public abstract void actionNext(Button.ClickEvent event);
-
+    
     public abstract boolean isformDataLoaded();
 
     /**
@@ -332,7 +404,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
      * @return OID
      */
     public abstract String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception;
-
+    
     protected void validateFormData() throws Validator.InvalidValueException {
         errorView.resetErrors();
         form.commit();
@@ -345,10 +417,10 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         if (model == null) {
             throw new RuntimeException("Initialization error - the form data model has not been set correctly.");
         }
-
+        
         return model.hashCode() != formDataUnmodifiedHashcode;
     }
-
+    
     private boolean isSaved() {
         return isformDataLoaded() && !isModified();
     }
@@ -361,11 +433,11 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         if (model == null) {
             throw new RuntimeException("Initialization error - the form data model has not been set correctly.");
         }
-
+        
         formDataUnmodifiedHashcode = model.hashCode();
         return formDataUnmodifiedHashcode;
     }
-
+    
     private void save(final SaveButtonState tila, Button.ClickEvent event) {
         try {
             validateFormData();
@@ -378,8 +450,8 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
                 LOG.error("Unknown backend service error - persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SERVICE_UNAVAILABLE);
             } catch (fi.vm.sade.tarjonta.service.GenericFault e) {
-                if(e.getFaultInfo().getErrorCode()!=null) {
-                    if(e.getFaultInfo().getErrorCode().equals("javax.persistence.OptimisticLockException")) {
+                if (e.getFaultInfo().getErrorCode() != null) {
+                    if (e.getFaultInfo().getErrorCode().equals("javax.persistence.OptimisticLockException")) {
                         presenter.showNotification(UserNotification.SAVE_FAILED_OPTIMISTIC_LOCKING);
                     } else {
                         LOG.error("An unknown application error - persist failed, message :  " + e.getFaultInfo().getErrorCode(), e);
@@ -409,12 +481,12 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         if (form == null) {
             throw new RuntimeException("Initialization error - the form not initialized or set correctly.");
         }
-
+        
         return form;
     }
 
     /**
-
+     *
      */
     public void setFormDataHashcode(final MODEL model) {
         this.model = model;
@@ -448,7 +520,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     public void setTilaNestedProperty(String tilaNestedProperty) {
         this.tilaNestedProperty = tilaNestedProperty;
     }
-
+    
     private void validArg(final Object obj, final String msg) {
         if (obj == null) {
             throw new IllegalArgumentException("Initialization error - " + msg + ".");

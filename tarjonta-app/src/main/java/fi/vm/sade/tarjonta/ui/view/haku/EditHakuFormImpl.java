@@ -15,10 +15,30 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
+
+import com.google.common.base.Strings;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -29,31 +49,23 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.common.validation.MultiLingualText;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Min;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
 
 /**
  * And editor for "Haku" object.
@@ -98,12 +110,16 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     @NotNull(message = "{validation.Haku.hakutapaNull}")
     @PropertyId("hakutapa")
     private KoodistoComponent _hakutapa;
-    @PropertyId("nimiFi")
+    /*@PropertyId("nimiFi")
     private TextField _haunNimiFI;
     @PropertyId("nimiSe")
     private TextField _haunNimiSE;
     @PropertyId("nimiEn")
-    private TextField _haunNimiEN;
+    private TextField _haunNimiEN;*/
+    
+    @PropertyId("mlNimi")
+    private MultiLingualTextField haunNimi;
+    
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
     // TODO hakuaika
@@ -127,10 +143,22 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     private transient I18NHelper _i18n;
     private boolean attached = false;
 
+    private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
+        @Override
+        public String formatCaption(KoodiType dto) {
+            if (dto == null) {
+                return "";
+            }
+
+            return TarjontaUIHelper.getKoodiMetadataForLanguage(dto, I18N.getLocale()).getNimi();
+        }
+    };
+
     public EditHakuFormImpl() {
         super();
         HakuViewModel haku = new HakuViewModel();
         initialize(haku);
+
     }
 
     @Override
@@ -151,26 +179,46 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         // Init fields
         //
 
-        _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi.setCaptionFormatter(koodiNimiFormatter);
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi.setCaptionFormatter(koodiNimiFormatter);
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi.setCaptionFormatter(koodiNimiFormatter);
         _koulutusAlkamiskausi.setSizeUndefined();
         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
         koulutuksenAlkamisvuosi.setSizeUndefined();
-        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
+        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
+        _hakuKohdejoukko.setCaptionFormatter(koodiNimiFormatter);
         _hakuKohdejoukko.setWidth("350px");//_hakuKohdejoukko.setSizeUndefined();
-        _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
+        _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
+        _hakutapa.setCaptionFormatter(koodiNimiFormatter);
         _hakutapa.setWidth("350px");//.setSizeUndefined();
-        _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
+        _hakutapa.setImmediate(true);
+        _hakutapa.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent valueChangeEvent) {
+                String hakutapaVal = (String)valueChangeEvent.getProperty().getValue();
+                if (hakutapaVal.trim().contains(EditHakuView.YHTEISHAKU_URI)) {
+                    _kaytetaanSijoittelua.setValue(true);
+                    _kayteaanJarjestelmanHakulomaketta.setValue(true);
+
+                }
+            }
+        });
+        haunNimi = new MultiLingualTextField();
+        /*_haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setWidth("450px");
         _haunNimiSE = UiUtil.textField(null, "", T("HaunNimiSE.prompt"), false);
         _haunNimiSE.setWidth("450px");
         _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
-        _haunNimiEN.setWidth("450px");
+        _haunNimiEN.setWidth("450px");*/
+        
+        
         _haunTunniste = UiUtil.label((AbstractLayout) null, hakuViewModel.getHaunTunniste());
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
@@ -194,12 +242,16 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.setSizeUndefined();
         _layout.addComponent(grid);
 
-        grid.addComponent(UiUtil.label(null, T("Hakutyyppi")));
+        Label hakutyyppiL = UiUtil.label(null, T("Hakutyyppi")); 
+        grid.addComponent(hakutyyppiL);
+        grid.setComponentAlignment(hakutyyppiL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakutyyppi);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("HakukausiJaVuosi")));
+            Label fieldL = UiUtil.label(null, T("HakukausiJaVuosi"));
+            grid.addComponent(fieldL);
+            grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             hl.setSpacing(true);
@@ -210,7 +262,9 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         }
 
         {
-            grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
+            Label fieldL = UiUtil.label(null, T("KoulutuksenAlkamiskausi"));
+            grid.addComponent(fieldL);
+            grid.setComponentAlignment(fieldL, Alignment.MIDDLE_RIGHT);
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             hl.setSpacing(true);
@@ -219,36 +273,49 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             grid.addComponent(hl);
             grid.newLine();
         }
-
-        grid.addComponent(UiUtil.label(null, T("HakuKohdejoukko")));
+        
+        Label kohdejoukkoL = UiUtil.label(null, T("HakuKohdejoukko"));
+        grid.addComponent(kohdejoukkoL);
+        grid.setComponentAlignment(kohdejoukkoL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakuKohdejoukko);
         grid.newLine();
 
-        grid.addComponent(UiUtil.label(null, T("Hakutapa")));
+        Label hakutapaL = UiUtil.label(null, T("Hakutapa"));
+        grid.addComponent(hakutapaL);
+        grid.setComponentAlignment(hakutapaL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakutapa);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("HaunNimi")));
+            Label nimiL = UiUtil.label(null, T("HaunNimi"));
+            grid.addComponent(nimiL);
+            grid.setComponentAlignment(nimiL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
             vl.setSizeUndefined();
 
-            vl.addComponent(_haunNimiFI);
+            /*vl.addComponent(_haunNimiFI);
             vl.addComponent(_haunNimiSE);
-            vl.addComponent(_haunNimiEN);
-            grid.addComponent(vl);
+            vl.addComponent(_haunNimiEN);*/
+            grid.addComponent(haunNimi);
             grid.newLine();
         }
 
-        grid.addComponent(UiUtil.label(null, T("HaunTunniste")));
+        Label tunnisteL = UiUtil.label(null, T("HaunTunniste"));
+        grid.addComponent(tunnisteL);
+        grid.setComponentAlignment(tunnisteL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_haunTunniste);
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("Hakuaika")));
+            Label hakuaikaL = UiUtil.label(null, T("Hakuaika"));
+            grid.addComponent(hakuaikaL);
 
+            grid.setComponentAlignment(hakuaikaL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
+            vl.setSpacing(true);
+            vl.setMargin(new MarginInfo(false, false, true, false));
+            
             //vl.setWidth(850, Sizeable.UNITS_PIXELS);
 
 
@@ -261,7 +328,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                     getSisaisetHakuajatContainer().addRowToHakuajat();
                 }
             });
-            lisaaHakuaika.setEnabled(presenter.getPermission().userCanEditHaku());
+            lisaaHakuaika.setEnabled(presenter.getPermission().userCanUpdateHaku());
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -273,7 +340,9 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         grid.newLine();
 
         {
-            grid.addComponent(UiUtil.label(null, T("Hakulomake")));
+            Label hakulomakeL = UiUtil.label(null, T("Hakulomake"));
+            grid.addComponent(hakulomakeL);
+            grid.setComponentAlignment(hakulomakeL, Alignment.MIDDLE_RIGHT);
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
             vl.setSpacing(true);
@@ -298,21 +367,22 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
         this.sisaisetHakuajatTable.setPageLength((this.getSisaisetHakuajatContainer().size() > 5) ? this.getSisaisetHakuajatContainer().size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
-        /*this.sisaisetHakuajatTable.setColumnWidth("kuvaus", 180);
-         this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 250);
-         this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 250);
-         this.sisaisetHakuajatTable.setColumnWidth("poistaB", 160);*/
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[0], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[1], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[2], Table.ALIGN_LEFT);
+        this.sisaisetHakuajatTable.setColumnAlignment(HAKUAJAT_COLUMNS[3], Table.ALIGN_LEFT);
 
     }
 
     public List<String> checkNimi() {
-        List<String> errorMessages = new ArrayList<String>();
-        if (fieldEmpty(_haunNimiFI) 
-                && fieldEmpty(_haunNimiSE)
-                && fieldEmpty(_haunNimiEN)) {
-            errorMessages.add(T("validation.nimiNull"));
-        }
-        return errorMessages;
+    	MultiLingualText mt = (MultiLingualText) haunNimi.getValue();    	
+    	if (Strings.isNullOrEmpty(mt.getTextFi())
+    		&& Strings.isNullOrEmpty(mt.getTextSv())
+    		&& Strings.isNullOrEmpty(mt.getTextEn())) {
+    		return Collections.singletonList("EditHakuFormImpl.validation.nimiNull"); 
+    	} else {
+    		return Collections.emptyList();
+    	}
     }
     
     public boolean fieldEmpty(TextField textField) {
@@ -385,7 +455,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                 }
             });
             addItem(hakuaikaRow);
-            hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanEditHaku());
+            hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku());
         }
 
         private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
@@ -401,7 +471,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                         removeItem(hakuaikaRow);
                     }
                 });
-                hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanEditHaku());
+                hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku());
                 addItem(hakuaikaRow);
             }
         }

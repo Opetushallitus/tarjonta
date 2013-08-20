@@ -38,17 +38,19 @@ import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 
 /**
  * <p>
- * Koulutusmoduuli kuvaa koulutuksen perustietoja, luokittelua nimea jne. Asioita jotka sailyvat yleensa
- * pidempaan eivatka ole aikaan tai paikkaan sidottuja. Kun koulutusmoduulista tehdaan toteutus
- * ({@link KoulutusmoduuliToteutus}) saadaan mukaan aika seka paikka -ulottuvuus.
+ * Koulutusmoduuli kuvaa koulutuksen perustietoja, luokittelua nimea jne.
+ * Asioita jotka sailyvat yleensa pidempaan eivatka ole aikaan tai paikkaan
+ * sidottuja. Kun koulutusmoduulista tehdaan toteutus
+ * ({@link KoulutusmoduuliToteutus}) saadaan mukaan aika seka paikka
+ * -ulottuvuus.
  * </p>
  * <p>
- * Koulutusrakenne saadaan aikaiseksi lisaamalla Koulutusmoduulille alimoduuleja kayttamalla {@link KoulutusSisaltyvyys}
- * sidosluokkaa.
+ * Koulutusrakenne saadaan aikaiseksi lisaamalla Koulutusmoduulille alimoduuleja
+ * kayttamalla {@link KoulutusSisaltyvyys} sidosluokkaa.
  * </p>
  * <p>
- * Koska kaikki koulutusrakenteen luodaan kayttamalla samaa Koulutusmoduuli -luokkaa, kaytetaan {@link KoulutusmoduuliTyyppi}:ia
- * kertomaa haluttu tyyppi.
+ * Koska kaikki koulutusrakenteen luodaan kayttamalla samaa Koulutusmoduuli
+ * -luokkaa, kaytetaan {@link KoulutusmoduuliTyyppi}:ia kertomaa haluttu tyyppi.
  * </p>
  *
  *
@@ -58,109 +60,82 @@ import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable {
 
     public static final String TABLE_NAME = "koulutusmoduuli";
-
     private static final long serialVersionUID = -3359195324699691606L;
-
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "ylamoduuli")
     private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
     private Set<KoulutusmoduuliToteutus> toteutusList = new HashSet<KoulutusmoduuliToteutus>();
-
     @Column(name = "organisaatio")
     private String omistajaOrganisaatioOid;
-
     /**
      * Koodisto uri. See accessors for more info.
      */
     @Column(name = "koulutusala")
     private String koulutusala;
-
     /**
      * Koodisto uri. See accessors for more info.
      */
     @Column(name = "eqfluokitus")
     private String eqfLuokitus;
-
     /**
      * Koodisto uri. See accessors for more info.
      */
     @Column(name = "nqfluokitus")
     private String nqfLuokitus;
-
     /**
      * Koodisto uri. See accessors for more info.
      */
     @Column(name = "koulutusaste")
     private String koulutusAste;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
-
     @Column(name = "koulutusluokitus_koodi")
     private String koulutusKoodi;
-
     @Column(name = "koulutusohjelmakoodi")
     private String koulutusohjelmaKoodi;
-
     @Column(name = "tutkintoohjelmanimi")
     private String tutkintoOhjelmanNimi;
-
     @Column(name = "laajuusarvo")
     private String laajuusArvo;
-
     @Column(name = "laajuusyksikko")
     private String laajuusYksikko;
-
     @Column(name = "tutkintonimike")
     private String tutkintonimike;
-
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
-    
     @Column(name = "opintoala")
     private String opintoala;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "koulutuksenrakenne")
     private MonikielinenTeksti koulutuksenRakenne;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "jatkoopintomahdollisuudet")
     private MonikielinenTeksti jatkoOpintoMahdollisuudet;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nimi")
     private MonikielinenTeksti nimi;
-    
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tavoitteet")
     private MonikielinenTeksti tavoitteet;
-    
+    @Enumerated(EnumType.STRING)
     @Column(name = "koulutustyyppi")
     private String koulutustyyppi;
-    
     @Column(name = "lukiolinja")
     private String lukiolinja;
-    
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
 
     /**
      * JPA konstruktori
      */
-    protected Koulutusmoduuli() {
+    public Koulutusmoduuli() {
         super();
     }
 
-    /**
-     *
-     * @param tyyppi
-     */
     public Koulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
+        super();
         moduuliTyyppi = tyyppi;
     }
 
@@ -180,15 +155,17 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     /**
      * <p>
-     * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa koulutusten
-     * sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja jota käytetään koulutusten
-     * suunnitteluun, seurantaan ja säätelyyn Opetushallinnon Koulutusala 2002 -luokittelun
-     * mukaisia koulutusaloja ovat esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
-     * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä: opetushallinnon Koulutusala
-     * 2002- ja Koulutusala 1995 -luokittelut, ISCED-luokittelu sekä Tilastokeskuksen
-     * koulutusalaluokittelu.
+     * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa
+     * koulutusten sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja
+     * jota käytetään koulutusten suunnitteluun, seurantaan ja säätelyyn
+     * Opetushallinnon Koulutusala 2002 -luokittelun mukaisia koulutusaloja ovat
+     * esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
+     * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä:
+     * opetushallinnon Koulutusala 2002- ja Koulutusala 1995 -luokittelut,
+     * ISCED-luokittelu sekä Tilastokeskuksen koulutusalaluokittelu.
      * <br/>
-     * Lähde: OKSA sanasto: https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
+     * Lähde: OKSA sanasto:
+     * https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
      * </p>
      *
      * @return uri koodistoon
@@ -224,7 +201,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * National Qualification Framework. Describes how Finnish qualification system connects with EQF.
+     * National Qualification Framework. Describes how Finnish qualification
+     * system connects with EQF.
      *
      * @see http://www.oph.fi/mobility/qualifications_frameworks
      *
@@ -271,8 +249,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus.
-     * Note that as children are lazily loaded, each level will require one more select.
+     * Returns true if given child is a direct or non-direct (unlimited depth)
+     * child of this Koulutus. Note that as children are lazily loaded, each
+     * level will require one more select.
      *
      * @param child
      * @return
@@ -282,7 +261,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Returns true if given child is a direct or non-direct child of this Koulutus, depth begin limited to
+     * Returns true if given child is a direct or non-direct child of this
+     * Koulutus, depth begin limited to
      * <code>depth</code>.
      *
      * @param child child to match
@@ -358,7 +338,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public Set<KoulutusSisaltyvyys> getSisaltyvyysList() {
         return Collections.unmodifiableSet(sisaltyvyysList);
     }
-    
+
     public void addSisaltyvyys(KoulutusSisaltyvyys sisaltyvyys) {
         sisaltyvyysList.add(sisaltyvyys);
     }
@@ -373,7 +353,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri koodistoon joka esittää kyseistä luokitus koodia.
+     * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri
+     * koodistoon joka esittää kyseistä luokitus koodia.
      *
      *
      * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
@@ -385,8 +366,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     /**
      * <p>
-     * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä silloin kun {@link Koulutusmoduuli#moduuliTyyppi}
-     * on {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
+     * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä
+     * silloin kun {@link Koulutusmoduuli#moduuliTyyppi} on
+     * {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
      * </p>
      *
      * <p>
@@ -407,7 +389,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Palautttaa moduulin tyypin joka osaltaa kertoo mikä joukko attribuutteja on päteviä tällä koulutusmoduulilla.
+     * Palautttaa moduulin tyypin joka osaltaa kertoo mikä joukko attribuutteja
+     * on päteviä tällä koulutusmoduulilla.
      *
      * @return
      */
@@ -415,10 +398,15 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         return moduuliTyyppi;
     }
 
+    public void setModuuliTyyppi(KoulutusmoduuliTyyppi moduuliTyyppi) {
+        this.moduuliTyyppi = moduuliTyyppi;
+    }
+
     /**
      * Palauttaa koodisto uri:n joka viittaa valittuun koulutusohjelmaan.
      *
-     * Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen koulutusohjelma (1603)"
+     * Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen
+     * koulutusohjelma (1603)"
      *
      * @return
      */
@@ -440,7 +428,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto esim. "opintoviikko"
+     * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto
+     * esim. "opintoviikko"
      *
      * @return
      */
@@ -449,8 +438,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden yksikon kuten "vuosi", "kuukausi" "opintojakso".
-     * Arvo on arvo edellämainitussa yksikössä.
+     * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden
+     * yksikon kuten "vuosi", "kuukausi" "opintojakso". Arvo on arvo
+     * edellämainitussa yksikössä.
      *
      * @param yksikkoUri
      * @param arvo
@@ -480,9 +470,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa jarjestelmassa. Esim. jos
-     * tama koulutusmoduuli on tuoto era-ajona toisesta jarjestelmasta. Sisallon muotoon ei oteta
-     * kantaa.
+     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa
+     * jarjestelmassa. Esim. jos tama koulutusmoduuli on tuoto era-ajona
+     * toisesta jarjestelmasta. Sisallon muotoon ei oteta kantaa.
      *
      * @return
      */
@@ -520,8 +510,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Kielistetty koulutuksen nimi. Joillain opintoasteilla kuten 2.aste, nimi generoituu joukosta
-     * attribuutteja joten sen manuaalinen asettaminen saattaa myöhemmi ylikirjoittautua.
+     * Kielistetty koulutuksen nimi. Joillain opintoasteilla kuten 2.aste, nimi
+     * generoituu joukosta attribuutteja joten sen manuaalinen asettaminen
+     * saattaa myöhemmi ylikirjoittautua.
      *
      * @return kielistetyt nimet tai null
      */
@@ -578,7 +569,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     public void setLukiolinja(String lukiolinja) {
         this.lukiolinja = lukiolinja;
-    } 
+    }
 
     /**
      * @return the oppilaitostyyppi
@@ -593,6 +584,4 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public void setOppilaitostyyppi(String oppilaitostyyppi) {
         this.oppilaitostyyppi = oppilaitostyyppi;
     }
-
 }
-

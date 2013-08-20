@@ -7,7 +7,7 @@
 	#ant -Dtomcat-host=luokka -Dtomcat-port=8302
 -->
 		<property name="oph.name" value="tarjonta"/>
-		<property name="pom.version" value="5.0-SNAPSHOT"/>
+		<property name="pom.version" value="6.0-SNAPSHOT"/>
 		
 		<property name="maven.repo" value="${user.home}/.m2/repository"/>
 		<property name="tomcat.name" value="tomcat_${oph.name}"/>
@@ -44,10 +44,10 @@
 			
 			<!-- deploy lates from local maven repo -->
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
-				<include name="*-SNAPSHOT.war"/>
+				<include name="*.war"/>
 			</fileset>
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
-				<include name="*-SNAPSHOT.war"/>
+				<include name="*.war"/>
 			</fileset>
 			<fileset dir="${maven.repo}/org/apache/solr/solr/4.2.0">
 				<include name="*.war"/>

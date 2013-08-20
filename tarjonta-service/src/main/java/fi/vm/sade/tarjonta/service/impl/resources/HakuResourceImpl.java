@@ -65,7 +65,7 @@ public class HakuResourceImpl implements HakuResource {
     // /haku?...
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -82,17 +82,17 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/OID
     @Override
     public HakuDTO getByOID(String oid) {
-        LOG.info("/haku/{} -- getByOID()", oid);
+        LOG.debug("/haku/{} -- getByOID()", oid);
 
         HakuDTO result = conversionService.convert(hakuDAO.findByOid(oid), HakuDTO.class);
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
     // /haku/OID/hakukohde
     @Override
     public List<OidRDTO> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
+        LOG.debug("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
 
         if (count <= 0) {
@@ -108,7 +108,7 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/OID/hakukohdeWithName
     @Override
     public List<Map<String, String>> getByOIDHakukohdeExtra(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
+        LOG.debug("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
 
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
