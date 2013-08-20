@@ -17,8 +17,10 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -365,10 +367,6 @@ public class OrganisaatiohakuView extends VerticalLayout {
         //sort
         organisaatios = ordering.immutableSortedCopy(organisaatios);
 
-        for (OrganisaatioPerustietoType curOrg : organisaatios) {
-            hc.addItem(curOrg);
-            hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));//curOrg.getNimiFi());
-        }
         //Creating the hierarchical structure of the organisaatio tree.
         createHierarchy();
         return hc;
@@ -378,26 +376,55 @@ public class OrganisaatiohakuView extends VerticalLayout {
      * Creates the parent child hieararchy to the organisaatio tree.
      */
     private void createHierarchy() {
+        
+        List<OrganisaatioPerustietoType> roots = new ArrayList<OrganisaatioPerustietoType>();
+        Map<String, List<OrganisaatioPerustietoType>> structureMap = new HashMap<String, List<OrganisaatioPerustietoType>>();
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
             //If the current organisaatio is root, it's child tree is created.
-            if (!hasParentInCurrentResults(curOrg)) {
-                setChildrenTo(curOrg);
+            
+            //Creating list of roots and adding them to the container
+            if (isRoot(curOrg)) {
+                roots.add(curOrg);
+                hc.addItem(curOrg);
+                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));
+            } else {
+                updateStructureMap(structureMap, curOrg);
             }
+            
+        }
+        
+        for (OrganisaatioPerustietoType curOrg : roots) {
+            createLocalHierarchy(curOrg, structureMap);
         }
     }
+    
+    
 
-    private void openTree(OrganisaatioPerustietoType organisaatio, OrganisaatioPerustietoType parentOrg) {
-        if (criteria.getSearchStr() != null && !criteria.getSearchStr().isEmpty()
-                && getClosestNimi(I18N.getLocale(), organisaatio).toLowerCase().contains(criteria.getSearchStr().toLowerCase())) {
-            expandPath(parentOrg); //this.setCollapsed(parentOrg, false);
+    private void createLocalHierarchy(OrganisaatioPerustietoType curOrg,
+            Map<String, List<OrganisaatioPerustietoType>> structureMap) {
+        if (structureMap.containsKey(curOrg.getOid())) {
+            for (OrganisaatioPerustietoType curChild : structureMap.get(curOrg.getOid())) {
+                hc.addItem(curChild);
+                hc.getContainerProperty(curChild, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curChild));
+                hc.setParent(curChild, curOrg);
+                createLocalHierarchy(curChild, structureMap);
+            }
+        } else {
+            hc.setChildrenAllowed(curOrg, false);
         }
+        
     }
 
-    private void expandPath(OrganisaatioPerustietoType org) {
-        tree.expandItem(org);
-        OrganisaatioPerustietoType parent = (OrganisaatioPerustietoType) (hc.getParent(org));
-        if (parent != null) {
-            expandPath(parent);
+    private void updateStructureMap(
+            Map<String, List<OrganisaatioPerustietoType>> structureMap,
+            OrganisaatioPerustietoType curOrg) {
+        String parentOid = curOrg.getParentOid();
+        if (structureMap.containsKey(parentOid)) {
+            structureMap.get(parentOid).add(curOrg);
+        } else {
+            List<OrganisaatioPerustietoType> siblings = new ArrayList<OrganisaatioPerustietoType>();
+            siblings.add(curOrg);
+            structureMap.put(parentOid, siblings);
         }
     }
 
@@ -407,39 +434,14 @@ public class OrganisaatiohakuView extends VerticalLayout {
      * @param org
      * @return
      */
-    private boolean hasParentInCurrentResults(OrganisaatioPerustietoType org) {
-        if (org.getParentOid() == null || org.getParentOid().equals(presenter.getModel().getRootOrganisaatioOid())) {
-            return false;
-        }
-        for (OrganisaatioPerustietoType curOrg : organisaatios) {
-            if (org.getParentOid().equals(curOrg.getOid())) {
-                return true;
-            }
+    private boolean isRoot(OrganisaatioPerustietoType org) {
+        String parentOid = org.getParentOid();
+        if (parentOid == null 
+                || parentOid.equals(presenter.getModel().getRootOrganisaatioOid()) 
+                || userContext.getUserOrganisations().contains(org.getOid())) {
+            return true;
         }
         return false;
-    }
-
-    /**
-     * Setting the children of the organisaatio given as parameter.
-     *
-     * @param parentOrg
-     */
-    private void setChildrenTo(OrganisaatioPerustietoType parentOrg) {
-        boolean wasChildren = false;
-        for (OrganisaatioPerustietoType curOrg : organisaatios) {
-            //if the curOrg is the child of parentOrg the parent-child relation is
-            //created in the container
-            if (parentOrg.getOid().equals(curOrg.getParentOid())) {
-                hc.setParent(curOrg, parentOrg);
-                setChildrenTo(curOrg);
-                wasChildren = true;
-                openTree(curOrg, parentOrg);
-            }
-        }
-        //If the parentOrg has no children we set childreAllowed to false.
-        if (!wasChildren) {
-            hc.setChildrenAllowed(parentOrg, false);
-        }
     }
 
     /**
