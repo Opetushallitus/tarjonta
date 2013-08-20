@@ -8,7 +8,7 @@ import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
@@ -124,7 +124,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                     errorView.addError(_i18n.getMessage("valitseKoulutusTyyppi"));
                     return;
                 }
-                List<OrganisaatioPerustietoType> orgs = new ArrayList<OrganisaatioPerustietoType>(selectedOrgs.values());
+                List<OrganisaatioPerustieto> orgs = new ArrayList<OrganisaatioPerustieto>(selectedOrgs.values());
                 if (!checkOppilaitosTyyppi(orgs.get(0), ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri())) {
                     errorView.addError(_i18n.getMessage("tarkistaOppilaitosJaKoulutusaste"));
                     return;
@@ -168,7 +168,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         });
     }
 
-    private boolean checkOppilaitosTyyppi(OrganisaatioPerustietoType org, String tyyppiUri) {
+    private boolean checkOppilaitosTyyppi(OrganisaatioPerustieto org, String tyyppiUri) {
         List<String> oppilaitosTyyppis = this.presenter.getOppilaitostyyppiUris(org.getOid());
         Collection<KoodiType> koodis = new ArrayList<KoodiType>();
         for (String oppilaitosTyyppi : oppilaitosTyyppis) {
@@ -301,13 +301,13 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
     
     @Override
-    public void addOrganisaatioToRight(OrganisaatioPerustietoType org) {
+    public void addOrganisaatioToRight(OrganisaatioPerustieto org) {
         int selectedCount = selectedOrgs.values().size();
         super.addOrganisaatioToRight(org);
         if (selectedCount != 0)
             return; // nothing new was selected
 
-        final OrganisaatioPerustietoType organisaatio = selectedOrgs.values()
+        final OrganisaatioPerustieto organisaatio = selectedOrgs.values()
                 .iterator().next();
         KoodiContainer currentSelection = (KoodiContainer) koulutuksenTyyppiCombo
                 .getValue();

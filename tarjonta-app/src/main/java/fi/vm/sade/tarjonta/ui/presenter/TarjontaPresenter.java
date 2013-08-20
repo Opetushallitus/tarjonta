@@ -51,13 +51,14 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
@@ -184,6 +185,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public TarjontaPublicService tarjontaPublicService;
     @Autowired(required = true)
     public OrganisaatioService organisaatioService;
+    @Autowired(required = true)
+    public OrganisaatioSearchService organisaatioSearchService;
     @Autowired(required = true)
     private HakukohdeViewModelToDTOConverter hakukohdeToDTOConverter;
     @Autowired(required = true)
@@ -726,15 +729,15 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
     }
 
-    public List<OrganisaatioPerustietoType> fetchChildOrganisaatios(List<String> organisaatioOids) {
+    public List<OrganisaatioPerustieto> fetchChildOrganisaatios(List<String> organisaatioOids) {
 
-        OrganisaatioSearchCriteriaDTO criteriaDTO = new OrganisaatioSearchCriteriaDTO();
+        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
 
-        criteriaDTO.getOidResctrictionList().addAll(organisaatioOids);
-        criteriaDTO.setMaxResults(400);
-        criteriaDTO.setSuunnitellut(true);
+        criteria.getOidResctrictionList().addAll(organisaatioOids);
+        criteria.setMaxResults(400);
+        criteria.setSuunnitellut(true);
 
-        return getOrganisaatioService().searchBasicOrganisaatios(criteriaDTO);
+        return organisaatioSearchService.searchBasicOrganisaatios(criteria);
 
     }
 
@@ -765,11 +768,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return caption;
     }
 
-    public void setAllSelectedOrganisaatios(Collection<OrganisaatioPerustietoType> orgs) {
+    public void setAllSelectedOrganisaatios(Collection<OrganisaatioPerustieto> orgs) {
         getTarjoaja().addSelectedOrganisations(orgs);
     }
 
-    public void showKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs, String pohjakoulutusvaatimusUri) {
+    public void showKoulutusEditView(Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusvaatimusUri) {
         getTarjoaja().setSelectedResultRowOrganisationOid(null); //clear tarjoaja model
         getTarjoaja().addSelectedOrganisations(orgs); //add orgs to rajoaja model
 
@@ -783,13 +786,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void showNewKoulutusEditView(final KoulutusActiveTab tab) {
     }
 
-    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs, String pohjakoulutusVaatimus) {
+    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusVaatimus) {
         getTarjoaja().addSelectedOrganisations(orgs);
         showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(), orgs, pohjakoulutusVaatimus);
         getModel().getSelectedKoulutukset().clear();
     }
 
-    public void copyLukioKoulutusToOrganization(Collection<OrganisaatioPerustietoType> orgs) {
+    public void copyLukioKoulutusToOrganization(Collection<OrganisaatioPerustieto> orgs) {
         lukioPresenter.showCopyKoulutusView(getModel().getSelectedKoulutusOid(), KoulutusActiveTab.PERUSTIEDOT, orgs);
 
         getModel().getSelectedKoulutukset().clear();
@@ -846,7 +849,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getHakukohde().setKomotoOids(komotoOids);
     }
 
-    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustietoType> orgs, String pohjakoulutusVaatimus) {
+    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusVaatimus) {
 
 
         // If oid of koulutus is provided the koulutus is read from database
@@ -857,7 +860,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             if (orgs != null && orgs.size() > 0) {
 
                 getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
-                for (OrganisaatioPerustietoType org : orgs) {
+                for (OrganisaatioPerustieto org : orgs) {
                     OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
                     if (org.getNimiFi() != null && org.getNimiFi().length() > 0) {
                         oidNamePair.setOrganisation(org.getOid(), org.getNimiFi());
@@ -943,12 +946,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
 
         LOG.info("getting org oid tree by oid : {}", organisaatioOid);
-        OrganisaatioSearchCriteriaDTO dto = new OrganisaatioSearchCriteriaDTO();
+        OrganisaatioSearchCriteria dto = new OrganisaatioSearchCriteria();
         dto.getOidResctrictionList().add(organisaatioOid);
         try {
-            List<OrganisaatioPerustietoType> orgs = getOrganisaatioService().searchBasicOrganisaatios(dto);
+            List<OrganisaatioPerustieto> orgs = organisaatioSearchService.searchBasicOrganisaatios(dto);
             List<String> organisaatioOidTree = new ArrayList<String>();
-            for (OrganisaatioPerustietoType perus : orgs) {
+            for (OrganisaatioPerustieto perus : orgs) {
                 if (perus != null) {
                     organisaatioOidTree.add(perus.getOid());
                 }
@@ -1320,8 +1323,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     .convertViewModelToHakukohdeDTO(getModel().getSearchSpec());
             getModel().setHakukohteet(getTarjontaPublicService().haeHakukohteet(kysely).getHakukohdeTulos());
         } catch (Exception ex) {
-            LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
+            LOG.error("Error in finding hakukokohteet ", ex);
             getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
+            throw new RuntimeException(ex);
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(getModel().getHakukohteet().size());
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
@@ -1661,8 +1665,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getModel().setKoulutukset(this.getTarjontaPublicService().haeKoulutukset(kysely).getKoulutusTulos());
 
         } catch (Exception ex) {
-            LOG.error("Error in finding koulutukset: {}", ex.getMessage());
+            LOG.error("Error in finding koulutukset", ex);
             getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
+            throw new RuntimeException(ex);
         }
 
         this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
@@ -1992,12 +1997,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     private List<String> getChildOrgOlTyyppis(OrganisaatioDTO selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
-        OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
+        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
         criteria.setMaxResults(1000);
-        List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
+        List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
-            for (OrganisaatioPerustietoType curChild : childOrgs) {
+            for (OrganisaatioPerustieto curChild : childOrgs) {
                 if (curChild.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)
                         && !childOlTyyppis.contains(curChild.getOppilaitostyyppi())) {
                     childOlTyyppis.add(curChild.getOppilaitostyyppi());
@@ -2265,8 +2270,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param orgs
      * @return
      */
-    public boolean checkOrganisaatiosKoulutukses(Collection<OrganisaatioPerustietoType> orgs) {
-        for (OrganisaatioPerustietoType org : orgs) {
+    public boolean checkOrganisaatiosKoulutukses(Collection<OrganisaatioPerustieto> orgs) {
+        for (OrganisaatioPerustieto org : orgs) {
             List<String> oppilaitosTyyppis = new ArrayList<String>(getOppilaitosTyyppiUrisForOrg(org));
             boolean isEmpty = this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitosTyyppis).isEmpty();
             if (isEmpty) {
@@ -2286,11 +2291,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @return true if there is at leas one common organisaatio type in selected
      * organisation types
      */
-    public boolean checkOrganisaatioOppilaitosTyyppimatches(Collection<OrganisaatioPerustietoType> orgs) {
+    public boolean checkOrganisaatioOppilaitosTyyppimatches(Collection<OrganisaatioPerustieto> orgs) {
 
         // Load the list containing the SET of all OppilaitosTyyppi uris.
         List<Set<String>> listOfOppilaitostyyppisLists = new ArrayList<Set<String>>();
-        for (OrganisaatioPerustietoType org : orgs) {
+        for (OrganisaatioPerustieto org : orgs) {
             listOfOppilaitostyyppisLists.add(getOppilaitosTyyppiUrisForOrg(org));
         }
 
@@ -2319,7 +2324,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param org
      * @return
      */
-    private Set<String> getOppilaitosTyyppiUrisForOrg(OrganisaatioPerustietoType org) {
+    private Set<String> getOppilaitosTyyppiUrisForOrg(OrganisaatioPerustieto org) {
         Set<String> oppilaitosTyyppis = new HashSet<String>();
 
         OrganisaatioDTO selectedOrg = this.getOrganisaatioService().findByOid(org.getOid());
