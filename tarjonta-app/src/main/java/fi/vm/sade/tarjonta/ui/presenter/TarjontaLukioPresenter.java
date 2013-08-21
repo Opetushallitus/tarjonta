@@ -16,9 +16,7 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -37,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
@@ -170,16 +170,16 @@ public class TarjontaLukioPresenter {
         getPresenter().getRootView().changeView(editLukioKoulutusView);
     }
 
-    public void showCopyKoulutusView(final String komotoOid, final KoulutusActiveTab tab, Collection<OrganisaatioPerustietoType> orgs) {
+    public void showCopyKoulutusView(final String komotoOid, final KoulutusActiveTab tab, Collection<OrganisaatioPerustieto> orgs) {
         // If koulutus OID is provided, the koulutus is read from database
         // before opening the KoulutusEditView.
 
         loadKomoto(komotoOid);
         if (orgs != null && orgs.size() > 0) {
             presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
-            for (OrganisaatioPerustietoType org : orgs) {
+            for (OrganisaatioPerustieto org : orgs) {
                 OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-                oidNamePair.setOrganisation(org.getOid(), org.getNimiFi());
+                oidNamePair.setOrganisation(org.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org));
                 presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
             }
         }
@@ -343,7 +343,7 @@ public class TarjontaLukioPresenter {
         this.editLukioKoulutusView = editLukioKoulutusView;
     }
 
-    public void showLukioKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
+    public void showLukioKoulutusEditView(Collection<OrganisaatioPerustieto> orgs) {
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
     }
 

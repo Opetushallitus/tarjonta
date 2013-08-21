@@ -16,7 +16,11 @@
 package fi.vm.sade.tarjonta.ui.model.org;
 
 import com.google.common.base.Preconditions;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,16 +130,11 @@ public class TarjoajaModel extends BaseUIViewModel {
     /*
      * Remove all previously added organisations from a list of organisations and adds new organisations to the list.
      */
-    public void addSelectedOrganisations(Collection<OrganisaatioPerustietoType> orgs) {
+    public void addSelectedOrganisations(Collection<OrganisaatioPerustieto> orgs) {
         getOrganisationOidNamePairs().clear();
-        List<OrganisaatioPerustietoType> tempOrgs = new ArrayList<OrganisaatioPerustietoType>(orgs);
-        if (tempOrgs.get(0).getNimiFi() != null && tempOrgs.get(0).getNimiFi().length() > 0) {
-            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiFi()));
-        } else if (tempOrgs.get(0).getNimiSv() != null && tempOrgs.get(0).getNimiSv().length() > 0) {
-            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiSv()));
-        } else if (tempOrgs.get(0).getNimiEn() != null && tempOrgs.get(0).getNimiEn().length() > 0) {
-            addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiEn()));
-        }
+        List<OrganisaatioPerustieto> tempOrgs = new ArrayList<OrganisaatioPerustieto>(orgs);
+        String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), tempOrgs.get(0));
+        addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), nimi));
     }
 
     /*

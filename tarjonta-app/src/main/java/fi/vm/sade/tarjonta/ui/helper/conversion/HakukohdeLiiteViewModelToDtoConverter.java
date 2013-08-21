@@ -15,14 +15,13 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.generic.ui.feature.UserFeature;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -46,7 +45,7 @@ public class HakukohdeLiiteViewModelToDtoConverter {
         hakukohdeLiite.setLiitteenId(hakukohdeLiiteViewModel.getHakukohdeLiiteId());
         hakukohdeLiite.setSahkoinenToimitusOsoite(hakukohdeLiiteViewModel.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setToimitettavaMennessa(hakukohdeLiiteViewModel.getToimitettavaMennessa());
-        hakukohdeLiite.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+        hakukohdeLiite.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
 
         return hakukohdeLiite;
     }

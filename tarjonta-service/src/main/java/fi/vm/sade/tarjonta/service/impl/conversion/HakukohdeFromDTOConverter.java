@@ -46,6 +46,8 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(from.getLisatiedot(), hakukohde.getLisatiedot()));
         hakukohde.setTila(EntityUtils.convertTila(from.getHakukohteenTila()));
         hakukohde.setHakukohdeKoodistoNimi(from.getHakukohdeKoodistoNimi());
+        hakukohde.setHakuaikaAlkuPvm(from.getHakuaikaAlkuPvm());
+        hakukohde.setHakuaikaLoppuPvm(from.getHakuaikaLoppuPvm());
 
         //Valintaperustekuvaus is stored now in MonikielinenMetaData table.
         //hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset())); 

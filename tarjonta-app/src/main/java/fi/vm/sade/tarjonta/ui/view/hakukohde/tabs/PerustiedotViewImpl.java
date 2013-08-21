@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -76,7 +76,6 @@ import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
@@ -718,11 +717,35 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
      *
      */
+
+    private boolean accepts(HakuaikaViewModel ham) {
+    	return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+    }
+    
+    private boolean accepts(HakuViewModel hm) {
+    	if (hm.getPaattymisPvm().after(new Date())) {
+    		return true;
+    	}
+    	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
+    		if (accepts(ham)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     @Override
     public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
+        
+        List<HakuViewModel> fhaut = new ArrayList<HakuViewModel>();
+        for (HakuViewModel hvm : haut) {
+        	if (accepts(hvm)) {
+        		fhaut.add(hvm);
+        	}
+        }
 
-        hakuContainer.addAll(haut);
+        hakuContainer.addAll(fhaut);
         hakuCombo.setContainerDataSource(hakuContainer);
         hakuCombo.setNullSelectionAllowed(true);
         hakuCombo.setRequired(true);
@@ -745,6 +768,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
 
         if (hvm != null) {
+        	
             if (hvm.getSisaisetHakuajat().isEmpty()) {
                 ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
                 lht.setHakuOid(hvm.getHakuOid());
@@ -756,7 +780,15 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
 
-            container.addAll(hvm.getSisaisetHakuajat());
+        	List<HakuaikaViewModel> hvms = new ArrayList<HakuaikaViewModel>();
+
+            for (HakuaikaViewModel ham : hvm.getSisaisetHakuajat()) {
+            	if (accepts(ham)) {
+            		hvms.add(ham);
+            	}
+            }
+
+            container.addAll(hvms);
         }
 
         hakuAikaCombo.setContainerDataSource(container);

@@ -182,6 +182,16 @@
                         type="xs:dateTime"
                         minOccurs="0"
                         maxOccurs="1"/>
+                        
+            <xs:element name="hakuaikaAlkuPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+                        
+            <xs:element name="hakuaikaLoppuPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         
             <!-- optimistic locking -->
             <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>            
