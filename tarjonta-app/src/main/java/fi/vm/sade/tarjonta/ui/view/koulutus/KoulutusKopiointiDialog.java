@@ -1,19 +1,19 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;/*
- *
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
+*
+* Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+*
+* This program is free software: Licensed under the EUPL, Version 1.1 or - as
+* soon as they will be approved by the European Commission - subsequent versions
+* of the EUPL (the "Licence");
+*
+* You may not use this work except in compliance with the Licence.
+* You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* European Union Public Licence for more details.
+*/
 
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
@@ -28,10 +28,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 import java.util.*;
 
 /**
- * @author: Tuomas Katva
- * Date: 4.3.2013
- */
-@Configurable(preConstruction =  true)
+* @author: Tuomas Katva
+* Date: 4.3.2013
+*/
+@Configurable(preConstruction = true)
 public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
     private static final long serialVersionUID = 5989896711603394196L;
 
@@ -111,8 +111,8 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 errorView.resetErrors();
-                if (optionGroup.getValue() !=  null) {
-                String value =  (String)optionGroup.getValue();
+                if (optionGroup.getValue() != null) {
+                String value = (String)optionGroup.getValue();
                 if (value.equalsIgnoreCase(_i18n.getMessage("optionGroup.kopioidaan"))) {
                 if (selectedOrgs.values() != null && selectedOrgs.values().size() > 0) {
 
@@ -135,8 +135,8 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
                     }
                     getParent().removeWindow(KoulutusKopiointiDialog.this);
                     /*} else {
-                      addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
-                    }*/
+addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
+}*/
                 } else {
                     addErrorMessage(_i18n.getMessage("valitseOrganisaatioMessage"));
                 }

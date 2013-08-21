@@ -8,7 +8,7 @@ import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
@@ -27,25 +27,25 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 
 /*
- *
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
+*
+* Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+*
+* This program is free software: Licensed under the EUPL, Version 1.1 or - as
+* soon as they will be approved by the European Commission - subsequent versions
+* of the EUPL (the "Licence");
+*
+* You may not use this work except in compliance with the Licence.
+* You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* European Union Public Licence for more details.
+*/
 /**
- *
- * @author Tuomas Katva
- */
+*
+* @author Tuomas Katva
+*/
 @Configurable(preConstruction = true)
 public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     
@@ -124,7 +124,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                     errorView.addError(_i18n.getMessage("valitseKoulutusTyyppi"));
                     return;
                 }
-                List<OrganisaatioPerustietoType> orgs = new ArrayList<OrganisaatioPerustietoType>(selectedOrgs.values());
+                List<OrganisaatioPerustieto> orgs = new ArrayList<OrganisaatioPerustieto>(selectedOrgs.values());
                 if (!checkOppilaitosTyyppi(orgs.get(0), ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri())) {
                     errorView.addError(_i18n.getMessage("tarkistaOppilaitosJaKoulutusaste"));
                     return;
@@ -132,7 +132,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
                 logger.info("koulutusAsteCombo : {} == {}", koulutuksenTyyppiCombo.getValue(), KOULUTUSTYYPPI_AMM);
                 
-                if (koulutuksenTyyppiCombo.getValue()  instanceof KoodiContainer
+                if (koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer
                         && ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(KOULUTUSTYYPPI_AMM)
                         && kcPohjakoulutusvaatimus.getValue() == null) {
                     errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
@@ -168,7 +168,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         });
     }
 
-    private boolean checkOppilaitosTyyppi(OrganisaatioPerustietoType org, String tyyppiUri) {
+    private boolean checkOppilaitosTyyppi(OrganisaatioPerustieto org, String tyyppiUri) {
         List<String> oppilaitosTyyppis = this.presenter.getOppilaitostyyppiUris(org.getOid());
         Collection<KoodiType> koodis = new ArrayList<KoodiType>();
         for (String oppilaitosTyyppi : oppilaitosTyyppis) {
@@ -279,10 +279,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
     
     /**
-     * Popukate koulutustyyppi combo
-     * 
-     * @param oppilaitostyyppiUrit
-     */
+* Popukate koulutustyyppi combo
+*
+* @param oppilaitostyyppiUrit
+*/
     private void buildKoulutustyyppiCombo(List<String> oppilaitostyyppiUrit) {
         Set<KoodiType> koodis = new HashSet<KoodiType>();
         for (String oppilaitosTyyppi : oppilaitostyyppiUrit) {
@@ -301,13 +301,13 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
     
     @Override
-    public void addOrganisaatioToRight(OrganisaatioPerustietoType org) {
+    public void addOrganisaatioToRight(OrganisaatioPerustieto org) {
         int selectedCount = selectedOrgs.values().size();
         super.addOrganisaatioToRight(org);
         if (selectedCount != 0)
             return; // nothing new was selected
 
-        final OrganisaatioPerustietoType organisaatio = selectedOrgs.values()
+        final OrganisaatioPerustieto organisaatio = selectedOrgs.values()
                 .iterator().next();
         KoodiContainer currentSelection = (KoodiContainer) koulutuksenTyyppiCombo
                 .getValue();

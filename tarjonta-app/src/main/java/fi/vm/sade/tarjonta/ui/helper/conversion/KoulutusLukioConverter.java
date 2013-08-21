@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-<<<<<<< HEAD
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -41,8 +40,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
-=======
->>>>>>> master
+
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertListToSet;
@@ -132,7 +130,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
 
         if (koulutusVastausTyyppi.getHakukohteet() != null) {
-            for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi:koulutusVastausTyyppi.getHakukohteet()) {
+            for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
                 SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
                 hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
                 hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());

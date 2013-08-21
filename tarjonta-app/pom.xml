@@ -44,6 +44,11 @@
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-api</artifactId>
             <version>${organisaatio.api.version}</version>
+        </dependency>       
+        <dependency>
+            <groupId>fi.vm.sade.organisaatio</groupId>
+            <artifactId>organisaatio-solr-client</artifactId>
+            <version>${organisaatio.api.version}</version>
         </dependency>
 
         <dependency>

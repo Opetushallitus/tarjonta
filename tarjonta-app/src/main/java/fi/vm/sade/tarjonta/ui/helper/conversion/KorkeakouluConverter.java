@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -334,8 +335,9 @@ public class KorkeakouluConverter extends KoulutusConveter {
             perustiedotModel.setSuunniteltuKestoTyyppi(vastaus.getKesto().getYksikko());
         }
 
-
- 
+        if (vastaus.getOpetuskieli() != null && !vastaus.getOpetuskieli().isEmpty()) {
+            perustiedotModel.setOpetuskielis(convertListToSet(vastaus.getOpetuskieli()));
+        }
 
         if (vastaus.getOpetusmuoto() != null && !vastaus.getOpetusmuoto().isEmpty()) {
             perustiedotModel.setOpetusmuodos(convertListToSet(vastaus.getOpetusmuoto()));

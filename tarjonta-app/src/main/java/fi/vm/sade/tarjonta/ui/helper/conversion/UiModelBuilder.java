@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software: Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * European Union Public Licence for more details.
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
@@ -36,24 +36,18 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
     private transient static final Locale LOCALE_FI = new Locale("FI");
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(UiModelBuilder.class);
     private Class<MODEL> modelClass;
-<<<<<<< HEAD
-    private TarjontaKoodistoHelper helper;
-
-    public UiModelBuilder(Class<MODEL> modelClass, TarjontaKoodistoHelper helper) {
-=======
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public UiModelBuilder(Class<MODEL> modelClass, TarjontaKoodistoHelper tarjontaKoodistoHelper) {
->>>>>>> master
         if (modelClass == null) {
             throw new RuntimeException("An invalid constructor argument - the class argument cannot be null.");
         }
+
+        if (tarjontaKoodistoHelper == null) {
+            throw new RuntimeException("An invalid constructor argument - the class argument TarjontaKoodistoHelper object cannot be null.");
+        }
         this.modelClass = modelClass;
-<<<<<<< HEAD
-        this.helper = helper;
-=======
         this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
->>>>>>> master
     }
 
     private MODEL newModelInstance() {
@@ -73,11 +67,7 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
         }
 
         if (locale != null) {
-<<<<<<< HEAD
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
-=======
             final MonikielinenTekstiTyyppi.Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
->>>>>>> master
 
             if (teksti != null) {
                 m.setKielikoodi(teksti.getKieliKoodi());
@@ -115,19 +105,6 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
 
     public MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final Locale locale) {
         LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
-<<<<<<< HEAD
-        Preconditions.checkNotNull(helper, "TarjontaKoodistoHelper object cannot be null");
-
-        final String langCode = helper.convertKielikoodiToKieliUri(locale.getLanguage());
-
-        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
-            if (teksti.getKieliKoodi() != null) {
-                final String tekstiLang = helper.convertKielikoodiToKieliUri(teksti.getKieliKoodi());
-                if (teksti.getKieliKoodi() != null && tekstiLang.equals(langCode)) {
-                    return teksti;
-                }
-            } else if (teksti.getKieliKoodi() == null) {
-=======
         Preconditions.checkNotNull(tarjontaKoodistoHelper, "TarjontaKoodistoHelper object cannot be null");
 
         final String requiredLangCode = convertToKielikoodiUriWithoutVersion(locale.getLanguage());
@@ -139,12 +116,11 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
                     return teksti;
                 }
             } else {
->>>>>>> master
                 LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
             }
         }
 
-        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
+        LOG.debug(" --> no text found by locale : " + locale.getLanguage());
 
         return null;
     }
@@ -159,59 +135,24 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
 
         if (koodiUri != null) {
             final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), koodiUri);
-<<<<<<< HEAD
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Language code : " + teksti.getKieliKoodi());
-                    LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-                }
-            } else {
-                LOG.debug("No text data found for locale " + koodiUri);
-            }
-=======
             updateTextToModel(teksti, m, koodiUri);
->>>>>>> master
         }
 
         if (m.getNimi() == null || m.getNimi().isEmpty()) {
             //FI default fallback
-<<<<<<< HEAD
-            final String fiKoodiUri = helper.convertKielikoodiToKieliUri(LOCALE_FI.getLanguage());
-            
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), fiKoodiUri);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Language code fallback : " + LOCALE_FI.getLanguage());
-                LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-            }
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-            } else {
-                LOG.error("An invalid data error -´MonikielinenTekstiModel object was missing Finnish language data.");
-            }
-=======
             final String fiKoodiUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(LOCALE_FI.getLanguage());
             final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), fiKoodiUri);
             updateTextToModel(teksti, m, koodiUri);
->>>>>>> master
         }
 
         m.setKielikaannos(convertToKielikaannosViewModel(tyyppi));
         return m;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Trim and clean.
-     *
-     * @param kielikoodi
+     *     
+* @param kielikoodi
      * @return
      */
     private String convertToKielikoodiUriWithoutVersion(final String kielikoodi) {
@@ -231,5 +172,4 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
             LOG.debug("No text data found for locale '{}'.", locale);
         }
     }
->>>>>>> master
 }

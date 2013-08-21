@@ -245,13 +245,9 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
-<<<<<<< HEAD
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
-=======
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
->>>>>>> master
+
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
 
         /*
          * replay
@@ -350,13 +346,10 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
-<<<<<<< HEAD
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
-=======
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
->>>>>>> master
+
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
+
 
 
         /*
@@ -510,30 +503,19 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
 
-<<<<<<< HEAD
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiTypes(LUKIOLINJA));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiTypes(KOULUTUSASTE));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiTypes(OPINTOALA));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
+
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiTypes(LUKIOLINJA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiTypes(KOULUTUSASTE));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiTypes(OPINTOALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiTypes(KOULUTUSLAJI));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
-        expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
-=======
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiType(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiType(LUKIOLINJA));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiType(KOULUTUSASTE));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiType(OPINTOALA));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
-        //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiType(KOULUTUSLAJI));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiType(LAAJUUS_YKSIKKO));
-        //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiType(LAAJUUS_ARVO));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiType(KOULUTUSALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
 
 
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
->>>>>>> master
 
         /*
          * replay

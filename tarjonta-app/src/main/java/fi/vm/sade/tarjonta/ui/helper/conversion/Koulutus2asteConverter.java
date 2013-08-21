@@ -210,27 +210,18 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
-<<<<<<< HEAD
-            model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
-=======
             model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
->>>>>>> master
         }
         model2Aste.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         model2Aste.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva() : null);
-
 
         if (koulutus.getKesto() != null) {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
 
-<<<<<<< HEAD
-        model2Aste.setKoulutusaste(convert(koulutus.getKoulutusmoduuli().getKoulutusasteUri()));
-=======
         model2Aste.setKoulutusaste(convert(koulutus.getKoulutusaste()));
->>>>>>> master
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
