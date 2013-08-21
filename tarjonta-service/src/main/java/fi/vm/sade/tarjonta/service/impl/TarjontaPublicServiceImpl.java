@@ -51,19 +51,17 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
-import fi.vm.sade.tarjonta.service.search.SearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeTarjoajanKoulutustenPohjakoulutuksetKysely;
@@ -118,7 +116,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Value("${tarjonta-alkamiskausi-syksy}")
     private String kausiUri;
     @Autowired
-    private SearchService searchService;
+    private TarjontaSearchService searchService;
     private final static String SYKSY = "syksy";
     private final static String KEVAT = "kevat";
     
@@ -376,23 +374,23 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         this.hakuDao = hakuDao;
     }
     
-    @Override
-    public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
-        HaeHakukohteetVastausTyyppi vastaus = this.searchService.haeHakukohteet(kysely);
-        return vastaus;
-    }
+//    @Override
+//    public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
+//        HaeHakukohteetVastausTyyppi vastaus = this.searchService.haeHakukohteet(kysely);
+//        return vastaus;
+//    }
     
     @Override
     public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
         HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setOid(hakukohdeKysely.getHakukohdeOid());
         
-        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getHakukohdeOids().add(hakukohdeKysely.getHakukohdeOid());
         
-        HaeKoulutuksetVastausTyyppi koulutusVastaus = searchService.haeKoulutukset(kysely);
+        KoulutuksetVastaus koulutusVastaus = searchService.haeKoulutukset(kysely);
         
-        for (KoulutusTulos tulos : koulutusVastaus.getKoulutusTulos()) {
+        for (fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos tulos : koulutusVastaus.getKoulutusTulos()) {
             
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
             koulutus.setTila(tulos.getKoulutus().getTila());
@@ -419,10 +417,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
     }
     
-    @Override
-    public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-        return this.searchService.haeKoulutukset(kysely);
-    }
+//    @Override
+//    public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
+//        return this.searchService.haeKoulutukset(kysely);
+//    }
     
     private List<Integer> getAlkuKuukaudet(String kausi) {
         List<Integer> kuukaudet = new ArrayList<Integer>();
@@ -504,7 +502,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
     }
     
-    private String getHakukohdeTulosKoodistoNimi(HakukohdeTulos hakukohdeTulos) {
+    private String getHakukohdeTulosKoodistoNimi(fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos hakukohdeTulos) {
         String koodistoNimi = null;
         
         for (MonikielinenTekstiTyyppi.Teksti teksti : hakukohdeTulos.getHakukohde().getNimi().getTeksti()) {
@@ -525,12 +523,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         toKoulutus.setVersion(fromKoulutus.getVersion());
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
         
-        HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+        HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.getKoulutusOids().add(fromKoulutus.getOid());
         kysely.setKoulutuksenAlkamisvuosi(0);
-        HaeHakukohteetVastausTyyppi vastaus = searchService.haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = searchService.haeHakukohteet(kysely);
         if (fromKoulutus.getHakukohdes() != null) {
-            for (HakukohdeTulos hakukohde : vastaus.getHakukohdeTulos()) {
+            for (fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos hakukohde : vastaus.getHakukohdeTulos()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
                 hakukohdeKoosteTyyppi.setOid(hakukohde.getHakukohde().getOid());
                 hakukohdeKoosteTyyppi.setKoodistoNimi(getHakukohdeTulosKoodistoNimi(hakukohde));

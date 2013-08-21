@@ -134,14 +134,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         if (hakukohdeNimi == null) {
             return;
         }
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, HAKUKOHTEEN_NIMI_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, HAKUKOHTEEN_NIMI_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, HAKUKOHTEEN_NIMI_EN, metadata.getNimi());
             add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
         }
@@ -152,14 +152,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         if (hakutapaUri == null) {
             return;
         }
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(hakutapaUri, koodiService);
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakutapaUri, koodiService);
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, HAKUTAPA_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, HAKUTAPA_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, HAKUTAPA_EN, metadata.getNimi());
             add(doc, HAKUTAPA_URI, hakutapaUri);
         }
@@ -171,17 +171,17 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             return;
         }
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, KAUSI_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KAUSI_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KAUSI_EN, metadata.getNimi());
             add(doc, KAUSI_KOODI,
-                    koodi.getKoodiUri() + IndexingUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
         }
     }
 
@@ -197,14 +197,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
         
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutus.getKoulutuslaji(),  koodiService);
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutus.getKoulutuslaji(),  koodiService);
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, KOULUTUSLAJI_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KOULUTUSLAJI_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSLAJI_EN, metadata.getNimi());
         }
     }
