@@ -34,7 +34,6 @@
         <module>tarjonta-enricher</module>
         <module>tarjonta-service</module>
         <module>tarjonta-app</module>
-<!--        <module>tarjonta-esb</module>-->
     </modules>
     
     <repositories>
