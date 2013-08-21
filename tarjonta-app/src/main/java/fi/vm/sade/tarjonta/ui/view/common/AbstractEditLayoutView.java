@@ -421,7 +421,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         return model.hashCode() != formDataUnmodifiedHashcode;
     }
     
-    private boolean isSaved() {
+    public boolean isSaved() {
         return isformDataLoaded() && !isModified();
     }
 

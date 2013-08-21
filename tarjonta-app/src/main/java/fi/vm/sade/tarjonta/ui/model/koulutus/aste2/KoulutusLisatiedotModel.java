@@ -153,9 +153,26 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().
+        
+        HashCodeBuilder builder = new HashCodeBuilder().
                 append(_ammattinimikkeet).
                 append(_kielet).
-                append(_lisatiedot).toHashCode();
+                append(_lisatiedot);
+        
+        if (_lisatiedot != null) {
+            for (String curKey : _lisatiedot.keySet()){
+                builder = builder.append(curKey);
+                KoulutusLisatietoModel lisatieto = _lisatiedot.get(curKey);
+                builder = builder.append(lisatieto.getKansainvalistyminen())
+                        .append(_lisatiedot.get(curKey).getKoulutusohjelmanValinta())
+                        .append(_lisatiedot.get(curKey).getKuvailevatTiedot())
+                        .append(_lisatiedot.get(curKey).getLanguageUri())
+                        .append(_lisatiedot.get(curKey).getSijoittuminenTyoelamaan())
+                        .append(_lisatiedot.get(curKey).getSisalto())
+                        .append(_lisatiedot.get(curKey).getYhteistyoMuidenToimijoidenKanssa());
+            }
+        }
+        
+        return builder.toHashCode();
     }
 }

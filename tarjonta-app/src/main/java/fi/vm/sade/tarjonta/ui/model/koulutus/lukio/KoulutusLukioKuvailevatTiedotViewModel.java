@@ -161,13 +161,31 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(tila)
+        
+        HashCodeBuilder builder = new HashCodeBuilder().append(tila)
                 .append(diplomit)
                 .append(kieliA)
                 .append(kieliB1)
                 .append(kieliB2)
                 .append(kieliB3)
                 .append(kieletMuu)
-                .toHashCode();
+                .append(tekstit);
+        
+        if (tekstit != null) {
+            for (String curKey : tekstit.keySet()) {
+                builder = builder.append(curKey);
+                KoulutusLisatietoModel lisatieto = tekstit.get(curKey);
+                builder = builder.append(lisatieto.getKansainvalistyminen())
+                        .append(lisatieto.getKoulutusohjelmanValinta())
+                        .append(lisatieto.getKuvailevatTiedot())
+                        .append(lisatieto.getLanguageUri())
+                        .append(lisatieto.getSijoittuminenTyoelamaan())
+                        .append(lisatieto.getSisalto())
+                        .append(lisatieto.getYhteistyoMuidenToimijoidenKanssa());
+
+            }
+        }
+        
+        return builder.toHashCode();
     }
 }

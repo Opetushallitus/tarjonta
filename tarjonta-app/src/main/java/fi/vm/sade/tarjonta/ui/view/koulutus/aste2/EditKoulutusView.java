@@ -19,7 +19,11 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
+
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -80,11 +84,11 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         hlLabelWrapper.addComponent(title);
         addComponent(hlLabelWrapper);
 
-        TabSheet tabs = UiBuilder.tabSheet(this);
-        EditKoulutusPerustiedotToinenAsteView perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
+        final TabSheet tabs = UiBuilder.tabSheet(this);
+        final EditKoulutusPerustiedotToinenAsteView perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
         tabs.addTab(perustiedotView, T("perustiedot"));
 
-        EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
+        final EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
 
         liitteetTab = tabs.addTab(lisatiedotView, T("lisatiedot"));
         liitteetTab.setEnabled(presenter.getModel().getKoulutusPerustiedotModel().isLoaded());
@@ -96,6 +100,27 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         } else {
             tabs.setSelectedTab(lisatiedotView);
         }
+        
+        tabs.addListener(new SelectedTabChangeListener() {
+
+            private static final long serialVersionUID = -3995507767832431214L;
+
+            @Override
+            public void selectedTabChange(SelectedTabChangeEvent event) {
+                if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab) && !perustiedotView.isSaved()) {
+                    tabs.setSelectedTab(perustiedotView);
+                    presenter.showNotification(UserNotification.UNSAVED);
+                } else if (KoulutusActiveTab.LISATIEDOT.equals(activeTab) && !lisatiedotView.isSaved()) {
+                    tabs.setSelectedTab(lisatiedotView);
+                    presenter.showNotification(UserNotification.UNSAVED);
+                } else if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab)) {
+                    activeTab = KoulutusActiveTab.LISATIEDOT;
+                } else {
+                    activeTab = KoulutusActiveTab.PERUSTIEDOT;
+                }
+            }
+            
+        });
     }
 
     public void enableLisatiedotTab() {
