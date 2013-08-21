@@ -862,13 +862,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
                 for (OrganisaatioPerustieto org : orgs) {
                     OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-                    if (org.getNimiFi() != null && org.getNimiFi().length() > 0) {
-                        oidNamePair.setOrganisation(org.getOid(), org.getNimiFi());
-                    } else if (org.getNimiSv() != null && org.getNimiSv().length() > 0) {
-                        oidNamePair.setOrganisation(org.getOid(), org.getNimiSv());
-                    } else if (org.getNimiEn() != null && org.getNimiEn().length() > 0) {
-                        oidNamePair.setOrganisation(org.getOid(), org.getNimiEn());
-                    }
+                    
+                    String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org);
+                    oidNamePair.setOrganisationName(nimi);
                     getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
                 }
             }

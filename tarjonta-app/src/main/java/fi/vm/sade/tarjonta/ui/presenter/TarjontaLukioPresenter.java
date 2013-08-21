@@ -36,6 +36,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
@@ -178,7 +179,7 @@ public class TarjontaLukioPresenter {
             presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
             for (OrganisaatioPerustieto org : orgs) {
                 OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-                oidNamePair.setOrganisation(org.getOid(), org.getNimiFi());
+                oidNamePair.setOrganisation(org.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org));
                 presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
             }
         }

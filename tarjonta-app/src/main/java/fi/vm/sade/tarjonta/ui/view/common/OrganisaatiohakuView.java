@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -61,6 +60,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -287,7 +287,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                     Object propertyId) {
                 if (itemId instanceof OrganisaatioPerustieto) {
                     OrganisaatioPerustieto tooltipOrg = (OrganisaatioPerustieto) itemId;
-                    return getClosestNimi(I18N.getLocale(), tooltipOrg);
+                    return OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), tooltipOrg);
                 }
 
                 return null;
@@ -359,7 +359,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         //Setting the items to the tree.
         Ordering<OrganisaatioPerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<OrganisaatioPerustieto, Comparable>() {
             public Comparable apply(OrganisaatioPerustieto input) {
-                return getClosestNimi(I18N.getLocale(), input);
+                return OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), input);
 
             }
         ;
@@ -386,7 +386,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
             if (isRoot(curOrg)) {
                 roots.add(curOrg);
                 hc.addItem(curOrg);
-                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));
+                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curOrg));
             } else {
                 updateStructureMap(structureMap, curOrg);
             }
@@ -405,7 +405,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         if (structureMap.containsKey(curOrg.getOid())) {
             for (OrganisaatioPerustieto curChild : structureMap.get(curOrg.getOid())) {
                 hc.addItem(curChild);
-                hc.getContainerProperty(curChild, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curChild));
+                hc.getContainerProperty(curChild, COLUMN_KEY).setValue(OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curChild));
                 hc.setParent(curChild, curOrg);
                 createLocalHierarchy(curChild, structureMap);
             }
@@ -465,23 +465,11 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private void organisaatioSelected(final OrganisaatioPerustieto item) {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
-            presenter.selectOrganisaatio(item.getOid(), getOrganisaatioNimi(item),
+            presenter.selectOrganisaatio(item.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(),item),
                     item.getLakkautusPvm() == null || item.getLakkautusPvm().after(new Date()));
         } else {
             presenter.unSelectOrganisaatio();
         }
-    }
-
-    private String getOrganisaatioNimi(final OrganisaatioPerustieto item) {
-        if (item.getNimiFi() != null) {
-            return item.getNimiFi();
-        } else if (item.getNimiSv() != null) {
-            return item.getNimiSv();
-
-        } else if (item.getNimiEn() != null) {
-            return item.getNimiEn();
-        }
-        return null;
     }
 
     /**
@@ -496,37 +484,6 @@ public class OrganisaatiohakuView extends VerticalLayout {
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }
 
-    private String getClosestNimi(Locale locale, OrganisaatioPerustieto org) {
-        String lang = (locale != null) ? locale.getLanguage().toLowerCase() : "";
-        if (lang.equals("fi") && org.getNimiFi() != null) {
-
-            return org.getNimiFi();
-        }
-        if (lang.equals("sv") && org.getNimiSv() != null) {
-
-            return org.getNimiSv();
-        }
-        if (lang.equals("en") && org.getNimiEn() != null) {
-            return org.getNimiEn();
-        }
-        return getAvailableNimi(org);
-    }
-
-    private String getAvailableNimi(OrganisaatioPerustieto org) {
-        if (org.getNimiFi() != null) {
-
-            return org.getNimiFi();
-        }
-        if (org.getNimiSv() != null) {
-
-            return org.getNimiSv();
-        }
-        if (org.getNimiEn() != null) {
-
-            return org.getNimiEn();
-        }
-        return "";
-    }
 
     public void clearTreeSelection() {
 

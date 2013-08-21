@@ -13,6 +13,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -204,7 +205,7 @@ public abstract class OrganisaatioSelectDialog extends Window {
         if (organisaatioChildTree != null) {
         for (final OrganisaatioPerustieto curOrg:organisaatios) {
 
-            Button buttonOrganisaatio = UiUtil.buttonLink(null, getAvailableNameBasic(curOrg), new Button.ClickListener() {
+            Button buttonOrganisaatio = UiUtil.buttonLink(null, OrganisaatioDisplayHelper.getAvailableNameBasic(curOrg), new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                      addOrganisaatioToRight(curOrg);
@@ -278,22 +279,6 @@ public abstract class OrganisaatioSelectDialog extends Window {
         vlRight.addComponent(link);
         vlRight.requestRepaintAll();
         }
-    }
-
-    private static String getAvailableNameBasic(OrganisaatioPerustieto org) {
-        if (org.getNimiFi() != null) {
-
-            return org.getNimiFi();
-        }
-        if (org.getNimiSv() != null) {
-
-            return org.getNimiSv();
-        }
-        if (org.getNimiEn() != null) {
-
-            return org.getNimiEn();
-        }
-        return "";
     }
 
     public boolean isLimitToOne() {
