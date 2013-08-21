@@ -1,0 +1,38 @@
+{
+  "modified" : 1375449660745,
+  "modifiedBy" : "1.2.246.562.24.00000000001",
+  "oid" : "1.2.246.562.5.2013062413194602131997",
+  "version" : 1,
+  "tila" : "JULKAISTU",
+  "painotus" : {
+  },
+  "kuvailevatTiedot" : {
+  },
+  "sisalto" : {
+  },
+  "sijoittuminenTyoelamaan" : {
+  },
+  "kansainvalistyminen" : {
+  },
+  "yhteistyoMuidenToimijoidenKanssa" : {
+  },
+  "tarjoajaOid" : "1.2.246.562.10.26887219132",
+  "koulutusAsteUri" : "koulutusasteoph2002_32#1",
+  "laajuusArvo" : "2",
+  "laajuusYksikkoUri" : "suunniteltukesto_01#1",
+  "maksullisuus" : false,
+  "ammattinimikeUris" : [ ],
+  "avainsanatUris" : [ ],
+  "koulutuksenAlkamisDate" : "2014-06-10",
+  "koulutuslajiUris" : [ "koulutuslaji_n#1" ],
+  "webLinkkis" : {
+  },
+  "lukiodiplomitUris" : [ ],
+  "opetuskieletUris" : [ "kieli_fi#1" ],
+  "opetusmuodotUris" : [ "opetusmuoto_l#1" ],
+  "pohjakoulutusVaatimusUri" : "pohjakoulutusvaatimustoinenaste_pk#1",
+  "teematUris" : [ ],
+  "komoOid" : "1.2.246.562.5.2013060313061248737942",
+  "parentKomotoOid" : "1.2.246.562.5.48348014419",
+  "api_VERSION" : 4
+}
