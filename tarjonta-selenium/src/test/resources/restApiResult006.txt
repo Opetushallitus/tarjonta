@@ -1,0 +1,23 @@
+{
+  "modified" : 1373608647938,
+  "oid" : "1.2.246.562.5.2013060313061248737942",
+  "version" : 19,
+  "tila" : "JULKAISTU",
+  "koulutuksenRakenne" : {
+  },
+  "jatkoOpintoMahdollisuudet" : {
+  },
+  "moduuliTyyppi" : "TUTKINTO_OHJELMA",
+  "tutkintonimikeUri" : "tutkintonimikkeet_10132#1",
+  "eqfLuokitusUri" : "4#1",
+  "koulutusOhjelmaKoodiUri" : "koulutusohjelmaamm_16311#1",
+  "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
+  "tavoitteet" : {
+    "kieli_sv" : "<p>I utbildningsprogrammet för gruvbranschen kan du beroende på specialisering bli gruvarbetare eller anrikare. Gruvarbetaren arbetar i gruvor som finns under eller utanpå jorden. Anrikaren arbetar på ett anrikningsverk eller inom processindustrin.</p>",
+    "kieli_fi" : "<p>Kaivosalan koulutusohjelmassa opiskelija erikoistuu kaivosmieheksi tai rikastajaksi. Kaivosmies tekee työtä maanalaisessa tai maanpäällisessä kaivoksessa. Rikastajan työpaikkana on maanpäällinen kaivoksen rikastamo tai muu työ prosessiteollisuudessa.</p>"
+  },
+  "koulutusKoodiUri" : "koulutus_351107#1",
+  "ylaModuulit" : [ "1.2.246.562.5.2013060313061007276716" ],
+  "alaModuulit" : [ ],
+  "api_VERSION" : 4
+}

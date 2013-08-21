@@ -1,0 +1,30 @@
+{
+  "modified" : 1370858304900,
+  "modifiedBy" : "1.2.246.562.24.00000000001",
+  "oid" : "1.2.246.562.5.2013061012582489969185",
+  "version" : 0,
+  "hakukausiUri" : "kausi_s#1",
+  "hakukausiVuosi" : 2013,
+  "hakutapaUri" : "hakutapa_01#1",
+  "tila" : "PERUTTU",
+  "nimi" : {
+    "kieli_sv" : "Luokan testihaku sv",
+    "kieli_en" : "Luokan testihaku en",
+    "kieli_fi" : "Luokan testihaku"
+  },
+  "hakutyyppiUri" : "hakutyyppi_01#1",
+  "haunTunniste" : "1.2.246.562.5.2013061012582489969185",
+  "kohdejoukkoUri" : "haunkohdejoukko_10#1",
+  "koulutuksenAlkamisVuosi" : 2014,
+  "koulutuksenAlkamiskausiUri" : "kausi_k#1",
+  "sijoittelu" : true,
+  "hakuaikas" : [ {
+    "oid" : "42803",
+    "version" : 1,
+    "nimi" : "Ensimmäinen hakuaika",
+    "alkuPvm" : 1362308280000,
+    "loppuPvm" : 1382003900297,
+    "api_VERSION" : 4
+  } ],
+  "api_VERSION" : 4
+}

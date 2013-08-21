@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fi.vm.sade.generic.ui.feature.UserFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ import fi.vm.sade.tarjonta.ui.view.haku.EditHakuForm;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -62,7 +60,7 @@ import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -225,11 +223,11 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
                 LOG.error(ex.getMessage());
             }
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
-            hakuTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+            hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
             tarjontaAdminService.lisaaHaku(hakuTyyppi);
         } else {
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
-            hakuTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+            hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
             tarjontaAdminService.paivitaHaku(hakuTyyppi);
         }
         LOG.info("Haku tallennettu valmiina");

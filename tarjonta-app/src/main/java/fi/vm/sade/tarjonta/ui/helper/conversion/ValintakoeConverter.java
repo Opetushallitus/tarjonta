@@ -15,19 +15,18 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Created by: Tuomas Katva
@@ -119,7 +118,7 @@ public class ValintakoeConverter {
         valintakoeTyyppi.getAjankohdat().addAll(mapAjankohdat(valintakoeViewModel.getValintakoeAjat()));
         valintakoeTyyppi.getPisterajat().addAll(mapPisterajatToDTO(valintakoeViewModel));
         valintakoeTyyppi.setLisaNaytot(ConversionUtils.convertKielikaannosToMonikielinenTeksti(valintakoeViewModel.getLisanayttoKuvaukset()));
-        valintakoeTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+        valintakoeTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
 
         return valintakoeTyyppi;
     }
