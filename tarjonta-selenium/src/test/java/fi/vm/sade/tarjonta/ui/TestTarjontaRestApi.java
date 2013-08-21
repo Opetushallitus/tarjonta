@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import fi.vm.sade.tarjonta.ui.Kattavuus;
 import fi.vm.sade.tarjonta.ui.SVTUtils;
 
 import java.io.BufferedReader;
@@ -21,9 +22,11 @@ public class TestTarjontaRestApi {
 
 	static private String path = "./src/test/resources/restApiResult";
 	static private String http = "";
+    private static Kattavuus RestApiRajaPinnat = new Kattavuus();
 
 	@Before
 	public void setUp() throws Exception {
+		RestApiRajaPinnat.alustaKattavuusKohde("RestApiRajaPinnat");
 		SVTUtils doit = new SVTUtils();
 		http = SVTUtils.prop.getProperty("tarjonta-selenium.restapi");
 	}
@@ -83,6 +86,15 @@ public class TestTarjontaRestApi {
 		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031/haku");
 	}
 	
+	@Test
+	public void testReport() throws IOException {
+		if (ok_count == 11) 
+		{
+			RestApiRajaPinnat.setKattavuus("TarjontaRestApi", RestApiRajaPinnat.KATTAVUUSOK);
+			RestApiRajaPinnat.KattavuusRaportti();
+		}
+	}
+
 	public String getJson(String urlString) {
 
 		String result = "\n\n";
@@ -117,6 +129,7 @@ public class TestTarjontaRestApi {
 		return result;
 	}
 	
+	static private int ok_count = 0;
 	public void restTest(String fileName, String url) throws IOException {
 		SVTUtils doit = new SVTUtils();   
 		doit.echo(fileName);
@@ -124,7 +137,8 @@ public class TestTarjontaRestApi {
 		String expected = doit.readFile(fileName);
 		response = getJson(url);
 		expected = expected.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
-		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
+		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " ");
 		Assert.assertEquals("RestApi error", expected, response);
+		ok_count++;
 	}
 }

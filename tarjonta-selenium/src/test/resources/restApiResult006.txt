@@ -1,7 +1,7 @@
 {
-  "modified" : 1373608647938,
+  "modified" : 1377086480455,
   "oid" : "1.2.246.562.5.2013060313061248737942",
-  "version" : 19,
+  "version" : 21,
   "tila" : "JULKAISTU",
   "koulutuksenRakenne" : {
   },
