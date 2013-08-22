@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
+import com.vaadin.data.Validator;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -27,6 +28,7 @@ import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -107,10 +109,10 @@ public class EditKoulutusView extends AbstractVerticalLayout {
 
             @Override
             public void selectedTabChange(SelectedTabChangeEvent event) {
-                if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab) && !perustiedotView.isSaved()) {
+                if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab) && !isTabChangeable(perustiedotView)) {
                     tabs.setSelectedTab(perustiedotView);
                     presenter.showNotification(UserNotification.UNSAVED);
-                } else if (KoulutusActiveTab.LISATIEDOT.equals(activeTab) && !lisatiedotView.isSaved()) {
+                } else if (KoulutusActiveTab.LISATIEDOT.equals(activeTab) && !isTabChangeable(lisatiedotView)) {
                     tabs.setSelectedTab(lisatiedotView);
                     presenter.showNotification(UserNotification.UNSAVED);
                 } else if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab)) {
@@ -121,6 +123,26 @@ public class EditKoulutusView extends AbstractVerticalLayout {
             }
             
         });
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private boolean isTabChangeable(AbstractEditLayoutView tabView) {
+        if (!tabView.isSaved()) {
+            try {
+                tabView.validateFormData();
+            } catch (Validator.InvalidValueException e) {
+                tabView.getErrorView().addError(e);
+            }
+            return false;
+        }
+        
+        try {
+            tabView.validateFormData();
+            return true;
+        } catch (Validator.InvalidValueException e) {
+            tabView.getErrorView().addError(e);
+            return false;
+        }
     }
 
     public void enableLisatiedotTab() {
