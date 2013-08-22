@@ -723,7 +723,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
     
     private boolean accepts(HakuViewModel hm) {
-    	if (hm.getPaattymisPvm().after(new Date())) {
+    	if (hm.getPaattymisPvm()==null || hm.getPaattymisPvm().after(new Date())) {
     		return true;
     	}
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {

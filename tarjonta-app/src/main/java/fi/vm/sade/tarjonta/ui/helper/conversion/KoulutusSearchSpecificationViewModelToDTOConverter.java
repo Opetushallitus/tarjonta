@@ -1,12 +1,10 @@
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
-import java.math.BigInteger;
-
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 
 /**
@@ -16,8 +14,8 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 @Component
 public class KoulutusSearchSpecificationViewModelToDTOConverter {
 
-	public HaeKoulutuksetKyselyTyyppi convertViewModelToKoulutusDTO(KoulutusSearchSpesificationViewModel viewModel) {
-		HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+	public KoulutuksetKysely convertViewModelToKoulutusDTO(KoulutusSearchSpesificationViewModel viewModel) {
+		KoulutuksetKysely kysely = new KoulutuksetKysely();
 		kysely.setNimi(viewModel.getSearchStr());
 		kysely.getTarjoajaOids().addAll(viewModel.getOrganisaatioOids());
 		kysely.setKoulutuksenAlkamiskausi(viewModel.getKoulutuksenAlkamiskausi());
@@ -28,13 +26,13 @@ public class KoulutusSearchSpecificationViewModelToDTOConverter {
 		return kysely;
 	}
 	
-	public HaeHakukohteetKyselyTyyppi convertViewModelToHakukohdeDTO(KoulutusSearchSpesificationViewModel viewModel) {
-		HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+	public HakukohteetKysely convertViewModelToHakukohdeDTO(KoulutusSearchSpesificationViewModel viewModel) {
+		HakukohteetKysely kysely = new HakukohteetKysely();
 		kysely.setNimi(viewModel.getSearchStr());
 		kysely.getTarjoajaOids().addAll(viewModel.getOrganisaatioOids());
 		kysely.setKoulutuksenAlkamiskausi(viewModel.getKoulutuksenAlkamiskausi());
         if (viewModel.getKoulutuksenTila() != null) {
-            kysely.setTilat(TarjontaTila.fromValue(viewModel.getKoulutuksenTila()));
+            kysely.setTilat(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(viewModel.getKoulutuksenTila()));
         }
 		kysely.setKoulutuksenAlkamisvuosi(viewModel.getKoulutuksenAlkamisvuosi());
 		return kysely;

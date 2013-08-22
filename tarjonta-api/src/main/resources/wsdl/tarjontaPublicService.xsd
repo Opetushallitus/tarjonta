@@ -12,12 +12,6 @@
     <xs:element name="haeTarjonta" type="tns:HaeTarjontaTyyppi" />
     <xs:element name="haeTarjontaVastaus" type="tns:HaeTarjontaVastausTyyppi" />
 
-    <xs:element name="haeHakukohteetKysely" type="tns:HaeHakukohteetKyselyTyyppi" />
-    <xs:element name="haeHakukohteetVastaus" type="tns:HaeHakukohteetVastausTyyppi" />
-
-    <xs:element name="haeKoulutuksetKysely" type="tns:HaeKoulutuksetKyselyTyyppi" />
-    <xs:element name="haeKoulutuksetVastaus" type="tns:HaeKoulutuksetVastausTyyppi" />
-
     <xs:element name="haeKoulutusmoduulitKysely" type="tns:HaeKoulutusmoduulitKyselyTyyppi" />
     <xs:element name="haeKoulutusmoduulitVastaus" type="tns:HaeKoulutusmoduulitVastausTyyppi" />
     
@@ -98,79 +92,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
-    <xs:complexType name="HaeHakukohteetKyselyTyyppi">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Haku objekti jolla valitetaan haku kriteerit.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="nimi" minOccurs="0" maxOccurs="1" type="xs:string"/>
-            <xs:element name="nimiKoodiUri" minOccurs="0" maxOccurs="1" type="xs:string"/>
-            <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-            <xs:element name="koulutusOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-            <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:int"/>
-            <xs:element name="tilat" minOccurs="0" maxOccurs="1" type="tns:TarjontaTila"/>
-            <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="HaeHakukohteetVastausTyyppi">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="HakukohdeTulos"
-                        minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Hakukohde" type="tarjonta:HakukohdeListausTyyppi"/>
-                        <!--<xs:element name="Haku" type="tarjonta:HakuKoosteTyyppi"/>
-                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>-->
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Haku objekti jolla valitetaan haku kriteerit.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="nimi" minOccurs="0" maxOccurs="1" type="xs:string"/>
-            <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-            <xs:element name="koulutusOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-            <xs:element name="koulutuksenTila" minOccurs="0" maxOccurs="1" type="tns:TarjontaTila"/>
-            <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:int"/>
-            <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
-            <xs:element name="koulutusKoodi" minOccurs="0" maxOccurs="1" type="xs:string"/>
-            <xs:element name="hakukohdeOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-
-
-    <xs:complexType name="HaeKoulutuksetVastausTyyppi">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="KoulutusTulos"
-                        minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Koulutus" type="tarjonta:KoulutusListausTyyppi"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="HaeKoulutusmoduulitKyselyTyyppi">
         <xs:annotation>

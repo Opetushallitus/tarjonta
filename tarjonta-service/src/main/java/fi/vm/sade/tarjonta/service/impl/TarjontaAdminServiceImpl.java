@@ -29,12 +29,13 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
-import fi.vm.sade.tarjonta.service.search.SearchService;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,9 +74,6 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.log.model.Tapahtuma;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 
 /**
  * @author Tuomas Katva
@@ -111,7 +109,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private IndexerResource solrIndexer;
     @Autowired
-    private SearchService searchService;
+    private TarjontaSearchService searchService;
     @Autowired
     private fi.vm.sade.log.client.Logger auditLogger;
     @Autowired
@@ -323,11 +321,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         //Get hakukohde koulutukses
         if (hakukohde.getHakukohteenKoulutusOidit() != null) {
 
-            HaeKoulutuksetKyselyTyyppi koulutusKysely = new HaeKoulutuksetKyselyTyyppi();
+            KoulutuksetKysely koulutusKysely = new KoulutuksetKysely();
             koulutusKysely.getKoulutusOids().addAll(hakukohde.getHakukohteenKoulutusOidit());
-            List<HaeKoulutuksetVastausTyyppi.KoulutusTulos> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutusTulos();
+            List<KoulutuksetVastaus.KoulutusTulos> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutusTulos();
             //Loop through hakukohtee's koulutukses and check all koulutukses and check that all have the same alkamiskausi and vuosi as the haku
-            for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : koulutusTuloses) {
+            for (KoulutuksetVastaus.KoulutusTulos koulutusTulos : koulutusTuloses) {
                 if (!koulutusTulos.getKoulutus().getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
                         || !koulutusTulos.getKoulutus().getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
                     return false;

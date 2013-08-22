@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,15 +38,11 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QHakukohdeLiite;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.util.CollectionUtils;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import java.util.Set;
 
 /**
  */
@@ -156,106 +151,106 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return findHakukohdeByOid(oid);
     }
 
-    @Override
-    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
-        BooleanExpression criteriaExpr = null;
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
-        if (kysely.getNimiKoodiUri() != null) {
-            //search by koodisto koodi uri (hakukohde combobox uri)
-            criteriaExpr = qHakukohde.hakukohdeNimi.eq(kysely.getNimiKoodiUri());
-        } else {
-            //search by concatenated text (result list name)
-            String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
-            criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
-        }
-
-        List<Hakukohde> hakukohdes = from(qHakukohde)
-                .where(criteriaExpr).
-                list(qHakukohde);
-
-        //Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
-        hakukohdes = createGrouping(hakukohdes, kysely);
-
-        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-        //If a list of organisaatio oids is provided only hakukohdes that match
-        //the list are returned
-        if (!kysely.getTarjoajaOids().isEmpty()) {
-            for (Hakukohde curHk : hakukohdes) {
-                if (kysely.getTarjoajaOids().contains(CollectionUtils.singleItem(curHk.getKoulutusmoduuliToteutuses()).getTarjoaja())) {
-                    vastaus.add(curHk);
-                }
-            }
-        } else {
-            vastaus = hakukohdes;
-        }
-        return vastaus;
-    }
-
-    /*
-     * Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
-     */
-    private List<Hakukohde> createGrouping(List<Hakukohde> hakukohdes, HaeHakukohteetKyselyTyyppi kysely) {
-        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-        for (Hakukohde curHakukohde : hakukohdes) {
-            List<String> tarjoajat = new ArrayList<String>();
-            if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
-                vastaus.addAll(handleKomotos(curHakukohde, kysely, tarjoajat));
-            } else if (isHakukohdeMatch(curHakukohde, kysely, tarjoajat)) {
-                vastaus.add(curHakukohde);
-                tarjoajat.add(curHakukohde.getKoulutusmoduuliToteutuses().iterator().next().getTarjoaja());
-            }
-        }
-        return vastaus;
-    }
-
-    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
-        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-            if (isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja())) {
-                Hakukohde newHakukohde = new Hakukohde();
-                newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
-                newHakukohde.setTila(hakukohde.getTila());
-                newHakukohde.setOid(hakukohde.getOid());
-                newHakukohde.addKoulutusmoduuliToteutus(komoto);
-                newHakukohde.setHaku(hakukohde.getHaku());
-                vastaus.add(newHakukohde);
-                tarjoajat.add(komoto.getTarjoaja());
-            }
-        }
-        return vastaus;
-    }
-
-    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
-        KoulutusmoduuliToteutus komoto = !hakukohde.getKoulutusmoduuliToteutuses().isEmpty() ? hakukohde.getKoulutusmoduuliToteutuses().iterator().next() : null;
-        return isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja());
-    }
-
-    private boolean isKomotoMatch(KoulutusmoduuliToteutus komoto, HaeHakukohteetKyselyTyyppi kysely) {
-        if (komoto == null) {
-            return false;
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(komoto.getKoulutuksenAlkamisPvm());
-        return isYearMatch(cal, kysely) && isKausiMatch(cal, kysely);
-    }
-
-    private boolean isYearMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-        if (kysely.getKoulutuksenAlkamisvuosi() == null || kysely.getKoulutuksenAlkamisvuosi() <= 0) {
-            return true;
-        }
-        return cal.get(Calendar.YEAR) == kysely.getKoulutuksenAlkamisvuosi().intValue();
-    }
-
-    private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-        log.debug("ALKAMISKAUSI URI : " + this.tarjontaAlkamiskausiSyksyUri);
-        if (kysely.getKoulutuksenAlkamiskausi() == null || kysely.getKoulutuksenAlkamiskausi().isEmpty()) {
-            return true;
-        }
-        if (kysely.getKoulutuksenAlkamiskausi().contains(this.tarjontaAlkamiskausiSyksyUri)) {
-            return cal.get(Calendar.MONTH) >= 6;
-        }
-        return cal.get(Calendar.MONTH) < 6;
-    }
+//    @Override
+//    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
+//        BooleanExpression criteriaExpr = null;
+//        QHakukohde qHakukohde = QHakukohde.hakukohde;
+//        if (kysely.getNimiKoodiUri() != null) {
+//            //search by koodisto koodi uri (hakukohde combobox uri)
+//            criteriaExpr = qHakukohde.hakukohdeNimi.eq(kysely.getNimiKoodiUri());
+//        } else {
+//            //search by concatenated text (result list name)
+//            String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
+//            criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
+//        }
+//
+//        List<Hakukohde> hakukohdes = from(qHakukohde)
+//                .where(criteriaExpr).
+//                list(qHakukohde);
+//
+//        //Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
+//        hakukohdes = createGrouping(hakukohdes, kysely);
+//
+//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
+//        //If a list of organisaatio oids is provided only hakukohdes that match
+//        //the list are returned
+//        if (!kysely.getTarjoajaOids().isEmpty()) {
+//            for (Hakukohde curHk : hakukohdes) {
+//                if (kysely.getTarjoajaOids().contains(CollectionUtils.singleItem(curHk.getKoulutusmoduuliToteutuses()).getTarjoaja())) {
+//                    vastaus.add(curHk);
+//                }
+//            }
+//        } else {
+//            vastaus = hakukohdes;
+//        }
+//        return vastaus;
+//    }
+//
+//    /*
+//     * Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
+//     */
+//    private List<Hakukohde> createGrouping(List<Hakukohde> hakukohdes, HaeHakukohteetKyselyTyyppi kysely) {
+//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
+//        for (Hakukohde curHakukohde : hakukohdes) {
+//            List<String> tarjoajat = new ArrayList<String>();
+//            if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
+//                vastaus.addAll(handleKomotos(curHakukohde, kysely, tarjoajat));
+//            } else if (isHakukohdeMatch(curHakukohde, kysely, tarjoajat)) {
+//                vastaus.add(curHakukohde);
+//                tarjoajat.add(curHakukohde.getKoulutusmoduuliToteutuses().iterator().next().getTarjoaja());
+//            }
+//        }
+//        return vastaus;
+//    }
+//
+//    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
+//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
+//        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+//            if (isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja())) {
+//                Hakukohde newHakukohde = new Hakukohde();
+//                newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
+//                newHakukohde.setTila(hakukohde.getTila());
+//                newHakukohde.setOid(hakukohde.getOid());
+//                newHakukohde.addKoulutusmoduuliToteutus(komoto);
+//                newHakukohde.setHaku(hakukohde.getHaku());
+//                vastaus.add(newHakukohde);
+//                tarjoajat.add(komoto.getTarjoaja());
+//            }
+//        }
+//        return vastaus;
+//    }
+//
+//    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
+//        KoulutusmoduuliToteutus komoto = !hakukohde.getKoulutusmoduuliToteutuses().isEmpty() ? hakukohde.getKoulutusmoduuliToteutuses().iterator().next() : null;
+//        return isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja());
+//    }
+//
+//    private boolean isKomotoMatch(KoulutusmoduuliToteutus komoto, HaeHakukohteetKyselyTyyppi kysely) {
+//        if (komoto == null) {
+//            return false;
+//        }
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(komoto.getKoulutuksenAlkamisPvm());
+//        return isYearMatch(cal, kysely) && isKausiMatch(cal, kysely);
+//    }
+//
+//    private boolean isYearMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
+//        if (kysely.getKoulutuksenAlkamisvuosi() == null || kysely.getKoulutuksenAlkamisvuosi() <= 0) {
+//            return true;
+//        }
+//        return cal.get(Calendar.YEAR) == kysely.getKoulutuksenAlkamisvuosi().intValue();
+//    }
+//
+//    private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
+//        log.debug("ALKAMISKAUSI URI : " + this.tarjontaAlkamiskausiSyksyUri);
+//        if (kysely.getKoulutuksenAlkamiskausi() == null || kysely.getKoulutuksenAlkamiskausi().isEmpty()) {
+//            return true;
+//        }
+//        if (kysely.getKoulutuksenAlkamiskausi().contains(this.tarjontaAlkamiskausiSyksyUri)) {
+//            return cal.get(Calendar.MONTH) >= 6;
+//        }
+//        return cal.get(Calendar.MONTH) < 6;
+//    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);

@@ -37,13 +37,9 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 
 @Component
-public class SearchService {
+public class TarjontaSearchService {
 
     private static final String QUERY_ALL = "*:*";
     private static final String TEKSTIHAKU_TEMPLATE = "{!lucene q.op=AND df=%s}%s";
@@ -55,23 +51,23 @@ public class SearchService {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public SearchService(SolrServerFactory factory) {
+    public TarjontaSearchService(SolrServerFactory factory) {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
         this.organisaatioSolr = factory.getOrganisaatioSolrServer();
     }
 
-    public HaeHakukohteetVastausTyyppi haeHakukohteet(
-            final HaeHakukohteetKyselyTyyppi kysely) {
+    public HakukohteetVastaus haeHakukohteet(
+            final HakukohteetKysely kysely) {
 
-        HaeHakukohteetVastausTyyppi response = new HaeHakukohteetVastausTyyppi();
+        HakukohteetVastaus response = new HakukohteetVastaus();
 
         String nimi = kysely.getNimi();
         final String kausi = kysely.getKoulutuksenAlkamiskausi();
         final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
-        final String tila = kysely.getTilat() != null ? kysely.getTilat().value() : null;
+        final String tila = kysely.getTilat() != null ? kysely.getTilat().name() : null;
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
         nimi = escape(nimi);
@@ -119,7 +115,7 @@ public class SearchService {
                 response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse.getResults());
             } else {
                 //empty result
-                response = new HaeHakukohteetVastausTyyppi();
+                response = new HakukohteetVastaus();
             }
 
         } catch (SolrServerException e) {
@@ -181,11 +177,10 @@ public class SearchService {
         queryParts.clear();
     }
 
-    // TODO
-    public HaeKoulutuksetVastausTyyppi haeKoulutukset(
-            final HaeKoulutuksetKyselyTyyppi kysely) {
+    public KoulutuksetVastaus haeKoulutukset(
+            final KoulutuksetKysely kysely) {
 
-        HaeKoulutuksetVastausTyyppi response = new HaeKoulutuksetVastausTyyppi();
+        KoulutuksetVastaus response = new KoulutuksetVastaus();
 
         String nimi = kysely.getNimi();
         final String kausi = kysely.getKoulutuksenAlkamiskausi();
@@ -262,7 +257,7 @@ public class SearchService {
                         orgResponse.getResults());
 
             } else {
-                response = new HaeKoulutuksetVastausTyyppi();
+                response = new KoulutuksetVastaus();
             }
 
         } catch (SolrServerException e) {

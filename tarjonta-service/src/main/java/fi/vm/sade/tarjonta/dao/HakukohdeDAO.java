@@ -19,7 +19,6 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +30,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
-    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
+//    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
 
     public List<Hakukohde> findOrphanHakukohteet();
 

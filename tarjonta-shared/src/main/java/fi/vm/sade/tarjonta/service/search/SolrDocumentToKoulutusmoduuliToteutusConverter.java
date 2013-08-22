@@ -4,8 +4,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -14,8 +13,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 public class SolrDocumentToKoulutusmoduuliToteutusConverter {
 
-    public HaeKoulutuksetVastausTyyppi convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, SolrDocumentList solrOrgList) {
-        HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+    public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, SolrDocumentList solrOrgList) {
+        KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
             SolrDocument curDoc = solrKomotoList.get(i);
             KoulutusTulos tulos = convertKoulutus(curDoc, solrOrgList);
@@ -31,20 +30,20 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         KoulutusListausTyyppi koulutus = new KoulutusListausTyyppi();
         koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutuskoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
+        koulutus.setKoulutuskoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
         koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
         if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
-            koulutus.setKoulutusohjelmakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            koulutus.setKoulutusohjelmakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
             koulutus.setKoulutuslaji(getKoulutuslaji(koulutusDoc));
         } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-            koulutus.setLukiolinjakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
         }
         koulutus.setNimi(createKoulutusNimi(koulutusDoc));
-        koulutus.setTila(IndexingUtils.createTila(koulutusDoc));
-        koulutus.setTutkintonimike(IndexingUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
-        koulutus.setTarjoaja(IndexingUtils.createTarjoaja(koulutusDoc, solrOrgList));
+        koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
+        koulutus.setTutkintonimike(IndexDataUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
+        koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, solrOrgList));
         if (koulutusDoc.containsKey(KAUSI_KOODI)) {
             koulutus.setKoulutuksenAlkamiskausiUri("" + koulutusDoc.getFieldValue(KAUSI_KOODI));
         }
