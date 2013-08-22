@@ -18,8 +18,6 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.ui.feature.UserFeature;
-import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -35,6 +33,8 @@ import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
@@ -67,8 +67,7 @@ public class HakukohdeViewModelToDTOConverter {
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
         hakukohde.setVersion(hakukohdevm.getVersion());
-        User usr = UserFeature.get();
-        hakukohde.setViimeisinPaivittajaOid(usr.getOid());
+        hakukohde.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (hakukohdevm.getHakuaika() != null) {
             hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());

@@ -16,6 +16,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +29,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 
@@ -51,6 +51,9 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
+        hakukohde.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
+        hakukohde.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
+        
 
         if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {
             // jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
@@ -58,7 +61,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         } else {
             hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
         }
-
+        
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
 

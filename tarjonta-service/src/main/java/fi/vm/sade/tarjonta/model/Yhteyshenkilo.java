@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import java.util.Collection;
 
 import javax.persistence.Column;

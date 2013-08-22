@@ -130,7 +130,7 @@ public class UserContext implements InitializingBean, Serializable {
      */
     public Set<String> getUserOrganisations() {
         final Set<String> userOrgs = ImmutableSet.copyOf(userOrganisations);
-        log.debug("userOrgs: {}", userOrgs.toString());
+        //log.debug("userOrgs: {}", userOrgs.toString());
         return userOrgs;
     }
 

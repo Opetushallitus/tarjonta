@@ -25,7 +25,9 @@ import java.util.Map;
  */
 public class HakukohdeDTO extends BaseRDTO {
 
-    private String _hakuOid;
+	private static final long serialVersionUID = 1L;
+	
+	private String _hakuOid;
     private double _alinHyvaksyttavaKeskiarvo;
     private int _alinValintaPistemaara;
     private int _aloituspaikatLkm;
@@ -49,10 +51,12 @@ public class HakukohdeDTO extends BaseRDTO {
     private List<HakukohdeLiiteDTO> _liitteet;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
+    private Date _hakuaikaAlkuPvm;
+    private Date _hakuaikaLoppuPvm;
 
     // NOTE: this is deducted from the komotos this hakukohde is nailed to
     private List<String> _opetuskielet;
-
+    
     public String getHakuOid() {
         return _hakuOid;
     }
@@ -253,4 +257,19 @@ public class HakukohdeDTO extends BaseRDTO {
         this._opetuskielet = _opetuskielet;
     }
 
+    public Date getHakuaikaAlkuPvm() {
+		return _hakuaikaAlkuPvm;
+	}
+    
+    public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
+		this._hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+	}
+    
+    public Date getHakuaikaLoppuPvm() {
+		return _hakuaikaLoppuPvm;
+	}
+    
+    public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
+		this._hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+	}
 }

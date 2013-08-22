@@ -44,7 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohde, HakukohdeDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
 
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
@@ -80,6 +81,9 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
 
         t.setLiitteet(convertLiitteet(s.getLiites()));
+        
+        t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm()==null ? s.getHakuaika().getAlkamisPvm() : s.getHakuaikaAlkuPvm());
+        t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm()==null ? s.getHakuaika().getPaattymisPvm() : s.getHakuaikaLoppuPvm());
 
         // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from koodisto)
         {

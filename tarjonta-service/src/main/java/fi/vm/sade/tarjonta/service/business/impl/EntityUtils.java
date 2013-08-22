@@ -139,8 +139,6 @@ public final class EntityUtils {
             }
         }
         to.setYhteyshenkilos(yhteyshenkilos);
-
-        Date today = Calendar.getInstance().getTime();
         to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
 
         copyLisatiedotFields(from, to);
@@ -168,9 +166,9 @@ public final class EntityUtils {
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
-//        if (fromKoulutus.getKoulutusaste() != null) {
-//            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
-//        }
+        if (fromKoulutus.getKoulutusaste() != null) {
+            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+        }
 
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
@@ -649,8 +647,8 @@ public final class EntityUtils {
     public static KoulutusmoduuliKoosteTyyppi convertToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
         return parentKomo != null ? EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo) : EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo);
     }
-    
-    public static KoulutusasteTyyppi KoulutusTyyppiStrToKoulutusAsteTyyppi(String koulutustyyppi){
+
+    public static KoulutusasteTyyppi KoulutusTyyppiStrToKoulutusAsteTyyppi(String koulutustyyppi) {
         return KoulutusasteTyyppi.fromValue(koulutustyyppi);
     }
 }

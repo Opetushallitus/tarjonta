@@ -13,6 +13,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -27,37 +28,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /*
-*
-* Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
-*
-* This program is free software: Licensed under the EUPL, Version 1.1 or - as
-* soon as they will be approved by the European Commission - subsequent versions
-* of the EUPL (the "Licence");
-*
-* You may not use this work except in compliance with the Licence.
-* You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* European Union Public Licence for more details.
-*/
+ *
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 
 /**
-*
-* @author: Tuomas Katva
-*
-* This is abstract class for organisaatio selection dialog.
-* All implementing subclasses must implement buildTopLayout-method,
-* which builds dialogs top layout which might contain instruction texts etc.
-*
-* Implementing subclasses must implement getOrganisaatioOids-method which returns list containing all parent organisaatio oids,
-* this list is used to populate organisaatio selection treetable.
-*
-* Finally implementing subclasses must implement setButtonListener-method which is used to add listeners to jatka and peruuta button
-*
-*/
-@Configurable(preConstruction = true)
+ *
+ * @author: Tuomas Katva
+ * 
+ * This is abstract class for organisaatio selection dialog.
+ * All implementing subclasses must implement buildTopLayout-method,
+ * which builds dialogs top layout which might contain instruction texts etc.
+ * 
+ * Implementing subclasses must implement getOrganisaatioOids-method which returns list containing all parent organisaatio oids,
+ * this list is used to populate organisaatio selection treetable.
+ * 
+ * Finally implementing subclasses must implement setButtonListener-method which is used to add listeners to jatka and peruuta button
+ * 
+ */
+@Configurable(preConstruction =  true)
 public abstract class OrganisaatioSelectDialog extends Window {
     
     private static final long serialVersionUID = 1L;
@@ -73,7 +74,7 @@ public abstract class OrganisaatioSelectDialog extends Window {
     private SelectableItemContainer vlRight;
     protected ErrorMessage errorView;
     private static final String CHILD_TREE_PROPERTY = "childOrganisaatioButton";
-    protected Button peruutaBtn;
+    protected Button peruutaBtn; 
     protected Button jatkaBtn;
     protected KoulutusasteTyyppi koulutusTyyppi;
     private boolean limitToOne = false;
@@ -118,7 +119,7 @@ public abstract class OrganisaatioSelectDialog extends Window {
        mainLayout.addComponent(buildTopLayout());
        mainLayout.addComponent(buildBottomLayout());
 
-       return mainLayout;
+       return mainLayout; 
     }
     
     private HorizontalLayout buildBottomLayout() {
@@ -134,10 +135,10 @@ public abstract class OrganisaatioSelectDialog extends Window {
 
        GridLayout gridRight = new GridLayout(1,2);
        /* vlParentRight.setWidth("100%");
-vlParentRight.setHeight("100%");*/
+        vlParentRight.setHeight("100%");*/
         Panel vlRightPanel = new Panel();
-    /* vlRightPanel.setWidth("100%");
-vlRightPanel.setHeight("100%");*/
+    /*    vlRightPanel.setWidth("100%");
+        vlRightPanel.setHeight("100%");*/
         vlRight = new SelectableItemContainer("100%","100%");
         vlRight.setMargin(false);
         vlRightPanel.addComponent(vlRight);
@@ -159,6 +160,10 @@ vlRightPanel.setHeight("100%");*/
 
         gridRight.setRowExpandRatio(0,10);
         gridRight.setRowExpandRatio(1,0.1f);
+
+
+
+
 
         bottomLayout.addComponent(vlLeft);
         bottomLayout.addComponent(gridRight);
@@ -200,7 +205,7 @@ vlRightPanel.setHeight("100%");*/
         if (organisaatioChildTree != null) {
         for (final OrganisaatioPerustieto curOrg:organisaatios) {
 
-            Button buttonOrganisaatio = UiUtil.buttonLink(null, getAvailableNameBasic(curOrg), new Button.ClickListener() {
+            Button buttonOrganisaatio = UiUtil.buttonLink(null, OrganisaatioDisplayHelper.getAvailableNameBasic(curOrg), new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                      addOrganisaatioToRight(curOrg);
@@ -252,11 +257,11 @@ vlRightPanel.setHeight("100%");*/
         }
         SelectableItem<OrganisaatioPerustieto> link = null ;
         if (org.getNimiFi() != null && org.getNimiFi().trim().length() > 0) {
-          link = new SelectableItem<OrganisaatioPerustieto>(org,"nimiFi");
+          link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiFi");
         } else if (org.getNimiSv() != null && org.getNimiSv().trim().length() > 0) {
-            link = new SelectableItem<OrganisaatioPerustieto>(org,"nimiSv");
+            link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiSv");
         } else if (org.getNimiEn() != null && org.getNimiEn().trim().length() > 0) {
-            link = new SelectableItem<OrganisaatioPerustieto>(org,"nimiEn");
+            link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiEn");
         }
         selectedOrgs.put(org.getOid(),org);
         link.setMargin(false);
@@ -274,22 +279,6 @@ vlRightPanel.setHeight("100%");*/
         vlRight.addComponent(link);
         vlRight.requestRepaintAll();
         }
-    }
-
-    private static String getAvailableNameBasic(OrganisaatioPerustieto org) {
-        if (org.getNimiFi() != null) {
-
-            return org.getNimiFi();
-        }
-        if (org.getNimiSv() != null) {
-
-            return org.getNimiSv();
-        }
-        if (org.getNimiEn() != null) {
-
-            return org.getNimiEn();
-        }
-        return "";
     }
 
     public boolean isLimitToOne() {

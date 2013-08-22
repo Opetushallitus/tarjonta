@@ -1,9 +1,6 @@
 alter table yhteyshenkilo add column tyyppi character varying(32);
 UPDATE yhteyshenkilo SET tyyppi='Yhteyshenkilo';
 
--- ROLLBACK
---ALTER TABLE yhteyshenkilo DROP COLUMN tyyppi;
-
 alter table koulutusmoduuli_toteutus add column hinta numeric(19,2);
 
 CREATE TABLE koulutusmoduuli_toteutus_pohjakoulutusvaatimus(
@@ -14,3 +11,8 @@ CREATE TABLE koulutusmoduuli_toteutus_pohjakoulutusvaatimus(
       REFERENCES koulutusmoduuli_toteutus (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
+-- ROLLBACK
+--DROP TABLE koulutusmoduuli_toteutus_pohjakoulutusvaatimus;
+--ALTER TABLE koulutusmoduuli_toteutus  DROP COLUMN hinta;
+--ALTER TABLE yhteyshenkilo DROP COLUMN tyyppi;
