@@ -20,7 +20,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -39,6 +38,7 @@ import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -554,6 +554,12 @@ public class ShowHakukohdeTab extends VerticalLayout {
         Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
         return lastUpdLbl;
     }
+    
+    private String getHakuaikaStr() {
+    	HakukohdeViewModel hm = presenter.getModel().getHakukohde();
+    	HakuaikaViewModel hvm = hm.getHakuaika();
+    	return hvm==null ? HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm()): hvm.toString();
+    }
 
     private void buildPerustiedotLayout(VerticalLayout layout) {
         VerticalLayout hdrLayout = new VerticalLayout();
@@ -576,7 +582,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         addItemToGrid(grid, "hakukohdeNimi", uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null));
         addItemToGrid(grid, "yhteishaunKoulutustunnus", uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo());
         addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuViewModel()));
-        addItemToGrid(grid, "hakuaika", presenter.getModel().getHakukohde().getHakuaika());
+        addItemToGrid(grid, "hakuaika", getHakuaikaStr());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
         if (checkLukioKoulutus()) {
