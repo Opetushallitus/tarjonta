@@ -16,38 +16,39 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
-import com.google.common.base.Preconditions;
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
-import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Preconditions;
+
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 
 /**
  *
@@ -63,14 +64,25 @@ public class HakukohdeViewModelToDTOConverter {
     private OIDService oidService;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
     private static final String NUMBER_FORMAT = "#.##";
-
+    
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
         hakukohde.setVersion(hakukohdevm.getVersion());
         hakukohde.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        if (hakukohdevm.getHakuaika() != null) {
+        if (hakukohdevm.isCustomHakuaikaEnabled()) {
+            hakukohde.setSisaisetHakuajat(null);
+            hakukohde.setHakuaikaAlkuPvm(hakukohdevm.getHakuaikaAlkuPvm());
+            hakukohde.setHakuaikaLoppuPvm(hakukohdevm.getHakuaikaLoppuPvm());
+        } else if (hakukohdevm.getHakuaika() != null) {
             hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
+            hakukohde.setHakuaikaAlkuPvm(null);
+            hakukohde.setHakuaikaLoppuPvm(null);
+        } else {
+        	// hakuaikaa ei määritelty -> pitäisikö tästä huolestua??
+            hakukohde.setSisaisetHakuajat(null);
+            hakukohde.setHakuaikaAlkuPvm(null);
+            hakukohde.setHakuaikaLoppuPvm(null);
         }
 
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
@@ -97,10 +109,9 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setLisatiedot(convertTekstis(hakukohdevm.getLisatiedot()));
 //        hakukohde.sey(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
-        try {
-            hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
-        } catch (Exception exp) {
-        }
+        hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
+        
+
         hakukohde.setSahkoinenToimitusOsoite(hakukohdevm.getLiitteidenSahkoinenToimitusOsoite());
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdevm.isKaytaHaunPaattymisenAikaa());
@@ -172,6 +183,11 @@ public class HakukohdeViewModelToDTOConverter {
 
         if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
             hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
+            hakukohdeVM.setCustomHakuaikaEnabled(false);
+        } else {
+        	hakukohdeVM.setHakuaikaAlkuPvm(hakukohdeTyyppi.getHakuaikaAlkuPvm());
+        	hakukohdeVM.setHakuaikaLoppuPvm(hakukohdeTyyppi.getHakuaikaLoppuPvm());
+            hakukohdeVM.setCustomHakuaikaEnabled(true);
         }
 
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());

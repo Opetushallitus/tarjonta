@@ -78,7 +78,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     }
     //Override validateFormDate method to add custom validations to same error messages and validation
     @Override
-    protected void validateFormData() throws Validator.InvalidValueException {
+    public void validateFormData() throws Validator.InvalidValueException {
         errorView.resetErrors();
         List<String> errorMessages = formView.getSisaisetHakuajatContainer().bindHakuajat();
         errorMessages.addAll(formView.checkNimi());

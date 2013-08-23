@@ -28,6 +28,8 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author Markus
  */
 public class HakuajatView {
+	
+	public static final String DATE_FORMAT = "d.MM.yyyy HH:mm";
 
 	/**
 	 * Start date for sisainen hakuaika.
@@ -59,7 +61,7 @@ public class HakuajatView {
                 kuvaus.setWidth("300px");
 
 		alkuPvm = UiUtil.dateField();
-		alkuPvm.setDateFormat("dd.MM.yyyy HH:mm");
+		alkuPvm.setDateFormat(DATE_FORMAT);
 		
 		alkuPvm.setPropertyDataSource(new NestedMethodProperty(model, "alkamisPvm"));
 		alkuPvm.setImmediate(true);
@@ -67,7 +69,7 @@ public class HakuajatView {
 		alkuPvm.setResolution(DateField.RESOLUTION_MIN);
 
 		loppuPvm = UiUtil.dateField();
-		loppuPvm.setDateFormat("dd.MM.yyyy HH:mm");
+		loppuPvm.setDateFormat(DATE_FORMAT);
 		loppuPvm.setPropertyDataSource(new NestedMethodProperty(model, "paattymisPvm"));
 		loppuPvm.setImmediate(true);
 		loppuPvm.setWidth("235px");

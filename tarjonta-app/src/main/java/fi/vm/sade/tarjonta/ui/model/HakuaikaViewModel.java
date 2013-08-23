@@ -41,17 +41,23 @@ public class HakuaikaViewModel {
     	this(new SisaisetHakuAjat());
     }
     
+    public static String toString(Date from, Date to) {
+    	final DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, I18N.getLocale());
+    	StringBuilder ret = new StringBuilder();
+    	ret.append(fmt.format(from));
+    	ret.append(" - ");
+    	ret.append(fmt.format(to));    	
+    	return ret.toString();
+    }
+    
     @Override
     public String toString() {
-    	final DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, I18N.getLocale());
-    	StringBuffer ret = new StringBuffer();
+    	StringBuilder ret = new StringBuilder();
     	if (getHakuajanKuvaus()!=null) {
     		ret.append(getHakuajanKuvaus())
     			.append(' ');
     	}
-    	ret.append(fmt.format(getAlkamisPvm()));
-    	ret.append(" - ");
-    	ret.append(fmt.format(getPaattymisPvm()));
+    	ret.append(toString(getAlkamisPvm(), getPaattymisPvm()));
     	
     	return ret.toString();
     }

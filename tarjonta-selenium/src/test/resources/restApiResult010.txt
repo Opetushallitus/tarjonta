@@ -132,7 +132,7 @@
   "sahkoinenToimitusOsoite" : "",
   "kaytetaanHaunPaattymisenAikaa" : false,
   "alinHyvaksyttavaKeskiarvo" : 0.0,
-  "hakuaikaAlkuPvm" : 1362308280000,
+  "hakuaikaAlkuPvm" : 1377341880000,
   "hakuaikaLoppuPvm" : 1382003900297,
   "valintojenAloituspaikatLkm" : 5,
   "edellisenVuodenHakijatLkm" : 0,

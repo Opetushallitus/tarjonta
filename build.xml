@@ -21,7 +21,7 @@
         <echo>  tomcat.home = ${tomcat.home}</echo>
 
         <echo>Stop Tomcat</echo>
-		<sshexec command="/data00/oph/tomcat/ctltomcat ${oph.name} stop"
+		<sshexec command="/data00/oph/tomcat/ophtomcat ${oph.name} stop"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
@@ -69,8 +69,13 @@
                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
+		<echo>Remove extra log4j config-files</echo>
+		<sshexec command="find ${tomcat.home} -name 'log4j.properties' -exec rm -rf {} \;"
+                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
+                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
+				 
 		<echo>Start Tomcat</echo>
-		<sshexec command="/data00/oph/tomcat/ctltomcat ${oph.name} start"
+		<sshexec command="/data00/oph/tomcat/ophtomcat ${oph.name} start"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
