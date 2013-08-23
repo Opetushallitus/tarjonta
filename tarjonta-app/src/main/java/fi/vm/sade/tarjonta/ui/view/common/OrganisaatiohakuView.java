@@ -342,6 +342,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
             }
             this.organisaatios = new ArrayList<OrganisaatioPerustieto>();
         }
+        
         LOG.debug("org search done. took {}ms.", System.currentTimeMillis() - time);
         tree.setContainerDataSource(createDatasource());
     }
@@ -377,71 +378,23 @@ public class OrganisaatiohakuView extends VerticalLayout {
      */
     private void createHierarchy() {
         
-        List<OrganisaatioPerustieto> roots = new ArrayList<OrganisaatioPerustieto>();
-        Map<String, List<OrganisaatioPerustieto>> structureMap = new HashMap<String, List<OrganisaatioPerustieto>>();
+        Map<String, OrganisaatioPerustieto> oidToOrgMap = new HashMap<String, OrganisaatioPerustieto>();
+        List<String> parentOids = new ArrayList<String>();
         for (OrganisaatioPerustieto curOrg : organisaatios) {
-            //If the current organisaatio is root, it's child tree is created.
-            
-            //Creating list of roots and adding them to the container
-            if (isRoot(curOrg)) {
-                roots.add(curOrg);
                 hc.addItem(curOrg);
                 hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curOrg));
-            } else {
-                updateStructureMap(structureMap, curOrg);
-            }
+                oidToOrgMap.put(curOrg.getOid(), curOrg);
+                parentOids.add(curOrg.getParentOid());
             
         }
         
-        for (OrganisaatioPerustieto curOrg : roots) {
-            createLocalHierarchy(curOrg, structureMap);
-        }
-    }
-    
-    
-
-    private void createLocalHierarchy(OrganisaatioPerustieto curOrg,
-            Map<String, List<OrganisaatioPerustieto>> structureMap) {
-        if (structureMap.containsKey(curOrg.getOid())) {
-            for (OrganisaatioPerustieto curChild : structureMap.get(curOrg.getOid())) {
-                hc.addItem(curChild);
-                hc.getContainerProperty(curChild, COLUMN_KEY).setValue(OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curChild));
-                hc.setParent(curChild, curOrg);
-                createLocalHierarchy(curChild, structureMap);
+        for (OrganisaatioPerustieto curOrg : organisaatios) {
+            String parentOid = curOrg.getParentOid();
+            if (oidToOrgMap.containsKey(parentOid)) {
+                hc.setParent(curOrg, oidToOrgMap.get(parentOid));
             }
-        } else {
-            hc.setChildrenAllowed(curOrg, false);
+            hc.setChildrenAllowed(curOrg, parentOids.contains(curOrg.getOid()));
         }
-        
-    }
-
-    private void updateStructureMap(
-            Map<String, List<OrganisaatioPerustieto>> structureMap,
-            OrganisaatioPerustieto curOrg) {
-        String parentOid = curOrg.getParentOid();
-        if (structureMap.containsKey(parentOid)) {
-            structureMap.get(parentOid).add(curOrg);
-        } else {
-            List<OrganisaatioPerustieto> siblings = new ArrayList<OrganisaatioPerustieto>();
-            siblings.add(curOrg);
-            structureMap.put(parentOid, siblings);
-        }
-    }
-
-    /**
-     * Is the current organisaatio a root organisaatio
-     *
-     * @param org
-     * @return
-     */
-    private boolean isRoot(OrganisaatioPerustieto org) {
-        String parentOid = org.getParentOid();
-        if (parentOid == null 
-                || parentOid.equals(presenter.getModel().getRootOrganisaatioOid()) 
-                || userContext.getUserOrganisations().contains(org.getOid())) {
-            return true;
-        }
-        return false;
     }
 
     /**
