@@ -463,7 +463,7 @@ public class SVTUtils {
 				}
                 return el;
         }
-        this.listXpathElements(driver, xpathExpression);
+        if (this.listXpathElements(driver, xpathExpression)) { return textElement(driver, text); };
         int a = 1 / 0;
         return null;
 	}
@@ -531,21 +531,27 @@ public class SVTUtils {
             }
     }
 
-    public void listXpathElements(WebDriver driver, String xpathExpression)
+    public Boolean listXpathElements(WebDriver driver, String xpathExpression)
     {
-            Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
-            echo("listXpathElements: " + eles.length + " xpathExpression=" + xpathExpression);
-            WebElement el;
-            int i = 1;
-            String disabled = "";
-            for (Object ele : eles)
-            {
-                    el = (WebElement)ele;
-                    disabled = "";
-                    if (! el.isDisplayed()) { disabled = "Invisble"; }
-                    if (! el.isEnabled()) { disabled = disabled + "Disabled"; }
-                    echo("listXpathElements i=" + i++ + " element=" + el.getLocation() + disabled);
-            }
+    	Boolean aliveElement = false;
+    	Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+    	echo("listXpathElements: " + eles.length + " xpathExpression=" + xpathExpression);
+    	WebElement el;
+    	int i = 1;
+    	String disabled = "";
+    	for (Object ele : eles)
+    	{
+    		Boolean vikaa = false;
+    		el = (WebElement)ele;
+    		disabled = "";
+    		if (! el.isDisplayed()) { vikaa = true; disabled = "Invisble"; }
+    		if (! el.isEnabled()) { vikaa = true; disabled = disabled + "Disabled"; }
+    		if (el.getLocation().x <= 0) { vikaa = true; }
+    		if (el.getLocation().y <= 0) { vikaa = true; }
+    		echo("listXpathElements i=" + i++ + " element=" + el.getLocation() + disabled);
+    		if (! vikaa) { aliveElement = true; }
+    	}
+    	return aliveElement;
     }
 
 	public String palvelimenVersio(WebDriver driver, String baseUrl)
@@ -1053,10 +1059,8 @@ public class SVTUtils {
     //////////// RAPORTTI END //////////////////////////////
     public WebElement findNearestElement(String label, String xpathExpression, WebDriver driver)
     {
-//    	this.listXpathElements(driver, xpathExpression);
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
-//        System.out.println("HOUHOU textElement=" + textElement.getLocation() + " visible=" + textElement.isDisplayed() + " enabled=" + textElement.isEnabled());
 
         Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
         int i = 1;
@@ -1075,8 +1079,6 @@ public class SVTUtils {
             	if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (distance == minDistance) { input = el; }
-//                System.out.println("HOUHOU distance=" + distance + " minDistance=" + minDistance + "input=" + input);
-//                if (input != null) System.out.println("HOUHOU textElement=" + textElement.getLocation() + " input=" + input.getLocation());
         }
 
         return input;
@@ -1168,8 +1170,6 @@ public class SVTUtils {
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (textElement.getLocation().y < el.getLocation().y && distance == minDistance) { input = el; }
         }
-//        System.out.println("HOUHOU text=" + textElement.getLocation() + " input=" + input.getLocation());
-
         return input;
     }
 
