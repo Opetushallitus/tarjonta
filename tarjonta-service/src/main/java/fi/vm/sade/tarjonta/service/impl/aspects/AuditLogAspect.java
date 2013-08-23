@@ -18,7 +18,9 @@ package fi.vm.sade.tarjonta.service.impl.aspects;/*
 import fi.vm.sade.log.model.Tapahtuma;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,85 +55,123 @@ public class AuditLogAspect {
     public static final String VALINTAPERUSTEKUVAUS_TYPE = "Valintaperustekuvaus/Sora-vaatimukset";
 
     //Haku pointcuts -->
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHaku(..))",
-            returning= "result")
-    private void updateHakuAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHaku(..))")
+    private void updateHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+        } catch (Exception exp) {
+           LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHaku(..))",
-            returning= "result")
-    private void insertHakuAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHaku(..))")
+    private void insertHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
+        } catch (Exception exp) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHaku(..))",
-            returning= "result")
-    private void deleteHakuAudit(JoinPoint pjp, Object result) throws Throwable {
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHaku(..))")
+    private void deleteHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+         try {
+         Object result = pjp.proceed();
          logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
+         } catch (Exception exp) {
+             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+         }
     }
 
     //<--
 
     //Hakukohde pointcuts
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHakukohde(..))",
-            returning= "result")
-    private void insertHakukohdeAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHakukohde(..))")
+    private void insertHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
+        }  catch (Exception exp ) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHakukohde(..))",
-            returning= "result")
-    private void updateHakukohdeAudit(JoinPoint pjp, Object result) throws Throwable {
-          logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHakukohde(..))")
+    private void updateHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+        }  catch (Exception exp) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHakukohde(..))",
-            returning= "result")
-    private void deleteHakukohdeAudit(JoinPoint pjp, Object result) throws Throwable {
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHakukohde(..))")
+    private void deleteHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+       try {
+           Object result = pjp.proceed();
+           logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
+       } catch (Exception exp ) {
+           LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+       }
 
-       logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
     }
 
     //<--
 
     //Koulutus pointcuts
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaKoulutus(..))",
-            returning= "result")
-    private void insertKoulutusAudit(JoinPoint pjp, Object result) throws Throwable{
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaKoulutus(..))")
+    private void insertKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable{
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
+        } catch (Exception exp) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
 
-        logHakuAuditAdvice(pjp,result,OPERATION_INSERT);
     }
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaKoulutus(..))",
-            returning= "result")
-    private void updateKoulutusAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaKoulutus(..))")
+    private void updateKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+        } catch (Exception exp) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaKoulutus(..))",
-            returning= "result")
-    private void deleteKoulutusAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaKoulutus(..))")
+    private void deleteKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_DELETE);
+        } catch (Exception exp ){
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
     //<--
 
     //Valintaperustekuvaus pointcut
-    @AfterReturning(
-            pointcut = "execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.tallennaMetadata(..))",
-            returning= "result")
-    private void updateValintaPerusteKuvausAudit(JoinPoint pjp, Object result) throws Throwable {
-        logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+    @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.tallennaMetadata(..))")
+    private void updateValintaPerusteKuvausAudit(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Object result = pjp.proceed();
+            logHakuAuditAdvice(pjp,result,OPERATION_UPDATE);
+        } catch (Exception exp) {
+            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
+        }
+
     }
 
 
