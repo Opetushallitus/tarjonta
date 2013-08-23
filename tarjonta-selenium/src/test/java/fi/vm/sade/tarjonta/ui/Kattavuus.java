@@ -29,7 +29,7 @@ public class Kattavuus {
 
     public void alustaKattavuusKohde(String kohde) throws SQLException
     {
-    	if (KattavuusTaulukko.size() > 0) { return; }
+    	if (KattavuusTaulukko.getProperty(KATTAVUUSKOHDE) != null) { return; }
     	KattavuusTaulukko.setProperty(Kattavuus.KATTAVUUSKOHDE, kohde);
     }
 
