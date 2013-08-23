@@ -62,40 +62,10 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
             return m;
         }
 
-        if (locale != null) {
-            final MonikielinenTekstiTyyppi.Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Language code : " + teksti.getKieliKoodi());
-                    LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-                }
-            } else {
-                LOG.debug("No text data found for locale " + locale.getLanguage());
-            }
-        }
-
-        if (m.getNimi() == null || m.getNimi().isEmpty()) {
-            //FI default fallback
-            final MonikielinenTekstiTyyppi.Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), LOCALE_FI);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Language code fallback : " + LOCALE_FI.getLanguage());
-                LOG.debug("Text value : " + (teksti != null ? teksti.getValue() : teksti));
-            }
-
-            if (teksti != null) {
-                m.setKielikoodi(teksti.getKieliKoodi());
-                m.setNimi(teksti.getValue());
-            } else {
-                LOG.error("An invalid data error -´MonikielinenTekstiModel object was missing Finnish language data.");
-            }
-        }
-
-        m.setKielikaannos(convertToKielikaannosViewModel(tyyppi));
+        m.setKielikaannos(
+                convertToKielikoodiUriWithoutVersion(locale.getLanguage()),
+                convertToKielikoodiUriWithoutVersion(LOCALE_FI.getLanguage()),
+                convertToKielikaannosViewModel(tyyppi));
         return m;
     }
 
@@ -124,24 +94,10 @@ public class UiModelBuilder<MODEL extends MonikielinenTekstiModel> {
     public MODEL build(final MonikielinenTekstiTyyppi tyyppi, final String koodiUri) {
         MODEL m = newModelInstance();
 
-        if (tyyppi == null) {
-            LOG.warn("MonikielinenTekstiTyyppi object was null, the missing data cannot be show on UI.");
-            return m;
-        }
-
-        if (koodiUri != null) {
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), koodiUri);
-            updateTextToModel(teksti, m, koodiUri);
-        }
-
-        if (m.getNimi() == null || m.getNimi().isEmpty()) {
-            //FI default fallback
-            final String fiKoodiUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(LOCALE_FI.getLanguage());
-            final MonikielinenTekstiTyyppi.Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), fiKoodiUri);
-            updateTextToModel(teksti, m, koodiUri);
-        }
-
-        m.setKielikaannos(convertToKielikaannosViewModel(tyyppi));
+        m.setKielikaannos(
+                koodiUri,
+                convertToKielikoodiUriWithoutVersion(LOCALE_FI.getLanguage()),
+                convertToKielikaannosViewModel(tyyppi));
         return m;
     }
 

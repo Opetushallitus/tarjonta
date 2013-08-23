@@ -100,7 +100,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         languages.addAll(presenter.getModel().getKoulutusLisatiedotModel().getLisatiedot().keySet());
         languages.add(presenter.getModel().getKoulutusPerustiedotModel().getOpetuskieli());
         
-        if(languages.size()==0) {
+        if(languages.isEmpty()) {
             //no languages available, "add" fi 
             presenter.getModel().getKoulutusLisatiedotModel().getLisatiedot(suomiUri);
         }
