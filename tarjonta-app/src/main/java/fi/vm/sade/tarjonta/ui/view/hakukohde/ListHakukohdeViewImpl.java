@@ -174,7 +174,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
                 Item item = categoryTree.getItem(event.getItemId());
                 
-                if (item.getItemProperty(COLUMN_A)==null) {
+                if (item==null || item.getItemProperty(COLUMN_A)==null) {
                 	return;
                 }
                 
