@@ -54,6 +54,8 @@ public class AuditLogAspect {
     public static final String KOULUTUS_TYPE = "Koulutus";
     public static final String VALINTAPERUSTEKUVAUS_TYPE = "Valintaperustekuvaus/Sora-vaatimukset";
 
+    public static final String SYSTEM = "tarjonta-service";
+
     //Haku pointcuts -->
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHaku(..))")
     private Object updateHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
@@ -63,7 +65,7 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp) {
            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -75,7 +77,7 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -88,7 +90,7 @@ public class AuditLogAspect {
          return result;
          } catch (Exception exp) {
              LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-             return null;
+             throw new Throwable(exp);
          }
     }
 
@@ -103,7 +105,7 @@ public class AuditLogAspect {
             return result;
         }  catch (Exception exp ) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -116,7 +118,7 @@ public class AuditLogAspect {
             return result;
         }  catch (Exception exp) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -129,7 +131,7 @@ public class AuditLogAspect {
            return result;
        } catch (Exception exp ) {
            LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-           return null;
+           throw new Throwable(exp);
        }
 
     }
@@ -146,7 +148,7 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -159,7 +161,7 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -173,7 +175,7 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp ){
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
@@ -189,281 +191,183 @@ public class AuditLogAspect {
             return result;
         } catch (Exception exp) {
             LOGGER.warn("Unable to send audit log message: {}",exp.toString());
-            return null;
+            throw new Throwable(exp);
         }
 
     }
 
-
-    private void logHakuAuditAdvice(JoinPoint pjp, Object result,int  operationType) throws Throwable {
+    private void logHakuAuditAdvice(JoinPoint pjp, Object result, int operationType) throws Throwable {
 
         switch (operationType) {
 
-            case OPERATION_INSERT :
+            case OPERATION_INSERT:
 
                 if (result instanceof HakuTyyppi) {
-                    HakuTyyppi hakuTyyppi = (HakuTyyppi)result;
-                    logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi,null,INSERT_OPERATION));
+                    HakuTyyppi hakuTyyppi = (HakuTyyppi) result;
+                    logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi, null, OPERATION_INSERT));
                 }
 
                 if (result instanceof HakukohdeTyyppi) {
-                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi)result;
-                    logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi,null,INSERT_OPERATION));
+                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi) result;
+                    logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi, null, OPERATION_INSERT));
                 }
 
                 if (pjp.getArgs()[0] instanceof LisaaKoulutusTyyppi) {
 
-                    LisaaKoulutusTyyppi koulutusTyyppi = (LisaaKoulutusTyyppi)pjp.getArgs()[0];
-                    logAuditTapahtuma(constructAddKoulutusTapahtuma(koulutusTyyppi,INSERT_OPERATION));
+                    LisaaKoulutusTyyppi koulutusTyyppi = (LisaaKoulutusTyyppi) pjp.getArgs()[0];
+                    logAuditTapahtuma(constructAddKoulutusTapahtuma(koulutusTyyppi, OPERATION_INSERT));
                 }
 
                 break;
 
-            case OPERATION_UPDATE :
+            case OPERATION_UPDATE:
                 if (result instanceof HakuTyyppi) {
 
-                    HakuTyyppi hakuTyyppi = (HakuTyyppi)result;
+                    HakuTyyppi hakuTyyppi = (HakuTyyppi) result;
                     logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi,
-                            pjp.getArgs()[0] instanceof HakuTyyppi ? (HakuTyyppi)pjp.getArgs()[0] : null
-                            ,UPDATE_OPERATION));
+                            pjp.getArgs()[0] instanceof HakuTyyppi ? (HakuTyyppi) pjp.getArgs()[0] : null, OPERATION_UPDATE));
 
                 }
 
-                if (result instanceof HakukohdeTyyppi ) {
-                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi)result;
+                if (result instanceof HakukohdeTyyppi) {
+                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi) result;
                     logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi,
-                            pjp.getArgs()[0] instanceof HakukohdeTyyppi ? (HakukohdeTyyppi)pjp.getArgs()[0] : null,
-                            UPDATE_OPERATION));
+                            pjp.getArgs()[0] instanceof HakukohdeTyyppi ? (HakukohdeTyyppi) pjp.getArgs()[0] : null,
+                            OPERATION_UPDATE));
                 }
 
-                if (pjp.getArgs()[0] instanceof  PaivitaKoulutusTyyppi) {
-                    PaivitaKoulutusTyyppi paivitaKoulutusTyyppi = (PaivitaKoulutusTyyppi)pjp.getArgs()[0];
-                    logAuditTapahtuma(constructUpdateKoulutusTapahtuma(paivitaKoulutusTyyppi,UPDATE_OPERATION));
+                if (pjp.getArgs()[0] instanceof PaivitaKoulutusTyyppi) {
+                    PaivitaKoulutusTyyppi paivitaKoulutusTyyppi = (PaivitaKoulutusTyyppi) pjp.getArgs()[0];
+                    logAuditTapahtuma(constructUpdateKoulutusTapahtuma(paivitaKoulutusTyyppi, OPERATION_UPDATE));
                 }
 
                 if (result instanceof MonikielinenMetadataTyyppi) {
-                    MonikielinenMetadataTyyppi monikielinenMetadataTyyppi = (MonikielinenMetadataTyyppi)result;
+                    MonikielinenMetadataTyyppi monikielinenMetadataTyyppi = (MonikielinenMetadataTyyppi) result;
                     logAuditTapahtuma(constructMetadataTapahtuma(monikielinenMetadataTyyppi));
                 }
                 break;
 
-            case OPERATION_DELETE :
+            case OPERATION_DELETE:
 
                 if (pjp.getArgs()[0] instanceof HakuTyyppi) {
-                    HakuTyyppi hakuTyyppi = (HakuTyyppi)pjp.getArgs()[0];
+                    HakuTyyppi hakuTyyppi = (HakuTyyppi) pjp.getArgs()[0];
 
-                  logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi,null,DELETE_OPERATION));
+                    logAuditTapahtuma(constructHakuTapahtuma(hakuTyyppi, null, OPERATION_DELETE));
                 }
 
                 if (pjp.getArgs()[0] instanceof HakukohdeTyyppi) {
-                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi)pjp.getArgs()[0];
+                    HakukohdeTyyppi hakukohdeTyyppi = (HakukohdeTyyppi) pjp.getArgs()[0];
 
-                    logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi,null,DELETE_OPERATION));
+                    logAuditTapahtuma(constructHakukohdeTapahtuma(hakukohdeTyyppi, null, OPERATION_DELETE));
                 }
 
-                if (pjp.getArgs()[0] instanceof  String) {
-                    String oid = (String)pjp.getArgs()[0];
-                    logAuditTapahtuma(constructRemoveKoulutusTapahtuma(oid,DELETE_OPERATION));
+                if (pjp.getArgs()[0] instanceof String) {
+                    String oid = (String) pjp.getArgs()[0];
+                    logAuditTapahtuma(constructRemoveKoulutusTapahtuma(oid, OPERATION_DELETE));
                 }
 
                 break;
-
-
         }
 
     }
 
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
-        try {
-
-            if (tapahtuma.getUusiArvo() != null && tapahtuma.getAikaleima() != null) {
-
-                auditLogger.log(tapahtuma);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            LOGGER.warn("Unable to send audit log message {}", e.toString());
-        }
+        auditLogger.log(tapahtuma);
     }
 
     private String getTekija() {
-
-        StringBuilder stb = new StringBuilder();
-        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-                stb.append(SecurityContextHolder.getContext().getAuthentication().getName() != null ? SecurityContextHolder.getContext().getAuthentication().getName() : "");
-                stb.append("/");
-                    if (SecurityContextHolder.getContext().getAuthentication().getCredentials() != null)  {
-                    stb.append(SecurityContextHolder.getContext().getAuthentication().getCredentials());
-                    stb.append("/");
-                    }
-                    if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
-                        stb.append(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-                    }
-        }
-        return stb.toString();
-    }
-
-    private Tapahtuma constructHakuTapahtuma(HakuTyyppi haku, HakuTyyppi vanhaHaku, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(HAKU_TYPE);
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
-        }
-        if (haku.getOid() != null) {
-           
-
-
-            tapahtuma.setUusiArvo(constructHakuArvo(haku));
-        }
-
-        if (vanhaHaku != null) {
-           if (vanhaHaku.getOid() != null) {
-              tapahtuma.setVanhaArvo(constructHakuArvo(vanhaHaku));
-           }
-        }
-
-        return tapahtuma;
-    }
-    
-    private String constructHakuArvo(HakuTyyppi hakuTyyppi) {
-        StringBuilder arvo = new StringBuilder();
-        arvo.append(hakuTyyppi.getHaunTunniste() != null ? hakuTyyppi.getHaunTunniste() : hakuTyyppi.getOid());
-        arvo.append(", ");
-        for (HaunNimi haunNimi:hakuTyyppi.getHaunKielistetytNimet()) {
-            arvo.append(haunNimi.getKielikoodi() + " : " + haunNimi.getNimi() + " ");
-        }
-        
-        return arvo.toString();
-    }
-
-
-    private Tapahtuma constructHakukohdeTapahtuma(HakukohdeTyyppi hakukohde, HakukohdeTyyppi vanhaHakukohde , String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(HAKUKOHDE_TYPE);
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
-        }
-
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        tapahtuma.setUusiArvo(constructArvo(hakukohde));
-
-        if (vanhaHakukohde != null )  {
-            if (vanhaHakukohde.getOid() != null) {
-                tapahtuma.setVanhaArvo(constructArvo(vanhaHakukohde));
-            }
-        }
-
-        return tapahtuma;
-    }
-
-    private String constructArvo(HakukohdeTyyppi hakukohde) {
-        String uusiArvo;
-        if (hakukohde.getOid() != null && hakukohde.getHakukohdeKoodistoNimi() != null) {
-            uusiArvo = "Hakukohde oid : " + hakukohde.getOid() + ", hakukohde nimi : " + hakukohde.getHakukohdeKoodistoNimi() != null ? hakukohde.getHakukohdeKoodistoNimi() : "";
+        if (SecurityContextHolder.getContext() != null &&
+                SecurityContextHolder.getContext().getAuthentication() != null &&
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
+            return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         } else {
-            uusiArvo = "Hakukohde oid:  " + hakukohde.getOid();
+            return null;
         }
-
-        return uusiArvo;
     }
 
-    private Tapahtuma constructAddKoulutusTapahtuma(LisaaKoulutusTyyppi toteutus, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-
-
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
+    private Tapahtuma constructHakuTapahtuma(HakuTyyppi haku, HakuTyyppi vanhaHaku, int tapahtumaTyyppi) {
+        Tapahtuma t = null;
+        if (tapahtumaTyyppi == OPERATION_DELETE) {
+            t = Tapahtuma.createDELETE(SYSTEM, getTekija(), HAKU_TYPE, haku.getOid());
         }
-        if (toteutus.getOid() != null) {
-          StringBuilder stb = new StringBuilder();
-          stb.append("Koulutus oid : " + toteutus.getOid());
-          if (toteutus.getNimi() != null && toteutus.getNimi().getTeksti() != null) {
-          for (MonikielinenTekstiTyyppi.Teksti teksti : toteutus.getNimi().getTeksti()) {
-              stb.append(" " + teksti.getKieliKoodi() + " " + teksti.getValue());
-          }
-          }
-         tapahtuma.setUusiArvo(stb.toString());
+        if (tapahtumaTyyppi == OPERATION_INSERT) {
+            t = Tapahtuma.createCREATE(SYSTEM, getTekija(), HAKU_TYPE, haku.getOid());
         }
-
-
-        return tapahtuma;
-    }
-
-    private Tapahtuma constructRemoveKoulutusTapahtuma(String oid, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
-        }
-        tapahtuma.setUusiArvo("OID : " + oid);
-
-        return tapahtuma;
-    }
-
-    private Tapahtuma constructUpdateKoulutusTapahtuma(PaivitaKoulutusTyyppi toteutus, String tapahtumaTyyppi) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(KOULUTUS_TYPE);
-        tapahtuma.setTapahtumatyyppi(tapahtumaTyyppi);
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
-        }
-        if (toteutus.getOid() != null) {
-            StringBuilder stb = new StringBuilder();
-            stb.append("Koulutus oid : " + toteutus.getOid());
-            if (toteutus.getNimi() != null && toteutus.getNimi().getTeksti() != null ) {
-            for (MonikielinenTekstiTyyppi.Teksti teksti : toteutus.getNimi().getTeksti()) {
-                stb.append(" " + teksti.getKieliKoodi() + " " + teksti.getValue());
+        if (tapahtumaTyyppi == OPERATION_UPDATE) {
+            t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), HAKU_TYPE, haku.getOid());
+            if (vanhaHaku != null) {
+                addChangesToLogEntry(t, vanhaHaku, haku);
             }
-            }
-            tapahtuma.setUusiArvo(stb.toString());
         }
 
-        return tapahtuma;
+        return t;
+    }
+
+    private Tapahtuma constructHakukohdeTapahtuma(HakukohdeTyyppi hakukohde, HakukohdeTyyppi vanhaHakukohde, int tapahtumaTyyppi) {
+        Tapahtuma t = null;
+        if (tapahtumaTyyppi == OPERATION_DELETE) {
+            t = Tapahtuma.createDELETE(SYSTEM, getTekija(), HAKUKOHDE_TYPE, hakukohde.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_INSERT) {
+            t = Tapahtuma.createCREATE(SYSTEM, getTekija(), HAKUKOHDE_TYPE, hakukohde.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_UPDATE) {
+            t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), HAKUKOHDE_TYPE, hakukohde.getOid());
+            if (vanhaHakukohde != null) {
+                addChangesToLogEntry(t, vanhaHakukohde, hakukohde);
+            }
+        }
+
+        return t;
+    }
+
+    private Tapahtuma constructAddKoulutusTapahtuma(LisaaKoulutusTyyppi toteutus, int tapahtumaTyyppi) {
+        Tapahtuma t = null;
+        if (tapahtumaTyyppi == OPERATION_DELETE) {
+            t = Tapahtuma.createDELETE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_INSERT) {
+            t = Tapahtuma.createCREATE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_UPDATE) {
+            t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+
+        return t;
+    }
+
+    private Tapahtuma constructRemoveKoulutusTapahtuma(String oid, int tapahtumaTyyppi) {
+        Tapahtuma t = Tapahtuma.createDELETE(SYSTEM, getTekija(), KOULUTUS_TYPE, oid);
+        return t;
+    }
+
+    private Tapahtuma constructUpdateKoulutusTapahtuma(PaivitaKoulutusTyyppi toteutus, int tapahtumaTyyppi) {
+        Tapahtuma t = null;
+        if (tapahtumaTyyppi == OPERATION_DELETE) {
+            t = Tapahtuma.createDELETE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_INSERT) {
+            t = Tapahtuma.createCREATE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+        if (tapahtumaTyyppi == OPERATION_UPDATE) {
+            t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), KOULUTUS_TYPE, toteutus.getOid());
+        }
+
+        return t;
     }
 
     private Tapahtuma constructMetadataTapahtuma(MonikielinenMetadataTyyppi meta) {
-        Tapahtuma tapahtuma = new Tapahtuma();
-        tapahtuma.setAikaleima(new Date());
-        tapahtuma.setMuutoksenKohde(VALINTAPERUSTEKUVAUS_TYPE);
-
-        try {
-            tapahtuma.setTekija(getTekija());
-        } catch (Exception exp) {
-        }
-
-        tapahtuma.setTapahtumatyyppi(UPDATE_OPERATION);
-
-        tapahtuma.setUusiArvo(constructValintaPerusteKuvausArvo(meta));
-
-
-        return tapahtuma;
+        String target = meta.getKategoria() + ":" + meta.getAvain() + ":" + meta.getKieli();
+        Tapahtuma t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), VALINTAPERUSTEKUVAUS_TYPE, target);
+        return t;
     }
 
-    private String constructValintaPerusteKuvausArvo(MonikielinenMetadataTyyppi meta) {
-        StringBuilder sb = new StringBuilder();
+    private void addChangesToLogEntry(Tapahtuma t, HakuTyyppi vanhaHaku, HakuTyyppi haku) {
+        // TODO track changes!
+    }
 
-        sb.append("Tyyppi : " + meta.getKategoria() + ", ");
-        sb.append("Uri/avain : " + meta.getAvain() + ", ");
-        sb.append("Kieli : " + meta.getKieli() +", ");
-        sb.append("Arvo : "+ meta.getArvo());
-
-        return sb.toString();
+    private void addChangesToLogEntry(Tapahtuma t, HakukohdeTyyppi vanhaHakukohde, HakukohdeTyyppi hakukohde) {
+        // TODO track changes!
     }
 
 }
