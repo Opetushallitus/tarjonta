@@ -1154,6 +1154,7 @@ public class SVTUtils {
     {
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
+        System.out.println("HOUHOU textElement label=" + label + " location=" + textElement.getLocation());
 
         Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
         int i = 1;
@@ -1441,6 +1442,7 @@ public class SVTUtils {
     {
         Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
         WebElement input = this.findNearestElementPlusY(label, "//input", driver);
+        System.out.println("HOUHOU input label=" + label + " location=" + input.getLocation());
         input.clear();
         tauko(1);
         input.sendKeys(value);
