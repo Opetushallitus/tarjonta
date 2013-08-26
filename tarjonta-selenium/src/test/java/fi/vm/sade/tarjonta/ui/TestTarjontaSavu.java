@@ -57,6 +57,7 @@ public class TestTarjontaSavu {
     static Boolean first = true;
 	@Test
     public void testKoulutus() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testKoulutusLoop();
@@ -257,6 +258,7 @@ public class TestTarjontaSavu {
 
 	@Test
     public void testHakukohteet() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testHakukohteetLoop();
@@ -274,8 +276,12 @@ public class TestTarjontaSavu {
 	public void testHakukohteetLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-        driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+            driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+    		doit.tauko(1);
+        }
+        first = false;
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		Boolean luokka = false;
@@ -472,14 +478,14 @@ public class TestTarjontaSavu {
         	t01 = doit.millis();
         	doit.textClick(driver, "Tarkastele");
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        			, doit.textElement(driver, "Liitä uusi koulutus"));
+        			, doit.textElement(driver, "Koulutukset"));
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
             doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
-        	if (! doit.isPresentText(driver, "julkaistu"))
+        	if (! doit.isPresentText(driver, "julkaistu") || ! doit.isPresentText(driver, "Ylioppilastutkinto"))
         	{
         	t01 = doit.millis();
         	doit.textClick(driver, "muokkaa");
@@ -982,6 +988,7 @@ public class TestTarjontaSavu {
 
 	@Test
     public void testHaku() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testHakuLoop();
@@ -999,8 +1006,11 @@ public class TestTarjontaSavu {
 	public void testHakuLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        	doit.tauko(1);
+        }
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
@@ -1076,6 +1086,7 @@ public class TestTarjontaSavu {
 
 	@Test
     public void testValinnat() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testValinnatLoop();
@@ -1093,8 +1104,11 @@ public class TestTarjontaSavu {
 	public void testValinnatLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        	doit.tauko(1);
+        }
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
