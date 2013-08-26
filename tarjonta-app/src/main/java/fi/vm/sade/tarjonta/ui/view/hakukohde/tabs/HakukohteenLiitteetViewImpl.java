@@ -121,6 +121,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         this.uiBuilder = uiBuilder;
         this.errorMessage = errorMessage;
         buildMainLayout();
+        setCustomOsoiteEnabled(false);
     }
     
     private String T(String key) {
