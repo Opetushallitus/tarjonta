@@ -386,8 +386,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                         presenter.saveHakukohteenEditView();
                     }
                 } catch (Validator.InvalidValueException e) {
+                	LOG.info("Validation error", e);
                     errorMessage.addError(e);
                 } catch (Exception exp) {
+                	LOG.warn("Error saving hakukohde", exp);
                     errorMessage.addError(exp.toString());
                 }
             }
