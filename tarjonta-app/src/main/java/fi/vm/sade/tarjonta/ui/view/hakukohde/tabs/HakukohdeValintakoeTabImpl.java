@@ -172,6 +172,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         visibleButtonByListener(clickListenerSaveAsReady, false);
         visibleButtonByListener(clickListenerNext, false);
         visibleButtonByListener(clickListenerBack, false);
+        makeFormDataUnmodified();
     }
 
     @Override
@@ -240,6 +241,8 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                 String kpAlinHyvVal = formView.getPisterajaTable().getKpAlinHyvVal();
                 presenter.saveHakukohdeValintakoe(formView.getLukioValintakoeView().getValintakokeenKuvaukset());
                 formView.getPisterajaTable().setValues(pkAlinVal, pkYlinVal, pkAlinHyvVal, lpAlinVal, lpYlinVal, lpAlinHyvVal, kpAlinHyvVal);
+                //Calculcating new hash after save
+                makeFormDataUnmodified();
                 return getHakukohdeOid();
 
             } catch (Validator.InvalidValueException e) {
