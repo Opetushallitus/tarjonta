@@ -1716,7 +1716,7 @@ public class SVTUtils {
     {
     	String millis = System.currentTimeMillis() + "";
     	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-    	String fileName = System.getProperty("user.home") + "screenshot_" + comment + "_" + millis + ".png";
+    	String fileName = System.getProperty("user.home") + "/screenshot_" + comment + "_" + millis + ".png";
     	FileUtils.copyFile(scrFile, new File(fileName));
     }
 
