@@ -592,7 +592,7 @@ public class SVTUtils {
         {
                 this.tauko(1);
                 driver.findElement(By.id("overridelink")).sendKeys(Keys.F12);
-                System.out.println("HOUHOU Vaihda IE mode . . . + F12");
+                this.echo("Vaihda IE mode . . . + F12");
                 this.tauko(30);
                 driver.navigate().refresh();
                 this.tauko(2);
@@ -1066,7 +1066,6 @@ public class SVTUtils {
     {
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
-        System.out.println("HOUHOU textElement label=" + label + " location=" + textElement.getLocation());
 
         Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
         int i = 1;
@@ -1154,7 +1153,6 @@ public class SVTUtils {
     {
         WebElement input = null;
         WebElement textElement = this.textElement(driver, label);
-        System.out.println("HOUHOU textElement label=" + label + " location=" + textElement.getLocation());
 
         Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
         int i = 1;
@@ -1383,7 +1381,6 @@ public class SVTUtils {
     {
         Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
         WebElement input = findNearestElement(label, "//input", driver);
-        System.out.println("HOUHOU input label=" + label + " location=" + input.getLocation());
         if (value != null && value.equals("SELECTED"))
         {
                 if (! input.isSelected())
@@ -1442,7 +1439,6 @@ public class SVTUtils {
     {
         Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
         WebElement input = this.findNearestElementPlusY(label, "//input", driver);
-        System.out.println("HOUHOU input label=" + label + " location=" + input.getLocation());
         input.clear();
         tauko(1);
         input.sendKeys(value);
