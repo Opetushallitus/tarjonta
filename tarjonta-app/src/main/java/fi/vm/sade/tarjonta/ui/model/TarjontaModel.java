@@ -16,10 +16,11 @@
 package fi.vm.sade.tarjonta.ui.model;
 
 import com.google.common.base.Preconditions;
+
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;

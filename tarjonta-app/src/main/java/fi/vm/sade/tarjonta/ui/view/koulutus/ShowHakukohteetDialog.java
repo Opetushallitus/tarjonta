@@ -30,8 +30,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;

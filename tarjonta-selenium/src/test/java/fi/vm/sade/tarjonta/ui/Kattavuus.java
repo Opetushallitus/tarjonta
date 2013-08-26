@@ -29,7 +29,7 @@ public class Kattavuus {
 
     public void alustaKattavuusKohde(String kohde) throws SQLException
     {
-    	if (KattavuusTaulukko.size() > 0) { return; }
+    	if (KattavuusTaulukko.getProperty(KATTAVUUSKOHDE) != null) { return; }
     	KattavuusTaulukko.setProperty(Kattavuus.KATTAVUUSKOHDE, kohde);
     }
 
@@ -149,9 +149,10 @@ public class Kattavuus {
     		String[] summarivi = summa.split(ls);
     		Properties okKohteet = new Properties();
     		for (int i = 0; i < summarivi.length; i++) {
-    			if (summarivi.length < 5) { continue; }
     			String rivi = summarivi[i];
+    			if (rivi.length() < 4) { continue; }
     			String[] items = rivi.split(" ");
+    			if (items.length < 4) { continue; }
     			String kohde = items[0];
     			String kohdeYyyymm = items[1];
     			String tapaus = items[3];
@@ -161,6 +162,7 @@ public class Kattavuus {
     			}
     		}
     		int ok2 = okKohteet.size();
+    		if (ok2 > tavoite) { tavoite = ok2; }
     		info = testiajo + " " + yyyymm + " " + ddhhmmss + " " + tavoite + " " + ok2;
     		doit.appendToFile(fileName, info);
     		//
@@ -176,11 +178,7 @@ public class Kattavuus {
     {
     	SVTUtils doit = new SVTUtils();
     	String htmlFileName = fileName + ".html";
-    	// backup
-    	// FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".backup"));
-    	//            Files.copy(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".backup"));
     	doit.writeToFile(htmlFileName, "");
-    	//
     	reportItems(fileName);
     	Enumeration mKeys = reportTavoite.keys();
     	List<String> list = Collections.list(mKeys);
@@ -190,7 +188,6 @@ public class Kattavuus {
     	String line = "";
     	int maxTavoite = 0;
     	int countMonth = 0;
-    	//    int maxCountMonth = 0;
 
     	line = "<html><head><title>TESTAUKSEN KATTAVUUSRAPORTTI</title></head><body>";
     	doit.appendToFile(htmlFileName, line);
@@ -247,8 +244,6 @@ public class Kattavuus {
     		int height = Integer.parseInt(kuukausiLkm) * 40;
     		if (height < 120) { height = 120; }
 
-    		// FileUtils.copyFile(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".height.backup"));
-    		//            Files.copy(new File(htmlFileName), new File(htmlFileName + "." + doit.ddhhmmssString() + ".height.backup"));
     		String tokenHtml = doit.readFile(htmlFileName);
     		line = tokenHtml.replace("%HEIGHT:" + moduli +"%", height + "");
     		doit.writeToFile(htmlFileName, line);
@@ -256,7 +251,6 @@ public class Kattavuus {
         FileUtils.copyFile(new File(fileName), new File("target/kattavuus.db.txt"));
     	// Artifact
     	FileUtils.copyFile(new File(htmlFileName), new File("target/kattavuus.db.txt.html"));
-    	//            Files.copy(new File(htmlFileName), new File("target/kattavuus.db.txt.html"));
     }
 
     private void diagram(String currentModuli, String htmlFileName, int maxTavoite, int countMonth)

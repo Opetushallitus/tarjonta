@@ -35,6 +35,8 @@ import java.util.Set;
  */
 public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> {
 
+    private static final String FALLBACK_LANG = KieliType.FI.value().toString();
+
     public KoulutusKoodiToModelConverter() {
     }
 
@@ -66,10 +68,12 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
         final String uriWithVersio = KoulutusConveter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
         model.setKoodistoUriVersio(uriWithVersio);
 
+        final String userLang = locale.getLanguage().toLowerCase();
+
         if (model instanceof MonikielinenTekstiModel) {
             //add all languages to the UI object
             MonikielinenTekstiModel o = (MonikielinenTekstiModel) model;
-            o.setKielikaannos(map(koodiType.getMetadata()));
+            o.setKielikaannos(userLang, FALLBACK_LANG, map(koodiType.getMetadata()));
         }
 
         return model;

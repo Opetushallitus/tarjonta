@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +47,6 @@ import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -174,7 +174,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
                 Item item = categoryTree.getItem(event.getItemId());
                 
-                if (item.getItemProperty(COLUMN_A)==null) {
+                if (item==null || item.getItemProperty(COLUMN_A)==null) {
                 	return;
                 }
                 

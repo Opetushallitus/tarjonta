@@ -55,9 +55,10 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
@@ -99,8 +100,8 @@ public class TarjontaUIHelper {
     private String langKoodiUriEn;
     @Value("${koodisto.language.sv.uri:kieli_sv}")
     private String langKoodiUriSv;
+    private TarjontaSearchService tarjontaSearchService;
     private static final String[] SEARCH_KOMO_KOODISTOS = new String[]{
-        KoodistoURI.KOODISTO_KOULUTUSALA_URI,
         KoodistoURI.KOODISTO_OPINTOALA_URI,
         KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
@@ -157,12 +158,12 @@ public class TarjontaUIHelper {
      * koodisto.
      */
     public Collection<KoodiType> getRelatedHakukohdeKoodisByKomotoOids(List<String> komotoOids) {
-        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getKoulutusOids().addAll(komotoOids);
-        HaeKoulutuksetVastausTyyppi vastaus = _tarjontaPublicService.haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
 
         List<String> sourceKoodiUris = new ArrayList<String>();
-        for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
+        for (KoulutuksetVastaus.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
             switch (koulutusTulos.getKoulutus().getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     sourceKoodiUris.add(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi().getUri());

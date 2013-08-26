@@ -17,9 +17,8 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.util.List;
 
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 
 /**
  *

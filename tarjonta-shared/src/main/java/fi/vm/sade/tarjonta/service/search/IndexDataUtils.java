@@ -53,9 +53,9 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
  * @author Markus
  *
  */
-public class IndexingUtils {
+public class IndexDataUtils {
 	
-	private static final Logger log = LoggerFactory.getLogger(IndexingUtils.class);
+	private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
 
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";

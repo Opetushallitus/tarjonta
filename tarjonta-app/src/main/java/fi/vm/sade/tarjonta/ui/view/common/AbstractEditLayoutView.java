@@ -405,7 +405,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
      */
     public abstract String actionSave(SaveButtonState tila, Button.ClickEvent event) throws Exception;
     
-    protected void validateFormData() throws Validator.InvalidValueException {
+    public void validateFormData() throws Validator.InvalidValueException {
         errorView.resetErrors();
         form.commit();
     }
@@ -421,7 +421,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         return model.hashCode() != formDataUnmodifiedHashcode;
     }
     
-    private boolean isSaved() {
+    public boolean isSaved() {
         return isformDataLoaded() && !isModified();
     }
 
@@ -532,5 +532,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
      */
     public Panel getFormPanel() {
         return formPanel;
+    }
+    
+    public ErrorMessage getErrorView() {
+        return errorView;
     }
 }

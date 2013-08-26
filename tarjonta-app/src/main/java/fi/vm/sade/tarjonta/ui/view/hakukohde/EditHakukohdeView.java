@@ -36,6 +36,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
@@ -43,7 +45,9 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.HakukohdeActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -79,6 +83,9 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private HakukohteenLiitteetTabImpl liitteet;
     private HakukohdeValintakoeTabImpl valintakokeet;
     private PerustiedotViewImpl perustiedot;
+    private HakukohdeActiveTab activeTab = HakukohdeActiveTab.PERUSTIEDOT;
+    
+    
     private VerticalLayout hl;
     public static final String DATE_PATTERN = "dd.MM.yyyy HH:mm";
 
@@ -397,7 +404,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         tabs = UiBuilder.tabSheet(layout);
         layout.setMargin(false, false, true, false);
-        VerticalLayout wrapperVl = new VerticalLayout();
+        final VerticalLayout wrapperVl = new VerticalLayout();
         perustiedot = new PerustiedotViewImpl(presenter, uiBuilder);
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
@@ -408,13 +415,42 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
+        
+        tabs.addListener(new SelectedTabChangeListener() {
+
+            private static final long serialVersionUID = -3995507767832431214L;
+
+            @Override
+            public void selectedTabChange(SelectedTabChangeEvent event) {
+                if (HakukohdeActiveTab.PERUSTIEDOT.equals(activeTab) && !isTabChangeable()) {
+                    tabs.setSelectedTab(wrapperVl);
+                    presenter.showNotification(UserNotification.UNSAVED);
+                } else if (tabs.getSelectedTab().equals(valintakokeet)) {
+                    activeTab = HakukohdeActiveTab.VALINTAKOKEET; 
+                } else if (tabs.getSelectedTab().equals(wrapperVl)) {
+                    activeTab = HakukohdeActiveTab.PERUSTIEDOT;
+                } else {
+                    activeTab = HakukohdeActiveTab.LIITTEET;   
+                }
+            }
+            
+        });
+    }
+
+    protected boolean isTabChangeable() {
+        if (this.isSaved()) {
+            return true;
+        }
+        return false;
     }
 
     public void setValintakokeetTabSelected() {
         if (tabs != null && valintakokeetTab != null) {
 
             tabs.setSelectedTab(valintakokeetTab);
+            activeTab = HakukohdeActiveTab.VALINTAKOKEET;
         }
+        
     }
 
     public HakukohteenLiitteetTabImpl getLiitteetTab() {
@@ -428,6 +464,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     public void setLiitteetTabSelected() {
         if (tabs != null && liitteetTab != null) {
             tabs.setSelectedTab(liitteetTab);
+            activeTab = HakukohdeActiveTab.LIITTEET;
         }
     }
 

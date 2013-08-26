@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Tuomas Katva
  */
 public class KielikaannosViewModel extends BaseUIViewModel {
+    private static final long serialVersionUID = -7143247971594161270L;
 
     private String kielikoodi;
     private String nimi;

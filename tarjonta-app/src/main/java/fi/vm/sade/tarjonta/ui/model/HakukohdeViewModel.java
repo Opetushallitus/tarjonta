@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import com.google.common.collect.Lists;
+
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
 
@@ -47,6 +48,10 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private Date viimeisinPaivitysPvm;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     
+    private boolean customHakuaikaEnabled;
+    private Date hakuaikaAlkuPvm;
+    private Date hakuaikaLoppuPvm;
+        
     public HakukohdeViewModel() {
         super();
         initialize();
@@ -91,6 +96,10 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.liites = Lists.<HakukohdeLiiteViewModel>newArrayList();
         this.valintaKokees = Lists.<ValintakoeViewModel>newArrayList();
         this.painotettavat = Lists.<PainotettavaOppiaineViewModel>newArrayList();
+        
+        customHakuaikaEnabled = false;
+        hakuaikaAlkuPvm = null;
+        hakuaikaLoppuPvm = null;
 
         addPainotettavaOppiainees(OPPIAINEET_MAX);
     }
@@ -181,7 +190,31 @@ public class HakukohdeViewModel extends BaseUIViewModel {
                 .toHashCode();
     }
 
-    public List<PainotettavaOppiaineViewModel> getPainotettavat() {
+    public boolean isCustomHakuaikaEnabled() {
+		return customHakuaikaEnabled;
+	}
+
+	public void setCustomHakuaikaEnabled(boolean customHakuaikaEnabled) {
+		this.customHakuaikaEnabled = customHakuaikaEnabled;
+	}
+
+	public Date getHakuaikaAlkuPvm() {
+		return hakuaikaAlkuPvm;
+	}
+
+	public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
+		this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+	}
+
+	public Date getHakuaikaLoppuPvm() {
+		return hakuaikaLoppuPvm;
+	}
+
+	public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
+		this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+	}
+
+	public List<PainotettavaOppiaineViewModel> getPainotettavat() {
         return painotettavat;
     }
 

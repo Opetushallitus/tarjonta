@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -208,12 +209,22 @@ public class SVTUtils {
 
 	public WebElement getTriangleForFirstItem(WebDriver driver)
 	{
-        return driver.findElements(By.className("v-treetable-treespacer")).get(0);
+        Object[] eles = driver.findElements(By.className("v-treetable-treespacer")).toArray();
+        WebElement el;
+        for (Object ele : eles)
+        {
+                el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled() || el.getLocation().x < 0 || el.getLocation().y < 0) { continue; }
+                return el;
+        }
+        listXpathElements(driver, "//span[contains(@class, 'v-treetable-treespacer')]");
+        int a = 1 / 0;
+        return null;
 	}	  
 
 	public List<WebElement> getTriangleList(WebDriver driver)
 	{
-        return driver.findElements(By.className("v-treetable-treespacer"));
+      return driver.findElements(By.className("v-treetable-treespacer"));
 	}	  
 
 	public WebElement getTriangleForLastHakukohde(WebDriver driver)
@@ -393,6 +404,7 @@ public class SVTUtils {
                 el.click();
                 return;
         }
+        echo("ERROR textClick does not hit. text=" + text);
         int a = 1 / 0; // never here
 	}
 	
@@ -427,10 +439,33 @@ public class SVTUtils {
         }
         el2.click();
 	}
-
+	
 	public WebElement textElement(WebDriver driver, String text)
 	{
-		return driver.findElement(By.xpath("//*[contains(text(), '" + text  + "')]"));
+		//button[.='OK' and not(ancestor::div[contains(@style,'display:none')]) and not(ancestor::div[contains(@style,'display: none')])]
+
+		String ancestor = "//*[contains(text(), '" + text  + "') and not(ancestor::div[contains(@style,'display:none')]) and not(ancestor::div[contains(@style,'display: none')])]";
+		String xpathExpression = "//*[contains(text(), '" + text  + "')]";
+		WebElement koe = driver.findElement(By.xpath(ancestor));
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        WebElement el = null;
+        WebElement el2 = null;
+        for (Object ele : eles)
+        {
+                el = (WebElement)ele;
+                try {
+					if (! el.isDisplayed() || ! el.isEnabled() || el.getLocation().x < 0 
+							|| el.getLocation().y < 0) { continue; }
+				} catch (Exception e) {
+					// uusi yritys
+					this.echo("WARNING haetaan uudestaan. text=" + text);
+					return textElement(driver, text);
+				}
+                return el;
+        }
+        if (this.listXpathElements(driver, xpathExpression)) { return textElement(driver, text); };
+        int a = 1 / 0;
+        return null;
 	}
 
 	public WebElement partIdElement(WebDriver driver, String text)
@@ -496,17 +531,28 @@ public class SVTUtils {
             }
     }
 
-    public void listXpathElements(WebDriver driver, String xpathExpression)
-	{
-		Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
-		echo("listXpathElements: " + eles.length);
-		int i = 1;
-		for (Object ele : eles)
-		{
-			WebElement el = (WebElement)ele;
-			echo("listXpathElements i=" + i++ + "element=" + el.toString());
-		}
-	}
+    public Boolean listXpathElements(WebDriver driver, String xpathExpression)
+    {
+    	Boolean aliveElement = false;
+    	Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+    	echo("listXpathElements: " + eles.length + " xpathExpression=" + xpathExpression);
+    	WebElement el;
+    	int i = 1;
+    	String disabled = "";
+    	for (Object ele : eles)
+    	{
+    		Boolean vikaa = false;
+    		el = (WebElement)ele;
+    		disabled = "";
+    		if (! el.isDisplayed()) { vikaa = true; disabled = "Invisble"; }
+    		if (! el.isEnabled()) { vikaa = true; disabled = disabled + "Disabled"; }
+    		if (el.getLocation().x <= 0) { vikaa = true; }
+    		if (el.getLocation().y <= 0) { vikaa = true; }
+    		echo("listXpathElements i=" + i++ + " element=" + el.getLocation() + disabled);
+    		if (! vikaa) { aliveElement = true; }
+    	}
+    	return aliveElement;
+    }
 
 	public String palvelimenVersio(WebDriver driver, String baseUrl)
 	{
@@ -1030,6 +1076,7 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+            	if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (distance == minDistance) { input = el; }
         }
@@ -1108,6 +1155,7 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (textElement.getLocation().y < el.getLocation().y && distance < minDistance)
                 {
@@ -1118,10 +1166,10 @@ public class SVTUtils {
         for (Object ele : eles)
         {
                 WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
                 if (textElement.getLocation().y < el.getLocation().y && distance == minDistance) { input = el; }
         }
-
         return input;
     }
 
@@ -1173,7 +1221,7 @@ public class SVTUtils {
         {
                 WebElement el = (WebElement)ele;
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
-                if (textElement.getLocation().y < el.getLocation().y && distance < minDistance)
+                if (textElement.getLocation().y > el.getLocation().y && distance < minDistance)
                 {
                         minDistance = distance;
                 }
@@ -1183,7 +1231,7 @@ public class SVTUtils {
         {
                 WebElement el = (WebElement)ele;
                 int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
-                if (textElement.getLocation().y < el.getLocation().y && distance == minDistance) { input = el; }
+                if (textElement.getLocation().y > el.getLocation().y && distance == minDistance) { input = el; }
         }
         return input;
     }
@@ -1276,6 +1324,14 @@ public class SVTUtils {
     public void menuOperaatioFirstMenu(WebDriver driver, String operaatio)
     {
     	WebElement menu = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    	int i = 0;
+    	while (menu == null) 
+    	{
+    		menu = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+    		this.tauko(1);
+    		i++;
+    		if (i > 30) { int a = 1 / 0; }
+    	}
     	menu.click();
     	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     	tauko(1);
@@ -1335,6 +1391,16 @@ public class SVTUtils {
         tauko(1);
     }
 
+    public void sendInputTextArea(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = findNearestElement(label, "//textarea", driver);
+        input.clear();
+        tauko(1);
+        input.sendKeys(value);
+        tauko(1);
+    }
+    
     public void sendInputExact(WebDriver driver, String label, String value)
     {
         Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
@@ -1392,6 +1458,13 @@ public class SVTUtils {
         tauko(1);
         input.sendKeys(value);
         tauko(1);
+    }
+    
+    public String getTextMinusY(WebDriver driver, String label, String xpath)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = this.findNearestElementMinusY(label, xpath, driver);
+        return input.getText();
     }
 
     public void popupItemClick(WebDriver driver, String text)
@@ -1501,6 +1574,8 @@ public class SVTUtils {
     	search.sendKeys(haku);
     	this.tauko(1);
     	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae koulutuksia ei toimi."
+                , this.textElement(driver, "Koulutukset ("));
     	List<WebElement> triangles = this.getTriangleList(driver);
     	Assert.assertNotNull("Running koulutushaku triangles ei esiinny.", triangles);
     	this.tauko(1);
@@ -1526,6 +1601,42 @@ public class SVTUtils {
     	return link;
     }
 
+	public WebElement TarkasteleHakukohdeLuonnosta(WebDriver driver, String haku) throws Exception {
+    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
+    	search.clear();
+    	search.sendKeys(haku);
+    	this.tauko(1);
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae koulutuksia ei toimi."
+                , this.textElement(driver, "Koulutukset ("));
+    	List<WebElement> triangles = this.getTriangleList(driver);
+    	Assert.assertNotNull("Running koulutushaku triangles ei esiinny.", triangles);
+    	this.tauko(1);
+    	int i = triangles.size() - 1;
+    	Boolean hit = false;
+    	int yritys = 0;
+    	try {
+			while (triangles.get(i) != null) {
+				triangles = this.getTriangleList(driver);
+				WebElement triangle = triangles.get(i);
+				triangle.click();
+				this.tauko(1);
+				if (this.isPresentText(driver, "luonnos")) { hit = true; break; }
+				triangles = this.getTriangleList(driver);
+				triangle = triangles.get(i);
+				triangle.click();
+				this.tauko(1);
+				i--;
+				yritys++;
+			}
+		} catch (Exception e) {
+			this.echo("Running Kolmiot loppuivat i=" + i + " yrityksia=" + yritys);
+		}
+    	WebElement link = null;
+    	if (hit) { link = this.getMenuNearestText(driver, "luonnos"); }
+    	return link;
+    }
+
 	public void ValikotHakukohteidenYllapito(WebDriver driver, String baseUrl)
 	{
 		this.textClick(driver, "Suunnittelu ja tarjonta");
@@ -1533,13 +1644,66 @@ public class SVTUtils {
 		this.textClick(driver, "Koulutusten ja hakukohteiden ylläpito");
 		this.tauko(1);
 		try {
-			Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 valikot ei toimi."
+			Assert.assertNotNull("Running Hakukohteiden valikot ei toimi."
 					, this.textElement(driver, "Koulutuksen alkamisvuosi"));
 		} catch (Exception e) {
 			driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-url") + "?restartApplication");
-			Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 valikot ei toimi."
+			Assert.assertNotNull("Running Hakukohteiden valikot ei toimi."
 					, this.textElement(driver, "Koulutuksen alkamisvuosi"));
 		}
 		this.tauko(1);
 	}
+
+	public void ValikotHakujenYllapito(WebDriver driver, String baseUrl)
+	{
+		this.textClick(driver, "Haut");
+		this.tauko(1);
+		this.textClick(driver, "Haun");
+		this.tauko(1);
+		try {
+			Assert.assertNotNull("Running Hakujen valikot ei toimi."
+					, this.textElement(driver, "Luo uusi haku"));
+		} catch (Exception e) {
+			driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.haku-url") + "?restartApplication");
+			Assert.assertNotNull("Running Hakujen valikot ei toimi."
+					, this.textElement(driver, "Luo uusi haku"));
+		}
+		this.tauko(1);
+	}
+	
+	public void ValikotValintaperusteKuvaustenYllapito(WebDriver driver, String baseUrl)
+	{
+		this.textClick(driver, "Suunnittelu ja tarjonta");
+		this.tauko(1);
+		this.textClick(driver, "Valintaperustekuvausten");
+		this.tauko(1);
+		try {
+			Assert.assertNotNull("Running Valintaperustekuvausten valikot ei toimi."
+					, this.textElement(driver, "Kuvausteksti"));
+		} catch (Exception e) {
+			driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.valinta-url") + "?restartApplication");
+			Assert.assertNotNull("Running Valintaperustekuvausten valikot ei toimi."
+					, this.textElement(driver, "Kuvausteksti"));
+		}
+		this.tauko(1);
+	}
+
+    public String commonStringBegin(String str1, String str2)
+    {
+    	String str = "";
+    	int i = 0;
+    	String s1 = str1.substring(i, i + 1);
+    	String s2 = str2.substring(i, i + 1);
+    	while (s1.equals(s2))
+    	{
+    		if (s1 == " " || s1 == ",") { break; }
+    		str = str + s1;
+    		i++;
+    		if (str1.length() == i) { break; }
+    		if (str2.length() == i) { break; }
+        	s1 = str1.substring(i, i + 1);
+        	s2 = str2.substring(i, i + 1);
+    	}
+    	return str;
+    }
 }

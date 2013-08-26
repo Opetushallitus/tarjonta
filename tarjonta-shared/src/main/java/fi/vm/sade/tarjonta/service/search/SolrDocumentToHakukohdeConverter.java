@@ -6,11 +6,9 @@ import java.util.Date;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.service.types.HakukohdeListausTyyppi;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
@@ -18,8 +16,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJ
 
 public class SolrDocumentToHakukohdeConverter {
     
-    public HaeHakukohteetVastausTyyppi convertSolrToHakukohteetVastaus(SolrDocumentList solrHakukohdeList, SolrDocumentList solrOrgList) {
-        HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
+    public HakukohteetVastaus convertSolrToHakukohteetVastaus(SolrDocumentList solrHakukohdeList, SolrDocumentList solrOrgList) {
+        HakukohteetVastaus vastaus = new HakukohteetVastaus();
         for (int i = 0 ; i < solrHakukohdeList.size(); ++i) {
             SolrDocument hakukohdeDoc = solrHakukohdeList.get(i);
             HakukohdeTulos tulos = convertHakukohde(hakukohdeDoc, solrOrgList);
@@ -34,19 +32,19 @@ public class SolrDocumentToHakukohdeConverter {
     private HakukohdeTulos convertHakukohde(SolrDocument hakukohdeDoc,
             SolrDocumentList solrOrgList) {
         HakukohdeTulos vastaus = new HakukohdeTulos();
-        HakukohdeListausTyyppi hakukohde = new HakukohdeListausTyyppi();
+        HakukohdeListaus hakukohde = new HakukohdeListaus();
         hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
-        hakukohde.setHakutapaKoodi(IndexingUtils.createKoodiTyyppi(HAKUTAPA_URI, HAKUTAPA_FI, HAKUTAPA_SV, HAKUTAPA_EN, hakukohdeDoc));
+        hakukohde.setHakutapaKoodi(IndexDataUtils.createKoodiTyyppi(HAKUTAPA_URI, HAKUTAPA_FI, HAKUTAPA_SV, HAKUTAPA_EN, hakukohdeDoc));
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
         hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
         hakukohde.setKoulutuksenAlkamisvuosi("" + hakukohdeDoc.getFieldValue(VUOSI_KOODI));
         hakukohde.setNimi(createHakukohdeNimi(hakukohdeDoc));
         hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
-        hakukohde.setTila(IndexingUtils.createTila(hakukohdeDoc));
-        hakukohde.setTarjoaja(IndexingUtils.createTarjoaja(hakukohdeDoc, solrOrgList));
+        hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
+        hakukohde.setTarjoaja(IndexDataUtils.createTarjoaja(hakukohdeDoc, solrOrgList));
         if(hakukohde.getTarjoaja().getNimi()==null) {
             return null;
         }

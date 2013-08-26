@@ -126,9 +126,9 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
                 ? koulutus.getKoulutusohjelmaKoodi() : koulutus.getLukiolinja());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
-        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()));
-        add(komotoDoc, KAUSI, IndexingUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
-        add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI_KOODI, IndexDataUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI, IndexDataUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
         add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutustyyppi());
@@ -187,14 +187,14 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             return;
         }
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(tutkintonimike, koodiService); 
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(tutkintonimike, koodiService); 
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, TUTKINTONIMIKE_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, TUTKINTONIMIKE_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, TUTKINTONIMIKE_EN, metadata.getNimi());
             add(doc, TUTKINTONIMIKE_URI, tutkintonimike);
         }
@@ -208,14 +208,14 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             return;
         }
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutusKoodi, koodiService); 
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusKoodi, koodiService); 
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, KOULUTUSKOODI_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KOULUTUSKOODI_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSKOODI_EN, metadata.getNimi());
             add(doc, KOULUTUSKOODI_URI, koulutusKoodi);
         }
@@ -228,14 +228,14 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             return;
         }
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService); 
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService); 
 
         if (koodi != null) {
-            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
-            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
             add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
         }

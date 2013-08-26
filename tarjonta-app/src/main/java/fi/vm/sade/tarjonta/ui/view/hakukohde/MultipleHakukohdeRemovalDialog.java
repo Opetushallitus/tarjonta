@@ -26,8 +26,8 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;

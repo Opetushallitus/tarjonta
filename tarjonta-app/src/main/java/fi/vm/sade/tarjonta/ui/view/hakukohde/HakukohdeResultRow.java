@@ -28,7 +28,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -38,8 +38,6 @@ import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -58,7 +56,6 @@ import java.util.List;
 public class HakukohdeResultRow extends HorizontalLayout {
 
     private static final long serialVersionUID = 4163145140260915772L;
-    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi HAKUKOHDE = SisaltoTyyppi.HAKUKOHDE;
     /**
