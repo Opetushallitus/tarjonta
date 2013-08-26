@@ -140,7 +140,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public Hakukohde findHakukohdeByOid(final String oid) {
         Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
-        
+
         return (Hakukohde) getEntityManager().createQuery("FROM " + Hakukohde.class.getName() + " WHERE oid=?")
                 .setParameter(1, oid)
                 .getSingleResult();
