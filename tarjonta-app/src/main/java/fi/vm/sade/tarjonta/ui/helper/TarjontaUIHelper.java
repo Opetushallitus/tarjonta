@@ -318,6 +318,9 @@ public class TarjontaUIHelper {
      * @return
      */
     public List<KoodiType> getKoodis(String uri) {
+    	if (uri==null) {
+    		return null;
+    	}
         final String[] spitByUriAndVersion = splitKoodiURIAllowNull(uri);
         final String version = spitByUriAndVersion[1];
         return gethKoodis(spitByUriAndVersion[0], version == null ? null : Integer.valueOf(version));
