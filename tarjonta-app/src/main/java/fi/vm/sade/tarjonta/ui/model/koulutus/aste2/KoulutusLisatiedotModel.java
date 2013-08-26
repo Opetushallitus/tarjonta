@@ -158,22 +158,20 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
                 append(_ammattinimikkeet).
                 append(_kielet).
                 append(_lisatiedot);
-        /*
+        
         if (_lisatiedot != null) {
-            System.out.println("There are lisatiedot");
             for (String curKey : _lisatiedot.keySet()){
                 builder = builder.append(curKey);
                 KoulutusLisatietoModel lisatieto = _lisatiedot.get(curKey);
                 builder = builder.append(lisatieto.getKansainvalistyminen())
-                        .append(_lisatiedot.get(curKey).getKoulutusohjelmanValinta())
-                        .append(_lisatiedot.get(curKey).getKuvailevatTiedot())
-                        .append(_lisatiedot.get(curKey).getLanguageUri())
-                        .append(_lisatiedot.get(curKey).getSijoittuminenTyoelamaan())
-                        .append(_lisatiedot.get(curKey).getSisalto())
-                        .append(_lisatiedot.get(curKey).getYhteistyoMuidenToimijoidenKanssa());
+                        .append(lisatieto.getKoulutusohjelmanValinta())
+                        .append(lisatieto.getKuvailevatTiedot())
+                        .append(lisatieto.getLanguageUri())
+                        .append(lisatieto.getSijoittuminenTyoelamaan())
+                        .append(lisatieto.getSisalto())
+                        .append(lisatieto.getYhteistyoMuidenToimijoidenKanssa());
             }
-        }*/
-        //System.out.println("hashcode: " + builder.toHashCode());
+        }
         return builder.toHashCode();
     }
 }

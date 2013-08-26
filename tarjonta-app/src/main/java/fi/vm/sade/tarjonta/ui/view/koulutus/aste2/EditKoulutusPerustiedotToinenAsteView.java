@@ -63,6 +63,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
         EditKoulutusPerustiedotFormView formView = new EditKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
 
         buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
+        this.makeFormDataUnmodified();
     }
 
     @Override
