@@ -171,6 +171,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
                 .append(kieletMuu)
                 .append(tekstit);
         
+        /*
         if (tekstit != null) {
             for (String curKey : tekstit.keySet()) {
                 builder = builder.append(curKey);
@@ -184,7 +185,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
                         .append(lisatieto.getYhteistyoMuidenToimijoidenKanssa());
 
             }
-        }
+        }*/
         
         return builder.toHashCode();
     }
