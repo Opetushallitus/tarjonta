@@ -159,9 +159,12 @@ public class TestTarjontaSavu {
         doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
         doit.screenShot("valiDialog2", driver);
         doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
-        doit.screenShot("valiDialog3", driver);
+        Assert.assertNotNull("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka ei toimi."
+        		, doit.textElement(driver, "Pohjakoulutus:"));
         doit.tauko(1);
-        doit.sendInputPlusX(driver, "Pohjakoulutus:", "Peruskoulu", 20);
+        doit.screenShot("valiDialog3", driver);
+//        doit.sendInputPlusX(driver, "Pohjakoulutus:", "Peruskoulu", 20);
+        doit.sendInput(driver, "Pohjakoulutus:", "Peruskoulu");
         doit.screenShot("valiDialog4", driver);
         doit.popupItemClick(driver, "Peruskoulu");
         doit.screenShot("valiDialog5", driver);
