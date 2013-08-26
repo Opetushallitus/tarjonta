@@ -36,6 +36,10 @@ public class CommonToDTOConverter {
 
 
     public static OsoiteTyyppi convertOsoiteToOsoiteTyyppi(Osoite osoite) {
+    	if (osoite==null) {
+    		return null;
+    	}
+    	
         OsoiteTyyppi osoiteTyyppi = new OsoiteTyyppi();
 
         osoiteTyyppi.setOsoiteRivi(osoite.getOsoiterivi1());
