@@ -15,15 +15,14 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
  * European Union Public Licence for more details.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by: Tuomas Katva
@@ -67,10 +66,10 @@ public class HakukohdeLiiteTyyppiToViewModelConverter {
     }
 
      private static void mapOsoite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel,OsoiteTyyppi osoite) {
-         hakukohdeLiiteViewModel.setOsoiteRivi1(osoite.getOsoiteRivi());
-         hakukohdeLiiteViewModel.setOsoiteRivi2(osoite.getLisaOsoiteRivi());
-         hakukohdeLiiteViewModel.setPostinumero(osoite.getPostinumero());
-         hakukohdeLiiteViewModel.setPostitoimiPaikka(osoite.getPostitoimipaikka());
+         hakukohdeLiiteViewModel.setOsoiteRivi1(osoite==null ? null : osoite.getOsoiteRivi());
+         hakukohdeLiiteViewModel.setOsoiteRivi2(osoite==null ? null : osoite.getLisaOsoiteRivi());
+         hakukohdeLiiteViewModel.setPostinumero(osoite==null ? null : osoite.getPostinumero());
+         hakukohdeLiiteViewModel.setPostitoimiPaikka(osoite==null ? null : osoite.getPostitoimipaikka());
      }
 
 }
