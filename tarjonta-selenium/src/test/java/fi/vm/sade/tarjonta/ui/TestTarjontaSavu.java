@@ -186,9 +186,12 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
+        doit.screenShot("HaeKerttuli01", driver);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Kerttulin lukio ei toimi."
                         , doit.textElement(driver, "Kerttulin lukio"));
         t01 = doit.millisDiff(t01);
+        doit.screenShot("HaeKerttuli02", driver);
         doit.echo("Running TarjontaSavu002 Hae Kerttulin lukio OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
