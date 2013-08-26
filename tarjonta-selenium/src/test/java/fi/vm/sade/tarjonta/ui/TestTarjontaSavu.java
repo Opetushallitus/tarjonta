@@ -155,11 +155,16 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         
         // LUO UUSI AMMATILLINENKOULUTUS (validialog + jatka)
+        doit.screenShot("valiDialog1", driver);
         doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
+        doit.screenShot("valiDialog2", driver);
         doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
+        doit.screenShot("valiDialog3", driver);
         doit.tauko(1);
         doit.sendInputPlusX(driver, "Pohjakoulutus:", "Peruskoulu", 20);
+        doit.screenShot("valiDialog4", driver);
         doit.popupItemClick(driver, "Peruskoulu");
+        doit.screenShot("valiDialog5", driver);
         doit.tauko(1);
         driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
         doit.tauko(1);
@@ -1080,6 +1085,7 @@ public class TestTarjontaSavu {
                 , doit.textElement(driver, "Hakulomake"));
 		t01 = doit.millisDiff(t01);
 		doit.echo("Running TarjontaHakuSavu004 Tarkastele hakua OK");
+		doit.echo("Running TarjontaHakuSavu END OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 	}		
@@ -1129,6 +1135,7 @@ public class TestTarjontaSavu {
                 , doit.textElement(driver, "Kuvausteksti"));
 		doit.footerTest(driver, "Running TarjontaValintaSavu002 Sora-vaatimukset footer ei toimi.", true);
 		doit.echo("Running TarjontaValintaSavu002 Sora-vaatimukset OK");
+		doit.echo("Running TarjontaValintaSavu END OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		

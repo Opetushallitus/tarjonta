@@ -32,6 +32,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+
+
 public class SVTUtils {
     protected final Logger log = LoggerFactory.getLogger("TEST");
     protected static final Logger log2 = LoggerFactory.getLogger("TEST");
@@ -1706,4 +1711,13 @@ public class SVTUtils {
     	}
     	return str;
     }
+
+    public void screenShot(String comment, WebDriver driver) throws IOException
+    {
+    	String millis = System.currentTimeMillis() + "";
+    	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+    	String fileName = System.getProperty("user.home") + "screenshot_" + comment + "_" + millis + ".png";
+    	FileUtils.copyFile(scrFile, new File(fileName));
+    }
+
 }
