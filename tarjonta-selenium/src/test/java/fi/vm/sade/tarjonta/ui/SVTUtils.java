@@ -592,7 +592,7 @@ public class SVTUtils {
         {
                 this.tauko(1);
                 driver.findElement(By.id("overridelink")).sendKeys(Keys.F12);
-                System.out.println("HOUHOU Vaihda IE mode . . . + F12");
+                this.echo("Vaihda IE mode . . . + F12");
                 this.tauko(30);
                 driver.navigate().refresh();
                 this.tauko(2);

@@ -126,9 +126,12 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
+        doit.screenShot("Haku01", driver);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
         		, doit.textElement(driver, "Optima samkommun"));
         t01 = doit.millisDiff(t01);
+        doit.screenShot("Haku02", driver);
         doit.echo("Running TarjontaSavu002 Hae Optima samkommun OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
@@ -151,20 +154,16 @@ public class TestTarjontaSavu {
         		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
         t01 = doit.millisDiff(t01);
         doit.echo("Running TarjontaSavu004a Luo uusi ammatillinenkoulutus OK");
-//        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
         
         // LUO UUSI AMMATILLINENKOULUTUS (validialog + jatka)
-        doit.screenShot("valiDialog1", driver);
         doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
-        doit.screenShot("valiDialog2", driver);
         doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
-        doit.screenShot("valiDialog3", driver);
+        Assert.assertNotNull("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka ei toimi."
+        		, doit.textElement(driver, "Pohjakoulutus:"));
         doit.tauko(1);
-        doit.sendInputPlusX(driver, "Pohjakoulutus:", "Peruskoulu", 20);
-        doit.screenShot("valiDialog4", driver);
+        doit.sendInputPlusY(driver, "Pohjakoulutus:", "Peruskoulu");
         doit.popupItemClick(driver, "Peruskoulu");
-        doit.screenShot("valiDialog5", driver);
         doit.tauko(1);
         driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
         doit.tauko(1);
@@ -187,9 +186,12 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
+        doit.screenShot("HaeKerttuli01", driver);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Kerttulin lukio ei toimi."
                         , doit.textElement(driver, "Kerttulin lukio"));
         t01 = doit.millisDiff(t01);
+        doit.screenShot("HaeKerttuli02", driver);
         doit.echo("Running TarjontaSavu002 Hae Kerttulin lukio OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
