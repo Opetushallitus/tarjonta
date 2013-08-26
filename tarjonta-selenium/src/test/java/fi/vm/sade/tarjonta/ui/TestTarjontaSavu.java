@@ -126,9 +126,12 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
+        doit.screenShot("Haku01", driver);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
         		, doit.textElement(driver, "Optima samkommun"));
         t01 = doit.millisDiff(t01);
+        doit.screenShot("Haku02", driver);
         doit.echo("Running TarjontaSavu002 Hae Optima samkommun OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
