@@ -21,17 +21,16 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
  * http://localhost:8181/tarjonta-service/rest/haku/hello
- * 
+ *
  * Internal documentation:
  * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- * 
+ *
  * @author mlyly
  * @see HakuResource
  */
@@ -126,16 +125,19 @@ public class HakuResourceImpl implements HakuResource {
             LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<HakukohdeDTO> result = null; // TODO: hakukohdeDAO.findBy...
-        // (oid, searchTerms, count, startIndex,lastModifiedBefore,
-        // lastModifiedSince));
+        // Get the total size (give count < 0 -- > no limits)
+        int totalSize = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince).size();
 
-        // total count
-        int kokonaismaara = 0; // TODO: hakukohdeDAO.count...
-        // (oid, searchTerms, count, startIndex,lastModifiedBefore,
-        // lastModifiedSince));
-        LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), kokonaismaara });
-        return new HakukohdeTulosDTO(kokonaismaara, result);
+        List<HakukohdeDTO> result = new ArrayList<HakukohdeDTO>();
+
+        for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince)) {
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
+            HakukohdeDTO dto = conversionService.convert(hakukohde, HakukohdeDTO.class);
+            result.add(dto);
+        }
+
+        LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), totalSize });
+        return new HakukohdeTulosDTO(totalSize, result);
     }
 
     // /haku/OID/hakukohdeWithName
