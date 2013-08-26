@@ -158,8 +158,9 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
                 append(_ammattinimikkeet).
                 append(_kielet).
                 append(_lisatiedot);
-        
+        /*
         if (_lisatiedot != null) {
+            System.out.println("There are lisatiedot");
             for (String curKey : _lisatiedot.keySet()){
                 builder = builder.append(curKey);
                 KoulutusLisatietoModel lisatieto = _lisatiedot.get(curKey);
@@ -171,8 +172,8 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
                         .append(_lisatiedot.get(curKey).getSisalto())
                         .append(_lisatiedot.get(curKey).getYhteistyoMuidenToimijoidenKanssa());
             }
-        }
-        
+        }*/
+        //System.out.println("hashcode: " + builder.toHashCode());
         return builder.toHashCode();
     }
 }
