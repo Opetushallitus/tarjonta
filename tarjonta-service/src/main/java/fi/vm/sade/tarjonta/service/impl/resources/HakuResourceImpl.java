@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -18,25 +20,29 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
+import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
  * Run:
+ * 
  * <pre>
  * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
  * </pre>
- *
+ * 
  * Test:
+ * 
  * <pre>
  * http://localhost:8084/tarjonta-service/rest?_wadl
  * </pre>
- *
- * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- *
+ * 
+ * Internal documentation:
+ * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ * 
  * @author mlyly
  * @see HakuResource
  */
@@ -48,6 +54,8 @@ public class HakuResourceImpl implements HakuResource {
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
     @Autowired
     private HakuDAO hakuDAO;
+    @Autowired
+    private HakukohdeResource hakukohdeResource;
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
     @Autowired(required = true)
@@ -72,8 +80,8 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore,
             Date lastModifiedSince) {
-        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex,
-            lastModifiedBefore, lastModifiedSince});
+        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[] { searchTerms, count, startIndex,
+                lastModifiedBefore, lastModifiedSince });
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -117,13 +125,10 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdetulos
     @Override
-    public HakukohdeTulosDTO getByOIDHakukohdeTulos(
-            String oid,
-            String searchTerms,
-            int count,
-            int startIndex,
-            Date lastModifiedBefore,
-            Date lastModifiedSince) {
+    public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
+            @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
+            @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince) {
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
         if (count <= 0) {
@@ -132,20 +137,14 @@ public class HakuResourceImpl implements HakuResource {
         }
 
         // Get the total size (give count < 0 -- > no limits)
-        int totalSize = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince)
-                .size();
-
-        List<HakukohdeDTO> result = new ArrayList<HakukohdeDTO>();
-
-        for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore,
-                lastModifiedSince)) {
-            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
-            HakukohdeDTO dto = conversionService.convert(hakukohde, HakukohdeDTO.class);
-            result.add(dto);
+        List<String> oids = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince);
+        int totalSize = oids.size();
+        List<HakukohdeNimiRDTO> result = new ArrayList<HakukohdeNimiRDTO>();
+        for (String hakukohdeoid : oids) {
+            result.add(hakukohdeResource.getHakukohdeNimi(hakukohdeoid));
         }
-
-        LOG.debug("  result={}, result count {}, total count {}", new Object[]{result, result.size(), totalSize});
-        return new HakukohdeTulosDTO(totalSize, result);
+        LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), totalSize });
+        return new HakukohdeTulosRDTO(totalSize, result);
     }
 
     // /haku/OID/hakukohdeWithName

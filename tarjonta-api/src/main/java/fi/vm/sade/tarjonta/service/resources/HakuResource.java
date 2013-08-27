@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
@@ -98,7 +98,7 @@ public interface HakuResource {
     @GET
     @Path("{oid}/hakukohdetulos")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakukohdeTulosDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
+    public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince);
