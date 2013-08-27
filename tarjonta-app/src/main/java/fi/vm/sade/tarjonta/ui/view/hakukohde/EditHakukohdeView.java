@@ -163,17 +163,21 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private String tryGetViimPaivittaja(String viimPaivittajaOid) {
         try {
             String userName = null;
-            HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
-            if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
-                userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
-            } else {
-                userName = henkilo.getKayttajatunnus();
-            }
+            if(viimPaivittajaOid!=null) {
+                HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+                if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                    userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+                } else {
+                    userName = henkilo.getKayttajatunnus();
+                }
             return userName;
+            }
         } catch (Exception exp) {
             LOG.warn("Unable to get user with oid : {} exception : {}", viimPaivittajaOid, exp.toString());
-            return viimPaivittajaOid;
         }
+
+        //fall back to viimPaivittajaOid
+        return viimPaivittajaOid;
     }
     /*
      * Prints out the hakukohde's attached koulutukset.
@@ -416,32 +420,115 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
         
+        //Listener to handle tab changes (whether to allow or not)
         tabs.addListener(new SelectedTabChangeListener() {
 
             private static final long serialVersionUID = -3995507767832431214L;
 
             @Override
             public void selectedTabChange(SelectedTabChangeEvent event) {
-                if (HakukohdeActiveTab.PERUSTIEDOT.equals(activeTab) && !isTabChangeable()) {
-                    tabs.setSelectedTab(wrapperVl);
-                    presenter.showNotification(UserNotification.UNSAVED);
-                } else if (tabs.getSelectedTab().equals(valintakokeet)) {
-                    activeTab = HakukohdeActiveTab.VALINTAKOKEET; 
-                } else if (tabs.getSelectedTab().equals(wrapperVl)) {
-                    activeTab = HakukohdeActiveTab.PERUSTIEDOT;
-                } else {
-                    activeTab = HakukohdeActiveTab.LIITTEET;   
+                switch (activeTab) {
+                case PERUSTIEDOT :
+                    handlePerustiedotTabChange(wrapperVl);
+                    break;
+                case VALINTAKOKEET:
+                    handleValintakokeetTabChange (wrapperVl);
+                    break;
+                case LIITTEET:
+                    changeTab(wrapperVl);
+                    break;
+                 default:
+                     changeTab(wrapperVl);
                 }
             }
             
         });
+        makeFormDataUnmodified();
     }
 
-    protected boolean isTabChangeable() {
-        if (this.isSaved()) {
-            return true;
+    /*
+     * Handles tab change in the case that user's current tab is perustiedot 
+     */
+    private void handlePerustiedotTabChange(VerticalLayout wrapperVl) {
+        HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+        hakukohde.getLisatiedot().clear();
+        hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());
+        if (!this.canTabBeChanged()) {
+            tabs.setSelectedTab(wrapperVl);
+            presenter.showNotification(UserNotification.UNSAVED);
+        } else {
+            changeTab(wrapperVl);
         }
+    }
+    
+    /*
+     * Handles tab change in the case that user's current tab is valintakokeet
+     */
+    private void handleValintakokeetTabChange (VerticalLayout perustiedotContainer) {
+        if (KoulutusasteTyyppi.LUKIOKOULUTUS.equals(valintakokeet.getModel().getKoulutusasteTyyppi()) 
+                && !isLukioValintakoeTabChangeable() ) {
+            tabs.setSelectedTab(valintakokeet);
+            presenter.showNotification(UserNotification.UNSAVED);
+        } else {
+            changeTab(perustiedotContainer);
+        }
+    }
+    
+    /*
+     * Changes the tab
+     */
+    private void changeTab(VerticalLayout perustiedotContainer) {
+        if (tabs.getSelectedTab().equals(valintakokeet)) {
+            activeTab = HakukohdeActiveTab.VALINTAKOKEET; 
+        } else if (tabs.getSelectedTab().equals(perustiedotContainer)) {
+            activeTab = HakukohdeActiveTab.PERUSTIEDOT;
+        } else if (tabs.getSelectedTab().equals(liitteet)) {
+            activeTab = HakukohdeActiveTab.LIITTEET;   
+        }
+        makeFormDataUnmodified();
+    }
+
+    /*
+     * Checks whether there are unsaved changes in lukio valintakoe tab 
+     */
+    private boolean isLukioValintakoeTabChangeable() {
+        this.valintakokeet.getFormView().getPisterajaTable().bindValintakoeData(presenter.getModel().getSelectedValintaKoe());
+        this.valintakokeet.getFormView().getPisterajaTable().bindLisapisteData(presenter.getModel().getSelectedValintaKoe());
+        presenter.getModel().getSelectedValintaKoe().setSanallisetKuvaukset(valintakokeet.getFormView().getLukioValintakoeView().getValintakokeenKuvaukset());
+        presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(this.valintakokeet.getFormView().getLisanayttoKuvaukset());
+        if (valintakokeet.isSaved()) {
+            try {
+                this.valintakokeet.getFormView().getPisterajaTable().bindValintakoeData(null);
+                this.valintakokeet.getFormView().getPisterajaTable().bindLisapisteData(null);
+                valintakokeet.validateLukioValintakoeForm();
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        } 
         return false;
+    }
+    
+    /*
+     * Checks whether perustiedot data is unchanged
+     */
+    private boolean canTabBeChanged() {
+        if (!this.isSaved()) {
+            try {
+                this.validateFormData();
+            } catch (Validator.InvalidValueException e) {
+                errorView.addError(e);
+            }
+            return false;
+        }
+        
+        try {
+            validateFormData();
+            return true;
+        } catch (Validator.InvalidValueException e) {
+            errorView.addError(e);
+            return false;
+        }
     }
 
     public void setValintakokeetTabSelected() {

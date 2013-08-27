@@ -21,16 +21,17 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
  * http://localhost:8181/tarjonta-service/rest/haku/hello
- *
+ * 
  * Internal documentation:
  * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- *
+ * 
  * @author mlyly
  * @see HakuResource
  */
@@ -126,11 +127,13 @@ public class HakuResourceImpl implements HakuResource {
         }
 
         // Get the total size (give count < 0 -- > no limits)
-        int totalSize = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince).size();
+        int totalSize = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince)
+                .size();
 
         List<HakukohdeDTO> result = new ArrayList<HakukohdeDTO>();
 
-        for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince)) {
+        for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore,
+                lastModifiedSince)) {
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
             HakukohdeDTO dto = conversionService.convert(hakukohde, HakukohdeDTO.class);
             result.add(dto);

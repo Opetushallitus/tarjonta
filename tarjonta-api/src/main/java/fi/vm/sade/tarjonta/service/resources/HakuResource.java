@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
  * /haku  (?searchTerms... - list of { oid : xxx }
  * /haku/OID
  * /haku/OID/hakukohde - list of {oid : xxx}
+ * /haku/OID/hakukohdetulos - list of {kokonaismaara: xxx, tulokset: []}
  * /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
  * </pre>
  * 

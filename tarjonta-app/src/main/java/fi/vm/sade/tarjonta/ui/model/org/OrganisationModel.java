@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.model.org;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 
@@ -78,11 +78,11 @@ public class OrganisationModel extends BaseUIViewModel {
         setOrganisation(obj.getOrganisationOid(), obj.getOrganisationName());
     }
 
-    public void dtoToModel(OrganisaatioDTO dto) {
+    public void dtoToModel(OrganisaatioPerustieto dto) {
         Preconditions.checkNotNull(dto, "OrganisaatioDTO object cannot be null!");
         Preconditions.checkNotNull(dto.getOid(), "OrganisaatioDTO object OID cannot be null!");
 
-        setOrganisation(dto.getOid(), OrganisaatioDisplayHelper.getClosest(I18N.getLocale(), dto));
+        setOrganisation(dto.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), dto));
     }
 
     public boolean isOrganisationSelected() {

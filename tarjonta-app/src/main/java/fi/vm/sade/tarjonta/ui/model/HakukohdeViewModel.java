@@ -156,38 +156,46 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(version)
-                .append(oid)
-                .append(organisaatioOid)
-                .append(hakukohdeKoodistoNimi)
-                .append(tunnisteKoodi)
-                .append(hakuViewModel)
-                .append(hakuaika)
-                .append(aloitusPaikat)
-                .append(valinnoissaKaytettavatPaikat)
-                .append(tila)
-                .append(hakukelpoisuusVaatimus)
-                .append(sahkoinenToimitusSallittu)
-                .append(kaytaHaunPaattymisenAikaa)
-                .append(liitteidenSahkoinenToimitusOsoite)
-                .append(liitteidenToimitusPvm)
-                .append(osoiteRivi1)
-                .append(osoiteRivi2)
-                .append(postinumero)
-                .append(postitoimipaikka)
-                .append(valintaPerusteidenKuvaus)
-                .append(lisatiedot)
-                .append(komotoOids)
-                .append(koulukses)
-                .append(liites)
-                .append(valintaKokees)
-                .append(painotettavat)
-                .append(selectedHakukohdeNimi)
-                .append(alinHyvaksyttavaKeskiarvo)
-                .append(viimeisinPaivittaja)
-                .append(viimeisinPaivitysPvm)
-                .toHashCode();
+        HashCodeBuilder builder = new HashCodeBuilder()
+        .append(version)
+        .append(oid)
+        .append(organisaatioOid)
+        .append(hakukohdeKoodistoNimi)
+        .append(tunnisteKoodi)
+        .append(hakuViewModel)
+        .append(hakuaika)
+        .append(aloitusPaikat)
+        .append(valinnoissaKaytettavatPaikat)
+        .append(tila)
+        .append(hakukelpoisuusVaatimus)
+        .append(sahkoinenToimitusSallittu)
+        .append(kaytaHaunPaattymisenAikaa)
+        .append(liitteidenSahkoinenToimitusOsoite)
+        .append(liitteidenToimitusPvm)
+        .append(osoiteRivi1)
+        .append(osoiteRivi2)
+        .append(postinumero)
+        .append(postitoimipaikka)
+        .append(valintaPerusteidenKuvaus)
+        .append(lisatiedot)
+        .append(komotoOids)
+        .append(koulukses)
+        .append(liites)
+        .append(valintaKokees)
+        .append(painotettavat)
+        .append(selectedHakukohdeNimi)
+        .append(alinHyvaksyttavaKeskiarvo)
+        .append(viimeisinPaivittaja)
+        .append(viimeisinPaivitysPvm);
+        
+        if (lisatiedot != null) {
+            for (KielikaannosViewModel curKaannos : lisatiedot) {
+                builder = builder.append(curKaannos.getKielikoodi())
+                                  .append(curKaannos.getNimi());
+            }
+        }
+        
+        return builder.toHashCode();
     }
 
     public boolean isCustomHakuaikaEnabled() {

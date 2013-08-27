@@ -121,6 +121,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         this.uiBuilder = uiBuilder;
         this.errorMessage = errorMessage;
         buildMainLayout();
+        setCustomOsoiteEnabled(false);
     }
     
     private String T(String key) {
@@ -223,11 +224,11 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private GridLayout buildLiitteidenToimitusOsoite() {
         GridLayout osoiteLayout = new GridLayout(2, 3);
-
-
+        
         osoiteRivi1 = UiUtil.textField(null);
         osoiteRivi1.setWidth("100%");
         osoiteRivi1.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi1"));
+        osoiteRivi1.setRequiredError(I18N.getMessage("HakukohteenLiitteetViewImpl.validation.osoite"));
         osoiteLayout.addComponent(osoiteRivi1, 0, 0, 1, 0);
 
         osoiteRivi2 = UiUtil.textField(null);
@@ -238,6 +239,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         postinumero = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_POSTINUMERO_URI);
         osoiteLayout.addComponent(postinumero, 0, 2);
         postinumero.setSizeUndefined();
+        postinumero.setRequiredError(I18N.getMessage("HakukohteenLiitteetViewImpl.validation.postinumero"));
 
         postitoimipaikka = UiUtil.textField(null);
         postitoimipaikka.setInputPrompt(I18N.getMessage("PerustiedotView.postitoimipaikka"));
@@ -386,8 +388,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                         presenter.saveHakukohteenEditView();
                     }
                 } catch (Validator.InvalidValueException e) {
+                	LOG.info("Validation error", e);
                     errorMessage.addError(e);
                 } catch (Exception exp) {
+                	LOG.warn("Error saving hakukohde", exp);
                     errorMessage.addError(exp.toString());
                 }
             }
@@ -430,13 +434,14 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     	presenter.setCustomLiiteOsoiteSelected(enabled);
         if (osoiteRivi1 != null) {
             osoiteRivi1.setEnabled(enabled);
+            osoiteRivi1.setRequired(enabled);
         }
         if (osoiteRivi2 != null) {
             osoiteRivi2.setEnabled(enabled);
         }
         if (postinumero != null) {
             postinumero.setEnabled(enabled);
-
+            postinumero.setRequired(enabled);
         }
         if (postitoimipaikka != null) {
             postitoimipaikka.setEnabled(enabled);

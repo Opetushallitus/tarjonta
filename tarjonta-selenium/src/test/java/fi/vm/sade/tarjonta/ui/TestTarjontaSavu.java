@@ -57,6 +57,7 @@ public class TestTarjontaSavu {
     static Boolean first = true;
 	@Test
     public void testKoulutus() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testKoulutusLoop();
@@ -125,6 +126,7 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
         		, doit.textElement(driver, "Optima samkommun"));
         t01 = doit.millisDiff(t01);
@@ -150,14 +152,15 @@ public class TestTarjontaSavu {
         		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
         t01 = doit.millisDiff(t01);
         doit.echo("Running TarjontaSavu004a Luo uusi ammatillinenkoulutus OK");
-//        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
         
         // LUO UUSI AMMATILLINENKOULUTUS (validialog + jatka)
         doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
         doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
+        Assert.assertNotNull("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka ei toimi."
+        		, doit.textElement(driver, "Pohjakoulutus:"));
         doit.tauko(1);
-        doit.sendInputPlusX(driver, "Pohjakoulutus:", "Peruskoulu", 20);
+        doit.sendInputPlusY(driver, "Pohjakoulutus:", "Peruskoulu");
         doit.popupItemClick(driver, "Peruskoulu");
         doit.tauko(1);
         driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
@@ -181,6 +184,7 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        doit.tauko(1);
         Assert.assertNotNull("Running TarjontaSavu002 Hae Kerttulin lukio ei toimi."
                         , doit.textElement(driver, "Kerttulin lukio"));
         t01 = doit.millisDiff(t01);
@@ -257,6 +261,7 @@ public class TestTarjontaSavu {
 
 	@Test
     public void testHakukohteet() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testHakukohteetLoop();
@@ -274,8 +279,12 @@ public class TestTarjontaSavu {
 	public void testHakukohteetLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-        driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+            driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+    		doit.tauko(1);
+        }
+        first = false;
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		Boolean luokka = false;
@@ -472,14 +481,14 @@ public class TestTarjontaSavu {
         	t01 = doit.millis();
         	doit.textClick(driver, "Tarkastele");
         	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        			, doit.textElement(driver, "Liitä uusi koulutus"));
+        			, doit.textElement(driver, "Koulutukset"));
         	t01 = doit.millisDiff(t01);
         	doit.echo("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
             doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
-        	if (! doit.isPresentText(driver, "julkaistu"))
+        	if (! doit.isPresentText(driver, "julkaistu") || ! doit.isPresentText(driver, "Ylioppilastutkinto"))
         	{
         	t01 = doit.millis();
         	doit.textClick(driver, "muokkaa");
@@ -982,6 +991,7 @@ public class TestTarjontaSavu {
 
 	@Test
     public void testHaku() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testHakuLoop();
@@ -999,8 +1009,11 @@ public class TestTarjontaSavu {
 	public void testHakuLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        	doit.tauko(1);
+        }
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
@@ -1070,12 +1083,14 @@ public class TestTarjontaSavu {
                 , doit.textElement(driver, "Hakulomake"));
 		t01 = doit.millisDiff(t01);
 		doit.echo("Running TarjontaHakuSavu004 Tarkastele hakua OK");
+		doit.echo("Running TarjontaHakuSavu END OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 	}		
 
 	@Test
     public void testValinnat() throws Exception {
+		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testValinnatLoop();
@@ -1093,8 +1108,11 @@ public class TestTarjontaSavu {
 	public void testValinnatLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
+        if (first)
+        {
+        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        	doit.tauko(1);
+        }
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
@@ -1115,6 +1133,7 @@ public class TestTarjontaSavu {
                 , doit.textElement(driver, "Kuvausteksti"));
 		doit.footerTest(driver, "Running TarjontaValintaSavu002 Sora-vaatimukset footer ei toimi.", true);
 		doit.echo("Running TarjontaValintaSavu002 Sora-vaatimukset OK");
+		doit.echo("Running TarjontaValintaSavu END OK");
         doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		

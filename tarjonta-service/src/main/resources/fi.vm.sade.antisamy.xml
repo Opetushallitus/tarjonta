@@ -280,6 +280,8 @@
             <attribute name="align"/>
             <attribute name="valign"/>
         </tag>
+        <tag name="tbody" action="validate">
+        </tag>
     </tag-rules>
 
     <css-rules>

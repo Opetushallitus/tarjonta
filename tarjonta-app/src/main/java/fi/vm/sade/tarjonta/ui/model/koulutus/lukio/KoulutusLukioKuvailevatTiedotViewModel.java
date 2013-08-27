@@ -175,6 +175,8 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
             for (String curKey : tekstit.keySet()) {
                 builder = builder.append(curKey);
                 KoulutusLisatietoModel lisatieto = tekstit.get(curKey);
+               
+                
                 builder = builder.append(lisatieto.getKansainvalistyminen())
                         .append(lisatieto.getKoulutusohjelmanValinta())
                         .append(lisatieto.getKuvailevatTiedot())

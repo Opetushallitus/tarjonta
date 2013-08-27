@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
@@ -31,12 +31,10 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
@@ -73,7 +71,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
     public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final OrganisationOidNamePair pair, final String komotoOid) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
-        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), pair);
+        final OrganisaatioPerustieto dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), pair);
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         paivita.setVersion(tarjontaModel.getKoulutusPerustiedotModel().getVersion());
@@ -101,7 +99,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         final String organisaatioOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
 
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisaatioOid, selectedOrganisation);
+        final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(organisaatioOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         mapToKoulutusTyyppi(lisaa, model, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
@@ -137,8 +135,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      */
     public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws ExceptionMessage {
         //set selected tarjoaja to UI model
-        OrganisationOidNamePair pair = new OrganisationOidNamePair();
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), pair);
+        final OrganisationOidNamePair pair = new OrganisationOidNamePair();
+        final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), pair);
         model.getTarjoajaModel().setSelectedOrganisation(pair);
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, DocumentStatus.NEW, organisaatio, locale);
@@ -153,7 +151,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
     }
 
     public static KoulutusTyyppi mapToKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusToisenAsteenPerustiedotViewModel model, final String komotoOid,
-            OrganisaatioDTO organisatio) {
+            OrganisaatioPerustieto organisatio) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
         Preconditions.checkNotNull(model, INVALID_DATA + "KoulutusToisenAsteenPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
@@ -194,7 +192,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
     }
 
     private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
-            OrganisaatioDTO organisatio, Locale locale) {
+            OrganisaatioPerustieto organisatio, Locale locale) {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
         Preconditions.checkNotNull(status, INVALID_DATA + "DocumentStatus enum cannot be null.");
         Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisation DTO cannot be null.");

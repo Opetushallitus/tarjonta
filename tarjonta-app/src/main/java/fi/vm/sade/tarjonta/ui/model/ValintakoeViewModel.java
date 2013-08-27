@@ -151,22 +151,35 @@ public class ValintakoeViewModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(valintakoeTunniste)
-                .append(valintakoeTyyppi)
-                .append(sanallisetKuvaukset)
-                .append(valintakoeAjat)
-                .append(pkAlinPM)
-                .append(pkYlinPM)
-                .append(pkAlinHyvaksyttyPM)
-                .append(lpAlinPM)
-                .append(lpYlinPM)
-                .append(lpAlinHyvaksyttyPM)
-                .append(kpAlinHyvaksyttyPM)
-                .append(viimeisinPaivittaja)
-                .append(viimeisinPaivitysPvm)
-                .append(lisanayttoKuvaukset)
-                .toHashCode();
+        HashCodeBuilder builder = new HashCodeBuilder()
+        .append(valintakoeTunniste)
+        .append(valintakoeTyyppi)
+        .append(sanallisetKuvaukset)
+        .append(valintakoeAjat)
+        .append(pkAlinPM)
+        .append(pkYlinPM)
+        .append(pkAlinHyvaksyttyPM)
+        .append(lpAlinPM)
+        .append(lpYlinPM)
+        .append(lpAlinHyvaksyttyPM)
+        .append(kpAlinHyvaksyttyPM)
+        .append(viimeisinPaivittaja)
+        .append(viimeisinPaivitysPvm)
+        .append(lisanayttoKuvaukset);
+
+        builder = appendMonikielinenData(builder, sanallisetKuvaukset);
+        builder = appendMonikielinenData(builder, lisanayttoKuvaukset);
+        
+        return builder.toHashCode();
+    }
+    
+    private HashCodeBuilder appendMonikielinenData(HashCodeBuilder builder, List<KielikaannosViewModel> kaannokset) {
+        if (kaannokset != null) {
+            for (KielikaannosViewModel curKaannos: kaannokset) {
+                builder = builder.append(curKaannos.getKielikoodi()).append(curKaannos.getNimi());
+            }
+        }
+        return builder;
     }
 
     public void clearModel() {

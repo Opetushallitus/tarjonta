@@ -27,6 +27,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -362,6 +363,9 @@ public class TarjontaKoodistoHelper {
 
         // Get koodi
         KoodiType sourceKoodiType = getKoodiByUri(koodiUri);
+        if (sourceKoodiType == null) {
+            return Collections.EMPTY_LIST;
+        }
 
         // Create uri + version
         KoodiUriAndVersioType koodi = getKoodiUriAndVersioTypeByKoodiUriAndVersion(createKoodiUriWithVersion(sourceKoodiType));
