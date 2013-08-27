@@ -26,7 +26,16 @@ public class HakukohdeTulosRDTO implements Serializable {
         return kokonaismaara;
     }
 
+    public void setKokonaismaara(int kokonaismaara) {
+        this.kokonaismaara = kokonaismaara;
+    }
+
     public List<HakukohdeNimiRDTO> getTulokset() {
         return tulokset;
     }
+
+    public void setTulokset(List<HakukohdeNimiRDTO> tulokset) {
+        this.tulokset = tulokset;
+    }
+
 }
