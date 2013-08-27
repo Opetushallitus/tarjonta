@@ -31,6 +31,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Jani Wilén
  */
 public class ValintaperusteModel extends BaseUIViewModel {
+    
+    
+    private static final long serialVersionUID = -629945979735589282L;
     /*
      * Form input fields
      */
