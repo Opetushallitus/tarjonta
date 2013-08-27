@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class TarjontaPublicationExceptionMapper implements ExceptionMapper<Exception> {
 
-    private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationRESTService.class);
+    private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationExceptionMapper.class);
 
     @Override
     public Response toResponse(Exception e) {

@@ -17,7 +17,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
  * REST services for haku's.
- * 
+ *
  * <pre>
  * /haku/hello
  * /haku  (?searchTerms... - list of { oid : xxx }
@@ -26,7 +26,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
  * /haku/OID/hakukohdetulos - list of {kokonaismaara: xxx, tulokset: []}
  * /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
  * </pre>
- * 
+ *
  * @author mlyly
  */
 @Path("/haku")
@@ -40,7 +40,7 @@ public interface HakuResource {
     /**
      * /haku?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&
      * lastModifiedSince=XX
-     * 
+     *
      * @param searchTerms
      * @param count
      * @param startIndex
@@ -56,7 +56,7 @@ public interface HakuResource {
 
     /**
      * /haku/OID
-     * 
+     *
      * @param oid
      * @return HakuDTO
      */
@@ -67,7 +67,7 @@ public interface HakuResource {
 
     /**
      * /haku/OID/hakukohde
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
@@ -86,14 +86,14 @@ public interface HakuResource {
 
     /**
      * /haku/OID/hakukohde
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
-     * @return list of Haku's Hakokohde OIDs
+     * @return list of Haku's HakokohdeDTOs
      */
     @GET
     @Path("{oid}/hakukohdetulos")
@@ -106,7 +106,7 @@ public interface HakuResource {
     /**
      * Same as "getByOIDHakukohde" but resolves the koodisto name for
      * hakukohde...
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
