@@ -81,9 +81,25 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
 
         t.setLiitteet(convertLiitteet(s.getLiites()));
-        
-        t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm()==null ? s.getHakuaika().getAlkamisPvm() : s.getHakuaikaAlkuPvm());
-        t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm()==null ? s.getHakuaika().getPaattymisPvm() : s.getHakuaikaLoppuPvm());
+
+        if (s.getHakuaikaAlkuPvm() != null) {
+            t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
+        } else {
+            if (s.getHakuaika() != null) {
+                t.setHakuaikaAlkuPvm(s.getHakuaika().getAlkamisPvm());
+            }
+        }
+
+        if (s.getHakuaikaLoppuPvm() != null) {
+            t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
+        } else {
+            if (s.getHakuaika() != null) {
+                t.setHakuaikaLoppuPvm(s.getHakuaika().getPaattymisPvm());
+            }
+        }
+
+//        t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm()==null ? s.getHakuaika().getAlkamisPvm() : s.getHakuaikaAlkuPvm());
+//        t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm()==null ? s.getHakuaika().getPaattymisPvm() : s.getHakuaikaLoppuPvm());
 
         // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from koodisto)
         {
