@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,18 +17,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
- * http://localhost:8181/tarjonta-service/rest/haku/hello
+ * Run:
+ * 
+ * <pre>
+ * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
+ * </pre>
+ * 
+ * Test:
+ * 
+ * <pre>
+ * http://localhost:8084/tarjonta-service/rest?_wadl
+ * </pre>
  * 
  * Internal documentation:
  * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
@@ -41,13 +58,14 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
-
     @Autowired
     private HakuDAO hakuDAO;
-
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    @Autowired
+    private OrganisaatioService organisaatioService;
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired(required = true)
     private ConversionService conversionService;
 
@@ -115,7 +133,7 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdetulos
     @Override
-    public HakukohdeTulosDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
+    public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince) {
@@ -127,20 +145,15 @@ public class HakuResourceImpl implements HakuResource {
         }
 
         // Get the total size (give count < 0 -- > no limits)
-        int totalSize = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince)
-                .size();
-
-        List<HakukohdeDTO> result = new ArrayList<HakukohdeDTO>();
-
-        for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore,
+        List<String> oids = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince);
+        int totalSize = oids.size();
+        List<HakukohdeNimiRDTO> result = new ArrayList<HakukohdeNimiRDTO>();
+        for (String hakukohdeoid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore,
                 lastModifiedSince)) {
-            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
-            HakukohdeDTO dto = conversionService.convert(hakukohde, HakukohdeDTO.class);
-            result.add(dto);
+            result.add(getHakukohdeNimi(hakukohdeoid));
         }
-
         LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), totalSize });
-        return new HakukohdeTulosDTO(totalSize, result);
+        return new HakukohdeTulosRDTO(totalSize, result);
     }
 
     // /haku/OID/hakukohdeWithName
@@ -179,4 +192,100 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
+    public HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
+        LOG.info("getHakukohdeNimi({})", oid);
+
+        HakukohdeNimiRDTO result = new HakukohdeNimiRDTO();
+
+        // TODO fixme to be more efficient! Add a custom finder for this
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+        if (hakukohde == null) {
+            return result;
+        }
+
+        //
+        // Get hakukohde name
+        //
+
+        // Get multilingual name for koodisto "hakukohde" (application option?)
+        result.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(hakukohde.getHakukohdeNimi()));
+        result.setHakukohdeOid(oid);
+        result.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
+
+        //
+        // Haku/koulutus year and term
+        //
+        Haku haku = hakukohde.getHaku();
+        if (haku != null) {
+            result.setHakuVuosi(haku.getHakukausiVuosi());
+            result.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
+        } else {
+            result.setHakuVuosi(-1);
+            result.setHakuKausi(null);
+        }
+
+        //
+        // Get organisaatio name
+        //
+        String organisaatioOid = null;
+
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (koulutusmoduuliToteutus.getTarjoaja() != null) {
+                // Assumes that only one provider for koulutus - is this true?
+                organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
+
+                // Also assume that kausi and vuosi is the same also
+                result.setKoulutusKausi(tarjontaKoodistoHelper
+                        .getKoodiMetadataNimi(resolveDateToKausiUri(koulutusmoduuliToteutus.getKoulutuksenAlkamisPvm())));
+                result.setKoulutusVuosi(resolveDateToYear(koulutusmoduuliToteutus.getKoulutuksenAlkamisPvm()));
+
+                // assume it is the same for all komotos
+                break;
+            }
+        }
+
+        if (organisaatioOid != null) {
+            result.setTarjoajaOid(organisaatioOid);
+            OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
+            if (organisaatio != null) {
+                Map<String, String> map = new HashMap<String, String>();
+                for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
+                    map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
+                            teksti.getValue());
+                }
+                result.setTarjoajaNimi(map);
+            }
+        }
+
+        LOG.info("  --> result = {}", result);
+
+        return result;
+    }
+
+    private String resolveDateToKausiUri(final Date d) {
+        if (d == null) {
+            return null;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+
+        // FIXME hardcoded kausi uris
+        // TODO check logic for kausi uris, hardcoded!
+        if (cal.get(Calendar.MONTH) < 6) {
+            return "kausi_k";
+        } else {
+            return "kausi_s";
+        }
+    }
+
+    private int resolveDateToYear(final Date d) {
+        if (d == null) {
+            return -1;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        return cal.get(Calendar.YEAR);
+    }
 }

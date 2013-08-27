@@ -1929,7 +1929,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> olTyyppiUris = new ArrayList<String>();
         //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
         if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
-            olTyyppiUris.add(selectedOrg.getOppilaitosKoodi());
+            olTyyppiUris.add(selectedOrg.getOppilaitostyyppi());
         }
         //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
         //list of oppilaitostyyppiuris
