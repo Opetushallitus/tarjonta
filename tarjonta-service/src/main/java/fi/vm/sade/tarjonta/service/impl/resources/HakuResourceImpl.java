@@ -140,7 +140,8 @@ public class HakuResourceImpl implements HakuResource {
         List<String> oids = hakukohdeDAO.findByHakuOid(oid, searchTerms, -1, 0, lastModifiedBefore, lastModifiedSince);
         int totalSize = oids.size();
         List<HakukohdeNimiRDTO> result = new ArrayList<HakukohdeNimiRDTO>();
-        for (String hakukohdeoid : oids) {
+        for (String hakukohdeoid : hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore,
+                lastModifiedSince)) {
             result.add(hakukohdeResource.getHakukohdeNimi(hakukohdeoid));
         }
         LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), totalSize });
