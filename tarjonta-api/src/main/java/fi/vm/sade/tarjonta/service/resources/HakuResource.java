@@ -85,7 +85,7 @@ public interface HakuResource {
             @QueryParam("lastModifiedSince") Date lastModifiedSince);
 
     /**
-     * /haku/OID/hakukohdetulos
+     * /haku/OID/hakukohdeTulos
      * 
      * @param oid
      * @param searchTerms
@@ -96,7 +96,7 @@ public interface HakuResource {
      * @return list of Haku's HakukohdeTulosRDTOs
      */
     @GET
-    @Path("{oid}/hakukohdetulos")
+    @Path("{oid}/hakukohdeTulos")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
