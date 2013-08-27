@@ -23,7 +23,8 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -34,8 +35,6 @@ import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import static fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper.splitKoodiURIAllowNull;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.INVALID_DATA;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.mapToKoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -66,6 +65,8 @@ public class KoulutusConveter {
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusConveter.class);
     public static final String INVALID_DATA = "Invalid data exception - ";
     @Autowired(required = true)
+    protected OrganisaatioSearchService organisaatioSearchService;
+    @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
     protected KoulutusKoodistoConverter koulutusKoodisto;
@@ -74,7 +75,7 @@ public class KoulutusConveter {
 
     public OrganisationOidNamePair searchOrganisationByOid(final String organisaatioOid) {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
-        OrganisaatioDTO dto = this.organisaatioService.findByOid(organisaatioOid);
+        OrganisaatioPerustieto dto = this.organisaatioSearchService.findByOidSet(Sets.newHashSet(organisaatioOid)).get(0);
 
         if (dto == null || dto.getOid() == null) {
             throw new RuntimeException("No organisation found by OID : " + organisaatioOid);
@@ -85,18 +86,19 @@ public class KoulutusConveter {
         return pair;
     }
 
-    public OrganisaatioDTO searchOrganisationByOid(final String organisaatioOid, final OrganisationOidNamePair model) {
+    public OrganisaatioPerustieto searchOrganisationByOid(final String organisaatioOid, final OrganisationOidNamePair model) {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
         Preconditions.checkNotNull(model, "TarjoajaModel object cannot be null.");
-        OrganisaatioDTO dto = this.organisaatioService.findByOid(organisaatioOid);
+        Preconditions.checkNotNull(organisaatioSearchService);
+        OrganisaatioPerustieto perus = this.organisaatioSearchService.findByOidSet(Sets.newHashSet(organisaatioOid)).get(0);
 
-        if (dto == null || dto.getOid() == null) {
+        if (perus == null || perus.getOid() == null) {
             throw new RuntimeException("No organisation found by OID : " + organisaatioOid);
         }
 
-        model.dtoToModel(dto);
+        model.dtoToModel(perus);
 
-        return dto;
+        return perus;
     }
 
     public static String checkWwwOsoite(String linkki) {

@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import com.google.common.collect.Lists;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -11,6 +12,8 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
@@ -104,7 +107,7 @@ public class TarjontaLukioPresenterTest {
     private TarjontaAdminService tarjontaAdminServiceMock;
     private TarjontaPublicService tarjontaPublicServiceMock;
     private OIDService oidServiceMock;
-    private OrganisaatioService organisaatioServiceMock;
+    private OrganisaatioSearchService organisaatioSearchServiceMock;
     private KoulutusKoodistoConverter koulutusKoodisto;
     private KoulutusLukioConverter koulutusLukioConverter;
     private EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView;
@@ -113,6 +116,7 @@ public class TarjontaLukioPresenterTest {
     private KoulutusLukioPerustiedotViewModel perustiedot;
     private KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot;
     private OrganisaatioDTO orgDto;
+    private OrganisaatioPerustieto orgPerus;
     private TarjontaUIHelper tarjontaUiHelperMock;
     private YhteyshenkiloModel yhteyshenkiloModel;
     private TarjontaPresenter tarjontaPresenter;
@@ -133,6 +137,9 @@ public class TarjontaLukioPresenterTest {
     public void setUp() {
         orgDto = new OrganisaatioDTO();
         orgDto.setOid(ORGANISAATIO_OID);
+        orgPerus = new OrganisaatioPerustieto();
+        orgPerus.setOid(ORGANISAATIO_OID);
+        orgPerus.setNimiFi(ORGANISATION_NAME);
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi omtt = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi();
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti();
         teksti.setKieliKoodi(LANGUAGE_FI);
@@ -159,7 +166,7 @@ public class TarjontaLukioPresenterTest {
 
         oidServiceMock = createMock(OIDService.class);
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
+        organisaatioSearchServiceMock = createMock(OrganisaatioSearchService.class);
         koulutusKoodisto = new KoulutusKoodistoConverter();//createMock(KoulutusKoodistoConverter.class);
         tarjontaUiHelperMock = createMock(TarjontaUIHelper.class);
 
@@ -170,7 +177,7 @@ public class TarjontaLukioPresenterTest {
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(koulutusLukioConverter, "oidService", oidServiceMock);
-        Whitebox.setInternalState(koulutusLukioConverter, "organisaatioService", organisaatioServiceMock);
+        Whitebox.setInternalState(koulutusLukioConverter, "organisaatioSearchService", organisaatioSearchServiceMock);
         Whitebox.setInternalState(koulutusLukioConverter, "koulutusKoodisto", koulutusKoodisto);
         Whitebox.setInternalState(instance, "editLukioKoulutusView", editLukioKoulutusView);
         Whitebox.setInternalState(instance, "lukioKoulutusConverter", koulutusLukioConverter);
@@ -279,11 +286,11 @@ public class TarjontaLukioPresenterTest {
          * Expect
          */
         expect(tarjontaAdminServiceMock.lisaaKoulutus(capture(localeCapture))).andReturn(new LisaaKoulutusVastausTyyppi());
-        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
-        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
         expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
 
@@ -292,9 +299,10 @@ public class TarjontaLukioPresenterTest {
          */
         replay(oidServiceMock);
         replay(tarjontaAdminServiceMock);
-        replay(organisaatioServiceMock);
+  //      replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(tarjontaUiHelperMock);
+        replay(organisaatioSearchServiceMock);
 
         /*
          * Presenter method call
@@ -306,7 +314,7 @@ public class TarjontaLukioPresenterTest {
          */
         verify(oidServiceMock);
         verify(tarjontaAdminServiceMock);
-        verify(organisaatioServiceMock);
+        verify(organisaatioSearchServiceMock);
         verify(tarjontaPublicServiceMock);
         LisaaKoulutusTyyppi koulutus = localeCapture.getValue();
 
@@ -382,9 +390,9 @@ public class TarjontaLukioPresenterTest {
          */
 
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
-        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
-        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(KOULUTUSKOODI));
         expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiType(LUKIOLINJA));
 
@@ -395,7 +403,7 @@ public class TarjontaLukioPresenterTest {
 
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
-        replay(organisaatioServiceMock);
+        replay(organisaatioSearchServiceMock);
         replay(tarjontaUiHelperMock);
 
         /*
@@ -407,7 +415,7 @@ public class TarjontaLukioPresenterTest {
          * verify
          */
         verify(tarjontaAdminServiceMock);
-        verify(organisaatioServiceMock);
+        verify(organisaatioSearchServiceMock);
 
         PaivitaKoulutusTyyppi koulutus = localeCapture.getValue();
 
@@ -536,7 +544,7 @@ public class TarjontaLukioPresenterTest {
         /*
          * Expect
          */
-        expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
+        expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
 
@@ -558,7 +566,7 @@ public class TarjontaLukioPresenterTest {
          */
         replay(tarjontaUiHelperMock);
         replay(oidServiceMock);
-        replay(organisaatioServiceMock);
+        replay(organisaatioSearchServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(tarjontaKoodistoHelperMock);
 
@@ -573,7 +581,7 @@ public class TarjontaLukioPresenterTest {
          */
         verify(tarjontaUiHelperMock);
         verify(oidServiceMock);
-        verify(organisaatioServiceMock);
+        verify(organisaatioSearchServiceMock);
         verify(tarjontaPublicServiceMock);
         verify(tarjontaKoodistoHelperMock);
 

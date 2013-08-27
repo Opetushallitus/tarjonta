@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
@@ -33,15 +33,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertListToSet;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.createKoodi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.fromKoodistoKoodiTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.getUri;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapOpetussuunnitelmaLinkkiToTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToValidKoodistoKoodiTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapYhteyshenkiloToTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.toKoodistoKoodiTyypi;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
@@ -67,7 +58,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         final String organisationOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         final KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
         final KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedotModel = tarjontaModel.getKoulutusLukioKuvailevatTiedot();
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisationOid, selectedOrganisation);
+        final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(organisationOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
@@ -88,7 +79,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
-        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
+        final OrganisaatioPerustieto dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         convertToLukioKoulutusTyyppi(paivita, perustiedotModel, komotoOid, dto);
@@ -210,7 +201,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return model;
     }
 
-    public static KoulutusTyyppi convertToLukioKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusLukioPerustiedotViewModel model, final String komotoOid, OrganisaatioDTO organisation) {
+    public static KoulutusTyyppi convertToLukioKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusLukioPerustiedotViewModel model, final String komotoOid, OrganisaatioPerustieto organisation) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
         Preconditions.checkNotNull(model, INVALID_DATA + "KoulutusLukioPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");

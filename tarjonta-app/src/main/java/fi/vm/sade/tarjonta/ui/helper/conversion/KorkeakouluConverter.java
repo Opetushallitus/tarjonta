@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -40,13 +40,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.createKoodi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.fromKoodistoKoodiTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapOpetussuunnitelmaLinkkiToTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToValidKoodistoKoodiTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapYhteyshenkiloToTyyppi;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.toKoodistoKoodiTyypi;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
@@ -73,7 +66,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         final String organisationOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         final KorkeakouluPerustiedotViewModel perustiedotModel = tarjontaModel.getKorkeakouluPerustiedot();
         final KorkeakouluKuvailevatTiedotViewModel kuvailevatTiedotModel = tarjontaModel.getKorkeakouluKuvailevatTiedot();
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisationOid, selectedOrganisation);
+        final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(organisationOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
@@ -94,7 +87,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KorkeakouluPerustiedotViewModel perustiedotModel = tarjontaModel.getKorkeakouluPerustiedot();
-        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
+        final OrganisaatioPerustieto dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         convertToKorkeakouluKoulutusTyyppi(paivita, perustiedotModel, komotoOid, dto);
@@ -197,7 +190,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return model;
     }
 
-    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KorkeakouluPerustiedotViewModel model, final String komotoOid, OrganisaatioDTO organisation) {
+    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KorkeakouluPerustiedotViewModel model, final String komotoOid, OrganisaatioPerustieto organisation) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
         Preconditions.checkNotNull(model, INVALID_DATA + "KoulutusLukioPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");

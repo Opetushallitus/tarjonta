@@ -163,17 +163,21 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private String tryGetViimPaivittaja(String viimPaivittajaOid) {
         try {
             String userName = null;
-            HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
-            if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
-                userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
-            } else {
-                userName = henkilo.getKayttajatunnus();
-            }
+            if(viimPaivittajaOid!=null) {
+                HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+                if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                    userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+                } else {
+                    userName = henkilo.getKayttajatunnus();
+                }
             return userName;
+            }
         } catch (Exception exp) {
             LOG.warn("Unable to get user with oid : {} exception : {}", viimPaivittajaOid, exp.toString());
-            return viimPaivittajaOid;
         }
+
+        //fall back to viimPaivittajaOid
+        return viimPaivittajaOid;
     }
     /*
      * Prints out the hakukohde's attached koulutukset.
