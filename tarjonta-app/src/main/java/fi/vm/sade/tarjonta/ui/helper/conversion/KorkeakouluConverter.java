@@ -379,12 +379,6 @@ public class KorkeakouluConverter extends KoulutusConveter {
         tutkintoohjelma.setKomoOid(tyyppi.getOid());
         tutkintoohjelma.setKomoOid(tyyppi.getParentOid());
 
-        MonikielinenTekstiTyyppi.Teksti selectedTeksti = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(locale, tyyppi.getNimi());
-        Preconditions.checkNotNull(selectedTeksti, "Could not found a closest name for tutkinto-ohjelma.");
-        tutkintoohjelma.setNimi(selectedTeksti.getValue());
-        tutkintoohjelma.setKielikoodi(selectedTeksti.getKieliKoodi());
-        tutkintoohjelma.setKielikaannos(new HashSet(mapToKielikaannosViewModel(tyyppi.getNimi())));
-
         return tutkintoohjelma;
     }
 

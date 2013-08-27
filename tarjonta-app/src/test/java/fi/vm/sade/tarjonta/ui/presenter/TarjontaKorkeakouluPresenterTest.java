@@ -39,8 +39,8 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
@@ -181,9 +181,9 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
         TutkintoohjelmaModel tutkintoohjelmaModel = new TutkintoohjelmaModel();
         tutkintoohjelmaModel.setNimi(KOMO_TUTKINTOOHJELMA_NAME);
-        Set<KielikaannosViewModel> kielikaannos = KoulutusConveter.convertToKielikaannosViewModel(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, KOMO_TUTKINTOOHJELMA_NAME));
+        final Set<KielikaannosViewModel> kielikaannos = KoulutusConveter.convertToKielikaannosViewModel(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, KOMO_TUTKINTOOHJELMA_NAME));
 
-        tutkintoohjelmaModel.setKielikaannos(kielikaannos);
+        tutkintoohjelmaModel.setKielikaannos(LANGUAGE_FI, LANGUAGE_FI, kielikaannos);
         tutkintoohjelmaModel.setKomoOid(KOMO_OID);
         perustiedot.setTutkintoohjelma(tutkintoohjelmaModel);
 
@@ -244,15 +244,25 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         //kuvailevatTiedot.setDiplomit(createList(1, "diplomi"));
 
 
-        Map<String, KoulutusLisatietoModel> map = new HashMap<String, KoulutusLisatietoModel>();
-        KoulutusLisatietoModel koulutusLisatietoModel = new KoulutusLisatietoModel();
-        koulutusLisatietoModel.setKansainvalistyminen("Kansainvalistyminen");
-        koulutusLisatietoModel.setYhteistyoMuidenToimijoidenKanssa("YhteistyoMuidenToimijoidenKanssa");
-        koulutusLisatietoModel.setSisalto("Sisalto");
+        Map<String, KorkeakouluLisatietoModel> map = new HashMap<String, KorkeakouluLisatietoModel>();
+        KorkeakouluLisatietoModel koulutusLisatietoModel = new KorkeakouluLisatietoModel();
+        koulutusLisatietoModel.setKoulutusohjelmanAmmatillisetTavoitteet("koulutusohjelmanAmmatillisetTavoitteet");
+        koulutusLisatietoModel.setPaaaineenValinta("paaaineenValinta");
+        koulutusLisatietoModel.setKoulutuksenSisalto("koulutuksenSisalto");
+        koulutusLisatietoModel.setKoulutuksenRakenne("koulutuksenRakenne");
+        koulutusLisatietoModel.setKuvaKoulutuksenRakenteesta("kuvaKoulutuksenRakenteesta");
+        koulutusLisatietoModel.setLisatietoaOpetuskielesta("lisatietoaOpetuskielesta");
+        koulutusLisatietoModel.setLopputyonKuvaus("lopputyonKuvaus");
+        koulutusLisatietoModel.setOpintojenMaksullisuus("lopputyonKuvaus");
+        koulutusLisatietoModel.setSijoittautuminenTyoelamaan("opintojenMaksullisuus");
+        koulutusLisatietoModel.setPatevyys("patevyys");
+        koulutusLisatietoModel.setKansainvalistyminen("kansainvalistyminen");
+        koulutusLisatietoModel.setYhteistyoMuidenToimijoidenKanssa("yhteistyoMuidenToimijoidenKanssa");
+        koulutusLisatietoModel.setTutkimuksenPainopisteet("tutkimuksenPainopisteet");
+        koulutusLisatietoModel.setJatkoOpintomahdollisuudet("jatkoOpintomahdollisuudet");
         map.put("fi", koulutusLisatietoModel);
 
         kuvailevatTiedot.setLisatiedot(map);
-        kuvailevatTiedot.setTila(TarjontaTila.VALMIS);
     }
 
     /**

@@ -48,6 +48,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
@@ -270,12 +271,12 @@ public class ShowKorkeakouluSummaryView extends AbstractVerticalInfoLayout {
 
 
 
-        KoulutusLisatietoModel tiedotModel = kuvailevatTiedot.getLisatiedot(lang);
+        KorkeakouluLisatietoModel tiedotModel = kuvailevatTiedot.getLisatiedot(lang);
 
         FormGridBuilder gridLang = new FormGridBuilder(getClass());
 
         gridLang
-                .addXhtml("tutkinnonSisalto", tiedotModel.getSisalto())
+                .addXhtml("koulutusohjelmanAmmatillisetTavoitteet", tiedotModel.getKoulutusohjelmanAmmatillisetTavoitteet())
                 .addXhtml("tutkinnonKansainvalistyminen", tiedotModel.getKansainvalistyminen())
                 .addXhtml("tutkinnonYhteistyoMuidenToimijoidenKanssa", tiedotModel.getYhteistyoMuidenToimijoidenKanssa());
 

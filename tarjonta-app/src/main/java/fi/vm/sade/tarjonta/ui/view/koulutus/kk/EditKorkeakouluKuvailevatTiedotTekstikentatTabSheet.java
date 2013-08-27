@@ -28,7 +28,7 @@ import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluLisatietoModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditLisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import java.util.HashSet;
@@ -56,24 +56,33 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
 
         vl.setSpacing(true);
         vl.setMargin(true);
-
-        KoulutusLisatietoModel model = getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().get(uri);
+        KorkeakouluLisatietoModel model = getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().get(uri);
 
         if (model == null) {
-            model = new KoulutusLisatietoModel();
+            model = new KorkeakouluLisatietoModel();
             getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().put(uri, model);
         }
 
         final PropertysetItem psi = new BeanItem(model);
 
-        createEditor(uri, vl, psi, "sisalto");
-        createEditor(uri, vl, psi, "kansainvalistyminen");
-        createEditor(uri, vl, psi, "yhteistyoMuidenToimijoidenKanssa");
-
+        createEditor(vl, psi, "koulutusohjelmanAmmatillisetTavoitteet");
+        createEditor(vl, psi, "paaaineenValinta");
+        createEditor(vl, psi, "koulutuksenSisalto");
+        createEditor(vl, psi, "koulutuksenRakenne");
+        createEditor(vl, psi, "kuvaKoulutuksenRakenteesta");
+        createEditor(vl, psi, "lisatietoaOpetuskielesta");
+        createEditor(vl, psi, "lopputyonKuvaus");
+        createEditor(vl, psi, "opintojenMaksullisuus");
+        createEditor(vl, psi, "sijoittautuminenTyoelamaan");
+        createEditor(vl, psi, "patevyys");
+        createEditor(vl, psi, "kansainvalistyminen");
+        createEditor(vl, psi, "yhteistyoMuidenToimijoidenKanssa");
+        createEditor(vl, psi, "tutkimuksenPainopisteet");
+        createEditor(vl, psi, "jatkoOpintomahdollisuudet");
         return vl;
     }
 
-    private void createEditor(final String langUri, final VerticalLayout vl, final PropertysetItem psi, final String id) {
+    private void createEditor(final VerticalLayout vl, final PropertysetItem psi, final String id) {
         final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, id);
         rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".label"), LabelStyleEnum.H2));
@@ -86,8 +95,6 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
         // What languages should we have as preselection when initializing the form?
         // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
-
-
         languageUris.addAll(getModel().getKorkeakouluPerustiedot().getOpetuskielis());
 
         if (!languageUris.isEmpty()) {
@@ -100,7 +107,5 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
             values.add(defautLang);
             getKcSelection().setValue(values);
         }
-
-        //setSelectedTab(opetuskieliKoodiUri);
     }
 }
