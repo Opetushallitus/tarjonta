@@ -269,7 +269,7 @@ public abstract class OrganisaatioSelectDialog extends Window {
             @Override
             public void itemSelected(Object item) {
                 if (item instanceof SelectableItem) {
-                    SelectableItem<OrganisaatioPerustietoType> link = (SelectableItem<OrganisaatioPerustietoType>)item;
+                    SelectableItem<OrganisaatioPerustieto> link = (SelectableItem<OrganisaatioPerustieto>)item;
                     selectedOrgs.remove(link.getItem().getOid());
                     vlRight.removeComponentFromGrid(link);
                 }
