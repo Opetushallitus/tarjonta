@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -27,11 +25,18 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
- * http://localhost:8181/tarjonta-service/rest/haku/hello
- * 
- * Internal documentation:
- * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- * 
+ * Run:
+ * <pre>
+ * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
+ * </pre>
+ *
+ * Test:
+ * <pre>
+ * http://localhost:8084/tarjonta-service/rest?_wadl
+ * </pre>
+ *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ *
  * @author mlyly
  * @see HakuResource
  */
@@ -41,13 +46,10 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
-
     @Autowired
     private HakuDAO hakuDAO;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired(required = true)
     private ConversionService conversionService;
 
@@ -70,8 +72,8 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore,
             Date lastModifiedSince) {
-        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[] { searchTerms, count, startIndex,
-                lastModifiedBefore, lastModifiedSince });
+        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex,
+            lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -115,10 +117,13 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdetulos
     @Override
-    public HakukohdeTulosDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
-            @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
-            @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince) {
+    public HakukohdeTulosDTO getByOIDHakukohdeTulos(
+            String oid,
+            String searchTerms,
+            int count,
+            int startIndex,
+            Date lastModifiedBefore,
+            Date lastModifiedSince) {
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
         if (count <= 0) {
@@ -139,7 +144,7 @@ public class HakuResourceImpl implements HakuResource {
             result.add(dto);
         }
 
-        LOG.debug("  result={}, result count {}, total count {}", new Object[] { result, result.size(), totalSize });
+        LOG.debug("  result={}, result count {}, total count {}", new Object[]{result, result.size(), totalSize});
         return new HakukohdeTulosDTO(totalSize, result);
     }
 
@@ -178,5 +183,4 @@ public class HakuResourceImpl implements HakuResource {
 
         return result;
     }
-
 }

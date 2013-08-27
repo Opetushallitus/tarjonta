@@ -1,14 +1,15 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Jussi Jartamo
- * 
+ *
  *         Sivutettua hakukohteiden hakua varten tulos DTO
  */
-public class HakukohdeTulosDTO {
+public class HakukohdeTulosDTO implements Serializable {
 
     private int _kokonaismaara;
     private List<HakukohdeDTO> _tulokset;
