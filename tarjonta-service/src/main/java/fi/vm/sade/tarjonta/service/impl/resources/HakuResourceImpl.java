@@ -192,7 +192,7 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-    public HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
+    private HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
         LOG.info("getHakukohdeNimi({})", oid);
 
         HakukohdeNimiRDTO result = new HakukohdeNimiRDTO();
