@@ -11,8 +11,6 @@ import java.util.List;
  */
 public class HakukohdeTulosRDTO implements Serializable {
 
-    private static final long serialVersionUID = 7580532025362066822L;
-
     private int kokonaismaara;
     private List<HakukohdeNimiRDTO> tulokset;
 
@@ -28,7 +26,16 @@ public class HakukohdeTulosRDTO implements Serializable {
         return kokonaismaara;
     }
 
+    public void setKokonaismaara(int kokonaismaara) {
+        this.kokonaismaara = kokonaismaara;
+    }
+
     public List<HakukohdeNimiRDTO> getTulokset() {
         return tulokset;
     }
+
+    public void setTulokset(List<HakukohdeNimiRDTO> tulokset) {
+        this.tulokset = tulokset;
+    }
+
 }

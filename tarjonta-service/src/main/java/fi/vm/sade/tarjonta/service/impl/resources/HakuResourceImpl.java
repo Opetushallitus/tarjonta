@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,10 +130,8 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdetulos
     @Override
-    public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
-            @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
-            @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince) {
+    public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
+            Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
         if (count <= 0) {
@@ -192,7 +187,7 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-    public HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
+    private HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
         LOG.info("getHakukohdeNimi({})", oid);
 
         HakukohdeNimiRDTO result = new HakukohdeNimiRDTO();
