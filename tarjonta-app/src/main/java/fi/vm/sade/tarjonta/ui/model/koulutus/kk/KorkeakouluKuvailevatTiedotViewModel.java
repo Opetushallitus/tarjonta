@@ -15,9 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
+import com.google.common.collect.Lists;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import java.util.Collection;
@@ -27,6 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 1L;
+    private TarjontaTila tila;
     // tekstikentät
     private Collection<String> ammattinimikkeet;
     private Map<String, KorkeakouluLisatietoModel> tekstit = Maps.<String, KorkeakouluLisatietoModel>newHashMap();
@@ -72,12 +75,13 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
 
         builder.append(ammattinimikkeet, other.ammattinimikkeet);
         builder.append(tekstit, other.tekstit);
+        builder.append(tila, other.tila);
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(tekstit).append(ammattinimikkeet)
+        return new HashCodeBuilder().append(tekstit).append(tila).append(ammattinimikkeet)
                 .toHashCode();
     }
 
@@ -85,6 +89,10 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
      * @return the ammattinimikkeet
      */
     public Collection<String> getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = Lists.<String>newArrayList();
+        }
+
         return ammattinimikkeet;
     }
 
@@ -93,5 +101,19 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
      */
     public void setAmmattinimikkeet(Collection<String> ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    /**
+     * @return the tila
+     */
+    public TarjontaTila getTila() {
+        return tila;
+    }
+
+    /**
+     * @param tila the tila to set
+     */
+    public void setTila(TarjontaTila tila) {
+        this.tila = tila;
     }
 }

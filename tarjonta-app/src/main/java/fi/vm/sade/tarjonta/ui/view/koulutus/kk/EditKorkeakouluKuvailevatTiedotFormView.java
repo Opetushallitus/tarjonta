@@ -69,8 +69,7 @@ public class EditKorkeakouluKuvailevatTiedotFormView extends VerticalLayout {
         HorizontalLayout hlAmmattinimike = new HorizontalLayout();
         hlAmmattinimike.setMargin(false, false, true, false);
 
-        PropertysetItem psi = new BeanItem(model.getAmmattinimikkeet());
-        tokenField = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURI.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+        tokenField = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURI.KOODISTO_AMMATTINIMIKKEET_URI, new BeanItem(model), "ammattinimikkeet");
         tokenField.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override
             public String formatToken(Object selectedToken) {
