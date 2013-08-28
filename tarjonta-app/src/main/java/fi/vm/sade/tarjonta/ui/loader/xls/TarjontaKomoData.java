@@ -144,16 +144,7 @@ public class TarjontaKomoData {
                 String parentKomoOid = searchChildKomo.getKoulutusmoduuli().getParentOid();
                 final String childKomoOid = searchChildKomo.getKoulutusmoduuli().getOid();
                 log.info("Update : {} {}", komos.getChildren().getKoulutuskoodiUri(), childKomoOid);
-
-                if (komos.getChildren().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-                    final String tempParentOid = parentKomoOid;
-                    //remove this code block after all environments has been update.
-                    //Update lukiolinja child's parent relations.
-                    KoulutusmoduuliTulos searchKomo = searchKomo(KoulutusasteTyyppi.LUKIOKOULUTUS, searchChildKomo.getKoulutusmoduuli().getKoulutuskoodiUri(), null);
-                    parentKomoOid = searchKomo.getKoulutusmoduuli().getOid();
-                    log.warn("Changed an invalid parent relation from OID {} to point OID {}", tempParentOid, parentKomoOid);
-                }
-
+    
                 if (komos.getParent().getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO)) {
                     //update KOMO parent
                     komos.getParent().setOid(parentKomoOid);
