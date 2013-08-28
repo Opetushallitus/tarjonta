@@ -1557,13 +1557,18 @@ public class SVTUtils {
     	tauko(1);
     	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
     	tauko(5);
-    	if (this.isPresentText(driver, "Koulutukset (0)")) { return false; }
+    	if (this.isPresentText(driver, "Koulutukset (0)")) 
+    	{
+    		tauko(10);
+    		return false; 
+    	}
     	WebElement triangle = getTriangleForFirstItem(driver);
         Assert.assertNotNull("Running koulutushaku triangle ei toimi.", triangle);
     	tauko(1);
     	triangle.click();
     	WebElement link = driver.findElement(By.className("v-button-link-row"));
         Assert.assertNotNull("Running koulutushaku link ei toimi.", link);
+        haku = haku.replace("*", "");
         this.menuOperaatio(driver, "Poista", haku);
     	Assert.assertNotNull("Running poistaa koulutus ei toimi."
     			, this.textElement(driver, "Haluatko varmasti poistaa alla olevan koulutuksen?"));
@@ -1576,8 +1581,9 @@ public class SVTUtils {
 	public WebElement TarkasteleKoulutusLuonnosta(WebDriver driver, String haku) throws Exception {
     	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
     	search.clear();
-    	search.sendKeys(haku);
     	this.tauko(1);
+    	search.sendKeys(haku);
+    	this.tauko(2);
     	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
         Assert.assertNotNull("Running Hae koulutuksia ei toimi."
                 , this.textElement(driver, "Koulutukset ("));
@@ -1611,6 +1617,8 @@ public class SVTUtils {
     	search.clear();
     	search.sendKeys(haku);
     	this.tauko(1);
+    	this.sendInput(driver, "Tila", "Luonnos");
+    	this.popupItemClick(driver, "Luonnos");
     	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
         Assert.assertNotNull("Running Hae koulutuksia ei toimi."
                 , this.textElement(driver, "Koulutukset ("));

@@ -1,7 +1,7 @@
 {
-  "modified" : 1377086456676,
+  "modified" : 1377670849501,
   "oid" : "1.2.246.562.5.2013060313060131672122",
-  "version" : 62,
+  "version" : 63,
   "tila" : "JULKAISTU",
   "koulutuksenRakenne" : {
   },
@@ -14,7 +14,7 @@
   "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
   "tavoitteet" : {
     "kieli_sv" : "<p>Om du genomfört utbildningsprogrammet för grönsektorn kan du arbeta med byggnad och underhåll inom grönsektorn, både i byggd och i naturmiljö. Du kan använda olika maskiner och apparater utgående från miljön, har goda kunskaper i matematik och blick för det estetiska samt god kännedom om olika växter och det material som behövs vid grönområdesbyggnad. Du bör vara social och samarbetsvillig, beakta kulturen och betydelsen av grönområden som en del av landskapet.</p>",
-    "kieli_fi" : "<p>Viheralan koulutusohjelman suorittanut osaa työskennellä viheralan rakentamisen ja kunnossapidon tehtävissä sekä rakennetuissa että luonnonympäristöissä. Hän osaa käyttää tarvittavia koneita ja laitteita turvallisesti ja ympäristöä säästäen. Viheralan ammattilaisella on hyvät matematiikan perustaidot ja esteettistä silmää ja hyvä kasvin- ja muun viherrakennusmateriaalin tuntemus. Hän on sosiaalinen ja osaa tehdä yhteistyötä eri alojen rakentajien kanssa ja osaa toimia työyhteisön jäsenenä. Hän myös ymmärtää miljöön kulttuuriset arvot ja viheralueiden merkityksen osana maiseman kokonaisuutta.</p>"
+    "kieli_fi" : "<p>Viheralan koulutusohjelman tai osaamisalan suorittanut puutarhuri rakentaa ja hoitaa pihoja, puistoja sekä liikunta- ja leikkipaikkoja. Viheralan puutarhuri työstää kivi- ja puumateriaalista suunnitelman mukaisia piha- ja viheralueita. Hän tunnistaa viherrakentamisessa käytettävät kasvit ja osaa sijoittaa ja käsitellä niitä kasvupaikkavaatimusten mukaisesti. Työssään hän käyttää ja huoltaa viheralueiden rakentamisessa tarvittavia koneita ja laitteita turvallisesti ja tehokkaasti.</p> <p>Työpaikat: Kaupunkien tai kuntien puistotoimi, viherrakennusyritykset, seurakunnat, golfkentät.</p>"
   },
   "koulutusKoodiUri" : "koulutus_361201#1",
   "ylaModuulit" : [ "1.2.246.562.5.2013060313055858232262" ],

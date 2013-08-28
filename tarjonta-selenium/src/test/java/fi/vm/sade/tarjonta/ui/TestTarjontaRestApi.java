@@ -33,7 +33,7 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST001() throws IOException {
-		restTest(path + "001.txt", http + "/komo?count=2");
+		restTestCount(path + "001.txt", http + "/komo?count=2");
 	}
 	
 	@Test
@@ -48,7 +48,7 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST004() throws IOException {
-		restTest(path + "004.txt", http + "/komoto?count=2");
+		restTestCount(path + "004.txt", http + "/komoto?count=2");
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST007() throws IOException {
-		restTest(path + "007.txt", http + "/haku?count=2");
+		restTestCount(path + "007.txt", http + "/haku?count=2");
 	}
 	
 	@Test
@@ -78,17 +78,22 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST010() throws IOException {
-		restTest(path + "010.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031");
+		restTestCount(path + "010.txt", http + "/hakukohde?count=2");
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST011() throws IOException {
-		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031/haku");
+		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031");
+	}
+	
+	@Test
+	public void test_T_INT_TAR_REST012() throws IOException {
+		restTest(path + "012.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031/haku");
 	}
 	
 	@Test
 	public void testReport() throws IOException {
-		if (ok_count == 11) 
+		if (ok_count == 12) 
 		{
 			RestApiRajaPinnat.setKattavuus("TarjontaRestApi", RestApiRajaPinnat.KATTAVUUSOK);
 			RestApiRajaPinnat.KattavuusRaportti();
@@ -138,6 +143,27 @@ public class TestTarjontaRestApi {
 		response = getJson(url);
 		expected = expected.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
 		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " ");
+		Assert.assertEquals("RestApi error", expected, response);
+		ok_count++;
+	}
+
+	public void restTestCount(String fileName, String url) throws IOException {
+		SVTUtils doit = new SVTUtils();   
+		doit.echo(fileName);
+		String response = "";
+		String expected = doit.readFile(fileName);
+		response = getJson(url);
+		expected = expected.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
+		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " ");
+		String[] list = response.split("}");
+		for (int i = 0; i < list.length; i++) {
+			String part = list[i];
+			if (part.indexOf(".") < 0) { continue; }
+			String id = part.substring(part.lastIndexOf(".") +1);
+			id = id.replace("\"", "");
+			response = response.replace(id, "");
+		}
+		doit.echo("response without id=" + response);
 		Assert.assertEquals("RestApi error", expected, response);
 		ok_count++;
 	}

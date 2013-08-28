@@ -187,8 +187,13 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
         //Reset checksum.
         makeFormDataUnmodified();
     }
+    
+    public boolean canTabBeChanged() {
+        final String selectedUri = getValintaModel().getSelectedUri();
+        return (selectedUri == null) || isSaved();
+    }
 
-    private void setModelDataToValidationHandler() {
+    public void setModelDataToValidationHandler() {
         //this is a quick data binding hack.
         getValintaModel().setKuvaus(form.getkuvaus());
         setModel(getValintaModel());
