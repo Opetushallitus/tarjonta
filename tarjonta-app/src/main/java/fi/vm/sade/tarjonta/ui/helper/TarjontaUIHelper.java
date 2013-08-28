@@ -67,7 +67,9 @@ import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
+import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.view.koulutus.UusiKoulutusDialog;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -323,9 +325,9 @@ public class TarjontaUIHelper {
      * @return
      */
     public List<KoodiType> getKoodis(String uri) {
-    	if (uri==null) {
-    		return null;
-    	}
+        if (uri == null) {
+            return null;
+        }
         final String[] spitByUriAndVersion = splitKoodiURIAllowNull(uri);
         final String version = spitByUriAndVersion[1];
         return gethKoodis(spitByUriAndVersion[0], version == null ? null : Integer.valueOf(version));
@@ -1126,5 +1128,26 @@ public class TarjontaUIHelper {
         }
 
         return koodiTypes;
+    }
+
+    public boolean hasRelationKoulutustyyppiToOppilaitostyyppi(final String koulutustyyppiUri, final List<String> oppilaitosTyyppis) {
+        Collection<KoodiType> koodis = new ArrayList<KoodiType>();
+        for (String oppilaitosTyyppi : oppilaitosTyyppis) {
+            Collection<KoodiType> curKoodis = getKoodistoRelations(oppilaitosTyyppi, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, false, SuhteenTyyppiType.SISALTYY);
+            koodis.addAll(curKoodis);
+        }
+        String[] tyyppiUriParts = TarjontaUIHelper.splitKoodiURI(koulutustyyppiUri);
+        for (KoodiType koodi : koodis) {
+            if (koodi.getKoodiUri().equals(tyyppiUriParts[0])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
+    public boolean isOrganisationKorkeakoulu(List<String> olTyyppiUris) {
+        return hasRelationKoulutustyyppiToOppilaitostyyppi(Koulutustyyppi.KORKEAKOULU.getKoulutustyyppiUri(), olTyyppiUris);
     }
 }

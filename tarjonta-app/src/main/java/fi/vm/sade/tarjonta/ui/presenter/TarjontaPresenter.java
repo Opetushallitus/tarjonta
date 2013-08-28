@@ -864,7 +864,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
                 for (OrganisaatioPerustieto org : orgs) {
                     OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-                    
+
                     String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org);
                     oidNamePair.setOrganisationName(nimi);
                     getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
@@ -2244,9 +2244,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public boolean availableKoulutus() {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
-        HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
-        kysely.getOppilaitostyyppiUris().addAll(oppilaitostyyppiUris);
-        return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
+
+        if (uiHelper.isOrganisationKorkeakoulu(oppilaitostyyppiUris)) {
+            //No KOMO data check needed.
+            return true;
+        } else {
+            //KOMO required.
+            HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
+            kysely.getOppilaitostyyppiUris().addAll(oppilaitostyyppiUris);
+            return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
+        }
     }
 
     /**
