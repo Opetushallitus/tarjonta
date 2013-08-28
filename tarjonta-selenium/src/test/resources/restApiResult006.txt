@@ -1,7 +1,7 @@
 {
-  "modified" : 1377086480455,
+  "modified" : 1377670862539,
   "oid" : "1.2.246.562.5.2013060313061248737942",
-  "version" : 21,
+  "version" : 22,
   "tila" : "JULKAISTU",
   "koulutuksenRakenne" : {
   },
@@ -14,7 +14,7 @@
   "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
   "tavoitteet" : {
     "kieli_sv" : "<p>I utbildningsprogrammet för gruvbranschen kan du beroende på specialisering bli gruvarbetare eller anrikare. Gruvarbetaren arbetar i gruvor som finns under eller utanpå jorden. Anrikaren arbetar på ett anrikningsverk eller inom processindustrin.</p>",
-    "kieli_fi" : "<p>Kaivosalan koulutusohjelmassa opiskelija erikoistuu kaivosmieheksi tai rikastajaksi. Kaivosmies tekee työtä maanalaisessa tai maanpäällisessä kaivoksessa. Rikastajan työpaikkana on maanpäällinen kaivoksen rikastamo tai muu työ prosessiteollisuudessa.</p>"
+    "kieli_fi" : "<p>Kaivosalan koulutusohjelman tai osaamisalan suorittanut kaivosmies tekee louhinnan keskeisiä työtehtäviä (poraus, panostus, murskaus, nostot, kaivoksentäyttömenetelmät, kallionlujitusmenetelmät, louheen käsittely, rakennustekniset työt). Hän osaa huoltaa käyttämiään koneita ja laitteita ja tehdä mekaanista kunnossapitoa.</p> <p>Työpaikat: maanalainen tai maanpäällinen kaivos.</p> <p>Kaivosalan koulutusohjelman tai osaamisalan suorittanut rikastaja tekee mekaanisen hienonnuksen keskeisiä työtehtäviä (murskaus ja hienonnus) ja rikastuksen yksikköprosessin keskeisiä työtehtäviä työryhmän jäsenenä. Hän tekee prosesseihin liittyviä mittaus-, säätö-, huolto- ja kunnossapitotehtäviä.</p> <p>Työpaikat: kaivoksen rikastamo, prosessiteollisuus.</p>"
   },
   "koulutusKoodiUri" : "koulutus_351107#1",
   "ylaModuulit" : [ "1.2.246.562.5.2013060313061007276716" ],
