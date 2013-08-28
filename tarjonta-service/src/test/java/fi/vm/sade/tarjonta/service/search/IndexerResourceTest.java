@@ -2,12 +2,10 @@ package fi.vm.sade.tarjonta.service.search;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -74,7 +72,7 @@ public class IndexerResourceTest {
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l);
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l, "hakuoid");
         return hie;
     }
 
@@ -105,6 +103,7 @@ public class IndexerResourceTest {
     private Hakukohde getHakukohde() {
         
         Haku haku = new Haku();
+        haku.setOid("oid");
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHakukohdeNimi("xxx");
         hakukohde.setId(1l);
