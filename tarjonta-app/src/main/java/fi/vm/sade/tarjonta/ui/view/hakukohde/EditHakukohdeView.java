@@ -480,6 +480,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private void changeTab(VerticalLayout perustiedotContainer) {
         if (tabs.getSelectedTab().equals(valintakokeet)) {
             activeTab = HakukohdeActiveTab.VALINTAKOKEET; 
+            valintakokeet.makeFormDataUnmodified();
         } else if (tabs.getSelectedTab().equals(perustiedotContainer)) {
             activeTab = HakukohdeActiveTab.PERUSTIEDOT;
         } else if (tabs.getSelectedTab().equals(liitteet)) {
