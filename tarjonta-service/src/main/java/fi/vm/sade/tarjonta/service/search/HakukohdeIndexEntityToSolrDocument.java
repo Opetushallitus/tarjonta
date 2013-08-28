@@ -20,6 +20,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,13 +34,15 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
@@ -54,7 +57,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private OrganisaatioService organisaatioService;
+    private OrganisaatioSearchService organisaatioSearchService;
 
     @Autowired
     private KoodiService koodiService;
@@ -232,17 +235,22 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             List<SolrInputDocument> docs) {
         //final SolrInputDocument orgDoc = new SolrInputDocument();
 
-        OrganisaatioDTO org = organisaatioService.findByOid(tarjoaja);
-        if (org == null) {
+        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
+        if (orgs.size()==0) {
             return false;
         }
-        add(hakukohdeDoc, ORG_OID, org.getOid());
-
-        for (String path : Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
+        
+        final OrganisaatioPerustieto perus = orgs.get(0);
+        
+        add(hakukohdeDoc, ORG_OID, perus.getOid());
+        ArrayList<String> oidPath = Lists.newArrayList();
+        
+        Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
+        Collections.reverse(oidPath);
+        
+        for (String path : oidPath) {
             add(hakukohdeDoc, ORG_PATH, path);
         }
-        add(hakukohdeDoc, ORG_PATH, org.getOid());
-
         return true;
     }
 

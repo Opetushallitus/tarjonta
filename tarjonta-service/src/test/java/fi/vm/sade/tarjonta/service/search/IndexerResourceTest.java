@@ -19,10 +19,8 @@ import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -36,7 +34,7 @@ public class IndexerResourceTest {
     private IndexerResource indexer;
     private SolrServer hakukohteetServer;
     private KoodiService koodiService;
-    private OrganisaatioService organisaatioService;
+    private OrganisaatioSearchService organisaatioSearchService;
 
     @org.junit.Before
     public void setup() {
@@ -49,9 +47,9 @@ public class IndexerResourceTest {
         HakukohdeIndexEntityToSolrDocument hakukohdeToSolr = new HakukohdeIndexEntityToSolrDocument();
         ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
         
-        organisaatioService = Mockito.mock(OrganisaatioService.class);
-        stub(organisaatioService.findByOid("o-oid-12345")).toReturn(getOrg("o-oid-12345"));
-        ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioService", organisaatioService);
+        organisaatioSearchService = Mockito.mock(OrganisaatioSearchService.class);
+        stub(organisaatioSearchService.findByOidSet(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
+        ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioSearchService", organisaatioSearchService);
 
         koodiService = Mockito.mock(KoodiService.class);
         ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
@@ -76,17 +74,12 @@ public class IndexerResourceTest {
         return hie;
     }
 
-    private OrganisaatioDTO getOrg(String oid) {
-        OrganisaatioDTO dto = new OrganisaatioDTO();
-        dto.setOid(oid);
-        dto.setParentOidPath("|010101|");
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        Teksti teksti = new Teksti();
-        teksti.setKieliKoodi("fi");
-        teksti.setValue("nimi for " + oid);
-        nimi.getTeksti().add(teksti);
-        dto.setNimi(nimi);
-        return dto;
+    private OrganisaatioPerustieto getOrg(String oid) {
+        OrganisaatioPerustieto organisaatio = new OrganisaatioPerustieto();
+        organisaatio.setOid(oid);
+        organisaatio.setParentOidPath("010101");
+        organisaatio.setNimiFi("nimi for " + oid);
+        return organisaatio;
     }
 
     @Test
@@ -97,7 +90,7 @@ public class IndexerResourceTest {
         verify(hakukohteetServer, times(2)).commit(true, true, false);
         verify(hakukohteetServer, times(1)).add(any(Collection.class));
         verify(koodiService, times(4)).searchKoodis(any(SearchKoodisCriteriaType.class));
-        verify(organisaatioService, times(1)).findByOid("o-oid-12345");
+        verify(organisaatioSearchService, times(1)).findByOidSet(anySet());
     }
 
     private Hakukohde getHakukohde() {
