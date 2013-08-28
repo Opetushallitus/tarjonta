@@ -30,6 +30,7 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -43,6 +44,9 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private EditLukioKoulutusKuvailevatTiedotFormView formView;
+    
+    @Autowired
+    private TarjontaUIHelper uiHelper;
 
     public EditLukioKoulutusKuvailevatTiedotView(String oid) {
         super(oid, SisaltoTyyppi.KOMOTO);
@@ -60,7 +64,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
          *  FORM LAYOUT (form components under navigation buttons)
          */
         model = presenter.getModel().getKoulutusLukioKuvailevatTiedot();
-        formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, getUiBuilder(), model);
+        formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, uiHelper, getUiBuilder(), model);
         buildFormLayout("kuvailevatTiedot", presenter, layout, model, formView);
     }
 

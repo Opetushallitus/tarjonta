@@ -178,7 +178,7 @@ public class ListKoulutusView extends VerticalLayout {
         }
         //Adding the actual Hakukohde-listing component.
         categoryTree = new CategoryTreeView();
-        categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow());
+        categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow(uiHelper));
         categoryTree.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
@@ -209,7 +209,7 @@ public class ListKoulutusView extends VerticalLayout {
 
                 final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
                 for (KoulutusTulos curKoulutus : row.getChildren()) {
-                    KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus, nimet));
+                    KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, getKoulutusNimi(curKoulutus, nimet));
                     categoryTree.addItem(curKoulutus);
                     categoryTree.setParent(curKoulutus, event.getItemId());
                     categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
@@ -258,7 +258,7 @@ public class ListKoulutusView extends VerticalLayout {
 
         resultSet = map.entrySet();
         HierarchicalContainer hc = new HierarchicalContainer();
-        KoulutusResultRow rowStyleDef = new KoulutusResultRow();
+        KoulutusResultRow rowStyleDef = new KoulutusResultRow(uiHelper);
 
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
@@ -274,7 +274,7 @@ public class ListKoulutusView extends VerticalLayout {
             }
 
             //LOG.debug("getTreeDataSource()" + e.getKey());
-            KoulutusResultRow rowStyle = new KoulutusResultRow();
+            KoulutusResultRow rowStyle = new KoulutusResultRow(uiHelper);
             rowStyle.setRowKey(e.getKey());
             rowStyle.setChildren(e.getValue());
             Object rootItem = hc.addItem();

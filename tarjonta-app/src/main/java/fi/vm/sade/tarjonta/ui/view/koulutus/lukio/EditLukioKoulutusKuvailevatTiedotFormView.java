@@ -108,9 +108,10 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     public EditLukioKoulutusKuvailevatTiedotFormView() {
     }
 
-    public EditLukioKoulutusKuvailevatTiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder,
+    public EditLukioKoulutusKuvailevatTiedotFormView(final TarjontaPresenter presenter, final TarjontaUIHelper uiHelper, final UiBuilder uiBuilder,
             final KoulutusLukioKuvailevatTiedotViewModel model) {
         this.uiBuilder = uiBuilder;
+        this.uiHelper = uiHelper;
         this.presenter = presenter;
         initializeLayout();
     }

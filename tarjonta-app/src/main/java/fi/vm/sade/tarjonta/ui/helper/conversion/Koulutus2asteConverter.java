@@ -253,13 +253,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return model2Aste;
     }
 
-    private KoodiModel convert(String uri) {
-        KoodiModel koulutusAste = new KoodiModel();
-        koulutusAste.setKoodistoUri(uri);
-        return koulutusAste;
-    }
-
     private KoodiModel convert(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+    	if (koodistoKoodiTyyppi==null) {
+    		return null;
+    	}
         KoodiModel koulutusAste = new KoodiModel();
         koulutusAste.setKoodistoUri(koodistoKoodiTyyppi.getUri());
         return koulutusAste;

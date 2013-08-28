@@ -80,21 +80,23 @@ public class KoulutusResultRow extends HorizontalLayout {
     private List<KoulutusTulos> children;
     
     private Window removeKoulutusDialog;
-    @Autowired(required = true)
-    private TarjontaUIHelper tarjontaUIHelper;
+
+    private final TarjontaUIHelper tarjontaUIHelper;
     /**
      * The presenter object for the component.
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
 
-    public KoulutusResultRow() {
+    public KoulutusResultRow(TarjontaUIHelper tarjontaUIHelper) {
+    	this.tarjontaUIHelper = tarjontaUIHelper;
         this.koulutus = new KoulutusTulos();
         this.setHeight(-1, UNITS_PIXELS);
         this.setWidth(-1, UNITS_PIXELS);
     }
 
-    public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
+    public KoulutusResultRow(TarjontaUIHelper tarjontaUIHelper, KoulutusTulos koulutus, String koulutusNimi) {
+    	this.tarjontaUIHelper = tarjontaUIHelper;
         this.koulutus = koulutus;
         this.koulutusNimi = koulutusNimi;
         formatKoulutusName();

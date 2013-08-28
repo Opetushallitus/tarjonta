@@ -69,7 +69,6 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.view.koulutus.UusiKoulutusDialog;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -102,6 +101,7 @@ public class TarjontaUIHelper {
     private String langKoodiUriEn;
     @Value("${koodisto.language.sv.uri:kieli_sv}")
     private String langKoodiUriSv;
+    @Autowired
     private TarjontaSearchService tarjontaSearchService;
     private static final String[] SEARCH_KOMO_KOODISTOS = new String[]{
         KoodistoURI.KOODISTO_OPINTOALA_URI,
