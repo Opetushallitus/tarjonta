@@ -42,6 +42,10 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+    <filter>
+        <filter-name>MDCFilter</filter-name>
+        <filter-class>fi.vm.sade.generic.common.UserToMDCFilter</filter-class>
+    </filter>
 
     <!-- add top javascript navigation stuff -->
     <filter>
@@ -51,6 +55,11 @@
 
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>MDCFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
@@ -116,11 +125,6 @@
         <init-param>
             <param-name>application</param-name>
             <param-value>fi.vm.sade.tarjonta.ui.ValintaApplication</param-value>
-        </init-param>
-        <init-param>
-            <description>Widget Set to Use</description>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
         <init-param>
             <description>Widget Set to Use</description>

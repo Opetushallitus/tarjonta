@@ -19,6 +19,15 @@ public class HakukohteetKysely implements Serializable
     protected Integer koulutuksenAlkamisvuosi;
     protected TarjontaTila tilat;
     protected String koulutuksenAlkamiskausi;
+    private String hakuOid;
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
 
     /**
      * Default no-arg constructor
@@ -26,20 +35,6 @@ public class HakukohteetKysely implements Serializable
      */
     public HakukohteetKysely() {
         super();
-    }
-
-    /**
-     * Fully-initialising value constructor
-     * 
-     */
-    public HakukohteetKysely(final String nimi, final String nimiKoodiUri, final List<String> tarjoajaOids, final List<String> koulutusOids, final Integer koulutuksenAlkamisvuosi, final TarjontaTila tilat, final String koulutuksenAlkamiskausi) {
-        this.nimi = nimi;
-        this.nimiKoodiUri = nimiKoodiUri;
-        this.tarjoajaOids = tarjoajaOids;
-        this.koulutusOids = koulutusOids;
-        this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
-        this.tilat = tilat;
-        this.koulutuksenAlkamiskausi = koulutuksenAlkamiskausi;
     }
 
     /**

@@ -85,6 +85,11 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:%s", Hakukohde.TILA, tila));
         }
 
+        
+        if(kysely.getHakuOid()!=null) {
+            addFilterForHakuOid(kysely.getHakuOid(), q);
+        }
+        
         // vuosi & kausi
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
 
@@ -227,7 +232,7 @@ public class TarjontaSearchService {
         if (koulutusOids.size() > 0) {
             addFilterForKOulutus(koulutusOids, q);
         }
-
+        
 
         //filter out orgs
         filterOutOrgs(q);
@@ -238,7 +243,6 @@ public class TarjontaSearchService {
 
             //now we have the hakukohteet, fetch orgs
             Set<String> orgOids = Sets.newHashSet();
-
 
             for (SolrDocument doc : koulutusResponse.getResults()) {
                 if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
@@ -270,6 +274,10 @@ public class TarjontaSearchService {
 
     private void addFilterForKOulutus(List<String> tarjoajaOids, SolrQuery q) {
         q.addFilterQuery(String.format("%s:(%s)", Koulutus.OID, Joiner.on(" ").join(tarjoajaOids)));
+    }
+    
+    private void addFilterForHakuOid(String haunOid, SolrQuery q) {
+        q.addFilterQuery(String.format("%s:(%s)", Hakukohde.HAUN_OID, haunOid));
     }
 
     private void filterOutOrgs(SolrQuery query) {

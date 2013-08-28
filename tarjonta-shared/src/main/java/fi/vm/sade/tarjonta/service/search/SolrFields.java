@@ -85,6 +85,7 @@ public class SolrFields {
         protected static final String HAKUKOHTEEN_NIMI_URI = "hakukohdeuri_s";
         protected static final String HAUN_ALKAMISPVM = "haunalkupvm_s";
         protected static final String HAUN_PAATTYMISPVM = "haunpaattymispvm_s";
+        protected static final String HAUN_OID = "hakuoid_s";
         protected static final String TEKSTIHAKU = "tekstihaku_txt";        //this is used in search
         protected static final String KOULUTUS_OIDS = "koulutusoids_ss";        //this is used in search
     }
