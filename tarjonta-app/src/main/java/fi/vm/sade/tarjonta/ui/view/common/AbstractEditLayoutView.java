@@ -429,7 +429,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
      * Take a snapshot of model hashcode.
      * Used to check data model modifications.
      */
-    protected int makeFormDataUnmodified() {
+    public int makeFormDataUnmodified() {
         if (model == null) {
             throw new RuntimeException("Initialization error - the form data model has not been set correctly.");
         }
