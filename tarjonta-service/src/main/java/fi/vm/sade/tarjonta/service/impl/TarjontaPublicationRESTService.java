@@ -56,72 +56,10 @@ public class TarjontaPublicationRESTService {
     private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationRESTService.class);
     @Autowired
     private PublicationCollector dataCollector;
-    @Autowired
-    private TarjontaSampleData sampleData;
     @PersistenceContext
     private EntityManager em;
     @Autowired(required = true)
     protected OrganisaatioService organisaatioService;
-
-    /**
-     * Dummy method that can be used to test connection. Always returns "hello"
-     * -string.
-     *
-     * @return
-     */
-    @GET
-    @Path("/hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-
-        return "hello";
-
-    }
-
-    /**
-     * Inserts some example tarjonta data.
-     *
-     * @return
-     */
-    @GET
-    @Path("/sample-data")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Transactional(readOnly = false)
-    public String sampleData() {
-        sampleData.init();
-        return "OK";
-    }
-
-    /**
-     * For demostration/testing purposes only. Toggles all data to JULKAISTU
-     * state from VALMIS state.
-     *
-     * @return
-     */
-    @GET
-    @Path("/publish")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Transactional(readOnly = false)
-    @Deprecated
-    public String publish() {
-        throw new UnsupportedOperationException("Deprecated operation.");
-    }
-
-    /**
-     * For demostration/testing purposes only. Toggles all datasto VALMIS state
-     * from JULKAISTU state.
-     *
-     * @return
-     */
-    @GET
-    @Path("/unpublish")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Transactional(readOnly = false)
-    @Deprecated
-    public String unpublish() {
-        throw new UnsupportedOperationException("Deprecated operation.");
-
-    }
 
     @GET
     @Path("/export-rich")
