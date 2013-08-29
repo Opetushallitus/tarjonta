@@ -520,20 +520,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildSpacingGridRow(grid);
     }
 
-    @SuppressWarnings("unused") // OVT-4560
-	private void buildGridPainotus(GridLayout grid, final String propertyKey) {
-        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
-
-        gridLabel(grid, propertyKey, type);
-        EditKoulutusPainotusFormView editKoulutusPainotusFormView = new EditKoulutusPainotusFormView(koulutusModel);
-
-        grid.addComponent(new EditKoulutusPainotusFormView(koulutusModel));
-        grid.newLine();
-        buildSpacingGridRow(grid);
-
-        addSelectedFormComponents(type, editKoulutusPainotusFormView);
-    }
-
     private void buildGridKestoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
         HorizontalLayout hl = new HorizontalLayout();
