@@ -38,11 +38,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLisatiedotTabSheet {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet.class);
     private static final String TEXT_AREA_DEFAULT_WIDTH = "550px";
     private static final long serialVersionUID = -7726685044305900176L;
-
+    
     public EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet(TarjontaModel tarjontaModel, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
         super(tarjontaModel, uiHelper, uiBuilder);
     }
@@ -56,22 +56,21 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
     @Override
     protected AbstractComponent createLanguageEditor(final String uri) {
         final VerticalLayout vl = UiBuilder.verticalLayout();
-
+        
         vl.setSpacing(true);
         vl.setMargin(true);
         KorkeakouluLisatietoModel model = getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().get(uri);
-
+        
         if (model == null) {
             model = new KorkeakouluLisatietoModel();
             getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().put(uri, model);
         }
-
+        
         final PropertysetItem psi = new BeanItem(model);
         createEditor(vl, psi, "koulutusohjelmanAmmatillisetTavoitteet");
         createEditor(vl, psi, "paaaineenValinta");
         createEditor(vl, psi, "koulutuksenSisalto");
-        createEditor(vl, psi, "koulutuksenRakenne");
-        createImageLoaderAndEditor(vl, psi, "kuvausKoulutuksenRakenteesta", model, uri);
+        createKoulutuksenRakenne(vl, psi, "koulutuksenRakenne", model, uri);
         createEditor(vl, psi, "lisatietoaOpetuskielesta");
         createEditor(vl, psi, "lopputyonKuvaus");
         createMaksullisuusAndHinta(vl, psi, "opintojenMaksullisuus");
@@ -83,31 +82,32 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
         createEditor(vl, psi, "jatkoOpintomahdollisuudet");
         return vl;
     }
-
-    private void createImageLoaderAndEditor(final VerticalLayout vl, final PropertysetItem psi, final String id, KorkeakouluLisatietoModel model, final String uri) {
+    
+    private void createKoulutuksenRakenne(final VerticalLayout vl, final PropertysetItem psi, final String id, KorkeakouluLisatietoModel model, final String uri) {
         Property.ValueChangeListener changeListener = new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
-
+            
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 LOG.debug("form valuechenged event fired!", getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().get(uri));
-
+                
             }
         };
-
+        
         createEditor(vl, psi, id);
         ImageUploader imageUploader = new ImageUploader(model.getKuvaKoulutuksenRakenteesta(), vl, changeListener);
     }
-
+    
     private void createMaksullisuusAndHinta(final VerticalLayout vl, final PropertysetItem psi, final String id) {
         createEditor(vl, psi, id);
-
+        
         final PropertysetItem kTiedot = new BeanItem(getModel().getKorkeakouluKuvailevatTiedot());
         TextField tfHinta = new TextField("", kTiedot.getItemProperty("hinta"));
-
+        tfHinta.setValue("");
+        
         vl.addComponent(tfHinta);
     }
-
+    
     private void createEditor(final VerticalLayout vl, final PropertysetItem psi, final String id) {
         final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, id);
         rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
@@ -115,14 +115,14 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".help"), LabelStyleEnum.TEXT));
         vl.addComponent(rta);
     }
-
+    
     @Override
     protected void initializeTabsheet(boolean allowDefault) {
         // What languages should we have as preselection when initializing the form?
         // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
         languageUris.addAll(getModel().getKorkeakouluPerustiedot().getOpetuskielis());
-
+        
         if (!languageUris.isEmpty()) {
             //get loaded data from model
             setInitialValues(languageUris);
