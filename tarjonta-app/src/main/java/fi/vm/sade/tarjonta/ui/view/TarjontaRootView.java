@@ -259,8 +259,8 @@ public class TarjontaRootView extends Window {
             hlMainLayout.addComponent(borderView);
             hlMainLayout.addComponent(vlMainRight);
 
-            hlMainLayout.setExpandRatio(organisationSearchView, 0.2f);
-            hlMainLayout.setExpandRatio(vlMainRight, 0.7f);
+            hlMainLayout.setExpandRatio(organisationSearchView, 0.25f);
+            hlMainLayout.setExpandRatio(vlMainRight, 0.75f);
             hlMainLayout.setSizeFull();
         }
 
