@@ -38,12 +38,12 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST002() throws IOException {
-		restTest(path + "002.txt", http + "/komo/1.2.246.562.5.2013060313060131672122");
+		restTest(path + "002.txt", http + "/komo/1.2.246.562.5.2013061010184768943288");
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST003() throws IOException {
-		restTest(path + "003.txt", http + "/komo/1.2.246.562.5.2013060313060131672122/komoto");
+		restTest(path + "003.txt", http + "/komo/1.2.246.562.5.2013061010184768943288/komoto");
 	}
 	
 	@Test
@@ -53,12 +53,12 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST005() throws IOException {
-		restTest(path + "005.txt", http + "/komoto/1.2.246.562.5.2013062413194602131997");
+		restTest(path + "005.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508");
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST006() throws IOException {
-		restTest(path + "006.txt", http + "/komoto/1.2.246.562.5.2013062413194602131997/komo");
+		restTest(path + "006.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508/komo");
 	}
 	
 	@Test
@@ -68,12 +68,12 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST008() throws IOException {
-		restTest(path + "008.txt", http + "/haku/1.2.246.562.5.2013070414120590299742");
+		restTest(path + "008.txt", http + "/haku/1.2.246.562.5.2013080813081926341927");
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST009() throws IOException {
-		restTest(path + "009.txt", http + "/haku/1.2.246.562.5.2013070414120590299742/hakukohde");
+		restTest(path + "009.txt", http + "/haku/1.2.246.562.5.2013080813081926341927/hakukohde");
 	}
 	
 	@Test
@@ -83,12 +83,12 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST011() throws IOException {
-		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031");
+		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.5.60684104718");
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST012() throws IOException {
-		restTest(path + "012.txt", http + "/hakukohde/1.2.246.562.14.2013061012593675316031/haku");
+		restTest(path + "012.txt", http + "/hakukohde/1.2.246.562.5.60684104718/haku");
 	}
 	
 	@Test

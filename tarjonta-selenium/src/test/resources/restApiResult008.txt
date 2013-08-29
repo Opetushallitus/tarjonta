@@ -1,37 +1,30 @@
 {
-  "modified" : 1372936325902,
-  "modifiedBy" : "1.2.246.562.24.00000000001",
-  "oid" : "1.2.246.562.5.2013070414120590299742",
-  "version" : 1,
+  "modified" : 1375956499263,
+  "modifiedBy" : "1.2.246.562.24.96497053108",
+  "oid" : "1.2.246.562.5.2013080813081926341927",
+  "version" : 0,
+  "tila" : "VALMIS",
+  "koulutuksenAlkamisVuosi" : 2014,
+  "nimi" : {
+    "kieli_sv" : "Gemensam ansökan till yrkes- och gymnasieutbildning",
+    "kieli_en" : null,
+    "kieli_fi" : "Ammatillisen koulutuksen ja lukiokoulutuksen yhteishaku"
+  },
+  "hakuaikas" : [ {
+    "oid" : "5474",
+    "version" : 1,
+    "nimi" : "kuvaus 1377532285996",
+    "alkuPvm" : 1406809443271,
+    "loppuPvm" : 1409487843271,
+    "api_VERSION" : 4
+  } ],
+  "koulutuksenAlkamiskausiUri" : "kausi_s#1",
   "hakukausiUri" : "kausi_k#1",
   "hakukausiVuosi" : 2014,
   "hakutapaUri" : "hakutapa_01#1",
-  "tila" : "JULKAISTU",
-  "nimi" : {
-    "kieli_sv" : "2014K yhteishaku",
-    "kieli_en" : "2014K yhteishaku",
-    "kieli_fi" : "2014K yhteishaku"
-  },
   "hakutyyppiUri" : "hakutyyppi_01#1",
-  "haunTunniste" : "1.2.246.562.5.2013070414120590299742",
   "kohdejoukkoUri" : "haunkohdejoukko_11#1",
-  "koulutuksenAlkamisVuosi" : 2014,
-  "koulutuksenAlkamiskausiUri" : "kausi_s#1",
   "sijoittelu" : true,
-  "hakuaikas" : [ {
-    "oid" : "138588",
-    "version" : 0,
-    "nimi" : "Toinen hakuaika",
-    "alkuPvm" : 1378020666751,
-    "loppuPvm" : 1388820666752,
-    "api_VERSION" : 4
-  }, {
-    "oid" : "45295",
-    "version" : 2,
-    "nimi" : "2014K yhteishakuaika",
-    "alkuPvm" : 1375592400000,
-    "loppuPvm" : 1394720100000,
-    "api_VERSION" : 4
-  } ],
+  "haunTunniste" : "1.2.246.562.5.2013080813081926341927",
   "api_VERSION" : 4
 }

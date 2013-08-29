@@ -1,23 +1,23 @@
 {
-  "modified" : 1377670862539,
-  "oid" : "1.2.246.562.5.2013060313061248737942",
-  "version" : 22,
+  "modified" : 1377673130317,
+  "oid" : "1.2.246.562.5.2013061010192088271026",
+  "version" : 151,
+  "moduuliTyyppi" : "TUTKINTO_OHJELMA",
   "tila" : "JULKAISTU",
-  "koulutuksenRakenne" : {
-  },
+  "tutkintonimikeUri" : "tutkintonimikkeet_10008#1",
+  "eqfLuokitusUri" : "4#1",
   "jatkoOpintoMahdollisuudet" : {
   },
-  "moduuliTyyppi" : "TUTKINTO_OHJELMA",
-  "tutkintonimikeUri" : "tutkintonimikkeet_10132#1",
-  "eqfLuokitusUri" : "4#1",
-  "koulutusOhjelmaKoodiUri" : "koulutusohjelmaamm_16311#1",
+  "koulutuksenRakenne" : {
+  },
+  "koulutusOhjelmaKoodiUri" : "koulutusohjelmaamm_1508#1",
   "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
   "tavoitteet" : {
-    "kieli_sv" : "<p>I utbildningsprogrammet för gruvbranschen kan du beroende på specialisering bli gruvarbetare eller anrikare. Gruvarbetaren arbetar i gruvor som finns under eller utanpå jorden. Anrikaren arbetar på ett anrikningsverk eller inom processindustrin.</p>",
-    "kieli_fi" : "<p>Kaivosalan koulutusohjelman tai osaamisalan suorittanut kaivosmies tekee louhinnan keskeisiä työtehtäviä (poraus, panostus, murskaus, nostot, kaivoksentäyttömenetelmät, kallionlujitusmenetelmät, louheen käsittely, rakennustekniset työt). Hän osaa huoltaa käyttämiään koneita ja laitteita ja tehdä mekaanista kunnossapitoa.</p> <p>Työpaikat: maanalainen tai maanpäällinen kaivos.</p> <p>Kaivosalan koulutusohjelman tai osaamisalan suorittanut rikastaja tekee mekaanisen hienonnuksen keskeisiä työtehtäviä (murskaus ja hienonnus) ja rikastuksen yksikköprosessin keskeisiä työtehtäviä työryhmän jäsenenä. Hän tekee prosesseihin liittyviä mittaus-, säätö-, huolto- ja kunnossapitotehtäviä.</p> <p>Työpaikat: kaivoksen rikastamo, prosessiteollisuus.</p>"
+    "kieli_sv" : "<p>Om du avlagt utbildningsprogrammet för akutvård ska du kunna sköta akutvård på basnivå i olika verksamhetsmiljöer. Du kan tillämpa den teoretiska grunden i stadganden och vård av människor, anatomi och fysiologi, läkemedelsvård. Du kan samarbeta med andra yrkesgrupper samt ge information om patientvården. Du bör känna till den inverkan olika sjukdomar och skador har på människans livsfunktioner och beteende. Du kan förhindra uppkomsten av komplikationer och fungera aseptiskt. Du arbetar ergonomiskt och håller dig i gott skick. Du kan använda olika vårdmedel och apparater tryggt och kan serva apparaterna. Du känner till repositionsmetoder och olika stödande vårdmetoder samt kan handleda patienterna om dessa.</p>  <p>Arbetsuppgifterna inom akutvården är mångsidiga och ansvarsfulla. De kräver ofta att du kan fatta snabba och självständiga beslut i ett team som består av många olika yrkesgrupper. Arbetet kräver god fysisk kondition, beredskap att uppehålla den samt psykisk balans.</p>  <p>Arbetsplatser finns i ambulanser, på jourpolikliniker, kirurgiska polikliniker, preoperativa avdelningar.</p>",
+    "kieli_fi" : "<p>Ensihoidon koulutusohjelman tai osaamisalan suorittanut lähihoitaja toimii ensihoitopalvelussa ja siihen liittyvässä viranomaisten verkostossa. Hän hoitaa ensihoidon potilasta eri hoitoympäristöissä. Hän käyttää ensihoidon ja terveydenhuollon välineitä ja laitteita, huolehtii niiden ja ambulanssin päivittäisestä huollosta ja käyttökunnosta ja toteuttaa vastuualueensa mukaisesti potilaan lääkehoitoa. Hän järjestää potilaalle ja hänen läheisilleen psykososiaalista tukea. Hän kuljettaa turvallisesti ambulanssia. Hän työskentelee potilaan hoitoprosessissa, mm. immobilisaatiohoidossa ja perioperatiivisessa hoidossa, alan tietoperustaa hyödyntäen.</p> <p</p>"
   },
-  "koulutusKoodiUri" : "koulutus_351107#1",
-  "ylaModuulit" : [ "1.2.246.562.5.2013060313061007276716" ],
+  "koulutusKoodiUri" : "koulutus_371101#1",
+  "ylaModuulit" : [ "1.2.246.562.5.2013061010184131784105" ],
   "alaModuulit" : [ ],
   "api_VERSION" : 4
 }
