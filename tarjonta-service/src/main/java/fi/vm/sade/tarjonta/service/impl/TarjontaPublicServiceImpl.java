@@ -16,7 +16,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import javax.jws.WebParam;
 
-import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Preconditions;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -47,6 +47,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -119,8 +120,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private String kausiUri;
     @Autowired
     private TarjontaSearchService searchService;
-    private final static String SYKSY = "syksy";
-    private final static String KEVAT = "kevat";
+    //private final static String SYKSY = "syksy";
+    //private final static String KEVAT = "kevat";
     
     public TarjontaPublicServiceImpl() {
         super();
@@ -564,11 +565,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
         
-//        if (fromKoulutus.getKoulutusaste() != null) {
-//            KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
-//            koulutusaste.setUri(fromKoulutus.getKoulutusaste());
-//            toKoulutus.setKoulutusaste(koulutusaste);
-//        }
+        if (fromKoulutus.getKoulutusaste() != null) {
+            KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+            koulutusaste.setUri(fromKoulutus.getKoulutusaste());
+            toKoulutus.setKoulutusaste(koulutusaste);
+        }
         
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
