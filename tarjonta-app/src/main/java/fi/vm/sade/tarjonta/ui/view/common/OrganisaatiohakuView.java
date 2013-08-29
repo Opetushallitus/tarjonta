@@ -214,9 +214,9 @@ public class OrganisaatiohakuView extends VerticalLayout {
         oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), true);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setSizeUndefined();
-        oppilaitosTyyppi.setWidth("230px");
+        oppilaitosTyyppi.setWidth("215px");
         oppilaitosTyyppi.getField().setSizeUndefined();
-        oppilaitosTyyppi.getField().setWidth("230px");
+        oppilaitosTyyppi.getField().setWidth("215px");
         oppilaitosTyyppi.setCaptionFormatter(this.koodiNimiFormatter);
 
         panelTop.addComponent(oppilaitosTyyppi);
