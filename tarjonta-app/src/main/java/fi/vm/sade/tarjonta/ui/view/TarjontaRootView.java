@@ -221,8 +221,8 @@ public class TarjontaRootView extends Window {
                     } else {
                         organisationSearchView.setVisible(true);
 
-                        hlMainLayout.setExpandRatio(organisationSearchView, 0.25f);
-                        hlMainLayout.setExpandRatio(vlMainRight, 0.75f);
+                        hlMainLayout.setExpandRatio(organisationSearchView, 0.22f);
+                        hlMainLayout.setExpandRatio(vlMainRight, 0.78f);
                     }
                     organisationSearchView.setWidth("100%");
                     searchResultsView.refreshTabs();//reset width to 100%
@@ -259,8 +259,8 @@ public class TarjontaRootView extends Window {
             hlMainLayout.addComponent(borderView);
             hlMainLayout.addComponent(vlMainRight);
 
-            hlMainLayout.setExpandRatio(organisationSearchView, 0.25f);
-            hlMainLayout.setExpandRatio(vlMainRight, 0.75f);
+            hlMainLayout.setExpandRatio(organisationSearchView, 0.22f);
+            hlMainLayout.setExpandRatio(vlMainRight, 0.78f);
             hlMainLayout.setSizeFull();
         }
 
