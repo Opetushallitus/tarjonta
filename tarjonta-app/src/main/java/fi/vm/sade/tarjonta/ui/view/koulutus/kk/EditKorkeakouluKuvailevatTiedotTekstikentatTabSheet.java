@@ -20,11 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -69,12 +67,24 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
         }
 
         final PropertysetItem psi = new BeanItem(model);
-
         createEditor(vl, psi, "koulutusohjelmanAmmatillisetTavoitteet");
         createEditor(vl, psi, "paaaineenValinta");
         createEditor(vl, psi, "koulutuksenSisalto");
         createEditor(vl, psi, "koulutuksenRakenne");
+        createImageLoaderAndEditor(vl, psi, "kuvausKoulutuksenRakenteesta", model, uri);
+        createEditor(vl, psi, "lisatietoaOpetuskielesta");
+        createEditor(vl, psi, "lopputyonKuvaus");
+        createMaksullisuusAndHinta(vl, psi, "opintojenMaksullisuus");
+        createEditor(vl, psi, "sijoittautuminenTyoelamaan");
+        createEditor(vl, psi, "patevyys");
+        createEditor(vl, psi, "kansainvalistyminen");
+        createEditor(vl, psi, "yhteistyoMuidenToimijoidenKanssa");
+        createEditor(vl, psi, "tutkimuksenPainopisteet");
+        createEditor(vl, psi, "jatkoOpintomahdollisuudet");
+        return vl;
+    }
 
+    private void createImageLoaderAndEditor(final VerticalLayout vl, final PropertysetItem psi, final String id, KorkeakouluLisatietoModel model, final String uri) {
         Property.ValueChangeListener changeListener = new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
 
@@ -85,21 +95,17 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
             }
         };
 
-        createEditor(vl, psi, "kuvausKoulutuksenRakenteesta");
+        createEditor(vl, psi, id);
         ImageUploader imageUploader = new ImageUploader(model.getKuvaKoulutuksenRakenteesta(), vl, changeListener);
-        createEditor(vl, psi, "lisatietoaOpetuskielesta");
-        createEditor(vl, psi, "lopputyonKuvaus");
-        createEditor(vl, psi, "opintojenMaksullisuus");
-        TextField tfHinta = new TextField("", psi.getItemProperty("hinta"));
+    }
+
+    private void createMaksullisuusAndHinta(final VerticalLayout vl, final PropertysetItem psi, final String id) {
+        createEditor(vl, psi, id);
+
+        final PropertysetItem kTiedot = new BeanItem(getModel().getKorkeakouluKuvailevatTiedot());
+        TextField tfHinta = new TextField("", kTiedot.getItemProperty("hinta"));
 
         vl.addComponent(tfHinta);
-        createEditor(vl, psi, "sijoittautuminenTyoelamaan");
-        createEditor(vl, psi, "patevyys");
-        createEditor(vl, psi, "kansainvalistyminen");
-        createEditor(vl, psi, "yhteistyoMuidenToimijoidenKanssa");
-        createEditor(vl, psi, "tutkimuksenPainopisteet");
-        createEditor(vl, psi, "jatkoOpintomahdollisuudet");
-        return vl;
     }
 
     private void createEditor(final VerticalLayout vl, final PropertysetItem psi, final String id) {
