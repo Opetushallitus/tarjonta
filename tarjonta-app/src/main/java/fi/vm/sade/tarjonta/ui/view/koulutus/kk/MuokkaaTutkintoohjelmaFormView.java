@@ -16,26 +16,20 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
 import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItemContainer;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

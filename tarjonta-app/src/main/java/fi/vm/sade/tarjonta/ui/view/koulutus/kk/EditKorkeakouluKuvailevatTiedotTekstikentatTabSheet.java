@@ -15,13 +15,17 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
+import com.vaadin.data.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
@@ -29,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluLisatietoModel;
+import fi.vm.sade.tarjonta.ui.view.common.ImageUploader;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditLisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import java.util.HashSet;
@@ -51,7 +56,7 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
      * @return
      */
     @Override
-    protected AbstractComponent createLanguageEditor(String uri) {
+    protected AbstractComponent createLanguageEditor(final String uri) {
         final VerticalLayout vl = UiBuilder.verticalLayout();
 
         vl.setSpacing(true);
@@ -69,10 +74,25 @@ public class EditKorkeakouluKuvailevatTiedotTekstikentatTabSheet extends EditLis
         createEditor(vl, psi, "paaaineenValinta");
         createEditor(vl, psi, "koulutuksenSisalto");
         createEditor(vl, psi, "koulutuksenRakenne");
-        createEditor(vl, psi, "kuvaKoulutuksenRakenteesta");
+
+        Property.ValueChangeListener changeListener = new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                LOG.debug("form valuechenged event fired!", getModel().getKorkeakouluKuvailevatTiedot().getTekstikentat().get(uri));
+
+            }
+        };
+
+        createEditor(vl, psi, "kuvausKoulutuksenRakenteesta");
+        ImageUploader imageUploader = new ImageUploader(model.getKuvaKoulutuksenRakenteesta(), vl, changeListener);
         createEditor(vl, psi, "lisatietoaOpetuskielesta");
         createEditor(vl, psi, "lopputyonKuvaus");
         createEditor(vl, psi, "opintojenMaksullisuus");
+        TextField tfHinta = new TextField("", psi.getItemProperty("hinta"));
+
+        vl.addComponent(tfHinta);
         createEditor(vl, psi, "sijoittautuminenTyoelamaan");
         createEditor(vl, psi, "patevyys");
         createEditor(vl, psi, "kansainvalistyminen");

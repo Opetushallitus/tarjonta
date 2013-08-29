@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
- * @author mlyly
+ * @author Jani Wilén
  */
 @Configurable
 public class EditKorkeakouluView extends AbstractVerticalLayout {

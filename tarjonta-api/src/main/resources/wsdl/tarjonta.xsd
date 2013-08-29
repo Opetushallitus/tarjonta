@@ -1071,4 +1071,15 @@
             <xs:element name="kieliUri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:complexType name="KuvaTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">Kuva tyyppi.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="mimeType" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="fileName" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="kuva" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

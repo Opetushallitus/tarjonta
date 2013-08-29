@@ -48,6 +48,7 @@ public class ValitseTutkintoohjelmaDialog extends TarjontaWindow {
         setCaption(T(WINDOW_TITLE_PROPERTY));
     }
 
+    @Override
     public void buildLayout(VerticalLayout layout) {
 
         layout.setMargin(false, true, true, true);

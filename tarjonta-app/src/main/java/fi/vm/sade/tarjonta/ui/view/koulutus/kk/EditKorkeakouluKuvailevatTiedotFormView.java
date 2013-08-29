@@ -23,7 +23,6 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;

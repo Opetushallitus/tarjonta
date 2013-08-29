@@ -89,7 +89,9 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     /*
      * Koodisto code (url).
      */
-    private Label labelTutkintoohjelma;
+    @NotNull(message = "{validation.Koulutus.tutkintoohjelmaNimi.notNull}")
+    @PropertyId("tutkintoohjelmaNimi")
+    private TextField tfTutkintoohjelma;
     private Button btMuokkaaTutkintoohjelma;
 
     /*
@@ -263,17 +265,11 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         HorizontalLayout hlContainer = UiUtil.horizontalLayout();
 
-        labelTutkintoohjelma = new Label();
-        labelTutkintoohjelma.setSizeFull();
-        labelTutkintoohjelma.setImmediate(true);
+        tfTutkintoohjelma = new TextField();
+        tfTutkintoohjelma.setSizeFull();
+        tfTutkintoohjelma.setImmediate(true);
 
-        if (model.getTutkintoohjelma() != null) {
-            labelTutkintoohjelma.setPropertyDataSource(new NestedMethodProperty(model.getTutkintoohjelma(), TutkintoohjelmaModel.MODEL_NAME_PROPERY));
-        } else {
-            labelTutkintoohjelma.setPropertyDataSource(new NestedMethodProperty(model, "tutkintoohjelmaNimi"));
-        }
-
-        hlContainer.addComponent(labelTutkintoohjelma);
+        hlContainer.addComponent(tfTutkintoohjelma);
 
         //ADD EDIT BUTTON
         btMuokkaaTutkintoohjelma = UiUtil.buttonLink(hlContainer, T("button.edit"), new Button.ClickListener() {
@@ -285,9 +281,8 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
             }
         });
 
-        hlContainer.setComponentAlignment(labelTutkintoohjelma, Alignment.TOP_LEFT);
-        hlContainer.setComponentAlignment(btMuokkaaTutkintoohjelma, Alignment.TOP_LEFT);
-        addGridRowItems(grid, labelTutkintoohjelma);
+        hlContainer.setComponentAlignment(tfTutkintoohjelma, Alignment.TOP_LEFT);
+        addGridRowItems(grid, tfTutkintoohjelma);
     }
 
     private void buildGridDatesRow(GridLayout grid, final String propertyKey) {

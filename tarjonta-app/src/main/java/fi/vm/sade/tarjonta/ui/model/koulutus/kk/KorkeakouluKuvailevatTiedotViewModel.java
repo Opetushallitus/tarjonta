@@ -33,6 +33,7 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
     // tekstikentät
     private Collection<String> ammattinimikkeet;
     private Map<String, KorkeakouluLisatietoModel> tekstit = Maps.<String, KorkeakouluLisatietoModel>newHashMap();
+    private String hinta = null;
 
     public Map<String, KorkeakouluLisatietoModel> getTekstikentat() {
         return tekstit;
@@ -115,5 +116,19 @@ public class KorkeakouluKuvailevatTiedotViewModel extends BaseUIViewModel {
      */
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
+    }
+
+    /**
+     * @return the hinta
+     */
+    public String getHinta() {
+        return hinta;
+    }
+
+    /**
+     * @param hinta the hinta to set
+     */
+    public void setHinta(String hinta) {
+        this.hinta = hinta;
     }
 }

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaKuvaModel;
+import java.math.BigDecimal;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -31,7 +33,6 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
     private String paaaineenValinta;
     private String koulutuksenSisalto;
     private String koulutuksenRakenne;
-    private String kuvaKoulutuksenRakenteesta;
     private String lisatietoaOpetuskielesta;
     private String lopputyonKuvaus;
     private String opintojenMaksullisuus;
@@ -41,6 +42,8 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
     private String yhteistyoMuidenToimijoidenKanssa;
     private String tutkimuksenPainopisteet;
     private String jatkoOpintomahdollisuudet;
+    private String kuvausKoulutuksenRakenteesta;
+    private TarjontaKuvaModel kuvaKoulutuksenRakenteesta; //kuvaKoulutuksenRakenteesta
 
     public KorkeakouluLisatietoModel() {
     }
@@ -100,20 +103,6 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
      */
     public void setKoulutuksenRakenne(String koulutuksenRakenne) {
         this.koulutuksenRakenne = koulutuksenRakenne;
-    }
-
-    /**
-     * @return the kuvaKoulutuksenRakenteesta
-     */
-    public String getKuvaKoulutuksenRakenteesta() {
-        return kuvaKoulutuksenRakenteesta;
-    }
-
-    /**
-     * @param kuvaKoulutuksenRakenteesta the kuvaKoulutuksenRakenteesta to set
-     */
-    public void setKuvaKoulutuksenRakenteesta(String kuvaKoulutuksenRakenteesta) {
-        this.kuvaKoulutuksenRakenteesta = kuvaKoulutuksenRakenteesta;
     }
 
     /**
@@ -259,7 +248,7 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
                 .append(paaaineenValinta, other.paaaineenValinta)
                 .append(koulutuksenSisalto, other.koulutuksenSisalto)
                 .append(koulutuksenRakenne, other.koulutuksenRakenne)
-                .append(kuvaKoulutuksenRakenteesta, other.kuvaKoulutuksenRakenteesta)
+                .append(getKuvausKoulutuksenRakenteesta(), other.getKuvausKoulutuksenRakenteesta())
                 .append(lisatietoaOpetuskielesta, other.lisatietoaOpetuskielesta)
                 .append(lopputyonKuvaus, other.lopputyonKuvaus)
                 .append(opintojenMaksullisuus, other.opintojenMaksullisuus)
@@ -268,7 +257,8 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
                 .append(kansainvalistyminen, other.kansainvalistyminen)
                 .append(yhteistyoMuidenToimijoidenKanssa, other.yhteistyoMuidenToimijoidenKanssa)
                 .append(tutkimuksenPainopisteet, other.tutkimuksenPainopisteet)
-                .append(jatkoOpintomahdollisuudet, other.jatkoOpintomahdollisuudet);
+                .append(jatkoOpintomahdollisuudet, other.jatkoOpintomahdollisuudet)
+                .append(kuvausKoulutuksenRakenteesta, other.kuvausKoulutuksenRakenteesta);
         return builder.isEquals();
     }
 
@@ -279,7 +269,7 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
                 .append(paaaineenValinta)
                 .append(koulutuksenSisalto)
                 .append(koulutuksenRakenne)
-                .append(kuvaKoulutuksenRakenteesta)
+                .append(getKuvausKoulutuksenRakenteesta())
                 .append(lisatietoaOpetuskielesta)
                 .append(lopputyonKuvaus)
                 .append(opintojenMaksullisuus)
@@ -289,6 +279,39 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
                 .append(yhteistyoMuidenToimijoidenKanssa)
                 .append(tutkimuksenPainopisteet)
                 .append(jatkoOpintomahdollisuudet)
+                .append(kuvausKoulutuksenRakenteesta)
                 .toHashCode();
+    }
+
+    /**
+     * @return the kuvausKoulutuksenRakenteesta
+     */
+    public String getKuvausKoulutuksenRakenteesta() {
+        return kuvausKoulutuksenRakenteesta;
+    }
+
+    /**
+     * @param kuvausKoulutuksenRakenteesta the kuvausKoulutuksenRakenteesta to
+     * set
+     */
+    public void setKuvausKoulutuksenRakenteesta(String kuvausKoulutuksenRakenteesta) {
+        this.kuvausKoulutuksenRakenteesta = kuvausKoulutuksenRakenteesta;
+    }
+
+    /**
+     * @return the kuvaKoulutuksenRakenteesta
+     */
+    public TarjontaKuvaModel getKuvaKoulutuksenRakenteesta() {
+        if (kuvaKoulutuksenRakenteesta == null) {
+            kuvaKoulutuksenRakenteesta = new TarjontaKuvaModel();
+        }
+        return kuvaKoulutuksenRakenteesta;
+    }
+
+    /**
+     * @param kuvaKoulutuksenRakenteesta the kuvaKoulutuksenRakenteesta to set
+     */
+    public void setKuvaKoulutuksenRakenteesta(TarjontaKuvaModel kuvaKoulutuksenRakenteesta) {
+        this.kuvaKoulutuksenRakenteesta = kuvaKoulutuksenRakenteesta;
     }
 }

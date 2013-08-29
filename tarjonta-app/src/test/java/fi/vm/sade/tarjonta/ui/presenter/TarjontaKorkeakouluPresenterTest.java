@@ -247,16 +247,14 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
 
         kuvailevatTiedot = instance.getKuvailevatTiedotModel();
-        //kuvailevatTiedot.setDiplomit(createList(1, "diplomi"));
-
-
+  
         Map<String, KorkeakouluLisatietoModel> map = new HashMap<String, KorkeakouluLisatietoModel>();
         KorkeakouluLisatietoModel koulutusLisatietoModel = new KorkeakouluLisatietoModel();
         koulutusLisatietoModel.setKoulutusohjelmanAmmatillisetTavoitteet("koulutusohjelmanAmmatillisetTavoitteet");
         koulutusLisatietoModel.setPaaaineenValinta("paaaineenValinta");
         koulutusLisatietoModel.setKoulutuksenSisalto("koulutuksenSisalto");
         koulutusLisatietoModel.setKoulutuksenRakenne("koulutuksenRakenne");
-        koulutusLisatietoModel.setKuvaKoulutuksenRakenteesta("kuvaKoulutuksenRakenteesta");
+        koulutusLisatietoModel.setKuvausKoulutuksenRakenteesta("kuvausKoulutuksenRakenteesta");
         koulutusLisatietoModel.setLisatietoaOpetuskielesta("lisatietoaOpetuskielesta");
         koulutusLisatietoModel.setLopputyonKuvaus("lopputyonKuvaus");
         koulutusLisatietoModel.setOpintojenMaksullisuus("lopputyonKuvaus");
