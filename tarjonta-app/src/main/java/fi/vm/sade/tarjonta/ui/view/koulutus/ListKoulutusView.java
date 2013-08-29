@@ -74,7 +74,7 @@ public class ListKoulutusView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListKoulutusView.class);
     private static final long serialVersionUID = 2571418094927644189L;
-    public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListKoulutusView.jarjestys.Organisaatio")};
+    //public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListKoulutusView.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_TUTKINTONIMIKE = "Tutkintonimike";
     public static final String COLUMN_PVM = "Ajankohta";
@@ -405,7 +405,7 @@ public class ListKoulutusView extends VerticalLayout {
         });
 
         //Creating the sorting options combobox
-        cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
+        cbJarjestys = UiUtil.comboBox(layout, null, new String[]{I18N.getMessage("ListKoulutusView.jarjestys.Organisaatio")});//ORDER_BY);
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(luoKoulutusB, 1f);
         layout.setComponentAlignment(luoKoulutusB, Alignment.TOP_RIGHT);
