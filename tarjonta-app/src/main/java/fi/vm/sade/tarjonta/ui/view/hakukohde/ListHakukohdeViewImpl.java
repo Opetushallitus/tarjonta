@@ -137,27 +137,34 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      *  Adding the actual hakukohde-listing component.
      */
     private void addAndRebuildTutkintoResultList() {
-        if (categoryTree != null) {
-            this.removeComponent(categoryTree);
-            categoryTree = null;
+        if (categoryTree == null) {
+            categoryTree = new CategoryTreeView();
+            categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
+            categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+            categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+            categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
+            categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
+            categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
+
+            categoryTree.setColumnExpandRatio(COLUMN_A, 1.9f);
+            categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
+            categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.4f);
+            categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
+            categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI, 0.3f);
+            categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
+            categoryTree.setSizeFull();
+            addComponent(categoryTree);
+            setExpandRatio(categoryTree, 1f);
+        } else {
+            //remove items
+            categoryTree.getContainerDataSource().removeAllItems();
+            //remove listeners
+            for(Object o: categoryTree.getListeners(Tree.ExpandListener.class)){
+                categoryTree.removeListener((Tree.ExpandListener)o);
+            }
+            
         }
 
-
-
-        categoryTree = new CategoryTreeView();
-        categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
-        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI, String.class, "");
-        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
-
-        categoryTree.setColumnExpandRatio(COLUMN_A, 1.9f);
-        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.4f);
-        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
-        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI, 0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
         categoryTree.addListener(new Tree.ExpandListener() {
             private static final long serialVersionUID = 7555216006146778964L;
 
@@ -195,9 +202,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 setPageLength(categoryTree.getItemIds().size());
             }
         });
-        categoryTree.setSizeFull();
-        addComponent(categoryTree);
-        setExpandRatio(categoryTree, 1f);
 
     }
 
