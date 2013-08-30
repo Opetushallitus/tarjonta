@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_KOODI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
@@ -30,11 +31,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TEKSTIHAKU;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
@@ -45,6 +42,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIM
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.VUOSI_KOODI;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,19 +56,19 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
@@ -83,7 +81,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 Function<KoulutusIndexEntity, List<SolrInputDocument>> {
 
     @Autowired
-    private OrganisaatioService organisaatioService;
+    private OrganisaatioSearchService organisaatioSearchService;
 
     @Autowired
     private KoodistoService koodistoPublicService;
@@ -104,22 +102,25 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
        
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, koulutus.getOid());
-        OrganisaatioDTO org = organisaatioService.findByOid(koulutus.getTarjoaja());
-        if(org==null) {
+        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
+        
+        if (orgs.size() == 0) {
             logger.warn("No org found for komoto: " + koulutus.getOid());
             return Lists.newArrayList();
-        }
+        }    
+    
+        final OrganisaatioPerustieto org = orgs.get(0);
         addOrganisaatioTiedot(komotoDoc, org, docs);
         
-        if (org != null && org.getParentOidPath() != null) {
-            for (String path : Splitter.on("|").omitEmptyStrings()
-                    .split(org.getParentOidPath())) {
+        if (org.getParentOidPath() != null) {
+            ArrayList<String> oidPath = Lists.newArrayList();
+            
+            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
+            Collections.reverse(oidPath);
+            
+            for (String path : oidPath) {
                 add(komotoDoc, ORG_PATH, path);
             }
-        }
-        
-        if (org != null) {
-            add(komotoDoc, ORG_PATH, org.getOid());
         }
         
         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
@@ -241,27 +242,11 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         }
     }
 
-    private void addOrganisaatioTiedot(SolrInputDocument doc, OrganisaatioDTO org, List<SolrInputDocument> docs) {
+    private void addOrganisaatioTiedot(SolrInputDocument doc, OrganisaatioPerustieto org, List<SolrInputDocument> docs) {
         if (org == null) {
             return;
         }
-        final SolrInputDocument orgDoc = new SolrInputDocument();
-        add(orgDoc, Organisaatio.TYPE, "ORG");
-
         add(doc, ORG_OID, org.getOid());
-        for (Teksti curTeksti : org.getNimi().getTeksti()) {
-            String kielikoodi = curTeksti.getKieliKoodi();//.equals("fi");
-            if (kielikoodi.equals("fi")) {
-                add(orgDoc, ORG_NAME_FI, curTeksti.getValue());
-            } else if (kielikoodi.equals("sv")) {
-                add(orgDoc, ORG_NAME_SV, curTeksti.getValue());
-            } else if (kielikoodi.equals("en")) {
-                add(orgDoc, ORG_NAME_EN, curTeksti.getValue());
-            }
-        }
-        add(orgDoc, OID, org.getOid());
-        
-        docs.add(orgDoc);
     }
 
     /**

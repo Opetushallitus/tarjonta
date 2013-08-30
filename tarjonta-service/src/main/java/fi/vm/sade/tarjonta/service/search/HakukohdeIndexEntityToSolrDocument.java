@@ -92,11 +92,11 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             boolean orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs,
             tarjoaja);
             
-             if(!orgFound) {
-             logger.warn("Skipping hakukohde:" + hakukohde.getOid() +
-             " no orgnisation found with oid " + tarjoaja);
-             return Lists.newArrayList();
-             }
+            if (!orgFound) {
+                logger.warn("Skipping hakukohde:" + hakukohde.getOid()
+                        + " no orgnisation found with oid " + tarjoaja);
+                return Lists.newArrayList();
+            }
         } else {
             logger.warn("No koulutuses found, this should not be possible!");
         }
