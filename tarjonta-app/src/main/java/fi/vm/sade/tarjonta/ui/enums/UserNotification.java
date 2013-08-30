@@ -29,6 +29,7 @@ public enum UserNotification {
     UNSAVED("notification.error.unsaved", Window.Notification.TYPE_WARNING_MESSAGE),
     //failures
     GENERIC_ERROR("notification.error", Window.Notification.TYPE_WARNING_MESSAGE),
+    TAB_CHANGE_UNEXPECTED_ERROR("notification.error.tabChangeUnexpectedError", Window.Notification.TYPE_ERROR_MESSAGE),
     EDIT_FAILED("notification.error.editFailed", Window.Notification.TYPE_WARNING_MESSAGE),
     ADD_FAILED("notification.error.addFailed", Window.Notification.TYPE_ERROR_MESSAGE),
     SAVE_FAILED("notification.error.saveFailed", Window.Notification.TYPE_ERROR_MESSAGE),

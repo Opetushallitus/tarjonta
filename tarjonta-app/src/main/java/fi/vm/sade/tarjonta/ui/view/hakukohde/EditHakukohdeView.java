@@ -503,7 +503,12 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
                 this.valintakokeet.getFormView().getPisterajaTable().bindLisapisteData(null);
                 valintakokeet.validateLukioValintakoeForm();
                 return true;
-            } catch (Exception ex) {
+            } catch (Validator.InvalidValueException ex) {
+                valintakokeet.getErrorView().addError(ex);
+                return false;
+            } catch (Exception e) {
+                LOG.error("An unknown application error - persist failed, message :  " + e.getMessage(), e);
+                presenter.showNotification(UserNotification.TAB_CHANGE_UNEXPECTED_ERROR);
                 return false;
             }
         } 
