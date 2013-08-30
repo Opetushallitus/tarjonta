@@ -2,6 +2,8 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,7 +144,7 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
             Date lastModifiedBefore, Date lastModifiedSince) {
-        final String filtterointiAvain = "fi"; // TODO: <- rajapintaan
+        final String kieliAvain = "fi"; // TODO: <- rajapintaan
         final String filtterointiTeksti = StringUtils.capitalize(StringUtils.trimToEmpty(searchTerms));
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
@@ -161,11 +163,11 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (filtterointiAvain.equals(teksti.getKieliKoodi())) {
+                        if (kieliAvain.equals(teksti.getKieliKoodi())) {
                             return StringUtils.capitalize(teksti.getValue());
                         }
                     }
-                    LOG.debug("Avain {} doesnt match any languages!", filtterointiAvain);
+                    LOG.debug("Avain {} doesnt match any languages!", kieliAvain);
                     return StringUtils.EMPTY;
                 }
 
@@ -177,28 +179,44 @@ public class HakuResourceImpl implements HakuResource {
                 }
             });
         }
-        int size = tulokset.size();
+        // sortataan tarjoajanimen mukaan!
+        List<HakukohdeTulos> sortattuLista = new ArrayList<HakukohdeTulos>(tulokset);
+        Collections.sort(sortattuLista, new Comparator<HakukohdeTulos>() {
+            public int compare(HakukohdeTulos o1, HakukohdeTulos o2) {
+                for (MonikielinenTekstiTyyppi.Teksti t1 : o1.getHakukohde().getTarjoaja().getNimi().getTeksti()) {
+                    if (kieliAvain.equals(t1.getKieliKoodi())) {
+                        for (MonikielinenTekstiTyyppi.Teksti t2 : o2.getHakukohde().getTarjoaja().getNimi().getTeksti()) {
+                            if (kieliAvain.equals(t2.getKieliKoodi())) {
+                                return t1.getValue().compareTo(t2.getValue());
+                            }
+                        }
+                        break;
+                    }
+                }
+                return 0;
+            }
+        });
+        int size = sortattuLista.size();
         LOG.debug("  after filtering results found '{}'", size);
         List<HakukohdeNimiRDTO> results = new ArrayList<HakukohdeNimiRDTO>();
         int index = 0;
-        for (HakukohdeTulos tulos : tulokset) {
-            if (index < startIndex) {
-                continue; // skip
-            }
-            if (index > startIndex + count) {
+        for (HakukohdeTulos tulos : sortattuLista) {
+            if (index >= startIndex + count) {
                 break; // done!
             }
-            HakukohdeListaus hakukohde = tulos.getHakukohde();
-            HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
-            // tarvitaanko?
-            // result.setHakukohdeNimi(...)
-            // result.setHakuVuosi(haku.getHakukausiVuosi());
-            // result.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
-            rdto.setHakukohdeNimi(convertMonikielinenToMap(hakukohde.getNimi()));
-            rdto.setTarjoajaNimi(convertMonikielinenToMap(hakukohde.getTarjoaja().getNimi()));
-            rdto.setHakukohdeOid(hakukohde.getOid());
-            rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
-            results.add(rdto);
+            if (index >= startIndex) {
+                HakukohdeListaus hakukohde = tulos.getHakukohde();
+                HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
+                // tarvitaanko?
+                // result.setHakukohdeNimi(...)
+                // result.setHakuVuosi(haku.getHakukausiVuosi());
+                // result.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
+                rdto.setHakukohdeNimi(convertMonikielinenToMap(hakukohde.getNimi()));
+                rdto.setTarjoajaNimi(convertMonikielinenToMap(hakukohde.getTarjoaja().getNimi()));
+                rdto.setHakukohdeOid(hakukohde.getOid());
+                rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
+                results.add(rdto);
+            }
             ++index;
         }
         return new HakukohdeTulosRDTO(size, results);
