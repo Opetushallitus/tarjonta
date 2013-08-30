@@ -63,7 +63,6 @@ public class TarjontaModel extends BaseUIViewModel {
     /*
 * Hakutulos
 */
-    private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
@@ -176,17 +175,6 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public KoulutusSearchSpesificationViewModel getSearchSpec() {
         return _searchSpec;
-    }
-
-    public List<HakukohdeTulos> getHakukohteet() {
-        if (_hakukohteet == null) {
-            _hakukohteet = new ArrayList<HakukohdeTulos>();
-        }
-        return _hakukohteet;
-    }
-
-    public void setHakukohteet(List<HakukohdeTulos> hakukohteet) {
-        this._hakukohteet = hakukohteet;
     }
 
     public List<HakukohdeTulos> getSelectedhakukohteet() {
