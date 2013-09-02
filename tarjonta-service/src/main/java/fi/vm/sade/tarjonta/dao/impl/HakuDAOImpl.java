@@ -15,32 +15,38 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import static fi.vm.sade.tarjonta.model.Haku.HAUN_ALKAMIS_PVM;
+import static fi.vm.sade.tarjonta.model.Haku.HAUN_LOPPUMIS_PVM;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_ALKAMIS_PVM;
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_LOPPUMIS_PVM;
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * @author Antti Salonen
@@ -199,17 +205,13 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
         // Convert Enums from API enum to DB enum
-        fi.vm.sade.tarjonta.shared.types.TarjontaTila dbTarjontaTila = null;
-        if (tila != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name());
-        }
 
         QHaku haku = QHaku.haku;
 
         BooleanExpression whereExpr = null;
 
-        if (dbTarjontaTila != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, haku.tila.eq(dbTarjontaTila));
+        if (tila != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, haku.tila.eq(tila));
         }
         if (lastModifiedBefore != null) {
             whereExpr = QuerydslUtils.and(whereExpr, haku.lastUpdateDate.before(lastModifiedBefore));

@@ -24,8 +24,10 @@ import com.google.common.collect.Collections2;
 
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
@@ -36,9 +38,13 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * Run:
@@ -60,19 +66,27 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
  * @see HakuResource
  */
 // @Path("/haku")
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, rollbackFor = Throwable.class)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
+    
     @Autowired
     private HakuDAO hakuDAO;
+    @Autowired
+    private HakuaikaDAO hakuaikaDAO;
+    
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
+    
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
+    
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
     @Autowired(required = true)
@@ -267,4 +281,32 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
+	@Override
+	@Transactional(readOnly = false)
+	public String createHaku(HakuDTO dto) {
+		return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void replaceHaku(HakuDTO dto) {
+		tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteHaku(String hakuOid) {
+		HakuTyyppi tmp = new HakuTyyppi();
+		tmp.setOid(hakuOid);
+		// TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
+		tarjontaAdminService.poistaHaku(tmp);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void updateHakuState(String hakuOid, String state) {
+		TarjontaTila tt = TarjontaTila.valueOf(state);
+		PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid, SisaltoTyyppi.HAKU, tt.asDto())));
+		tarjontaAdminService.paivitaTilat(ptt);
+	}
 }

@@ -1,13 +1,13 @@
 package fi.vm.sade.tarjonta.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import java.util.Date;
-
-import java.util.List;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * @author Antti

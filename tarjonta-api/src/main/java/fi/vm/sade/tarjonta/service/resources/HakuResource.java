@@ -4,7 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -12,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuaikaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
@@ -19,12 +24,25 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
  * REST services for haku's.
  * 
  * <pre>
- * /haku/hello
- * /haku  (?searchTerms... - list of { oid : xxx }
- * /haku/OID
- * /haku/OID/hakukohde - list of {oid : xxx}
- * /haku/OID/hakukohdetulos - list of {kokonaismaara: xxx, tulokset: []}
- * /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
+ * GET    /haku/hello
+ * GET    /haku  (?searchTerms... - list of { oid : xxx }
+ * 
+ * GET    /haku/OID
+ * POST   /haku/OID - create haku
+ * PUT    /haku/OID - replace existing haku
+ * DELETE /haku/OID - delete haku
+ * 
+ * PUT    /haku/OID/state - update state (state string as body)
+ * 
+ * GET    /haku/OID/hakukohde - list of {oid : xxx}
+ * GET    /haku/OID/hakukohdetulos - list of {kokonaismaara: xxx, tulokset: []}
+ * GET    /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
+ * 
+ * PUT    /haku/OID/hakuaika - creates a hakuaika for a haku
+ * 
+ * PUT    /haku/hakuaika/OID - replaces existing hakuaika
+ * DELETE /haku/hakuaika/OID - deletes a hakuaika
+ * 
  * </pre>
  * 
  * @author mlyly
@@ -122,4 +140,40 @@ public interface HakuResource {
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince);
+    
+    
+    /**
+     * Creates a haku.
+     * 
+     * @return Oid of the created haku.
+     */
+    @POST
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createHaku(HakuDTO dto);
+    
+    /**
+     * Updates a haku.
+     */
+    @PUT
+    @Path("{oid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void replaceHaku(HakuDTO dto);
+    
+    /**
+     * Deletes a haku by oid.
+     */
+    @DELETE
+    @Path("{oid}")
+    public void deleteHaku(@PathParam("oid") String hakuOid);
+
+    /**
+     * Updates state of a haku.
+     */
+    @PUT
+    @Path("{oid}/state")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void updateHakuState(@PathParam("oid") String hakuOid, String state);
+
 }
