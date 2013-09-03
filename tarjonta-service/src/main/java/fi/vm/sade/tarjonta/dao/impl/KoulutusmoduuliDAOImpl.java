@@ -15,35 +15,38 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.base.Preconditions;
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.expr.DslExpression;
+
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import java.util.Date;
-
-import java.util.List;
-import java.util.logging.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  *
@@ -52,7 +55,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+    @SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+    
     @Autowired
     private OIDService oidService;
 
@@ -179,7 +184,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     @Override
     public List<Koulutusmoduuli> findAllKomos() {
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+        /*QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
         QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
         QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
@@ -187,7 +192,8 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
                 leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
                 leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
                 leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
-                list(moduuli);
+                list(moduuli);*/
+    	return findAll();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

@@ -93,10 +93,10 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
-        QMonikielinenTeksti jom = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
-        QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
-        QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
+        //QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
+        //QMonikielinenTeksti jom = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+        //QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
+        //QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
         QKoulutusSisaltyvyys sl = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
         QKielivalikoima kielivalikoima = QKielivalikoima.kielivalikoima;
@@ -109,14 +109,14 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 leftJoin(komoto.opetuskielis).fetch().
                 leftJoin(komoto.opetusmuotos).fetch().
                 leftJoin(komoto.koulutuslajis).fetch().
-                leftJoin(komoto.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
-                leftJoin(komoto.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
+                //leftJoin(komoto.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
+                //leftJoin(komoto.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
                 leftJoin(komoto.linkkis).fetch().
                 leftJoin(komoto.koulutusmoduuli, komo).fetch().
                 leftJoin(komoto.lukiodiplomit).fetch().
                 leftJoin(komoto.tarjotutKielet, kielivalikoima).fetch().leftJoin(kielivalikoima.kielet).fetch().
-                leftJoin(komo.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-                leftJoin(komo.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
+                //leftJoin(komo.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+                //leftJoin(komo.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
                 leftJoin(komo.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
                 leftJoin(komo.sisaltyvyysList, sl).fetch().leftJoin(sl.alamoduuliList).fetch().
                 

@@ -126,6 +126,14 @@ public class MonikielinenTeksti extends BaseEntity {
 
     	return old;
     }
-
+    
+    public static <T> void merge(Map<T, MonikielinenTeksti> dst, T key, MonikielinenTeksti uus) {
+    	if (uus==null) {
+    		dst.remove(key);
+    	} else {
+    		dst.put(key, merge(dst.get(key), uus));
+    	}
+    }
+    
 }
 

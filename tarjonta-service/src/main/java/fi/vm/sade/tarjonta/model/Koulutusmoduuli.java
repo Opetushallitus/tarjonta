@@ -17,7 +17,9 @@ package fi.vm.sade.tarjonta.model;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,6 +29,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -35,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 
 /**
  * <p>
@@ -61,7 +67,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     public static final String TABLE_NAME = "koulutusmoduuli";
     private static final long serialVersionUID = -3359195324699691606L;
-    private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
+    @SuppressWarnings("unused")
+	private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "ylamoduuli")
     private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
@@ -107,18 +114,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private String ulkoinenTunniste;
     @Column(name = "opintoala")
     private String opintoala;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "koulutuksenrakenne")
-    private MonikielinenTeksti koulutuksenRakenne;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "jatkoopintomahdollisuudet")
-    private MonikielinenTeksti jatkoOpintoMahdollisuudet;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "nimi")
-    private MonikielinenTeksti nimi;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tavoitteet")
-    private MonikielinenTeksti tavoitteet;
     @Enumerated(EnumType.STRING)
     @Column(name = "koulutustyyppi")
     private String koulutustyyppi;
@@ -127,6 +122,16 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi")
+    private MonikielinenTeksti nimi;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name=TABLE_NAME+"_tekstit", inverseJoinColumns=@JoinColumn(name="monikielinen_teksti_id"))
+    @MapKeyEnumerated(EnumType.STRING)
+    @MapKeyColumn(name="teksti", nullable=false)
+    private Map<KomoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomoTeksti, MonikielinenTeksti>();
+    
     /**
      * JPA konstruktori
      */
@@ -138,6 +143,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         super();
         moduuliTyyppi = tyyppi;
     }
+    
+    public Map<KomoTeksti, MonikielinenTeksti> getTekstit() {
+		return tekstit;
+	}
+    
+    public void setTekstit(Map<KomoTeksti, MonikielinenTeksti> tekstit) {
+		this.tekstit = tekstit;
+	}
 
     /**
      * @return the organisaatioOid
@@ -494,19 +507,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @return
      */
     public MonikielinenTeksti getKoulutuksenRakenne() {
-        return koulutuksenRakenne;
+        return tekstit.get(KomoTeksti.KOULUTUKSEN_RAKENNE);
     }
 
     public void setKoulutuksenRakenne(MonikielinenTeksti koulutuksenRakenne) {
-        this.koulutuksenRakenne = MonikielinenTeksti.merge(this.koulutuksenRakenne, koulutuksenRakenne);
+    	MonikielinenTeksti.merge(tekstit, KomoTeksti.KOULUTUKSEN_RAKENNE, koulutuksenRakenne);
     }
 
     public MonikielinenTeksti getJatkoOpintoMahdollisuudet() {
-        return jatkoOpintoMahdollisuudet;
+        return tekstit.get(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
     }
 
     public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
-        this.jatkoOpintoMahdollisuudet = MonikielinenTeksti.merge(this.jatkoOpintoMahdollisuudet, jatkoOpintoMahdollisuudet);
+    	MonikielinenTeksti.merge(tekstit, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, jatkoOpintoMahdollisuudet);
     }
 
     /**
@@ -531,14 +544,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @return the tavoitteet
      */
     public MonikielinenTeksti getTavoitteet() {
-        return tavoitteet;
+        return tekstit.get(KomoTeksti.TAVOITTEET);
     }
 
     /**
      * @param tavoitteet the tavoitteet to set
      */
     public void setTavoitteet(MonikielinenTeksti tavoitteet) {
-        this.tavoitteet = MonikielinenTeksti.merge(this.tavoitteet, tavoitteet);
+    	MonikielinenTeksti.merge(tekstit, KomoTeksti.TAVOITTEET, tavoitteet);
     }
 
     /**
