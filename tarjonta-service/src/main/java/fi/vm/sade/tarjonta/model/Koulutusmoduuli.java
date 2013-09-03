@@ -506,18 +506,22 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKoulutuksenRakenne() {
         return tekstit.get(KomoTeksti.KOULUTUKSEN_RAKENNE);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKoulutuksenRakenne(MonikielinenTeksti koulutuksenRakenne) {
     	MonikielinenTeksti.merge(tekstit, KomoTeksti.KOULUTUKSEN_RAKENNE, koulutuksenRakenne);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getJatkoOpintoMahdollisuudet() {
         return tekstit.get(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
     	MonikielinenTeksti.merge(tekstit, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, jatkoOpintoMahdollisuudet);
     }
@@ -543,6 +547,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     /**
      * @return the tavoitteet
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getTavoitteet() {
         return tekstit.get(KomoTeksti.TAVOITTEET);
     }
@@ -550,8 +555,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     /**
      * @param tavoitteet the tavoitteet to set
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setTavoitteet(MonikielinenTeksti tavoitteet) {
     	MonikielinenTeksti.merge(tekstit, KomoTeksti.TAVOITTEET, tavoitteet);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public MonikielinenTeksti getPatevyys() {
+        return tekstit.get(KomoTeksti.PATEVYYS);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setPatevyys(MonikielinenTeksti tavoitteet) {
+    	MonikielinenTeksti.merge(tekstit, KomoTeksti.PATEVYYS, tavoitteet);
     }
 
     /**

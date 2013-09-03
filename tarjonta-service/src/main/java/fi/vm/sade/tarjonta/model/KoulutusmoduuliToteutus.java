@@ -488,6 +488,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the maksullisuusUrl
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getMaksullisuusUrl() {
         return tekstit.get(KomotoTeksti.MAKSULLISUUS);
     }
@@ -495,6 +496,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @param maksullisuusUrl the maksullisuusUrl to set
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setMaksullisuusUrl(MonikielinenTeksti maksullisuusUrl) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.MAKSULLISUUS, maksullisuusUrl);
     }
@@ -566,10 +568,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getArviointikriteerit() {
         return tekstit.get(KomotoTeksti.ARVIOINTIKRITEERIT);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setArviointikriteerit(MonikielinenTeksti arviointikriteerit) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.ARVIOINTIKRITEERIT, arviointikriteerit);
     }
@@ -579,10 +583,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getLoppukoeVaatimukset() {
         return tekstit.get(KomotoTeksti.LOPPUKOEVAATIMUKSET);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.LOPPUKOEVAATIMUKSET, loppukoeVaatimukset);
     }
@@ -616,10 +622,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKuvailevatTiedot() {
         return tekstit.get(KomotoTeksti.KUVAILEVAT_TIEDOT);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKuvailevatTiedot(MonikielinenTeksti kuvailevatTiedot) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KUVAILEVAT_TIEDOT, kuvailevatTiedot);
     }
@@ -629,10 +637,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getSisalto() {
         return tekstit.get(KomotoTeksti.SISALTO);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSisalto(MonikielinenTeksti sisalto) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.SISALTO, sisalto);
     }
@@ -642,10 +652,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getSijoittuminenTyoelamaan() {
         return tekstit.get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSijoittuminenTyoelamaan(MonikielinenTeksti sijoittuminenTyoelamaan) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, sijoittuminenTyoelamaan);
     }
@@ -655,10 +667,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKansainvalistyminen() {
         return tekstit.get(KomotoTeksti.KANSAINVALISTYMINEN);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKansainvalistyminen(MonikielinenTeksti kansainvalistyminen) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KANSAINVALISTYMINEN, kansainvalistyminen);
     }
@@ -668,10 +682,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getYhteistyoMuidenToimijoidenKanssa() {
         return tekstit.get(KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, yhteistyoMuidenToimijoidenKanssa);
     }
@@ -679,6 +695,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the painotus
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getPainotus() {
         return tekstit.get(KomotoTeksti.PAINOTUS);
     }
@@ -686,17 +703,43 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @param painotus the painotus to set
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setPainotus(MonikielinenTeksti painotus) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.PAINOTUS, painotus);
     }
     
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKoulutusohjelmanValinta() {
         return tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKoulutusohjelmanValinta(MonikielinenTeksti koulutusohjelmanValinta) {
     	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, koulutusohjelmanValinta);
     }
+    
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public MonikielinenTeksti getLisatietoaOpetuskielista() {
+        return tekstit.get(KomotoTeksti.LISATIETOA_OPETUSKIELISTA);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setLisatietoaOpetuskielista(MonikielinenTeksti tavoitteet) {
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.LISATIETOA_OPETUSKIELISTA, tavoitteet);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public MonikielinenTeksti getTutkimuksenPainopisteet() {
+        return tekstit.get(KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setTutkimuksenPainopisteet(MonikielinenTeksti tavoitteet) {
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET, tavoitteet);
+    }
+
+    
     
     public void setLukiodiplomit(Set<KoodistoUri> lukiodiplomit) {
         this.lukiodiplomit.clear();
