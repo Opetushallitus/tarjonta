@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = false)
 public class HakuResultRow extends HorizontalLayout {
 
+    private static final long serialVersionUID = 8295347976959013279L;
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi HAKU = SisaltoTyyppi.HAKU;
@@ -72,9 +73,12 @@ public class HakuResultRow extends HorizontalLayout {
         this.hakuNimi = hakuNimi;
     }
     private MenuBar.Command menuCommand = new MenuBar.Command() {
+
+        private static final long serialVersionUID = -6595316501605366763L;
+
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            //DEBUGSAWAY:LOG.debug(selectedItem.getText());
+            
             menuItemClicked(selectedItem.getText());
 
         }
@@ -99,8 +103,6 @@ public class HakuResultRow extends HorizontalLayout {
 
         if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanPublishHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
 
         return rowMenuBar;
@@ -117,14 +119,15 @@ public class HakuResultRow extends HorizontalLayout {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
              showPublishDialog();
-        } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
-            showCancelPublishDialog();
-        }
+        } 
     }
 
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakuNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = 6555227248805537953L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakuRemovalDialog();
@@ -132,6 +135,9 @@ public class HakuResultRow extends HorizontalLayout {
             }
         },
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -3276341748051443397L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakuRemovalDialog();
@@ -142,31 +148,12 @@ public class HakuResultRow extends HorizontalLayout {
         getWindow().addWindow(removeDialogWindow);
     }
 
-    private void showCancelPublishDialog() {
-        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("cancelPublishQ"), hakuNimi, T("removeYes"), T("removeNo"),
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(ClickEvent event) {
-                        closeHakuRemovalDialog();
-                        cancelHakuPublish();
-
-                    }
-                },
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(ClickEvent event) {
-                        closeHakuRemovalDialog();
-
-                    }
-                });
-        removeDialogWindow = new TarjontaDialogWindow(removeDialog, T("cancelPublishTitle"));
-        removeDialogWindow.setResizable(false);
-        getWindow().addWindow(removeDialogWindow);
-    }
-
     private void showPublishDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("publishQ"), hakuNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -1659792344996887472L;
+
                     @Override
                     public void buttonClick(ClickEvent event) {
                         closeHakuRemovalDialog();
@@ -175,6 +162,9 @@ public class HakuResultRow extends HorizontalLayout {
                     }
                 },
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = 1707035591602111711L;
+
                     @Override
                     public void buttonClick(ClickEvent event) {
                         closeHakuRemovalDialog();
@@ -191,10 +181,6 @@ public class HakuResultRow extends HorizontalLayout {
         if (removeDialogWindow != null) {
             getWindow().removeWindow(removeDialogWindow);
         }
-    }
-
-    private void cancelHakuPublish() {
-        hakuPresenter.changeStateToCancelled(haku.getHakuOid(), HAKU);
     }
 
     private void startHakuPublish() {
@@ -215,6 +201,9 @@ public class HakuResultRow extends HorizontalLayout {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
+
+            private static final long serialVersionUID = 8857751432323545143L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (haku != null
@@ -224,7 +213,7 @@ public class HakuResultRow extends HorizontalLayout {
                 } else if (haku != null
                         && haku.getHakuOid() != null) {
                     hakuPresenter.unSelectHaku(haku);
-                    //hakuPresenter.getSelectedhaut().remove(haku);
+                    
                 }
             }
         });
@@ -235,6 +224,9 @@ public class HakuResultRow extends HorizontalLayout {
         if (withMenuBar) {
             Button nimiB = UiUtil.buttonLink(null, text);
             nimiB.addListener(new Button.ClickListener() {
+
+                private static final long serialVersionUID = 6974472604937788133L;
+
                 @Override
                 public void buttonClick(ClickEvent event) {
                     menuItemClicked(i18n.getMessage("tarkastele"));
@@ -267,6 +259,7 @@ public class HakuResultRow extends HorizontalLayout {
 
     public class HakuRowMenuEvent extends Component.Event {
 
+        private static final long serialVersionUID = 177504337415571268L;
         public static final String REMOVE = "remove";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";

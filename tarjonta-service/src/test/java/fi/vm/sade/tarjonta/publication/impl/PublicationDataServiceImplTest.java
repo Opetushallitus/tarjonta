@@ -343,6 +343,7 @@ public class PublicationDataServiceImplTest {
         check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
     }
 
+    /*Haku cancel is not supported anymore
     @Test
     public void testiHakuCancel() {
         GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
@@ -362,7 +363,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.PERUTTU, TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU);
-    }
+    }*/
 
     @Test
     public void testiToteutusPublish() {
