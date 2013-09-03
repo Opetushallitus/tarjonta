@@ -16,6 +16,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.data.Container;
+
 import fi.vm.sade.tarjonta.ui.enums.TarjontaStyles;
 import fi.vm.sade.vaadin.ui.OphAbstractTreeTable;
 
@@ -23,9 +25,16 @@ public class CategoryTreeView extends OphAbstractTreeTable {
 
     private static final long serialVersionUID = -6359993156163192562L;
 
+    public CategoryTreeView(Container container) {
+        super(container);
+        //addStyleName(TarjontaStyles.CATEGORY_TREE.getStyleName());
+        setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
+    }
+
     public CategoryTreeView() {
-        super();
         addStyleName(TarjontaStyles.CATEGORY_TREE.getStyleName());
         setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
     }
+
+    
 }
