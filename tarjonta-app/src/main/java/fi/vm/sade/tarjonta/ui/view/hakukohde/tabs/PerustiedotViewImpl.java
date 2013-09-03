@@ -864,17 +864,28 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 			
 			DateField df = alku ? hakuaikaAlkuPvm : hakuaikaLoppuPvm;
 			Date spvm = (Date) df.getValue();
+			Date opvm = (Date) (alku ? hakuaikaLoppuPvm : hakuaikaAlkuPvm).getValue();
 			
 			if (spvm==null) {
 				return;
 			}
 
-			if (hvm.getAlkamisPvm()!=null && hvm.getAlkamisPvm().after(spvm)) {
-				df.setValue(hvm.getAlkamisPvm());
-			} else if (hvm.getPaattymisPvm()!=null && hvm.getPaattymisPvm().before(spvm)) {
-				df.setValue(hvm.getPaattymisPvm());
+			// rajaa haun alkamis- ja päättymispäivän mukaan
+			if (spvm.before(hvm.getAlkamisPvm())) {
+				spvm = hvm.getAlkamisPvm();
+			} else if (spvm.after(hvm.getPaattymisPvm())) {
+				spvm = hvm.getPaattymisPvm();
 			}
-
+			
+			// rajaa annetun alku/loppupvm:n mukaan
+			if (opvm!=null && ((alku && spvm.after(opvm)) || (!alku && spvm.before(opvm)))) {
+				spvm = opvm;
+			}
+			
+			if (!spvm.equals(df.getValue())) {
+				df.setValue(spvm);
+			}
+			
     	}
     }
     
