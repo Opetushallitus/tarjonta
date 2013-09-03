@@ -57,8 +57,10 @@ public class CreationDialog<T> extends CustomComponent {
     private static final Logger LOG = LoggerFactory.getLogger(CreationDialog.class);
     private String dialogTitleKey = null;
     private String dialogOptionGroupTitleKey = null;
+    boolean selectedByDefault;
 
-    public CreationDialog(List<T> selectedThingsParam, Class<T> clazzParam, String dialogTitle, String optionGroupTitle) {
+    public CreationDialog(List<T> selectedThingsParam, Class<T> clazzParam, String dialogTitle, String optionGroupTitle, boolean selectedByDefault) {
+        this.selectedByDefault = selectedByDefault;
         selectedThings = selectedThingsParam;
         typeClazz = clazzParam;
         rootLayout = new VerticalLayout();
@@ -125,8 +127,10 @@ public class CreationDialog<T> extends CustomComponent {
         optionGroup = new OptionGroup(null, beanValues);
         getOptionGroup().setMultiSelect(true);
         //Set all selected as default
-        for (Object obj : getOptionGroup().getItemIds()) {
-            getOptionGroup().select(obj);
+        if (this.selectedByDefault) {
+            for (Object obj : getOptionGroup().getItemIds()) {
+                getOptionGroup().select(obj);
+            }
         }
         if (this.dialogOptionGroupTitleKey != null) {
         Label lbl = new Label(I18N.getMessage(this.dialogOptionGroupTitleKey));
