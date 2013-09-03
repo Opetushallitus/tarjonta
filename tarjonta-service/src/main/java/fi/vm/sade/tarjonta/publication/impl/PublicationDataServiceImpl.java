@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
@@ -63,6 +64,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -345,9 +347,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 //update all other data relations to give status
                 if (TarjontaTila.JULKAISTU.equals(toStatus)) {
                     updateAllStatusesRelatedToHaku(oids, toStatus, TarjontaTila.VALMIS);
-                } else if (TarjontaTila.PERUTTU.equals(toStatus)) {
+                } /*else if (TarjontaTila.PERUTTU.equals(toStatus)) {
                     updateAllStatusesRelatedToHakuCancel(oids, TarjontaTila.cancellableValues());
-                }
+                }*/
 
                 break;
             case HAKUKOHDE:

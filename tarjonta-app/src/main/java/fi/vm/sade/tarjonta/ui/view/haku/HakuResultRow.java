@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = false)
 public class HakuResultRow extends HorizontalLayout {
 
+    private static final long serialVersionUID = 8295347976959013279L;
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi HAKU = SisaltoTyyppi.HAKU;
@@ -72,9 +73,12 @@ public class HakuResultRow extends HorizontalLayout {
         this.hakuNimi = hakuNimi;
     }
     private MenuBar.Command menuCommand = new MenuBar.Command() {
+
+        private static final long serialVersionUID = -6595316501605366763L;
+
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            //DEBUGSAWAY:LOG.debug(selectedItem.getText());
+            
             menuItemClicked(selectedItem.getText());
 
         }
@@ -125,6 +129,9 @@ public class HakuResultRow extends HorizontalLayout {
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakuNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = 6555227248805537953L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakuRemovalDialog();
@@ -132,6 +139,9 @@ public class HakuResultRow extends HorizontalLayout {
             }
         },
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -3276341748051443397L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakuRemovalDialog();
@@ -215,6 +225,9 @@ public class HakuResultRow extends HorizontalLayout {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
+
+            private static final long serialVersionUID = 8857751432323545143L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (haku != null
@@ -224,7 +237,7 @@ public class HakuResultRow extends HorizontalLayout {
                 } else if (haku != null
                         && haku.getHakuOid() != null) {
                     hakuPresenter.unSelectHaku(haku);
-                    //hakuPresenter.getSelectedhaut().remove(haku);
+                    
                 }
             }
         });
@@ -235,6 +248,9 @@ public class HakuResultRow extends HorizontalLayout {
         if (withMenuBar) {
             Button nimiB = UiUtil.buttonLink(null, text);
             nimiB.addListener(new Button.ClickListener() {
+
+                private static final long serialVersionUID = 6974472604937788133L;
+
                 @Override
                 public void buttonClick(ClickEvent event) {
                     menuItemClicked(i18n.getMessage("tarkastele"));
@@ -267,6 +283,7 @@ public class HakuResultRow extends HorizontalLayout {
 
     public class HakuRowMenuEvent extends Component.Event {
 
+        private static final long serialVersionUID = 177504337415571268L;
         public static final String REMOVE = "remove";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";

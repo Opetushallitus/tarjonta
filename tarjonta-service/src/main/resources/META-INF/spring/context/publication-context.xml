@@ -6,7 +6,6 @@
         <!--
         May be completely replaced/moved when the architechture team resolves how tarjonta publication is designed.
         -->
-
     <bean id="tarjontaPublicationCollector" class="fi.vm.sade.tarjonta.publication.PublicationCollector">
 
         <property name="dataService">

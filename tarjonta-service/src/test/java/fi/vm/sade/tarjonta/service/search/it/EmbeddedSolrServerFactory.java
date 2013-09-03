@@ -47,6 +47,11 @@ public class EmbeddedSolrServerFactory extends SolrServerFactory {
     }
     
     @Override
+    public SolrServer getOrganisaatioSolrServer() {
+        return getSolrServer("organisaatiot");
+    }
+    
+    @Override
     public void afterPropertiesSet() throws Exception {
      
     }

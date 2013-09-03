@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vaadin.ui.Window;
 
@@ -1331,20 +1332,20 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
+        List<HakukohdeTulos> hakukohdetulos = Lists.newArrayList();
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         try {
             // Fetching komotos matching currently specified criteria (currently
             // selected organisaatio and written text in search box)
             HakukohteetKysely kysely = koulutusSearchSpecToDTOConverter
                     .convertViewModelToHakukohdeDTO(getModel().getSearchSpec());
-            getModel().setHakukohteet(tarjontaSearchService.haeHakukohteet(kysely).getHakukohdeTulos());
+            hakukohdetulos.addAll(tarjontaSearchService.haeHakukohteet(kysely).getHakukohdeTulos());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet ", ex);
-            getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
             throw new RuntimeException(ex);
         }
-        this.searchResultsView.setResultSizeForHakukohdeTab(getModel().getHakukohteet().size());
-        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
+        this.searchResultsView.setResultSizeForHakukohdeTab(hakukohdetulos.size());
+        for (HakukohdeTulos curHk : hakukohdetulos) {
             String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getHakukohde().getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(hkKey)) {
                 List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();

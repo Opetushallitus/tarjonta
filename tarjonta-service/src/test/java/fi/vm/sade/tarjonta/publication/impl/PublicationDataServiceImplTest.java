@@ -343,6 +343,7 @@ public class PublicationDataServiceImplTest {
         check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
     }
 
+    
     @Test
     public void testiHakuCancel() {
         GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
@@ -356,12 +357,12 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         //cancel haku and hakukohteet
         publicationDataService.updatePublicationStatus(list);
-        check(TarjontaTila.PERUTTU, TarjontaTila.VALMIS, TarjontaTila.PERUTTU);
+        check(TarjontaTila.PERUTTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
 
         //same as above, but toteutus has a different status
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         publicationDataService.updatePublicationStatus(list);
-        check(TarjontaTila.PERUTTU, TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU);
+        check(TarjontaTila.PERUTTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
     }
 
     @Test
