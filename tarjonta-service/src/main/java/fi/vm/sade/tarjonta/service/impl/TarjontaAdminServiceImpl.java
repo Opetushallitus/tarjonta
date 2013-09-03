@@ -405,9 +405,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.info("Hakukohde koulutukses : {}", hakukohde.getKoulutusmoduuliToteutuses().size());
         log.info("Number koulutukses to remove from hakukohde : {}", parameters.getKoulutusOids().size());
         if (parameters.isLisaa()) {
-            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(), hakukohde));
+            Set<KoulutusmoduuliToteutus> komotos = findKoulutusModuuliToteutus(parameters.getKoulutusOids(), hakukohde);
+            hakukohde.setKoulutusmoduuliToteutuses(komotos);
             log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());
             hakukohdeDAO.update(hakukohde);
+            solrIndexer.indexKoulutukset(getKomotoIds(komotos));
+            List<Long> hakukohdeIds = new ArrayList<Long>();
+            hakukohdeIds.add(hakukohde.getId());
+            solrIndexer.indexHakukohteet(hakukohdeIds);
         } else {
             List<KoulutusmoduuliToteutus> poistettavatModuuliLinkitLista = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
             Set<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = new HashSet<KoulutusmoduuliToteutus>(poistettavatModuuliLinkitLista);
@@ -443,6 +448,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         }
 
+    }
+    
+    private List<Long> getKomotoIds(Set<KoulutusmoduuliToteutus> komotos) {
+        List<Long> komotoIds = new ArrayList<Long>();
+        for (KoulutusmoduuliToteutus curKomoto : komotos) {
+            komotoIds.add(curKomoto.getId());
+        }
+        return komotoIds;
     }
 
     @Override

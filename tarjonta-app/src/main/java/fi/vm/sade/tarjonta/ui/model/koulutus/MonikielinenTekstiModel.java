@@ -21,8 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -43,6 +47,17 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
         return model;
     }
 
+    public void addKielikaannos(KielikaannosViewModel model) {
+        Preconditions.checkNotNull(model, "KielikaannosViewModel object cannot be null.");
+        Preconditions.checkNotNull(model.getKielikoodi(), "Kielikoodi cannot be null.");
+        kaannokset.put(model.getKielikoodi(), model);
+    }
+
+    public KielikaannosViewModel removeKielikaannos(String langCode) {
+        Preconditions.checkNotNull(langCode, "Language code cannot be null.");
+        return kaannokset.remove(langCode);
+    }
+
     /**
      * @param kielikaannos the kielikaannos to set
      */
@@ -51,14 +66,11 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
 
         //build index for easier access
         for (KielikaannosViewModel model : kielikaannos) {
-            Preconditions.checkNotNull(model.getKielikoodi(), ERROR_NULL);
-
-            kaannokset.put(model.getKielikoodi(), model);
+            addKielikaannos(model);
         }
 
         //store text to the field
         closestKieliKaannos(userKieliUri, fallbackKieliUri);
-
     }
 
     public String getTextByLangCode(final String langCode) {
@@ -112,4 +124,33 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
         }
         return -1;
     }
+
+    /**
+     * Get KielikaannosViewModel objects by given order. Null param not allowed.
+     *
+     * @param orderByLangCode
+     * @return
+     */
+    public LinkedList<KielikaannosViewModel> getLangByOrder(String[] orderByLangCode) {
+        Preconditions.checkNotNull(orderByLangCode, "Array cannot be null.");
+        final Set<Entry<String, KielikaannosViewModel>> entrySet = kaannokset.entrySet();
+        LinkedList<KielikaannosViewModel> order = Lists.<KielikaannosViewModel>newLinkedList();
+
+        for (String e : orderByLangCode) {
+            if (kaannokset.containsKey(e)) {
+                order.add(kaannokset.get(e));
+            } else {
+                order.addLast(new KielikaannosViewModel(e, ""));
+            }
+        }
+
+        for (Entry<String, KielikaannosViewModel> e : entrySet) {
+            if (!order.contains(e.getValue())) {
+                order.addLast(e.getValue());
+            }
+        }
+        return order;
+    }
+    
+    
 }

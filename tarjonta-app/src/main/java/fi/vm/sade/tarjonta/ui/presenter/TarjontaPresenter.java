@@ -515,7 +515,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
 
 
-        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", null);
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", null, true);
         List<String> validationMessages = validateKoulutukses(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
         if (validationMessages != null && validationMessages.size() > 0) {
             for (String validationMessage : validationMessages) {
@@ -579,10 +579,27 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getTarjoajaOids().add(getNavigationOrganisation().getOrganisationOid());
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
-        List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos()));
-        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses, KoulutusOidNameViewModel.class, "ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        LueKoulutusKyselyTyyppi lueK = new LueKoulutusKyselyTyyppi();
+        lueK.setOid(getModel().getHakukohde().getKomotoOids().get(0));
+        LueKoulutusVastausTyyppi koulutus = this.tarjontaPublicService.lueKoulutus(lueK);
+        List<KoulutusTulos> validKoulutukses = getValidKoulutuksesForHakukohde(vastaus, koulutus.getKoulutusKoodi(), koulutus.getPohjakoulutusvaatimus());
+        List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(validKoulutukses));
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses, KoulutusOidNameViewModel.class, "ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup", false);
         return dialog;
 
+    }
+
+    private List<KoulutusTulos> getValidKoulutuksesForHakukohde(
+            KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi) {
+        List<KoulutusTulos> validKoulutukses = new ArrayList<KoulutusTulos>();
+        for (KoulutusTulos curKoulutus : vastaus.getKoulutusTulos()) {
+            if (curKoulutus.getKoulutus().getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+                && curKoulutus.getKoulutus().getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())) {
+                validKoulutukses.add(curKoulutus);
+            }
+        }
+        
+        return validKoulutukses;
     }
 
     private List<KoulutusOidNameViewModel> removeSelectedKoulutukses(List<KoulutusOidNameViewModel> koulutukses) {

@@ -88,4 +88,8 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
     public void actionNext(ClickEvent event) {
         presenter.getKorkeakouluPresenter().showSummaryKoulutusView();
     }
+
+    public void rebuildLanguageTextFields() {
+        formView.rebuildLanguageTextFields();
+    }
 }

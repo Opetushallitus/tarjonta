@@ -231,6 +231,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteria();
+                criteria.setFirstResult(1);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
                 }
