@@ -25,8 +25,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Tuomas Katva
  */
 public class KielikaannosViewModel extends BaseUIViewModel {
-    private static final long serialVersionUID = -7143247971594161270L;
 
+    private static final long serialVersionUID = -7143247971594161270L;
     private String kielikoodi;
     private String nimi;
 
@@ -91,6 +91,6 @@ public class KielikaannosViewModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(kielikoodi).append(nimi).toString();
+        return new ToStringBuilder(this).append("kielikoodi", kielikoodi).append("nimi", nimi).toString();
     }
 }

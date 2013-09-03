@@ -371,6 +371,9 @@ public class KoulutusKoodistoConverter {
         }
     }
 
+    /*
+     * Used in koulutus koodis filter.
+     */
     public List<KoulutuskoodiRowModel> listaaKoulutuksesByKoulutusala(String koulutusalaKoodiUri, final Locale locale) {
         final Set<String> korkeakoulutKoulutusasteUris = convertToKoulutusasteUris(korkeakouluKoodiarvos);
         Collection<KoodiType> koulutuskoodisByAste = tarjontaUiHelper.getKoulutusasteRelatedKoulutuskoodis(korkeakoulutKoulutusasteUris);

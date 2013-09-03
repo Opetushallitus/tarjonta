@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.LisaaNimiDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.MuokkaaTutkintoohjelmaDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ShowKorkeakouluSummaryView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
@@ -58,6 +59,7 @@ import java.util.Locale;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 
 /**
  *
@@ -80,6 +82,8 @@ public class TarjontaKorkeakouluPresenter {
     private KoulutusKoodistoConverter koulutusKoodistoConverter;
     @Autowired(required = true)
     private UiBuilder uiBuilder;
+    @Autowired(required = true)
+    private TarjontaUIHelper tarjontaUiHelper;
     private TarjontaPresenter presenter; //initialized in Spring xml configuration file.
     private EditKorkeakouluPerustiedotView perustiedotView;
     private EditKorkeakouluKuvailevatTiedotView kuvailevatTiedotView;
@@ -389,6 +393,11 @@ public class TarjontaKorkeakouluPresenter {
         this.valitseTutkintoohjelmaDialog.windowOpen();
     }
 
+    public void showLisaaKieliDialog() {
+        LisaaNimiDialog dialog = new LisaaNimiDialog(presenter, tarjontaUiHelper, uiBuilder);
+        dialog.windowOpen();
+    }
+
     /**
      * @return the MuokkaaTutkintoohjelmaDialog
      */
@@ -398,7 +407,7 @@ public class TarjontaKorkeakouluPresenter {
         if (edit) {
             //set the current name of the form text edit field.
             Preconditions.checkNotNull(tutkintoohjelma, "Loaded tutkinto-ohjelma UI model cannot be null.");
-            Preconditions.checkNotNull(tutkintoohjelma.getKomoOid(), "Loaded tutkinto-ohjelma KOMO OID cannot be null.");
+            // Preconditions.checkNotNull(tutkintoohjelma.getKomoOid(), "Loaded tutkinto-ohjelma KOMO OID cannot be null.");
             Preconditions.checkArgument(!tutkintoohjelma.getKielikaannos().isEmpty(), "Loaded tutkinto-ohjelma UI model cannot be empty.");
             Preconditions.checkNotNull(tutkintoohjelma.getNimi(), "Loaded tutkinto-ohjelma name cannot be empty.");
 

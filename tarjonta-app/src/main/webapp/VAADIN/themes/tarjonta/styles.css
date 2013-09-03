@@ -46,3 +46,7 @@ Alternative for Vaadin horizontal layout:
     padding-top: 10px !important;
     vertical-align:bottom;
 }
+
+.component-twincolsel-title{
+    margin-left: 161px;
+}
