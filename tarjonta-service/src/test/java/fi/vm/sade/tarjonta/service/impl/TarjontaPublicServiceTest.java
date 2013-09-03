@@ -225,51 +225,6 @@ public class TarjontaPublicServiceTest {
 
     }
 
-    /*
-    @Test
-    public void testEtsiHakukohteet() {
-
-        HakukohdeTulos rivi;
-        HakuKoosteTyyppi haku;
-        HakukohdeKoosteTyyppi hakukohde;
-        KoulutusKoosteTyyppi koulutus;
-
-        HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
-        HaeHakukohteetVastausTyyppi vastaus = service.haeHakukohteet(kysely);
-
-        assertNotNull(vastaus);
-
-        List<HakukohdeTulos> rivit = vastaus.getHakukohdeTulos();
-
-        // vastaus pitäisi olla:
-        //
-        // haku1, hakukohde1, koulutusmoduuli1, organisaatioA
-        // haku1, hakukohde2, koulutusmoduuli2, organisaatioB
-        // haku1, hakukohde1, koulutusmoduuli2, organisaatioB
-
-        assertEquals(3, rivit.size());
-
-        rivi = rivit.get(0);
-
-        haku = rivi.getHaku();
-        hakukohde = rivi.getHakukohde();
-        koulutus = rivi.getKoulutus();
-
-        assertEquals(YHTEISHAKU, haku.getHakutapa());
-        assertEquals("Peltikorjaajan perustutkinto", hakukohde.getNimi());
-        assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
-
-        rivi = rivit.get(2);
-        haku = rivi.getHaku();
-        hakukohde = rivi.getHakukohde();
-        koulutus = rivi.getKoulutus();
-
-        assertEquals(YHTEISHAKU, haku.getHakutapa());
-        assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
-        assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
-        assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
-
-    }*/
 
     @Test
     public void testPisterajat()  {

@@ -1,9 +1,12 @@
 package fi.vm.sade.tarjonta.service.search;
 
+import java.util.Map;
+
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -13,19 +16,19 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 public class SolrDocumentToKoulutusmoduuliToteutusConverter {
 
-    public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, SolrDocumentList solrOrgList) {
+    public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
             SolrDocument curDoc = solrKomotoList.get(i);
-            KoulutusTulos tulos = convertKoulutus(curDoc, solrOrgList);
-            if(tulos!=null) {
+            KoulutusTulos tulos = convertKoulutus(curDoc, orgs);
+            if (tulos != null) {
                 vastaus.getKoulutusTulos().add(tulos);
             }
         }
         return vastaus;
     }
     
-    private KoulutusTulos convertKoulutus(SolrDocument koulutusDoc, SolrDocumentList solrOrgList) {
+    private KoulutusTulos convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutusTulos tulos = new KoulutusTulos();
         KoulutusListausTyyppi koulutus = new KoulutusListausTyyppi();
         koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
@@ -43,7 +46,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setNimi(createKoulutusNimi(koulutusDoc));
         koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexDataUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
-        koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, solrOrgList));
+        koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
         if (koulutusDoc.containsKey(KAUSI_KOODI)) {
             koulutus.setKoulutuksenAlkamiskausiUri("" + koulutusDoc.getFieldValue(KAUSI_KOODI));
         }

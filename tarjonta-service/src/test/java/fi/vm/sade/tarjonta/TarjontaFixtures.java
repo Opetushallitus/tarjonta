@@ -165,6 +165,23 @@ public class TarjontaFixtures {
 
     }
 
+    public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutusWithTarjoajaOid(String tarjoajaOid) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, 1);
+
+        KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
+        t.setTarjoaja(tarjoajaOid);
+        t.setOid(randomOid("koulutusmoduulitotetutus"));
+        t.setKoulutuksenAlkamisPvm(cal.getTime());
+        t.setMaksullisuus(null);
+        t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
+        t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
+
+        return t;
+
+    }
+
     public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutus(String komotoOid) {
 
         Calendar cal = Calendar.getInstance();
@@ -285,12 +302,16 @@ public class TarjontaFixtures {
     }
 
     public Hakukohde createPersistedHakukohdeWithKoulutus() {
+        return createPersistedHakukohdeWithKoulutus(OID_ORGANISAATIO);
+    }
+
+    public Hakukohde createPersistedHakukohdeWithKoulutus(String tarjoajaOid) {
 
         Hakukohde h = createPersistedHakukohde();//createHakukohde();
 
-        KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutus();
-        KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutus();
-        KoulutusmoduuliToteutus t3 = createTutkintoOhjelmaToteutus();
+        KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutusWithTarjoajaOid(tarjoajaOid);
+        KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutusWithTarjoajaOid(tarjoajaOid);
+        KoulutusmoduuliToteutus t3 = createTutkintoOhjelmaToteutusWithTarjoajaOid(tarjoajaOid);
 
         Koulutusmoduuli m1 = koulutusmoduuliDAO.insert(createTutkintoOhjelma());
 
@@ -419,7 +440,7 @@ public class TarjontaFixtures {
     }
 
     private String randomOid(String type) {
-        return "http://" + type + "/" + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
+        return "1.2.3.4." + type + "." + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
     }
 
     private String randomUri(String context) {

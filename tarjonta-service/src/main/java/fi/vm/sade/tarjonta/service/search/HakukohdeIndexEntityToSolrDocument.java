@@ -245,11 +245,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         add(hakukohdeDoc, ORG_OID, perus.getOid());
         ArrayList<String> oidPath = Lists.newArrayList();
         
-        Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
-        Collections.reverse(oidPath);
-        
-        for (String path : oidPath) {
-            add(hakukohdeDoc, ORG_PATH, path);
+        if (perus.getParentOidPath() != null) {
+            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings()
+                    .split(perus.getParentOidPath()));
+            Collections.reverse(oidPath);
+
+            for (String path : oidPath) {
+                add(hakukohdeDoc, ORG_PATH, path);
+            }
         }
         return true;
     }
