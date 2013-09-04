@@ -99,8 +99,6 @@ public class SearchPresenter implements SimpleAutocompleteTextField.IAutocomplet
 
     private KKAutocompleteModel model(KoulutusmoduuliKoosteTyyppi m) {
         TutkintoohjelmaModel t = getUiModelBuilder().build(m.getNimi(), I18N.getLocale());
-        t.setKomoOid(m.getOid());
-        t.setKomoParentOid(m.getParentOid());
         return new KKAutocompleteModel(t);
     }
 
@@ -132,8 +130,6 @@ public class SearchPresenter implements SimpleAutocompleteTextField.IAutocomplet
         for (KoulutusmoduuliTulos tulos : koulutusmoduuliTulos) {
             TutkintoohjelmaModel m = modelTutkintoohjelmaModel(tulos.getKoulutusmoduuli());
             Preconditions.checkNotNull(tulos.getKoulutusmoduuli().getOid(), "KOMO OID cannot be null.");
-            m.setKomoOid(tulos.getKoulutusmoduuli().getOid()); //required OID
-            m.setKomoParentOid(tulos.getKoulutusmoduuli().getParentOid()); //not needed?
             tutkintoohjelmas.add(m);
         }
         LOG.error("Output count {}", tutkintoohjelmas.size());

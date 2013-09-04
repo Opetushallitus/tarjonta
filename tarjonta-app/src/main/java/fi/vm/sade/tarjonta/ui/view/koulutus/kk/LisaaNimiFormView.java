@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.ui.Alignment;
@@ -63,6 +64,9 @@ public class LisaaNimiFormView extends AbstractVerticalLayout {
     private boolean mode;
 
     public LisaaNimiFormView(TarjontaKorkeakouluPresenter presenter, TarjontaUIHelper uiHelper, UiBuilder uiBuilder, LisaaNimiDialog dialog, boolean mode) {
+        Preconditions.checkNotNull(presenter, "TarjontaKorkeakouluPresenter object cannot be null.");
+        Preconditions.checkNotNull(uiHelper, "TarjontaUIHelper object cannot be null.");
+        Preconditions.checkNotNull(dialog, "LisaaNimiDialog object cannot be null.");
         this.presenter = presenter;
         this.dialog = dialog;
         this.mode = mode;
@@ -136,7 +140,7 @@ public class LisaaNimiFormView extends AbstractVerticalLayout {
                 TutkintoohjelmaModel tutkintoohjelma = presenter.getPerustiedotModel().getTutkintoohjelma();
                 tutkintoohjelma.addKielikaannos(dialog.getKielikaannosViewModel());
                 presenter.getPerustiedotView().rebuildLanguageTextFields();
-                
+
                 LOG.debug("set of langs : {}", tutkintoohjelma.getKielikaannos());
                 dialog.windowClose();
             }

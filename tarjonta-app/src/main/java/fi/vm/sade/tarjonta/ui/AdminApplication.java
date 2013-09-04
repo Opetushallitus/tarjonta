@@ -22,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.presenter.SearchPresenter;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.CollapsibleTutkintoohjelmaTable;
 import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
 import fi.vm.sade.vaadin.Oph;
 import org.apache.commons.httpclient.HttpClient;
@@ -57,6 +58,7 @@ public class AdminApplication extends AbstractWebApplication {
         setTheme(Oph.THEME_NAME);
 
         HorizontalLayout hl = new HorizontalLayout();
+
         window.addComponent(hl);
 
         Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
@@ -74,23 +76,6 @@ public class AdminApplication extends AbstractWebApplication {
             }
         });
         hl.addComponent(btnKomo);
-
-        Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                try {
-                    LOG.debug("Luo komot event");
-                    tarjontaKomoData.preLoadAllKoodistot();
-                    tarjontaKomoData.createData(false);
-                } catch (Exception ex) {
-                    LOG.error("Failed to create KOMOs", ex);
-                }
-            }
-        });
-
-        hl.addComponent(btnKomoTest);
 
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -158,7 +143,6 @@ public class AdminApplication extends AbstractWebApplication {
         // Make session to stay alive with small timeout
         hl.addComponent(AbstractWebApplication.createRefersh("AdminApplication.initApplization()"));
     }
-
 //    private void buildTest(AbstractLayout l) {
 //        SearchPresenter searchPresenter = new SearchPresenter();
 //

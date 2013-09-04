@@ -92,30 +92,4 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
 
         return teksti;
     }
-//    public MODEL mapKoodiTypeToModel(Class modelClass, KoodiType koodiType, Locale locale) {
-//        MODEL model;
-//        try {
-//            model = (MODEL) modelClass.newInstance();
-//        } catch (Exception ex) {
-//            throw new RuntimeException("Application error - class initialization failed.", ex);
-//        }
-//        final KoodiMetadataType koodiMetadata = TarjontaUIHelper.getKoodiMetadataForLanguage(koodiType, locale);
-//        model.setNimi(koodiMetadata.getNimi());
-//        model.setKuvaus(koodiMetadata.getKuvaus());
-//
-//        model.setKoodi(koodiType.getKoodiArvo());
-//        model.setKoodistoUri(koodiType.getKoodiUri());
-//        model.setKoodistoVersio(koodiType.getVersio());
-//
-//        final String uriWithVersio = KoulutusConveter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
-//        model.setKoodistoUriVersio(uriWithVersio);
-//
-//        if (model instanceof MonikielinenTekstiModel) {
-//            //add all languages to the UI object
-//            MonikielinenTekstiModel o = (MonikielinenTekstiModel) model;
-//            o.setKielikaannos(KoulutusConveter.convertToKielikaannosViewModel(koodiType.getMetadata()));
-//        }
-//
-//        return model;
-//    }
 }

@@ -23,37 +23,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.*;
  */
 public class TutkintoohjelmaModel extends MonikielinenTekstiModel {
     private static final long serialVersionUID = -5947159028438495028L;
-    private String komoOid;
-    private String komoParentOid;
-    
+ 
     public TutkintoohjelmaModel() {
-    }
-
-    /**
-     * @return the komoOid
-     */
-    public String getKomoOid() {
-        return komoOid;
-    }
-
-    /**
-     * @param komoOid the komoOid to set
-     */
-    public void setKomoOid(String komoOid) {
-        this.komoOid = komoOid;
-    }
-
-    /**
-     * @return the komoParentOid
-     */
-    public String getKomoParentOid() {
-        return komoParentOid;
-    }
-
-    /**
-     * @param komoParentOid the komoParentOid to set
-     */
-    public void setKomoParentOid(String komoParentOid) {
-        this.komoParentOid = komoParentOid;
     }
 }

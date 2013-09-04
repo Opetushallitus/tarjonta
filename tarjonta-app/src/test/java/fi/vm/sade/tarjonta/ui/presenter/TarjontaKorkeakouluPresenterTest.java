@@ -190,7 +190,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         final Set<KielikaannosViewModel> kielikaannos = KoulutusConveter.convertToKielikaannosViewModel(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, KOMO_TUTKINTOOHJELMA_NAME));
 
         tutkintoohjelmaModel.setKielikaannos(LANGUAGE_FI, LANGUAGE_FI, kielikaannos);
-        tutkintoohjelmaModel.setKomoOid(KOMO_OID);
         perustiedot.setTutkintoohjelma(tutkintoohjelmaModel);
 
         /*
@@ -247,7 +246,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
 
         kuvailevatTiedot = instance.getKuvailevatTiedotModel();
-  
+
         Map<String, KorkeakouluLisatietoModel> map = new HashMap<String, KorkeakouluLisatietoModel>();
         KorkeakouluLisatietoModel koulutusLisatietoModel = new KorkeakouluLisatietoModel();
         koulutusLisatietoModel.setKoulutusohjelmanAmmatillisetTavoitteet("koulutusohjelmanAmmatillisetTavoitteet");
@@ -547,7 +546,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
 
         assertEquals(KOMO_OID, perustiedotModel.getKoulutusmoduuliOid());
 
-        assertEquals(1, perustiedotModel.getTutkintoohjelma().getKielikaannos().size());
+        assertEquals("no names for tutkinto-ohjelma", 1, perustiedotModel.getTutkintoohjelma().getKielikaannos().size());
         assertEquals("654321", perustiedotModel.getTutkintoohjelma().getKoodi());
         assertEquals(KOMO_TUTKINTOOHJELMA_NAME, perustiedotModel.getTutkintoohjelma().getNimi());
 

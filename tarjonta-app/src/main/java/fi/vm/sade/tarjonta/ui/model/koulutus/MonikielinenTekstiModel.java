@@ -158,6 +158,8 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
         }
         return order;
     }
-    
-    
+
+    public Set<String> getLanguages() {
+        return kaannokset.keySet();
+    }
 }
