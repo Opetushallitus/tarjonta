@@ -214,7 +214,7 @@
 
    <dynamicField name="*_pi"  type="pint"    indexed="true"  stored="true"/>
    <dynamicField name="*_c"   type="currency" indexed="true"  stored="true"/>
-
+   <dynamicField name="*_tnws"  type="text_general_nows"    indexed="true"  stored="true" multiValued="true"/>
    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
    <dynamicField name="attr_*" type="text_general" indexed="true" stored="true" multiValued="true"/>
 
@@ -376,6 +376,16 @@
 
     <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
     <fieldtype name="binary" class="solr.BinaryField"/>
+    <fieldType name="text_general_nows" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
 
     <!--
       Note:
