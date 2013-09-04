@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,14 +31,16 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,9 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
  * Koulutusmoduuli:n tietoja ja antaa moduulille aika seka paikka ulottuvuuden.
@@ -119,31 +120,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_linkki", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<WebLinkki> linkkis = new HashSet<WebLinkki>();
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "maksullisuus_teksti_id")
-    private MonikielinenTeksti maksullisuusUrl;
     @Column(name = "ulkoinentunniste")
     @FilterXss
     private String ulkoinenTunniste;
     @Column(name = "koulutusaste")
     @FilterXss
     private String koulutusaste;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "arviointikriteerit")
-    private MonikielinenTeksti arviointikriteerit;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "loppukoevaatimukset")
-    private MonikielinenTeksti loppukoeVaatimukset;
     @Column(name = "pohjakoulutusvaatimus")
     @FilterXss
     private String pohjakoulutusvaatimus;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "painotus")
-    private MonikielinenTeksti painotus;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "koulutusohjelmanvalinta")
-    private MonikielinenTeksti koulutusohjelmanValinta;
-
     /*
      * Koulutuksen Lisatiedot  (additional information)
      */
@@ -151,21 +136,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "kuvailevattiedot")
-    private MonikielinenTeksti kuvailevatTiedot;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sisalto")
-    private MonikielinenTeksti sisalto;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sijoittuminentyoelamaan")
-    private MonikielinenTeksti sijoittuminenTyoelamaan;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "kansainvalistyminen")
-    private MonikielinenTeksti kansainvalistyminen;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
-    private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
  
     //Lukiospesifeja kenttia
     @MapKey(name="key")
@@ -183,16 +153,29 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name="viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date viimIndeksointiPvm = null;
-
  
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_pohjakoulutusvaatimus", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name="kk_pohjakoulutusvaatimus")
     private Set<KoodistoUri> kkPohjakoulutusvaatimus = new HashSet<KoodistoUri>();
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name=TABLE_NAME+"_tekstit", inverseJoinColumns=@JoinColumn(name="monikielinen_teksti_id"))
+    @MapKeyEnumerated(EnumType.STRING)
+    @MapKeyColumn(name="teksti", nullable=false)
+    private Map<KomotoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomotoTeksti, MonikielinenTeksti>();
 
     @Column(name="hinta")
     private BigDecimal hinta;
+    
+    public Map<KomotoTeksti, MonikielinenTeksti> getTekstit() {
+		return tekstit;
+	}
+    
+    public void setTekstit(Map<KomotoTeksti, MonikielinenTeksti> tekstit) {
+		this.tekstit = tekstit;
+	}
     
     public Date getViimIndeksointiPvm() {
         return viimIndeksointiPvm;
@@ -505,15 +488,17 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the maksullisuusUrl
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getMaksullisuusUrl() {
-        return maksullisuusUrl;
+        return tekstit.get(KomotoTeksti.MAKSULLISUUS);
     }
 
     /**
      * @param maksullisuusUrl the maksullisuusUrl to set
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setMaksullisuusUrl(MonikielinenTeksti maksullisuusUrl) {
-        this.maksullisuusUrl = maksullisuusUrl;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.MAKSULLISUUS, maksullisuusUrl);
     }
 
     /**
@@ -583,12 +568,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getArviointikriteerit() {
-        return arviointikriteerit;
+        return tekstit.get(KomotoTeksti.ARVIOINTIKRITEERIT);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setArviointikriteerit(MonikielinenTeksti arviointikriteerit) {
-        this.arviointikriteerit = arviointikriteerit;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.ARVIOINTIKRITEERIT, arviointikriteerit);
     }
 
     /**
@@ -596,12 +583,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getLoppukoeVaatimukset() {
-        return loppukoeVaatimukset;
+        return tekstit.get(KomotoTeksti.LOPPUKOEVAATIMUKSET);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
-        this.loppukoeVaatimukset = loppukoeVaatimukset;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.LOPPUKOEVAATIMUKSET, loppukoeVaatimukset);
     }
 
     /**
@@ -633,12 +622,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKuvailevatTiedot() {
-        return kuvailevatTiedot;
+        return tekstit.get(KomotoTeksti.KUVAILEVAT_TIEDOT);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKuvailevatTiedot(MonikielinenTeksti kuvailevatTiedot) {
-        this.kuvailevatTiedot = kuvailevatTiedot;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KUVAILEVAT_TIEDOT, kuvailevatTiedot);
     }
 
     /**
@@ -646,12 +637,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getSisalto() {
-        return sisalto;
+        return tekstit.get(KomotoTeksti.SISALTO);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSisalto(MonikielinenTeksti sisalto) {
-        this.sisalto = sisalto;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.SISALTO, sisalto);
     }
 
     /**
@@ -659,12 +652,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getSijoittuminenTyoelamaan() {
-        return sijoittuminenTyoelamaan;
+        return tekstit.get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSijoittuminenTyoelamaan(MonikielinenTeksti sijoittuminenTyoelamaan) {
-        this.sijoittuminenTyoelamaan = sijoittuminenTyoelamaan;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, sijoittuminenTyoelamaan);
     }
 
     /**
@@ -672,12 +667,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKansainvalistyminen() {
-        return kansainvalistyminen;
+        return tekstit.get(KomotoTeksti.KANSAINVALISTYMINEN);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKansainvalistyminen(MonikielinenTeksti kansainvalistyminen) {
-        this.kansainvalistyminen = kansainvalistyminen;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KANSAINVALISTYMINEN, kansainvalistyminen);
     }
 
     /**
@@ -685,39 +682,64 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getYhteistyoMuidenToimijoidenKanssa() {
-        return yhteistyoMuidenToimijoidenKanssa;
+        return tekstit.get(KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA);
     }
 
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa) {
-        this.yhteistyoMuidenToimijoidenKanssa = yhteistyoMuidenToimijoidenKanssa;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, yhteistyoMuidenToimijoidenKanssa);
     }
 
     /**
      * @return the painotus
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getPainotus() {
-        return painotus;
+        return tekstit.get(KomotoTeksti.PAINOTUS);
     }
 
     /**
      * @param painotus the painotus to set
      */
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setPainotus(MonikielinenTeksti painotus) {
-        if (this.painotus != null && this.painotus.getTekstis() == null) {
-            this.painotus.getTekstis().clear();
-        }
-        this.painotus = painotus;
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.PAINOTUS, painotus);
     }
     
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKoulutusohjelmanValinta() {
-        return koulutusohjelmanValinta;
+        return tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
     }
 
-    public void setKoulutusohjelmanValinta(
-            MonikielinenTeksti koulutusohjelmanValinta) {
-        this.koulutusohjelmanValinta = koulutusohjelmanValinta;
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setKoulutusohjelmanValinta(MonikielinenTeksti koulutusohjelmanValinta) {
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, koulutusohjelmanValinta);
     }
+    
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public MonikielinenTeksti getLisatietoaOpetuskielista() {
+        return tekstit.get(KomotoTeksti.LISATIETOA_OPETUSKIELISTA);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setLisatietoaOpetuskielista(MonikielinenTeksti tavoitteet) {
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.LISATIETOA_OPETUSKIELISTA, tavoitteet);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public MonikielinenTeksti getTutkimuksenPainopisteet() {
+        return tekstit.get(KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET);
+    }
+
+    @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
+    public void setTutkimuksenPainopisteet(MonikielinenTeksti tavoitteet) {
+    	MonikielinenTeksti.merge(tekstit, KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET, tavoitteet);
+    }
+
+    
     
     public void setLukiodiplomit(Set<KoodistoUri> lukiodiplomit) {
         this.lukiodiplomit.clear();
