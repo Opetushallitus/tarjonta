@@ -24,6 +24,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.util.NamedList;
@@ -40,7 +41,6 @@ import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
-import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
@@ -49,7 +49,7 @@ import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 public class TarjontaSearchService {
 
     private static final String QUERY_ALL = "*:*";
-    private static final String TEKSTIHAKU_TEMPLATE = "{!lucene q.op=AND df=%s}%s";
+    private static final String TEKSTIHAKU_TEMPLATE = "%s:*%s*";
     @Value("${root.organisaatio.oid}")
     private String rootOrganisaatioOid;
     private final SolrServer koulutusSolr;
@@ -158,10 +158,12 @@ public class TarjontaSearchService {
         final String tila = kysely.getTilat() != null ? kysely.getTilat().name() : null;
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
-        nimi = escape(nimi);
 
         // nimihaku
+        
         if (nimi != null && nimi.length() > 0) {
+            nimi = escape(nimi);
+            queryParts.clear();
             addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE,
                     Hakukohde.TEKSTIHAKU, nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
@@ -253,13 +255,13 @@ public class TarjontaSearchService {
         final List<String> tarjoajaOids = kysely.getTarjoajaOids();
         final List<String> koulutusOids = kysely.getKoulutusOids();
         final List<String> hakukohdeOids = kysely.getHakukohdeOids();
-        nimi = escape(nimi);
 
         final SolrQuery q = new SolrQuery(QUERY_ALL);
         final List<String> queryParts = Lists.newArrayList();
 
         // nimihaku
         if (nimi != null && nimi.length() > 0) {
+            nimi = escape(nimi);
             addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE, Koulutus.TEKSTIHAKU,
                     nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
@@ -340,11 +342,7 @@ public class TarjontaSearchService {
     }
 
     private String escape(String searchStr) {
-        if (searchStr == null) {
-            return null;
-        }
-
-        searchStr = searchStr.replaceAll("\"", "\\\\\"");
+        searchStr = ClientUtils.escapeQueryChars(searchStr);
         return searchStr;
     }
 }

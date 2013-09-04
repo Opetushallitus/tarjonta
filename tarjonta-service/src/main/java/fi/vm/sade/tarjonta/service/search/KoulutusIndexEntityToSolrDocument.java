@@ -168,18 +168,17 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
     }
 
     private void addTekstihaku(SolrInputDocument komotoDoc) {
-        add(komotoDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-                 komotoDoc.getFieldValue(KOULUTUSKOODI_FI), 
-                 komotoDoc.getFieldValue(KOULUTUSKOODI_SV), 
-                 komotoDoc.getFieldValue(KOULUTUSKOODI_EN),
-                 komotoDoc.getFieldValue(KAUSI_KOODI),
-                 komotoDoc.getFieldValue(VUOSI_KOODI),
-                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_FI),
-                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_SV),
-                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_EN),
-                 komotoDoc.getFieldValue(TUTKINTONIMIKE_FI),
-                 komotoDoc.getFieldValue(TUTKINTONIMIKE_SV),
-                 komotoDoc.getFieldValue(TUTKINTONIMIKE_EN)));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_FI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_SV));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_EN));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KAUSI_KOODI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(VUOSI_KOODI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_FI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_SV));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_EN));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_FI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_SV));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_EN));
      }
 
     private void addTutkintonimikeTiedot(SolrInputDocument doc,

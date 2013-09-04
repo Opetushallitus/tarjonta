@@ -50,7 +50,7 @@ public class SolrFields {
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
-        protected static final String TEKSTIHAKU = "tekstihaku_txt";        //this is used in search
+        protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String HAKUKOHDE_OIDS = "hakukohdeoids_ss";        //this is used in search
         protected static final String KOULUTUSLAJI_URIS = "koulutuslaji_ss";
     }
@@ -86,7 +86,7 @@ public class SolrFields {
         protected static final String HAUN_ALKAMISPVM = "haunalkupvm_s";
         protected static final String HAUN_PAATTYMISPVM = "haunpaattymispvm_s";
         protected static final String HAUN_OID = "hakuoid_s";
-        protected static final String TEKSTIHAKU = "tekstihaku_txt";        //this is used in search
+        protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String KOULUTUS_OIDS = "koulutusoids_ss";        //this is used in search
     }
     

@@ -119,12 +119,16 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     }
 
     private void addTekstihaku(SolrInputDocument hakukohdeDoc) {
-        add(hakukohdeDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI), hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV),
-                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN), hakukohdeDoc.getFieldValue(KAUSI_FI),
-                hakukohdeDoc.getFieldValue(KAUSI_SV), hakukohdeDoc.getFieldValue(KAUSI_EN),
-                hakukohdeDoc.getFieldValue(VUOSI_KOODI), hakukohdeDoc.getFieldValue(HAKUTAPA_FI),
-                hakukohdeDoc.getFieldValue(HAKUTAPA_SV), hakukohdeDoc.getFieldValue(HAKUTAPA_EN)));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_EN));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(VUOSI_KOODI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_EN));
     }
 
     private void addHakuTiedot(SolrInputDocument hakukohdeDoc, List<HakuAikaIndexEntity> hakuajat) {
