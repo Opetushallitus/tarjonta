@@ -327,7 +327,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.addSpace();
 
         if (koulutusaste != null) {
-            System.out.println("Koulutusaste: " + koulutusaste.getKoodi());
             layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutusaste.getKoodistoUri(), locale)));
         }
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
