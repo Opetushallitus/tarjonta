@@ -315,6 +315,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel opintoala = koodiModel.getOpintoala();
         final String opintojenLaajuusArvo = koodiModel.getOpintojenLaajuus();
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
+        final KoodiModel koulutusaste =  koodiModel.getKoulutusaste();
+        
 
         //TODO get org name for current language?
         layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
@@ -324,8 +326,9 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusohjelmaModel().getKoodistoUri(), locale)));
         layout.addSpace();
 
-        if (presenter.getModel().getKoulutusPerustiedotModel().getKoulutusaste() != null) {
-            layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusaste().getKoodistoUri(), locale)));
+        if (koulutusaste != null) {
+            System.out.println("Koulutusaste: " + koulutusaste.getKoodi());
+            layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutusaste.getKoodistoUri(), locale)));
         }
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));
