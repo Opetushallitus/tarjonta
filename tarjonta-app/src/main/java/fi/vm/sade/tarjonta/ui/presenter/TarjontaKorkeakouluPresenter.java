@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -63,12 +64,137 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 @Component
 public class TarjontaKorkeakouluPresenter {
 
+    public class FakeTarjontaAdminService implements TarjontaAdminService {
+
+        public FakeTarjontaAdminService() {
+        }
+
+        @Override
+        public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(String hakukohdeOid, List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void lisaaTaiPoistaKoulutuksiaHakukohteelle(LisaaKoulutusHakukohteelleTyyppi parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void poistaValintakoe(String valintakoeTunniste) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void poistaKoulutus(String koulutusOid) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public MonikielinenMetadataTyyppi tallennaMetadata(String avain, String kategoria, String kieli, String arvo) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public List<MonikielinenMetadataTyyppi> haeMetadata(String avain, String kategoria) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(String hakukohdeOid, List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void poistaHakukohdeLiite(String hakukohdeLiiteTunniste) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public boolean tarkistaKoulutuksenKopiointi(TarkistaKoulutusKopiointiTyyppi parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void tallennaLiitteitaHakukohteelle(String hakukohdeOid, List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void initSample(String parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void initKomo(String parameters) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
     private static transient final Logger LOG = LoggerFactory.getLogger(TarjontaKorkeakouluPresenter.class);
     private static transient final String URI_LANG_FI = "kieli_fi";
     @Autowired(required = true)
     protected OIDService oidService;
-    @Autowired(required = true)
-    private TarjontaAdminService tarjontaAdminService;
+  
+    private TarjontaAdminService tarjontaAdminService = new FakeTarjontaAdminService();
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
     @Autowired(required = true)
@@ -103,38 +229,37 @@ public class TarjontaKorkeakouluPresenter {
      * @return komo oid
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
- 
-//        
-//        LOG.debug("in saveKoulutus, tila : {}", tila);
-//        /**
-//         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
-//         */
-//        ///this.getEditKoulutusView().enableKuvailevatTiedotTab();
-//        ///this.getKuvailevatTiedotView().getLisatiedotForm().reBuildTabsheet();
-//        KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotModel();
-//
-//        /**
-//         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
-//         */
-//        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
-//        LOG.debug("In is loaded : {}", perustiedot.isLoaded());
-//
-//        if (perustiedot.isLoaded()) {//update KOMOTO
-//            PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
-//            tarjontaAdminService.paivitaKoulutus(paivita);
-//            perustiedot.setKoulutusmoduuliOid(paivita.getKomoOid());
-//        } else { //insert new KOMOTO
-//            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
-//                LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
-//
-//                LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
-//                Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
-//                Preconditions.checkNotNull(lisaaKoulutus.getKomoOid(), INVALID_DATA + "KOMO OID cannot ne null.");
-//                perustiedot.setKomotoOid(lisaa.getOid());
-//                perustiedot.setVersion(lisaaKoulutus.getVersion());
-//                perustiedot.setKoulutusmoduuliOid(lisaaKoulutus.getKomoOid());
-//            }
-//        }
+        
+        LOG.debug("in saveKoulutus, tila : {}", tila);
+        /**
+         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
+         */
+        ///this.getEditKoulutusView().enableKuvailevatTiedotTab();
+        ///this.getKuvailevatTiedotView().getLisatiedotForm().reBuildTabsheet();
+        KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotModel();
+
+        /**
+         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
+         */
+        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
+        LOG.debug("In is loaded : {}", perustiedot.isLoaded());
+
+        if (perustiedot.isLoaded()) {//update KOMOTO
+            PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
+            tarjontaAdminService.paivitaKoulutus(paivita);
+            perustiedot.setKoulutusmoduuliOid(paivita.getKomoOid());
+        } else { //insert new KOMOTO
+            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
+                LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
+
+                LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
+                Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
+                Preconditions.checkNotNull(lisaaKoulutus.getKomoOid(), INVALID_DATA + "KOMO OID cannot ne null.");
+                perustiedot.setKomotoOid(lisaa.getOid());
+                perustiedot.setVersion(lisaaKoulutus.getVersion());
+                perustiedot.setKoulutusmoduuliOid(lisaaKoulutus.getKomoOid());
+            }
+        }
     }
 
     public void getReloadKoulutusListData() {
