@@ -83,11 +83,11 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setLiitteet(convertLiitteet(s.getLiites()));
 
         if (s.getHakuaikaAlkuPvm()!=null && s.getHakuaikaLoppuPvm()!=null) {
-        	t.setKaytetaanHakukohtaistaHakuaikaa(true);
+        	t.setKaytetaanHakukohdekohtaistaHakuaikaa(true);
             t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
             t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
         } else {
-        	t.setKaytetaanHakukohtaistaHakuaikaa(false);
+        	t.setKaytetaanHakukohdekohtaistaHakuaikaa(false);
         	if (s.getHakuaika()!=null) {
                 t.setHakuaikaAlkuPvm(s.getHakuaika().getAlkamisPvm());
                 t.setHakuaikaLoppuPvm(s.getHakuaika().getPaattymisPvm());

@@ -275,7 +275,7 @@ public class HakukohdeDTO extends BaseRDTO {
 	}
     
     public void setKaytetaanHakukohdekohtaistaHakuaikaa(
-			boolean _kaytetaanHakukohtaistaHakuaikaa) {
+			boolean _kaytetaanHakukohdekohtaistaHakuaikaa) {
 		this._kaytetaanHakukohdekohtaistaHakuaikaa = _kaytetaanHakukohdekohtaistaHakuaikaa;
 	}
     
