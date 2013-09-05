@@ -71,22 +71,22 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
-    
+
     @Autowired
     private HakuDAO hakuDAO;
     @Autowired
     private HakuaikaDAO hakuaikaDAO;
-    
+
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-    
+
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
-    
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
     @Autowired(required = true)
@@ -189,7 +189,7 @@ public class HakuResourceImpl implements HakuResource {
                     String tarjoajaNimi = haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi());
                     String hakukohdeNimi = haeTekstiAvaimella(tulos.getHakukohde().getNimi());
 
-                    return tarjoajaNimi.startsWith(filtterointiTeksti) || hakukohdeNimi.startsWith(filtterointiTeksti);
+                    return tarjoajaNimi.contains(filtterointiTeksti) || hakukohdeNimi.contains(filtterointiTeksti);
                 }
             });
         }
@@ -281,32 +281,33 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-	@Override
-	@Transactional(readOnly = false)
-	public String createHaku(HakuDTO dto) {
-		return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public String createHaku(HakuDTO dto) {
+        return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void replaceHaku(HakuDTO dto) {
-		tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void replaceHaku(HakuDTO dto) {
+        tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void deleteHaku(String hakuOid) {
-		HakuTyyppi tmp = new HakuTyyppi();
-		tmp.setOid(hakuOid);
-		// TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
-		tarjontaAdminService.poistaHaku(tmp);
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteHaku(String hakuOid) {
+        HakuTyyppi tmp = new HakuTyyppi();
+        tmp.setOid(hakuOid);
+        // TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
+        tarjontaAdminService.poistaHaku(tmp);
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void updateHakuState(String hakuOid, String state) {
-		TarjontaTila tt = TarjontaTila.valueOf(state);
-		PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid, SisaltoTyyppi.HAKU, tt.asDto())));
-		tarjontaAdminService.paivitaTilat(ptt);
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void updateHakuState(String hakuOid, String state) {
+        TarjontaTila tt = TarjontaTila.valueOf(state);
+        PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid,
+                SisaltoTyyppi.HAKU, tt.asDto())));
+        tarjontaAdminService.paivitaTilat(ptt);
+    }
 }
