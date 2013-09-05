@@ -48,7 +48,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private Map<String, String> _hakukelpoisuusvaatimus;
     private List<List<String>> _painotettavatOppiaineet;
     private boolean _kaytetaanHaunPaattymisenAikaa;
-    private boolean _kaytetaanHakukohtaistaHakuaikaa;
+    private boolean _kaytetaanHakukohdekohtaistaHakuaikaa;
     private List<HakukohdeLiiteDTO> _liitteet;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
@@ -274,12 +274,12 @@ public class HakukohdeDTO extends BaseRDTO {
 		this._hakuaikaLoppuPvm = hakuaikaLoppuPvm;
 	}
     
-    public void setKaytetaanHakukohtaistaHakuaikaa(
+    public void setKaytetaanHakukohdekohtaistaHakuaikaa(
 			boolean _kaytetaanHakukohtaistaHakuaikaa) {
-		this._kaytetaanHakukohtaistaHakuaikaa = _kaytetaanHakukohtaistaHakuaikaa;
+		this._kaytetaanHakukohdekohtaistaHakuaikaa = _kaytetaanHakukohdekohtaistaHakuaikaa;
 	}
     
-    public boolean isKaytetaanHakukohtaistaHakuaikaa() {
-		return _kaytetaanHakukohtaistaHakuaikaa;
+    public boolean isKaytetaanHakukohdekohtaistaHakuaikaa() {
+		return _kaytetaanHakukohdekohtaistaHakuaikaa;
 	}
 }
