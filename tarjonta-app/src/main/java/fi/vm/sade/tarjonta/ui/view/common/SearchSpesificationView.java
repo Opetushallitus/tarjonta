@@ -23,15 +23,18 @@ import com.vaadin.event.FieldEvents.BlurListener;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.ui.helper.RaportointiRestClientHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
+import fi.vm.sade.tarjonta.ui.view.raportointi.AloituspaikatRaporttiDialog;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphHorizontalLayout;
@@ -68,12 +71,18 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private ComboBox cbTilat;
     private KoodistoComponent kcKausi;
     private Button btnTyhjenna;
+    private Button btnTulostaRaportti;
     private boolean attached = false;
     private HashMap<String, String> tilaMap;
     /* Model for search spesifications */
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+
+    private TarjontaDialogWindow aloituspaikatRaporttiDialog;
+
+    @Autowired(required = true)
+    private RaportointiRestClientHelper raportointiRestHelper;
     private static final CssHorizontalLayout.StyleEnum[] COMPONENT_STYLE = {
         //a style for CssLayout components
         CssHorizontalLayout.StyleEnum.PADDING_RIGHT_5PX
@@ -182,6 +191,32 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             }
         });
 
+        btnTulostaRaportti = UiBuilder.buttonSmallSecodary(null,T("tulostaRaporttiBtn"), new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent clickEvent) {
+
+                AloituspaikatRaporttiDialog dialog = new AloituspaikatRaporttiDialog(new AloituspaikatRaporttiDialog.DialogCloseListener() {
+                    @Override
+                    public void windowCloseEvent(String result) {
+                        getWindow().removeWindow(aloituspaikatRaporttiDialog);
+                        if (result != null) {
+                            getWindow().open(new ExternalResource(result),"",true);
+                        }
+
+                    }
+                });
+                aloituspaikatRaporttiDialog = new TarjontaDialogWindow(dialog,T("aloituspaikatDialogTitle"));
+                aloituspaikatRaporttiDialog.setWidth("600px");
+                aloituspaikatRaporttiDialog.setHeight("450px");
+
+                getWindow().addWindow(aloituspaikatRaporttiDialog);
+                dialog.setSizeFull();
+                /*String raporttiUrl = raportointiRestHelper.createAloitusPaikatRaporttiUrl("Vantaan kaupunki",null,null,"S","2014",null,RaportointiRestClientHelper.PDF_TYPE,"FI");
+                System.out.println(raporttiUrl);*/
+            }
+        });
+
         tfSearch.addListener(new FocusListener() {
             private static final long serialVersionUID = -5924587297708382318L;
 
@@ -201,6 +236,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         });
 
         buttons.addComponent(btnHae);
+        buttons.addComponent(btnTulostaRaportti);
         searchSpecLayout.addComponent(buttons);
 
         searchSpecLayout.setWidth("100%");
