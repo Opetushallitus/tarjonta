@@ -48,6 +48,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 
 import java.util.*;
@@ -74,7 +75,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
-        convertToKorkeakouluKoulutusTyyppi(lisaa, koulutusasteTyyppi, perustiedotModel, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
+        convertToKorkeakouluKoulutusTyyppi(lisaa, koulutusasteTyyppi, perustiedotModel, tarjontaModel.getValitseKoulutusModel(), oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
         convertToKorkeakouluLisatiedotTyyppi(lisaa, kuvailevatTiedotModel);
 
         return lisaa;
@@ -95,7 +96,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         OrganisaatioPerustieto orgDto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
-        convertToKorkeakouluKoulutusTyyppi(paivita, koulutusaste, perustiedotModel, komotoOid, orgDto);
+        convertToKorkeakouluKoulutusTyyppi(paivita, koulutusaste, perustiedotModel, tarjontaModel.getValitseKoulutusModel(), komotoOid, orgDto);
 
         convertToKorkeakouluLisatiedotTyyppi(paivita, tarjontaModel.getKorkeakouluKuvailevatTiedot());
         paivita.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
@@ -186,7 +187,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return model;
     }
 
-    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusasteTyyppi koulutusasteTyyppi, final KorkeakouluPerustiedotViewModel model, final String komotoOid, OrganisaatioPerustieto organisation) {
+    public static KoulutusTyyppi convertToKorkeakouluKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusasteTyyppi koulutusasteTyyppi, final KorkeakouluPerustiedotViewModel model, ValitseKoulutusModel valitseKoulutusModel, final String komotoOid, OrganisaatioPerustieto organisation) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
         Preconditions.checkNotNull(koulutusasteTyyppi, INVALID_DATA + "KoulutusasteTyyppi object cannot be null.");
         Preconditions.checkNotNull(model, INVALID_DATA + "KorkeakouluPerustiedotViewModel object cannot be null.");
@@ -202,7 +203,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
          * KOMO:
          * set the koulutus and tutkinto-ohjelma data to koulutusmoduuli tyyppi
          */
-        tyyppi.setKoulutusmoduuli(convertModelToKoulutusmoduuliKoosteTyyppi(model, koulutusasteTyyppi));
+        tyyppi.setKoulutusmoduuli(convertModelToKoulutusmoduuliKoosteTyyppi(model, valitseKoulutusModel, koulutusasteTyyppi));
 
         /*
          * Other input fields
@@ -322,7 +323,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         /*
          * Update the select koulutuskoodi dialog data object
          */
-        perustiedotModel.getValitseKoulutus().setKoulutuskoodiRow(new KoulutuskoodiRowModel(perustiedotModel.getKoulutuskoodiModel()));
+        //perustiedotModel.getValitseKoulutus().setKoulutuskoodiRow(new KoulutuskoodiRowModel(perustiedotModel.getKoulutuskoodiModel()));
 
         /*
          * Other UI fields
@@ -390,9 +391,10 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return tutkintoohjelma;
     }
 
-    public void updateKoulutuskoodiModel(KorkeakouluPerustiedotViewModel model, Locale locale) {
+    public void updateKoulutuskoodiModel(KorkeakouluPerustiedotViewModel model, ValitseKoulutusModel valitseKoulutusModel, Locale locale) {
         Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
-        KoulutuskoodiRowModel koulutuskoodiRow = model.getValitseKoulutus().getKoulutuskoodiRow();
+        Preconditions.checkNotNull(valitseKoulutusModel, "ValitseKoulutusModel object cannot be null.");
+        KoulutuskoodiRowModel koulutuskoodiRow = valitseKoulutusModel.getKoulutuskoodiRow();
         Preconditions.checkNotNull(koulutuskoodiRow, "KoulutuskoodiRowModel object cannot be null.");
 
         final String koulutuskoodiUri = koulutuskoodiRow.getKoodistoUri();
@@ -406,7 +408,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
     /**
      * Tutkinto-ohjelma + koulutuskoodi (KOMO) data conversion to Tyyppi object.
      */
-    private static KoulutusmoduuliKoosteTyyppi convertModelToKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, KoulutusasteTyyppi koulutusasteTyyppi) {
+    private static KoulutusmoduuliKoosteTyyppi convertModelToKoulutusmoduuliKoosteTyyppi(KorkeakouluPerustiedotViewModel model, ValitseKoulutusModel valitseKoulutusModel, KoulutusasteTyyppi koulutusasteTyyppi) {
         Preconditions.checkNotNull(model, "KorkeakouluPerustiedotViewModel object cannot be null.");
         Preconditions.checkNotNull(model.getTutkintoohjelma(), "Tutkinto-ohjelma UI model cannot be null!");
         Preconditions.checkNotNull(model.getTutkintoohjelma().getKielikaannos(), "Tutkinto-ohjelma kielikaannos set cannot be null!");
@@ -420,7 +422,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
         /*
          * get koulutusohjelma 'koodi' from the dialog model
          */
-        KoulutuskoodiRowModel koulutuskoodiRow = model.getValitseKoulutus().getKoulutuskoodiRow();
+        KoulutuskoodiRowModel koulutuskoodiRow = valitseKoulutusModel.getKoulutuskoodiRow();
         Preconditions.checkNotNull(koulutuskoodiRow, "Koulutus not selected, or KoulutuskoodiRowModel object not initialized!");
         Preconditions.checkNotNull(koulutuskoodiRow.getKoodistoUriVersio(), "Koulutuskoodi URI cannot be null!");
         kooste.setKoulutuskoodiUri(koulutuskoodiRow.getKoodistoUriVersio());

@@ -130,7 +130,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                LOG.debug("valueChange {} {}", event, presenter.getPerustiedotModel().getValitseKoulutus());
+                LOG.debug("valueChange {} {}", event, presenter.getValitseKoulutusModel());
             }
         });
 
@@ -146,7 +146,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.debug("clear {}", event);
-                presenter.getPerustiedotModel().getValitseKoulutus().clear();
+                presenter.getValitseKoulutusModel().clear();
                 tfSearchField.setValue("");
                 kcKoulutusalas.getField().setValue(null);
                 reload();
@@ -158,7 +158,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                LOG.debug("buttonClick  {} {}", presenter.getPerustiedotModel().getValitseKoulutus(), event);
+                LOG.debug("buttonClick  {} {}", presenter.getValitseKoulutusModel(), event);
                 reload();
             }
         });
@@ -204,7 +204,7 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (event != null && table.getValue() != null) {
-                    presenter.getPerustiedotModel().getValitseKoulutus().setKoulutuskoodiRow((KoulutuskoodiRowModel) table.getValue());
+                    presenter.getValitseKoulutusModel().setKoulutuskoodiRow((KoulutuskoodiRowModel) table.getValue());
                     btNext.setEnabled(true);
                 } else {
                     btNext.setEnabled(false);

@@ -37,6 +37,7 @@ public class ValitseKoulutusModel extends BaseUIViewModel {
 
     public void clear() {
         setSearchWord("");
+        koulutusala = null;
         searchResultRows = Sets.<KoulutuskoodiRowModel>newHashSet();
     }
 

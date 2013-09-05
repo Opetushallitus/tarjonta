@@ -91,7 +91,6 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
      * Koodisto code (url).
      */
     private Label labelKoulutusTaiTutkinto;
-    private Label labelKoodiarvo;
     private Button btVaihdaTukintokoodi;
 
     /*
@@ -244,10 +243,8 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setWidth(100, UNITS_PERCENTAGE);
 
-        PropertysetItem beanItem = new BeanItem(model.getKoulutuskoodiModel());
-        labelKoulutusTaiTutkinto = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_NAME_PROPERY);
-        labelKoulutusTaiTutkinto.setWidth(400, UNITS_PIXELS);
-        labelKoodiarvo = UiUtil.label(hl, beanItem, KoulutuskoodiModel.MODEL_VALUE_PROPERY);
+        labelKoulutusTaiTutkinto = UiUtil.label(hl, model.getKoulutuskoodiModel().getNimi() + " " + model.getKoulutuskoodiModel().getKoodi());
+        labelKoulutusTaiTutkinto.setSizeFull();
         btVaihdaTukintokoodi = UiUtil.buttonLink(hl, T("button.edit"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -258,9 +255,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         });
 
         hl.setComponentAlignment(labelKoulutusTaiTutkinto, Alignment.TOP_LEFT);
-        hl.setComponentAlignment(labelKoodiarvo, Alignment.TOP_LEFT);
         hl.setComponentAlignment(btVaihdaTukintokoodi, Alignment.TOP_LEFT);
-        hl.setExpandRatio(btVaihdaTukintokoodi, 1f);
 
         addGridRowItems(grid, hl);
     }
@@ -614,7 +609,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
             tfLang.setRequired(false);
             tfLang.setImmediate(true);
             tfLang.setValidationVisible(true);
-            tfLang.setWidth("250px");
+            tfLang.setWidth("262px");
             hl.addComponent(tfLang);
             hl.setComponentAlignment(tfLang, Alignment.TOP_LEFT);
             final String kielikoodi = lang.getKielikoodi();

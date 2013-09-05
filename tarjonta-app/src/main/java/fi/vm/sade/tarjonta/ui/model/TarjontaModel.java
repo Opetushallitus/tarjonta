@@ -1,18 +1,18 @@
 /*
-* Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
-*
-* This program is free software: Licensed under the EUPL, Version 1.1 or - as
-* soon as they will be approved by the European Commission - subsequent versions
-* of the EUPL (the "Licence");
-*
-* You may not use this work except in compliance with the Licence.
-* You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* European Union Public Licence for more details.
-*/
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.ui.model;
 
 import com.google.common.base.Preconditions;
@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustied
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
@@ -33,10 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* Contains the data and state of the Tarjonta UI.
-*
+ * Contains the data and state of the Tarjonta UI.
+ * 
 * @author mlyly
-*/
+ */
 public class TarjontaModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 6216606779350260527L;
@@ -47,22 +48,26 @@ public class TarjontaModel extends BaseUIViewModel {
     private TarjoajaModel tarjoajaModel; //data instace of exam provider
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     /*
-* 2-aste ammattikoulut
-*/
+     * 2-aste ammattikoulut
+     */
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
     private KoulutusLisatiedotModel _koulutusLisatiedotModel;
     /*
-* 2-aste lukiokoulutus
-*/
+     * 2-aste lukiokoulutus
+     */
     private KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot;
     /*
-* University
-*/
+     * University
+     */
     private KorkeakouluPerustiedotViewModel korkeakouluPerustiedot;
     private KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot;
     /*
-* Hakutulos
-*/
+     * Koulutuskoodi filter dialog model
+     */
+    private ValitseKoulutusModel valitseKoulutusModel;
+    /*
+     * Hakutulos
+     */
     private List<HakukohdeTulos> _selectedhakukohteet;
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
@@ -84,8 +89,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the koulutusLukioPerustiedot
-*/
+     * @return the koulutusLukioPerustiedot
+     */
     public KoulutusLukioPerustiedotViewModel getKoulutusLukioPerustiedot() {
         if (koulutusLukioPerustiedot == null) {
             koulutusLukioPerustiedot = new KoulutusLukioPerustiedotViewModel();
@@ -95,8 +100,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the koulutusLukioKuvailevatTiedot
-*/
+     * @return the koulutusLukioKuvailevatTiedot
+     */
     public KoulutusLukioKuvailevatTiedotViewModel getKoulutusLukioKuvailevatTiedot() {
         //TODO have a map!
         if (koulutusLukioKuvailevatTiedot == null) {
@@ -107,16 +112,16 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @param koulutusLukioPerustiedot the koulutusLukioPerustiedot to set
-*/
+     * @param koulutusLukioPerustiedot the koulutusLukioPerustiedot to set
+     */
     public void setKoulutusLukioPerustiedot(KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot) {
         this.koulutusLukioPerustiedot = koulutusLukioPerustiedot;
     }
 
     /**
-* @param koulutusLukioKuvailevatTiedot the koulutusLukioKuvailevatTiedot to
-* set
-*/
+     * @param koulutusLukioKuvailevatTiedot the koulutusLukioKuvailevatTiedot to
+     * set
+     */
     public void setKoulutusLukioKuvailevatTiedot(KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot) {
         this.koulutusLukioKuvailevatTiedot = koulutusLukioKuvailevatTiedot;
     }
@@ -130,8 +135,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the navigationModel
-*/
+     * @return the navigationModel
+     */
     public NavigationModel getNavigationModel() {
         if (navigationModel == null) {
             navigationModel = new NavigationModel();
@@ -141,15 +146,15 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @param navigaatioModel the navigaatioModel to set
-*/
+     * @param navigaatioModel the navigaatioModel to set
+     */
     public void setNavigaatioModel(NavigationModel navigationModel) {
         this.navigationModel = navigationModel;
     }
 
     /**
-* @return the tarjoajaModel
-*/
+     * @return the tarjoajaModel
+     */
     public TarjoajaModel getTarjoajaModel() {
         if (tarjoajaModel == null) {
             tarjoajaModel = new TarjoajaModel();
@@ -159,8 +164,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @param tarjoajaModel the tarjoajaModel to set
-*/
+     * @param tarjoajaModel the tarjoajaModel to set
+     */
     public void setTarjoajaModel(TarjoajaModel tarjoajaModel) {
         this.tarjoajaModel = tarjoajaModel;
     }
@@ -196,10 +201,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* Gets the currently selected (in ListKoulutusView) koulutus objects.
-*
+     * Gets the currently selected (in ListKoulutusView) koulutus objects.
+     *     
 * @return the selected koulutukset
-*/
+     */
     public List<KoulutusTulos> getSelectedKoulutukset() {
         if (_selectedKoulutukset == null) {
             _selectedKoulutukset = new ArrayList<KoulutusTulos>();
@@ -208,21 +213,21 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* Sets the koulutus objects that is the koulutus list used in
-* ListKoulutusView.
-*
+     * Sets the koulutus objects that is the koulutus list used in
+     * ListKoulutusView.
+     *     
 * @param koulutusTulos the koulutus objects to set
-*/
+     */
     public void setKoulutukset(List<KoulutusTulos> koulutusTulos) {
         _koulutukset = koulutusTulos;
     }
 
     /**
-* Gets the koulutus objects that is the koulutus list used in
-* ListKoulutusView.
-*
+     * Gets the koulutus objects that is the koulutus list used in
+     * ListKoulutusView.
+     *     
 * @return
-*/
+     */
     public List<KoulutusTulos> getKoulutukset() {
         if (_koulutukset == null) {
             _koulutukset = new ArrayList<KoulutusTulos>();
@@ -231,8 +236,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the hakukohde
-*/
+     * @return the hakukohde
+     */
     public HakukohdeViewModel getHakukohde() {
         if (hakukohde == null) {
             hakukohde = new HakukohdeViewModel();
@@ -242,8 +247,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @param hakukohde the hakukohde to set
-*/
+     * @param hakukohde the hakukohde to set
+     */
     public void setHakukohde(HakukohdeViewModel hakukohde) {
         this.hakukohde = hakukohde;
     }
@@ -292,11 +297,11 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* Get the root OID (OPH) of a organisation tree. Throws an exception, if
-* OID is not set.
-*
+     * Get the root OID (OPH) of a organisation tree. Throws an exception, if
+     * OID is not set.
+     *     
 * @return the root organisation Oid
-*/
+     */
     public String getRootOrganisaatioOid() {
         Preconditions.checkNotNull(rootOrganisaatioOid, "Application initialization error - organisation root OID cannot be null.");
 
@@ -304,10 +309,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* Set the root OID (OPH) of a organisation tree. Null OID not allowed.
-*
+     * Set the root OID (OPH) of a organisation tree. Null OID not allowed.
+     *     
 * @param rootOrganisationOid the root organisation Oid to set
-*/
+     */
     public void setRootOrganisaatioOid(String rootOrganisationOid) {
         Preconditions.checkNotNull(rootOrganisationOid, "Organisation root OID cannot be null.");
 
@@ -315,10 +320,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* Is selected organisation same as the root organisation (OPH).
-*
+     * Is selected organisation same as the root organisation (OPH).
+     *     
 * @return boolean
-*/
+     */
     public boolean isSelectedRootOrganisaatio() {
         if (getNavigationModel().getOrganisationOid() == null) {
             return false;
@@ -328,8 +333,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the koulutusLukioPerustiedot
-*/
+     * @return the koulutusLukioPerustiedot
+     */
     public KorkeakouluPerustiedotViewModel getKorkeakouluPerustiedot() {
         if (korkeakouluPerustiedot == null) {
             korkeakouluPerustiedot = new KorkeakouluPerustiedotViewModel();
@@ -339,8 +344,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @return the koulutusLukioKuvailevatTiedot
-*/
+     * @return the koulutusLukioKuvailevatTiedot
+     */
     public KorkeakouluKuvailevatTiedotViewModel getKorkeakouluKuvailevatTiedot() {
         //TODO have a map!
         if (korkeakouluKuvailevatTiedot == null) {
@@ -351,15 +356,15 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-* @param korkeakouluKuvailevatTiedot the korkeakouluKuvailevatTiedot to set
-*/
+     * @param korkeakouluKuvailevatTiedot the korkeakouluKuvailevatTiedot to set
+     */
     public void setKorkeakouluKuvailevatTiedot(KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot) {
         this.korkeakouluKuvailevatTiedot = korkeakouluKuvailevatTiedot;
     }
 
     /**
-* @param korkeakouluPerustiedot the korkeakouluPerustiedot to set
-*/
+     * @param korkeakouluPerustiedot the korkeakouluPerustiedot to set
+     */
     public void setKorkeakouluPerustiedot(KorkeakouluPerustiedotViewModel korkeakouluPerustiedot) {
         this.korkeakouluPerustiedot = korkeakouluPerustiedot;
     }
@@ -370,5 +375,22 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public void setHakukohdeTitleKoulutukses(List<KoulutusOidNameViewModel> hakukohdeTitleKoulutukses) {
         this.hakukohdeTitleKoulutukses = hakukohdeTitleKoulutukses;
+    }
+
+    /**
+     * @return the valitseKoulutusModel
+     */
+    public ValitseKoulutusModel getValitseKoulutusModel() {
+        if (valitseKoulutusModel == null) {
+            valitseKoulutusModel = new ValitseKoulutusModel();
+        }
+        return valitseKoulutusModel;
+    }
+
+    /**
+     * @param valitseKoulutusModel the valitseKoulutusModel to set
+     */
+    public void setValitseKoulutusModel(ValitseKoulutusModel valitseKoulutusModel) {
+        this.valitseKoulutusModel = valitseKoulutusModel;
     }
 }

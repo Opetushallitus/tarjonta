@@ -57,10 +57,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     private YhteyshenkiloModel yhteyshenkilo;
     private YhteyshenkiloModel ectsKoordinaattori;
 
-    /*
-     * Koulutuskoodi filter dialog model
-     */
-    private ValitseKoulutusModel valitseKoulutus;
 
     public KorkeakouluPerustiedotViewModel() {
         super();
@@ -189,11 +185,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          * Other from info
          */
         setKoulutuskoodi(null);
-
-        /*
-         * Valitse dialog
-         */
-        setValitseKoulutus(null);
     }
 
     @Override
@@ -367,21 +358,4 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
         this.tunniste = tunniste;
     }
 
-    /**
-     * @return the valitseKoulutus
-     */
-    public ValitseKoulutusModel getValitseKoulutus() {
-        if (valitseKoulutus == null) {
-            valitseKoulutus = new ValitseKoulutusModel();
-        }
-
-        return valitseKoulutus;
-    }
-
-    /**
-     * @param valitseKoulutus the valitseKoulutus to set
-     */
-    public void setValitseKoulutus(ValitseKoulutusModel valitseKoulutus) {
-        this.valitseKoulutus = valitseKoulutus;
-    }
 }

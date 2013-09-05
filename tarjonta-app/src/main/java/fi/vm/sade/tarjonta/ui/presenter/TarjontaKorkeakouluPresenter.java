@@ -56,6 +56,7 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.ValitseKoulutusModel;
 
 /**
  *
@@ -193,7 +194,6 @@ public class TarjontaKorkeakouluPresenter {
     private static transient final String URI_LANG_FI = "kieli_fi";
     @Autowired(required = true)
     protected OIDService oidService;
-  
     private TarjontaAdminService tarjontaAdminService = new FakeTarjontaAdminService();
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
@@ -229,7 +229,7 @@ public class TarjontaKorkeakouluPresenter {
      * @return komo oid
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
-        
+
         LOG.debug("in saveKoulutus, tila : {}", tila);
         /**
          * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
@@ -349,7 +349,7 @@ public class TarjontaKorkeakouluPresenter {
             korkeakouluConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, locale);
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
-            korkeakouluConverter.updateKoulutuskoodiModel(getPerustiedotModel(), locale);
+            korkeakouluConverter.updateKoulutuskoodiModel(getPerustiedotModel(), getValitseKoulutusModel(), locale);
         }
 
         //set the user koodi language uri to the base model.
@@ -365,6 +365,13 @@ public class TarjontaKorkeakouluPresenter {
      */
     public KorkeakouluPerustiedotViewModel getPerustiedotModel() {
         return getTarjontaModel().getKorkeakouluPerustiedot();
+    }
+
+    /**
+     * @return the ValitseKoulutusModel
+     */
+    public ValitseKoulutusModel getValitseKoulutusModel() {
+        return getTarjontaModel().getValitseKoulutusModel();
     }
 
     /**
@@ -441,8 +448,8 @@ public class TarjontaKorkeakouluPresenter {
      * @return
      */
     public List<KoulutuskoodiRowModel> filterKoulutuskoodis() {
-        final String searchWord = getPerustiedotModel().getValitseKoulutus().getSearchWord();
-        final String koulutusalaUri = getPerustiedotModel().getValitseKoulutus().getKoulutusala();
+        final String searchWord = getValitseKoulutusModel().getSearchWord();
+        final String koulutusalaUri = getValitseKoulutusModel().getKoulutusala();
 
         List<KoulutuskoodiRowModel> models = null;
 

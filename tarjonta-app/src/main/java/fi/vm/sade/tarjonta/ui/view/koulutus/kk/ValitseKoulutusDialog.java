@@ -57,7 +57,7 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
 
-        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getKorkeakouluPerustiedot().getValitseKoulutus();
+        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getValitseKoulutusModel();
         BeanItem<ValitseKoulutusModel> beanItem = new BeanItem<ValitseKoulutusModel>(valitseKoulutus);
         form.setItemDataSource(beanItem);
 
@@ -75,7 +75,7 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
 
-        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getKorkeakouluPerustiedot().getValitseKoulutus();
+        ValitseKoulutusModel valitseKoulutus = presenter.getModel().getValitseKoulutusModel();
         BeanItem<ValitseKoulutusModel> beanItem = new BeanItem<ValitseKoulutusModel>(valitseKoulutus);
 
         LOG.debug("buildLayout {}", valitseKoulutus);

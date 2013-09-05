@@ -180,7 +180,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         KoulutuskoodiRowModel koulutuskoodiRowModel = new KoulutuskoodiRowModel(createKoodiModel(KOULUTUSKOODI));
         koulutuskoodiRowModel.setKoodi(KOMO_ULKOINEN_TUNNISTE);
         koulutuskoodiRowModel.setNimi("koulutuskoodi name");
-        perustiedot.getValitseKoulutus().setKoulutuskoodiRow(koulutuskoodiRowModel);
+        instance.getValitseKoulutusModel().setKoulutuskoodiRow(koulutuskoodiRowModel);
 
         /*
          * Create new tutkintoohjelma model (populated by user & autocomplete)
