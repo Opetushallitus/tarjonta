@@ -71,22 +71,22 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
-    
+
     @Autowired
     private HakuDAO hakuDAO;
     @Autowired
     private HakuaikaDAO hakuaikaDAO;
-    
+
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-    
+
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
-    
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
     @Autowired(required = true)
@@ -158,8 +158,9 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
             Date lastModifiedBefore, Date lastModifiedSince) {
-        final String kieliAvain = "fi"; // TODO: <- rajapintaan
-        final String filtterointiTeksti = StringUtils.capitalize(StringUtils.trimToEmpty(searchTerms));
+        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: <-
+        // rajapintaan
+        final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
         if (count <= 0) {
@@ -177,8 +178,8 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (kieliAvain.equals(teksti.getKieliKoodi())) {
-                            return StringUtils.capitalize(teksti.getValue());
+                        if (kieliAvain.equals(StringUtils.upperCase(teksti.getKieliKoodi()))) {
+                            return StringUtils.upperCase(teksti.getValue());
                         }
                     }
                     LOG.debug("Avain {} doesnt match any languages!", kieliAvain);
@@ -186,10 +187,9 @@ public class HakuResourceImpl implements HakuResource {
                 }
 
                 public boolean apply(@Nullable HakukohdeTulos tulos) {
-                    String tarjoajaNimi = haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi());
-                    String hakukohdeNimi = haeTekstiAvaimella(tulos.getHakukohde().getNimi());
-
-                    return tarjoajaNimi.startsWith(filtterointiTeksti) || hakukohdeNimi.startsWith(filtterointiTeksti);
+                    return haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi())
+                            .contains(filtterointiTeksti)
+                            || haeTekstiAvaimella(tulos.getHakukohde().getNimi()).contains(filtterointiTeksti);
                 }
             });
         }
@@ -281,32 +281,33 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-	@Override
-	@Transactional(readOnly = false)
-	public String createHaku(HakuDTO dto) {
-		return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public String createHaku(HakuDTO dto) {
+        return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void replaceHaku(HakuDTO dto) {
-		tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void replaceHaku(HakuDTO dto) {
+        tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void deleteHaku(String hakuOid) {
-		HakuTyyppi tmp = new HakuTyyppi();
-		tmp.setOid(hakuOid);
-		// TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
-		tarjontaAdminService.poistaHaku(tmp);
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteHaku(String hakuOid) {
+        HakuTyyppi tmp = new HakuTyyppi();
+        tmp.setOid(hakuOid);
+        // TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
+        tarjontaAdminService.poistaHaku(tmp);
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void updateHakuState(String hakuOid, String state) {
-		TarjontaTila tt = TarjontaTila.valueOf(state);
-		PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid, SisaltoTyyppi.HAKU, tt.asDto())));
-		tarjontaAdminService.paivitaTilat(ptt);
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void updateHakuState(String hakuOid, String state) {
+        TarjontaTila tt = TarjontaTila.valueOf(state);
+        PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid,
+                SisaltoTyyppi.HAKU, tt.asDto())));
+        tarjontaAdminService.paivitaTilat(ptt);
+    }
 }

@@ -36,8 +36,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
      * Data for comboxes (komo + tutkintoohjelma) 
      */
     private TutkintoohjelmaModel tutkintoohjelma;
-    //the selected text, the same data is in tutkintoohjelma
-    private String tutkintoohjelmaNimi;
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
@@ -63,7 +61,6 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
      * Koulutuskoodi filter dialog model
      */
     private ValitseKoulutusModel valitseKoulutus;
-
 
     public KorkeakouluPerustiedotViewModel() {
         super();
@@ -154,7 +151,7 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          */
         setKoulutuskoodiModel(null);
         setTutkintoohjelma(null);
-        setTutkintoohjelmaNimi(null);
+
         setTunniste(null);
 
         /*
@@ -192,7 +189,7 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
          * Other from info
          */
         setKoulutuskoodi(null);
-        
+
         /*
          * Valitse dialog
          */
@@ -337,11 +334,15 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     public void setPohjakoulutusvaatimukset(Set<String> pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
-    
+
     /**
      * @return the tutkintoohjelma
      */
     public TutkintoohjelmaModel getTutkintoohjelma() {
+        if (tutkintoohjelma == null) {
+            tutkintoohjelma = new TutkintoohjelmaModel();
+        }
+
         return tutkintoohjelma;
     }
 
@@ -383,19 +384,4 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     public void setValitseKoulutus(ValitseKoulutusModel valitseKoulutus) {
         this.valitseKoulutus = valitseKoulutus;
     }
-
-    /**
-     * @return the tutkintoohjelmaNimi
-     */
-    public String getTutkintoohjelmaNimi() {
-        return tutkintoohjelmaNimi;
-    }
-
-    /**
-     * @param tutkintoohjelmaNimi the tutkintoohjelmaNimi to set
-     */
-    public void setTutkintoohjelmaNimi(String tutkintoohjelmaNimi) {
-        this.tutkintoohjelmaNimi = tutkintoohjelmaNimi;
-    }
-
 }

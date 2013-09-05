@@ -898,7 +898,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 if (hakukohde != null) {
                     hakukohteet.add(hakukohde.getId());
                 }
-            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto())) {
+            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto()) && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
                 addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot, hakukohteet);
             }
         }
@@ -909,14 +909,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private void addRelatedHakukohteetAndKoulutukset(String hakuOid, List<Long> komotoIds, List<Long> hakukohdeIds) {
         List<String> hakuOids = new ArrayList<String>();
         hakuOids.add(hakuOid);
-        List<Hakukohde> hakukohteet = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
+        List<Hakukohde> hakukohteet = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
         for (Hakukohde curhakukohde : hakukohteet) {
             hakukohdeIds.add(curhakukohde.getId());
-            for (KoulutusmoduuliToteutus komoto : curhakukohde.getKoulutusmoduuliToteutuses()) {
+            for (KoulutusmoduuliToteutus komoto : curhakukohde.getKoulutusmoduuliToteutuses()) { 
                 komotoIds.add(komoto.getId());
             }
         }
-
     }
 
 

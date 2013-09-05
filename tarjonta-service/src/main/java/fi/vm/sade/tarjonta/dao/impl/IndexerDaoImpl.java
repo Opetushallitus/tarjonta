@@ -72,9 +72,6 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public HakukohdeIndexEntity findHakukohdeById(Long id) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
-        
         
         final QHaku haku = QHaku.haku;
         return q(hakukohde)

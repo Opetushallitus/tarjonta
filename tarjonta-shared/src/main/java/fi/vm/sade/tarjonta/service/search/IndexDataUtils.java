@@ -15,10 +15,6 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
 
@@ -26,9 +22,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +37,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -55,7 +52,16 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
  */
 public class IndexDataUtils {
 	
-	private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
+    private static final String LANG_EN = "en";
+
+
+    private static final String LANG_SV = "sv";
+
+
+    private static final String LANG_FI = "fi";
+
+
+    private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
 
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
@@ -159,15 +165,15 @@ public class IndexDataUtils {
         KoodistoKoodiTyyppi koodiTyyppi = new KoodistoKoodiTyyppi();
         koodiTyyppi.setUri("" + koulutusDoc.getFieldValue(koodiUri));
         Nimi nimiFi = new Nimi();
-        nimiFi.setKieli("fi");
+        nimiFi.setKieli(LANG_FI);
         nimiFi.setValue("" + koulutusDoc.getFieldValue(koodiFi));
         koodiTyyppi.getNimi().add(nimiFi);
         Nimi nimiSv = new Nimi();
-        nimiSv.setKieli("sv");
+        nimiSv.setKieli(LANG_SV);
         nimiSv.setValue("" + koulutusDoc.getFieldValue(koodiSv));
         koodiTyyppi.getNimi().add(nimiSv);
         Nimi nimiEn = new Nimi();
-        nimiEn.setKieli("en");
+        nimiEn.setKieli(LANG_EN);
         nimiEn.setValue("" + koulutusDoc.getFieldValue(koodiEn));
         koodiTyyppi.getNimi().add(nimiEn);
         return koodiTyyppi;
@@ -187,45 +193,38 @@ public class IndexDataUtils {
     }
     
     public static TarjoajaTyyppi createTarjoaja(SolrDocument koulutusDoc,
-            SolrDocumentList solrOrgList) {
+            Map<String, OrganisaatioPerustieto> orgResponse) {
         TarjoajaTyyppi tarjoaja = new TarjoajaTyyppi();
         tarjoaja.setTarjoajaOid("" + koulutusDoc.getFieldValue(ORG_OID));
-        tarjoaja.setNimi(createTarjoajaNimi(tarjoaja.getTarjoajaOid(), solrOrgList));
+        tarjoaja.setNimi(getOrganisaatioNimi(orgResponse.get(tarjoaja.getTarjoajaOid())));
+        
         return tarjoaja;
     }
 
-    private static MonikielinenTekstiTyyppi createTarjoajaNimi(String tarjoajaOid,
-            SolrDocumentList solrOrgList) {
-        for (int i = 0; i < solrOrgList.size(); ++i) {
-            SolrDocument orgdoc = solrOrgList.get(i);
-            if (tarjoajaOid.equals("" + orgdoc.getFieldValue(OID))) {
-                return getNimiFromTarjoajaDoc(orgdoc);
+    private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
+            OrganisaatioPerustieto org) {
+        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
+        if (org != null) {
+            if (org.getNimiFi() != null) {
+                Teksti nimiFi = new Teksti();
+                nimiFi.setKieliKoodi(LANG_FI);
+                nimiFi.setValue(org.getNimiFi());
+                nimi.getTeksti().add(nimiFi);
+            }
+            if (org.getNimiSv() != null) {
+                Teksti nimiSv = new Teksti();
+                nimiSv.setKieliKoodi(LANG_SV);
+                nimiSv.setValue(org.getNimiSv());
+                nimi.getTeksti().add(nimiSv);
+            }
+            if (org.getNimiEn() != null) {
+                Teksti nimiEn = new Teksti();
+                nimiEn.setKieliKoodi(LANG_EN);
+                nimiEn.setValue(org.getNimiEn());
+                nimi.getTeksti().add(nimiEn);
             }
         }
-        return null;
-    }
-
-    private static MonikielinenTekstiTyyppi getNimiFromTarjoajaDoc(SolrDocument orgdoc) {
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        if (orgdoc.getFieldValue(ORG_NAME_FI) != null) {
-            Teksti nimiFi = new Teksti();
-            nimiFi.setKieliKoodi("fi");
-            nimiFi.setValue(orgdoc.getFieldValue(ORG_NAME_FI).toString());
-            nimi.getTeksti().add(nimiFi);
-        }
-        if (orgdoc.getFieldValue(ORG_NAME_SV) != null) {
-            Teksti nimiSv = new Teksti();
-            nimiSv.setKieliKoodi("sv");
-            nimiSv.setValue(orgdoc.getFieldValue(ORG_NAME_SV).toString());
-            nimi.getTeksti().add(nimiSv);
-        }
-        if (orgdoc.getFieldValue(ORG_NAME_EN) != null) {
-            Teksti nimiEn = new Teksti();
-            nimiEn.setKieliKoodi("en");
-            nimiEn.setValue(orgdoc.getFieldValue(ORG_NAME_EN).toString());
-            nimi.getTeksti().add(nimiEn);
-        }
-        Preconditions.checkArgument(nimi.getTeksti().size()>0);
+        Preconditions.checkArgument(nimi.getTeksti().size() > 0);
         return nimi;
     }
     

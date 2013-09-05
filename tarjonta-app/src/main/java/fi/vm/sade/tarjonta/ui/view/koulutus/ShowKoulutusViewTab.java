@@ -261,8 +261,9 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang == null ? null : lisatietoForLang.getKoulutusohjelmanValinta()));
         layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang == null ? null : lisatietoForLang.getSisalto()));
         layout.add(getXhtmlRow("koulutuksenRakenne", getText(language, model.getKoulutuskoodiModel().getKoulutuksenRakenne())));
-        layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang == null ? null : lisatietoForLang.getKansainvalistyminen()));
         layout.add(getXhtmlRow("tutkinnonSijoittuminenTyoelamaan", lisatietoForLang == null ? null : lisatietoForLang.getSijoittuminenTyoelamaan()));
+        layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang == null ? null : lisatietoForLang.getKansainvalistyminen()));
+        layout.add(getXhtmlRow("tutkinnonYhteistyoMuidenKanssa", lisatietoForLang == null ? null : lisatietoForLang.getYhteistyoMuidenToimijoidenKanssa()));
         layout.add(getXhtmlRow("ammattinimikkeet", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), locale)));
         layout.add(getXhtmlRow("jatkoOpintomahdollisuudet", getText(language, model.getKoulutuskoodiModel().getJatkoopintomahdollisuudet())));
     }
@@ -315,6 +316,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel opintoala = koodiModel.getOpintoala();
         final String opintojenLaajuusArvo = koodiModel.getOpintojenLaajuus();
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
+        final KoodiModel koulutusaste =  koodiModel.getKoulutusaste();
+        
 
         //TODO get org name for current language?
         layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
@@ -324,8 +327,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusohjelmaModel().getKoodistoUri(), locale)));
         layout.addSpace();
 
-        if (presenter.getModel().getKoulutusPerustiedotModel().getKoulutusaste() != null) {
-            layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusaste().getKoodistoUri(), locale)));
+        if (koulutusaste != null) {
+            layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutusaste.getKoodistoUri(), locale)));
         }
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));

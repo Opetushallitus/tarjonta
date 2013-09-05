@@ -17,33 +17,30 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.ItemClickEvent;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
-import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
 
 /**
  *
@@ -56,13 +53,11 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
     private static transient final Logger LOG = LoggerFactory.getLogger(ValitseTutkintoohjelmaFormView.class);
     private TarjontaKorkeakouluPresenter presenter;
     private UiBuilder uiBuilder;
-    @NotNull(message = "{validation.Koulutus.tutkintoohjelma.notNull}")
-    @PropertyId("tutkintoohjelma")
-    private ComboBox cbTutkintoohjelma;
-    private OptionGroup valitseMuokkaaLisaa;
     private BeanItemContainer<TutkintoohjelmaModel> bic;
     private ValitseTutkintoohjelmaDialog dialog;
     private Button btNext, btPrev;
+    private CollapsibleTutkintoohjelmaTable tbTutkintoohjelma;
+    TarjontaKoodistoHelper tkHelper;
 
     @Override
     protected void buildLayout() {
@@ -73,17 +68,25 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         SELECT, EDIT, ADD
     };
 
-    public ValitseTutkintoohjelmaFormView(TarjontaKorkeakouluPresenter presenter, UiBuilder uiBuilder, ValitseTutkintoohjelmaDialog dialog) {
+    public ValitseTutkintoohjelmaFormView(TarjontaKorkeakouluPresenter presenter, TarjontaKoodistoHelper tkHelper, UiBuilder uiBuilder, ValitseTutkintoohjelmaDialog dialog) {
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
         this.dialog = dialog;
+        this.tkHelper = tkHelper;
 
         setSizeFull();
         addInfoText();
-        addRadio();
-        addTutkintoohjelmaRow("tutkinto-ohjelma");
+        addHeaderText("tutkinto-ohjelma");
+        addTutkintoohjelmaRow();
         addNavigationButtonLayout();
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+    }
+
+    private void addHeaderText(final String propertyKey) {
+        Label label = UiUtil.label(null, T(propertyKey));
+        label.setContentMode(Label.CONTENT_TEXT);
+        label.setWidth(100, UNITS_PERCENTAGE);
+        addHL(label);
     }
 
     private void addInfoText() {
@@ -94,59 +97,32 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         addHL(label);
     }
 
-    private void addRadio() {
-        RadioItem radioItem = new RadioItem(RadioItemType.SELECT, T("radioValitseNimi"));
+    private void addTutkintoohjelmaRow() {
+        bic = new BeanItemContainer<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
 
-        valitseMuokkaaLisaa = new OptionGroup();
-        valitseMuokkaaLisaa.addItem(radioItem);
-        valitseMuokkaaLisaa.addItem(new RadioItem(RadioItemType.EDIT, T("radioMuokkaa")));
-        valitseMuokkaaLisaa.addItem(new RadioItem(RadioItemType.ADD, T("radioLisaa")));
-        valitseMuokkaaLisaa.setImmediate(true);
-        valitseMuokkaaLisaa.setValue(radioItem);
-        valitseMuokkaaLisaa.addListener(new ValueChangeListener() {
+        tbTutkintoohjelma = new CollapsibleTutkintoohjelmaTable(tkHelper);
+        tbTutkintoohjelma.setSizeFull();
+        tbTutkintoohjelma.setHeight("280px");
+        tbTutkintoohjelma.setNullSelectionAllowed(false);
+        tbTutkintoohjelma.setImmediate(true);
+        tbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                if (event != null && event.getProperty() != null) {
-                    final RadioItem ri = (RadioItem) event.getProperty().getValue();
+                LOG.debug("Selected: {}, {}" + tbTutkintoohjelma.getSelectedRows(), event);
+
+                if (event != null && !tbTutkintoohjelma.getSelectedRows().isEmpty()) {
+
                     btNext.setEnabled(true);
-                    enableNextDialogButton(ri.getType());
-                }
-            }
-        });
-
-        addHL(valitseMuokkaaLisaa);
-    }
-
-    private void addTutkintoohjelmaRow(final String propertyKey) {
-        bic = new BeanItemContainer<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
-
-        cbTutkintoohjelma = new ComboBox();
-        cbTutkintoohjelma.setContainerDataSource(bic);
-        cbTutkintoohjelma.setInputPrompt(T(propertyKey + ".prompt"));
-        cbTutkintoohjelma.setWidth(300, UNITS_PIXELS);
-        cbTutkintoohjelma.setNullSelectionAllowed(false);
-        cbTutkintoohjelma.setImmediate(true);
-        cbTutkintoohjelma.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbTutkintoohjelma.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
-        cbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                LOG.debug("Selected: {}, {}" + cbTutkintoohjelma.getValue(), event);
-
-                if (event != null) {
-                    presenter.getPerustiedotModel().setTutkintoohjelma((TutkintoohjelmaModel) cbTutkintoohjelma.getValue());
-                    enableNextDialogButton(RadioItemType.SELECT);
                 } else {
-                    LOG.debug("Null event object");
+                    btNext.setEnabled(false);
                 }
             }
         });
 
-        addHL(cbTutkintoohjelma);
+
+        addHL(tbTutkintoohjelma);
     }
 
     private void addNavigationButtonLayout() {
@@ -157,7 +133,6 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 dialog.windowClose();
-                presenter.showValitseKoulutusDialog();
             }
         });
 
@@ -166,22 +141,11 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                dialog.windowClose();
-                RadioItem ri = (RadioItem) valitseMuokkaaLisaa.getValue();
-
-                switch (ri.getType()) {
-                    case ADD:
-                        presenter.showMuokkaaTutkintoohjelmaDialog(false);
-                        break;
-                    case SELECT:
-                        presenter.showKorkeakouluKoulutusEditView();
-                        break;
-                    case EDIT:
-                        presenter.showMuokkaaTutkintoohjelmaDialog(true);
-                        break;
+                for (KielikaannosViewModel kieli : tbTutkintoohjelma.getSelectedRows()) {
+                    presenter.getPerustiedotModel().getTutkintoohjelma().addKielikaannos(kieli);
                 }
-
-
+                presenter.getPerustiedotView().rebuildLanguageTextFields();
+                dialog.windowClose();
             }
         });
         btNext.setEnabled(false); //no item selected -> disable 
@@ -211,13 +175,14 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         List<TutkintoohjelmaModel> ds = presenter.getSearchPresenter().searchKorkeakouluTutkintoohjelmas();
 
         bic.addAll(ds);
+        tbTutkintoohjelma.addDataToContainer(ds);
     }
 
     /**
      * Clear all data items from a tree component.
      */
     public void clearAllDataItems() {
-        cbTutkintoohjelma.removeAllItems();
+        tbTutkintoohjelma.removeAllItems();
     }
 
     private class RadioItem {
@@ -262,25 +227,6 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         public String toString() {
             return name;
 
-        }
-    }
-
-    private void enableNextDialogButton(RadioItemType type) {
-        RadioItem ri = (RadioItem) valitseMuokkaaLisaa.getValue();
-        TutkintoohjelmaModel m = (TutkintoohjelmaModel) cbTutkintoohjelma.getValue();
-        btNext.setEnabled(false); //set to default
-        switch (type) {
-            case ADD:
-                btNext.setEnabled(ri != null);
-                cbTutkintoohjelma.setEnabled(false);
-                cbTutkintoohjelma.setValue(null);
-                break;
-            case SELECT:
-            case EDIT:
-                boolean enable = ri != null && m != null;
-                btNext.setEnabled(enable);
-                cbTutkintoohjelma.setEnabled(true);
-                break;
         }
     }
 }

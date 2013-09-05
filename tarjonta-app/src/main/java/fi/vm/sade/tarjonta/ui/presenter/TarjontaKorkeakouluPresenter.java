@@ -27,20 +27,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
-import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KKAutocompleteModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
@@ -50,13 +47,11 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotVi
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.LisaaNimiDialog;
-import fi.vm.sade.tarjonta.ui.view.koulutus.kk.MuokkaaTutkintoohjelmaDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ShowKorkeakouluSummaryView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseTutkintoohjelmaDialog;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -89,12 +84,13 @@ public class TarjontaKorkeakouluPresenter {
     private EditKorkeakouluKuvailevatTiedotView kuvailevatTiedotView;
     private ValitseKoulutusDialog valitseKoulutusDialog;
     private ValitseTutkintoohjelmaDialog valitseTutkintoohjelmaDialog;
-    private MuokkaaTutkintoohjelmaDialog muokkaaTutkintoohjelmaDialog;
     private EditKorkeakouluView editKoulutusView;
     private RegexModelFilter<KoulutuskoodiRowModel> filter;
     @Autowired(required = true)
     private SearchPresenter searchPresenter;
     private Locale locale = I18N.getLocale();
+    @Autowired(required = true)
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public TarjontaKorkeakouluPresenter() {
     }
@@ -353,10 +349,6 @@ public class TarjontaKorkeakouluPresenter {
 
 
         KoulutusmoduuliKoosteTyyppi koulutusmoduuli = lueKoulutusmoduuli.getKoulutusmoduuli();
-        MonikielinenTekstiTyyppi name = korkeakouluConverter.updateTutkintoohjelmaModelTextData(getPerustiedotModel());
-        koulutusmoduuli.setNimi(name);
-        koulutusmoduuli.setKoulutusmoduulinNimi(name); ///?? same as above?
-
         //persist changed data to db, after the operatio we need to reload komos to form. 
         tarjontaAdminService.paivitaKoulutusmoduuli(koulutusmoduuli);
     }
@@ -384,7 +376,7 @@ public class TarjontaKorkeakouluPresenter {
      */
     public void showValitseTutkintoohjelmaDialog() {
         if (this.valitseTutkintoohjelmaDialog == null) {
-            this.valitseTutkintoohjelmaDialog = new ValitseTutkintoohjelmaDialog(presenter, uiBuilder);
+            this.valitseTutkintoohjelmaDialog = new ValitseTutkintoohjelmaDialog(presenter, tarjontaKoodistoHelper, uiBuilder);
         } else {
             //fix for Jrebel window close issue.
             valitseTutkintoohjelmaDialog.windowClose();
@@ -396,37 +388,6 @@ public class TarjontaKorkeakouluPresenter {
     public void showLisaaKieliDialog() {
         LisaaNimiDialog dialog = new LisaaNimiDialog(presenter, tarjontaUiHelper, uiBuilder);
         dialog.windowOpen();
-    }
-
-    /**
-     * @return the MuokkaaTutkintoohjelmaDialog
-     */
-    public void showMuokkaaTutkintoohjelmaDialog(final boolean edit) {
-        TutkintoohjelmaModel tutkintoohjelma = getPerustiedotModel().getTutkintoohjelma();
-
-        if (edit) {
-            //set the current name of the form text edit field.
-            Preconditions.checkNotNull(tutkintoohjelma, "Loaded tutkinto-ohjelma UI model cannot be null.");
-            // Preconditions.checkNotNull(tutkintoohjelma.getKomoOid(), "Loaded tutkinto-ohjelma KOMO OID cannot be null.");
-            Preconditions.checkArgument(!tutkintoohjelma.getKielikaannos().isEmpty(), "Loaded tutkinto-ohjelma UI model cannot be empty.");
-            Preconditions.checkNotNull(tutkintoohjelma.getNimi(), "Loaded tutkinto-ohjelma name cannot be empty.");
-
-            LOG.debug("Original KOMO name : {}", tutkintoohjelma.getNimi());
-            getPerustiedotModel().setTutkintoohjelmaNimi(tutkintoohjelma.getNimi());
-        } else {
-            //clear name field
-            presenter.getKorkeakouluPresenter().getPerustiedotModel().setTutkintoohjelmaNimi(null);
-        }
-
-        if (this.muokkaaTutkintoohjelmaDialog == null) {
-            this.muokkaaTutkintoohjelmaDialog = new MuokkaaTutkintoohjelmaDialog(presenter);
-        } else {
-            //fix for Jrebel window close issue.
-            muokkaaTutkintoohjelmaDialog.windowClose();
-        }
-
-        this.muokkaaTutkintoohjelmaDialog.setMode(edit); //modes : edit or add
-        this.muokkaaTutkintoohjelmaDialog.windowOpen();
     }
 
     /**

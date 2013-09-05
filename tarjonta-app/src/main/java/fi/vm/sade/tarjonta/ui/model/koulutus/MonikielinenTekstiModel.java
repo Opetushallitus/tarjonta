@@ -87,9 +87,16 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
      * @return
      */
     private String closestKieliKaannos(final String userLangCode, final String fallbackLangCode) {
-        String value = getTextByLangCode(userLangCode);
+        String value = getTextByLangCode(userLangCode.toLowerCase());
 
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
+            setSelectedLanguage(userLangCode, value);
+            return userLangCode;
+        }
+        
+        //There seems to be some confusion whether lang is lower or upper case so trying both
+        value = getTextByLangCode(userLangCode.toUpperCase());
+        if (value != null && !value.isEmpty()) {
             setSelectedLanguage(userLangCode, value);
             return userLangCode;
         }
@@ -151,6 +158,8 @@ public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Co
         }
         return order;
     }
-    
-    
+
+    public Set<String> getLanguages() {
+        return kaannokset.keySet();
+    }
 }

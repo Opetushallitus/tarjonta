@@ -31,6 +31,12 @@
         </dependency>
 
         <dependency>
+            <groupId>fi.vm.sade.organisaatio</groupId>
+            <artifactId>organisaatio-solr-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>

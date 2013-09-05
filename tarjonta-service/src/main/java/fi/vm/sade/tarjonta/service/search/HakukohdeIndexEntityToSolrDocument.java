@@ -92,11 +92,11 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             boolean orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs,
             tarjoaja);
             
-             if(!orgFound) {
-             logger.warn("Skipping hakukohde:" + hakukohde.getOid() +
-             " no orgnisation found with oid " + tarjoaja);
-             return Lists.newArrayList();
-             }
+            if (!orgFound) {
+                logger.warn("Skipping hakukohde:" + hakukohde.getOid()
+                        + " no orgnisation found with oid " + tarjoaja);
+                return Lists.newArrayList();
+            }
         } else {
             logger.warn("No koulutuses found, this should not be possible!");
         }
@@ -119,12 +119,16 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     }
 
     private void addTekstihaku(SolrInputDocument hakukohdeDoc) {
-        add(hakukohdeDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI), hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV),
-                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN), hakukohdeDoc.getFieldValue(KAUSI_FI),
-                hakukohdeDoc.getFieldValue(KAUSI_SV), hakukohdeDoc.getFieldValue(KAUSI_EN),
-                hakukohdeDoc.getFieldValue(VUOSI_KOODI), hakukohdeDoc.getFieldValue(HAKUTAPA_FI),
-                hakukohdeDoc.getFieldValue(HAKUTAPA_SV), hakukohdeDoc.getFieldValue(HAKUTAPA_EN)));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(KAUSI_EN));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(VUOSI_KOODI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_FI));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_SV));
+        add(hakukohdeDoc, TEKSTIHAKU, hakukohdeDoc.getFieldValue(HAKUTAPA_EN));
     }
 
     private void addHakuTiedot(SolrInputDocument hakukohdeDoc, List<HakuAikaIndexEntity> hakuajat) {
@@ -245,11 +249,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         add(hakukohdeDoc, ORG_OID, perus.getOid());
         ArrayList<String> oidPath = Lists.newArrayList();
         
-        Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
-        Collections.reverse(oidPath);
-        
-        for (String path : oidPath) {
-            add(hakukohdeDoc, ORG_PATH, path);
+        if (perus.getParentOidPath() != null) {
+            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings()
+                    .split(perus.getParentOidPath()));
+            Collections.reverse(oidPath);
+
+            for (String path : oidPath) {
+                add(hakukohdeDoc, ORG_PATH, path);
+            }
         }
         return true;
     }

@@ -2,25 +2,25 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_SV;
 
 public class SolrDocumentToHakukohdeConverter {
     
-    public HakukohteetVastaus convertSolrToHakukohteetVastaus(SolrDocumentList solrHakukohdeList, SolrDocumentList solrOrgList) {
+    public HakukohteetVastaus convertSolrToHakukohteetVastaus(SolrDocumentList solrHakukohdeList, Map<String, OrganisaatioPerustieto> orgResponse) {
         HakukohteetVastaus vastaus = new HakukohteetVastaus();
         for (int i = 0 ; i < solrHakukohdeList.size(); ++i) {
             SolrDocument hakukohdeDoc = solrHakukohdeList.get(i);
-            HakukohdeTulos tulos = convertHakukohde(hakukohdeDoc, solrOrgList);
+            HakukohdeTulos tulos = convertHakukohde(hakukohdeDoc, orgResponse);
             if(tulos!=null) {
                 vastaus.getHakukohdeTulos().add(tulos);
             }
@@ -30,7 +30,7 @@ public class SolrDocumentToHakukohdeConverter {
     }
 
     private HakukohdeTulos convertHakukohde(SolrDocument hakukohdeDoc,
-            SolrDocumentList solrOrgList) {
+            Map<String, OrganisaatioPerustieto> orgResponse) {
         HakukohdeTulos vastaus = new HakukohdeTulos();
         HakukohdeListaus hakukohde = new HakukohdeListaus();
         hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
@@ -44,7 +44,7 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
-        hakukohde.setTarjoaja(IndexDataUtils.createTarjoaja(hakukohdeDoc, solrOrgList));
+        hakukohde.setTarjoaja(IndexDataUtils.createTarjoaja(hakukohdeDoc, orgResponse));
         if(hakukohde.getTarjoaja().getNimi()==null) {
             return null;
         }

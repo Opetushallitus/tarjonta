@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -33,17 +35,19 @@ public class ValitseTutkintoohjelmaDialog extends TarjontaWindow {
 
     private static transient final Logger LOG = LoggerFactory.getLogger(ValitseTutkintoohjelmaDialog.class);
     private static final long serialVersionUID = -7357037259731478017L;
-    private static final String WINDOW_HEIGHT = "300px";
+    private static final String WINDOW_HEIGHT = "500px";
     private static final String WINDOW_WIDTH = "700px";
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;
+    private TarjontaKoodistoHelper tkHelper;
     private ValidatingViewBoundForm form;
     private ValitseTutkintoohjelmaFormView view;
 
-    public ValitseTutkintoohjelmaDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
+    public ValitseTutkintoohjelmaDialog(TarjontaPresenter presenter, TarjontaKoodistoHelper tkHelper, UiBuilder uiBuilder) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
+        this.tkHelper = tkHelper;
 
         setCaption(T(WINDOW_TITLE_PROPERTY));
     }
@@ -52,7 +56,7 @@ public class ValitseTutkintoohjelmaDialog extends TarjontaWindow {
     public void buildLayout(VerticalLayout layout) {
 
         layout.setMargin(false, true, true, true);
-        view = new ValitseTutkintoohjelmaFormView(presenter.getKorkeakouluPresenter(), uiBuilder, this);
+        view = new ValitseTutkintoohjelmaFormView(presenter.getKorkeakouluPresenter(), tkHelper, uiBuilder, this);
         form = new ValidatingViewBoundForm(view);
 
         form.setValidationVisible(false);

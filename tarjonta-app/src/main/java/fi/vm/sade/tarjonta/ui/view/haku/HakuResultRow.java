@@ -103,6 +103,8 @@ public class HakuResultRow extends HorizontalLayout {
 
         if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanPublishHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
 
         return rowMenuBar;
@@ -119,7 +121,9 @@ public class HakuResultRow extends HorizontalLayout {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
              showPublishDialog();
-        } 
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
+            showCancelPublishDialog();
+        }
     }
 
     private void showRemoveDialog() {
@@ -148,12 +152,31 @@ public class HakuResultRow extends HorizontalLayout {
         getWindow().addWindow(removeDialogWindow);
     }
 
+    private void showCancelPublishDialog() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("cancelPublishQ"), hakuNimi, T("removeYes"), T("removeNo"),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        closeHakuRemovalDialog();
+                        cancelHakuPublish();
+
+                    }
+                },
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        closeHakuRemovalDialog();
+
+                    }
+                });
+        removeDialogWindow = new TarjontaDialogWindow(removeDialog, T("cancelPublishTitle"));
+        removeDialogWindow.setResizable(false);
+        getWindow().addWindow(removeDialogWindow);
+    }
+
     private void showPublishDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("publishQ"), hakuNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
-
-                    private static final long serialVersionUID = -1659792344996887472L;
-
                     @Override
                     public void buttonClick(ClickEvent event) {
                         closeHakuRemovalDialog();
@@ -162,9 +185,6 @@ public class HakuResultRow extends HorizontalLayout {
                     }
                 },
                 new Button.ClickListener() {
-
-                    private static final long serialVersionUID = 1707035591602111711L;
-
                     @Override
                     public void buttonClick(ClickEvent event) {
                         closeHakuRemovalDialog();
@@ -181,6 +201,10 @@ public class HakuResultRow extends HorizontalLayout {
         if (removeDialogWindow != null) {
             getWindow().removeWindow(removeDialogWindow);
         }
+    }
+
+    private void cancelHakuPublish() {
+        hakuPresenter.changeStateToCancelled(haku.getHakuOid(), HAKU);
     }
 
     private void startHakuPublish() {
