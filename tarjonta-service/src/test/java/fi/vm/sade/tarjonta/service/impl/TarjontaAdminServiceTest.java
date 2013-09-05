@@ -59,7 +59,6 @@ import java.util.*;
 
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
-import org.junit.Ignore;
 
 /**
  *
@@ -178,30 +177,36 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
     }
-    
+
     
     @Test
-    public void testHakukohdeCRUD(){
-        Haku haku = fixtures.createPersistedHaku();
-        HakukohdeTyyppi hakukohde = fixtures.createHakukohdeTyyppi();
-        hakukohde.setHakukohteenHakuOid(haku.getOid());
-        hakukohde.setKaytetaanHaunPaattymisenAikaa(true);
-        HakukohdeTyyppi hakukohdeTyyppi = adminService.lisaaHakukohde(hakukohde);
-        final String oid = hakukohdeTyyppi.getOid();
-        assertNotNull(hakukohdeTyyppi);
-        assertEquals(haku.getOid(), hakukohdeTyyppi.getHakukohteenHakuOid(), hakukohdeTyyppi.getHakukohteenHakuOid());
-        hakukohdeTyyppi = adminService.paivitaHakukohde(hakukohdeTyyppi);
-        assertNotNull(hakukohdeTyyppi);
-        assertEquals(haku.getOid(), hakukohdeTyyppi.getHakukohteenHakuOid(), hakukohdeTyyppi.getHakukohteenHakuOid());
-        adminService.poistaHakukohde(hakukohdeTyyppi);
+    public void testOptimisticLockingHakukohde() {
         
-        try{
-            publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(oid));
-            fail("hakukohdetta ei pitäisi löytyä!");
-        } catch (NoResultException nre) {
-            //ok
+        Hakukohde hk = fixtures.createPersistedHakukohde();
+        
+        
+        
+        HakukohdeTyyppi hakukohdetyyppi = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hk.getOid())).getHakukohde();
+        //update with illegal version
+        hakukohdetyyppi.setVersion(999l);
+
+        try {
+            adminService.paivitaHakukohde(hakukohdetyyppi);
+            fail("Should throw exception!");
+        } catch (OptimisticLockException ole) {
+            //all is good...
         }
+        
+        hakukohdetyyppi.setVersion(0l);
+
+        try {
+            adminService.paivitaHakukohde(hakukohdetyyppi);
+        } catch (OptimisticLockException ole) {
+            fail("Should not throw optimistick locking exception");
+        }
+        
     }
+
     
     @Test
     public void testUpdateKoulutusYhteyshenkilo() {
