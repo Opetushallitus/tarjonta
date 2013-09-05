@@ -158,7 +158,8 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
             Date lastModifiedBefore, Date lastModifiedSince) {
-        final String kieliAvain = "fi"; // TODO: <- rajapintaan
+        final String kieliAvain = StringUtils.capitalize("fi"); // TODO: <-
+                                                                // rajapintaan
         final String filtterointiTeksti = StringUtils.capitalize(StringUtils.trimToEmpty(searchTerms));
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
@@ -177,7 +178,9 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (kieliAvain.equals(teksti.getKieliKoodi())) {
+                        // kieliAvain.equals(StringUtils.capitalize(teksti.getKieliKoodi())))
+                        // {
+                        if (StringUtils.capitalize(teksti.getKieliKoodi()).contains(kieliAvain)) {
                             return StringUtils.capitalize(teksti.getValue());
                         }
                     }
@@ -186,10 +189,9 @@ public class HakuResourceImpl implements HakuResource {
                 }
 
                 public boolean apply(@Nullable HakukohdeTulos tulos) {
-                    String tarjoajaNimi = haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi());
-                    String hakukohdeNimi = haeTekstiAvaimella(tulos.getHakukohde().getNimi());
-
-                    return tarjoajaNimi.contains(filtterointiTeksti) || hakukohdeNimi.contains(filtterointiTeksti);
+                    return haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi())
+                            .contains(filtterointiTeksti)
+                            || haeTekstiAvaimella(tulos.getHakukohde().getNimi()).contains(filtterointiTeksti);
                 }
             });
         }
