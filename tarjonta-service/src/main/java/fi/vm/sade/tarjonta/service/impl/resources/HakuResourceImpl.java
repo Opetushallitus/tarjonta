@@ -158,9 +158,9 @@ public class HakuResourceImpl implements HakuResource {
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
             Date lastModifiedBefore, Date lastModifiedSince) {
-        final String kieliAvain = StringUtils.capitalize("fi"); // TODO: <-
-                                                                // rajapintaan
-        final String filtterointiTeksti = StringUtils.capitalize(StringUtils.trimToEmpty(searchTerms));
+        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: <-
+        // rajapintaan
+        final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
         LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
 
         if (count <= 0) {
@@ -178,10 +178,8 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        // kieliAvain.equals(StringUtils.capitalize(teksti.getKieliKoodi())))
-                        // {
-                        if (StringUtils.capitalize(teksti.getKieliKoodi()).contains(kieliAvain)) {
-                            return StringUtils.capitalize(teksti.getValue());
+                        if (kieliAvain.equals(StringUtils.upperCase(teksti.getKieliKoodi()))) {
+                            return StringUtils.upperCase(teksti.getValue());
                         }
                     }
                     LOG.debug("Avain {} doesnt match any languages!", kieliAvain);
