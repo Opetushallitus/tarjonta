@@ -139,14 +139,14 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
             vl.addComponent(rta);
         }
 
-//        {
-//            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa", MAX_LENGTH,
-//                    T("_textTooLong", T("yhteistyoMuidenToimijoidenKanssa") + " (" + kieli + ")", 2000));
-//            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-//            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
-//            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help", 2000), LabelStyleEnum.TEXT));
-//            vl.addComponent(rta);
-//        }
+        {
+            OphRichTextArea rta = UiUtil.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa", MAX_LENGTH,
+                    T("_textTooLong", T("yhteistyoMuidenToimijoidenKanssa") + " (" + kieli + ")", 2000));
+            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help", 2000), LabelStyleEnum.TEXT));
+            vl.addComponent(rta);
+        }
 
         return vl;
     }
