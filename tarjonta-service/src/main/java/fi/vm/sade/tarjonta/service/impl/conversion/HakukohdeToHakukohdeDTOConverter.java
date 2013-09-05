@@ -82,24 +82,17 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
         t.setLiitteet(convertLiitteet(s.getLiites()));
 
-        if (s.getHakuaikaAlkuPvm() != null) {
+        if (s.getHakuaikaAlkuPvm()!=null && s.getHakuaikaLoppuPvm()!=null) {
+        	t.setKaytetaanHakukohtaistaHakuaikaa(true);
             t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
-        } else {
-            if (s.getHakuaika() != null) {
-                t.setHakuaikaAlkuPvm(s.getHakuaika().getAlkamisPvm());
-            }
-        }
-
-        if (s.getHakuaikaLoppuPvm() != null) {
             t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
         } else {
-            if (s.getHakuaika() != null) {
+        	t.setKaytetaanHakukohtaistaHakuaikaa(false);
+        	if (s.getHakuaika()!=null) {
+                t.setHakuaikaAlkuPvm(s.getHakuaika().getAlkamisPvm());
                 t.setHakuaikaLoppuPvm(s.getHakuaika().getPaattymisPvm());
-            }
+        	}
         }
-
-//        t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm()==null ? s.getHakuaika().getAlkamisPvm() : s.getHakuaikaAlkuPvm());
-//        t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm()==null ? s.getHakuaika().getPaattymisPvm() : s.getHakuaikaLoppuPvm());
 
         // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from koodisto)
         {
