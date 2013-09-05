@@ -31,17 +31,20 @@ import java.net.URISyntaxException;
 @Component
 public class RaportointiRestClientHelper {
 
-    @Value("${raportointi.host}")
+    @Value("${raportointi.host:}")
     private String aloitusPaikatReportHost;
 
-    @Value("${raportointi.port}")
+    @Value("${raportointi.port:}")
     private String aloitusPaikatReportPort;
 
-    @Value("${raportointi.pathPdf}")
+    @Value("${raportointi.pathPdf:}")
     private String aloitusPaikatReportPathPdf;
 
-    @Value("${raportointi.pathExcel}")
+    @Value("${raportointi.pathExcel:}")
     private String aloitusPaikatReportPathExcel;
+
+    @Value("${raportointi.protocol:}")
+    private String builderScheme;
 
 
     public static final String EXCEL_TYPE = "Excel";
@@ -62,11 +65,11 @@ public class RaportointiRestClientHelper {
 
         URIBuilder builder = new URIBuilder();
         if (reportOutputType.equalsIgnoreCase(PDF_TYPE))   {
-            builder.setScheme("http").setHost(aloitusPaikatReportHost).setPort(new Integer(aloitusPaikatReportPort)).setPath(aloitusPaikatReportPathPdf);
+            builder.setScheme(builderScheme).setHost(aloitusPaikatReportHost).setPort(new Integer(aloitusPaikatReportPort)).setPath(aloitusPaikatReportPathPdf);
 
 
         } else if (reportOutputType.equalsIgnoreCase(EXCEL_TYPE)) {
-            builder.setScheme("http").setHost(aloitusPaikatReportHost).setPort(new Integer(aloitusPaikatReportPort)).setPath(aloitusPaikatReportPathExcel);
+            builder.setScheme(builderScheme).setHost(aloitusPaikatReportHost).setPort(new Integer(aloitusPaikatReportPort)).setPath(aloitusPaikatReportPathExcel);
         }
 
                     builder.setParameter(KOULUTUSTOIMIJA_PARAM, koulutustoimija)
