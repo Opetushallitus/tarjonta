@@ -21,7 +21,6 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
@@ -58,6 +57,7 @@ import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import org.junit.Ignore;
 
@@ -177,6 +177,30 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         adminService.paivitaKoulutus(update);
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
+    }
+    
+    
+    @Test
+    public void testHakukohdeCRUD(){
+        Haku haku = fixtures.createPersistedHaku();
+        HakukohdeTyyppi hakukohde = fixtures.createHakukohdeTyyppi();
+        hakukohde.setHakukohteenHakuOid(haku.getOid());
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(true);
+        HakukohdeTyyppi hakukohdeTyyppi = adminService.lisaaHakukohde(hakukohde);
+        final String oid = hakukohdeTyyppi.getOid();
+        assertNotNull(hakukohdeTyyppi);
+        assertEquals(haku.getOid(), hakukohdeTyyppi.getHakukohteenHakuOid(), hakukohdeTyyppi.getHakukohteenHakuOid());
+        hakukohdeTyyppi = adminService.paivitaHakukohde(hakukohdeTyyppi);
+        assertNotNull(hakukohdeTyyppi);
+        assertEquals(haku.getOid(), hakukohdeTyyppi.getHakukohteenHakuOid(), hakukohdeTyyppi.getHakukohteenHakuOid());
+        adminService.poistaHakukohde(hakukohdeTyyppi);
+        
+        try{
+            publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(oid));
+            fail("hakukohdetta ei pitäisi löytyä!");
+        } catch (NoResultException nre) {
+            //ok
+        }
     }
     
     @Test
