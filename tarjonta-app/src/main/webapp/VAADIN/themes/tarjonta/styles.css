@@ -50,3 +50,9 @@ Alternative for Vaadin horizontal layout:
 .component-twincolsel-title{
     margin-left: 161px;
 }
+
+.v-captiontext{
+    text-transform: none !important;
+    font-weight: bold;
+}
+

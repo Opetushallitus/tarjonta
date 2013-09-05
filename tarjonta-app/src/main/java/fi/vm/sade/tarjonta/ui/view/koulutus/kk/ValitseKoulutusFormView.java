@@ -28,6 +28,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import static com.vaadin.ui.Table.COLUMN_HEADER_MODE_HIDDEN;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -65,7 +66,6 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
     private UiBuilder uiBuilder;
     @PropertyId("koulutusala")
     private KoodistoComponent kcKoulutusalas;
-    @NotNull(message = "{validation.Koulutus.searchField.notNull}")
     @PropertyId("searchWord")
     private TextField tfSearchField;
     private Table table;
@@ -100,9 +100,6 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         label.setStyleName(Oph.LABEL_SMALL);
 
         CssLayout removeMe = new CssLayout();
-        
-       
-
         HorizontalLayout hl = addHL();
         hl.addComponent(label);
         hl.addComponent(removeMe);
@@ -127,14 +124,13 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
         tfSearchField.setImmediate(true);
         tfSearchField.setWidth(100, UNITS_PERCENTAGE);
         tfSearchField.setCaption(T("search.caption"));
+        tfSearchField.setRequired(false);
         tfSearchField.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-
                 LOG.debug("valueChange {} {}", event, presenter.getPerustiedotModel().getValitseKoulutus());
-
             }
         });
 
@@ -175,6 +171,8 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
 
     private void addComponentKoulutuskoodiTable() {
         table = new Table();
+        table.setCaption(T("search.caption"));
+        table.setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
 
         //Bean 
         bic = new BeanItemContainer<KoulutuskoodiRowModel>(KoulutuskoodiRowModel.class);
@@ -205,13 +203,11 @@ public class ValitseKoulutusFormView extends AbstractVerticalLayout {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                LOG.debug("Selected: {}, {}" + table.getValue(), event);
-
-                if (event != null) {
+                if (event != null && table.getValue() != null) {
                     presenter.getPerustiedotModel().getValitseKoulutus().setKoulutuskoodiRow((KoulutuskoodiRowModel) table.getValue());
                     btNext.setEnabled(true);
                 } else {
-                    LOG.debug("Null event object");
+                    btNext.setEnabled(false);
                 }
             }
         });

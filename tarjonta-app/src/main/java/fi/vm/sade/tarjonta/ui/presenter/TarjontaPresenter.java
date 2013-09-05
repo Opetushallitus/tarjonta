@@ -595,11 +595,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<KoulutusTulos> validKoulutukses = new ArrayList<KoulutusTulos>();
         for (KoulutusTulos curKoulutus : vastaus.getKoulutusTulos()) {
             if (curKoulutus.getKoulutus().getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
-                && curKoulutus.getKoulutus().getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())) {
+                    && curKoulutus.getKoulutus().getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())) {
                 validKoulutukses.add(curKoulutus);
             }
         }
-        
+
         return validKoulutukses;
     }
 
@@ -2263,7 +2263,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public boolean availableKoulutus() {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
 
-        if (uiHelper.isOrganisationKorkeakoulu(oppilaitostyyppiUris)) {
+        if (this.getPermission().underConstruction() && uiHelper.isOrganisationKorkeakoulu(oppilaitostyyppiUris)) {
             //No KOMO data check needed.
             return true;
         } else {

@@ -31,7 +31,7 @@ import fi.vm.sade.generic.service.PermissionService;
 /**
  * This class encapsulates permission service so that changes the actual
  * {@link PermissionService} do not have so much effect on this app.
- * 
+ *
  * @author Jani Wilén
  */
 @Configurable
@@ -39,7 +39,6 @@ import fi.vm.sade.generic.service.PermissionService;
 public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     public static final String TARJONTA = "TARJONTA";
-
     //OPH oid
     @Value("${root.organisaatio.oid}")
     String rootOrgOid;
@@ -47,28 +46,26 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public TarjontaPermissionServiceImpl() {
         // TODO Auto-generated constructor stub
     }
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(TarjontaPermissionServiceImpl.class);
 
     @Component
     public static class TPermissionService extends AbstractPermissionService {
-        
+
         public TPermissionService() {
             super(TARJONTA);
         }
     }
-
     @Autowired
     TPermissionService wrapped;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Preconditions.checkNotNull(wrapped, "The permissionService is not set");        
+        Preconditions.checkNotNull(wrapped, "The permissionService is not set");
     }
 
     /**
      * Checks if user can cancel koulutus publishment.
-     * 
+     *
      * @param org
      * @return
      */
@@ -82,7 +79,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user is allowed to create koulutus.
-     * 
+     *
      * @param context
      * @return
      */
@@ -96,7 +93,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can delete koulutus.
-     * 
+     *
      * @return
      */
     public boolean userCanDeleteKoulutus(final OrganisaatioContext context) {
@@ -105,7 +102,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can publish koulutus.
-     * 
+     *
      * @param org
      * @return
      */
@@ -115,6 +112,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can update hakukohde.
+     *
      * @param context
      * @return
      */
@@ -126,14 +124,15 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can update hakukohde when haku started status is known
+     *
      * @param context
      * @return
      */
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context, final boolean hakuStarted) {
         boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU) && !hakuStarted;
-        
+
         //OPH user can edit even if haku has started
-        if(!result) {
+        if (!result) {
             result = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
         }
         LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
@@ -142,7 +141,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can update koulutus.
-     * 
+     *
      * @return
      */
     public boolean userCanUpdateKoulutus(final OrganisaatioContext context) {
@@ -153,6 +152,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can copy koulutus as new.
+     *
      * @param context
      * @return
      */
@@ -162,6 +162,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can move koulutus
+     *
      * @param context
      * @return
      */
@@ -171,6 +172,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can add new "koulutus instance"
+     *
      * @param context
      * @return
      */
@@ -187,6 +189,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Checks if user can delete hakukohde from koulutus.
+     *
      * @param context
      * @return
      */
@@ -196,6 +199,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can add koulutus to hakukohde.
+     *
      * @param context
      * @return
      */
@@ -209,6 +213,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can delete haku.
+     *
      * @return
      */
     public boolean userCanDeleteHaku() {
@@ -217,6 +222,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can delete haku.
+     *
      * @return
      */
     public boolean userCanCreateHaku() {
@@ -227,6 +233,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can edit haku.
+     *
      * @return
      */
     public boolean userCanUpdateHaku() {
@@ -237,7 +244,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can publish haku.
-     * 
+     *
      * @return
      */
     public boolean userCanPublishHaku() {
@@ -246,6 +253,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can Cancel haku publishment.
+     *
      * @return
      */
     public boolean userCanCancelHakuPublish() {
@@ -253,18 +261,29 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     }
 
     /**
-     *  Check if user can edit valintaperustekuvaus/sorakuvaus
+     * Check if user can edit valintaperustekuvaus/sorakuvaus
+     *
      * @return
      */
-    public boolean userCanEditValintaperustekuvaus(){
+    public boolean userCanEditValintaperustekuvaus() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 
     /**
      * This is used by the "luo koulutusmoduulit" button in the ui.
+     *
      * @return
      */
     public boolean userCanCreateKoulutusmoduuli() {
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
+
+     /**
+     * Check if user can see unfinished development features.
+     *
+     * @return
+     */
+    public boolean underConstruction() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 }

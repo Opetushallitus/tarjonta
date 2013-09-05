@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
@@ -39,20 +40,16 @@ import org.vaadin.addon.formbinder.PropertyId;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class YhteyshenkiloViewForm extends VerticalLayout {
 
-    private static transient final Logger LOG = LoggerFactory
-            .getLogger(YhteyshenkiloViewForm.class);
+    private static transient final Logger LOG = LoggerFactory.getLogger(YhteyshenkiloViewForm.class);
     private static final long serialVersionUID = -3571709365318709818L;
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.email}")
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
     @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
@@ -79,12 +76,12 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
      * @param henkiloType
      */
     public void populateYhtHenkiloFields(HenkiloType henkiloType) {
-       
+
         if (henkiloType == null) {
             return;
         }
         LOG.info(henkiloType.getEtunimet());
-        
+
         this.yhtHenkKokoNimi.setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
         this.model.setYhtHenkiloOid(henkiloType.getOidHenkilo());
         if (henkiloType.getOrganisaatioHenkilos() != null && !henkiloType.getOrganisaatioHenkilos().isEmpty()) {
@@ -213,5 +210,12 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
         initialYhtHenkTitteli = model.getYhtHenkTitteli();
         initialYhtHenkEmail = model.getYhtHenkEmail();
         initialYhtHenkPuhelin = model.getYhtHenkPuhelin();
+    }
+
+    public void setFieldWidth(int width) {
+        yhtHenkTitteli.setWidth(width, UNITS_PIXELS);
+        yhtHenkEmail.setWidth(width, UNITS_PIXELS);
+        yhtHenkKokoNimi.setWidth(width, UNITS_PIXELS);
+        yhtHenkPuhelin.setWidth(width, UNITS_PIXELS);
     }
 }

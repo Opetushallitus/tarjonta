@@ -152,12 +152,8 @@ public class ImageUploader extends VerticalLayout implements Upload.SucceededLis
         imagePanel.setWidth("280px");
         imagePanel.addComponent(new Label(T("noImageYet")));
 
-
-        Label uploadLabel = UiUtil.label(null, T("uploadPrompt"));
-
         HorizontalLayout hl = UiUtil.horizontalLayout();
         uploader = new Upload();
-        uploader.addStyleName(Oph.BUTTON_SMALL);
         uploader.setReceiver(this);
         uploader.addListener((Upload.SucceededListener) this);
         uploader.addListener((Upload.FailedListener) this);
@@ -165,18 +161,6 @@ public class ImageUploader extends VerticalLayout implements Upload.SucceededLis
         uploader.setButtonCaption(T("Lataa"));
         hl.addComponent(uploader);
 
-        UiUtil.buttonLink(hl, T("poistaKuva"), new Button.ClickListener() {
-            private static final long serialVersionUID = -7947543772372919644L;
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                Label changeLabel = new Label("val");
-                changeLabel.addListener(changeListener);
-                changeLabel.setValue("val1");
-                clearImage();
-
-            }
-        });
 
         mainLayout.addComponent(hl);
         mainLayout.addComponent(imagePanel);
@@ -225,6 +209,19 @@ public class ImageUploader extends VerticalLayout implements Upload.SucceededLis
         StreamResource resource = new StreamResource(source, filename, mainLayout.getApplication());
 
         imagePanel.removeAllComponents();
+        UiUtil.buttonLink(imagePanel, T("poistaKuva"), new Button.ClickListener() {
+            private static final long serialVersionUID = -7947543772372919644L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                Label changeLabel = new Label("val");
+                changeLabel.addListener(changeListener);
+                changeLabel.setValue("val1");
+                clearImage();
+
+            }
+        });
+
         image = new Embedded(filename);
         image.setWidth("250px");
         image.setSource(resource);

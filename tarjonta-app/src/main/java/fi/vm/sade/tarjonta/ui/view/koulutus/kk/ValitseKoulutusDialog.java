@@ -63,11 +63,10 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
 
         layout.addComponent(form);
     }
-    
-    
+
     public void buildValitseTutkintoOhjelma(VerticalLayout layout) {
         this.removeAllComponents();
-        
+
         layout.setMargin(false, true, true, true);
         ValitseKoulutusFormView view = new ValitseKoulutusFormView(presenter.getKorkeakouluPresenter(), uiBuilder, this);
         form = new ValidatingViewBoundForm(view);
@@ -85,7 +84,7 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
         form.setItemDataSource(beanItem);
 
         layout.addComponent(form);
-         
+
     }
 
     public void windowClose() {
@@ -98,6 +97,8 @@ public class ValitseKoulutusDialog extends TarjontaWindow {
     }
 
     public void windowOpen() {
-        presenter.getRootView().addWindow(this);
+        if (!presenter.getRootView().getApplication().getWindows().contains(this)) {
+            presenter.getRootView().addWindow(this);
+        }
     }
 }

@@ -103,36 +103,38 @@ public class TarjontaKorkeakouluPresenter {
      * @return komo oid
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
-        LOG.debug("in saveKoulutus, tila : {}", tila);
-        /**
-         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
-         */
-        ///this.getEditKoulutusView().enableKuvailevatTiedotTab();
-        ///this.getKuvailevatTiedotView().getLisatiedotForm().reBuildTabsheet();
-        KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotModel();
-
-        /**
-         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
-         */
-        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
-        LOG.debug("In is loaded : {}", perustiedot.isLoaded());
-
-        if (perustiedot.isLoaded()) {//update KOMOTO
-            PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
-            tarjontaAdminService.paivitaKoulutus(paivita);
-            perustiedot.setKoulutusmoduuliOid(paivita.getKomoOid());
-        } else { //insert new KOMOTO
-            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
-                LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
-
-                LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
-                Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
-                Preconditions.checkNotNull(lisaaKoulutus.getKomoOid(), INVALID_DATA + "KOMO OID cannot ne null.");
-                perustiedot.setKomotoOid(lisaa.getOid());
-                perustiedot.setVersion(lisaaKoulutus.getVersion());
-                perustiedot.setKoulutusmoduuliOid(lisaaKoulutus.getKomoOid());
-            }
-        }
+ 
+//        
+//        LOG.debug("in saveKoulutus, tila : {}", tila);
+//        /**
+//         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
+//         */
+//        ///this.getEditKoulutusView().enableKuvailevatTiedotTab();
+//        ///this.getKuvailevatTiedotView().getLisatiedotForm().reBuildTabsheet();
+//        KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotModel();
+//
+//        /**
+//         * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
+//         */
+//        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
+//        LOG.debug("In is loaded : {}", perustiedot.isLoaded());
+//
+//        if (perustiedot.isLoaded()) {//update KOMOTO
+//            PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tyyppi, tila);
+//            tarjontaAdminService.paivitaKoulutus(paivita);
+//            perustiedot.setKoulutusmoduuliOid(paivita.getKomoOid());
+//        } else { //insert new KOMOTO
+//            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
+//                LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaKoulutusTyyppi(getTarjontaModel(), tyyppi, pair, tila);
+//
+//                LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
+//                Preconditions.checkNotNull(lisaaKoulutus.getVersion(), INVALID_DATA + "Version ID for optimistic locking control cannot be null.");
+//                Preconditions.checkNotNull(lisaaKoulutus.getKomoOid(), INVALID_DATA + "KOMO OID cannot ne null.");
+//                perustiedot.setKomotoOid(lisaa.getOid());
+//                perustiedot.setVersion(lisaaKoulutus.getVersion());
+//                perustiedot.setKoulutusmoduuliOid(lisaaKoulutus.getKomoOid());
+//            }
+//        }
     }
 
     public void getReloadKoulutusListData() {
@@ -307,6 +309,12 @@ public class TarjontaKorkeakouluPresenter {
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
     }
 
+    /**
+     * Filter koodisto tutkintokoodi data by given parameters. Koulutusala by
+     * koodisto relation + search word by regex.
+     *
+     * @return
+     */
     public List<KoulutuskoodiRowModel> filterKoulutuskoodis() {
         final String searchWord = getPerustiedotModel().getValitseKoulutus().getSearchWord();
         final String koulutusalaUri = getPerustiedotModel().getValitseKoulutus().getKoulutusala();
@@ -363,11 +371,7 @@ public class TarjontaKorkeakouluPresenter {
 
         if (this.valitseKoulutusDialog == null) {
             this.valitseKoulutusDialog = new ValitseKoulutusDialog(presenter, uiBuilder);
-        } else {
-            //fix for Jrebel window close issue.
-            valitseKoulutusDialog.windowClose();
         }
-
         this.valitseKoulutusDialog.windowOpen();
     }
 
@@ -375,13 +379,7 @@ public class TarjontaKorkeakouluPresenter {
      * @return the ValitseTutkintoohjelmaDialog
      */
     public void showValitseTutkintoohjelmaDialog() {
-        if (this.valitseTutkintoohjelmaDialog == null) {
-            this.valitseTutkintoohjelmaDialog = new ValitseTutkintoohjelmaDialog(presenter, tarjontaKoodistoHelper, uiBuilder);
-        } else {
-            //fix for Jrebel window close issue.
-            valitseTutkintoohjelmaDialog.windowClose();
-        }
-
+        this.valitseTutkintoohjelmaDialog = new ValitseTutkintoohjelmaDialog(presenter, tarjontaKoodistoHelper, uiBuilder);
         this.valitseTutkintoohjelmaDialog.windowOpen();
     }
 

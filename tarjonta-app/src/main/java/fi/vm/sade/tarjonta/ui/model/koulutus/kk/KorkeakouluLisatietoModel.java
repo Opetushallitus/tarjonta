@@ -264,12 +264,11 @@ public class KorkeakouluLisatietoModel extends BaseUIViewModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this)
+        return new HashCodeBuilder()
                 .append(koulutusohjelmanAmmatillisetTavoitteet)
                 .append(paaaineenValinta)
                 .append(koulutuksenSisalto)
                 .append(koulutuksenRakenne)
-                .append(getKuvausKoulutuksenRakenteesta())
                 .append(lisatietoaOpetuskielesta)
                 .append(lopputyonKuvaus)
                 .append(opintojenMaksullisuus)

@@ -82,9 +82,6 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private KoodistoComponent kcPohjakoulutusvaatimus;
     @Autowired
     private TarjontaUIHelper helper;
-    @Value("${tarjonta.showUnderConstruction:false}")
-    private boolean underConstraction;
-    private Label koulutuksenTyyppiLbl;
 
     public UusiKoulutusDialog(String width, String height) {
         super(width, height, true);
@@ -146,11 +143,11 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                     KoodiType type = koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer ? ((KoodiContainer) (koulutuksenTyyppiCombo.getValue())).koodiType : null;
 
                     if (type != null) {
-                        if (underConstraction && contains(type ,Koulutustyyppi.KORKEAKOULU)) {
+                        if (presenter.getPermission().underConstruction() && contains(type, Koulutustyyppi.KORKEAKOULU)) {
                             getParent().removeWindow(UusiKoulutusDialog.this);
                             presenter.getKorkeakouluPresenter().showValitseKoulutusDialog();
 
-                        } else if (contains(type,Koulutustyyppi.TOINEN_ASTE_LUKIO)) {
+                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_LUKIO)) {
                             presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                             logger.info("lukiokoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
@@ -168,15 +165,15 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
             }
         });
     }
-    
-    private static boolean contains(final KoodiType type, final Koulutustyyppi  koulutustyyppi){
+
+    private static boolean contains(final KoodiType type, final Koulutustyyppi koulutustyyppi) {
         Preconditions.checkNotNull(koulutustyyppi, "Koulutustyyppi cannot be null.");
         return type.getKoodiUri().contains(koulutustyyppi.getKoulutustyyppiUri());
     }
 
     private boolean checkOppilaitosTyyppi(OrganisaatioPerustieto org, String tyyppiUri) {
         List<String> oppilaitosTyyppis = this.presenter.getOppilaitostyyppiUris(org.getOid());
-  
+
         return helper.hasRelationKoulutustyyppiToOppilaitostyyppi(tyyppiUri, oppilaitosTyyppis);
     }
 

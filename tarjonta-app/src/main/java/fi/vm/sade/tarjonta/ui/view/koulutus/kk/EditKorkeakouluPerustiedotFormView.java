@@ -34,6 +34,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Form;
+import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -162,7 +163,6 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private Label opintojenLaajuusyksikko;
     private Button lisaaKieli;
     private Button haeListalta;
-    private List<HorizontalLayout> languageRows;
     private VerticalLayout vlContainer;
 
     public EditKorkeakouluPerustiedotFormView() {
@@ -187,11 +187,14 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     }
 
     private void initializeLayout() {
-        languageRows = new ArrayList<HorizontalLayout>();
+
         vlContainer = new VerticalLayout();
 
         buildGridKoulutusRow(this, "koulutusTaiTutkinto");
-        
+        buildGridKoulutusohjelmaRow(this, "tutkintoohjelma");
+        buildGridLRowHelp(this, "tutkintoohjelma");
+        buildGridTunnisteRow(this, "tutkintoohjelmanTunniste");
+        buildGridLRowHelp(this, "tutkintoohjelmanTunniste");
         //Build a label section, the data for labels are
         //received from koodisto service (KOMO).
         koulutusaste = buildLabel(this, "koulutusaste");
@@ -203,10 +206,6 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
 
         //OTHER FORM FIELDS AND LABELS
-        buildGridKoulutusohjelmaRow(this, "tutkintoohjelma");
-        buildGridLRowHelp(this, "tutkintoohjelma");
-        buildGridTunnisteRow(this, "tutkintoohjelmanTunniste");
-
         buildGridLRow(this, "opintojenLaajuusarvo");
         buildGridLRowHelp(this, "opintojenLaajuusarvo");
         buildGridDatesRow(this, "koulutuksenAlkamisPvm");
@@ -296,6 +295,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         gridLabel(grid, propertyKey);
         dfKoulutuksenAlkamisPvm = UiUtil.dateField(null, null, null, null, propertyKey);
         dfKoulutuksenAlkamisPvm.setImmediate(true);
+        dfKoulutuksenAlkamisPvm.setResolution(PopupDateField.RESOLUTION_DAY);
         addGridRowItems(grid, dfKoulutuksenAlkamisPvm);
     }
 
@@ -384,7 +384,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         grid.addComponent(cssLayout);
         grid.newLine();
     }
-    
+
     private void buildBigSpacingGridRow(GridLayout grid) {
         gridLabel(grid, null);
         CssLayout cssLayout = new CssLayout();
@@ -393,12 +393,12 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         grid.newLine();
     }
 
-    private AbstractLayout gridLabel(GridLayout grid, final String propertyKey) {
+    private AbstractLayout gridText(GridLayout grid, final String text) {
         HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
         hl.setSizeFull();
 
-        if (propertyKey != null) {
-            Label labelValue = UiUtil.label(hl, T(propertyKey));
+        if (text != null) {
+            Label labelValue = UiUtil.label(hl, text);
             hl.setComponentAlignment(labelValue, Alignment.TOP_RIGHT);
             labelValue.setSizeUndefined();
             grid.addComponent(hl);
@@ -406,6 +406,10 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         }
         return hl;
+    }
+
+    private AbstractLayout gridLabel(GridLayout grid, final String propertyKey) {
+        return gridText(grid, T(propertyKey));
     }
 
     private void disableOrEnableComponents(boolean active) {
@@ -457,6 +461,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
         yhteyshenkiloForm = new YhteyshenkiloViewForm(tarjontaPresenter, model.getYhteyshenkilo());
+        yhteyshenkiloForm.setFieldWidth(250);
         yhteyshenkiloForm.getYhtHenkKokoNimi().setInputPrompt(T("prompt.kokoNimi"));
 
         Form form = new ValidatingViewBoundForm(yhteyshenkiloForm);
@@ -465,7 +470,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
         form.setValidationVisibleOnCommit(false);
 
         gridLabel(grid, "prompt.yhteyshenkilo");
-        yhteyshenkiloForm.getSelectionFieldLayout().setWidth(400, UNITS_PIXELS);
+        yhteyshenkiloForm.getSelectionFieldLayout().setWidth(450, UNITS_PIXELS);
         grid.addComponent(yhteyshenkiloForm.getSelectionFieldLayout());
         grid.newLine();
 
@@ -490,6 +495,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
      */
     private void buildGridEctsKoordinaattoriRows(GridLayout grid) {
         yhteyshenkiloForm = new YhteyshenkiloViewForm(tarjontaPresenter, model.getEctsKoordinaattori());
+        yhteyshenkiloForm.setFieldWidth(250);
         yhteyshenkiloForm.getYhtHenkKokoNimi().setInputPrompt(T("prompt.kokoNimi"));
 
         Form form = new ValidatingViewBoundForm(yhteyshenkiloForm);
@@ -561,7 +567,7 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     }
 
     private String T(String key) {
-        return getI18n().getMessage(key);
+        return key != null ? getI18n().getMessage(key) : "";
     }
 
     private I18NHelper getI18n() {
@@ -596,19 +602,19 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
 
         final String[] defaultLanguages = new String[]{"kieli_fi", "kieli_sv", "kieli_en"};
         final LinkedList<KielikaannosViewModel> languages = tutkintoohjelma.getLangByOrder(defaultLanguages);
+        GridLayout g = new GridLayout(2, 1);
 
         for (KielikaannosViewModel lang : languages) {
-            HorizontalLayout hl = new HorizontalLayout();
-            Label rowLabelKieli = new Label(uiHelper.getKoodiNimi(lang.getKielikoodi()));
-            rowLabelKieli.setWidth("70px");
-            hl.addComponent(rowLabelKieli);
+            gridText(g, uiHelper.getKoodiNimi(lang.getKielikoodi()));
 
+            HorizontalLayout hl = new HorizontalLayout();
+            hl.setSpacing(true);
             final PropertysetItem psi = new BeanItem(lang);
             TextField tfLang = UiUtil.textField(null, psi, "nimi", null, T("tutkintoohjelma" + PROPERTY_PROMPT_SUFFIX));
             tfLang.setRequired(false);
             tfLang.setImmediate(true);
             tfLang.setValidationVisible(true);
-            tfLang.setWidth(300, UNITS_PIXELS);
+            tfLang.setWidth("250px");
             hl.addComponent(tfLang);
             hl.setComponentAlignment(tfLang, Alignment.TOP_LEFT);
             final String kielikoodi = lang.getKielikoodi();
@@ -634,9 +640,10 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
                 //add to the first hl row.
                 hl.addComponent(haeListalta);
             }
-
-            languageRows.add(hl);
-            vlContainer.addComponent(hl);
+            g.addComponent(hl);
+            g.newLine();
         }
+
+        vlContainer.addComponent(g);
     }
 }

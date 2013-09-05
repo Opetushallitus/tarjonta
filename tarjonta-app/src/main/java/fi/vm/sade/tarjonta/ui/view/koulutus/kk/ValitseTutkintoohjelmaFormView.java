@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.view.koulutus.kk;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.event.ItemClickEvent;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -28,7 +27,6 @@ import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
@@ -63,11 +61,6 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
     protected void buildLayout() {
     }
 
-    private enum RadioItemType {
-
-        SELECT, EDIT, ADD
-    };
-
     public ValitseTutkintoohjelmaFormView(TarjontaKorkeakouluPresenter presenter, TarjontaKoodistoHelper tkHelper, UiBuilder uiBuilder, ValitseTutkintoohjelmaDialog dialog) {
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
@@ -76,17 +69,10 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
 
         setSizeFull();
         addInfoText();
-        addHeaderText("tutkinto-ohjelma");
-        addTutkintoohjelmaRow();
+
+        addTutkintoohjelmaRow("tutkinto-ohjelma");
         addNavigationButtonLayout();
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-    }
-
-    private void addHeaderText(final String propertyKey) {
-        Label label = UiUtil.label(null, T(propertyKey));
-        label.setContentMode(Label.CONTENT_TEXT);
-        label.setWidth(100, UNITS_PERCENTAGE);
-        addHL(label);
     }
 
     private void addInfoText() {
@@ -97,12 +83,14 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         addHL(label);
     }
 
-    private void addTutkintoohjelmaRow() {
+    private void addTutkintoohjelmaRow(String key) {
         bic = new BeanItemContainer<TutkintoohjelmaModel>(TutkintoohjelmaModel.class);
 
         tbTutkintoohjelma = new CollapsibleTutkintoohjelmaTable(tkHelper);
+        tbTutkintoohjelma.setCaption(T(key));
         tbTutkintoohjelma.setSizeFull();
-        tbTutkintoohjelma.setHeight("280px");
+        tbTutkintoohjelma.setHeight("350px");
+        tbTutkintoohjelma.setWidth("550px");
         tbTutkintoohjelma.setNullSelectionAllowed(false);
         tbTutkintoohjelma.setImmediate(true);
         tbTutkintoohjelma.addListener(new Property.ValueChangeListener() {
@@ -113,15 +101,12 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
                 LOG.debug("Selected: {}, {}" + tbTutkintoohjelma.getSelectedRows(), event);
 
                 if (event != null && !tbTutkintoohjelma.getSelectedRows().isEmpty()) {
-
                     btNext.setEnabled(true);
                 } else {
                     btNext.setEnabled(false);
                 }
             }
         });
-
-
         addHL(tbTutkintoohjelma);
     }
 
@@ -171,6 +156,7 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
     }
 
     public void reload() {
+        btNext.setEnabled(false);
         clearAllDataItems();
         List<TutkintoohjelmaModel> ds = presenter.getSearchPresenter().searchKorkeakouluTutkintoohjelmas();
 
@@ -185,48 +171,11 @@ public class ValitseTutkintoohjelmaFormView extends AbstractVerticalLayout {
         tbTutkintoohjelma.removeAllItems();
     }
 
-    private class RadioItem {
-
-        private RadioItemType type;
-        private String name;
-
-        private RadioItem(RadioItemType t, String name) {
-            type = t;
-            this.name = name;
-        }
-
-        /**
-         * @return the type
-         */
-        public RadioItemType getType() {
-            return type;
-        }
-
-        /**
-         * @param type the type to set
-         */
-        public void setType(RadioItemType type) {
-            this.type = type;
-        }
-
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @param name the name to set
-         */
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-
+    @Override
+    public void attach() {
+        super.attach(); //To change body of generated methods, choose Tools | Templates.
+        if (btNext != null) {
+            btNext.setEnabled(false);
         }
     }
 }
