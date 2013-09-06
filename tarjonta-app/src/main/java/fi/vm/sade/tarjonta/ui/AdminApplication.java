@@ -15,15 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
-import fi.vm.sade.tarjonta.ui.presenter.SearchPresenter;
-import fi.vm.sade.tarjonta.ui.view.koulutus.kk.CollapsibleTutkintoohjelmaTable;
-import fi.vm.sade.tarjonta.ui.view.koulutus.SimpleAutocompleteTextField;
 import fi.vm.sade.vaadin.Oph;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;

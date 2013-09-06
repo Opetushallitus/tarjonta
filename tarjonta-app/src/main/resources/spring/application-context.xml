@@ -76,12 +76,10 @@
     <bean id="hakuPresenter" class="fi.vm.sade.tarjonta.ui.presenter.HakuPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
-
-<!--
-    <bean id="valintaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter" scope="session">
+    
+    <bean id="searchPresenter" class="fi.vm.sade.tarjonta.ui.presenter.SearchPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
--->
 
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" ></bean>
 

@@ -500,10 +500,7 @@ public class TarjontaKorkeakouluPresenter {
         getPerustiedotModel().clearModel();
         getKuvailevatTiedotModel().clearModel();
         getPerustiedotModel().setUserKoodiLangUri(korkeakouluConverter.getUserLangUri());
-
-        if (this.valitseKoulutusDialog == null) {
-            this.valitseKoulutusDialog = new ValitseKoulutusDialog(presenter, uiBuilder);
-        }
+        this.valitseKoulutusDialog = new ValitseKoulutusDialog(presenter, uiBuilder);
         this.valitseKoulutusDialog.windowOpen();
     }
 
