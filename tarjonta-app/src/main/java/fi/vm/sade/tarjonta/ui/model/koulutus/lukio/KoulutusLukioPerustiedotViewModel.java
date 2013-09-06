@@ -292,6 +292,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
                 .append(getPohjakoulutusvaatimus())
                 .append(opetuskieli)
                 .append(yhteyshenkilo)
+                .append(opsuLinkki)
                 .toHashCode();
     }
 
