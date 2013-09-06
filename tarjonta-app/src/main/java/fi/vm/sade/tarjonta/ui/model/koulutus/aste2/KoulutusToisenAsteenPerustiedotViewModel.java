@@ -246,6 +246,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     @Override
     public int hashCode() {
+        
+        
         return new HashCodeBuilder().append(oid)
                 .append(koulutusaste)
                 .append(koulutusmoduuliOid)
@@ -270,7 +272,15 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                 .append(pohjakoulutusvaatimus)
                 .append(opetuskieli)
                 .append(yhteyshenkilot)
+                .append(opsuLinkki)
+                .append(yhtHenkEmail)
+                .append(yhtHenkKokoNimi)
+                .append(yhtHenkPuhelin)
+                .append(yhtHenkTitteli)
                 .append(koulutusLinkit).toHashCode();
+        
+        
+        
     }
 
     /**
