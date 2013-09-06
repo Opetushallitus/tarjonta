@@ -49,20 +49,15 @@
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
 				<include name="*.war"/>
 			</fileset>
-			<fileset dir="${maven.repo}/org/apache/solr/solr/4.2.0">
-				<include name="*.war"/>
-			</fileset>
 		</scp>
 
 		<echo>unzip tarjonta-service.war</echo>
         <sshexec command="
 				mkdir ${tomcat.home}/webapps/tarjonta-service;
 				mkdir ${tomcat.home}/webapps/tarjonta-app;
-				mkdir ${tomcat.home}/webapps/solr;
 				
 				unzip -qo -d${tomcat.home}/webapps/tarjonta-service ${tomcat.home}/webapps/tarjonta-service*.war;
 				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*.war;
-				unzip -qo -d${tomcat.home}/webapps/solr ${tomcat.home}/webapps/solr*.war;
 				
 				rm -rf ${tomcat.home}/webapps/*.war;
 				"
@@ -84,7 +79,6 @@
 			<and>
 			<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-service"/>
 			<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-app"/>
-			<http url="http://${tomcat-host}:${tomcat-port}/solr"/>
 			</and>
 		</waitfor>
 		<fail message="App did not come up.  Check your log files, fix and try again.  Good Luck :-).">     
@@ -95,9 +89,6 @@
 					</not>
 					<not>
 						<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-app" />
-					</not>
-					<not>
-						<http url="http://${tomcat-host}:${tomcat-port}/solr" />
 					</not>
 				</or>
 			</condition>
