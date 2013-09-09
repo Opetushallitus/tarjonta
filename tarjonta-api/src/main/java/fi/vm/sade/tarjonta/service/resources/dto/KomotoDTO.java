@@ -15,8 +15,12 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST DTO for LOI / Komoto / Koulutusmoduulin toteutus
@@ -25,20 +29,12 @@ import java.util.Map;
  */
 public class KomotoDTO extends BaseRDTO {
 
-    private Date _koulutuksenAlkamisDate;
+	private static final long serialVersionUID = 1L;
+	
+	private Date _koulutuksenAlkamisDate;
     private boolean _maksullisuus;
     private String _komoOid;
     private String _pohjakoulutusVaatimusUri;
-    private Map<String, String> _arviointiKriteerit;
-    private Map<String, String> _kansainvalistyminen;
-    private Map<String, String> _kuvailevatTiedot;
-    private Map<String, String> _loppukoeVaatimukset;
-    private Map<String, String> _maksullisuusKuvaus;
-    private Map<String, String> _sijoittuminenTyoelamaan;
-    private Map<String, String> _sisalto;
-    private Map<String, String> _yhteistyoMuidenToimijoidenKanssa;
-    private Map<String, String> _koulutusohjelmanValinta;
-    private Map<String, String> _painotus;
     private Map<String, String> _webLinkkis;
     private List<String> _avainsanatUris;
     private List<String> _ammattinimikeUris;
@@ -50,10 +46,23 @@ public class KomotoDTO extends BaseRDTO {
     private String _laajuusArvo;
     private String _laajuusYksikkoUri;
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
-    private String _tila;
+    private TarjontaTila _tila;
     private String _ulkoinenTunniste;
     private String _koulutusAsteUri;
     private String _parentKomotoOid;
+
+    private Map<KomotoTeksti, Map<String,String>> _tekstit;
+
+    public Map<KomotoTeksti, Map<String, String>> getTekstit() {
+    	if (_tekstit==null) {
+    		_tekstit = new EnumMap<KomotoTeksti, Map<String,String>>(KomotoTeksti.class);
+    	}
+		return _tekstit;
+	}
+    
+    public void setTekstit(Map<KomotoTeksti, Map<String, String>> _tekstit) {
+		this._tekstit = _tekstit;
+	}
 
     public Date getKoulutuksenAlkamisDate() {
         return _koulutuksenAlkamisDate;
@@ -90,84 +99,104 @@ public class KomotoDTO extends BaseRDTO {
     // ------------------------------------------
     // Multilingual text data
     //
+    @Deprecated
     public Map<String, String> getArviointiKriteerit() {
-        return _arviointiKriteerit;
+    	return getTekstit().get(KomotoTeksti.ARVIOINTIKRITEERIT);
     }
 
+    @Deprecated
     public void setArviointiKriteerit(Map<String, String> arviointiKriteerit) {
-        this._arviointiKriteerit = arviointiKriteerit;
+    	getTekstit().put(KomotoTeksti.ARVIOINTIKRITEERIT, arviointiKriteerit);
     }
 
+    @Deprecated
     public Map<String, String> getKansainvalistyminen() {
-        return _kansainvalistyminen;
+    	return getTekstit().get(KomotoTeksti.KANSAINVALISTYMINEN);
     }
 
+    @Deprecated
     public void setKansainvalistyminen(Map<String, String> kansainvalistyminen) {
-        this._kansainvalistyminen = kansainvalistyminen;
+    	getTekstit().put(KomotoTeksti.KANSAINVALISTYMINEN, kansainvalistyminen);
     }
 
+    @Deprecated
     public Map<String, String> getKuvailevatTiedot() {
-        return _kuvailevatTiedot;
+    	return getTekstit().get(KomotoTeksti.KUVAILEVAT_TIEDOT);
     }
 
+    @Deprecated
     public void setKuvailevatTiedot(Map<String, String> kuvailevatTiedot) {
-        this._kuvailevatTiedot = kuvailevatTiedot;
+    	getTekstit().put(KomotoTeksti.KUVAILEVAT_TIEDOT, kuvailevatTiedot);
     }
 
+    @Deprecated
     public Map<String, String> getLoppukoeVaatimukset() {
-        return _loppukoeVaatimukset;
+    	return getTekstit().get(KomotoTeksti.LOPPUKOEVAATIMUKSET);
     }
 
+    @Deprecated
     public void setLoppukoeVaatimukset(Map<String, String> loppukoeVaatimukset) {
-        this._loppukoeVaatimukset = loppukoeVaatimukset;
+    	getTekstit().put(KomotoTeksti.LOPPUKOEVAATIMUKSET, loppukoeVaatimukset);
     }
 
+    @Deprecated
     public Map<String, String> getMaksullisuusKuvaus() {
-        return _maksullisuusKuvaus;
+    	return getTekstit().get(KomotoTeksti.MAKSULLISUUS);
     }
 
+    @Deprecated
     public void setMaksullisuusKuvaus(Map<String, String> maksullisuusKuvaus) {
-        this._maksullisuusKuvaus = maksullisuusKuvaus;
+    	getTekstit().put(KomotoTeksti.MAKSULLISUUS, maksullisuusKuvaus);
     }
 
+    @Deprecated
     public Map<String, String> getSijoittuminenTyoelamaan() {
-        return _sijoittuminenTyoelamaan;
+    	return getTekstit().get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN);
     }
 
+    @Deprecated
     public void setSijoittuminenTyoelamaan(Map<String, String> sijoittuminenTyoelamaan) {
-        this._sijoittuminenTyoelamaan = sijoittuminenTyoelamaan;
+    	getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, sijoittuminenTyoelamaan);
     }
 
+    @Deprecated
     public Map<String, String> getSisalto() {
-        return _sisalto;
+    	return getTekstit().get(KomotoTeksti.SISALTO);
     }
 
+    @Deprecated
     public void setSisalto(Map<String, String> sisalto) {
-        this._sisalto = sisalto;
+    	getTekstit().put(KomotoTeksti.SISALTO, sisalto);
     }
 
+    @Deprecated
     public Map<String, String> getYhteistyoMuidenToimijoidenKanssa() {
-        return _yhteistyoMuidenToimijoidenKanssa;
+    	return getTekstit().get(KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA);
     }
 
+    @Deprecated
     public void setYhteistyoMuidenToimijoidenKanssa(Map<String, String> yhteistyoMuidenToimijoidenKanssa) {
-        this._yhteistyoMuidenToimijoidenKanssa = yhteistyoMuidenToimijoidenKanssa;
+    	getTekstit().put(KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, yhteistyoMuidenToimijoidenKanssa);
     }
 
+    @Deprecated
     public Map<String, String> getKoulutusohjelmanValinta() {
-        return _koulutusohjelmanValinta;
+    	return getTekstit().get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
     }
 
+    @Deprecated
     public void setKoulutusohjelmanValinta(Map<String, String> koulutusohjelmanValinta) {
-        this._koulutusohjelmanValinta = koulutusohjelmanValinta;
+    	getTekstit().put(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, koulutusohjelmanValinta);
     }
 
+    @Deprecated
     public Map<String, String> getPainotus() {
-        return _painotus;
+    	return getTekstit().get(KomotoTeksti.PAINOTUS);
     }
 
+    @Deprecated
     public void setPainotus(Map<String, String> painotus) {
-        this._painotus = painotus;
+    	getTekstit().put(KomotoTeksti.PAINOTUS, painotus);
     }
 
     public Map<String, String> getWebLinkkis() {
@@ -269,11 +298,11 @@ public class KomotoDTO extends BaseRDTO {
         this._tarjoajaOid = _tarjoajaOid;
     }
 
-    public String getTila() {
+    public TarjontaTila getTila() {
         return _tila;
     }
 
-    public void setTila(String _tila) {
+    public void setTila(TarjontaTila _tila) {
         this._tila = _tila;
     }
 

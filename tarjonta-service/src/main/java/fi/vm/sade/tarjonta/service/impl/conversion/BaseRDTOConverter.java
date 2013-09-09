@@ -57,7 +57,15 @@ public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends Abs
         return conversionService;
     }
 
-
+    public <T> void convertTekstit(Map<T, Map<String, String>> dst, Map<T, MonikielinenTeksti> src) {
+    	for (Map.Entry<T, MonikielinenTeksti> me : src.entrySet()) {
+    		Map<String,String> mtm = convertMonikielinenTekstiToMap(me.getValue());
+    		if (!mtm.isEmpty()) {
+    			dst.put(me.getKey(), mtm);
+    		}
+        }
+    }
+    
     public Map<String, String> convertMonikielinenTekstiToMap(MonikielinenTeksti s) {
         if (s == null) {
             return null;
@@ -66,8 +74,10 @@ public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends Abs
         Map<String, String> t = new HashMap<String, String>();
 
         for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
-            t.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(tekstiKaannos.getKieliKoodi()),
-                    tekstiKaannos.getArvo());
+        	if (!tekstiKaannos.getArvo().trim().isEmpty()) {
+	            t.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(tekstiKaannos.getKieliKoodi()),
+	                    tekstiKaannos.getArvo());
+        	}
         }
 
         return t;
