@@ -129,8 +129,12 @@ public final class EntityUtils {
     public static <T> void copyFields(List<NimettyMonikielinenTekstiTyyppi> dst, Map<T, MonikielinenTeksti> src, T... keys) {
     	Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
     	for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
-    		if (kenums.contains(e.getKey())) {
-    			dst.add(new NimettyMonikielinenTekstiTyyppi(new ArrayList<MonikielinenTekstiTyyppi.Teksti>(), e.getKey().toString()));
+    		if (kenums.isEmpty() || kenums.contains(e.getKey())) {
+    			List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
+    			for (TekstiKaannos tk : e.getValue().getTekstis()) {
+    				txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
+    			}    			
+    			dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));
     		}
     	}
     }

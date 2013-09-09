@@ -198,6 +198,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         			lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
         			break;
     			default:
+    				LOG.debug("Ignored: {} {}",nmt.getTunniste(), t.getKieliKoodi());
     				// ignore
     				break;
         		}
