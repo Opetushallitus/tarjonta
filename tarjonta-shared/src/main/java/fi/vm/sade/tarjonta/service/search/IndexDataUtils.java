@@ -194,9 +194,13 @@ public class IndexDataUtils {
     
     public static TarjoajaTyyppi createTarjoaja(SolrDocument koulutusDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
-        TarjoajaTyyppi tarjoaja = new TarjoajaTyyppi();
+        final TarjoajaTyyppi tarjoaja = new TarjoajaTyyppi();
         tarjoaja.setTarjoajaOid("" + koulutusDoc.getFieldValue(ORG_OID));
-        tarjoaja.setNimi(getOrganisaatioNimi(orgResponse.get(tarjoaja.getTarjoajaOid())));
+        final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja
+                .getTarjoajaOid());
+        if (organisaatio != null) {
+            tarjoaja.setNimi(getOrganisaatioNimi(orgResponse.get(tarjoaja.getTarjoajaOid())));
+        }
         
         return tarjoaja;
     }
@@ -224,6 +228,7 @@ public class IndexDataUtils {
                 nimi.getTeksti().add(nimiEn);
             }
         }
+        
         Preconditions.checkArgument(nimi.getTeksti().size() > 0);
         return nimi;
     }

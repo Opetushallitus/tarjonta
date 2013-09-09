@@ -15,39 +15,51 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
-import com.google.common.base.Preconditions;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
-
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-
-import java.util.*;
 
 /**
  *
@@ -143,33 +155,16 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         target.getMuutKielet().addAll(Lists.newArrayList(Iterables.transform(source.getKieletMuu(), toKoodistoKoodiTyypi)));
         target.getLukiodiplomit().addAll(Lists.newArrayList(Iterables.transform(source.getDiplomit(), toKoodistoKoodiTyypi)));
 
-        clear(target.getSisalto());
-        clear(target.getKansainvalistyminen());
-        clear(target.getYhteistyoMuidenToimijoidenKanssa());
+        target.getTekstit().clear();
 
         for (String kieliUri : source.getTekstikentat().keySet()) {
             LOG.debug("koulutusLisatiedotModel.getLisatiedot().keySet() '" + kieliUri + "', " + source.getTekstikentat().keySet());
 
             KoulutusLisatietoModel lisatieto = source.getLisatiedot(kieliUri);
 
-            if (target.getSisalto() == null) {
-                target.setSisalto(new MonikielinenTekstiTyyppi());
-            }
-
-            target.getSisalto().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSisalto()));
-
-            if (target.getKansainvalistyminen() == null) {
-                target.setKansainvalistyminen(new MonikielinenTekstiTyyppi());
-            }
-
-            target.getKansainvalistyminen().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKansainvalistyminen()));
-
-            if (target.getYhteistyoMuidenToimijoidenKanssa() == null) {
-                target.setYhteistyoMuidenToimijoidenKanssa(new MonikielinenTekstiTyyppi());
-            }
-
-            target.getYhteistyoMuidenToimijoidenKanssa().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.
-                    getYhteistyoMuidenToimijoidenKanssa()));
+            ConversionUtils.setTeksti(target.getTekstit(), KomotoTeksti.SISALTO, kieliUri, lisatieto.getSisalto());
+            ConversionUtils.setTeksti(target.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN, kieliUri, lisatieto.getKansainvalistyminen());
+            ConversionUtils.setTeksti(target.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, kieliUri, lisatieto.getYhteistyoMuidenToimijoidenKanssa());
 
         }
     }
@@ -187,26 +182,29 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         model.setKieliB3(Lists.newArrayList(Iterables.transform(input.getB3Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieletMuu(Lists.newArrayList(Iterables.transform(input.getMuutKielet(), fromKoodistoKoodiTyyppi)));
         model.setDiplomit(Lists.newArrayList(Iterables.transform(input.getLukiodiplomit(), fromKoodistoKoodiTyyppi)));
-        if (input.getSisalto() != null) {
-            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getSisalto().getTeksti()) {
-                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
-                lisatieto.setSisalto(mkt.getValue());
-            }
+        
+        for (NimettyMonikielinenTekstiTyyppi nmt : input.getTekstit()) {
+        	KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
+        	for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
+        		KoulutusLisatietoModel lisatieto = model.getLisatiedot(t.getKieliKoodi());
+        		switch (kt) {
+        		case SISALTO:
+        			lisatieto.setSisalto(t.getValue());
+        			break;
+        		case KANSAINVALISTYMINEN:
+        			lisatieto.setKansainvalistyminen(t.getValue());
+        			break;
+        		case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
+        			lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
+        			break;
+    			default:
+    				LOG.debug("Ignored: {} {}",nmt.getTunniste(), t.getKieliKoodi());
+    				// ignore
+    				break;
+        		}
+        	}
         }
 
-        if (input.getKansainvalistyminen() != null) {
-            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getKansainvalistyminen().getTeksti()) {
-                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
-                lisatieto.setKansainvalistyminen(mkt.getValue());
-            }
-        }
-
-        if (input.getYhteistyoMuidenToimijoidenKanssa() != null) {
-            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getYhteistyoMuidenToimijoidenKanssa().getTeksti()) {
-                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
-                lisatieto.setYhteistyoMuidenToimijoidenKanssa(mkt.getValue());
-            }
-        }
         return model;
     }
 

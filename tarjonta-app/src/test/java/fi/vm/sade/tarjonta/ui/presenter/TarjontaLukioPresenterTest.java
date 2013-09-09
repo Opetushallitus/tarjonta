@@ -1,11 +1,36 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.easymock.Capture;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.powermock.reflect.Whitebox;
+
 import com.google.common.collect.Lists;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
@@ -28,35 +53,25 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
-import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotFormView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.easymock.Capture;
-import static org.easymock.EasyMock.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.powermock.reflect.Whitebox;
 
 /**
  *
@@ -305,23 +320,23 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertNotNull(koulutus.getYhteyshenkiloTyyppi());
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
-   
-        assertEquals("Kansainvalistyminen", koulutus.getKansainvalistyminen().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getKansainvalistyminen().getTeksti().get(0).getKieliKoodi());
+        
+        assertEquals("Kansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getKieliKoodi());
 
-        assertEquals("YhteistyoMuidenToimijoidenKanssa", koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getKieliKoodi());
+        assertEquals("YhteistyoMuidenToimijoidenKanssa", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getKieliKoodi());
 
-        assertEquals("Sisalto", koulutus.getSisalto().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getSisalto().getTeksti().get(0).getKieliKoodi());
+        assertEquals("Sisalto", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getKieliKoodi());
 
 
-        assertEquals(null, koulutus.getPainotus());
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.PAINOTUS));
         assertEquals(null, koulutus.getNimi()); ///????
-        assertEquals(null, koulutus.getSijoittuminenTyoelamaan());
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN));
         assertEquals(null, koulutus.getKoulutusohjelmaKoodi());
-        assertEquals(null, koulutus.getKoulutusohjelmanValinta());
-        assertEquals(null, koulutus.getKuvailevatTiedot());
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA));
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KUVAILEVAT_TIEDOT));
     }
 
     @Test
@@ -410,21 +425,21 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
 
-        assertEquals("Kansainvalistyminen", koulutus.getKansainvalistyminen().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getKansainvalistyminen().getTeksti().get(0).getKieliKoodi());
+        assertEquals("Kansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getKieliKoodi());
+        
+        assertEquals("YhteistyoMuidenToimijoidenKanssa", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getKieliKoodi());
 
-        assertEquals("YhteistyoMuidenToimijoidenKanssa", koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getKieliKoodi());
-
-        assertEquals("Sisalto", koulutus.getSisalto().getTeksti().get(0).getValue());
-        assertEquals(LANGUAGE_FI, koulutus.getSisalto().getTeksti().get(0).getKieliKoodi());
-
-        assertEquals(null, koulutus.getPainotus());
+        assertEquals("Sisalto", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getValue());
+        assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getKieliKoodi());
+        
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.PAINOTUS));
         assertEquals(null, koulutus.getNimi()); ///????
-        assertEquals(null, koulutus.getSijoittuminenTyoelamaan());
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN));
         assertEquals(null, koulutus.getKoulutusohjelmaKoodi());
-        assertEquals(null, koulutus.getKoulutusohjelmanValinta());
-        assertEquals(null, koulutus.getKuvailevatTiedot());
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA));
+        assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KUVAILEVAT_TIEDOT));
     }
 
     @Test
@@ -435,7 +450,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         perustiedot.setKomotoOid(null); //null == insert new perustiedot
 
         LueKoulutusVastausTyyppi vastaus = new LueKoulutusVastausTyyppi();
-        vastaus.setKansainvalistyminen(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "Kansainvalistyminen"));
+        setTeksti(vastaus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN, LANGUAGE_FI, "Kansainvalistyminen");
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo("kesto");
         koulutuksenKestoTyyppi.setYksikko("yksikko");
@@ -445,27 +460,27 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
    //     vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
         vastaus.setKoulutusmoduuli(new KoulutusmoduuliKoosteTyyppi());
 
-        vastaus.setKoulutusohjelmanValinta(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KoulutusohjelmanValinta"));
+        setTeksti(vastaus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, LANGUAGE_FI, "KoulutusohjelmanValinta");
         vastaus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
-        vastaus.setKuvailevatTiedot(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KuvailevatTiedot"));
+        setTeksti(vastaus.getTekstit(), KomotoTeksti.KUVAILEVAT_TIEDOT, LANGUAGE_FI, "KuvailevatTiedot");
         vastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
         vastaus.setNimi(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "nimi"));
         vastaus.setOid(KOMOTO_OID);
 
-        vastaus.setSisalto(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "sisalto"));
+        setTeksti(vastaus.getTekstit(), KomotoTeksti.SISALTO, LANGUAGE_FI, "sisalto");
         vastaus.setTarjoaja(ORGANISAATIO_OID);
         vastaus.setTila(TarjontaTila.VALMIS);
-        vastaus.setYhteistyoMuidenToimijoidenKanssa(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "setYhteistyoMuidenToimijoidenKanssa"));
+        setTeksti(vastaus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, LANGUAGE_FI, "setYhteistyoMuidenToimijoidenKanssa");
         vastaus.getA1A2Kieli().add(createKoodistoKoodiTyyppi("A1"));
         vastaus.getAmmattinimikkeet().add(createKoodistoKoodiTyyppi("ammattinimikkeet"));
         vastaus.getB1Kieli().add(createKoodistoKoodiTyyppi("b1"));
         vastaus.getB2Kieli().add(createKoodistoKoodiTyyppi("b2"));
         vastaus.getB3Kieli().add(createKoodistoKoodiTyyppi("b3"));
-        vastaus.setPainotus(null);
+        clearTeksti(vastaus.getTekstit(), KomotoTeksti.PAINOTUS);
         vastaus.setKoulutuksenAlkamisPaiva(null);
         vastaus.setKoulutusohjelmaKoodi(null);
         vastaus.setPohjakoulutusvaatimus(null);
-        vastaus.setSijoittuminenTyoelamaan(null);
+        clearTeksti(vastaus.getTekstit(), KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN);
 
         WebLinkkiTyyppi web = new WebLinkkiTyyppi();
         web.setUri(WEB_LINK);
@@ -485,8 +500,8 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         KoulutusmoduuliKoosteTyyppi t = new KoulutusmoduuliKoosteTyyppi();
         t.setOid(KOMO_OID);
         t.setKoulutusalaUri(createUri(KOULUTUSALA));
-        t.setJatkoOpintoMahdollisuudet(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, JATKOOPINTOMAHDOLLISUUDET));
-        t.setKoulutuksenRakenne(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, KOULUTUKSEN_RAKENNE));
+        setTeksti(t.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, LANGUAGE_FI, JATKOOPINTOMAHDOLLISUUDET);
+        setTeksti(t.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, LANGUAGE_FI, KOULUTUKSEN_RAKENNE);
         t.setKoulutusasteUri(createUri(KOULUTUSASTE));
         t.setKoulutuskoodiUri(createUri(KOULUTUSKOODI));
         t.setLaajuusarvoUri(createUri(LAAJUUS_ARVO));
@@ -500,7 +515,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         t.setTutkinnonTavoitteet(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, TUTKINNON_TAVOITTEET));
         t.setUlkoinenTunniste(null);
         t.setParentOid(null);
-        t.setTavoitteet(null);
+        clearTeksti(t.getTekstit(), KomoTeksti.TAVOITTEET);
         t.setKoulutusohjelmakoodiUri(null);
 
         vastaus.setKoulutusmoduuli(t);

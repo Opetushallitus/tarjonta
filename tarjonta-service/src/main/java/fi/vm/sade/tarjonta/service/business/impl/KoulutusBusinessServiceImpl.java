@@ -15,18 +15,18 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import com.google.common.base.Preconditions;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Preconditions;
 
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -34,26 +34,20 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 
 /**
  *
@@ -270,7 +264,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
-            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
+        	EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -284,7 +279,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
-            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
+        	EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+        	//parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);

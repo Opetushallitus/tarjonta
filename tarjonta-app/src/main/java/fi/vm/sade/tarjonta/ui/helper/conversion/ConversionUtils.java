@@ -15,11 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 /**
  *
@@ -27,10 +29,70 @@ import java.util.List;
  */
 public class ConversionUtils {
 
+	public static NimettyMonikielinenTekstiTyyppi getTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object key) {
+		String kv = String.valueOf(key);
+		for (NimettyMonikielinenTekstiTyyppi nmt : tekstit) {
+			if (kv.equals(nmt.getTunniste())) {
+				return nmt;
+			}
+		}		
+		return null;
+	}
+	
+	public static boolean containsTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object key) {
+		String kv = String.valueOf(key);
+		for (NimettyMonikielinenTekstiTyyppi nmt : tekstit) {
+			if (kv.equals(nmt.getTunniste())) {
+				return !nmt.getTeksti().isEmpty();
+			}
+		}		
+		return false;
+	}
+
+	public static void setTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object key, String langCode, String teksti) {
+		String kv = String.valueOf(key);
+		NimettyMonikielinenTekstiTyyppi cu = null;
+		for (NimettyMonikielinenTekstiTyyppi nmt : tekstit) {
+			if (kv.equals(nmt.getTunniste())) {
+				cu = nmt;
+				break;
+			}
+		}
+		if (cu==null) {
+			cu = new NimettyMonikielinenTekstiTyyppi(new ArrayList<MonikielinenTekstiTyyppi.Teksti>(), String.valueOf(key));
+			tekstit.add(cu);
+		}
+		MonikielinenTekstiTyyppi.Teksti txt = null;
+		for (MonikielinenTekstiTyyppi.Teksti t : cu.getTeksti()) {
+			if (t.getKieliKoodi().equals(langCode)) {
+				txt = t;
+			}
+		}
+		if (txt==null) {
+			cu.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppi(langCode, teksti));
+		} else {
+			txt.setValue(teksti);
+		}
+		
+	}
+
+	public static void setTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object key, MonikielinenTekstiTyyppi txt) {
+		for (MonikielinenTekstiTyyppi.Teksti t : txt.getTeksti()) {
+			setTeksti(tekstit, key, t.getKieliKoodi(), t.getValue());
+		}
+	}
+
+    public static void clearTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste) {
+    	NimettyMonikielinenTekstiTyyppi old = ConversionUtils.getTeksti(tekstit, tunniste);
+    	if (old!=null) {
+    		tekstit.remove(old);
+    	}
+    }
+    
     public static List<KielikaannosViewModel> convertTekstiToVM(MonikielinenTekstiTyyppi tekstiTyyppi) {
 
         if (tekstiTyyppi == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<KielikaannosViewModel> vastaus = new ArrayList<KielikaannosViewModel>();
