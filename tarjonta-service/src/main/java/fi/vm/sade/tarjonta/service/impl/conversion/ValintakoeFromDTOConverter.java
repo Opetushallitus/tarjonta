@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -65,10 +66,10 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
         Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
         for (PisterajaTyyppi pisterajaTyyppi:pisterajaTyypit) {
             Pisteraja pisteRaja = new Pisteraja();
-            pisteRaja.setAlinHyvaksyttyPistemaara(pisterajaTyyppi.getAlinHyvaksyttyPistemaara());
-            pisteRaja.setAlinPistemaara(pisterajaTyyppi.getAlinPistemaara());
+            pisteRaja.setAlinHyvaksyttyPistemaara(new BigDecimal(Double.toString(pisterajaTyyppi.getAlinHyvaksyttyPistemaara())));//pisterajaTyyppi.getAlinHyvaksyttyPistemaara());
+            pisteRaja.setAlinPistemaara(new BigDecimal(Double.toString(pisterajaTyyppi.getAlinPistemaara())));//pisterajaTyyppi.getAlinPistemaara());
             pisteRaja.setValinnanPisterajaTyyppi(pisterajaTyyppi.getValinnanPisteraja().value());
-            pisteRaja.setYlinPistemaara(pisterajaTyyppi.getYlinPistemaara());
+            pisteRaja.setYlinPistemaara(new BigDecimal(Double.toString(pisterajaTyyppi.getYlinPistemaara())));
             if (pisterajaTyyppi.getPisterajaTunniste() != null) {
                 pisteRaja.setId(new Long(pisterajaTyyppi.getPisterajaTunniste()));
             }

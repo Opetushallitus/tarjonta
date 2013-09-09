@@ -551,9 +551,9 @@ public class LearningOpportunityDataWriterTest {
     	for (Valintakoe vKoe : lukioHakukohde.getValintakoes()) {
     		Pisteraja pisteraja = new Pisteraja();
     		pisteraja.setValinnanPisterajaTyyppi(ValinnanPisterajaTyyppi.PAASYKOE.value());
-    		pisteraja.setAlinPistemaara(minExamScore);
-    		pisteraja.setYlinPistemaara(minExamScore);
-    		pisteraja.setAlinHyvaksyttyPistemaara(minExamScore);
+    		pisteraja.setAlinPistemaara(new BigDecimal("" + minExamScore));
+    		pisteraja.setYlinPistemaara(new BigDecimal("" + minExamScore));
+    		pisteraja.setAlinHyvaksyttyPistemaara(new BigDecimal("" + minExamScore));
     		pisterajat.add(pisteraja);
     		vKoe.setPisterajat(pisterajat);
     	}

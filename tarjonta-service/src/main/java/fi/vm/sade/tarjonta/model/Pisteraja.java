@@ -16,6 +16,8 @@ package fi.vm.sade.tarjonta.model;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+import java.math.BigDecimal;
+
 import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.*;
 /**
@@ -26,13 +28,15 @@ import javax.persistence.*;
 @Table(name = "pisteraja")
 public class Pisteraja extends BaseEntity  {
 
-        private String valinnanPisterajaTyyppi;
+    private static final long serialVersionUID = 1878029033380865674L;
+
+    private String valinnanPisterajaTyyppi;
     
-    private Integer alinPistemaara;
+    private BigDecimal alinPistemaara;
     
-    private Integer ylinPistemaara;
+    private BigDecimal ylinPistemaara;
     
-    private Integer alinHyvaksyttyPistemaara;
+    private BigDecimal alinHyvaksyttyPistemaara;
 
     /**
      * @return the valinnanPisterajaTyyppi
@@ -51,42 +55,42 @@ public class Pisteraja extends BaseEntity  {
     /**
      * @return the alinPistemaara
      */
-    public Integer getAlinPistemaara() {
+    public BigDecimal getAlinPistemaara() {
         return alinPistemaara;
     }
 
     /**
      * @param alinPistemaara the alinPistemaara to set
      */
-    public void setAlinPistemaara(Integer alinPistemaara) {
+    public void setAlinPistemaara(BigDecimal alinPistemaara) {
         this.alinPistemaara = alinPistemaara;
     }
 
     /**
      * @return the ylinPistemaara
      */
-    public Integer getYlinPistemaara() {
+    public BigDecimal getYlinPistemaara() {
         return ylinPistemaara;
     }
 
     /**
      * @param ylinPistemaara the ylinPistemaara to set
      */
-    public void setYlinPistemaara(Integer ylinPistemaara) {
+    public void setYlinPistemaara(BigDecimal ylinPistemaara) {
         this.ylinPistemaara = ylinPistemaara;
     }
 
     /**
      * @return the alinHyvaksyttyPistemaara
      */
-    public Integer getAlinHyvaksyttyPistemaara() {
+    public BigDecimal getAlinHyvaksyttyPistemaara() {
         return alinHyvaksyttyPistemaara;
     }
 
     /**
      * @param alinHyvaksyttyPistemaara the alinHyvaksyttyPistemaara to set
      */
-    public void setAlinHyvaksyttyPistemaara(Integer alinHyvaksyttyPistemaara) {
+    public void setAlinHyvaksyttyPistemaara(BigDecimal alinHyvaksyttyPistemaara) {
         this.alinHyvaksyttyPistemaara = alinHyvaksyttyPistemaara;
     }
     

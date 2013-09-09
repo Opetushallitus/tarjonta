@@ -919,15 +919,15 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 		ScoreLimitsType limits = new ScoreLimitsType();
 		for(Pisteraja curPisteraja : source.getPisterajat()) {
 			if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
-				limits.setExaminationMaxScore(curPisteraja.getYlinPistemaara());
-				limits.setExaminationMinScore(curPisteraja.getAlinPistemaara());
-				limits.setExaminationMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+				limits.setExaminationMaxScore(curPisteraja.getYlinPistemaara() != null ? curPisteraja.getYlinPistemaara().doubleValue() : null);
+				limits.setExaminationMinScore(curPisteraja.getAlinPistemaara() != null ? curPisteraja.getAlinPistemaara().doubleValue() : null);
+				limits.setExaminationMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara() != null ? curPisteraja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
 			} else if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
-				limits.setExtraPointsMaxScore(curPisteraja.getYlinPistemaara());
-				limits.setExtraPointsMinScore(curPisteraja.getAlinPistemaara());
-				limits.setExtraPointsMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+				limits.setExtraPointsMaxScore(curPisteraja.getYlinPistemaara() != null ? curPisteraja.getYlinPistemaara().doubleValue() : null);
+				limits.setExtraPointsMinScore(curPisteraja.getAlinPistemaara() != null ? curPisteraja.getAlinPistemaara().doubleValue() : null);
+				limits.setExtraPointsMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara() != null ? curPisteraja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
 			} else if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.KOKONAISPISTEET.value())) {
-				limits.setOverallMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+				limits.setOverallMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara() != null ? curPisteraja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
 			}
 		}
 		target.setScoreLimits(limits);

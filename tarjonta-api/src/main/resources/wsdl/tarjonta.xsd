@@ -986,9 +986,9 @@
         <xs:sequence>
             <xs:element name="pisterajaTunniste" type="xs:string"/>
             <xs:element name="valinnanPisteraja" type="tns:ValinnanPisterajaTyyppi" />
-            <xs:element name="alinPistemaara" type="xs:int"/>
-            <xs:element name="ylinPistemaara" type="xs:int"/>
-            <xs:element name="alinHyvaksyttyPistemaara" type="xs:int"/> 
+            <xs:element name="alinPistemaara" type="xs:double"/>
+            <xs:element name="ylinPistemaara" type="xs:double"/>
+            <xs:element name="alinHyvaksyttyPistemaara" type="xs:double"/> 
         </xs:sequence>
     </xs:complexType>
 
