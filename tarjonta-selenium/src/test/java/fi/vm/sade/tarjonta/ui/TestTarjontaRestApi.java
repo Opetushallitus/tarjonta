@@ -22,6 +22,7 @@ public class TestTarjontaRestApi {
 
 	static private String path = "./src/test/resources/restApiResult";
 	static private String http = "";
+	static private Boolean qa = false;
     private static Kattavuus RestApiRajaPinnat = new Kattavuus();
 
 	@Before
@@ -29,66 +30,151 @@ public class TestTarjontaRestApi {
 		RestApiRajaPinnat.alustaKattavuusKohde("RestApiRajaPinnat");
 		SVTUtils doit = new SVTUtils();
 		http = SVTUtils.prop.getProperty("tarjonta-selenium.restapi");
+		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { qa = true; }
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST001() throws IOException {
-		restTestCount(path + "001.txt", http + "/komo?count=2");
+		if (qa)
+		{
+			restTestCount(path + "001.qa.txt", http + "/komo?count=2");
+		}
+		else
+		{
+			restTestCount(path + "001.txt", http + "/komo?count=2");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST002() throws IOException {
-		restTest(path + "002.txt", http + "/komo/1.2.246.562.5.2013061010184768943288");
+		if (qa)
+		{
+			restTest(path + "002.qa.txt", http + "/komo/1.2.246.562.5.2013061010185764933625");
+		}
+		else
+		{
+			restTest(path + "002.txt", http + "/komo/1.2.246.562.5.2013061010184768943288");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST003() throws IOException {
-		restTest(path + "003.txt", http + "/komo/1.2.246.562.5.2013061010184768943288/komoto");
+		if (qa)
+		{
+			restTest(path + "003.qa.txt", http + "/komo/1.2.246.562.5.2013061010184768943288/komoto");
+		}
+		else
+		{
+			restTest(path + "003.txt", http + "/komo/1.2.246.562.5.2013061010184768943288/komoto");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST004() throws IOException {
-		restTestCount(path + "004.txt", http + "/komoto?count=2");
+		if (qa)
+		{
+			restTestCount(path + "004.qa.txt", http + "/komoto?count=2");
+		}
+		else
+		{
+			restTestCount(path + "004.txt", http + "/komoto?count=2");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST005() throws IOException {
-		restTest(path + "005.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508");
+		if (qa)
+		{
+			restTest(path + "005.qa.txt", http + "/komoto/1.2.246.562.5.93352903079");
+		}
+		else
+		{
+			restTest(path + "005.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST006() throws IOException {
-		restTest(path + "006.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508/komo");
+		if (qa)
+		{
+			restTest(path + "006.qa.txt", http + "/komoto/1.2.246.562.5.93352903079/komo");
+		}
+		else
+		{
+			restTest(path + "006.txt", http + "/komoto/1.2.246.562.5.10067_02_900_1616_1508/komo");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST007() throws IOException {
-		restTestCount(path + "007.txt", http + "/haku?count=2");
+		if (qa)
+		{
+			restTestCount(path + "007.qa.txt", http + "/haku?count=2");
+		}
+		else
+		{
+			restTestCount(path + "007.txt", http + "/haku?count=2");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST008() throws IOException {
-		restTest(path + "008.txt", http + "/haku/1.2.246.562.5.2013080813081926341927");
+		if (qa)
+		{
+			restTest(path + "008.qa.txt", http + "/haku/1.2.246.562.5.2013080813081926341927");
+		}
+		else
+		{
+			restTest(path + "008.txt", http + "/haku/1.2.246.562.5.2013080813081926341927");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST009() throws IOException {
-		restTest(path + "009.txt", http + "/haku/1.2.246.562.5.2013080813081926341927/hakukohde");
+		if (qa)
+		{
+			restTest(path + "009.qa.txt", http + "/haku/1.2.246.562.5.2013080813081926341927/hakukohde");
+		}
+		else
+		{
+			restTest(path + "009.txt", http + "/haku/1.2.246.562.5.2013080813081926341927/hakukohde");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST010() throws IOException {
-		restTestCount(path + "010.txt", http + "/hakukohde?count=2");
+		if (qa)
+		{
+			restTestCount(path + "010.qa.txt", http + "/hakukohde?count=2");
+		}
+		else
+		{
+			restTestCount(path + "010.txt", http + "/hakukohde?count=2");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST011() throws IOException {
-		restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.5.60684104718");
+		if (qa)
+		{
+			restTest(path + "011.qa.txt", http + "/hakukohde/1.2.246.562.5.60684104718");
+		}
+		else
+		{
+			restTest(path + "011.txt", http + "/hakukohde/1.2.246.562.5.60684104718");
+		}
 	}
 	
 	@Test
 	public void test_T_INT_TAR_REST012() throws IOException {
-		restTest(path + "012.txt", http + "/hakukohde/1.2.246.562.5.60684104718/haku");
+		if (qa)
+		{
+			restTest(path + "012.qa.txt", http + "/hakukohde/1.2.246.562.5.60684104718/haku");
+		}
+		else
+		{
+			restTest(path + "012.txt", http + "/hakukohde/1.2.246.562.5.60684104718/haku");
+		}
 	}
 	
 	@Test
@@ -150,6 +236,7 @@ public class TestTarjontaRestApi {
 	public void restTestCount(String fileName, String url) throws IOException {
 		SVTUtils doit = new SVTUtils();   
 		doit.echo(fileName);
+		doit.echo("url=" + url);
 		String response = "";
 		String expected = doit.readFile(fileName);
 		response = getJson(url);
