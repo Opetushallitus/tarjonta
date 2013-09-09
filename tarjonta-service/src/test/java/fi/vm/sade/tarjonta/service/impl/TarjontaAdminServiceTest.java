@@ -19,6 +19,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
@@ -201,6 +202,38 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         update.setVersion(1L);
         adminService.paivitaKoulutus(update);
         vastaus = publicService.lueKoulutus(kysely);
+        assertNotNull(vastaus);
+    }
+
+    
+    @Test
+    public void testOptimisticLockingHaku() {
+        HakuTyyppi haku = new HakuTyyppi();
+        haku.setOid("haku-oid");
+        haku.setHaunTila(TarjontaTila.LUONNOS);
+        haku.setHakutyyppiUri("hakutyyppi-uri");
+        haku.setHakutapaUri("hakutapa-uri");
+        haku.setHakukausiUri("hakukausi-uri");
+        haku.setKohdejoukkoUri("kohdejoukko-uri");
+        haku.setKoulutuksenAlkamisKausiUri("koulutuksen-alakmiskausi-uri");
+        HakuTyyppi vastaus = adminService.lisaaHaku(haku);
+        assertNotNull(vastaus);
+
+        final long properVersion = vastaus.getVersion();
+
+        //update with incorrect version
+        try {
+            vastaus.setVersion(100l);
+            vastaus = adminService.paivitaHaku(vastaus);
+            fail("Should throw exception!");
+        } catch (OptimisticLockException ole) {
+            //all is good...
+        }
+
+        
+        //update with correct version
+        vastaus.setVersion(properVersion);
+        vastaus = adminService.paivitaHaku(vastaus);
         assertNotNull(vastaus);
     }
 

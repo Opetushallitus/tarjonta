@@ -837,6 +837,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
+        target.setVersion(source.getVersion()); //optimistic locking
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }
