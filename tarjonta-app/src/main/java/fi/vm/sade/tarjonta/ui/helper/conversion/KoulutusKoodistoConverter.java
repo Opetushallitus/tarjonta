@@ -15,9 +15,24 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -27,26 +42,15 @@ import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -171,7 +175,7 @@ public class KoulutusKoodistoConverter {
             UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
 
             ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
-            ohjelma.setTavoitteet(UiModelBuilder.build(tyyppi.getTavoitteet(), locale));
+            ohjelma.setTavoitteet(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.TAVOITTEET), locale));
         }
     }
 
@@ -327,10 +331,10 @@ public class KoulutusKoodistoConverter {
         //text data models
         UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
 
-
         tutkinto.setTavoitteet(UiModelBuilder.build(tyyppi.getTutkinnonTavoitteet(), locale));
-        tutkinto.setJatkoopintomahdollisuudet(UiModelBuilder.build(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
-        tutkinto.setKoulutuksenRakenne(UiModelBuilder.build(tyyppi.getKoulutuksenRakenne(), locale));
+        
+        tutkinto.setJatkoopintomahdollisuudet(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET), locale));
+        tutkinto.setKoulutuksenRakenne(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE), locale));
 
         //koodisto koodi data models 
         tutkinto.setOpintojenLaajuus(tyyppi.getLaajuusarvoUri());

@@ -25,6 +25,8 @@ import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
@@ -147,8 +149,24 @@ public class BaseTarjontaTest {
     protected MonikielinenTekstiTyyppi convertToMonikielinenTekstiTyyppi(final String languageCode, final String text) {
         MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
         tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppi(languageCode, text));
-
         return tyyppi;
+    }
+
+    protected void clearTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste) {
+    	NimettyMonikielinenTekstiTyyppi old = ConversionUtils.getTeksti(tekstit, tunniste);
+    	if (old!=null) {
+    		tekstit.remove(old);
+    	}
+    }
+    
+    protected void setTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste, String languageCode, String text) {
+    	clearTeksti(tekstit, tunniste);
+
+    	NimettyMonikielinenTekstiTyyppi tyyppi = new NimettyMonikielinenTekstiTyyppi();
+    	tyyppi.setTunniste(String.valueOf(tunniste));
+        tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppi(languageCode, text));
+
+        tekstit.add(tyyppi);
     }
 
     protected KoodistoKoodiTyyppi createKoodistoKoodiTyyppi(final String fieldName) {

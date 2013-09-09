@@ -15,8 +15,21 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.ui.loader.xls.dto.ExcelMigrationDTO;
+
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -30,8 +43,6 @@ import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -42,18 +53,10 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.ExcelMigrationDTO;
 
 /**
  * Alustaa tarjontaan esimerkki dataa. Poistetaan kun Koodistosta saadaan
@@ -324,9 +327,9 @@ public class TarjontaKomoData {
          * Description data for tutkinto (nothing to do with the Koodisto service)
          * LUKIO and AMMATILLINEN koulutus
          */
-        tutkintoParentKomo.setKoulutuksenRakenne(dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
+        ConversionUtils.setTeksti(tutkintoParentKomo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
         tutkintoParentKomo.setTutkinnonTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
-        tutkintoParentKomo.setJatkoOpintoMahdollisuudet(dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
+        ConversionUtils.setTeksti(tutkintoParentKomo.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
 
         /*
          * Oppilaitostyyppi
@@ -353,7 +356,7 @@ public class TarjontaKomoData {
                 /*
                  * Description data for koulutusohjelma (nothing to do with the Koodisto service)
                  */
-                koChildKomo.setTavoitteet(dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
+                ConversionUtils.setTeksti(koChildKomo.getTekstit(), KomoTeksti.TAVOITTEET, dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
                 break;
             case LUKIOKOULUTUS:
                 Preconditions.checkNotNull(dto.getLukiolinjaKoodiarvo(), "Lukiolinja koodi uri cannot be null.");
