@@ -37,11 +37,13 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
         koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
+        if(koulutus.getKoulutustyyppi()!=null){
         if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             koulutus.setKoulutusohjelmakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
             koulutus.setKoulutuslaji(getKoulutuslaji(koulutusDoc));
         } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+        }
         }
         koulutus.setNimi(createKoulutusNimi(koulutusDoc));
         koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
@@ -74,7 +76,9 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     }
     
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
-        return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+        if(koulutusDoc.getFieldValue(KOULUTUSTYYPPI)!=null){
+            return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+        } else return null;
     }
 
     private MonikielinenTekstiTyyppi createKoulutusNimi(SolrDocument koulutusDoc) {

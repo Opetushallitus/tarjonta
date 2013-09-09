@@ -15,17 +15,19 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
@@ -59,7 +64,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.persistence.OptimisticLockException;
-import org.junit.Ignore;
 
 /**
  *
@@ -79,6 +83,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     private TarjontaAdminService adminService;
     @Autowired 
     private TarjontaPublicService publicService;
+    @Autowired
+    private OrganisaatioSearchService organisaatioSearchService;
     @Autowired
     private TarjontaFixtures fixtures;
     @Autowired
@@ -101,6 +107,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     @Before
     @Override
     public void before() {
+        OrganisaatioPerustieto perustieto = new OrganisaatioPerustieto();
+        perustieto.setNimiFi("org nimi fi");
+        perustieto.setOid("1.2.3.4.5");
+        Mockito.reset(organisaatioSearchService);
+        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.5"))).toReturn(Lists.newArrayList(perustieto));
         super.before();
         kesto3Vuotta = new KoulutuksenKestoTyyppi();
         kesto3Vuotta.setArvo("3");
@@ -149,7 +160,21 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
         assertEquals(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS, toteutus.getTila());
     }
-    
+
+    @Test
+    public void testUpdateKoulutusNonExistingOrg() {
+        KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        PaivitaKoulutusTyyppi update = createPaivitaKoulutusTyyppi();
+        update.setTarjoaja("non.existing.tarjoaja.oid");
+        update.setVersion(toteutus.getVersion());
+        try {
+            adminService.paivitaKoulutus(update);
+            fail("should not succeed");
+        } catch (Throwable t) {
+            assertTrue(t.getMessage().contains("nonexisting.organisation.error"));
+        }
+    }
+
     @Test
     public void testOptimisticLockingKoulutus() {
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
@@ -178,6 +203,36 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
     }
+
+    
+    @Test
+    public void testOptimisticLockingHakukohde() {
+        
+        Hakukohde hk = fixtures.createPersistedHakukohde();
+        
+        
+        
+        HakukohdeTyyppi hakukohdetyyppi = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hk.getOid())).getHakukohde();
+        //update with illegal version
+        hakukohdetyyppi.setVersion(999l);
+
+        try {
+            adminService.paivitaHakukohde(hakukohdetyyppi);
+            fail("Should throw exception!");
+        } catch (OptimisticLockException ole) {
+            //all is good...
+        }
+        
+        hakukohdetyyppi.setVersion(0l);
+
+        try {
+            adminService.paivitaHakukohde(hakukohdetyyppi);
+        } catch (OptimisticLockException ole) {
+            fail("Should not throw optimistick locking exception");
+        }
+        
+    }
+
     
     @Test
     public void testUpdateKoulutusYhteyshenkilo() {
@@ -986,6 +1041,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             newHakukohde.setKaytetaanHaunPaattymisenAikaa(true);
             newHakukohde.setHakukohteenHakuOid(haku.getOid());
             newHakukohde.getHakukohdeKoulutukses().add(koulutus);
+            
             adminService.lisaaHakukohde(newHakukohde);
         } catch (NotAuthorizedException rte) {
             fail("virkailija should be able to add hakukohde");

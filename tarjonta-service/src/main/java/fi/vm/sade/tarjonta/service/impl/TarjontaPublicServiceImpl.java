@@ -474,16 +474,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //if parent komo does not exist, we are reading a parent komoto, thus the koulutusohjelmanvalinta field is in the komoto itself
 
-        System.out.println("parent : " + parentKomo);
+        log.debug("parent : " + parentKomo);
         if (parentKomo == null) {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
             EntityUtils.copyFields(result.getTekstit(), komoto.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
 
             if (result.getKoulutusmoduuli().getNimi() != null && !result.getKoulutusmoduuli().getNimi().getTeksti().isEmpty()) {
-                System.out.println("child name : " + result.getKoulutusmoduuli().getNimi().getTeksti().size());
+                log.debug("child name : " + result.getKoulutusmoduuli().getNimi().getTeksti().size());
             } else {
-                System.out.println("no child name ");
+                log.debug("no child name ");
             }
             //if parent komo exists we read the koulutusohjelmanValinta field from the parent (tutkinto) komoto,
             //and merging the parent and actual komo to get the komo fields.

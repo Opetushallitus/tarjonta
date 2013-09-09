@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
@@ -114,6 +115,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private fi.vm.sade.log.client.Logger auditLogger;
     @Autowired
     private PermissionChecker permissionChecker;
+    @Autowired
+    private OrganisaatioSearchService organisaatioSearchService;
 
 
     @Override
@@ -566,13 +569,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
+        checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();      
-        vastaus.setVersion(toteutus.getVersion()); //optimistic logging
+        vastaus.setVersion(toteutus.getVersion()); //optimistic locking
         vastaus.setKomoOid(toteutus.getKoulutusmoduuli().getOid());
     
         return vastaus;
@@ -584,7 +588,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
+        checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+        
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
@@ -601,6 +607,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return new PaivitaKoulutusVastausTyyppi();
     }
+
+    /**
+     * Tarkista että organisaatio löytyy. Heittää RuntimeExceptionin jos ei löydy.
+     * @param tarjoaja
+     */
+    private void checkOrganisationExists(String tarjoaja) {
+        if(organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja)).size()!=1){
+            throw new RuntimeException("nonexisting.organisation.error");
+        }
+    }
+
+
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)

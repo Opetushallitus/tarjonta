@@ -23,6 +23,7 @@ import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -79,6 +80,8 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
     private DialogCloseListener closeListener;
 
+    protected ErrorMessage errorView;
+
 
     private static final String I18N_KAUSI = "kausi";
     private static final String I18N_POHJAKOULU = "pohjakouluprompt";
@@ -100,6 +103,10 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     protected void buildLayout() {
 
         rootLayout = new VerticalLayout();
+
+        errorView = new ErrorMessage();
+
+        rootLayout.addComponent(errorView);
 
         searchSpecLayout = createSearchSpecLayout();
 
@@ -324,6 +331,10 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
 
+                if (!validateFields())  {
+                    return;
+                }
+
                 String url = createUrl();
 
 
@@ -339,6 +350,24 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         buttonLayout.setComponentAlignment(printBtn,Alignment.MIDDLE_RIGHT);
         buttonLayout.setMargin(true,true,true,true);
         return buttonLayout;
+    }
+
+    private boolean validateFields() {
+        boolean fieldsValid = true;
+
+        if (cbKoulutusToimijat.getValue() == null || ((OrganisaatioPerustietoWrapper)cbKoulutusToimijat.getValue()).getLocalizedName() == null ) {
+            errorView.addError(T("validation.koulutustoimija.missing"));
+            fieldsValid = false;
+        }
+
+        if (cbVuosi.getValue() == null || ((String)cbVuosi.getValue()).trim().length() < 1 ) {
+            errorView.addError(T("validation.vuosi.missing"));
+            fieldsValid = false;
+        }
+
+
+
+        return fieldsValid;
     }
 
     private String createUrl() {

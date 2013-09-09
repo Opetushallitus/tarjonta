@@ -64,6 +64,11 @@ public class SecurityAwareTestBase {
         Mockito.stub(oidProvider.getSelfAndParentOids("1.2.3.4.557")).toReturn(
                 Lists.newArrayList(ophOid, "1.2.3.4.557"));
 
+        Mockito.stub(oidProvider.getSelfAndParentOids("non.existing.tarjoaja.oid")).toReturn(
+                Lists.newArrayList(ophOid, "non.existing.tarjoaja.oid"));
+
+        
+
         //save original oidprovider
         this.oidProvider = Whitebox.getInternalState(authorizer, "oidProvider");
         //set mock oidprovider
