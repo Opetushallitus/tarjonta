@@ -14,8 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST DTO for LOS / Komo / Koulutusmoduuli.
@@ -24,7 +28,9 @@ import java.util.Map;
  */
 public class KomoDTO extends BaseRDTO {
 
-    private String _tila;
+	private static final long serialVersionUID = 1L;
+	
+	private TarjontaTila _tila;
     private List<String> _ylaModuulit;
     private List<String> _alaModuulit;
     private String _organisaatioOid;
@@ -46,20 +52,29 @@ public class KomoDTO extends BaseRDTO {
     private String _ulkoinenTunniste;
     private String _moduuliTyyppi;
     private Map<String, String> _nimi;
-    private Map<String, String> _koulutuksenRakenne;
-    private Map<String, String> _jatkoOpintoMahdollisuudet;
-    private Map<String, String> _tavoitteet;
+    private Map<KomoTeksti, Map<String,String>> _tekstit;
     private String _koulutusKoodiUri;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
     //
+    
+    public Map<KomoTeksti, Map<String, String>> getTekstit() {
+    	if (_tekstit==null) {
+    		_tekstit = new EnumMap<KomoTeksti, Map<String,String>>(KomoTeksti.class);
+    	}
+		return _tekstit;
+	}
+    
+    public void setTekstit(Map<KomoTeksti, Map<String, String>> _tekstit) {
+		this._tekstit = _tekstit;
+	}
 
-    public String getTila() {
+    public TarjontaTila getTila() {
         return _tila;
     }
 
-    public void setTila(String tila) {
+    public void setTila(TarjontaTila tila) {
         this._tila = tila;
     }
 
@@ -235,28 +250,34 @@ public class KomoDTO extends BaseRDTO {
         this._nimi = _nimi;
     }
 
+    @Deprecated
     public Map<String, String> getKoulutuksenRakenne() {
-        return _koulutuksenRakenne;
+        return getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE);
     }
 
+    @Deprecated
     public void setKoulutuksenRakenne(Map<String, String> _koulutuksenRakenne) {
-        this._koulutuksenRakenne = _koulutuksenRakenne;
+    	getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, _koulutuksenRakenne);
     }
 
+    @Deprecated
     public Map<String, String> getJatkoOpintoMahdollisuudet() {
-        return _jatkoOpintoMahdollisuudet;
+        return getTekstit().get(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
     }
 
+    @Deprecated
     public void setJatkoOpintoMahdollisuudet(Map<String, String> _jatkoOpintoMahdollisuudet) {
-        this._jatkoOpintoMahdollisuudet = _jatkoOpintoMahdollisuudet;
+    	getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, _jatkoOpintoMahdollisuudet);
     }
 
+    @Deprecated
     public Map<String, String> getTavoitteet() {
-        return _tavoitteet;
+    	return getTekstit().get(KomoTeksti.TAVOITTEET);
     }
 
+    @Deprecated
     public void setTavoitteet(Map<String, String> _tavoitteet) {
-        this._tavoitteet = _tavoitteet;
+    	getTekstit().put(KomoTeksti.TAVOITTEET, _tavoitteet);
     }
 
     public String getKoulutusKoodiUri() {

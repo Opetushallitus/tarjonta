@@ -72,11 +72,16 @@ public class KomoResourceImpl implements KomoResource {
     // GET /komo/{oid}
     @Override
     public KomoDTO getByOID(String oid) {
-        LOG.info("/komo/}{} -- getByOID()", oid);
-        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        KomoDTO result = conversionService.convert(komo, KomoDTO.class);
-        LOG.debug("  result={}", result);
-        return result;
+        try {
+			LOG.info("/komo/}{} -- getByOID()", oid);
+			Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+			KomoDTO result = conversionService.convert(komo, KomoDTO.class);
+			LOG.debug("  result={}", result);
+			return result;
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			throw e;
+		}
     }
 
     // GET /komo?searchTerms=xxx&count=x&startIndex=x&lastModifiedBefore=x&lastModifiedSince=x

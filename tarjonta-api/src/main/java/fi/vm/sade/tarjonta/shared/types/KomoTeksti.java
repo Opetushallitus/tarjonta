@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.shared.types;
 /**
  * Komoto lisätieto-avain.
  * 
- * <p>HUOM! Käytetään tietokanta-avaimena, eli tee flyway-skripti jos muutat näitä!</p>
+ * <p>HUOM! Käytetään sekä tietokanta-avaimena että osana apia, eli älä muuta näitä arvoja.</p>
  * 
  * @author Timo Santasalo / Teknokala Ky
  */

@@ -1,0 +1,22 @@
+{
+  "modified" : 1376909246886,
+  "oid" : "1.2.246.562.5.93352903079",
+  "version" : 0,
+  "tila" : "LUONNOS",
+  "tarjoajaOid" : "1.2.246.562.10.67048326663",
+  "koulutusohjelmanValinta" : {
+  },
+  "maksullisuus" : false,
+  "ammattinimikeUris" : [ ],
+  "avainsanatUris" : [ ],
+  "koulutuslajiUris" : [ ],
+  "webLinkkis" : {
+  },
+  "lukiodiplomitUris" : [ ],
+  "opetuskieletUris" : [ ],
+  "opetusmuodotUris" : [ ],
+  "pohjakoulutusVaatimusUri" : "pohjakoulutusvaatimustoinenaste_yo#1",
+  "teematUris" : [ ],
+  "komoOid" : "1.2.246.562.5.2013061010184768943288",
+  "api_VERSION" : 4
+}
