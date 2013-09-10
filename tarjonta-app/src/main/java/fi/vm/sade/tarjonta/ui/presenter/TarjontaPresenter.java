@@ -1322,10 +1322,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
-    public void doSearch() {
-        LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
-    }
-
     public ListHakukohdeView getHakukohdeListView() {
         return _hakukohdeListView;
     }
