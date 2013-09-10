@@ -29,8 +29,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
@@ -42,7 +40,6 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
@@ -55,8 +52,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  */
 @Repository
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HakuDAOImpl.class);
 
     @Override
     public List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi) {
@@ -172,6 +167,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         }
         return orderBy;
     }
+    
     @Override
     public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
 
@@ -237,8 +233,8 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
     
     @Override
-    public void update(Haku entity) {
-        detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
+    public void update(final Haku entity) {
+        getEntityManager().detach(entity);
         Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
         super.update(entity);
     }

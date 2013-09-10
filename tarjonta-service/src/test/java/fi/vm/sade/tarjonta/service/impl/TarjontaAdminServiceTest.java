@@ -58,6 +58,8 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 
@@ -203,47 +205,57 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         adminService.paivitaKoulutus(update);
         vastaus = publicService.lueKoulutus(kysely);
         assertNotNull(vastaus);
+        update.setVersion(2L);
+        adminService.paivitaKoulutus(update);
+        vastaus = publicService.lueKoulutus(kysely);
+        assertNotNull(vastaus);
     }
 
     
     @Test
     public void testOptimisticLockingHaku() {
-        HakuTyyppi haku = new HakuTyyppi();
-        haku.setOid("haku-oid");
-        haku.setHaunTila(TarjontaTila.LUONNOS);
-        haku.setHakutyyppiUri("hakutyyppi-uri");
-        haku.setHakutapaUri("hakutapa-uri");
-        haku.setHakukausiUri("hakukausi-uri");
-        haku.setKohdejoukkoUri("kohdejoukko-uri");
-        haku.setKoulutuksenAlkamisKausiUri("koulutuksen-alakmiskausi-uri");
-        HakuTyyppi vastaus = adminService.lisaaHaku(haku);
-        assertNotNull(vastaus);
+        
+        KoodistoURI.KOODI_LANG_EN_URI="kieli_en";
+        KoodistoURI.KOODI_LANG_SV_URI="kieli_sv";
+        KoodistoURI.KOODI_LANG_FI_URI="kieli_fi";
+        
+        Haku h = fixtures.createPersistedHaku();
+        
+        
+        System.out.println("haku version:" + h.getVersion());
 
-        final long properVersion = vastaus.getVersion();
-
+        ListaaHakuTyyppi hakutyyppi = new ListaaHakuTyyppi();
+        hakutyyppi.setHakuOid(h.getOid());
+        ListHakuVastausTyyppi haut = publicService.listHaku(hakutyyppi);
+        assertSame(1, haut.getResponse().size());
+        final HakuTyyppi haku = haut.getResponse().get(0);
+        
         //update with incorrect version
         try {
-            vastaus.setVersion(100l);
-            vastaus = adminService.paivitaHaku(vastaus);
-            fail("Should throw exception!");
+            haku.setVersion(100l);
+            adminService.paivitaHaku(haku);
+            fail("No OptimisticLockException was thrown!");
         } catch (OptimisticLockException ole) {
             //all is good...
         }
 
         
         //update with correct version
-        vastaus.setVersion(properVersion);
-        vastaus = adminService.paivitaHaku(vastaus);
-        assertNotNull(vastaus);
-    }
+        haku.setVersion(0l);
+        haku.setHakulomakeUrl("joku"); //need to have an actual change in the object so that version is incremented
+        HakuTyyppi vast = adminService.paivitaHaku(haku);
+        assertNotNull(vast);
+        assertSame("version was not incremented!", 1l,vast.getVersion());
 
+        // update with correct version again
+        haku.setVersion(1l);
+        adminService.paivitaHaku(haku);
+    }
     
     @Test
     public void testOptimisticLockingHakukohde() {
         
         Hakukohde hk = fixtures.createPersistedHakukohde();
-        
-        
         
         HakukohdeTyyppi hakukohdetyyppi = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hk.getOid())).getHakukohde();
         //update with illegal version
@@ -256,16 +268,14 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             //all is good...
         }
         
+        //proper version
         hakukohdetyyppi.setVersion(0l);
-
-        try {
-            adminService.paivitaHakukohde(hakukohdetyyppi);
-        } catch (OptimisticLockException ole) {
-            fail("Should not throw optimistick locking exception");
-        }
+        adminService.paivitaHakukohde(hakukohdetyyppi).getVersion();
         
+        //proper version again
+        hakukohdetyyppi.setVersion(1l);
+        adminService.paivitaHakukohde(hakukohdetyyppi);
     }
-
     
     @Test
     public void testUpdateKoulutusYhteyshenkilo() {
