@@ -22,7 +22,6 @@ import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +194,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                     categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
                     categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
                     categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
+                    categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()).getValue());
                     categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
                     categoryTree.setChildrenAllowed(curHakukohde, false);
                 }
@@ -258,47 +257,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         return hc;
     }
 
-    private String getKoulutuslaji(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
-        String country = I18N.getLocale().getLanguage();
-        String retval = "";
-        if (country.trim().equalsIgnoreCase("fi")) {
-
-            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                if (teksti.getKieliKoodi().equalsIgnoreCase("fi")) {
-                    retval = teksti.getValue();
-                }
-            }
-            return retval;
-        } else if (country.trim().equalsIgnoreCase("sv")) {
-            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                if (teksti.getKieliKoodi().equalsIgnoreCase("sv")) {
-                    retval = teksti.getValue();
-                }
-            }
-            return retval;
-        } else if (country.trim().equalsIgnoreCase("en")) {
-            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                if (teksti.getKieliKoodi().equalsIgnoreCase("en")) {
-                    retval = teksti.getValue();
-                }
-            }
-            return retval;
-        }
-
-        if (retval.trim().equalsIgnoreCase("") && monikielinenTekstiTyyppi.getTeksti().size() > 0) {
-            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-                if (teksti.getKieliKoodi().equalsIgnoreCase("fi")) {
-                    retval = teksti.getValue();
-                }
-            }
-            if (retval.trim().equalsIgnoreCase("")) {
-                retval = monikielinenTekstiTyyppi.getTeksti().get(0).getValue();
-            }
-        }
-
-        return retval;
-    }
-
     private Object getHakutapa(HakukohdeTulos curHakukohde) {
         return getKoodiNimi(curHakukohde.getHakukohde().getHakutapaKoodi());
     }
@@ -326,7 +284,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * @return
      */
     private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
         for (Nimi curNimi : koodistoKoodiTyyppi.getNimi()) {
             if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
                 return curNimi.getValue();
@@ -362,16 +319,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
         addComponent(layout);
-    }
-
-    /**
-     * Showing the confirmation dialog for removing multiple hakukohde objects.
-     *
-     */
-    private void showRemoveDialog() {
-        MultipleHakukohdeRemovalDialog removeDialog = new MultipleHakukohdeRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
-        hakukohdeDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
-        getWindow().addWindow(hakukohdeDialog);
     }
 
     public void closeRemoveDialog() {
