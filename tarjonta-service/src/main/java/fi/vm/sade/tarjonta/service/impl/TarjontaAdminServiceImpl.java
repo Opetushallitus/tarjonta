@@ -136,7 +136,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             listaaHakuTyyppi.setHakuOid(foundHaku.getOid());
             HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
             
-            System.out.println("dto version (return):" + hakuTyyppi.getVersion());
             return hakuTyyppi;
 
         } else {
@@ -531,7 +530,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
-        return conversionService.convert(haku, HakuTyyppi.class);
+        ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
+        listaaHakuTyyppi.setHakuOid(haku.getOid());
+
+        HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+        
+        return hakuTyyppi;
     }
 
 
@@ -828,6 +832,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private void mergeHaku(Haku source, Haku target) {
+        target.setNimi(null);
         target.setNimi(source.getNimi());
         target.setOid(source.getOid());
         target.setHakukausiUri(source.getHakukausiUri());

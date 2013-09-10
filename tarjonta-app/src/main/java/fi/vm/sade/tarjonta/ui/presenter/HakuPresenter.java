@@ -226,7 +226,8 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
             hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
             hakuTyyppi.setViimeisinPaivitysPvm(new Date());
-            tarjontaAdminService.lisaaHaku(hakuTyyppi);
+            HakuTyyppi uusi = tarjontaAdminService.lisaaHaku(hakuTyyppi);
+            hakuModel.getHakuDto().setVersion(uusi.getVersion());  //päivitä versio (optimistic locking)
         } else {
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
             hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());

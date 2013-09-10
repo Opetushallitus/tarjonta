@@ -59,7 +59,6 @@ import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 
@@ -242,7 +241,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         
         //update with correct version
         haku.setVersion(0l);
-        haku.setHakulomakeUrl("joku"); //need to have an actual change in the object so that version is incremented
+        haku.getHaunKielistetytNimet().add(new HaunNimi("fi", "bar"));
         HakuTyyppi vast = adminService.paivitaHaku(haku);
         assertNotNull(vast);
         assertSame("version was not incremented!", 1l,vast.getVersion());
