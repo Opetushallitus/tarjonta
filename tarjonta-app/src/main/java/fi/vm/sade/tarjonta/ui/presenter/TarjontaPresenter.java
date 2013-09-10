@@ -1437,6 +1437,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.hakukohteet", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedhakukohteet().clear();
 
+        //TODO korvaa reload
         getHakukohdeListView().reload();
 
         getRootView().getSearchResultsView().getHakukohdeList().getWindow().showNotification(I18N.getMessage("notification.deleted.hakukohteet.title"),
@@ -1450,6 +1451,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         hakukohde.setOid(curHakukohde.getHakukohde().getOid());
         try {
             getTarjontaAdminService().poistaHakukohde(hakukohde);
+            //TODO korvaa reload
             getHakukohdeListView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
         } catch (Exception exp) {
@@ -2172,7 +2174,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * koulutus objects in the list.
      */
     public void toggleCreateHakukohde() {
-        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(this.getNavigationOrganisation().getOrganisationOid(), !this._model.getSelectedKoulutukset().isEmpty());
+        String organisaatioOid = null;
+        if(_model.getSelectedKoulutukset().size()>0) {
+            organisaatioOid = _model.getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid();
+        }
+        
+        if(organisaatioOid==null) {
+            organisaatioOid = getNavigationOrganisation().getOrganisationOid();
+        }
+        
+        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(organisaatioOid, !this._model.getSelectedKoulutukset().isEmpty());
     }
 
     public void setSearchResultsView(SearchResultsView searchResultsView) {
