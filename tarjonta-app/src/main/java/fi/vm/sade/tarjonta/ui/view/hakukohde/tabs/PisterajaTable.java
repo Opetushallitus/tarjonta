@@ -394,13 +394,11 @@ public class PisterajaTable extends GridLayout {
     
     public boolean validateInputRestrictions() {
         try {
-           
+            
             double pkAlin = Double.parseDouble(valintakoe.getPkAlinPM() != null ? valintakoe.getPkAlinPM().replace(',', '.') : "0.0");
             double pkYlin = Double.parseDouble(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM().replace(',', '.') : "0.0");
             double lpAlin = Double.parseDouble(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM().replace(',', '.') : "0.0");
             double lpYlin = Double.parseDouble(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM().replace(',', '.') : "0.0");
-
-            
             
             
             if (isOutOfRange(pkAlin, pkYlin, lpAlin, lpYlin)) {

@@ -133,8 +133,12 @@ public class ValintakoeConverter {
             } else {
                 pkTyyppi.setAlinHyvaksyttyPistemaara(-1);
             }
-            pkTyyppi.setAlinPistemaara(Double.parseDouble(valintakoeViewModel.getPkAlinPM() != null ? valintakoeViewModel.getPkAlinPM().replace(',', '.') : null));
-            pkTyyppi.setYlinPistemaara(Double.parseDouble(valintakoeViewModel.getPkYlinPM() != null ? valintakoeViewModel.getPkYlinPM().replace(',', '.') : null));
+            if (valintakoeViewModel.getPkAlinPM() != null && !valintakoeViewModel.getPkAlinPM().isEmpty()) {
+                pkTyyppi.setAlinPistemaara(Double.parseDouble(valintakoeViewModel.getPkAlinPM().replace(',', '.')));
+            }
+            if (valintakoeViewModel.getPkYlinPM() != null && !valintakoeViewModel.getPkYlinPM().isEmpty() ) {
+                pkTyyppi.setYlinPistemaara(Double.parseDouble(valintakoeViewModel.getPkYlinPM().replace(',', '.')));
+            }
             pisterajat.add(pkTyyppi);
         }
         if (valintakoeViewModel.getLpAlinHyvaksyttyPM() != null || valintakoeViewModel.getLpAlinPM() != null || valintakoeViewModel.getLpYlinPM() != null) {
@@ -145,8 +149,12 @@ public class ValintakoeConverter {
             } else {
                 lpTyyppi.setAlinHyvaksyttyPistemaara(-1);
             }
-            lpTyyppi.setAlinPistemaara(Double.parseDouble(valintakoeViewModel.getLpAlinPM() != null ? valintakoeViewModel.getLpAlinPM().replace(',', '.') : null));
-            lpTyyppi.setYlinPistemaara(Double.parseDouble(valintakoeViewModel.getLpYlinPM() != null ? valintakoeViewModel.getLpYlinPM().replace(',', '.') : null));
+            if (valintakoeViewModel.getLpAlinPM() != null && !valintakoeViewModel.getLpAlinPM().isEmpty()) { 
+                lpTyyppi.setAlinPistemaara(Double.parseDouble(valintakoeViewModel.getLpAlinPM().replace(',', '.')));
+            }
+            if (valintakoeViewModel.getLpYlinPM() != null && !valintakoeViewModel.getLpYlinPM().isEmpty()) {
+                lpTyyppi.setYlinPistemaara(Double.parseDouble(valintakoeViewModel.getLpYlinPM().replace(',', '.')));
+            }
             pisterajat.add(lpTyyppi);
         }
         if (valintakoeViewModel.getKpAlinHyvaksyttyPM() != null && !valintakoeViewModel.getKpAlinHyvaksyttyPM().isEmpty()) {
