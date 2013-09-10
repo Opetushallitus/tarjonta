@@ -18,10 +18,6 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.management.RuntimeErrorException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -42,7 +38,7 @@ import java.util.Set;
 })
 public class Haku extends BaseEntity {
 
-    private static Logger log = LoggerFactory.getLogger(Haku.class);
+    private static final long serialVersionUID = 1L;
 
     public static final String TABLE_NAME = "haku";
 

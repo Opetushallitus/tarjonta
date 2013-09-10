@@ -29,10 +29,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Preconditions;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -53,8 +52,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  */
 @Repository
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HakuDAOImpl.class);
 
     @Override
     public List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi) {
@@ -170,6 +167,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         }
         return orderBy;
     }
+    
     @Override
     public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
 
@@ -233,4 +231,12 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         return q.list(haku.oid);
     }
+    
+    @Override
+    public void update(final Haku entity) {
+        getEntityManager().detach(entity);
+        Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
+        super.update(entity);
+    }
+
 }

@@ -80,7 +80,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
  * @author Tuomas Katva
  * @author Timo Santasalo / Teknokala Ky
  */
-@Transactional(rollbackFor = Throwable.class, readOnly = true)
+@Transactional(rollbackFor = Throwable.class, readOnly = false)
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
@@ -120,17 +120,24 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
         permissionChecker.checkHakuUpdate();
 
-        Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
+//        System.out.println("dto version:" + hakuDto.getVersion());
+        final Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
+        
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
-            foundHaku = hakuBusinessService.update(foundHaku);
+            hakuBusinessService.update(foundHaku);
 
             publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
-            return conversionService.convert(foundHaku, HakuTyyppi.class);
+            ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
+            listaaHakuTyyppi.setHakuOid(foundHaku.getOid());
+            HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+            
+            return hakuTyyppi;
+
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
@@ -494,11 +501,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
 
         Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdePaivitys.getOid());
-        //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.getId());
 
-        //why do we overwrite version from DTO?
-        //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
         hakukohde.setHaku(haku);
@@ -511,10 +515,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
 
-
-        //return fresh copy (that has fresh versions so that optimistic locking works)
-        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-        kysely.setOid(hakukohdePaivitys.getOid());
+        //return fresh copy (that has fresh version so that optimistic locking works)
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
         return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
@@ -528,7 +530,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
-        return conversionService.convert(haku, HakuTyyppi.class);
+        ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
+        listaaHakuTyyppi.setHakuOid(haku.getOid());
+
+        HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+        
+        return hakuTyyppi;
     }
 
 
@@ -825,6 +832,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private void mergeHaku(Haku source, Haku target) {
+        target.setNimi(null);
         target.setNimi(source.getNimi());
         target.setOid(source.getOid());
         target.setHakukausiUri(source.getHakukausiUri());
@@ -837,6 +845,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
+        target.setVersion(source.getVersion());
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }
