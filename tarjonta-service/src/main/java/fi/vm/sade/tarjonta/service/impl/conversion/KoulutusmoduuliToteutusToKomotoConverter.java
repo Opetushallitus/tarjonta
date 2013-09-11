@@ -14,17 +14,17 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 
 /**
  * Conversion services for REST service.
@@ -53,42 +53,35 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         KomotoDTO t = new KomotoDTO();
 
         t.setAmmattinimikeUris(convertKoodistoUrisToList(s.getAmmattinimikes()));
-        t.setArviointiKriteerit(convertMonikielinenTekstiToMap(s.getArviointikriteerit()));
         t.setAvainsanatUris(convertKoodistoUrisToList(s.getAvainsanas()));
 
         // t.set(s.getHakukohdes()); TODO list OIDs
 
-        t.setKansainvalistyminen(convertMonikielinenTekstiToMap(s.getKansainvalistyminen()));
         t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
         t.setKoulutusAsteUri(s.getKoulutusaste());
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
-        t.setKoulutusohjelmanValinta(convertMonikielinenTekstiToMap(s.getKoulutusohjelmanValinta()));
-        t.setKuvailevatTiedot(convertMonikielinenTekstiToMap(s.getKuvailevatTiedot()));
         t.setModified(s.getUpdated());
         t.setModifiedBy(s.getLastUpdatedByOid());
         t.setWebLinkkis(convertWebLinkkisToMap(s.getLinkkis()));
-        t.setLoppukoeVaatimukset(convertMonikielinenTekstiToMap(s.getLoppukoeVaatimukset()));
         t.setLukiodiplomitUris(convertKoodistoUrisToList(s.getLukiodiplomit()));
         t.setMaksullisuus(s.getMaksullisuus() != null);
-        t.setMaksullisuusKuvaus(convertMonikielinenTekstiToMap(s.getMaksullisuusUrl()));
         t.setOid(s.getOid());
         t.setOpetuskieletUris(convertKoodistoUrisToList(s.getOpetuskielis()));
         t.setOpetusmuodotUris(convertKoodistoUrisToList(s.getOpetusmuotos()));
-        t.setPainotus(convertMonikielinenTekstiToMap(s.getPainotus()));
         t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimus());
-        t.setSijoittuminenTyoelamaan(convertMonikielinenTekstiToMap(s.getSijoittuminenTyoelamaan()));
-        t.setSisalto(convertMonikielinenTekstiToMap(s.getSisalto()));
         t.setLaajuusArvo(s.getSuunniteltuKestoArvo());
         t.setLaajuusYksikkoUri(s.getSuunniteltuKestoYksikko());
         t.setTarjoajaOid(s.getTarjoaja());
         // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
         t.setTeematUris(convertKoodistoUrisToList(s.getTeemas()));
-        t.setTila(s.getTila() != null ? s.getTila().name() : null);
+        t.setTila(s.getTila());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
         // t.setUpdated(s.getUpdated()); // TODO POISTA "lastUpdateDate"
         t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
-        t.setYhteistyoMuidenToimijoidenKanssa(convertMonikielinenTekstiToMap(s.getYhteistyoMuidenToimijoidenKanssa()));
 
+        convertTekstit(t.getTekstit(), s.getTekstit());
+        
+        
         // TODO t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
 
         //

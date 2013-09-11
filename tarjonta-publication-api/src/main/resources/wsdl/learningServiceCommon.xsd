@@ -476,13 +476,13 @@
     
     <xs:complexType name="ScoreLimitsType">
         <xs:sequence>
-            <xs:element name="examinationMinScore" type="xs:int"/>
-            <xs:element name="examinationMaxScore" type="xs:int" />
-            <xs:element name="examinationMinApplicableScore" type="xs:int" />
-            <xs:element name="extraPointsMinScore" type="xs:int"/>
-            <xs:element name="extraPointsMaxScore" type="xs:int"/>
-            <xs:element name="extraPointsMinApplicableScore" type="xs:int" />
-            <xs:element name="overallMinApplicableScore" type="xs:int"/> 
+            <xs:element name="examinationMinScore" type="xs:double"/>
+            <xs:element name="examinationMaxScore" type="xs:double" />
+            <xs:element name="examinationMinApplicableScore" type="xs:double" />
+            <xs:element name="extraPointsMinScore" type="xs:double"/>
+            <xs:element name="extraPointsMaxScore" type="xs:double"/>
+            <xs:element name="extraPointsMinApplicableScore" type="xs:double" />
+            <xs:element name="overallMinApplicableScore" type="xs:double"/> 
         </xs:sequence>
     </xs:complexType>
 

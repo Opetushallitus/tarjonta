@@ -14,14 +14,16 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 
 /**
  * Conversion services for REST api.
@@ -30,11 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmoduuli, KomoDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
+    
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
         // LOG.debug("convert({}) --> Komo", s);
@@ -50,8 +54,6 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setCreated(null);
         t.setCreatedBy(null);
         t.setEqfLuokitusUri(s.getEqfLuokitus());
-        t.setJatkoOpintoMahdollisuudet(convertMonikielinenTekstiToMap(s.getJatkoOpintoMahdollisuudet()));
-        t.setKoulutuksenRakenne(convertMonikielinenTekstiToMap(s.getKoulutuksenRakenne()));
         t.setKoulutusAlaUri(s.getKoulutusala());
         t.setKoulutusAsteUri(s.getKoulutusAste());
         // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
@@ -70,8 +72,9 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setOrganisaatioOid(s.getOmistajaOrganisaatioOid());
         t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
 
-        t.setTavoitteet(convertMonikielinenTekstiToMap(s.getTavoitteet()));
-        t.setTila(s.getTila() != null ? s.getTila().name() : null);
+        convertTekstit(t.getTekstit(), s.getTekstit());
+        
+        t.setTila(s.getTila());
         t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
         t.setTutkintonimikeUri(s.getTutkintonimike());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());

@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
@@ -79,7 +80,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
  * @author Tuomas Katva
  * @author Timo Santasalo / Teknokala Ky
  */
-@Transactional(rollbackFor = Throwable.class, readOnly = true)
+@Transactional(rollbackFor = Throwable.class, readOnly = false)
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
@@ -114,20 +115,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private fi.vm.sade.log.client.Logger auditLogger;
     @Autowired
     private PermissionChecker permissionChecker;
+    @Autowired
+    private OrganisaatioSearchService organisaatioSearchService;
 
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
         permissionChecker.checkHakuUpdate();
 
-        Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
+//        System.out.println("dto version:" + hakuDto.getVersion());
+        final Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
+        
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
-            foundHaku = hakuBusinessService.update(foundHaku);
+            hakuBusinessService.update(foundHaku);
 
             publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
-            return conversionService.convert(foundHaku, HakuTyyppi.class);
+            ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
+            listaaHakuTyyppi.setHakuOid(foundHaku.getOid());
+            HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+            
+            return hakuTyyppi;
+
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
@@ -491,11 +501,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
 
         Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdePaivitys.getOid());
-        //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.getId());
 
-        //why do we overwrite version from DTO?
-        //hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
         hakukohde.setHaku(haku);
@@ -508,10 +515,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
 
-
-        //return fresh copy (that has fresh versions so that optimistic locking works)
-        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-        kysely.setOid(hakukohdePaivitys.getOid());
+        //return fresh copy (that has fresh version so that optimistic locking works)
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
         return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
@@ -525,7 +530,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
-        return conversionService.convert(haku, HakuTyyppi.class);
+        ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
+        listaaHakuTyyppi.setHakuOid(haku.getOid());
+
+        HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+        
+        return hakuTyyppi;
     }
 
 
@@ -566,13 +576,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
+        checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();      
-        vastaus.setVersion(toteutus.getVersion()); //optimistic logging
+        vastaus.setVersion(toteutus.getVersion()); //optimistic locking
         vastaus.setKomoOid(toteutus.getKoulutusmoduuli().getOid());
     
         return vastaus;
@@ -584,7 +595,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
+        checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+        
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
@@ -601,6 +614,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return new PaivitaKoulutusVastausTyyppi();
     }
+
+    /**
+     * Tarkista että organisaatio löytyy. Heittää RuntimeExceptionin jos ei löydy.
+     * @param tarjoaja
+     */
+    private void checkOrganisationExists(String tarjoaja) {
+        if(organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja)).size()!=1){
+            throw new RuntimeException("nonexisting.organisation.error");
+        }
+    }
+
+
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -807,6 +832,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private void mergeHaku(Haku source, Haku target) {
+        target.setNimi(null);
         target.setNimi(source.getNimi());
         target.setOid(source.getOid());
         target.setHakukausiUri(source.getHakukausiUri());
@@ -819,6 +845,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
+        target.setVersion(source.getVersion());
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }

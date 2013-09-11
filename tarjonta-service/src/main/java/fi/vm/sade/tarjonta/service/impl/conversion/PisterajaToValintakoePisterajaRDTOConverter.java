@@ -38,10 +38,10 @@ public class PisterajaToValintakoePisterajaRDTOConverter extends BaseRDTOConvert
 
         ValintakoePisterajaRDTO t = new ValintakoePisterajaRDTO();
 
-        t.setAlinHyvaksyttyPistemaara(s.getAlinHyvaksyttyPistemaara());
-        t.setAlinPistemaara(s.getAlinPistemaara());
+        t.setAlinHyvaksyttyPistemaara(s.getAlinHyvaksyttyPistemaara() != null ? s.getAlinHyvaksyttyPistemaara().doubleValue() : null);
+        t.setAlinPistemaara(s.getAlinPistemaara() != null ? s.getAlinPistemaara().doubleValue() : null);
         t.setTyyppi(s.getValinnanPisterajaTyyppi());
-        t.setYlinPistemaara(s.getYlinPistemaara());
+        t.setYlinPistemaara(s.getYlinPistemaara() != null ? s.getYlinPistemaara().doubleValue() : null);
 
         t.setOid("" + s.getId());
         t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);

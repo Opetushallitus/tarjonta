@@ -168,9 +168,9 @@ public class TarjontaPublicServiceTest {
 
         Pisteraja pisteraja = new Pisteraja();
         pisteraja.setValinnanPisterajaTyyppi("Paasykoe");
-        pisteraja.setAlinHyvaksyttyPistemaara(5);
-        pisteraja.setAlinPistemaara(4);
-        pisteraja.setYlinPistemaara(6);
+        pisteraja.setAlinHyvaksyttyPistemaara(new BigDecimal("5.0"));
+        pisteraja.setAlinPistemaara(new BigDecimal("4.0"));
+        pisteraja.setYlinPistemaara(new BigDecimal("6.0"));
         valintakoe.getPisterajat().add(pisteraja);
 
         hakukohde.addValintakoe(valintakoe);

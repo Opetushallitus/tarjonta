@@ -28,8 +28,6 @@ import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
@@ -46,6 +44,8 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
 import java.io.IOException;
 import java.util.HashMap;
@@ -239,7 +239,7 @@ public class TarjontaKomoData {
     }
 
     /**
-     * Create full KoulutusmoduuliKoosteTyyppi object.
+     * Create the KOMO child DTO.
      *
      * @param dto
      * @return
@@ -267,8 +267,11 @@ public class TarjontaKomoData {
 
                 /*
                  * Description data for koulutusohjelma (nothing to do with the Koodisto service)
+                 * Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet:
+                 * -------------------------------------------------------------
+                 * Kokin koulutusohjelman tai osaamisalan suorittanut kokki toimii ruoanvalmistustehtavissa...
                  */
-                koChildKomo.setTavoitteet(dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
+                ConversionUtils.setTeksti(koChildKomo.getTekstit(), KomoTeksti.TAVOITTEET, dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
                 break;
             case LUKIOKOULUTUS:
                 Preconditions.checkNotNull(dto.getLukiolinjaKoodiarvo(), "Lukiolinja koodi uri cannot be null.");
@@ -294,7 +297,15 @@ public class TarjontaKomoData {
         return koChildKomo;
     }
 
-    private KoulutusmoduuliKoosteTyyppi createParentKomo(final ExcelMigrationDTO dto, String koulutuskoodiUri) throws ExceptionMessage {
+    /**
+     * Create the KOMO parent DTO.
+     *
+     * @param dto
+     * @param koulutuskoodiUri
+     * @return
+     * @throws ExceptionMessage
+     */
+    private KoulutusmoduuliKoosteTyyppi createParentKomo(final ExcelMigrationDTO dto, final String koulutuskoodiUri) throws ExceptionMessage {
         Preconditions.checkNotNull(koulutuskoodiUri, "Import data error - koulutuskoodi value cannot be null!");
         KoulutusmoduuliKoosteTyyppi tutkintoParentKomo = new KoulutusmoduuliKoosteTyyppi();
         if (parentKomosReadyForUpdate.containsKey(koulutuskoodiUri)) {
@@ -316,12 +327,13 @@ public class TarjontaKomoData {
         tutkintoParentKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
         /*
          * Description data for tutkinto (nothing to do with the Koodisto service)
-         * LUKIO and AMMATILLINEN koulutus
+         * Tutkinnon koulutukselliset ja ammatilliset tavoitteet:
+         * ------------------------------------------------------
+         * Hotelli-, ravintola- ja catering-alan perustutkinnon suorittanut on kielitaitoinen sekä myynti- ja asiakaspalveluhenkinen....
          */
-        tutkintoParentKomo.setKoulutuksenRakenne(dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
+        ConversionUtils.setTeksti(tutkintoParentKomo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, dto.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti());
         tutkintoParentKomo.setTutkinnonTavoitteet(dto.getTutkinnonKuvaukset().getTavoiteTeksti());
-        tutkintoParentKomo.setJatkoOpintoMahdollisuudet(dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
-
+        ConversionUtils.setTeksti(tutkintoParentKomo.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, dto.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti());
         /*
          * Oppilaitostyyppi
          */

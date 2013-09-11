@@ -94,6 +94,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 
 /**
  *
@@ -473,15 +474,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //if parent komo does not exist, we are reading a parent komoto, thus the koulutusohjelmanvalinta field is in the komoto itself
 
-        System.out.println("parent : " + parentKomo);
+        log.debug("parent : " + parentKomo);
         if (parentKomo == null) {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
-            result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
+            EntityUtils.copyFields(result.getTekstit(), komoto.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            //result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
 
             if (result.getKoulutusmoduuli().getNimi() != null && !result.getKoulutusmoduuli().getNimi().getTeksti().isEmpty()) {
-                System.out.println("child name : " + result.getKoulutusmoduuli().getNimi().getTeksti().size());
+                log.debug("child name : " + result.getKoulutusmoduuli().getNimi().getTeksti().size());
             } else {
-                System.out.println("no child name ");
+                log.debug("no child name ");
             }
             //if parent komo exists we read the koulutusohjelmanValinta field from the parent (tutkinto) komoto,
             //and merging the parent and actual komo to get the komo fields.
@@ -508,7 +510,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
              } catch (Exception ex) {
              result.setKoulutuksenAlkamisPaiva(null);
              }*/
-            result.setKoulutusohjelmanValinta(EntityUtils.copyFields(parentKomoto.getKoulutusohjelmanValinta()));
+            EntityUtils.copyFields(result.getTekstit(), parentKomoto.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            //result.setKoulutusohjelmanValinta(EntityUtils.copyFields(parentKomoto.getKoulutusohjelmanValinta()));
         }
     }
     
@@ -584,16 +587,21 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajis(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
         EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkiloTyyppi());
-        toKoulutus.setPainotus(EntityUtils.copyFields(fromKoulutus.getPainotus()));
         //
         // Koulutus lisätiedot / additional information for Koulutus
         //
         EntityUtils.copyKoodistoUris(fromKoulutus.getAmmattinimikes(), toKoulutus.getAmmattinimikkeet());
+        
+        
+        EntityUtils.copyFields(toKoulutus.getTekstit(), fromKoulutus.getTekstit()); // TODO rajaus?
+
+        /*toKoulutus.setPainotus(EntityUtils.copyFields(fromKoulutus.getPainotus()));
         toKoulutus.setKuvailevatTiedot(EntityUtils.copyFields(fromKoulutus.getKuvailevatTiedot()));
         toKoulutus.setSisalto(EntityUtils.copyFields(fromKoulutus.getSisalto()));
         toKoulutus.setSijoittuminenTyoelamaan(EntityUtils.copyFields(fromKoulutus.getSijoittuminenTyoelamaan()));
         toKoulutus.setKansainvalistyminen(EntityUtils.copyFields(fromKoulutus.getKansainvalistyminen()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(EntityUtils.copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
+        */
         
         toKoulutus.getA1A2Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet().values(), Kieliaine.A1A2KIELI));
         toKoulutus.getB1Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet().values(), Kieliaine.B1KIELI));

@@ -20,32 +20,32 @@ package fi.vm.sade.tarjonta.service.resources.dto;
  */
 public class ValintakoePisterajaRDTO extends BaseRDTO {
 
-    private int _alinHyvaksyttyPistemaara;
-    private int _alinPistemaara;
-    private int _ylinPistemaara;
+    private double _alinHyvaksyttyPistemaara;
+    private double _alinPistemaara;
+    private double _ylinPistemaara;
     private String _tyyppi;
 
-    public int getAlinHyvaksyttyPistemaara() {
+    public double getAlinHyvaksyttyPistemaara() {
         return _alinHyvaksyttyPistemaara;
     }
 
-    public void setAlinHyvaksyttyPistemaara(int _alinHyvaksyttyPistemaara) {
+    public void setAlinHyvaksyttyPistemaara(double _alinHyvaksyttyPistemaara) {
         this._alinHyvaksyttyPistemaara = _alinHyvaksyttyPistemaara;
     }
 
-    public int getAlinPistemaara() {
+    public double getAlinPistemaara() {
         return _alinPistemaara;
     }
 
-    public void setAlinPistemaara(int _alinPistemaara) {
+    public void setAlinPistemaara(double _alinPistemaara) {
         this._alinPistemaara = _alinPistemaara;
     }
 
-    public int getYlinPistemaara() {
+    public double getYlinPistemaara() {
         return _ylinPistemaara;
     }
 
-    public void setYlinPistemaara(int _ylinPistemaara) {
+    public void setYlinPistemaara(double _ylinPistemaara) {
         this._ylinPistemaara = _ylinPistemaara;
     }
 

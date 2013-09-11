@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,11 +225,15 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
             }
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
             hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
-            tarjontaAdminService.lisaaHaku(hakuTyyppi);
+            hakuTyyppi.setViimeisinPaivitysPvm(new Date());
+            HakuTyyppi uusi = tarjontaAdminService.lisaaHaku(hakuTyyppi);
+            hakuModel.getHakuDto().setVersion(uusi.getVersion());  //päivitä versio (optimistic locking)
         } else {
             HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
             hakuTyyppi.setViimeisinPaivittajaOid(SecurityContextHolder.getContext().getAuthentication().getName());
-            tarjontaAdminService.paivitaHaku(hakuTyyppi);
+            hakuTyyppi.setViimeisinPaivitysPvm(new Date());
+            HakuTyyppi uusi = tarjontaAdminService.paivitaHaku(hakuTyyppi);
+            hakuModel.getHakuDto().setVersion(uusi.getVersion());  //päivitä versio (optimistic locking)
         }
         LOG.info("Haku tallennettu valmiina");
     }

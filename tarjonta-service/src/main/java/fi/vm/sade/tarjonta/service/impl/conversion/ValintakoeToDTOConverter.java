@@ -64,9 +64,9 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
         
         for (Pisteraja pisteraja:pisterajat) {
             PisterajaTyyppi pisterajatyyppi = new PisterajaTyyppi();
-            pisterajatyyppi.setAlinHyvaksyttyPistemaara(pisteraja.getAlinHyvaksyttyPistemaara());
-            pisterajatyyppi.setAlinPistemaara(pisteraja.getAlinPistemaara());
-            pisterajatyyppi.setYlinPistemaara(pisteraja.getYlinPistemaara());
+            pisterajatyyppi.setAlinHyvaksyttyPistemaara(pisteraja.getAlinHyvaksyttyPistemaara() != null ? pisteraja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
+            pisterajatyyppi.setAlinPistemaara(pisteraja.getAlinPistemaara() != null ? pisteraja.getAlinPistemaara().doubleValue() : null);
+            pisterajatyyppi.setYlinPistemaara(pisteraja.getYlinPistemaara() != null ? pisteraja.getYlinPistemaara().doubleValue() : null);
             pisterajatyyppi.setPisterajaTunniste(pisteraja.getId().toString());
             pisterajatyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.fromValue(pisteraja.getValinnanPisterajaTyyppi()));
             pisterajaTyypit.add(pisterajatyyppi);

@@ -24,7 +24,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -40,8 +41,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -53,7 +52,9 @@ import org.slf4j.LoggerFactory;
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
+    
     private static final long serialVersionUID = 4511930754933045032L;
     private List<KoulutusmoduuliKoosteTyyppi> komos;
     private List<KoulutuskoodiModel> koulutuskoodit;
@@ -88,7 +89,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      * cache maps
      */
     private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
-    private Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
+    private Map<Entry<String,String>, KoulutusmoduuliKoosteTyyppi> cacheKomo;
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -352,14 +353,14 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     /**
      * @return the cacheKomo
      */
-    public Map<Entry, KoulutusmoduuliKoosteTyyppi> getCacheKomo() {
+    public Map<Entry<String,String>, KoulutusmoduuliKoosteTyyppi> getCacheKomo() {
         return cacheKomo;
     }
 
     /**
      * @param cacheKomo the cacheKomo to set
      */
-    public void setCacheKomo(Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
+    public void setCacheKomo(Map<Entry<String,String>, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
         this.cacheKomo = cacheKomo;
     }
 

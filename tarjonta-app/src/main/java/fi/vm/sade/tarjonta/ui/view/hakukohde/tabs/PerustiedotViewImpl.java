@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -104,7 +105,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
-
+    
     private static final long serialVersionUID = 1L;
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
@@ -191,6 +192,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
     private boolean muuOsoite;
 
+    @Value("${koodisto-uris.yhteishaku}")
+    private String hakutapaYhteishakuUrl;
     /*
      *
      * Init view with new model
@@ -807,9 +810,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
 
         hakuAikaCombo.setContainerDataSource(container);
-
+        
         selectHakuAika(model.getHakuaika(), hk);
-    	setCustomHakuaikaSelected(model.getHakuaika()==null);
+    	setCustomHakuaika(!hakutapaYhteishakuUrl.equals(model.getHakuViewModel().getHakutapa()), model.getHakuaika()==null);
     }
 
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk) {
@@ -826,6 +829,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
     }
 
+    private void setCustomHakuaika(boolean enabled, boolean selected) {
+    	setCustomHakuaikaEnabled(enabled);
+    	setCustomHakuaikaSelected(enabled && selected);
+    }
+    
+    private void setCustomHakuaikaEnabled(boolean enabled) {
+    	customHakuaika.setEnabled(enabled);
+    	hakuaikaAlkuPvm.setEnabled(enabled);
+    	hakuaikaLoppuPvm.setEnabled(enabled);
+    }
+    
     private void setCustomHakuaikaSelected(boolean selected) {
     	if (!customHakuaika.getValue().equals(selected)) {
     		customHakuaika.setValue(selected);
