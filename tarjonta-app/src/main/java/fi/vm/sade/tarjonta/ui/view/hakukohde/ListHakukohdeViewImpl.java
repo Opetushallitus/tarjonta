@@ -22,11 +22,14 @@ import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -115,6 +118,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void attach() {
         super.attach();
+        presenter.registerEventListener(this);
 
         if (attached) {
             return;
@@ -130,6 +134,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         addSelectAllButton();
 
         presenter.setHakukohdeListView(this);
+    }
+    
+    @Override
+    public void detach() {
+        presenter.unregisterEventListener(this);
     }
 
     /*
@@ -191,11 +200,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                     categoryTree.addItem(curHakukohde);
                     categoryTree.setParent(curHakukohde, event.getItemId());
                     categoryTree.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()).getValue());
-                    categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
+                    setHakukohdeRowProperties(curHakukohde, rowStyleInner);
                     categoryTree.setChildrenAllowed(curHakukohde, false);
                 }
                 setPageLength(categoryTree.getItemIds().size());
@@ -386,5 +391,69 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     public void setPageLength(int pageLength) {
         categoryTree.setPageLength(pageLength + 1);
+    }
+    
+    /**
+     * Event listeneri joka saa viestejä hakutulospuun muutostarpeista, katso
+     * {@link TarjontaPresenter#sendEvent(Object)}
+     */
+    @Subscribe 
+    public void receiveHakukohdeContainerEvent(HakukohdeContainerEvent e) {
+        
+        final String eventHakukohdeOid = e.oid;
+    
+        switch (e.type) {
+        case REMOVE:
+            for(Object itemid: categoryTree.getItemIds()){
+                if (itemid.getClass() == HakukohdeTulos.class) {
+                    HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
+                    if(currentHakukohde.getHakukohde().getOid()==eventHakukohdeOid) {
+                        categoryTree.removeItem(currentHakukohde);
+                    }
+            
+                }
+            }
+            break;
+
+        case UPDATE:
+            
+            for(Object itemid: categoryTree.getItemIds()){
+                if (itemid.getClass() == HakukohdeTulos.class) {
+                    HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
+                    if(currentHakukohde.getHakukohde().getOid()==eventHakukohdeOid) {
+                        //hae tuore hakukohde
+                        final HakukohdeTulos freshHakukohde = presenter.findHakukohdeByHakukohdeOid(eventHakukohdeOid).getHakukohdeTulos().get(0); 
+                        copyData(currentHakukohde, freshHakukohde);
+                        final HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(itemid, COLUMN_A).getValue());
+                        setHakukohdeRowProperties(currentHakukohde, curRow);
+                        curRow.reinitMenubar();
+                    }
+                }
+            }
+            
+            break;
+            
+        default:
+            LOG.warn("event not processed:" + e);
+            break;
+        }
+    }
+
+    private void copyData(Object to,
+            final Object from) {
+        try {
+            BeanUtils.copyProperties(to,  from);
+        } catch (Throwable t) {
+            LOG.warn("Could not copy properties from " + from.getClass() + " to " + to.getClass(), t);
+        }
+    }
+
+    private void setHakukohdeRowProperties(final HakukohdeTulos curHakukohde,
+            final HakukohdeResultRow rowStyleInner) {
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()).getValue());
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
     }
 }

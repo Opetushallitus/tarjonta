@@ -36,6 +36,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.UserService;
@@ -221,10 +223,36 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private TarjontaKorkeakouluPresenter korkeakouluPresenter;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
+
+    private final EventBus eventBus;
+    
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
     public TarjontaPresenter() {
+        eventBus = new EventBus("TARJONTA");
+        registerEventListener(this);
+    }
+
+    /**
+     * Rekisteröi uusi event listeneri.
+     */
+    public void registerEventListener(Object o) {
+        eventBus.register(o);        
+    }
+
+    /**
+     * Poista listenerin rekisteröinti.
+     */
+    public void unregisterEventListener(Object o) {
+        eventBus.unregister(o);        
+    }
+    
+    /**
+     * Lähetä eventti.
+     */
+    public void sendEvent(Object o) {
+        eventBus.post(o);
     }
 
     public void saveHakuKohde(SaveButtonState tila) {
@@ -1451,8 +1479,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         hakukohde.setOid(curHakukohde.getHakukohde().getOid());
         try {
             getTarjontaAdminService().poistaHakukohde(hakukohde);
-            //TODO korvaa reload
-            getHakukohdeListView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
         } catch (Exception exp) {
             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
@@ -2253,8 +2279,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (publishingService.changeState(oid, toState, sisalto)) {
             showNotification(UserNotification.GENERIC_SUCCESS);
 
-            //reload result data in tables.
-            reloadMainView();
+            //update hakutulokset
+            if(sisalto == SisaltoTyyppi.HAKUKOHDE) {
+            } else {
+                reloadMainView();
+            }
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
@@ -2521,4 +2550,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             return strTwo;
         }
     }
+    
+    @Subscribe
+    public void listen(com.google.common.eventbus.DeadEvent event) {
+        LOG.warn("got event of type" + event.getEvent().getClass() + ", send by " + event.getSource().getClass() + " that was not received by anyone. Isn't that strange?");
+    }
+    
+    public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid){
+        return tarjontaSearchService.haeHakukohteet(HakukohteetKysely.findByHakukohdeOid(oid));
+    }
+
 }
