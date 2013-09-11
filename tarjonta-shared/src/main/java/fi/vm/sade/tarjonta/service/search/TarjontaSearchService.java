@@ -186,6 +186,11 @@ public class TarjontaSearchService {
         // restrict by org
         addFilterForOrgs(oids, queryParts, q);
 
+        // restrict by hakukohdeoid
+        if(kysely.getHakukohdeOid()!=null) {
+            q.addFilterQuery(String.format("%s:%s", Hakukohde.OID, kysely.getHakukohdeOid()));
+        }
+
         addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
         q.setRows(Integer.MAX_VALUE);

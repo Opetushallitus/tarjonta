@@ -20,6 +20,15 @@ public class HakukohteetKysely implements Serializable
     protected TarjontaTila tilat;
     protected String koulutuksenAlkamiskausi;
     private String hakuOid;
+    private String hakukohdeOid;
+
+    public String getHakukohdeOid() {
+        return hakukohdeOid;
+    }
+
+    public void setHakukohdeOid(String hakukohdeOid) {
+        this.hakukohdeOid = hakukohdeOid;
+    }
 
     public String getHakuOid() {
         return hakuOid;
@@ -213,6 +222,13 @@ public class HakukohteetKysely implements Serializable
      */
     public void setKoulutuksenAlkamiskausi(String value) {
         this.koulutuksenAlkamiskausi = value;
+    }
+    
+    
+    public static final HakukohteetKysely findByHakukohdeOid(String oid){
+        HakukohteetKysely kys = new HakukohteetKysely();
+        kys.hakukohdeOid = oid;
+        return kys;
     }
 
 }
