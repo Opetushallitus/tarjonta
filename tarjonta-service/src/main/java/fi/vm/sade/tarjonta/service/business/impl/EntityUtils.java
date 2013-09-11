@@ -372,7 +372,7 @@ public final class EntityUtils {
         tyyppi.setNqfLuokitus(komo.getNqfLuokitus());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
         
-        copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.TAVOITTEET);
+        copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.TAVOITTEET); // rajaus turha?
         //tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
         //tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTekstit().get(KomoTeksti.TAVOITTEET)));
@@ -453,8 +453,11 @@ public final class EntityUtils {
          * Description data
          */
         
-        tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTekstit().get(KomoTeksti.TAVOITTEET))); //parent KOMO: tutkinnon-tavoitteet
-        copyFields(tyyppi.getTekstit(), parentKomo.getTekstit());
+        tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTekstit().get(KomoTeksti.TAVOITTEET)));
+        copyFields(tyyppi.getTekstit(), parentKomo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
+        copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.TAVOITTEET);
+
+        //tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
         //tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         //tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //child KOMO: ammatilliset-tavoitteet
         //tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet())); //parent KOMO: jatko-opintomahdollisuudet
