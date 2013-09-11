@@ -440,7 +440,7 @@ public class TestTarjontaElements {
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-required\">" // debug rivi
 //        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\"" // debug rivi
         		+ ".*23KPL<div class=\"v-label v-label-undef-w\">"
-        		+ ".*18KPL" + htmlAbsoluteLeft18
+//        		+ ".*18KPL" + htmlAbsoluteLeft18 // vaihtelee
         		+ ".*11KPL<span class=\"v-button-caption\">"
         		+ ".*5KPLv-required-field-indicator"
         		+ ".*3KPLv-textfield v-textfield-prompt"
