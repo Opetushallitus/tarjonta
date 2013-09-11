@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 
@@ -67,6 +68,8 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     private TarjontaUIHelper tarjontaUIHelper;
     @Autowired
     private TarjontaPresenter presenter;
+
+    @Value("${root.organisaatio.oid}") String rootOrgOid;
 
 
     private VerticalLayout rootLayout;
@@ -162,13 +165,28 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
           if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
 
           } else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
-               OrganisaatioPerustietoWrapper selectedOrg = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
-              buildOppilaitosCombo(organisaatioPerustieto.getOid());
+             String parentOrg = getOppilaitosParent(organisaatioPerustieto);
+             OrganisaatioPerustietoWrapper selectedOrg = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
+              OrganisaatioPerustietoWrapper parent = new OrganisaatioPerustietoWrapper(parentOrg);
+              cbKoulutusToimijat.select(parent);
+              createOppilaitosComboDatasource(parentOrg);
               cbOppilaitos.setEnabled(true);
               cbOppilaitos.select(selectedOrg);
           }  else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
 
           }
+    }
+
+    private String getOppilaitosParent(OrganisaatioPerustieto perustieto) {
+        String parentOid = null;
+           StringTokenizer st = new StringTokenizer(perustieto.getParentOidPath(),"/");
+           parentOid = st.nextToken();
+           if (parentOid != null & parentOid != rootOrgOid) {
+              return parentOid;
+           } else{
+              parentOid = st.nextToken();
+           }
+        return parentOid;
     }
 
     private GridLayout createSearchSpecLayout() {

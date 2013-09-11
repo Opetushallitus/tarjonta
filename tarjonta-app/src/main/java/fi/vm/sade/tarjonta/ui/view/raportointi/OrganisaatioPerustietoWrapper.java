@@ -35,6 +35,10 @@ public class OrganisaatioPerustietoWrapper {
         this.localizedName = OrganisaatioDisplayHelper.getAvailableNameBasic(perustieto);
     }
 
+    public OrganisaatioPerustietoWrapper(String oid) {
+        this.organisaatioOid = oid;
+    }
+
 
     public String getLocalizedName() {
         return localizedName;
