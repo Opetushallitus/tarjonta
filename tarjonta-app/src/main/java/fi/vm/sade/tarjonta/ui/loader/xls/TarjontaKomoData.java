@@ -475,6 +475,12 @@ public class TarjontaKomoData {
                     case TUTKINTO:
                         if (!dbParentKomos.containsKey(koulutuskoodiUri)) {
                             //KOMO parent data sanity check, remove an invalid parent relations etc.
+                            if (kkt.getOid().equals("1.2.246.562.5.2013061010184237347962")
+                                    || kkt.getOid().equals("1.2.246.562.5.2013061010184880727629")) {
+                                //A quick hack, remove this code block after the rows are removed from dd.
+                                continue;
+                            }
+
                             if (kkt.getKoulutusmoduuliTyyppi() != null && kkt.getParentOid() == null) {
                                 dbParentKomos.put(koulutuskoodiUri, kkt.getOid());
                                 log.debug("added parent OID : {}, URI : {}", kkt.getOid(), koulutuskoodiUri);

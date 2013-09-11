@@ -81,6 +81,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
     private TarjontaDialogWindow aloituspaikatRaporttiDialog;
 
+    boolean showTulostaRaporttiBtn = true;
+
     @Autowired(required = true)
     private RaportointiRestClientHelper raportointiRestHelper;
     private static final CssHorizontalLayout.StyleEnum[] COMPONENT_STYLE = {
@@ -91,6 +93,12 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     public SearchSpesificationView() {
         super(true, UiMarginEnum.BOTTOM);
     }
+
+    public SearchSpesificationView(boolean showTulostaRaporttiBtn) {
+        super(true, UiMarginEnum.BOTTOM);
+        this.showTulostaRaporttiBtn = showTulostaRaporttiBtn;
+    }
+
 
     public SearchSpesificationView(KoulutusSearchSpesificationViewModel model) {
         super(true, UiMarginEnum.BOTTOM);
@@ -196,6 +204,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent clickEvent) {
 
+                String selectedVuosi = cbVuosi.getValue() instanceof String ? (String)cbVuosi.getValue() : null;
+                String selectedKausi = kcKausi.getValue() instanceof String ? (String)kcKausi.getValue() : null;
+
                 AloituspaikatRaporttiDialog dialog = new AloituspaikatRaporttiDialog(new AloituspaikatRaporttiDialog.DialogCloseListener() {
                     @Override
                     public void windowCloseEvent(String result) {
@@ -205,7 +216,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
                         }
 
                     }
-                });
+                },selectedVuosi,selectedKausi,null);
                 aloituspaikatRaporttiDialog = new TarjontaDialogWindow(dialog,T("aloituspaikatDialogTitle"));
                 aloituspaikatRaporttiDialog.setWidth("600px");
                 aloituspaikatRaporttiDialog.setHeight("500px");
@@ -236,7 +247,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         });
 
         buttons.addComponent(btnHae);
+        if (showTulostaRaporttiBtn) {
         buttons.addComponent(btnTulostaRaportti);
+        }
         searchSpecLayout.addComponent(buttons);
 
         searchSpecLayout.setWidth("100%");

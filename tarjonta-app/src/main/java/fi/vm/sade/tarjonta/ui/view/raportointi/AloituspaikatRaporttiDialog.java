@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.ui.view.raportointi;/*
  */
 
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ExternalResource;
@@ -35,7 +36,9 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.RaportointiRestClientHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -43,9 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Tuomas Katva
@@ -63,7 +64,10 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
     @Autowired
-    private UserContext userContext;
+    private TarjontaUIHelper tarjontaUIHelper;
+    @Autowired
+    private TarjontaPresenter presenter;
+
 
     private VerticalLayout rootLayout;
     private GridLayout searchSpecLayout;
@@ -82,6 +86,9 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
     protected ErrorMessage errorView;
 
+    private String selectedVuosi = null;
+    private String selectedKausi = null;
+
 
     private static final String I18N_KAUSI = "kausi";
     private static final String I18N_POHJAKOULU = "pohjakouluprompt";
@@ -92,6 +99,14 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     public AloituspaikatRaporttiDialog(DialogCloseListener listener) {
         this.closeListener = listener;
         buildLayout();
+    }
+
+    public AloituspaikatRaporttiDialog(DialogCloseListener listener, String vuosi, String kausi, OrganisaatioPerustieto perustieto) {
+        this.closeListener = listener;
+        this.selectedVuosi = vuosi;
+        this.selectedKausi = kausi;
+        buildLayout();
+
     }
 
     public interface DialogCloseListener {
@@ -116,8 +131,44 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
         setCompositionRoot(rootLayout);
 
+    }
 
+    @Override
+    public void attach() {
+        super.attach();    //To change body of overridden methods use File | Settings | File Templates.
 
+        String selectedOrgOid = this.presenter.getNavigationOrganisation() != null ? this.presenter.getNavigationOrganisation().getOrganisationOid() : null;
+
+        if (selectedOrgOid != null) {
+            Set<String> searchOrgOids = new HashSet<String>();
+            searchOrgOids.add(selectedOrgOid);
+            List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(searchOrgOids);
+            if (orgs != null && orgs.size()>0) {
+                OrganisaatioPerustieto org = orgs.get(0);
+                setSelectedOrganisaatio(org);
+            }
+
+        }
+
+        if (selectedKausi != null) {
+          List<KoodiType> koodis = tarjontaUIHelper.getKoodis(selectedKausi);
+            if (koodis != null && koodis.get(0) != null) {
+                kcKausi.setValue(getKausiLyhytNimi(koodis.get(0).getMetadata()));
+            }
+        }
+    }
+
+    private void setSelectedOrganisaatio(OrganisaatioPerustieto organisaatioPerustieto) {
+          if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+
+          } else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
+               OrganisaatioPerustietoWrapper selectedOrg = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
+              buildOppilaitosCombo(organisaatioPerustieto.getOid());
+              cbOppilaitos.setEnabled(true);
+              cbOppilaitos.select(selectedOrg);
+          }  else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+
+          }
     }
 
     private GridLayout createSearchSpecLayout() {
@@ -143,26 +194,30 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         vuosiKausiLayout.setMargin(true,false,false,false);
         cbVuosi = UiUtil.comboBox(null, null, new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"});
         cbVuosi.setWidth("100px");
+        if (selectedVuosi != null) {
+            cbVuosi.setValue(selectedVuosi);
+        }
         VerticalLayout vuosiLayout = new VerticalLayout();
         vuosiLayout.addComponent(cbVuosi);
         vuosiLayout.setMargin(false, true, false, true);
+
         kcKausi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI));
+        kcKausi.setImmediate(true);
+
+
         kcKausi.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object o) {
               if (o instanceof KoodiType) {
-                  String kausiLyhytNimi = null;
-                 for (KoodiMetadataType meta :((KoodiType) o).getMetadata()) {
-                    if (meta.getKieli().equals(KieliType.FI)) {
-                       kausiLyhytNimi = meta.getLyhytNimi();
-                    }
-                 }
-                  return kausiLyhytNimi;
+
+                  return getKausiLyhytNimi(((KoodiType)o).getMetadata());
               } else {
                   return o;
               }
             }
         });
+
+
         kcKausi.getField().setWidth("100px");
         vuosiKausiLayout.addComponent(vuosiLayout);
         vuosiKausiLayout.addComponent(kcKausi);
@@ -246,6 +301,16 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         grid.setColumnExpandRatio(2,0.8f);
         grid.setColumnExpandRatio(3,0.5f);
         return grid;
+    }
+
+    private String getKausiLyhytNimi(List<KoodiMetadataType> metas) {
+        String kausiLyhytNimi = null;
+        for (KoodiMetadataType meta :metas) {
+            if (meta.getKieli().equals(KieliType.FI)) {
+                kausiLyhytNimi = meta.getLyhytNimi();
+            }
+        }
+       return kausiLyhytNimi;
     }
 
     private String T(String key) {
