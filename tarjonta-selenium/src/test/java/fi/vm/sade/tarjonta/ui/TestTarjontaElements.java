@@ -139,6 +139,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<span class=\"v-button-caption\">Tyhjennä</span>"
 				+ ".*<span class=\"v-button-caption\">Hae</span>"
+        		+ ".*<span class=\"v-button-caption\">Tulosta raportti</span>"
         		+ ".*<div class=\"v-captiontext\">Koulutukset</div>"
         		+ ".*<div class=\"v-captiontext\">Hakukohteet</div>"
         		+ ".*<span class=\"v-button-caption\">Siirrä tai kopioi</span>"
@@ -153,7 +154,7 @@ public class TestTarjontaElements {
         		+ ".*2KPL<input type=\"text\" class=\"v-textfield v-textfield-search-box search-box"
         		+ ".*8KPL<input type=\"text\" class=\"v"
         		+ ".*2KPL<div class=\"v-captiontext\""
-        		+ ".*9KPL<span class=\"v-button-caption\">"
+        		+ ".*10KPL<span class=\"v-button-caption\">"
         		+ ".*6KPL<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
         		+ ".*6KPL<div class=\"v-filterselect-button\"></div>"
         		+ ".*3KPL<input type=\"checkbox\""
@@ -181,7 +182,7 @@ public class TestTarjontaElements {
         Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi.", link);
         link.click();
         Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
-        		, doit.textElement(driver, "Koulutusaste"));
+        		, doit.textElement(driver, "Koulutusala"));
 	}
 	
 	// tarkasteleLukioKoulutus
@@ -190,7 +191,7 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
         	this.frontPage();
-        	this.TarkasteleKoulutus("ylioppilastutkint*", "Lukio");
+        	this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");
         }
         
 		String vLabelTextAlignRight = ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;";
@@ -219,13 +220,15 @@ public class TestTarjontaElements {
 				+ vLabelTextAlignRight 
 				+ ".*" + htmlAbsoluteLeft
 				+ ".*" + htmlAbsoluteLeft
-				+ vLabelTextAlignRight + ".*>Koulutusaste</div>"
+/*
+                + vLabelTextAlignRight + ".*>Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*" + htmlAbsoluteLeft
 				+ vLabelTextAlignRight 
         		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*" + htmlAbsoluteLeft
 //        		+ ".*" + htmlAbsoluteLeft
+ */
         		+ ".*" + divClassvLabelStyleWidthPx + ">Yleissivistävä koulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ vLabelTextAlignRight + ".*>Opintoala</div>"
@@ -338,7 +341,7 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                this.TarkasteleKoulutus("ylioppilastutkint*", "Lukio");
+                this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");
                 doit.textClick(driver, "muokkaa"); // click Muokkaa(1)
                 Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
                 		, doit.textElement(driver, "Puhelinnumero"));
@@ -366,12 +369,12 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus / tutkinto</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Lukiolinja</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
-        		+ ".*" + htmlAbsoluteLeft
+//        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Lukiokoulutus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
@@ -421,7 +424,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-required-field-indicator\">*</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Linkki opetussuunnitemaan</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<span class=\"v-button-caption\">Tyhjennä</span>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tehtävänimike</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Sähköpostiosoite</div>"
@@ -440,10 +443,10 @@ public class TestTarjontaElements {
         		+ ".*18KPL" + htmlAbsoluteLeft18
         		+ ".*11KPL<span class=\"v-button-caption\">"
         		+ ".*5KPLv-required-field-indicator"
-        		+ ".*5KPLv-textfield v-textfield-prompt"
+        		+ ".*3KPLv-textfield v-textfield-prompt"
         		+ ".*4KPL<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*4KPL<div class=\"v-filterselect-button\"></div>"
-        		+ ".*1KPL<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
+//        		+ ".*1KPL<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
         		+ ".*1KPLv-datefield-textfield"
 		;
 
@@ -460,7 +463,7 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                this.TarkasteleKoulutus("ylioppilastutkint*", "Lukio");                
+                this.TarkasteleKoulutus("ylioppilastutkint", "Lukio");                
                 driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
                 Assert.assertNotNull("Running TarjontaElements000 koulutushaku ei toimi."
                                 , doit.textElement(driver, "Yritysten nimien mainitsemista"));
@@ -551,7 +554,7 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
             this.frontPage();
-            this.TarkasteleKoulutus("*tusohjel*", "koulutusohjelma");
+            this.TarkasteleKoulutus("tusohjel", "koulutusohjelma");
             Assert.assertNotNull("Running TarjontaElements005 TarkasteleAmmatillinenKoulutus ei toimi."
                             , doit.textElement(driver, "Jatko-opintomahdollisuudet"));
             
@@ -561,6 +564,8 @@ public class TestTarjontaElements {
             }
         }
         
+        String textAlignRight = "<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;";
+//        textAlignRight = "";
         String elements = "<div tabindex=\"0\" class=\"v-button v-button-small small v-button-back back\" role=\"button\">"
         		+ poista
         		+ ".*<span class=\"v-button-caption\">Lisää rinnakkainen toteutus</span>"
@@ -570,109 +575,113 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Organisaatio</div>"
+        		+ ".*" + textAlignRight + ".*>Organisaatio</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutus / tutkinto</div>"
+				+ ".*" + textAlignRight + ".*>Koulutus tai tutkinto</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusohjelma</div>"
+				+ ".*" + textAlignRight + ".*>Koulutusohjelma</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusaste</div>"
+				+ ".*" + textAlignRight + ".*>Koulutusaste</div>"
         		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-				+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusala</div>"
+				+ ".*" + textAlignRight + ".*>Koulutusala</div>"
         		+ ".*" + htmlAbsoluteLeft
 				+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintoala</div>"
+        		+ ".*" + textAlignRight + ".*>Opintoala</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Tutkintonimike</div>"
+        		+ ".*" + textAlignRight + ".*>Tutkintonimike</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opintojen laajuus</div>"
+        		+ ".*" + textAlignRight + ".*>Opintojen laajuus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuslaji</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuslaji</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Pohjakoulutusvaatimus</div>"
+        		+ ".*" + textAlignRight + ".*>Pohjakoulutusvaatimus</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen alkamispäivä</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen alkamispäivä</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Suunniteltu kesto</div>"
+        		+ ".*" + textAlignRight + ".*>Suunniteltu kesto</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetuskieli / -kielet</div>"
+        		+ ".*" + textAlignRight + ".*>Opetuskieli- / kielet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Opetusmuoto</div>"
+        		+ ".*" + textAlignRight + ".*>Opetusmuoto</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Linkki opetussuunnitelmaan</div>"
+        		+ ".*" + textAlignRight + ".*>Linkki opetussuunnitelmaan</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen yhteyshenkilö</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen yhteishenkilö</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*" + textAlignRight + ".*>Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutusohjelman valinta</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutusohjelman valinta</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen sisältö</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen sisältö</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Koulutuksen rakenne</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen rakenne</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
 //        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Kansainvälistyminen</div>"
+        		+ ".*" + textAlignRight + ".*>Sijoittuminen työelämään</div>"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + textAlignRight + ".*>Kansainvälistyminen</div>"
 //        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
 //        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Sijoittuminen työelämään</div>"
+        		+ ".*" + textAlignRight + ".*>Yhteistyö muiden toimijoiden kanssa</div>"
+//        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
+//        		+ ".*" + htmlAbsoluteLeft
+        		+ ".*" + textAlignRight + ".*>Ammattinimikkeet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Ammattinimikkeet</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width: ...px;\">Jatko-opintomahdollisuudet</div>"
+        		+ ".*" + textAlignRight + ".*>Jatko-opintomahdollisuudet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Hakuko"
         		+ ".*<span class=\"v-button-caption\">Luo uusi hakukohde</span>"
 //        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
 //        		+ ".*<div class=\"v-label\" style=\"width:" // ylimaarainen debuggia varten
-//        		+ ".*<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width:"  // ylimaarainen debuggia varten // jotain nakymattomia 3 kpl
-        		+ ".*29KPL<div class=\"v-label\" style=\"width:"
+//        		+ ".*" + textAlignRight  // ylimaarainen debuggia varten // edelliselta sivulta nakymattomia N kpl
+        		+ ".*30KPL<div class=\"v-label\" style=\"width:"
 //        		+ ".*28KPL<div class=\"v-label v-label-text-align-right text-align-right\" style=\"width:" // jotain nakymattomia 3 kpl
 //        		+ ".*10KPL<span class=\"v-button-caption\">" // hakukohteita on lopussa vaihteleva maara 
 //        		+ ".*42KPLheight: 18px; overflow: hidden; padding-left: 0px; padding-top: 0px; position: absolute; left:" // vaihtuu
@@ -692,10 +701,16 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
             this.frontPage();
-            this.TarkasteleKoulutus("*tusohjel*", "koulutusohjelma");
+            this.TarkasteleKoulutus("tusohjel", "koulutusohjelma");
             driver.findElement(By.xpath("//*[text()='muokkaa']")).click(); // click Muokkaa(1)
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
-                            , doit.textElement(driver, "Tehtävänimike"));
+                    , doit.textElement(driver, "Tyhjenn"));
+            Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
+                    , doit.textElement(driver, "Olet muokkaamassa"));
+            Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
+                    , doit.textElement(driver, "Tutkinnon koulutukselliset ja ammatilliset tavoitteet"));
+            Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
+                    , doit.textElement(driver, "Koulutuksen koulutukselliset ja ammatilliset tavoitteet"));
         }
         
         String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
@@ -724,10 +739,10 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus tai tutkinto</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelma</div>"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
-        		+ ".*" + htmlAbsoluteLeft
-        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ammatillinen koulutus</div>"
-        		+ ".*" + htmlAbsoluteLeft
+//        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
+//        		+ ".*" + htmlAbsoluteLeft
+//        		+ ".*<div class=\"v-label\" style=\"width: ...px;\">Ammatillinen koulutus</div>"
+//        		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusala</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
@@ -748,14 +763,14 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">120 ov</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen alkamispäivä</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Suunniteltu kesto</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
+//        		+ ".*<div class=\"v-label v-label-undef-w\">Opetuskieli</div>"
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width:"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*v-required-field-indicator"
@@ -768,7 +783,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-filterselect-button\"></div>"
 				+ ".*v-required-field-indicator"
         		+ ".*<div class=\"v-label v-label-undef-w\">Linkki opetussuunnitelmaan</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
+//        		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
         		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<span class=\"v-button-caption\">Tyhjennä tiedot</span>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tehtävänimike</div>"
@@ -808,7 +823,7 @@ public class TestTarjontaElements {
         if (! readPageFromFile)
         {
                 this.frontPage();
-                this.TarkasteleKoulutus("*tusohjel*", "koulutusohjelma");
+                this.TarkasteleKoulutus("tusohjel", "koulutusohjelma");
                 driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
                 Assert.assertNotNull("Running TarjontaElements007 MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot ei toimi."
                                 , doit.textElement(driver, "miten valinta koulutusohjelmiin on toteutettu"));
