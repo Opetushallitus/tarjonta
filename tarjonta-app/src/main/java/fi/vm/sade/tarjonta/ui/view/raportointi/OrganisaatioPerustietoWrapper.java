@@ -27,9 +27,12 @@ public class OrganisaatioPerustietoWrapper {
 
     private String localizedName;
 
+    private String organisaatioOid;
+
     public OrganisaatioPerustietoWrapper(OrganisaatioPerustieto perustieto) {
-        organisaatioPerustieto = perustieto;
-        localizedName = OrganisaatioDisplayHelper.getAvailableNameBasic(perustieto);
+        this.organisaatioPerustieto = perustieto;
+        this.organisaatioOid = perustieto.getOid();
+        this.localizedName = OrganisaatioDisplayHelper.getAvailableNameBasic(perustieto);
     }
 
 
@@ -43,5 +46,22 @@ public class OrganisaatioPerustietoWrapper {
 
     public OrganisaatioPerustieto getOrganisaatioPerustieto() {
         return organisaatioPerustieto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrganisaatioPerustietoWrapper that = (OrganisaatioPerustietoWrapper) o;
+
+        if (!organisaatioOid.equals(that.organisaatioOid)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return organisaatioOid.hashCode();
     }
 }

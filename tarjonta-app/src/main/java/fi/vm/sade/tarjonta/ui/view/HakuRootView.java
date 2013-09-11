@@ -71,7 +71,8 @@ public class HakuRootView extends Window {
         //
         //BreadcrumbsView otettu pois
         //breadcrumbsView = new BreadcrumbsView();
-        searchSpesificationView = new SearchSpesificationView();
+        searchSpesificationView = new SearchSpesificationView(false);
+
         searchSpesificationView.setMargin(true, true, false, true);
         
         searchResultsView = new HakuSearchResultView();
