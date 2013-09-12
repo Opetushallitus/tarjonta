@@ -16,10 +16,8 @@ package fi.vm.sade.tarjonta.ui.view.raportointi;/*
  */
 
 
-import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -39,7 +37,6 @@ import fi.vm.sade.tarjonta.ui.helper.RaportointiRestClientHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,31 +158,64 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         }
     }
 
+    private OrganisaatioPerustieto findOrganisaatioByOid(String oid) {
+        OrganisaatioPerustieto foundOrg = null;
+
+        HashSet<String> oids = new HashSet<String>();
+        oids.add(oid);
+        List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(oids);
+        foundOrg = orgs.get(0);
+
+        return foundOrg;
+    }
+
     private void setSelectedOrganisaatio(OrganisaatioPerustieto organisaatioPerustieto) {
           if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
 
+              OrganisaatioPerustietoWrapper org = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
+              cbKoulutusToimijat.select(org);
+
           } else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
-             String parentOrg = getOppilaitosParent(organisaatioPerustieto);
+             String parentOrg = getKoulutusParent(organisaatioPerustieto, 1);
              OrganisaatioPerustietoWrapper selectedOrg = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
+
               OrganisaatioPerustietoWrapper parent = new OrganisaatioPerustietoWrapper(parentOrg);
+
               cbKoulutusToimijat.select(parent);
-              createOppilaitosComboDatasource(parentOrg);
-              cbOppilaitos.setEnabled(true);
+
+
               cbOppilaitos.select(selectedOrg);
           }  else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+              String oppilaitos = getKoulutusParent(organisaatioPerustieto, 2);
+              String koulutustoimija = getKoulutusParent(organisaatioPerustieto, 1);
+
+              cbKoulutusToimijat.select(new OrganisaatioPerustietoWrapper(koulutustoimija));
+              cbOppilaitos.select(new OrganisaatioPerustietoWrapper(oppilaitos));
+              cbToimipiste.select(new OrganisaatioPerustietoWrapper(organisaatioPerustieto));
 
           }
     }
 
-    private String getOppilaitosParent(OrganisaatioPerustieto perustieto) {
+
+
+    private String getKoulutusParent(OrganisaatioPerustieto perustieto, int nthParent) {
         String parentOid = null;
-           StringTokenizer st = new StringTokenizer(perustieto.getParentOidPath(),"/");
-           parentOid = st.nextToken();
-           if (parentOid != null & parentOid != rootOrgOid) {
-              return parentOid;
-           } else{
-              parentOid = st.nextToken();
-           }
+        StringTokenizer st = new StringTokenizer(perustieto.getParentOidPath(),"/");
+        int tokens = st.countTokens();
+        int counter = 0;
+        int nthToken = tokens - nthParent;
+        while (st.hasMoreTokens())  {
+            counter ++;
+            String temp = st.nextToken();
+            if (counter == nthToken) {
+                parentOid = temp;
+            }
+
+        }
+
+
+
+
         return parentOid;
     }
 
@@ -213,7 +243,10 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         cbVuosi = UiUtil.comboBox(null, null, new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"});
         cbVuosi.setWidth("100px");
         if (selectedVuosi != null) {
-            cbVuosi.setValue(selectedVuosi);
+            cbVuosi.select(selectedVuosi);
+        } else {
+
+            cbVuosi.select(new Integer(Calendar.getInstance().get(Calendar.YEAR)).toString());
         }
         VerticalLayout vuosiLayout = new VerticalLayout();
         vuosiLayout.addComponent(cbVuosi);
@@ -350,7 +383,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 OrganisaatioPerustietoWrapper selectedOrg = (OrganisaatioPerustietoWrapper)valueChangeEvent.getProperty().getValue();
 
-               createOppilaitosComboDatasource(selectedOrg.getOrganisaatioPerustieto().getOid());
+               createOppilaitosComboDatasource(selectedOrg.getOrganisaatioPerustieto() != null ? selectedOrg.getOrganisaatioPerustieto().getOid() : selectedOrg.getOrganisaatioOid());
             }
         });
         koulutustoimijaCombo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
@@ -493,7 +526,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 OrganisaatioPerustietoWrapper selectedOrg = (OrganisaatioPerustietoWrapper)valueChangeEvent.getProperty().getValue();
-                createToimipisteComboDatasource(selectedOrg.getOrganisaatioPerustieto().getOid());
+                createToimipisteComboDatasource(selectedOrg.getOrganisaatioPerustieto() != null ? selectedOrg.getOrganisaatioPerustieto().getOid() : selectedOrg.getOrganisaatioOid());
                 cbToimipiste.setEnabled(true);
             }
         });

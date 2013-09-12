@@ -218,7 +218,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
                     }
                 },selectedVuosi,selectedKausi,null);
                 aloituspaikatRaporttiDialog = new TarjontaDialogWindow(dialog,T("aloituspaikatDialogTitle"));
-                aloituspaikatRaporttiDialog.setWidth("600px");
+                aloituspaikatRaporttiDialog.setWidth("680px");
                 aloituspaikatRaporttiDialog.setHeight("500px");
 
                 getWindow().addWindow(aloituspaikatRaporttiDialog);

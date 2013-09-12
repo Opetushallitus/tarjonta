@@ -68,4 +68,8 @@ public class OrganisaatioPerustietoWrapper {
     public int hashCode() {
         return organisaatioOid.hashCode();
     }
+
+    public String getOrganisaatioOid() {
+        return this.organisaatioOid;
+    }
 }
