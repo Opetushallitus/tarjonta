@@ -255,8 +255,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
 
-        layout.add(getXhtmlRow("tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(language, model.getKoulutusohjelmaModel().getTavoitteet())));
-        layout.add(getXhtmlRow("koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(language, model.getKoulutuskoodiModel().getTavoitteet())));
+        layout.add(getXhtmlRow("tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(language, model.getKoulutuskoodiModel().getTavoitteet())));
+        layout.add(getXhtmlRow("koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(language, model.getKoulutusohjelmaModel().getTavoitteet())));
         layout.addSpace();
         layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang == null ? null : lisatietoForLang.getKoulutusohjelmanValinta()));
         layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang == null ? null : lisatietoForLang.getSisalto()));
