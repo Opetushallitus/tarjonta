@@ -225,7 +225,7 @@ public class HakukohteetKysely implements Serializable
     }
     
     
-    public static final HakukohteetKysely findByHakukohdeOid(String oid){
+    public static final HakukohteetKysely byHakukohdeOid(String oid){
         HakukohteetKysely kys = new HakukohteetKysely();
         kys.hakukohdeOid = oid;
         return kys;
