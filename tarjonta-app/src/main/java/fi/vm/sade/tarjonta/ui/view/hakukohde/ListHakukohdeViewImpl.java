@@ -407,7 +407,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             for(Object itemid: categoryTree.getItemIds()){
                 if (itemid.getClass() == HakukohdeTulos.class) {
                     HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
-                    if(currentHakukohde.getHakukohde().getOid()==eventHakukohdeOid) {
+                    if(currentHakukohde.getHakukohde().getOid().equals(eventHakukohdeOid)) {
                         categoryTree.removeItem(currentHakukohde);
                     }
             
@@ -420,7 +420,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             for(Object itemid: categoryTree.getItemIds()){
                 if (itemid.getClass() == HakukohdeTulos.class) {
                     HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
-                    if(currentHakukohde.getHakukohde().getOid()==eventHakukohdeOid) {
+                    if(currentHakukohde.getHakukohde().getOid().equals(eventHakukohdeOid)) {
                         //hae tuore hakukohde
                         final HakukohdeTulos freshHakukohde = presenter.findHakukohdeByHakukohdeOid(eventHakukohdeOid).getHakukohdeTulos().get(0); 
                         copyData(currentHakukohde, freshHakukohde);
