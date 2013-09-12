@@ -158,6 +158,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
@@ -238,6 +239,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Rekisteröi uusi event listeneri.
      */
     public void registerEventListener(Object o) {
+        LOG.debug("registering new listener:" + o.getClass());
         eventBus.register(o);        
     }
 
@@ -245,6 +247,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Poista listenerin rekisteröinti.
      */
     public void unregisterEventListener(Object o) {
+        LOG.debug("inregistering listener:" + o.getClass());
         eventBus.unregister(o);        
     }
     
@@ -252,6 +255,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Lähetä eventti.
      */
     public void sendEvent(Object o) {
+        LOG.info("sending event:" + o.getClass());
         eventBus.post(o);
     }
 
@@ -1521,6 +1525,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
                         && getPermission().userCanDeleteKoulutus(context)) {
                     getTarjontaAdminService().poistaKoulutus(curKoulutus.getKoulutus().getKoulutusmoduuliToteutus());
+                    sendEvent(KoulutusContainerEvent.delete(curKoulutus.getKoulutus().getKomotoOid()));
                     ++removalLaskuri;
                 } else {
                     errorNotes += I18N.getMessage("notification.error.koulutus.notRemovable", uiHelper.getKoodiNimi(koulutusNimiUri)) + "<br/>";
@@ -1537,9 +1542,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.koulutukset", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedKoulutukset().clear();
-
-        // Force UI update.
-        getReloadKoulutusListData();
 
         getRootView().getListKoulutusView().getWindow().showNotification(I18N.getMessage("notification.deleted.koulutukset.title"),
                 notificationMessage,
@@ -1569,9 +1571,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             getTarjontaAdminService().paivitaKoulutus(paivita);
             oid = paivita.getOid();
+            sendEvent(KoulutusContainerEvent.update(oid));
         } else {
             for (OrganisationOidNamePair pair : getTarjoaja().getOrganisationOidNamePairs()) {
                 oid = persistKoulutus(koulutusModel, pair, tila);
+                sendEvent(KoulutusContainerEvent.create(oid));
             }
         }
 
@@ -1774,7 +1778,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         boolean removeSuccess = false;
         try {
             getTarjontaAdminService().poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-            getRootView().getListKoulutusView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
             removeSuccess = true;
         } catch (Exception ex) {
@@ -2275,15 +2278,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         publish(oid, TarjontaTila.JULKAISTU, sisalto);
     }
 
+    /**
+     * Palauttaa true jos tilamuutos meni ok.
+     * @param oid
+     * @param toState
+     * @param sisalto
+     * @return
+     */
     private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
         if (publishingService.changeState(oid, toState, sisalto)) {
             showNotification(UserNotification.GENERIC_SUCCESS);
-
-            //update hakutulokset
-            if(sisalto == SisaltoTyyppi.HAKUKOHDE) {
-            } else {
-                reloadMainView();
-            }
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
@@ -2557,7 +2561,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
     
     public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid){
-        return tarjontaSearchService.haeHakukohteet(HakukohteetKysely.findByHakukohdeOid(oid));
+        return tarjontaSearchService.haeHakukohteet(HakukohteetKysely.byHakukohdeOid(oid));
+    }
+
+    public KoulutuksetVastaus findKoulutusByKoulutusOid(final String oid){
+        return tarjontaSearchService.haeKoulutukset(KoulutuksetKysely.byKoulutusOid(oid));
     }
 
 }
