@@ -156,7 +156,7 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
@@ -210,7 +210,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
-    private ShowHakukohdeViewImpl hakukohdeView;
+    private ShowHakukohdeView hakukohdeView;
     private ShowKoulutusView showKoulutusView;
     private EditKoulutusView editKoulutusView;
     private SearchResultsView searchResultsView;
@@ -778,7 +778,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 hakukohde.setHakukohdeKoodistoNimi(resolveHakukohdeKoodistonimiFields());
                 hakukohde.setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
 
-                hakukohdeView = new ShowHakukohdeViewImpl(hakukohde.getHakukohdeKoodistoNimi(), null, null);
+                hakukohdeView = new ShowHakukohdeView(hakukohde.getHakukohdeKoodistoNimi(), null, null);
                 getRootView().changeView(hakukohdeView);
             }
         }
