@@ -4,7 +4,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 public class HakuSearchResultView extends VerticalLayout {
 
@@ -29,7 +29,7 @@ public class HakuSearchResultView extends VerticalLayout {
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
-        ListHakuViewImpl hakuList = new ListHakuViewImpl();
+        ListHakuView hakuList = new ListHakuView();
         hakuList.addListener(new Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
 
@@ -37,7 +37,7 @@ public class HakuSearchResultView extends VerticalLayout {
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
                     fireEvent(event);
-                } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
+                } else if (event instanceof ListHakuView.NewHakuEvent) {
                     fireEvent(event);
                 }
 
