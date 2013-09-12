@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "valintakoe")
-public class Valintakoe extends BaseEntity {
+public class Valintakoe extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 7092585555234995829L;
     @Column(name = "hakukohde_id", insertable = false, updatable = false)

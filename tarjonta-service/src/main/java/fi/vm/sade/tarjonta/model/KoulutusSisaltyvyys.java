@@ -38,7 +38,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = KoulutusSisaltyvyys.TABLE_NAME)
-public class KoulutusSisaltyvyys extends BaseEntity implements Serializable {
+public class KoulutusSisaltyvyys extends TarjontaBaseEntity implements Serializable {
 
     static final String TABLE_NAME = "koulutus_sisaltyvyys";
 

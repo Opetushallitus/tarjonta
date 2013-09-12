@@ -189,6 +189,11 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     @Override
     public List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
             Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri) {
+
+        if (parentKomo == null) {
+            return null;
+        }
+
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         List<KoulutusmoduuliToteutus> komotoRes = null;
         try {
@@ -204,7 +209,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     join(komoto.koulutusmoduuli).fetch().
                     where(criteria).list(komoto);
         } catch (Exception ex) {
-            log.error("Exception: " + ex.getMessage());
+            log.error("findKomotosByKomoTarjoajaPohjakoulutus() - Exception: {}", ex);
         }
         return komotoRes;
     }
@@ -279,14 +284,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
         return q.list(komoto.oid);
     }
-    
+
     @Override
     public void update(KoulutusmoduuliToteutus entity) {
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(KoulutusmoduuliToteutus.class, entity.getId()));
         super.update(entity);
     }
-    
+
 }
 
 

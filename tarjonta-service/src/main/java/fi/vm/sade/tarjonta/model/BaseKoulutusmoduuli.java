@@ -28,7 +28,7 @@ import java.io.Serializable;
  * Yhteinen abstrakti perusluokka (ei entiteetti) Koulutusmoduuli:lle seka Koulutusmoduulintoteutukselle.
  */
 @MappedSuperclass
-public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializable {
+public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements Serializable {
 
     public static final String OID_COLUMN_NAME = "oid";
 

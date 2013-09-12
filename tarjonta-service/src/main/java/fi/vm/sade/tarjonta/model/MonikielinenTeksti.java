@@ -35,7 +35,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Entity
 @Table(name = "monikielinen_teksti")
-public class MonikielinenTeksti extends BaseEntity {
+public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
@@ -78,7 +78,7 @@ public class MonikielinenTeksti extends BaseEntity {
      * @param otherTeksti
      * /
     public void updateFrom(MonikielinenTeksti otherTeksti) {
-    	
+
         tekstis.clear();
 
         for (TekstiKaannos t : otherTeksti.getTekstis()) {
@@ -95,10 +95,10 @@ public class MonikielinenTeksti extends BaseEntity {
     public boolean removeKaannos(String kieliKoodi) {
         return tekstis.remove(kieliKoodi)!=null;
     }
-    
+
     /**
      * Apumetodi monikielisten tekstien settereille; esim.:
-     * 
+     *
      * <pre>
      * void setFoo(MonikielinenTeksti foo) {
      *     this.foo = MonikielinenTeksti.merge(this.foo, foo);
@@ -112,7 +112,7 @@ public class MonikielinenTeksti extends BaseEntity {
     	if (uus==null) {
     		return null;
     	}
-		
+
     	// retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
     	for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
 			if (!uus.tekstis.containsKey(ki.next())) {
@@ -126,7 +126,7 @@ public class MonikielinenTeksti extends BaseEntity {
 
     	return old;
     }
-    
+
     public static <T> void merge(Map<T, MonikielinenTeksti> dst, T key, MonikielinenTeksti uus) {
     	if (uus==null) {
     		dst.remove(key);
@@ -134,6 +134,6 @@ public class MonikielinenTeksti extends BaseEntity {
     		dst.put(key, merge(dst.get(key), uus));
     	}
     }
-    
+
 }
 

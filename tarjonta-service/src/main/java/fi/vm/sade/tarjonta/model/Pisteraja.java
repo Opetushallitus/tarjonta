@@ -26,16 +26,16 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "pisteraja")
-public class Pisteraja extends BaseEntity  {
+public class Pisteraja extends TarjontaBaseEntity  {
 
     private static final long serialVersionUID = 1878029033380865674L;
 
     private String valinnanPisterajaTyyppi;
-    
+
     private BigDecimal alinPistemaara;
-    
+
     private BigDecimal ylinPistemaara;
-    
+
     private BigDecimal alinHyvaksyttyPistemaara;
 
     /**
@@ -93,7 +93,7 @@ public class Pisteraja extends BaseEntity  {
     public void setAlinHyvaksyttyPistemaara(BigDecimal alinHyvaksyttyPistemaara) {
         this.alinHyvaksyttyPistemaara = alinHyvaksyttyPistemaara;
     }
-    
-    
-    
+
+
+
 }

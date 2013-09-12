@@ -20,7 +20,7 @@ import java.util.Date;
     @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
 })
 @EntityListeners(XssFilterListener.class)
-public class MonikielinenMetadata extends BaseEntity {
+public class MonikielinenMetadata extends TarjontaBaseEntity {
 
     // Make translated texts behave more like "metadata".
     // For example: "uri: Sosiaali- ja Terveysala"

@@ -17,14 +17,14 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 @Entity
 @Table(name = Kielivalikoima.TABLE_NAME)
-public class Kielivalikoima extends BaseEntity {
+public class Kielivalikoima extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 3305481184717052756L;
 
     public static final String TABLE_NAME = "kielivalikoima";
-    
+
     private String key;
-    
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_kieli", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
@@ -37,7 +37,7 @@ public class Kielivalikoima extends BaseEntity {
     public void setKey(String key) {
         this.key = key;
     }
-    
+
     /**
      * Koodisto uri
      *

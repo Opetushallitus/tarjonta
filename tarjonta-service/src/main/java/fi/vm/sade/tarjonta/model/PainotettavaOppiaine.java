@@ -30,7 +30,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "painotettavaoppiaine")
 @EntityListeners(XssFilterListener.class)
-public class PainotettavaOppiaine extends BaseEntity {
+public class PainotettavaOppiaine extends TarjontaBaseEntity {
 
     @FilterXss
     private String oppiaine;

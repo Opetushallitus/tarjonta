@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.aspects;/*
  */
 
 
+import fi.vm.sade.log.client.LoggerHelper;
 import fi.vm.sade.log.model.Tapahtuma;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.aspectj.lang.JoinPoint;
@@ -33,7 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Aspect
 public class AuditLogAspect {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AuditLogAspect.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuditLogAspect.class);
 
     @Autowired(required = true)
     private fi.vm.sade.log.client.Logger auditLogger;
@@ -52,9 +53,15 @@ public class AuditLogAspect {
     public static final String VALINTAPERUSTEKUVAUS_TYPE = "Valintaperustekuvaus/Sora-vaatimukset";
     public static final String SYSTEM = "tarjonta-service";
 
+    private void init() {
+        LoggerHelper.init(auditLogger);
+    }
+
+
     //Haku pointcuts -->
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHaku(..))")
     private Object updateHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_UPDATE);
         return result;
@@ -62,6 +69,7 @@ public class AuditLogAspect {
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHaku(..))")
     private Object insertHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_INSERT);
         return result;
@@ -69,6 +77,7 @@ public class AuditLogAspect {
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHaku(..))")
     private Object deleteHakuAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_DELETE);
         return result;
@@ -78,13 +87,18 @@ public class AuditLogAspect {
     //Hakukohde pointcuts
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaHakukohde(..))")
     private Object insertHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+        LoggerHelper.init(auditLogger);
+
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_INSERT);
+
+        LoggerHelper.log();
         return result;
     }
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaHakukohde(..))")
     private Object updateHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_UPDATE);
         return result;
@@ -92,6 +106,7 @@ public class AuditLogAspect {
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaHakukohde(..))")
     private Object deleteHakukohdeAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_DELETE);
         return result;
@@ -101,6 +116,7 @@ public class AuditLogAspect {
     //Koulutus pointcuts
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.lisaaKoulutus(..))")
     private Object insertKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_INSERT);
         return result;
@@ -108,6 +124,7 @@ public class AuditLogAspect {
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.paivitaKoulutus(..))")
     private Object updateKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_UPDATE);
         return result;
@@ -115,6 +132,7 @@ public class AuditLogAspect {
 
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.poistaKoulutus(..))")
     private Object deleteKoulutusAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_DELETE);
         return result;
@@ -124,6 +142,7 @@ public class AuditLogAspect {
     //Valintaperustekuvaus pointcut
     @Around("execution(public * fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl.tallennaMetadata(..))")
     private Object updateValintaPerusteKuvausAudit(ProceedingJoinPoint pjp) throws Throwable {
+        init();
         Object result = pjp.proceed();
         logHakuAuditAdvice(pjp, result, OPERATION_UPDATE);
         return result;
@@ -205,7 +224,19 @@ public class AuditLogAspect {
     }
 
     private void logAuditTapahtuma(Tapahtuma tapahtuma) {
-        auditLogger.log(tapahtuma);
+        // Get the (possible) composite log event that can contain "sub" events and update it.
+        Tapahtuma rootTapahtuma = LoggerHelper.getAuditRootTapahtuma();
+        rootTapahtuma.setHost(tapahtuma.getHost());
+        rootTapahtuma.setSystem(tapahtuma.getSystem());
+        rootTapahtuma.setTarget(tapahtuma.getTarget());
+        rootTapahtuma.setTargetType(tapahtuma.getTargetType());
+        rootTapahtuma.setTimestamp(tapahtuma.getTimestamp());
+        rootTapahtuma.setType(tapahtuma.getType());
+        rootTapahtuma.setUser(tapahtuma.getUser());
+        rootTapahtuma.setUserActsForUser(tapahtuma.getUserActsForUser());
+
+        // Log the root event
+        LoggerHelper.log();
     }
 
     private String getTekija() {
@@ -228,9 +259,6 @@ public class AuditLogAspect {
         }
         if (tapahtumaTyyppi == OPERATION_UPDATE) {
             t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), HAKU_TYPE, haku.getOid());
-            if (vanhaHaku != null) {
-                addChangesToLogEntry(t, vanhaHaku, haku);
-            }
         }
 
         return t;
@@ -246,9 +274,6 @@ public class AuditLogAspect {
         }
         if (tapahtumaTyyppi == OPERATION_UPDATE) {
             t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), HAKUKOHDE_TYPE, hakukohde.getOid());
-            if (vanhaHakukohde != null) {
-                addChangesToLogEntry(t, vanhaHakukohde, hakukohde);
-            }
         }
 
         return t;
@@ -293,13 +318,5 @@ public class AuditLogAspect {
         String target = meta.getKategoria() + ":" + meta.getAvain() + ":" + meta.getKieli();
         Tapahtuma t = Tapahtuma.createUPDATE(SYSTEM, getTekija(), VALINTAPERUSTEKUVAUS_TYPE, target);
         return t;
-    }
-
-    private void addChangesToLogEntry(Tapahtuma t, HakuTyyppi vanhaHaku, HakuTyyppi haku) {
-        // TODO track changes!
-    }
-
-    private void addChangesToLogEntry(Tapahtuma t, HakukohdeTyyppi vanhaHakukohde, HakukohdeTyyppi hakukohde) {
-        // TODO track changes!
     }
 }

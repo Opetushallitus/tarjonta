@@ -39,7 +39,7 @@ import fi.vm.sade.security.xssfilter.XssFilterListener;
 @Entity
 @Table(name = Yhteyshenkilo.TABLE_NAME)
 @EntityListeners(XssFilterListener.class)
-public class Yhteyshenkilo extends BaseEntity {
+public class Yhteyshenkilo extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "yhteyshenkilo";
     private static final long serialVersionUID = -1434499440678133630L;

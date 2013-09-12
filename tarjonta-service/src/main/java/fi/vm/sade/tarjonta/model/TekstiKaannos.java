@@ -36,7 +36,7 @@ import javax.persistence.UniqueConstraint;
 	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
 )
 @EntityListeners(XssFilterListener.class)
-public class TekstiKaannos extends BaseEntity {
+public class TekstiKaannos extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 8949181662473812771L;
 

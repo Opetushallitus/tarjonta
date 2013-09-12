@@ -36,14 +36,12 @@ import java.util.Set;
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })
-public class Haku extends BaseEntity {
+public class Haku extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     public static final String TABLE_NAME = "haku";
-
     public static final String HAUN_ALKAMIS_PVM = "haunAlkamisPvm";
-
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     @NotNull
