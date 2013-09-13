@@ -23,7 +23,7 @@
       <vaadin.theme.version>6.1</vaadin.theme.version>
       <koodisto.api.version>6.1</koodisto.api.version>
       <koodisto.widget.version>6.1</koodisto.widget.version>
-      <oid.api.version>6.1</oid.api.version>
+      <oid.api.version>6.0</oid.api.version>
       <log.version>6.1</log.version>
     </properties>
 
