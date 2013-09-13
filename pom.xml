@@ -4,27 +4,27 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.1</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
     <parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.1</version>
     </parent>
 
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-      <organisaatio.api.version>6.1-SNAPSHOT</organisaatio.api.version>
-      <authentication.api.version>6.1-SNAPSHOT</authentication.api.version>
-      <generic.version>6.1-SNAPSHOT</generic.version>
-      <vaadin.theme.version>6.1-SNAPSHOT</vaadin.theme.version>
-      <koodisto.api.version>6.1-SNAPSHOT</koodisto.api.version>
-      <koodisto.widget.version>6.1-SNAPSHOT</koodisto.widget.version>
-      <oid.api.version>6.1-SNAPSHOT</oid.api.version>
-      <log.version>6.1-SNAPSHOT</log.version>
+      <organisaatio.api.version>6.1</organisaatio.api.version>
+      <authentication.api.version>6.1</authentication.api.version>
+      <generic.version>6.1</generic.version>
+      <vaadin.theme.version>6.1</vaadin.theme.version>
+      <koodisto.api.version>6.1</koodisto.api.version>
+      <koodisto.widget.version>6.1</koodisto.widget.version>
+      <oid.api.version>6.1</oid.api.version>
+      <log.version>6.1</log.version>
     </properties>
 
     <modules>
