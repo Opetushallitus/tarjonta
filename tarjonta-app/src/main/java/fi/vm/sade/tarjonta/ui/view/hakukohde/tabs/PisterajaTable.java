@@ -441,6 +441,16 @@ public class PisterajaTable extends GridLayout {
             double pkYlin = Double.parseDouble(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM().replace(',', '.') : "0.0");
             double lpAlin = Double.parseDouble(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM().replace(',', '.') : "0.0");
             double lpYlin = Double.parseDouble(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM().replace(',', '.') : "0.0");
+            
+            
+            if (valintakoe.getPkAlinHyvaksyttyPM() != null && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty()) {
+                pkAlin = Double.parseDouble(valintakoe.getPkAlinHyvaksyttyPM().replace(',', '.'));
+            }
+            if (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty()) {
+                lpAlin = Double.parseDouble(valintakoe.getLpAlinHyvaksyttyPM().replace(',', '.'));
+            }
+            
+            
 
             if (valintakoe.getKpAlinHyvaksyttyPM() != null && !valintakoe.getKpAlinHyvaksyttyPM().isEmpty()) {
                 double kpAlinH = Double.parseDouble(valintakoe.getKpAlinHyvaksyttyPM().replace(',', '.'));
