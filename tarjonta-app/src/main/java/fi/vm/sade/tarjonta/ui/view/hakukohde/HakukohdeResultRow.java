@@ -118,8 +118,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
-        if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
-                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
+        /*if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
+                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {*/
+        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 

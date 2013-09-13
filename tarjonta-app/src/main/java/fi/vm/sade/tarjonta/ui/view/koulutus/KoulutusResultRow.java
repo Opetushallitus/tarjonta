@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -40,6 +43,8 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
@@ -139,15 +144,19 @@ public class KoulutusResultRow extends HorizontalLayout {
         }
     };
     OphRowMenuBar rowMenuBar;
+    private boolean commandsAdded = false;
 
     private OphRowMenuBar newMenuBar() {
-        final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
+        //final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
+        
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+        /*final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
+        
+        
         if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
@@ -164,9 +173,48 @@ public class KoulutusResultRow extends HorizontalLayout {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        }
+        }*/
 
         return rowMenuBar;
+    }
+    
+    private void addPermissionSpecificCommands() {
+        
+        final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
+        
+        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+
+        boolean hakuStarted = false;
+        HakukohteetVastaus hakukVastaus =  tarjontaPresenter.getHakukohteetForKoulutus(koulutus.getKoulutus().getKomotoOid());
+        for (HakukohdeTulos curHakuk : hakukVastaus.getHakukohdeTulos()) {
+            Date hakuAlku = curHakuk.getHakukohde().getHakuAlkamisPvm();
+            Date today = new Date();
+            if (today.after(hakuAlku)) {
+                hakuStarted = true;
+            }
+        }
+        
+        if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
+        }
+
+        rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
+
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
+        }
+
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
+        } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+        }
+        //menuLayout.requestRepaintAll();
+        rowMenuBar.requestRepaint();
+        this.getWindow().getApplication().getMainWindow().executeJavaScript("javascript:vaadin.forceSync();");
+        commandsAdded = true;
     }
 
     /**
@@ -308,12 +356,27 @@ public class KoulutusResultRow extends HorizontalLayout {
             nimiB.setSizeUndefined();
             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
 
+            HorizontalLayout hl = UiUtil.horizontalLayout();
             OphRowMenuBar menubar = newMenuBar();
-            addComponent(menubar);
+            hl.addComponent(menubar);
+            hl.addListener(new LayoutClickListener() {
+
+                private static final long serialVersionUID = -4622160054223438418L;
+
+                @Override
+                public void layoutClick(LayoutClickEvent event) {
+                    if (!commandsAdded) {
+                        addPermissionSpecificCommands();
+                    }
+                    
+                }
+                
+            });
+            addComponent(hl);
             addComponent(nimiB);
             setExpandRatio(nimiB, 1f); //default == 0
             setComponentAlignment(isSelected, Alignment.MIDDLE_LEFT);
-            setComponentAlignment(rowMenuBar, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(hl, Alignment.MIDDLE_LEFT);
             setComponentAlignment(nimiB, Alignment.TOP_LEFT);
         } else {
             Label label = new Label(text);

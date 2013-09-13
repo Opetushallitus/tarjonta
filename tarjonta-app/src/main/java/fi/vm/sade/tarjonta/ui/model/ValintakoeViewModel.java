@@ -156,13 +156,13 @@ public class ValintakoeViewModel {
         .append(valintakoeTyyppi)
         .append(sanallisetKuvaukset)
         .append(valintakoeAjat)
-        .append(pkAlinPM != null ? pkAlinPM.replace(',', '.') : pkAlinPM)
-        .append(pkYlinPM != null ? pkYlinPM.replace(',', '.') : pkYlinPM)
-        .append(pkAlinHyvaksyttyPM != null ? pkAlinHyvaksyttyPM.replace(',', '.') : pkAlinHyvaksyttyPM)
-        .append(lpAlinPM != null ? lpAlinPM.replace(',', '.') : lpAlinPM)
-        .append(lpYlinPM != null ? lpYlinPM.replace(',', '.') : lpYlinPM)
-        .append(lpAlinHyvaksyttyPM != null ? lpAlinHyvaksyttyPM.replace(',', '.') : lpAlinHyvaksyttyPM)
-        .append(kpAlinHyvaksyttyPM  != null ? kpAlinHyvaksyttyPM.replace(',', '.') : kpAlinHyvaksyttyPM)
+        .append(pkAlinPM != null ? addDouble(pkAlinPM): pkAlinPM)
+        .append(pkYlinPM != null ? addDouble(pkYlinPM) : pkYlinPM)
+        .append(pkAlinHyvaksyttyPM != null ? addDouble(pkAlinHyvaksyttyPM) : pkAlinHyvaksyttyPM)
+        .append(lpAlinPM != null ? addDouble(lpAlinPM) : lpAlinPM)
+        .append(lpYlinPM != null ? addDouble(lpYlinPM) : lpYlinPM)
+        .append(lpAlinHyvaksyttyPM != null ? addDouble(lpAlinHyvaksyttyPM) : lpAlinHyvaksyttyPM)
+        .append(kpAlinHyvaksyttyPM  != null ? addDouble(kpAlinHyvaksyttyPM) : kpAlinHyvaksyttyPM)
         .append(viimeisinPaivittaja)
         .append(viimeisinPaivitysPvm)
         .append(lisanayttoKuvaukset);
@@ -171,6 +171,14 @@ public class ValintakoeViewModel {
         builder = appendMonikielinenData(builder, lisanayttoKuvaukset);
         
         return builder.toHashCode();
+    }
+    
+    private String addDouble(String val) {
+        String replaced = val.replace(',', '.');
+        if (!replaced.contains(".")) {
+            replaced = replaced + ".0";
+        }
+        return replaced;
     }
     
     private HashCodeBuilder appendMonikielinenData(HashCodeBuilder builder, List<KielikaannosViewModel> kaannokset) {

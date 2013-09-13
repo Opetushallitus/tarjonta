@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +33,10 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
@@ -55,6 +54,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeTabImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenKuvauksetTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.Oph;
@@ -414,9 +414,13 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid, presenter.getModel().getHakukohde().getKoulutusasteTyyppi());
+        HakukohteenKuvauksetTabImpl sovapeKuvaukset = new HakukohteenKuvauksetTabImpl(presenter);
+        
         perustiedotTab = tabs.addTab(wrapperVl, T("tabNimi"));
         valintakokeetTab = tabs.addTab(valintakokeet, T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
+        tabs.addTab(sovapeKuvaukset, T("sovapeTab"));
+        
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
         
