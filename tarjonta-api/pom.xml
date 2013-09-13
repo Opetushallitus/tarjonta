@@ -1,4 +1,3 @@
-
 <!--
   ~ Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
   ~
@@ -21,7 +20,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.2-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-api</artifactId>
