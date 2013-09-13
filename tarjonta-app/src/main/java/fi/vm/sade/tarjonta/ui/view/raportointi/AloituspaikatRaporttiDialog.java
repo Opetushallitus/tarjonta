@@ -526,6 +526,9 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 OrganisaatioPerustietoWrapper selectedOrg = (OrganisaatioPerustietoWrapper)valueChangeEvent.getProperty().getValue();
+                if (selectedOrg == null) {
+                    selectedOrg = (OrganisaatioPerustietoWrapper)cbKoulutusToimijat.getValue();
+                }
                 createToimipisteComboDatasource(selectedOrg.getOrganisaatioPerustieto() != null ? selectedOrg.getOrganisaatioPerustieto().getOid() : selectedOrg.getOrganisaatioOid());
                 cbToimipiste.setEnabled(true);
             }
