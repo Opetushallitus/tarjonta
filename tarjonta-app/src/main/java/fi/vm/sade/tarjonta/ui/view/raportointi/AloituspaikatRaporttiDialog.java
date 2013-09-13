@@ -179,7 +179,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
              String parentOrg = getKoulutusParent(organisaatioPerustieto, 1);
              OrganisaatioPerustietoWrapper selectedOrg = new OrganisaatioPerustietoWrapper(organisaatioPerustieto);
 
-              OrganisaatioPerustietoWrapper parent = new OrganisaatioPerustietoWrapper(parentOrg);
+              OrganisaatioPerustietoWrapper parent = new OrganisaatioPerustietoWrapper(findOrganisaatioByOid(parentOrg));
 
               cbKoulutusToimijat.select(parent);
 
@@ -189,8 +189,8 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
               String oppilaitos = getKoulutusParent(organisaatioPerustieto, 2);
               String koulutustoimija = getKoulutusParent(organisaatioPerustieto, 1);
 
-              cbKoulutusToimijat.select(new OrganisaatioPerustietoWrapper(koulutustoimija));
-              cbOppilaitos.select(new OrganisaatioPerustietoWrapper(oppilaitos));
+              cbKoulutusToimijat.select(new OrganisaatioPerustietoWrapper(findOrganisaatioByOid(koulutustoimija)));
+              cbOppilaitos.select(new OrganisaatioPerustietoWrapper(findOrganisaatioByOid(oppilaitos)));
               cbToimipiste.select(new OrganisaatioPerustietoWrapper(organisaatioPerustieto));
 
           }
