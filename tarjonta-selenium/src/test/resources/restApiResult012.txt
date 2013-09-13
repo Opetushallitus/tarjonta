@@ -7,7 +7,6 @@
   "koulutuksenAlkamisVuosi" : 2014,
   "nimi" : {
     "kieli_sv" : "Gemensam ansökan till yrkes- och gymnasieutbildning",
-    "kieli_en" : null,
     "kieli_fi" : "Ammatillisen koulutuksen ja lukiokoulutuksen yhteishaku"
   },
   "hakuaikas" : [ {

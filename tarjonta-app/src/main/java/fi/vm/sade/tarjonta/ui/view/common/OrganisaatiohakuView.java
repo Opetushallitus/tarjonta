@@ -346,6 +346,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
             this.organisaatios = new ArrayList<OrganisaatioPerustieto>();
         }
         
+        System.out.println("Organisaatioita loytyi: " + organisaatios.size());
+        
         LOG.debug("org search done. took {}ms.", System.currentTimeMillis() - time);
         tree.setContainerDataSource(createDatasource());
     }
