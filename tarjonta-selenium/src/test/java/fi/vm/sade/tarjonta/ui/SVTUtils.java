@@ -468,6 +468,7 @@ public class SVTUtils {
 				}
                 return el;
         }
+        this.tauko(30);
         if (this.listXpathElements(driver, xpathExpression)) { return textElement(driver, text); };
         int a = 1 / 0;
         return null;
@@ -1370,6 +1371,29 @@ public class SVTUtils {
     		tauko(1);
     		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
     		menu3.click();
+    		tauko(1);
+    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+    		tauko(1);
+    	}
+    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+
+    public void menuOperaatioMenuLuonnos(WebDriver driver, WebElement menu, String operaatio)
+    {
+    	menu.click();
+    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+    	tauko(1);
+    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+    	if (! this.isPresentText(driver, htmlOperaatio))
+    	{
+    		// avataan menu uudestaan
+    		WebElement menu2 = this.getMenuNearestText(driver, "luonnos"); 
+    		menu2.click();
+    		tauko(1);
+    		WebElement menu3 = this.getMenuNearestText(driver, "luonnos"); 
+    		menu3.click();
+    		tauko(1);
     		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
     		tauko(1);

@@ -105,7 +105,7 @@ public class TestTarjontaPunainenLanka {
         doit.tauko(1);
         
         // poistetaan aikaisemmin mahdollisesti luotu hevoskoulutus
-        if (doit.PoistaKoulutus(driver, "Hevo*"))
+        if (doit.PoistaKoulutus(driver, "Hevo"))
         {
         	doit.textClick(driver, "Lihateollisuuden tutkimuskeskus");
         	doit.tauko(1);
@@ -129,27 +129,27 @@ public class TestTarjontaPunainenLanka {
         doit.tauko(1);
         doit.popupItemClick(driver, "Hevostalouden perustutkinto");
         doit.tauko(1);
-        
-        if (doit.isPresentText(driver, "Ammatillinen koulutus")
-        		|| doit.isPresentText(driver, "Maatilatalous")
-        		|| doit.isPresentText(driver, "Luonnonvara- ja ympäristöala")
-        		|| doit.isPresentText(driver, "opintoviikko")
-        		|| doit.isPresentText(driver, "120")
-        		|| doit.isPresentText(driver, "Ratsastuksenohjaaja")
-        		|| doit.isPresentText(driver, "Tutkinnon kaikille pakolliset osat")
-        		|| doit.isPresentText(driver, "Tutkinnon suorittaja työskentelee")
-        		|| doit.isPresentText(driver, "Ammatillisista perustutkinnoista sekä ammatti")
-        		)
-        {
-            Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Jotain ei toimi."
-            		, doit.textElement(driver, "Jotain ei toimi"));
-        }
-        
         doit.sendInput(driver, "Koulutusohjelma", "Hevostalouden koulutusohjelma, ratsastuksenohjaaja");
         doit.popupItemClick(driver, "Hevostalouden koulutusohjelma, ratsastuksenohjaaja");
         doit.tauko(1);
+        
+//        if (doit.isPresentText(driver, "Koulutusala")
+//        		|| doit.isPresentText(driver, "Maatilatalous")
+//        		|| doit.isPresentText(driver, "Luonnonvara- ja ympäristöala")
+////        		|| doit.isPresentText(driver, "opintoviikko")
+//        		|| doit.isPresentText(driver, "120")
+//        		|| doit.isPresentText(driver, "Ratsastuksenohjaaja")
+//        		|| doit.isPresentText(driver, "Tutkinnon kaikille pakolliset osat")
+//        		|| doit.isPresentText(driver, "ratsastuksenohjaaja vastaa ratsastuskoulun hevosten hoidosta")
+//        		|| doit.isPresentText(driver, "Ammatillisista perustutkinnoista sekä ammatti")
+//        		)
+//        {
+//            Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Jotain ei toimi."
+//            		, doit.textElement(driver, "Jotain ei toimi"));
+//        }
+        
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Koulutusaste ei toimi."
-        		, doit.textElement(driver, "Ammatillinen koulutus"));
+        		, doit.textElement(driver, "Koulutusala"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Opintoala ei toimi."
         		, doit.textElement(driver, "Maatilatalous"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Koulutusala ei toimi."
@@ -163,7 +163,7 @@ public class TestTarjontaPunainenLanka {
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Koulutuksen rakenne ei toimi."
         		, doit.textElement(driver, "Tutkinnon kaikille pakolliset osat"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Tutkinnon koulutukselliset ja ammatilliset tavoitteet ei toimi."
-        		, doit.textElement(driver, "Tutkinnon suorittaja työskentelee"));
+        		, doit.textElement(driver, "ratsastuksenohjaaja vastaa ratsastuskoulun hevosten hoidosta"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Jatko-opintomahdollisuudet ei toimi."
         		, doit.textElement(driver, "Ammatillisista perustutkinnoista sekä ammatti"));
         doit.tauko(1);
@@ -186,27 +186,35 @@ public class TestTarjontaPunainenLanka {
         doit.sendInputTiny(driver, "Sijoittuminen", "Sijoitu tyoelmaan");
         doit.sendInput(driver, "Kuvaus siitä, miten valinta koulutusohjelmiin on toteutettu.", "Hevostenvalmentaja");
         doit.popupItemClick(driver, "Hevostenvalmentaja");
+        doit.tauko(1);
         
         doit.textClickLast(driver, "Tallenna luonnoksena");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Tallenna ei toimi."
         		, doit.textElement(driver, "Tallennus onnistui"));
+        doit.tauko(1);
         
         doit.textClick(driver, "Koulutuksen perustiedot");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Koulutuksen perustiedot + LUONNOS ei toimi."
         		, doit.textElement(driver, "LUONNOS"));
+        doit.tauko(1);
         
         doit.textClick(driver, "Jatka");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Jatka ei toimi."
         		, doit.textElement(driver, "muokkaa"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 Jatka ei toimi."
         		, doit.textElement(driver, "Tallennettu"));
+        doit.tauko(1);
         
         driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(10);
+        driver.navigate().refresh();
+        doit.tauko(1);
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802 valikot ei toimi."
                 , doit.textElement(driver, "Koulutuksen alkamisvuosi"));
+        doit.tauko(1);
     	
-     // poistetaan luotu hevoskoulutus
-        doit.PoistaKoulutus(driver, "Hevo*");
+        // poistetaan luotu hevoskoulutus
+        doit.PoistaKoulutus(driver, "Hevo");
     	doit.echo("SUCCESSFUL testTC0802");
     	TarjontaTapaukset.setKattavuus("TC0802", Kattavuus.KATTAVUUSOK);
     }
@@ -334,6 +342,9 @@ public class TestTarjontaPunainenLanka {
         		, doit.textElement(driver, "Tallennettu"));
         
         driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(10);
+        driver.navigate().refresh();
+        doit.tauko(1);
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0802lukio valikot ei toimi."
                 , doit.textElement(driver, "Koulutuksen alkamisvuosi"));
     	
@@ -366,8 +377,8 @@ public class TestTarjontaPunainenLanka {
     	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastut*");
-		doit.menuOperaatioMenu(driver, menu, "Muokkaa");
+		WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastut");
+		doit.menuOperaatioMenuLuonnos(driver, menu, "Muokkaa");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0804 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
         String puhelinnumero = (System.currentTimeMillis() + "").substring(6);
@@ -433,12 +444,13 @@ public class TestTarjontaPunainenLanka {
         doit.popupItemClick(driver, "Syksy");
         doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
         doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
+        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
         doit.sendInput(driver, "Haun kohdejoukko", "Aikuiskoulutus");
         doit.popupItemClick(driver, "Aikuiskoulutus");
         doit.sendInput(driver, "Hakutapa", "Erillishaku");
         doit.popupItemClick(driver, "Erillishaku");
         doit.sendInputPlusY(driver, "Haun nimi", nimi);
-        doit.sendInputTextArea(driver, "Kuvaus", kuvaus);
+        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
         doit.sendInput(driver, "Hakuaika alkaa", "31.07.2014 15:24");
         doit.sendInput(driver, "Hakuaika päättyy", "31.08.2014 15:24");
         doit.sendInput(driver, "Haussa käytetään sijoittelua", "SELECTED");
@@ -508,7 +520,7 @@ public class TestTarjontaPunainenLanka {
 
         String millis = System.currentTimeMillis() + "";
         String kuvaus = "kuvaus " + millis;
-        doit.sendInputTextArea(driver, "Kuvaus", kuvaus);
+        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
         doit.sendInput(driver, "Hakuaika alkaa", "31.07.2014 15:24");
         doit.sendInput(driver, "Hakuaika päättyy", "31.08.2014 15:24");
 
@@ -724,6 +736,7 @@ public class TestTarjontaPunainenLanka {
                 , doit.textElement(driver, "Tallennettu"));
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0811 Jatka ei toimi."
                 , doit.textElement(driver, "muokkaa"));
+        doit.tauko(60);
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0811 Jatka ei toimi."
                 , doit.textElement(driver, ilmoitettavat));
         doit.tauko(1);
