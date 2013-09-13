@@ -242,7 +242,7 @@ public class TarjontaKomoDataTest {
         assertEquals(null, next.getJatkoOpintomahdollisuudetEnTeksti());
         assertNotNull("JatkoOpintomahdollisuudetFiTeksti", next.getJatkoOpintomahdollisuudetFiTeksti());
         assertNotNull("JatkoOpintomahdollisuudetSvTeksti", next.getJatkoOpintomahdollisuudetSvTeksti());
-        assertEquals("NULL", next.getKoulutuksellisetJaAmmatillisetTavoitteetEnTeksti());
+        assertEquals(null, next.getKoulutuksellisetJaAmmatillisetTavoitteetEnTeksti());
         assertNotNull("KoulutuksellisetJaAmmatillisetTavoitteetFiTeksti", next.getKoulutuksellisetJaAmmatillisetTavoitteetFiTeksti());
         assertNotNull("KoulutuksellisetJaAmmatillisetTavoitteetSvTeksti", next.getKoulutuksellisetJaAmmatillisetTavoitteetSvTeksti());
         assertEquals(null, next.getKoulutuksenRakenneEnTeksti());
