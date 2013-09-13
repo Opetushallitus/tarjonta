@@ -2468,12 +2468,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
+       
+        HakukohteetVastaus vastaus = getHakukohteetForKoulutus(koulutus.getKoulutus().getKomotoOid());
+        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+    }
+    
+    public HakukohteetVastaus getHakukohteetForKoulutus(String komotoOid) {
         HakukohteetKysely kysely = new HakukohteetKysely();
-        kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
+        kysely.getKoulutusOids().add(komotoOid);
         kysely.setKoulutuksenAlkamisvuosi(-1);
 
         HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
-        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+        return vastaus;
     }
 
     /**

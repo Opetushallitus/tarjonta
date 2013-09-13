@@ -138,6 +138,22 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
         return result;
     }
+    
+    /**
+     * Checks if user can update koulutus.
+     *
+     * @return
+     */
+    public boolean userCanUpdateKoulutus(final OrganisaatioContext context, boolean hakuStarted) {
+        boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+        
+        if (!result) {
+            result = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
+        }
+        
+        LOGGER.debug("userCanUpdateKoulutus({}):{}", context, result);
+        return result;
+    }
 
     /**
      * Checks if user can update koulutus.
