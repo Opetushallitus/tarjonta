@@ -4,7 +4,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>6.1</version>
+    <version>6.1.1</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
@@ -25,6 +25,9 @@
       <koodisto.widget.version>6.1</koodisto.widget.version>
       <oid.api.version>6.0</oid.api.version>
       <log.version>6.1</log.version>
+	  
+	  <!-- Our generic components -->
+	  <sade-generic.version>6.1</sade-generic.version>
     </properties>
 
     <modules>
