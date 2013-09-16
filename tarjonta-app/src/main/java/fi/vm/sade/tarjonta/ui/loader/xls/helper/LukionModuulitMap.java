@@ -45,12 +45,19 @@ public class LukionModuulitMap extends KoulutuskoodiMap< KuvausDTO> {
             final String koulutuksellisetTeksti = row.getKoulutuksellisetTeksti();
             final String koulutuksenRakenneTeksti = row.getKoulutuksenRakenneTeksti();
 
-            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(jatkoOpintomahdollisuudetTeksti, null, null));
-            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(koulutuksenRakenneTeksti, null, null));
-            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(koulutuksellisetTeksti, null, null));
+            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(jatkoOpintomahdollisuudetTeksti), null, null));
+            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksenRakenneTeksti), null, null));
+            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksellisetTeksti), null, null));
 
             this.put(koodiarvo, kuvausDTO);
             rowIndex++;
         }
+    }
+    
+    private String nullToEmptyStr(final String s) {
+        if (s == null) {
+            return "";
+        }
+        return s;
     }
 }
