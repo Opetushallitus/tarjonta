@@ -71,7 +71,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //  TC0802	Luo koulutus (ammatillinen koulutus)
-    @test
+    @Test
     public void testTC0802() throws Exception {
     	try {
     		testTC0802loop();
@@ -220,7 +220,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //  TC0802lukio	Luo koulutus (lukio koulutus)
-    @test
+    @Test
     public void testTC0802lukio() throws Exception {
     	try {
     		testTC0802lukioloop();
@@ -355,7 +355,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //TC0804	Muokkaa koulutusta
-    @test
+    @Test
     public void testTC0804() throws Exception {
     	try {
     		testTC0804loop();
@@ -494,7 +494,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0808	Muokkaa hakua
-    @test
+    @Test
     public void testTC0808() throws Exception {
     	try {
     		testTC0808loop();
@@ -542,7 +542,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0816	Luo yhteiset valintaperustekuvaukset
-    @test
+    @Test
     public void testTC0816() throws Exception {
     	try {
     		testTC0816loop();
@@ -588,7 +588,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0817	Muokkaa valintaperustekuvauksia
-    @test
+    @Test
     public void testTC0817() throws Exception {
     	try {
     		testTC0817loop();
@@ -626,7 +626,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0811	Luo hakukohde
-    @test
+    @Test
     public void testTC0811() throws Exception {
     	try {
     		testTC0811loop();
@@ -770,7 +770,7 @@ public class TestTarjontaPunainenLanka {
     }
     
     //  TC0812	Muokkaa hakukohdetta 
-    @test
+    @Test
     public void testTC0812() throws Exception {
     	try {
     		testTC0812loop();
@@ -868,7 +868,7 @@ public class TestTarjontaPunainenLanka {
     	TarjontaTapaukset.setKattavuus("TC0812", Kattavuus.KATTAVUUSOK);
     }
 
-    @test
+    @Test
     public void testReport() throws Exception {
         SVTUtils doit = new SVTUtils();
         doit.alustaVaatimukset(TarjontaPunainenLankaVaatimukset);
