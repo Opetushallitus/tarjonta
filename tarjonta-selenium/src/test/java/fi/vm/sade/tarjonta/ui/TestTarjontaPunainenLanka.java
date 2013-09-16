@@ -71,7 +71,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //  TC0802	Luo koulutus (ammatillinen koulutus)
-    //@test TODO keep this
+    @test
     public void testTC0802() throws Exception {
     	try {
     		testTC0802loop();
@@ -220,7 +220,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //  TC0802lukio	Luo koulutus (lukio koulutus)
-    //@test TODO keep this
+    @test
     public void testTC0802lukio() throws Exception {
     	try {
     		testTC0802lukioloop();
@@ -355,7 +355,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //TC0804	Muokkaa koulutusta
-    //@test TODO keep this
+    @test
     public void testTC0804() throws Exception {
     	try {
     		testTC0804loop();
@@ -458,9 +458,6 @@ public class TestTarjontaPunainenLanka {
         doit.sendInput(driver, "Haussa käytetään sijoittelua", "SELECTED");
 
         doit.textClick(driver, "Tallenna luonnoksena");
-        doit.tauko(10);
-        doit.sendPageToFile(driver);
-        doit.screenShot("tallennus_feilaa", driver);
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Tallenna luonnoksena ei toimi."
                 , doit.textElement(driver, "Tallennus onnistui"));
         doit.tauko(1);
@@ -497,7 +494,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0808	Muokkaa hakua
-    //@test TODO keep this
+    @test
     public void testTC0808() throws Exception {
     	try {
     		testTC0808loop();
@@ -545,7 +542,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0816	Luo yhteiset valintaperustekuvaukset
-    //@test TODO keep this
+    @test
     public void testTC0816() throws Exception {
     	try {
     		testTC0816loop();
@@ -591,7 +588,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0817	Muokkaa valintaperustekuvauksia
-    //@test TODO keep this
+    @test
     public void testTC0817() throws Exception {
     	try {
     		testTC0817loop();
@@ -629,7 +626,7 @@ public class TestTarjontaPunainenLanka {
     }
 
     //    TC0811	Luo hakukohde
-    //@test TODO keep this
+    @test
     public void testTC0811() throws Exception {
     	try {
     		testTC0811loop();
@@ -773,7 +770,7 @@ public class TestTarjontaPunainenLanka {
     }
     
     //  TC0812	Muokkaa hakukohdetta 
-    //@test TODO keep this
+    @test
     public void testTC0812() throws Exception {
     	try {
     		testTC0812loop();
@@ -871,7 +868,7 @@ public class TestTarjontaPunainenLanka {
     	TarjontaTapaukset.setKattavuus("TC0812", Kattavuus.KATTAVUUSOK);
     }
 
-    //@test TODO keep this
+    @test
     public void testReport() throws Exception {
         SVTUtils doit = new SVTUtils();
         doit.alustaVaatimukset(TarjontaPunainenLankaVaatimukset);
