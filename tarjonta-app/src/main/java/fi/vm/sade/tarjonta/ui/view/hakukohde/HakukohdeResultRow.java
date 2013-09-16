@@ -106,20 +106,27 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         }
     };
-    OphRowMenuBar rowMenuBar;
+    private OphRowMenuBar rowMenuBar;
 
     private OphRowMenuBar newMenuBar() {
+        rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
+        reinitMenubar();
+        return rowMenuBar;
+    }
+
+    void reinitMenubar() {
         final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
-        rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
-
+        //rowMenuBar.removeItems();
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
+        rowMenuBar.clear();
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
-        if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
-                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
+        /*if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
+                || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {*/
+        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
@@ -136,8 +143,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
         	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
-
-        return rowMenuBar;
     }
 
     /**
@@ -154,12 +159,17 @@ public class HakukohdeResultRow extends HorizontalLayout {
             tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
             tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid, null, null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
+            //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {
             tarjontaPresenter.showKoulutuksetForHakukohde(hakukohde);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
+            //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
             tarjontaPresenter.changeStateToPublished(hakukohdeOid, HAKUKOHDE);
+            tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getHakukohde().getOid()));
+
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
+            //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
             showPeruutaDialog();
         }
     }
@@ -176,6 +186,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
                 tarjontaPresenter.changeStateToCancelled(hakukohde.getHakukohde().getOid(), HAKUKOHDE);
+                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getHakukohde().getOid()));
+
             }
 
         },
@@ -201,6 +213,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
                 tarjontaPresenter.removeHakukohde(hakukohde);
+                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.delete(hakukohde.getHakukohde().getOid()));
             }
         },
                 new Button.ClickListener() {
@@ -300,14 +313,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
         return isSelected;
     }
 
-    /**
-     * The hakukohde the data of which is showed on this row.
-     *
-     * @return
-     */
-    public HakukohdeTulos getHakukohde() {
-        return hakukohde;
-    }
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);

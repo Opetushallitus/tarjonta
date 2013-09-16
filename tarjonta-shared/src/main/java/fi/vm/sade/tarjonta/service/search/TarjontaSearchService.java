@@ -186,6 +186,11 @@ public class TarjontaSearchService {
         // restrict by org
         addFilterForOrgs(oids, queryParts, q);
 
+        // restrict by hakukohdeoid
+        if(kysely.getHakukohdeOid()!=null) {
+            q.addFilterQuery(String.format("%s:%s", Hakukohde.OID, kysely.getHakukohdeOid()));
+        }
+
         addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
         q.setRows(Integer.MAX_VALUE);
@@ -247,51 +252,7 @@ public class TarjontaSearchService {
 
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 
-        String nimi = kysely.getNimi();
-        final String kausi = kysely.getKoulutuksenAlkamiskausi();
-        final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
-
-        final String koulutuksenTila = kysely.getKoulutuksenTila() != null ? kysely.getKoulutuksenTila().value() : null;
-        final List<String> tarjoajaOids = kysely.getTarjoajaOids();
-        final List<String> koulutusOids = kysely.getKoulutusOids();
-        final List<String> hakukohdeOids = kysely.getHakukohdeOids();
-
-        final SolrQuery q = new SolrQuery(QUERY_ALL);
-        final List<String> queryParts = Lists.newArrayList();
-
-        // nimihaku
-        if (nimi != null && nimi.length() > 0) {
-            nimi = escape(nimi);
-            addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE, Koulutus.TEKSTIHAKU,
-                    nimi);
-            q.addFilterQuery(Joiner.on(" ").join(queryParts));
-            queryParts.clear();
-        }
-
-        if (koulutuksenTila != null) {
-            q.addFilterQuery(String.format("%s:%s", Koulutus.TILA_EN, koulutuksenTila));
-        }
-
-        if (kysely.getKoulutusKoodi() != null) {
-            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSKOODI_URI, kysely.getKoulutusKoodi()));
-        }
-
-        // vuosi & kausi
-        addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
-
-        // restrict by org
-        addFilterForOrgs(tarjoajaOids, queryParts, q);
-
-
-        //restrict with hakukohde oids
-        if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
-            addFilterForHakukohdes(hakukohdeOids, queryParts, q);
-        }
-
-        //restrict by koulutus
-        if (koulutusOids.size() > 0) {
-            addFilterForKOulutus(koulutusOids, q);
-        }
+        final SolrQuery q = createKoulutusQuery(kysely);
         
 
         try {
@@ -324,6 +285,60 @@ public class TarjontaSearchService {
             throw new RuntimeException("haku.error", e);
         }
         return response;
+    }
+
+    private SolrQuery createKoulutusQuery(final KoulutuksetKysely kysely) {
+        String nimi = kysely.getNimi();
+        final String kausi = kysely.getKoulutuksenAlkamiskausi();
+        final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
+
+        final String koulutuksenTila = kysely.getKoulutuksenTila() != null ? kysely.getKoulutuksenTila().value() : null;
+        final List<String> tarjoajaOids = kysely.getTarjoajaOids();
+        final List<String> koulutusOids = kysely.getKoulutusOids();
+        final List<String> hakukohdeOids = kysely.getHakukohdeOids();
+
+        final SolrQuery q = new SolrQuery(QUERY_ALL);
+        final List<String> queryParts = Lists.newArrayList();
+
+        // nimihaku
+        if (nimi != null && nimi.length() > 0) {
+            nimi = escape(nimi);
+            addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE, Koulutus.TEKSTIHAKU,
+                    nimi);
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+            queryParts.clear();
+        }
+
+        if (koulutuksenTila != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.TILA_EN, koulutuksenTila));
+        }
+
+        if (kysely.getKoulutusKoodi() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSKOODI_URI, kysely.getKoulutusKoodi()));
+        }
+
+        //koulutuksen oid
+        if (kysely.getKoulutusOid() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.OID, kysely.getKoulutusOid()));
+        }
+
+        // vuosi & kausi
+        addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
+
+        // restrict by org
+        addFilterForOrgs(tarjoajaOids, queryParts, q);
+
+
+        //restrict with hakukohde oids
+        if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
+            addFilterForHakukohdes(hakukohdeOids, queryParts, q);
+        }
+
+        //restrict by koulutus
+        if (koulutusOids.size() > 0) {
+            addFilterForKOulutus(koulutusOids, q);
+        }
+        return q;
     }
 
     private void addFilterForKOulutus(List<String> tarjoajaOids, SolrQuery q) {

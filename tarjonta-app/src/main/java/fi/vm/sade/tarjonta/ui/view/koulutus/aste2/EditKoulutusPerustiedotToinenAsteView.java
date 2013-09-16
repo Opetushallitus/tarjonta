@@ -75,7 +75,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
         presenter.saveKoulutus(tila, KoulutusActiveTab.PERUSTIEDOT);
-        presenter.getReloadKoulutusListData();
         return model.getOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {

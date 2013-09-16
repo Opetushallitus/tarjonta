@@ -59,7 +59,7 @@ import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
-import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -412,7 +412,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
         this.setHakuViewModel(haku);
 
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
+        ShowHakuView showHaku = new ShowHakuView(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 null);
         showHaku.addListener(new com.vaadin.ui.Component.Listener() {
@@ -420,10 +420,10 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
             @Override
             public void componentEvent(com.vaadin.ui.Component.Event event) {
-                if (event instanceof ShowHakuViewImpl.BackEvent) {
+                if (event instanceof ShowHakuView.BackEvent) {
                     getRootView().showMainDefaultView();
                     refreshHakulist();
-                } else if (event instanceof ShowHakuViewImpl.EditEvent) {
+                } else if (event instanceof ShowHakuView.EditEvent) {
                     showHakuEdit(null);
                 }
             }

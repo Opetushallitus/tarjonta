@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Jani Wilén
  */
-public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHakuFormImpl> {
+public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHakuForm> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -46,7 +46,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
 	private static final Logger LOG = LoggerFactory.getLogger(EditHakuView.class);
 	
     private HakuViewModel model;
-    private EditHakuFormImpl formView;
+    private EditHakuForm formView;
     @Autowired(required = true)
     private HakuPresenter presenter;
 
@@ -66,7 +66,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
          *  FORM LAYOUT (form components under navigation buttons)
          */
         model = presenter.getHakuModel();
-        formView = new EditHakuFormImpl();
+        formView = new EditHakuForm();
         setTilaNestedProperty("hakuDto.haunTila");
 
         buildFormLayout("HaunTiedot", presenter, layout, model, formView);

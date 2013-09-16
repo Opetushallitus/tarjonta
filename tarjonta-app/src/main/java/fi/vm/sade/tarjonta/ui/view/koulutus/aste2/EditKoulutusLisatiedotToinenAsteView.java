@@ -81,7 +81,6 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         presenter.saveKoulutus(tila, KoulutusActiveTab.LISATIEDOT);
-        presenter.getReloadKoulutusListData();
         return presenter.getModel().getKoulutusPerustiedotModel().getOid();
     }
 

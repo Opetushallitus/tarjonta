@@ -35,7 +35,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.TarjontaStyles;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
-import static fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl.COLUMN_A;
+import static fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView.COLUMN_A;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;

@@ -36,6 +36,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.UserService;
@@ -154,8 +156,9 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
@@ -207,7 +210,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
-    private ShowHakukohdeViewImpl hakukohdeView;
+    private ShowHakukohdeView hakukohdeView;
     private ShowKoulutusView showKoulutusView;
     private EditKoulutusView editKoulutusView;
     private SearchResultsView searchResultsView;
@@ -221,10 +224,39 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private TarjontaKorkeakouluPresenter korkeakouluPresenter;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
+
+    private final EventBus eventBus;
+    
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
     public TarjontaPresenter() {
+        eventBus = new EventBus("TARJONTA");
+        registerEventListener(this);
+    }
+
+    /**
+     * Rekisteröi uusi event listeneri.
+     */
+    public void registerEventListener(Object o) {
+        LOG.debug("registering new listener:" + o.getClass());
+        eventBus.register(o);        
+    }
+
+    /**
+     * Poista listenerin rekisteröinti.
+     */
+    public void unregisterEventListener(Object o) {
+        LOG.debug("inregistering listener:" + o.getClass());
+        eventBus.unregister(o);        
+    }
+    
+    /**
+     * Lähetä eventti.
+     */
+    public void sendEvent(Object o) {
+        LOG.info("sending event:" + o.getClass());
+        eventBus.post(o);
     }
 
     public void saveHakuKohde(SaveButtonState tila) {
@@ -746,7 +778,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 hakukohde.setHakukohdeKoodistoNimi(resolveHakukohdeKoodistonimiFields());
                 hakukohde.setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
 
-                hakukohdeView = new ShowHakukohdeViewImpl(hakukohde.getHakukohdeKoodistoNimi(), null, null);
+                hakukohdeView = new ShowHakukohdeView(hakukohde.getHakukohdeKoodistoNimi(), null, null);
                 getRootView().changeView(hakukohdeView);
             }
         }
@@ -1322,10 +1354,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
-    public void doSearch() {
-        LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
-    }
-
     public ListHakukohdeView getHakukohdeListView() {
         return _hakukohdeListView;
     }
@@ -1441,6 +1469,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.hakukohteet", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedhakukohteet().clear();
 
+        //TODO korvaa reload
         getHakukohdeListView().reload();
 
         getRootView().getSearchResultsView().getHakukohdeList().getWindow().showNotification(I18N.getMessage("notification.deleted.hakukohteet.title"),
@@ -1454,7 +1483,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         hakukohde.setOid(curHakukohde.getHakukohde().getOid());
         try {
             getTarjontaAdminService().poistaHakukohde(hakukohde);
-            getHakukohdeListView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
         } catch (Exception exp) {
             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
@@ -1497,6 +1525,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
                         && getPermission().userCanDeleteKoulutus(context)) {
                     getTarjontaAdminService().poistaKoulutus(curKoulutus.getKoulutus().getKoulutusmoduuliToteutus());
+                    sendEvent(KoulutusContainerEvent.delete(curKoulutus.getKoulutus().getKomotoOid()));
                     ++removalLaskuri;
                 } else {
                     errorNotes += I18N.getMessage("notification.error.koulutus.notRemovable", uiHelper.getKoodiNimi(koulutusNimiUri)) + "<br/>";
@@ -1513,9 +1542,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.koulutukset", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedKoulutukset().clear();
-
-        // Force UI update.
-        getReloadKoulutusListData();
 
         getRootView().getListKoulutusView().getWindow().showNotification(I18N.getMessage("notification.deleted.koulutukset.title"),
                 notificationMessage,
@@ -1545,9 +1571,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             getTarjontaAdminService().paivitaKoulutus(paivita);
             oid = paivita.getOid();
+            sendEvent(KoulutusContainerEvent.update(oid));
         } else {
             for (OrganisationOidNamePair pair : getTarjoaja().getOrganisationOidNamePairs()) {
                 oid = persistKoulutus(koulutusModel, pair, tila);
+                sendEvent(KoulutusContainerEvent.create(oid));
             }
         }
 
@@ -1750,7 +1778,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         boolean removeSuccess = false;
         try {
             getTarjontaAdminService().poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-            getRootView().getListKoulutusView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
             removeSuccess = true;
         } catch (Exception ex) {
@@ -2176,7 +2203,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * koulutus objects in the list.
      */
     public void toggleCreateHakukohde() {
-        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(this.getNavigationOrganisation().getOrganisationOid(), !this._model.getSelectedKoulutukset().isEmpty());
+        String organisaatioOid = null;
+        if(_model.getSelectedKoulutukset().size()>0) {
+            organisaatioOid = _model.getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid();
+        }
+        
+        if(organisaatioOid==null) {
+            organisaatioOid = getNavigationOrganisation().getOrganisationOid();
+        }
+        
+        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(organisaatioOid, !this._model.getSelectedKoulutukset().isEmpty());
     }
 
     public void setSearchResultsView(SearchResultsView searchResultsView) {
@@ -2242,12 +2278,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         publish(oid, TarjontaTila.JULKAISTU, sisalto);
     }
 
+    /**
+     * Palauttaa true jos tilamuutos meni ok.
+     * @param oid
+     * @param toState
+     * @param sisalto
+     * @return
+     */
     private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
         if (publishingService.changeState(oid, toState, sisalto)) {
             showNotification(UserNotification.GENERIC_SUCCESS);
-
-            //reload result data in tables.
-            reloadMainView();
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
@@ -2468,12 +2508,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
+       
+        HakukohteetVastaus vastaus = getHakukohteetForKoulutus(koulutus.getKoulutus().getKomotoOid());
+        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+    }
+    
+    public HakukohteetVastaus getHakukohteetForKoulutus(String komotoOid) {
         HakukohteetKysely kysely = new HakukohteetKysely();
-        kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
+        kysely.getKoulutusOids().add(komotoOid);
         kysely.setKoulutuksenAlkamisvuosi(-1);
 
         HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
-        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+        return vastaus;
     }
 
     /**
@@ -2508,4 +2554,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             return strTwo;
         }
     }
+    
+    @Subscribe
+    public void listen(com.google.common.eventbus.DeadEvent event) {
+        LOG.warn("got event of type" + event.getEvent().getClass() + ", send by " + event.getSource().getClass() + " that was not received by anyone. Isn't that strange?");
+    }
+    
+    public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid){
+        return tarjontaSearchService.haeHakukohteet(HakukohteetKysely.byHakukohdeOid(oid));
+    }
+
+    public KoulutuksetVastaus findKoulutusByKoulutusOid(final String oid){
+        return tarjontaSearchService.haeKoulutukset(KoulutuksetKysely.byKoulutusOid(oid));
+    }
+
 }

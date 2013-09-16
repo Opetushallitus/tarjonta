@@ -87,6 +87,12 @@ public class HakuResultRow extends HorizontalLayout {
 
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
+        reinitMenubar();
+
+        return rowMenuBar;
+    }
+
+    private void reinitMenubar() {
         final TarjontaTila tila = TarjontaTila.valueOf(haku.getHakuDto().getHaunTila());
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
@@ -106,8 +112,6 @@ public class HakuResultRow extends HorizontalLayout {
         } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
-
-        return rowMenuBar;
     }
 
     private void menuItemClicked(String selection) {
