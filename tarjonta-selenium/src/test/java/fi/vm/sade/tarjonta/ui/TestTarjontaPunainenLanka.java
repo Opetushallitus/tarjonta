@@ -440,6 +440,8 @@ public class TestTarjontaPunainenLanka {
         doit.sendInput(driver, "Hakukausi ja -vuosi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
         doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
         doit.sendInput(driver, "Koulutuksen alkamiskausi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
         doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
