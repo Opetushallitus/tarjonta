@@ -21,7 +21,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.CacheUpdateException;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.ui.component.OphTokenField;
@@ -101,7 +100,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		@Override
 		protected boolean onNewTokenSeleted(Object tokenSelected) {
 			if (tokenSelected!=null) {
-				valitutMuutKielet.add(getKieliKoodi(tokenSelected));
+				valitutMuutKielet.add((String)tokenSelected);
 				return true;
 			} else {
 				return false;
@@ -109,7 +108,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		};
 		@Override
 		protected boolean onTokenDelete(Object selectedToken) {
-			valitutMuutKielet.remove(getKieliKoodi(selectedToken));
+			valitutMuutKielet.remove(selectedToken);
 			return true;
 		};
 	};
@@ -176,7 +175,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	}
 	
 	private String getKieliKoodi(Object token) {
-		return "kieli_"+String.valueOf(token);
+		// TODO purkkaratkaisu, tee parempi (eli mistä token -> kielikoodi-muunnos)
+		return "kieli_"+String.valueOf(token).toLowerCase()+"#1";
 	}
 
 	@Override
@@ -211,13 +211,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			}
 		});
 
-		try {
-			layout.addComponent(table);
-		} catch (CacheUpdateException e) {
-			for (Throwable t : e.getCauses()) {
-				t.printStackTrace(System.err);
-			}
-		}
+		layout.addComponent(table);
 		
 		VerticalLayout muut = new VerticalLayout();
 		muut.setWidth("100%");
@@ -225,22 +219,36 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		
 		tuoMuutKielet.setCaption(super.T("tuoMuutKuvaukset"));
 		muut.addComponent(tuoMuutKielet);
-		
 		HorizontalLayout muut2 = new HorizontalLayout();
 		muut.addComponent(muut2);
 		muut2.setWidth("100%");
 		muut2.setMargin(false, false, false, true);
 
-		GridLayout langSels = new GridLayout(3,1);
+		final GridLayout langSels = new GridLayout(3,1);
 		langList.setSelectionComponent(langChooser);
 		langList.setSelectionLayout(langSels);
 		langList.setFormatter(new SelectedTokenToTextFormatter() {
 			@Override
 			public String formatToken(Object selectedToken) {
-				//System.out.println("Selected: "+selectedToken+" // "+(selectedToken==null ? null : selectedToken.getClass()));
-				return presenter.getUiHelper().getKoodiNimi(getKieliKoodi(selectedToken).toLowerCase());
+				return presenter.getUiHelper().getKoodiNimi(getKieliKoodi(selectedToken));
 			}
 		});
+
+		tuoMuutKielet.addListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (!tuoMuutKielet.booleanValue()) {
+					langSels.removeAllComponents();
+					for (String s : valitutMuutKielet) {
+						langList.removeToken(s);
+					}
+					valitutMuutKielet.clear();
+				}
+
+			}
+		});
+		
 
 		Panel langPanel = new Panel();
 		langPanel.addComponent(langSels);
@@ -292,7 +300,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 				
 				// opetuskielet
 				langs.addAll(presenter.getModel().getHakukohde().getOpetusKielet());
-				
+	
 				// muut valitut kielet
 				if (tuoMuutKielet.booleanValue()) {
 					langs.addAll(valitutMuutKielet);
