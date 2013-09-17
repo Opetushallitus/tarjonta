@@ -110,7 +110,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
-
+        rowMenuBar.clear();
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
