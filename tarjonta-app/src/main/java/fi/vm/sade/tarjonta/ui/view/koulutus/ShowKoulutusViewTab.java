@@ -71,6 +71,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     private final OrganisaatioContext context;
 //    private final LueKoulutusVastausTyyppi koulutus;
     private final String datePattern = "dd.MM.yyyy HH:mm";
+    boolean hakuStarted = false;
 
     /**
      *
@@ -114,6 +115,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     }
 
     private void build(final VerticalLayout parent) {
+        hakuStarted = presenter.isHakuStartedForKoulutus(presenter.getModel().getKoulutusPerustiedotModel().getOid());
         FormGridBuilder layout = new FormGridBuilder();
         layout.setWidth("100%");
         parent.addComponent(layout);
@@ -122,6 +124,10 @@ public class ShowKoulutusViewTab extends CustomComponent {
         insertKoulutuksenKuvailevatTiedot(layout);
         insertLayoutSplit(layout);
         insertKoulutuksenHakukohteet(layout);
+    }
+    
+    private void checkHakustarted() {
+        
     }
 
     private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean buttonVisible, boolean showTime) {
@@ -248,7 +254,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
                 presenter.showKoulutustEditView(getEditViewOid(),
                         KoulutusActiveTab.LISATIEDOT);
             }
-        }, presenter.getPermission().userCanUpdateKoulutus(context), false));
+        }, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted), false));
 
         final KoulutusLisatietoModel lisatietoForLang = lisatiedotModel
                 .getLisatiedot().get(language);
@@ -308,7 +314,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
                 presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
                 presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        }, lastUpdDateLbl, presenter.getPermission().userCanUpdateKoulutus(context)));
+        }, lastUpdDateLbl, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)));
 
         final KoulutuskoodiModel koodiModel = model.getKoulutuskoodiModel();
         final KoodiModel koulutusala = koodiModel.getKoulutusala();

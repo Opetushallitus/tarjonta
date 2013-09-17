@@ -30,6 +30,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
@@ -40,6 +41,7 @@ import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.List;
@@ -83,12 +85,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
-        Date today = new Date();
-        if (hakukohde != null
-                && hakukohde.getHakukohde().getHakuAlkamisPvm() != null
-                && hakukohde.getHakukohde().getHakuAlkamisPvm().before(today)) {
-            hakuStarted = true;
-        }
+        
 
         this.hakukohdeNimi = hakukohdeNimi;
     }
@@ -126,13 +123,13 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
 
-        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
         
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
         	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
@@ -230,6 +227,17 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * @return
      */
     public HakukohdeResultRow format(String text, boolean withMenuBar) {
+        
+        Date today = new Date();
+        //Haku has started if the start date of the haku is is in the past and if the haku is not a lisahaku
+        if  ((hakukohde != null
+                    && hakukohde.getHakukohde() != null
+                    && hakukohde.getHakukohde().getHakuAlkamisPvm() != null
+                    && hakukohde.getHakukohde().getHakuAlkamisPvm().before(today))
+                    && !KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde.getHakukohde().getHakutyyppiUri())) {
+            hakuStarted = true;
+        }
+        
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {

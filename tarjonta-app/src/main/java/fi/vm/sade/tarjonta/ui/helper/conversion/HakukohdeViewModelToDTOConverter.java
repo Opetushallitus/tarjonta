@@ -179,7 +179,9 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
 
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
+        haku.setHakutyyppi(hakukohdeTyyppi.getHakukohteenHakutyyppiUri());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
+        //hakukohdeTyyppi.getHa
 
         if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
             hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));

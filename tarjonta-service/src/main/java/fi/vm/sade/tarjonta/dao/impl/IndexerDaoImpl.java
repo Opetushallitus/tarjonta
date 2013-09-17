@@ -57,7 +57,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .list(
                         new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.koulutuksenAlkamiskausiUri, haku.koulutuksenAlkamisVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, haku.oid));
+                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .singleResult(
                         new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.koulutuksenAlkamiskausiUri, haku.koulutuksenAlkamisVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, haku.oid)); 
+                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri)); 
     }
 
     @Override

@@ -211,7 +211,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             } catch (Exception exp) {
                 exp.printStackTrace();
                 log.error("Error querying listHaku : " + exp.toString());
-                System.out.println("ERROR : "  +exp.toString());
             }
             if (parameters.getHakuSana() != null && parameters.getHakuSana().trim().length() > 0)  {
                List<Haku> filteredHakus = filterByHakusana(parameters.getHakuSana(),parameters.getHakuSanaKielikoodi(),hakus);
