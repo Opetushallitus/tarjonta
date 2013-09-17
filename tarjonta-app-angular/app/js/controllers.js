@@ -5,12 +5,12 @@
 var app = angular.module('tarjontaApp.controllers', []);
 
 app.controller('MyCtrl1', [function() {
-        console.log("MyCtrl1");
+        console.log("MyCtrl1()");
     }]);
 
 app.controller('MyCtrl2', ['$scope', 'instagram', function($scope, instagram) {
 
-        console.log("MyCtrl2");
+        console.log("MyCtrl2()");
 
         $scope.page = 0;
         $scope.pageSize = 4;
