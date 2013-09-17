@@ -770,19 +770,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      * Checking if the haku is acceptable for hakukohde
      */
     private boolean accepts(HakuViewModel hm) {
-        
         //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(hm);
         }
-        
         //If it is lisahaku it is ok for hakukohde if the haku has not ended
         if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
-                && (hm.getPaattymisPvm() != null || hm.getPaattymisPvm().after(new Date()))) {
+                && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
             return true;
         }
         //If haku has not started it is ok for hakukohde
-    	if (hm.getAlkamisPvm() != null && hm.getAlkamisPvm().before(new Date())) {
+    	if (hm.getAlkamisPvm() != null && !hm.getAlkamisPvm().before(new Date())) {
     		return true;
     	}
     	
