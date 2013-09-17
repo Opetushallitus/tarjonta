@@ -72,6 +72,16 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanCancelKoulutusPublish(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
+    
+    /**
+     * Checks if user can cancel koulutus publishment. Takes into account hakuaika.
+     *
+     * @param org
+     * @return
+     */
+    public boolean userCanCancelKoulutusPublish(final OrganisaatioContext context, boolean hakuStarted) {
+       return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD);
+    }
 
     public boolean userCanCreateHakukohde(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
@@ -91,6 +101,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
 
+    public boolean userCanDeleteHakukohde(final OrganisaatioContext context, boolean hakuStarted) {
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD);
+    }
+
     /**
      * Checks if user can delete koulutus.
      *
@@ -98,6 +112,15 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      */
     public boolean userCanDeleteKoulutus(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
+    }
+    
+    /**
+     * Checks if user can delete koulutus, takes into account hakuaika.
+     *
+     * @return
+     */
+    public boolean userCanDeleteKoulutus(final OrganisaatioContext context, boolean hakuStarted) {
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD);
     }
 
     /**
@@ -109,6 +132,17 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanPublishKoulutus(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
+    
+    /**
+     * Checks if user can publish koulutus.
+     *
+     * @param org
+     * @return
+     */
+    public boolean userCanPublishKoulutus(final OrganisaatioContext context, boolean hakuStarted) {
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD);
+    }
+
 
     /**
      * Checks if user can update hakukohde.
@@ -129,30 +163,16 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context, final boolean hakuStarted) {
-        boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU) && !hakuStarted;
-
-        //OPH user can edit even if haku has started
-        if (!result) {
-            result = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
-        }
-        LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
-        return result;
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
     }
     
     /**
-     * Checks if user can update koulutus.
+     * Checks if user can update koulutus, takes into account hakuStarted.
      *
      * @return
      */
     public boolean userCanUpdateKoulutus(final OrganisaatioContext context, boolean hakuStarted) {
-        boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
-        
-        if (!result) {
-            result = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
-        }
-        
-        LOGGER.debug("userCanUpdateKoulutus({}):{}", context, result);
-        return result;
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
     /**
@@ -211,6 +231,16 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      */
     public boolean userCanDeleteHakukohdeFromKoulutus(OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
+    }
+    
+    /**
+     * Checks if user can delete hakukohde from koulutus, takes into account hakuaika.
+     *
+     * @param context
+     * @return
+     */
+    public boolean userCanDeleteHakukohdeFromKoulutus(OrganisaatioContext context, boolean hakuStarted) {
+        return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD);
     }
 
     /**
@@ -293,6 +323,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanCreateKoulutusmoduuli() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
+    
+    public boolean userIsOphCrud() {
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
 
      /**
      * Check if user can see unfinished development features.
@@ -301,5 +335,13 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      */
     public boolean underConstruction() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+    }
+    
+    private boolean genericCanChangeTarjonta(final OrganisaatioContext context, boolean hakuStarted, String... roles) {
+        boolean result = wrapped.checkAccess(context.ooid, roles) && !hakuStarted;
+        if (!result) {
+            result = wrapped.checkAccess(rootOrgOid, roles);
+        }
+        return result;
     }
 }

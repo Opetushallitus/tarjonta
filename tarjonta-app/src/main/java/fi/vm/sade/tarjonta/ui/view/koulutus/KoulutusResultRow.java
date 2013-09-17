@@ -184,15 +184,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         
         final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
-        boolean hakuStarted = false;
-        HakukohteetVastaus hakukVastaus =  tarjontaPresenter.getHakukohteetForKoulutus(koulutus.getKoulutus().getKomotoOid());
-        for (HakukohdeTulos curHakuk : hakukVastaus.getHakukohdeTulos()) {
-            Date hakuAlku = curHakuk.getHakukohde().getHakuAlkamisPvm();
-            Date today = new Date();
-            if (today.after(hakuAlku)) {
-                hakuStarted = true;
-            }
-        }
+        boolean hakuStarted = tarjontaPresenter.isHakuStartedForKoulutus(koulutus.getKoulutus().getKomotoOid());
         
         if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
@@ -200,13 +192,13 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
-        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);

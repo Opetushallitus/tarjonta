@@ -33,6 +33,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -91,8 +92,11 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private boolean checkHaunAlkaminen() {
         presenter.loadHakukohdeHakuPvm();
         Date haunAlkamisPvm = presenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
+        
+        
+        //Haku is started if the start date is in the past and the haku is not a lisahaku
         Date tanaan = new Date();
-        if (tanaan.after(haunAlkamisPvm)) {
+        if (tanaan.after(haunAlkamisPvm) && !KoodistoURI.KOODI_LISAHAKU_URI.equals(presenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {
             return false;
         } else {
             return true;

@@ -18,9 +18,10 @@ public class HakukohdeIndexEntity {
     private String hakukohdeNimi;
     private Long hakuId;
     private String hakuOid;
+    private String hakutyyppiUri;
 
     @QueryProjection
-    public HakukohdeIndexEntity(Long id, String oid, String hakukohdeNimi, String hakukausiUri, Integer hakukausiVuosi, TarjontaTila tila, String hakutapaUri, Integer aloituspaikatLkm, Long hakuId, String hakuOid) {
+    public HakukohdeIndexEntity(Long id, String oid, String hakukohdeNimi, String hakukausiUri, Integer hakukausiVuosi, TarjontaTila tila, String hakutapaUri, Integer aloituspaikatLkm, Long hakuId, String hakuOid, String hakutyyppiUri) {
         this.id = id;
         this.oid = oid;
         this.hakukohdeNimi = hakukohdeNimi;
@@ -31,6 +32,7 @@ public class HakukohdeIndexEntity {
         this.aloituspaikatLkm = aloituspaikatLkm;
         this.hakuId = hakuId;
         this.hakuOid = hakuOid;
+        this.hakutyyppiUri = hakutyyppiUri;
     }
 
     //hakukohde.id, hakukohde.oid
@@ -117,6 +119,10 @@ public class HakukohdeIndexEntity {
 
     public Object getHakuOid() {
         return hakuOid;
+    }
+
+    public String getHakutyyppiUri() {
+        return hakutyyppiUri;
     }
 
 }

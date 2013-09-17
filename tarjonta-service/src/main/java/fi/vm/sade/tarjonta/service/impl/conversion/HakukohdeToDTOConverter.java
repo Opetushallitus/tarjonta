@@ -53,6 +53,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
         hakukohde.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
+        hakukohde.setHakukohteenHakutyyppiUri(s.getHaku().getHakutyyppiUri());
         
 
         if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {

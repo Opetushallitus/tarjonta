@@ -43,6 +43,7 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setNimi(createHakukohdeNimi(hakukohdeDoc));
         hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
+        hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
         hakukohde.setTarjoaja(IndexDataUtils.createTarjoaja(hakukohdeDoc, orgResponse));
         if(hakukohde.getTarjoaja().getNimi()==null) {
