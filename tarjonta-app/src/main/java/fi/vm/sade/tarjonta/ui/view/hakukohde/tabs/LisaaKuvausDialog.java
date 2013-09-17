@@ -45,14 +45,25 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			return this==SORA ? MetaCategory.SORA_KUVAUS : MetaCategory.VALINTAPERUSTEKUVAUS;
 		}		
 	};
+	
+	public static interface LisaaKuvausListener {
+		
+		/**
+		 * @param asTemplate Jos tosi, kuvaus haetaan muokattavaksi pohjaksi (muutoin linkitetään).
+		 * @param kuvaus
+		 * @param langs
+		 */
+		void lisaaKuvaukset(boolean asTemplate, String kuvaus, Set<String> langs);
+		
+	}
 
 	private static final long serialVersionUID = 1L;
 	private static final String WINDOW_HEIGHT = "580px";
 	private static final String WINDOW_WIDTH = "864px";
 
 	private final TarjontaPresenter presenter;
-	
 	private final Mode mode;
+	private final LisaaKuvausListener listener;
 	
 	private Map<String, Set<String>> modelData;
 
@@ -61,6 +72,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	private final CheckBox hakuPohjaksi = new CheckBox();
 	private final Table table = new Table();
 	private final CheckBox tuoMuutKielet = new CheckBox();
+	
+	private final Set<String> valitutMuutKielet = new TreeSet<String>();
 	
 	private final KoodistoComponent langChooser = new KoodistoComponent(KoodistoURI.KOODISTO_KIELI_URI){
 		private static final long serialVersionUID = 1L;
@@ -82,26 +95,32 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			return ret;
 		};
 	};
+	
 	private final OphTokenField langList = new OphTokenField(){
 		private static final long serialVersionUID = 1L;
 		@Override
 		protected boolean onNewTokenSeleted(Object tokenSelected) {
-			System.out.println("Selected "+tokenSelected);
-			return tokenSelected!=null;
+			if (tokenSelected!=null) {
+				valitutMuutKielet.add(getKieliKoodi(tokenSelected));
+				return true;
+			} else {
+				return false;
+			}
 		};
 		@Override
 		protected boolean onTokenDelete(Object selectedToken) {
-			System.out.println("Unselected "+selectedToken);
+			valitutMuutKielet.remove(getKieliKoodi(selectedToken));
 			return true;
 		};
 	};
 	
 	private final Button importBtn = new Button();
 
-	public LisaaKuvausDialog(TarjontaPresenter presenter, Mode mode) {
+	public LisaaKuvausDialog(TarjontaPresenter presenter, Mode mode, LisaaKuvausListener listener) {
 		super(WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.presenter = presenter;
 		this.mode = mode;
+		this.listener = listener;
 		
 		langChooser.setField(new ComboBox());
 
@@ -138,10 +157,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	}
 
 	@Override
-	public void windowClose(CloseEvent e) {
+	public void windowClose(CloseEvent e) {}
 		
-	}
-	
 	private Map<String, Set<String>> getKuvaukset() {
 		if (modelData==null) {
 			modelData = new TreeMap<String, Set<String>>();
@@ -156,6 +173,10 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			}
 		}		
 		return modelData;
+	}
+	
+	private String getKieliKoodi(Object token) {
+		return "kieli_"+String.valueOf(token);
 	}
 
 	@Override
@@ -176,8 +197,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 				
 		table.setContainerDataSource(new KuvausContainer(getKuvaukset()));
 		table.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_EXPLICIT);
-		table.setColumnHeader("title", T("kuvausRyhma")); // TODO i18n
-		table.setColumnHeader("langs", super.T("kuvausKielet")); // TODO i18n
+		table.setColumnHeader("title", T("kuvausRyhma"));
+		table.setColumnHeader("langs", super.T("kuvausKielet"));
 		table.setSortAscending(true);
 		table.setVisibleColumns(new String[]{"title", "langs"});
 		table.setSelectable(true);
@@ -217,7 +238,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			@Override
 			public String formatToken(Object selectedToken) {
 				//System.out.println("Selected: "+selectedToken+" // "+(selectedToken==null ? null : selectedToken.getClass()));
-				return presenter.getUiHelper().getKoodiNimi("kieli_"+String.valueOf(selectedToken).toLowerCase());
+				return presenter.getUiHelper().getKoodiNimi(getKieliKoodi(selectedToken).toLowerCase());
 			}
 		});
 
@@ -247,6 +268,13 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		Button cancelBtn = new Button(super.T("peruuta"));
 		btns.addComponent(cancelBtn);
 		btns.setComponentAlignment(cancelBtn, Alignment.BOTTOM_LEFT);
+		cancelBtn.addListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getParent().removeWindow(LisaaKuvausDialog.this);
+			}
+		});
 
 		importBtn.setCaption(super.T("tuoTiedot"));
 		importBtn.setEnabled(false);
@@ -258,8 +286,22 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(ClickEvent event) {
+				
+				String kuvausUri = (String) table.getValue();
+				Set<String> langs = new TreeSet<String>();
+				
+				// opetuskielet
+				langs.addAll(presenter.getModel().getHakukohde().getOpetusKielet());
+				
+				// muut valitut kielet
+				if (tuoMuutKielet.booleanValue()) {
+					langs.addAll(valitutMuutKielet);
+				}
+				
+				// poistetaan kielet joilla em. kuvausta ei ole
+				langs.retainAll(getKuvaukset().get(kuvausUri));
 
-				System.out.println("LANGSELS = "+langList.getValue());
+				listener.lisaaKuvaukset(hakuPohjaksi.booleanValue(), kuvausUri, langs);
 				
 			}
 		});
@@ -329,12 +371,12 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		private final String title;
 		private final String langs;
 		
-		public KuvausRowModel(String uri, Set<String> langs) {
+		public KuvausRowModel(String uri, Set<String> kieliUris) {
 			super();
 			title = presenter.getUiHelper().getKoodiNimi(uri);
 			
 			StringBuilder s = new StringBuilder();
-			for (String lc : langs) {
+			for (String lc : kieliUris) {
 				if (s.length()>0) {
 					s.append(", ");
 				}

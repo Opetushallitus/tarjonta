@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.ui.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -47,6 +48,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    private Set<String> opetusKielet;
     
     private boolean customHakuaikaEnabled;
     private Date hakuaikaAlkuPvm;
@@ -103,6 +105,14 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
         addPainotettavaOppiainees(OPPIAINEET_MAX);
     }
+    
+    public void setOpetusKielet(Set<String> opetusKielet) {
+		this.opetusKielet = opetusKielet;
+	}
+    
+    public Set<String> getOpetusKielet() {
+		return opetusKielet;
+	}
 
     public void addPainotettavaOppiainees(int createObjects) {
         for (int i = 0; i < createObjects; i++) {
