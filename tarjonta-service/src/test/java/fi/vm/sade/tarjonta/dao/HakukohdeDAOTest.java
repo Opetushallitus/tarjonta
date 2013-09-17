@@ -19,7 +19,6 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

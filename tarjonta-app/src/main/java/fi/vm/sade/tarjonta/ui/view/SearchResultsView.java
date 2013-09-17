@@ -20,7 +20,7 @@ import com.vaadin.ui.Component.Listener;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.common.css.CssHorizontalLayout;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class SearchResultsView extends TabSheet {
     boolean attached = false;
     private transient I18NHelper _i18n = new I18NHelper(this);
     private ListKoulutusView koulutusList;
-    private ListHakukohdeViewImpl hakukohdeList;
+    private ListHakukohdeView hakukohdeList;
 
     public SearchResultsView() {
         super();
@@ -67,7 +67,7 @@ public class SearchResultsView extends TabSheet {
         });
         this.addTab(koulutusList, T("koulutukset"));
 
-        hakukohdeList = new ListHakukohdeViewImpl();
+        hakukohdeList = new ListHakukohdeView();
         this.addTab(hakukohdeList, T("hakuryhmat"));
     }
 
@@ -101,7 +101,7 @@ public class SearchResultsView extends TabSheet {
     /**
      * @return the hakukohdeList
      */
-    public ListHakukohdeViewImpl getHakukohdeList() {
+    public ListHakukohdeView getHakukohdeList() {
         return this.hakukohdeList;
     }
 

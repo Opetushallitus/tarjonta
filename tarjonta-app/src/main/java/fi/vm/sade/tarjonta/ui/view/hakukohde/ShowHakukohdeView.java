@@ -51,9 +51,9 @@ import org.springframework.beans.factory.annotation.Value;
  * Author: Tuomas Katva
  */
 @Configurable(preConstruction = true)
-public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
+public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeViewImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeView.class);
     private static final long serialVersionUID = -4485798240650803109L;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenterPresenter;
@@ -63,7 +63,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     private @Value("${koodisto.suomi.uri:suomi}")
     String suomiUri;
 
-    public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
+    public ShowHakukohdeView(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
         LOG.debug(this.getClass().getName() + "()");
     }

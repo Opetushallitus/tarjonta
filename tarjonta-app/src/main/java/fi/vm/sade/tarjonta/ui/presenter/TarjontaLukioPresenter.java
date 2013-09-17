@@ -46,7 +46,6 @@ import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

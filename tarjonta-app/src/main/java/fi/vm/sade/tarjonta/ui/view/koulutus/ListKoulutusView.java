@@ -17,16 +17,19 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -135,6 +138,8 @@ public class ListKoulutusView extends VerticalLayout {
         LOG.debug("attach : ListKoulutusView()");
         isAttached = true;
 
+        presenter.registerEventListener(this);
+
 
         //Initialization of the view layout
 
@@ -153,6 +158,12 @@ public class ListKoulutusView extends VerticalLayout {
          */
         luoKoulutusB.setEnabled(presenter.getNavigationOrganisation().isOrganisationSelected());
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
+    }
+
+    
+    @Override
+    public void finalize() {
+        presenter.unregisterEventListener(this);
     }
 
     /*
@@ -201,26 +212,34 @@ public class ListKoulutusView extends VerticalLayout {
 
                 Item item = categoryTree.getItem(event.getItemId());
                 KoulutusResultRow row = (KoulutusResultRow) item.getItemProperty(COLUMN_A).getValue();
-                categoryTree.getParent(event);
 
-                final Map<KoulutusTulos, String> nimet = new HashMap<KoulutusTulos, String>();
                 for (KoulutusTulos curKoulutus : row.getChildren()) {
-                    KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, getKoulutusNimi(curKoulutus, nimet));
-                    categoryTree.addItem(curKoulutus);
-                    categoryTree.setParent(curKoulutus, event.getItemId());
-                    categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
-                    categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
-                    categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
-                    categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
-                    categoryTree.setChildrenAllowed(curKoulutus, false);
+                    addKoulutusRow(event.getItemId(), curKoulutus);
                 }
                 setPageLength(categoryTree.getItemIds().size());
             }
+
         });
 
         categoryTree.setSizeFull();
     }
 
+    private void addKoulutusRow(Object parentId,
+            KoulutusTulos curKoulutus) {
+        KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, getKoulutusNimi(curKoulutus));
+        categoryTree.addItem(curKoulutus);
+        categoryTree.setParent(curKoulutus, parentId);
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
+        setKoulutusRowProperties(curKoulutus);
+        categoryTree.setChildrenAllowed(curKoulutus, false);
+    }
+
+    private void setKoulutusRowProperties(KoulutusTulos curKoulutus) {
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
+    }
+    
     private void addValitsekaikki() {
         //Adding the select all checkbox.
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
@@ -239,7 +258,7 @@ public class ListKoulutusView extends VerticalLayout {
         addComponent(wrapper);
     }
 
-    private String getKoulutusNimi(KoulutusTulos koulutus, Map<KoulutusTulos, String> cache) {
+    private String getKoulutusNimi(KoulutusTulos koulutus) {
         return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getKoulutus().getNimi()).getValue();
     }
 
@@ -537,7 +556,6 @@ public class ListKoulutusView extends VerticalLayout {
     public void reload() {
         errorView.resetErrors();
         clearAllDataItems();
-        //this.btnPoista.setEnabled(false);
         this.btnSiirraJaKopioi.setEnabled(false);
         this.luoHakukohdeB.setEnabled(false);
         Map<String, List<KoulutusTulos>> koulutusDataSource = presenter.getKoulutusDataSource();
@@ -642,4 +660,99 @@ public class ListKoulutusView extends VerticalLayout {
         }
         return checkedKoulutukset;
     }
+    
+    
+    private final Predicate<Object> filter(final Class type) {
+        return new Predicate<Object>() {
+            public boolean apply(Object o) {
+                return o.getClass() == type;
+            }
+        };
+    }
+    
+    /**
+     * Event listeneri joka saa viestejä koulutustulospuun muutostarpeista, katso
+     * {@link TarjontaPresenter#sendEvent(Object)}
+     */
+    @Subscribe 
+    public void receiveKoulutusContainerEvent(KoulutusContainerEvent e) {
+
+
+        final String eventKoulutusOid = e.oid;
+    
+        switch (e.type) {
+        case DELETE:
+            
+            
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusTulos.class))){
+                    final KoulutusTulos currentKoulutus = (KoulutusTulos)itemid;
+                    if(currentKoulutus.getKoulutus().getKomotoOid().equals(eventKoulutusOid)) {
+                        categoryTree.removeItem(currentKoulutus);
+                    }
+            }
+            break;
+
+        case UPDATE:
+            
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusTulos.class))){
+                    KoulutusTulos currentKoulutus = (KoulutusTulos)itemid;
+                    if(currentKoulutus.getKoulutus().getKomotoOid().equals(eventKoulutusOid)) {
+                        //hae tuore koulutus
+                        final KoulutusTulos freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutusTulos().get(0);
+                        copyData(currentKoulutus, freshKoulutus);
+                        final KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerProperty(itemid, COLUMN_A).getValue());
+                        setKoulutusRowProperties(currentKoulutus);
+                        curRow.reinitMenubar();
+                    }
+            }
+            break;
+
+        case CREATE:
+            final KoulutusTulos freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutusTulos().get(0);
+            Object parent = findParent(freshKoulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+            if(parent==null) {
+                //need to add new org to tree, falling back to reload for now!
+                reload();
+            } else {
+                addKoulutusRow(parent, freshKoulutus);
+                //TODO increase counter?
+            }
+            
+            
+            break;
+            
+        default:
+            LOG.warn("event not processed:" + e);
+            break;
+        }
+    }
+
+    /**
+     * Etsi organisaatio
+     * @param tarjoajaOid
+     * @return
+     */
+    private Object findParent(String tarjoajaOid) {
+        for(Object itemId: Iterables.filter(categoryTree.getItemIds(), filter(Integer.class))){
+            final KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerProperty(itemId, COLUMN_A).getValue());
+            if (curRow.getChildren() != null) {
+                if (tarjoajaOid.equals(curRow.getChildren().get(0)
+                        .getKoulutus().getTarjoaja().getTarjoajaOid())) {
+                    return itemId;
+                }
+            }
+
+        }
+        return null;
+    }
+
+    private void copyData(Object to,
+            final Object from) {
+        try {
+            BeanUtils.copyProperties(to,  from);
+        } catch (Throwable t) {
+            LOG.warn("Could not copy properties from " + from.getClass() + " to " + to.getClass(), t);
+        }
+    }
+
 }

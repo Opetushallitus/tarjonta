@@ -30,7 +30,7 @@ import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -99,7 +99,7 @@ public class HakuRootView extends Window {
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
                     handleHakuRowMenuEvent((HakuResultRow.HakuRowMenuEvent) event);
-                } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
+                } else if (event instanceof ListHakuView.NewHakuEvent) {
                     hakuPresenter.showHakuEdit(new HakuViewModel());
                 }
             }

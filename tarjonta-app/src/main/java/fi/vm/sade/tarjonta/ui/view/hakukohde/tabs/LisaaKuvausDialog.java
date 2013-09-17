@@ -146,7 +146,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		if (modelData==null) {
 			modelData = new TreeMap<String, Set<String>>();
 			
-			for (MonikielinenMetadataTyyppi mt : presenter.getTarjontaAdminService().haeMetadata(null, mode.category().toString())) {
+			for (MonikielinenMetadataTyyppi mt : presenter.haeMetadata(null, mode.category().toString())) {
 				Set<String> s = modelData.get(mt.getAvain());
 				if (s==null) {
 					s = new TreeSet<String>();
