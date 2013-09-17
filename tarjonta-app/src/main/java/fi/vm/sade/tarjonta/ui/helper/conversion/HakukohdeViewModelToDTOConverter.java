@@ -181,7 +181,9 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setOpetusKielet(new TreeSet<String>(hakukohdeTyyppi.getOpetuskieliUris()));
 
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
+        haku.setHakutyyppi(hakukohdeTyyppi.getHakukohteenHakutyyppiUri());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
+        //hakukohdeTyyppi.getHa
 
         if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
             hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));

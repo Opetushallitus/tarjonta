@@ -64,6 +64,8 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         }
 
         hakukohde.getOpetuskieliUris().addAll(okielet);
+        hakukohde.setHakukohteenHakutyyppiUri(s.getHaku().getHakutyyppiUri());
+        
 
         if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {
             // jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se

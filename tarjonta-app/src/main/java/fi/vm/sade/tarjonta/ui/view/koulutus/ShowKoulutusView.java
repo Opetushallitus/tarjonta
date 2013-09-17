@@ -160,16 +160,19 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
 
 
+    	
+    	
 
     	final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
-    		private static final long serialVersionUID = 5019806363620874205L;
+    	    private static final long serialVersionUID = 5019806363620874205L;
 
-    		@Override
-    		public void buttonClick(Button.ClickEvent event) {
-    			showRemoveDialog();
+    	    @Override
+    	    public void buttonClick(Button.ClickEvent event) {
+    	        showRemoveDialog();
 
-    		}
+    	    }
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+    	
 
       /* Removed because functionality is not yet implemented OVT-4450 */
     /*	final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
@@ -214,7 +217,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     	//check permissions
     	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
     	poista.setVisible(TarjontaTila.valueOf(presenter.getModel().getKoulutusPerustiedotModel().getTila()).isRemovable()
-    			&& permissions.userCanDeleteKoulutus(context));
+    			&& permissions.userCanDeleteKoulutus(context, presenter.isHakuStartedForKoulutus(presenter.getModel().getKoulutusPerustiedotModel().getOid())));
     	
 //    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
     	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));

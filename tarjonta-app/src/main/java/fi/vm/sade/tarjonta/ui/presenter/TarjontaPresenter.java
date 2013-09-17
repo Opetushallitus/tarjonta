@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1012,12 +1013,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             koulutus.getKoulutuskoodit().clear();
             if (rawKoulutus.getHakukohteet() != null) {
                 koulutus.getKoulutuksenHakukohteet().clear();
-                for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : rawKoulutus.getHakukohteet()) {
+                HakukohteetVastaus hakukVastaus = this.getHakukohteetForKoulutus(koulutusOid);
+                for (HakukohdeTulos hakukohdeKoosteTyyppi : hakukVastaus.getHakukohdeTulos()) {//rawKoulutus.getHakukohteet()) {
                     SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                    hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
-                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
-                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
-                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getHakukohde().getKoodistoNimi());// getKoodistoNimi());
+                    hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getHakukohde().getNimi()).getValue());// getNimi());
+                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getHakukohde().getOid());
+                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getHakukohde().getTila().value());
+                    hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakukohde().getHakuAlkamisPvm());
                     koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
                 }
             }
@@ -2444,6 +2447,19 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         public String getStrTwo() {
             return strTwo;
         }
+    }
+
+    public boolean isHakuStartedForKoulutus(String komotoOid) {
+        boolean hakuStarted = false;
+        HakukohteetVastaus hakukVastaus =  getHakukohteetForKoulutus(komotoOid);
+        for (HakukohdeTulos curHakuk : hakukVastaus.getHakukohdeTulos()) {
+            Date hakuAlku = curHakuk.getHakukohde().getHakuAlkamisPvm();
+            Date today = new Date();
+            if (today.after(hakuAlku)) {
+                hakuStarted = true;
+            }
+        }
+        return hakuStarted;
     }
     
     public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid){

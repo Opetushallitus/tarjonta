@@ -193,6 +193,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Value("${koodisto-uris.yhteishaku}")
     private String hakutapaYhteishakuUrl;
+    
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
     /*
      *
      * Init view with new model
@@ -736,13 +739,50 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      */
 
     private boolean accepts(HakuaikaViewModel ham) {
-    	return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+        if (presenter.getPermission().userIsOphCrud()) {
+            return acceptsForOph(ham);
+        }
+    	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
     
+    private boolean acceptsForOph(HakuaikaViewModel ham) {
+        return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+    }
+    
+    private boolean acceptsForOph(HakuViewModel hm) {
+        
+        if (hm.getPaattymisPvm() ==null || !hm.getPaattymisPvm().before(new Date())) {
+                return true;
+        }
+        for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
+                if (accepts(ham)) {
+                        return true;
+                }
+        }
+        return false;
+    }
+    
+    /*
+     * Checking if the haku is acceptable for hakukohde
+     */
     private boolean accepts(HakuViewModel hm) {
-    	if (hm.getPaattymisPvm()==null || hm.getPaattymisPvm().after(new Date())) {
+        
+        //Oph user has her own rules
+        if (presenter.getPermission().userIsOphCrud()) {
+            return acceptsForOph(hm);
+        }
+        
+        //If it is lisahaku it is ok for hakukohde if the haku has not ended
+        if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
+                && (hm.getPaattymisPvm() ==null || hm.getPaattymisPvm().after(new Date()))) {
+            return true;
+        }
+        //If haku has not started it is ok for hakukohde
+    	if (hm.getAlkamisPvm() ==null || hm.getAlkamisPvm().before(new Date())) {
     		return true;
     	}
+    	
+    	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
     		if (accepts(ham)) {
     			return true;
