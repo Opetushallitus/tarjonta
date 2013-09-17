@@ -6,8 +6,8 @@
         <Arg>jdbc/tarjonta</Arg>
         <Arg>
             <New class="org.postgresql.ds.PGSimpleDataSource">
-                <Set name="User">oph</Set>
-                <Set name="Password">oph</Set>
+                <Set name="User"><SystemProperty name="dbuser" default="oph"/></Set>
+                <Set name="Password"><SystemProperty name="dbpasswd" default="oph"/></Set>
                 <Set name="DatabaseName">tarjonta</Set>
                 <Set name="ServerName"><SystemProperty name="dbhost" default="localhost"/></Set>
                 <Set name="PortNumber"><SystemProperty name="dbport" default="5432"/></Set>
