@@ -92,8 +92,9 @@ public class HakuResultRow extends HorizontalLayout {
         return rowMenuBar;
     }
 
-    private void reinitMenubar() {
+    public void reinitMenubar() {
         final TarjontaTila tila = TarjontaTila.valueOf(haku.getHakuDto().getHaunTila());
+        rowMenuBar.clear();
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
@@ -209,14 +210,17 @@ public class HakuResultRow extends HorizontalLayout {
 
     private void cancelHakuPublish() {
         hakuPresenter.changeStateToCancelled(haku.getHakuOid(), HAKU);
+        hakuPresenter.sendEvent(HakuContainerEvent.update(haku.getHakuOid()));
     }
 
     private void startHakuPublish() {
         hakuPresenter.changeStateToPublished(haku.getHakuOid(), HAKU);
+        hakuPresenter.sendEvent(HakuContainerEvent.update(haku.getHakuOid()));
     }
 
     private void startHakuRemoval() {
         fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
+        hakuPresenter.sendEvent(HakuContainerEvent.delete(haku.getHakuOid()));
     }
 
     /**
