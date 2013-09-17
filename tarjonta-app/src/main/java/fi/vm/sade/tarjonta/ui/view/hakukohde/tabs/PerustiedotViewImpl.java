@@ -755,7 +755,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     
     private boolean acceptsForOph(HakuViewModel hm) {
         
-        if (hm.getPaattymisPvm() ==null || !hm.getPaattymisPvm().before(new Date())) {
+        if (hm.getPaattymisPvm() != null && !hm.getPaattymisPvm().before(new Date())) {
                 return true;
         }
         for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
