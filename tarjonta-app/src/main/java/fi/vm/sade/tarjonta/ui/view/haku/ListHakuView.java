@@ -173,7 +173,6 @@ public class ListHakuView extends VerticalLayout {
             LOG.info("getTreeDataSource()" + e.getKey());
             HakuResultRow rowStyle = new HakuResultRow();
 
-            System.out.println("adding key:" + e.getKey());
             Object rootItem = hc.addItem();
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(getKoodiNimi(e.getKey()) + " (" + e.getValue().size() + ")", false));
@@ -389,18 +388,16 @@ public class ListHakuView extends VerticalLayout {
     @Subscribe 
     public void receiveHakuContainerEvent(HakuContainerEvent e) {
 
-        System.out.println("received event");
-
         final String eventHakuOid = e.oid;
     
         switch (e.type) {
         case DELETE:
             
             
-            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusTulos.class))){
-                    final KoulutusTulos currentKoulutus = (KoulutusTulos)itemid;
-                    if(currentKoulutus.getKoulutus().getKomotoOid().equals(eventHakuOid)) {
-                        categoryTree.removeItem(currentKoulutus);
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(HakuViewModel.class))){
+                    final HakuViewModel currentHaku = (HakuViewModel)itemid;
+                    if(currentHaku.getHakuOid().equals(eventHakuOid)) {
+                        categoryTree.removeItem(currentHaku);
                     }
             }
             break;
@@ -465,11 +462,10 @@ public class ListHakuView extends VerticalLayout {
     @Override
     public void attach() {
         super.attach();
-        if(!attached){
+        if (!attached) {
             attached = true;
             presenter.registerEventListener(this);
         }
-        
     }
     
     @Override

@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuForm;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.generic.common.I18N;
@@ -231,7 +232,7 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
                 throw new RuntimeException(exp.getMessage());
             }
         }
-        hakuList.reload();
+        sendEvent(HakuContainerEvent.delete(haku.getHakuOid()));
     }
 
     /**
