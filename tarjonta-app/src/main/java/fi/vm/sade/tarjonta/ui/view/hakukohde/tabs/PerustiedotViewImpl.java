@@ -738,9 +738,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      *
      */
 
-    private boolean accepts(HakuaikaViewModel ham) {
+    private boolean accepts(HakuaikaViewModel ham, boolean isLisahaku) {
+        //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(ham);
+        }
+        if (isLisahaku) {
+            return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
         }
     	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
@@ -755,7 +759,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 return true;
         }
         for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-                if (accepts(ham)) {
+                if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
                         return true;
                 }
         }
@@ -774,7 +778,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         
         //If it is lisahaku it is ok for hakukohde if the haku has not ended
         if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
-                && (hm.getPaattymisPvm() ==null || hm.getPaattymisPvm().after(new Date()))) {
+                && (hm.getPaattymisPvm() != null || hm.getPaattymisPvm().after(new Date()))) {
             return true;
         }
         //If haku has not started it is ok for hakukohde
@@ -784,7 +788,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	
     	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-    		if (accepts(ham)) {
+    		if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
     			return true;
     		}
     	}
@@ -835,7 +839,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         	List<HakuaikaViewModel> hvms = new ArrayList<HakuaikaViewModel>();
 
             for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
-            	if (accepts(ham)) {
+            	if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hk.getHakutyyppi()))) {
             		hvms.add(ham);
             	}
             }
