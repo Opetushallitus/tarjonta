@@ -115,9 +115,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
         final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
-        //rowMenuBar.removeItems();
-        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
         rowMenuBar.clear();
+        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
+       
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
