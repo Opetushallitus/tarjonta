@@ -35,12 +35,24 @@ public class HakukohdeAmmatillinenValintakoeDialog extends TarjontaWindow {
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;
     private HakukohdeValintakoeViewImpl view;
+    private final String WINDOW_UPDATE_TITLE = "dialogEditTitle";
 
     public HakukohdeAmmatillinenValintakoeDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
         setCaption(T(WINDOW_TITLE_PROPERTY));
+    }
+
+    public HakukohdeAmmatillinenValintakoeDialog(TarjontaPresenter presenter, UiBuilder uiBuilder, boolean isNew) {
+        super(WINDOW_WIDTH, WINDOW_HEIGHT);
+        this.presenter = presenter;
+        this.uiBuilder = uiBuilder;
+        if (isNew) {
+        setCaption(T(WINDOW_TITLE_PROPERTY));
+        } else {
+        setCaption(T(WINDOW_UPDATE_TITLE));
+        }
     }
 
     @Override

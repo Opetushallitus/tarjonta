@@ -73,7 +73,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class HakukohteenLiitteetViewImpl extends CustomComponent {
+public class HakukohteenLiitteetViewImpl extends CustomComponent implements Property.ValueChangeListener {
 
     public static final String LANGUAGE_TAB_SHEET_WIDTH = "600px";
     private static final long serialVersionUID = 8051865706102814333L;
@@ -114,6 +114,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private OptionGroup osoiteValinta;
     private HakukohdeLiiteViewModel selectedLiite;
     private TarjontaDialogWindow dialogWindow;
+    private boolean modelEdited = false;
 
     public HakukohteenLiitteetViewImpl(ErrorMessage errorMessage, TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
@@ -122,8 +123,24 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         this.errorMessage = errorMessage;
         buildMainLayout();
         setCustomOsoiteEnabled(false);
+       addValueChangeListeners();
     }
-    
+
+    private void addValueChangeListeners() {
+        liitteenTyyppi.addListener(this);
+        toimittettavaMennessa.addListener(this);
+        osoiteRivi1.addListener(this);
+        osoiteRivi2.addListener(this);
+        postinumero.addListener(this);
+        voidaanToimittaaSahkoisesti.addListener(this);
+        osoiteValinta.addListener(this);
+    }
+
+    @Override
+    public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+        modelEdited = true;
+    }
+
     private String T(String key) {
         if (i18n == null) {
             i18n = new I18NHelper(this);
@@ -202,7 +219,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
         liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true, LANGUAGE_TAB_SHEET_WIDTH, languageTabsheetHeight);
-
+        liitteenSanallinenKuvausTxtArea.addValueChangeListener(this);
 
         return liitteenSanallinenKuvausTxtArea;
     }
@@ -293,17 +310,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private boolean isLiiteEdited() {
 
-        if (selectedLiite.getLiitteenTyyppi() != null && selectedLiite.getLiitteenTyyppi().trim().length() > 0) {
-            return true;
-        }
-        if (selectedLiite.getToimitettavaMennessa() != null) {
-            return true;
-        }
-        if (selectedLiite.getSahkoinenToimitusOsoite() != null && selectedLiite.getSahkoinenToimitusOsoite().trim().length() > 0) {
-            return true;
-        }
-
-        if (selectedLiite.getLiitteenSanallinenKuvaus() != null && selectedLiite.getLiitteenSanallinenKuvaus().size() > 0) {
+        if (modelEdited) {
             return true;
         }
 

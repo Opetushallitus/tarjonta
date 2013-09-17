@@ -32,12 +32,24 @@ public class HakukohdeLiiteetDialog extends TarjontaWindow {
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;
     private HakukohteenLiitteetViewImpl view;
+    private final String WINDOW_EDIT_TITLE_PROPERTY = "dialogEditTitle";
 
     public HakukohdeLiiteetDialog(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
         setCaption(T(WINDOW_TITLE_PROPERTY));
+    }
+
+    public HakukohdeLiiteetDialog(TarjontaPresenter presenter, UiBuilder uiBuilder,boolean isNew) {
+        super(WINDOW_WIDTH, WINDOW_HEIGHT);
+        this.presenter = presenter;
+        this.uiBuilder = uiBuilder;
+        if (isNew) {
+        setCaption(T(WINDOW_TITLE_PROPERTY));
+        } else {
+        setCaption(T(WINDOW_EDIT_TITLE_PROPERTY));
+        }
     }
 
     @Override
