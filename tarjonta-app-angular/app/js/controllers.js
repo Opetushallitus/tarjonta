@@ -12,7 +12,8 @@ app.controller('MyCtrl2', ['$scope', 'instagram', function($scope, instagram) {
 
         console.log("MyCtrl2");
 
-        $scope.foo = "FOO";
+        $scope.page = 0;
+        $scope.pageSize = 4;
         $scope.pics = [];
 
         // Use the instagram service and fetch a list of the popular pics

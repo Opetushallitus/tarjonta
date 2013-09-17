@@ -5,8 +5,18 @@
 
 <h2>Test</h2>
 
-<li ng-repeat="p in pics">
-    <img ng-src="{{p.images.low_resolution.url}}" />
+
+<div class="btn" ng-click="page = 0" ng-disabled="page <= 0"> << </div>
+<div class="btn" ng-click="page = page - 1" ng-disabled="page <= 0"> < </div>
+
+{{ page * pageSize }} / {{ pics.length }}
+
+<div class="btn" ng-click="page = page + 1" ng-disabled="(page * pageSize >= pics.length)"> > </div>
+<div class="btn" ng-click="page = pics.length / pageSize" ng-disabled="(page * pageSize >= pics.length)"> >> </div>
+
+<li ng-repeat="p in pics | startFrom: pageSize * page | limitTo: pageSize">
+    <!--    <img ng-src="{{p.images.low_resolution.url}}" /> -->
+    <img ng-src="{{p.images.thumbnail.url}}" />
 </li>
 
 </p>
