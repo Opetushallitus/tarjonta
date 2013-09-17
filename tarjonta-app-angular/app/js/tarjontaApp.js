@@ -2,7 +2,8 @@
 
 // Declare app level module which depends on filters, and services
 
-var app = angular.module('tarjontaApp', ['tarjontaApp.filters', 'tarjontaApp.services', 'tarjontaApp.directives', 'tarjontaApp.controllers', 'ngRoute', 'ngResource']);
+var app = angular.module('tarjontaApp', ['tarjontaApp.filters', 'tarjontaApp.services', 'tarjontaApp.directives', 'tarjontaApp.controllers', 'loading',
+    'ngRoute', 'ngResource']);
 
 app.config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});

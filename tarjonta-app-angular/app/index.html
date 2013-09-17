@@ -23,6 +23,8 @@
         <script src="js/directives.js"></script>
         <script src="js/tarjontaApp.js"></script>
 
+        <script src="js/libs/loading.js"></script>
+
         <!-- Le styles -->
         <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
         <style type="text/css">
@@ -45,6 +47,8 @@
         </style>
         <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
+        <script src="lib/bootstrap/js/bootstrap.js"></script>
+
         <link rel="stylesheet" href="css/app.css"/>
     </head>
     <body>
@@ -64,5 +68,8 @@
                 </div>
             </div>
 
+            <div ng-controller="LoadingCtrl">
+                <div ng-show="loading" style="position: fixed; top:0; left: 0; background: gold; padding: 0.3em; font-weight: bold;">käsitellään...</div>
+            </div>
     </body>
 </html>
