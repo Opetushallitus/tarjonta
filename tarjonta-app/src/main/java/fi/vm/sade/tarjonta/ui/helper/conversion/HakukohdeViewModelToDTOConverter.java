@@ -21,6 +21,7 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTe
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +178,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());;
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
+        hakukohdeVM.setOpetusKielet(new TreeSet<String>(hakukohdeTyyppi.getOpetuskieliUris()));
 
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakutyyppi(hakukohdeTyyppi.getHakukohteenHakutyyppiUri());

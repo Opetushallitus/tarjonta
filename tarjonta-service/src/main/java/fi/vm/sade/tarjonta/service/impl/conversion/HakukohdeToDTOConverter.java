@@ -22,9 +22,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
@@ -53,6 +55,15 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
         hakukohde.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
+
+        Set<String> okielet = new TreeSet<String>();
+        for (KoulutusmoduuliToteutus komoto : s.getKoulutusmoduuliToteutuses()) {
+        	for (KoodistoUri ku : komoto.getOpetuskielis()) {
+        		okielet.add(ku.getKoodiUri()); // versio?
+        	}
+        }
+
+        hakukohde.getOpetuskieliUris().addAll(okielet);
         hakukohde.setHakukohteenHakutyyppiUri(s.getHaku().getHakutyyppiUri());
         
 
