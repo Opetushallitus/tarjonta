@@ -20,6 +20,11 @@ public class KoulutuksetKysely implements Serializable
     protected String koulutuksenAlkamiskausi;
     protected String koulutusKoodi;
     protected List<String> hakukohdeOids;
+    private String koulutusOid;
+
+    public String getKoulutusOid() {
+        return koulutusOid;
+    }
 
     /**
      * Default no-arg constructor
@@ -222,33 +227,24 @@ public class KoulutuksetKysely implements Serializable
         this.koulutusKoodi = value;
     }
 
-    /**
-     * Gets the value of the hakukohdeOids property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the hakukohdeOids property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getHakukohdeOids().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getHakukohdeOids() {
         if (hakukohdeOids == null) {
             hakukohdeOids = new ArrayList<String>();
         }
         return this.hakukohdeOids;
+    }
+
+    /**
+     * Hakuehto joka hakee koulutuksia koulutusoidin perusteella.
+     */
+    public static KoulutuksetKysely byKoulutusOid(String oid) {
+        KoulutuksetKysely kysely = new KoulutuksetKysely();
+        kysely.setKoulutusOid(oid);
+        return kysely;
+    }
+
+    public void setKoulutusOid(String oid) {
+        this.koulutusOid = oid;
     }
 
 }

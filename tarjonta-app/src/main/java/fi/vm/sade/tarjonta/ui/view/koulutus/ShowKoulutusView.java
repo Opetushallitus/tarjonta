@@ -106,9 +106,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }
         
         for (String language : languages) {
-            List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
-            ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language,
+            final String[] langParts = tarjontaUIHelper.splitKoodiURI(language);
+            final List<KoodiType> koodit = tarjontaUIHelper.getKoodis(langParts[0]);
+
+            ShowKoulutusViewTab tab=null;
+            if(koodit.size()>0) {
+                tab = new ShowKoulutusViewTab(language,
                     new Locale(koodit.get(0).getKoodiArvo()));
+            } else {
+                tab = new ShowKoulutusViewTab(language,
+                        new Locale(language));
+            }
             tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
         }
 

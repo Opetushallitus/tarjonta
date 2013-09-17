@@ -35,13 +35,14 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST001() throws IOException {
+		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
-			restTestCount(path + "001.qa.txt", http + "/komo?count=2");
+			run.restTestCount(path + "001.qa.txt", http + "/komo?count=2");
 		}
 		else
 		{
-			restTestCount(path + "001.txt", http + "/komo?count=2");
+			run.restTestCount(path + "001.txt", http + "/komo?count=2");
 		}
 	}
 	
@@ -71,13 +72,14 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST004() throws IOException {
+		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
-			restTestCount(path + "004.qa.txt", http + "/komoto?count=2");
+			run.restTestCount(path + "004.qa.txt", http + "/komoto?count=2");
 		}
 		else
 		{
-			restTestCount(path + "004.txt", http + "/komoto?count=2");
+			run.restTestCount(path + "004.txt", http + "/komoto?count=2");
 		}
 	}
 	
@@ -107,13 +109,14 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST007() throws IOException {
+		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
-			restTestCount(path + "007.qa.txt", http + "/haku?count=2");
+			run.restTestCount(path + "007.qa.txt", http + "/haku?count=2");
 		}
 		else
 		{
-			restTestCount(path + "007.txt", http + "/haku?count=2");
+			run.restTestCount(path + "007.txt", http + "/haku?count=2");
 		}
 	}
 	
@@ -143,13 +146,14 @@ public class TestTarjontaRestApi {
 	
 	@Test
 	public void test_T_INT_TAR_REST010() throws IOException {
+		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
-			restTestCount(path + "010.qa.txt", http + "/hakukohde?count=2");
+			run.restTestCount(path + "010.qa.txt", http + "/hakukohde?count=2");
 		}
 		else
 		{
-			restTestCount(path + "010.txt", http + "/hakukohde?count=2");
+			run.restTestCount(path + "010.txt", http + "/hakukohde?count=2");
 		}
 	}
 	
@@ -185,72 +189,17 @@ public class TestTarjontaRestApi {
 			RestApiRajaPinnat.KattavuusRaportti();
 		}
 	}
-
-	public String getJson(String urlString) {
-
-		String result = "\n\n";
-		SVTUtils doit = new SVTUtils();        
-		try {
-			URL url = new URL(urlString);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Accept", "application/json");
-
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-						+ conn.getResponseCode());
-			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					(conn.getInputStream())));
-
-			String line = "";
-			doit.echo("=================================================");
-			while ((line = br.readLine()) != null) {
-				result = result + line + "\n";
-			}
-			doit.echo(result);
-			doit.echo("=================================================");
-			conn.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 	
 	static private int ok_count = 0;
 	public void restTest(String fileName, String url) throws IOException {
 		SVTUtils doit = new SVTUtils();   
+		TestTUtils run = new TestTUtils();   
 		doit.echo(fileName);
 		String response = "";
 		String expected = doit.readFile(fileName);
-		response = getJson(url);
+		response = run.getJson(url);
 		expected = expected.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
 		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " ");
-		Assert.assertEquals("RestApi error", expected, response);
-		ok_count++;
-	}
-
-	public void restTestCount(String fileName, String url) throws IOException {
-		SVTUtils doit = new SVTUtils();   
-		doit.echo(fileName);
-		doit.echo("url=" + url);
-		String response = "";
-		String expected = doit.readFile(fileName);
-		response = getJson(url);
-		expected = expected.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " "); 
-		response = response.replace("\n", "").replace("\r", "").replace("\t", " ").replace("  ", " ");
-		String[] list = response.split("}");
-		for (int i = 0; i < list.length; i++) {
-			String part = list[i];
-			if (part.indexOf(".") < 0) { continue; }
-			String id = part.substring(part.lastIndexOf(".") +1);
-			id = id.replace("\"", "");
-			response = response.replace(id, "");
-		}
-		doit.echo("response without id=" + response);
 		Assert.assertEquals("RestApi error", expected, response);
 		ok_count++;
 	}

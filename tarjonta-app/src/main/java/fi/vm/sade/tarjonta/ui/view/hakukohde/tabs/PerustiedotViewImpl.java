@@ -73,7 +73,6 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -830,12 +829,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             if (hk.getSisaisetHakuajat().isEmpty()) {
                 ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
                 lht.setHakuOid(hk.getHakuOid());
-                List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
-                if (hakus.size() != 1) {
-                    LOG.warn("Hakua ei löytynyt: {}", hk.getHakuOid());
-                } else {
-                    hk = new HakuViewModel(hakus.iterator().next());
-                }
+                hk = presenter.findHakuByOid(hk.getHakuOid());
             }
 
         	List<HakuaikaViewModel> hvms = new ArrayList<HakuaikaViewModel>();

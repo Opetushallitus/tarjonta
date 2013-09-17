@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.ui.Window;
 
@@ -35,31 +34,26 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuForm;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
-import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -69,7 +63,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author markus
  *
  */
-public class HakuPresenter implements CommonPresenter<HakuViewModel> {
+public class HakuPresenter extends CommonPresenter<HakuViewModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
@@ -79,22 +73,8 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     private EditHakuForm editHaku;
     private HakuViewModel hakuModel;
     private HakuRootView _rootView;
-    @Autowired(required = true)
-    private OIDService oidService;
-    @Autowired(required = true)
-    private KoodiService koodiService;
-    @Autowired(required = true)
-    private TarjontaPublicService tarjontaPublicService;
-    @Autowired(required = true)
-    private TarjontaAdminService tarjontaAdminService;
+    
     public static final String COLUMN_A = "Kategoriat";
-    @Autowired(required = true)
-    private PublishingService publishingService;
-    @Autowired(required = true)
-    private TarjontaPermissionServiceImpl tarjontaPermissionService;
-
-    public HakuPresenter() {
-    }
 
     /**
      * Performs the search according to searchSpec and reloads the hakuList
@@ -252,7 +232,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
                 throw new RuntimeException(exp.getMessage());
             }
         }
-        hakuList.reload();
+        sendEvent(HakuContainerEvent.delete(haku.getHakuOid()));
     }
 
     /**
@@ -412,7 +392,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
         this.setHakuViewModel(haku);
 
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
+        ShowHakuView showHaku = new ShowHakuView(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), this.getHakuModel()),
                 null);
         showHaku.addListener(new com.vaadin.ui.Component.Listener() {
@@ -420,10 +400,10 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
             @Override
             public void componentEvent(com.vaadin.ui.Component.Event event) {
-                if (event instanceof ShowHakuViewImpl.BackEvent) {
+                if (event instanceof ShowHakuView.BackEvent) {
                     getRootView().showMainDefaultView();
                     refreshHakulist();
-                } else if (event instanceof ShowHakuViewImpl.EditEvent) {
+                } else if (event instanceof ShowHakuView.EditEvent) {
                     showHakuEdit(null);
                 }
             }
@@ -436,6 +416,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     /**
      * @return the _rootView
      */
+    @Override
     public HakuRootView getRootView() {
         return _rootView;
     }
@@ -475,16 +456,6 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     }
 
     @Override
-    public void showNotification(UserNotification msg) {
-        LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
-        if (msg != null && getRootView() != null) {
-            getRootView().showNotification(msg.getInfo(), msg.getNotifiaction());
-        } else {
-            LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
-        }
-    }
-
-    @Override
     public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
         return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
     }
@@ -502,20 +473,14 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
     private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
         if (publishingService.changeState(oid, toState, sisalto)) {
             showNotification(UserNotification.GENERIC_SUCCESS);
-            //reload result data list.
-            refreshHakulist();
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
     }
 
     @Override
-    public TarjontaPermissionServiceImpl getPermission() {
-        return tarjontaPermissionService;
-    }
-
-    @Override
     public HakuViewModel getModel() {
         return hakuModel;
     }
+    
 }

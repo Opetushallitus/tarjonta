@@ -422,7 +422,7 @@ public class TarjontaUIHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         // LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
 
-        String result = "";
+        String result = koodiUriWithPossibleVersionInformation;
 
         try {
             if (koodiUriWithPossibleVersionInformation != null) {

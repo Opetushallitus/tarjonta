@@ -87,7 +87,14 @@ public class HakuResultRow extends HorizontalLayout {
 
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
+        reinitMenubar();
+
+        return rowMenuBar;
+    }
+
+    public void reinitMenubar() {
         final TarjontaTila tila = TarjontaTila.valueOf(haku.getHakuDto().getHaunTila());
+        rowMenuBar.clear();
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
@@ -106,8 +113,6 @@ public class HakuResultRow extends HorizontalLayout {
         } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
-
-        return rowMenuBar;
     }
 
     private void menuItemClicked(String selection) {
@@ -205,14 +210,17 @@ public class HakuResultRow extends HorizontalLayout {
 
     private void cancelHakuPublish() {
         hakuPresenter.changeStateToCancelled(haku.getHakuOid(), HAKU);
+        hakuPresenter.sendEvent(HakuContainerEvent.update(haku.getHakuOid()));
     }
 
     private void startHakuPublish() {
         hakuPresenter.changeStateToPublished(haku.getHakuOid(), HAKU);
+        hakuPresenter.sendEvent(HakuContainerEvent.update(haku.getHakuOid()));
     }
 
     private void startHakuRemoval() {
         fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
+        hakuPresenter.sendEvent(HakuContainerEvent.delete(haku.getHakuOid()));
     }
 
     /**

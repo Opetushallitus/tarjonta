@@ -19,8 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -65,7 +63,6 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = true)
 public class KoulutusResultRow extends HorizontalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
     private static final long serialVersionUID = -1498887965250483214L;
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi KOMOTO = SisaltoTyyppi.KOMOTO;
@@ -84,7 +81,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private String rowKey;
     private List<KoulutusTulos> children;
     
-    private Window removeKoulutusDialog;
+    private Window dialogWindow;
 
     private final TarjontaUIHelper tarjontaUIHelper;
     /**
@@ -147,34 +144,8 @@ public class KoulutusResultRow extends HorizontalLayout {
     private boolean commandsAdded = false;
 
     private OphRowMenuBar newMenuBar() {
-        //final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
-
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        
-        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
-
-        /*final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
-
-        
-        
-        if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
-        }
-
-        rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
-
-        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
-        }
-
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        }*/
-
+        reinitMenubar();
         return rowMenuBar;
     }
     
@@ -239,6 +210,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
+            tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKoulutus().getKomotoOid()));
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             showPeruutaDialog();
         } else if (selection.equals(i18n.getMessage("naytaHakukohteet"))) {
@@ -253,8 +225,9 @@ public class KoulutusResultRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                closeKoulutusCreationDialog();
+                closeDialogWindow();
                 tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
+                tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKoulutus().getKomotoOid()));
             }
         },
                 new Button.ClickListener() {
@@ -262,12 +235,12 @@ public class KoulutusResultRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                closeKoulutusCreationDialog();
+                closeDialogWindow();
 
             }
         });
-        removeKoulutusDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
-        getWindow().addWindow(removeKoulutusDialog);
+        dialogWindow = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
+        getWindow().addWindow(dialogWindow);
     }
 
     private void showRemoveDialog() {
@@ -277,9 +250,9 @@ public class KoulutusResultRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                closeKoulutusCreationDialog();
+                closeDialogWindow();
                 tarjontaPresenter.removeKoulutus(koulutus);
-                tarjontaPresenter.getHakukohdeListView().reload();
+                tarjontaPresenter.sendEvent(KoulutusContainerEvent.delete(koulutus.getKoulutus().getKomotoOid()));
             }
         },
                 new Button.ClickListener() {
@@ -287,17 +260,17 @@ public class KoulutusResultRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                closeKoulutusCreationDialog();
+                closeDialogWindow();
 
             }
         });
-        removeKoulutusDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
-        getWindow().addWindow(removeKoulutusDialog);
+        dialogWindow = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(dialogWindow);
     }
 
-    public void closeKoulutusCreationDialog() {
-        if (removeKoulutusDialog != null) {
-            getWindow().removeWindow(removeKoulutusDialog);
+    public void closeDialogWindow() {
+        if (dialogWindow != null) {
+            getWindow().removeWindow(dialogWindow);
         }
     }
 
@@ -448,6 +421,11 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     public void setChildren(List<KoulutusTulos> children) {
         this.children = children;
+    }
+
+    public void reinitMenubar() {
+        rowMenuBar.clear();
+        commandsAdded=false;
     }
 
 

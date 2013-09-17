@@ -56,6 +56,25 @@ public class DataReaderTest {
     }
 
     @Test
+    public void testLukioKOMO2() throws IOException {
+        //LUKIO
+        ExcelMigrationDTO result = searchByKoulutuskoodi("301104", null, "0014");
+        assertNotNull("Object not found", result);
+
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getTavoiteTeksti().getTeksti().size());
+
+        assertEquals(1, result.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
+        assertEquals(1, result.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
+        assertEquals(1, result.getTutkinnonKuvaukset().getTavoiteTeksti().getTeksti().size());
+
+        assertEquals("", result.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().get(0).getValue());
+        assertEquals("", result.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().get(0).getValue());
+        assertEquals("", result.getTutkinnonKuvaukset().getTavoiteTeksti().getTeksti().get(0).getValue());
+    }
+
+    @Test
     public void testAmmKOMO() throws IOException {
         //AMMATILLINEN	
         ExcelMigrationDTO result = searchByKoulutuskoodi("321101", "1624", null);

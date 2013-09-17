@@ -21,20 +21,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
-import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -67,7 +61,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaModel> {
+public class ValintaperustekuvausPresenter extends CommonPresenter<ValintaModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValintaperustekuvausPresenter.class);
     private ValintaperustekuvausRootView rootView;
@@ -75,17 +69,7 @@ public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaMod
     private transient UiBuilder uiBuilder;
     private ValintaModel model;
     @Autowired(required = true)
-    private TarjontaPermissionServiceImpl tarjontaPermissionService;
-    @Autowired(required = true)
-    private TarjontaAdminService tarjontaAdminService;
-    @Autowired(required = true)
-    private TarjontaPublicService tarjontaPublicService;
-    @Autowired(required = true)
     private TarjontaUIHelper tarjotaHelper;
-    @Autowired(required = true)
-    private KoodiService koodiService;
-    @Autowired(required = true)
-    private KoodistoService koodistoService;
 
     public ValintaperustekuvausPresenter() {
     }
@@ -129,27 +113,10 @@ public class ValintaperustekuvausPresenter implements CommonPresenter<ValintaMod
         return true;
     }
 
-    /*
-     * A simple notification helper method.
-     */
-    @Override
-    public void showNotification(final UserNotification msg) {
-        LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
-        if (msg != null && getRootView() != null) {
-            getRootView().showNotification(msg.getInfo(), msg.getNotifiaction());
-        } else {
-            LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
-        }
-    }
 
     @Override
     public void showMainDefaultView() {
         getRootView();
-    }
-
-    @Override
-    public TarjontaPermissionServiceImpl getPermission() {
-        return tarjontaPermissionService;
     }
 
     @Override
