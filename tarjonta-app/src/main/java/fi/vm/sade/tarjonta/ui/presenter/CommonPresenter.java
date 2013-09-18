@@ -66,7 +66,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Lähetä eventti.
      */
     public void sendEvent(Object o) {
-        LOG.info("sending event:" + o.getClass());
+        LOG.debug("sending event:" + o.getClass());
         eventBus.post(o);
     }
 
