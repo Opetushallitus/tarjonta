@@ -1,0 +1,30 @@
+{
+  "oid" : "1.2.246.562.5.2013091114080489552096",
+  "version" : 0,
+  "komoOid" : "1.2.246.562.5.2013061010184627561236",
+  "koulutuskoodi" : {
+    "teksti" : "Talotekniikan perustutkinto",
+    "uri" : "koulutus_351203",
+    "arvo" : "351203",
+    "version" : "1"
+  },
+  "koulutusmoduuliTyyppi" : "TUTKINTO_OHJELMA",
+  "koulutusohjelma" : {
+    "teksti" : [ {
+      "value" : "Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä",
+      "kieliKoodi" : "kieli_fi"
+    } ],
+    "uri" : "koulutusohjelmaamm_16481",
+    "version" : "1",
+    "availableLanguages" : [ {
+      "value" : "suomi",
+      "kieliKoodi" : "kieli_fi"
+    }, {
+      "value" : "ruotsi",
+      "kieliKoodi" : "kieli_sv"
+    } ],
+    "arvo" : "16481"
+  },
+  "teemas" : [ ],
+  "api_VERSION" : 4
+}

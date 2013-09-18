@@ -95,7 +95,10 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
         addValueChangeListeners();
     }
 
-    private void addValueChangeListeners() {
+    private void addValueChangeListeners() {    
+        if (valintakoeTyyppi == null || valintaKoeAikaEditView == null || valintaKoeAikaForm == null) {
+            return;
+        }
         valintakoeTyyppi.addListener(this);
         valintaKoeAikaEditView.addValueChangeListener(this);
         valintaKoeAikaForm.addListener(this);

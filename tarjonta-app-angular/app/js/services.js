@@ -38,3 +38,59 @@ app.factory('instagram', function($resource) {
     }
 
 });
+
+app.factory('TarjontaConfig', function($resource) {
+    return $resource('config.json', {}, {
+        query: {method: 'GET', headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }}
+    });
+});
+
+app.factory('TarjontaService', function($resource) {
+    var CONFIG;
+    
+    
+//    dataFactory.insertTutkinto = function (cust) {
+//        return $http.post(urlBase, cust);
+//    };
+//
+//    dataFactory.updateTutkinto = function (cust) {
+//        return $http.put(urlBase + '/' + cust.ID, cust)
+//    };
+//
+//    dataFactory.deleteTutkinto = function (id) {
+//        return $http.delete(urlBase + '/' + id);
+//    };
+//    
+//     dataFactory.getTutkinto = function (id) {
+//        return $http.delete(urlBase + '/' + id);
+//    };
+
+//    tarjontaConfig.get(function(jsonObject) {
+//        if (CONFIG === undefined) {
+//            console.info("Tarjonta configuration file loaded.");
+//            CONFIG = jsonObject;
+//        }
+//    });
+
+    return $resource("js/" + KK_TUTKINTO + '/koulutusData.json', {}, {
+        query: {method: 'GET', headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }}
+    });
+
+//    return $resource('http://localhost:8585/tarjonta-service/rest/koulutus/:oid', {}, {
+//        query: {method: 'GET', headers: {
+//                'Content-Type': 'application/json',
+//                'Accept': 'application/json'
+//            }, params: {
+//                host: CONFIG.host,
+//                port: CONFIG.port,
+//            }, isArray: true, xhrFields: {
+//                withCredentials: true
+//            }}
+//    });
+});

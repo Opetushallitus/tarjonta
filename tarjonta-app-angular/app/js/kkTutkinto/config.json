@@ -1,0 +1,6 @@
+{
+    "DESCRIPTION": "Angular application configuration file",
+    "host": "localhost",
+    "port": 8585,
+    "koulutusResource": "tarjota-service/rest/koulutus/"
+}
