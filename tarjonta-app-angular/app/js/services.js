@@ -5,12 +5,12 @@
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
-var app = angular.module('tarjontaApp.services', ['ngResource']);
+angular.module('tarjontaApp.services', ['ngResource'])
 
-app.value('version', '0.1');
+.value('version', '0.1')
 
 // http://tutorialzine.com/2013/08/learn-angularjs-5-examples/
-app.factory('instagram', function($resource) {
+.factory('instagram', function($resource) {
 
     return {
         fetchPopular: function(callback) {
@@ -35,21 +35,20 @@ app.factory('instagram', function($resource) {
 
             });
         }
-    }
+    };
 
-});
+})
 
-app.factory('TarjontaConfig', function($resource) {
+.factory('TarjontaConfig', function($resource) {
     return $resource('config.json', {}, {
         query: {method: 'GET', headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             }}
     });
-});
+})
 
-app.factory('TarjontaService', function($resource) {
-    var CONFIG;
+.factory('TarjontaService', function($resource) {
     
     
 //    dataFactory.insertTutkinto = function (cust) {
