@@ -55,8 +55,16 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setLiitteidenToimitusPvm(from.getLiitteidenToimitusPvm());
         hakukohde.setSahkoinenToimitusOsoite(from.getSahkoinenToimitusOsoite());
         hakukohde.setKaytetaanHaunPaattymisenAikaa(from.isKaytetaanHaunPaattymisenAikaa());
-        hakukohde.setSoraKuvausKoodiUri(from.getSoraKuvausKoodiUri());
+        
+        // sora- ja vape-kuvaus: varmistetaan, että joko url, teksti tai molemmat ovat null
+    	hakukohde.setSoraKuvausKoodiUri(from.getSoraKuvausKoodiUri());
+    	hakukohde.setSoraKuvaus(from.getSoraKuvausKoodiUri()!=null ? null : 
+    		CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(from.getSoraKuvausTeksti()));
+        
         hakukohde.setValintaperustekuvausKoodiUri(from.getValintaperustekuvausKoodiUri());
+    	hakukohde.setValintaperusteKuvaus(from.getValintaperustekuvausKoodiUri()!=null ? null : 
+    		CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(from.getValintaperustekuvausTeksti()));
+        
         if (from.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
         }

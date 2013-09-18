@@ -52,6 +52,9 @@ public class CommonToDTOConverter {
 
 
     public static MonikielinenTekstiTyyppi convertMonikielinenTekstiToTekstiTyyppi(MonikielinenTeksti monikielinenTeksti) {
+    	if (monikielinenTeksti==null) {
+    		return null;
+    	}
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
         ArrayList<MonikielinenTekstiTyyppi.Teksti> tekstis = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
         for (TekstiKaannos kaannos: monikielinenTeksti.getTekstis()) {
