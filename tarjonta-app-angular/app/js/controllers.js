@@ -1,6 +1,6 @@
 angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
 
-app.controller('RootCtrl', function($scope, Localisation) {
+.controller('RootCtrl', function($scope, Localisation) {
     console.log("RootCtrl()");
 
     // TODO how to get browser locale ? use locale?
@@ -31,15 +31,15 @@ app.controller('RootCtrl', function($scope, Localisation) {
             // Unknown translation, maybe create placeholder for it?
             return "[" + key + "]";
         }
-    }
-});
+    };
+})
 
 
-app.controller('MyCtrl1', [function() {
+.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
-    }]);
+    }])
 
-app.controller('MyCtrl2', function($scope, instagram) {
+.controller('MyCtrl2', function($scope, instagram) {
     console.log("MyCtrl2()");
 
     $scope.pics = [];
