@@ -1,3 +1,9 @@
 <p>This is the partial for view 1.</p>
 
 <a href="#/view2">Go to partial 2</a>
+
+{{ searchSpec = "HAKUEHTO" }}
+<pre>
+Lokalisaatio test 1: {{ t("tarjonta.title") }}
+Lokalisaatio test 2: {{ t("tarjonta.organisaationHaku.hakutulos", searchSpec, 7) }}
+</pre>

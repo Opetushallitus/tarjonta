@@ -12,9 +12,9 @@ angular.module('kkTutkintoApp',
             'ngRoute'
         ]);
 
-/*******************************************************/
-/* Main module dependecies                             */
-/*******************************************************/
+/*******************************************************
+ * Main module dependecies                             *
+ *******************************************************/
 angular.module('tarjontaApp',
         [
             'tarjontaApp.directives',
