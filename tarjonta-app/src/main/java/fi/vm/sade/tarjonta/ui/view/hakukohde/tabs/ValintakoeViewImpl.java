@@ -216,10 +216,14 @@ public class ValintakoeViewImpl extends VerticalLayout {
     }
 
     public void showValintakoeEditWithId(String id) {
+        boolean isNew = true;
         if (id == null) {
+            isNew = true;
             presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+        } else {
+            isNew = false;
         }
-        dialog = new HakukohdeAmmatillinenValintakoeDialog(presenter, uiBuilder);
+        dialog = new HakukohdeAmmatillinenValintakoeDialog(presenter, uiBuilder,isNew);
         dialog.windowOpen();
     }
 

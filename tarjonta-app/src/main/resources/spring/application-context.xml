@@ -80,6 +80,10 @@
     <bean id="searchPresenter" class="fi.vm.sade.tarjonta.ui.presenter.SearchPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
+    
+    <bean id="eventbus" class="com.google.common.eventbus.EventBus" scope="session"/>
+
+
 
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" ></bean>
 

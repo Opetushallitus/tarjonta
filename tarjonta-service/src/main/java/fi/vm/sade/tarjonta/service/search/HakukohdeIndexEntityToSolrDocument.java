@@ -84,6 +84,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
+        add(hakukohdeDoc, HAKUTYYPPI_URI, hakukohde.getHakutyyppiUri());
 
         docs.add(hakukohdeDoc);
 

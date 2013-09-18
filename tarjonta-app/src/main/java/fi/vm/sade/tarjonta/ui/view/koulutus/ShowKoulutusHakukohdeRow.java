@@ -81,7 +81,7 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
             }
         });
         
-        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context));
+        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context, hakukohdeViewModel.isHakuStarted()));
         poistaBtn.setStyleName("link-row");
     }
 

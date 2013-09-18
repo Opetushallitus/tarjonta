@@ -21,11 +21,16 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -43,9 +48,11 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
@@ -175,10 +182,7 @@ public class ListHakuView extends VerticalLayout {
                 hc.addItem(curHaku);
                 hc.setParent(curHaku, rootItem);
                 hc.getContainerProperty(curHaku, COLUMN_A).setValue(rowStyleInner.format(getListHakuName(curHaku), true));
-                hc.getContainerProperty(curHaku, COLUMN_PVM).setValue(getAjankohtaStr(curHaku));
-                hc.getContainerProperty(curHaku, COLUMN_HAKUTAPA).setValue(getHakutapaStr(curHaku));
-                hc.getContainerProperty(curHaku, COLUMN_HAKUTYYPPI).setValue(getHakuTyyppiStr(curHaku));
-                hc.getContainerProperty(curHaku, COLUMN_TILA).setValue(this.getTilaStr(curHaku));
+                setHakuProperties(hc, curHaku);
                 
                 
                 hc.setChildrenAllowed(curHaku, false);
@@ -197,6 +201,14 @@ public class ListHakuView extends VerticalLayout {
             }
         }
         return hc;
+    }
+
+    private void setHakuProperties(HierarchicalContainer hc, HakuViewModel curHaku) {
+        Preconditions.checkNotNull("haku cannot be null", curHaku);
+        hc.getContainerProperty(curHaku, COLUMN_PVM).setValue(getAjankohtaStr(curHaku));
+        hc.getContainerProperty(curHaku, COLUMN_HAKUTAPA).setValue(getHakutapaStr(curHaku));
+        hc.getContainerProperty(curHaku, COLUMN_HAKUTYYPPI).setValue(getHakuTyyppiStr(curHaku));
+        hc.getContainerProperty(curHaku, COLUMN_TILA).setValue(this.getTilaStr(curHaku));
     }
     
     private String getListHakuName(HakuViewModel curHaku) {
@@ -369,7 +381,99 @@ public class ListHakuView extends VerticalLayout {
 
     }
 
+    /**
+     * Event listeneri joka saa viestejä koulutustulospuun muutostarpeista, katso
+     * {@link TarjontaPresenter#sendEvent(Object)}
+     */
+    @Subscribe 
+    public void receiveHakuContainerEvent(HakuContainerEvent e) {
 
+        final String eventHakuOid = e.oid;
+    
+        switch (e.type) {
+        case DELETE:
+            
+            
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(HakuViewModel.class))){
+                    final HakuViewModel currentHaku = (HakuViewModel)itemid;
+                    if(currentHaku.getHakuOid().equals(eventHakuOid)) {
+                        categoryTree.removeItem(currentHaku);
+                    }
+            }
+            break;
 
+        case UPDATE:
+            
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(HakuViewModel.class))){
+                    HakuViewModel currentHaku = (HakuViewModel)itemid;
+                    if(currentHaku.getHakuOid().equals(eventHakuOid)) {
+                        //hae tuore haku
+                        final HakuViewModel freshHaku = presenter.findHakuByOid(eventHakuOid);
+                        copyData(currentHaku, freshHaku);
+                        final HakuResultRow curRow = (HakuResultRow) (categoryTree.getContainerProperty(itemid, COLUMN_A).getValue());
+                        setHakuProperties((HierarchicalContainer)categoryTree.getContainerDataSource(), currentHaku);
+                        curRow.reinitMenubar();
+                    }
+            }
+            break;
 
+        case CREATE:
+
+//            final HakuViewModel freshHaku = presenter.findHakuByOid(eventHakuOid);
+//            
+//            Object parent = categoryTree.getItem(freshHaku.getfindParent(freshHaku.getHakutyyppi());
+//            if(parent==null) {
+//                //need to add new org to tree, falling back to reload for now!
+                reload();
+//            } else {
+//                addHakuRow(parent, freshHaku);
+//                //TODO increase counter?
+//            }
+            
+            
+            break;
+            
+        default:
+            LOG.warn("event not processed:" + e);
+            break;
+        }
+    }
+
+    private void copyData(Object to,
+            final Object from) {
+        try {
+            BeanUtils.copyProperties(to,  from);
+        } catch (Throwable t) {
+            LOG.warn("Could not copy properties from " + from.getClass() + " to " + to.getClass(), t);
+        }
+    }
+
+    private final Predicate<Object> filter(final Class<?> type) {
+        return new Predicate<Object>() {
+            public boolean apply(Object o) {
+                return o.getClass() == type;
+            }
+        };
+    }
+    
+    
+    private boolean attached = false;
+    
+    @Override
+    public void attach() {
+        super.attach();
+        if (!attached) {
+            attached = true;
+            presenter.registerEventListener(this);
+        }
+    }
+    
+    @Override
+    protected void finalize() throws Throwable {
+        if(presenter!=null) {
+            presenter.unregisterEventListener(this);
+        }
+        super.finalize();
+    }
+    
 }

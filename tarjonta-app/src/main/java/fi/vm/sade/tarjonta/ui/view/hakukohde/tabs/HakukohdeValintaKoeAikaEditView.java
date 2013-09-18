@@ -74,13 +74,29 @@ public class HakukohdeValintaKoeAikaEditView extends VerticalLayout {
 
     private Button lisaaBtn;
 
+    private Property.ValueChangeListener valueChangeListener;
+
     public HakukohdeValintaKoeAikaEditView() {
          buildLayout();
+        addValueChangeListeners();
+    }
 
+    public void addValueChangeListener(Property.ValueChangeListener listener) {
+        this.valueChangeListener = listener;
+    }
+
+    private void addValueChangeListeners() {
+        if (valueChangeListener != null) {
+            osoiteRiviTxt.addListener(valueChangeListener);
+            postinumeroCombo.addListener(valueChangeListener);
+            alkupvm.addListener(valueChangeListener);
+            loppuPvm.addListener(valueChangeListener);
+        }
     }
 
     private void buildLayout() {
         this.addComponent(buildOsoiteEditLayout());
+
     }
 
     private HorizontalLayout buildLisatietoLayout() {

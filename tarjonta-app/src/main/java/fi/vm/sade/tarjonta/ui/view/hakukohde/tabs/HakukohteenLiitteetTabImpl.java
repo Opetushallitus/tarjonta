@@ -254,14 +254,17 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
     }
 
     public void showHakukohdeEditWindow(final String id) {
+        boolean isNew = true;
         if (id == null) {
             presenter.getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
             presenter.setCustomLiiteOsoiteSelected(false);
+            isNew = true;
         } else {
             presenter.loadHakukohdeLiiteWithId(id);
+            isNew = false;
         }
 
-        liitteetDialog = new HakukohdeLiiteetDialog(presenter, uiBuilder);
+        liitteetDialog = new HakukohdeLiiteetDialog(presenter, uiBuilder,isNew);
         liitteetDialog.windowOpen();
 
     }

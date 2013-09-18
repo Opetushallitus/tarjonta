@@ -113,6 +113,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
     }
 
     private void addNavigationButtons(OrganisaatioContext context) {
+        final boolean hakuStarted = !checkHaunAlkaminen();
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -127,7 +128,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (checkHaunAlkaminen()) {
+                if (!hakuStarted) {
                     showConfirmationDialog();
                 } else {
                     getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
@@ -146,7 +147,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
          }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
-        poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context));
+        poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted));
         /*kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));*/
     }
 

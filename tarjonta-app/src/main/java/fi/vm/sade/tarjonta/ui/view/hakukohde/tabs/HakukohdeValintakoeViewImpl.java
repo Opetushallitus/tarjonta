@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 
 import com.google.common.base.Preconditions;
+import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
@@ -57,7 +58,7 @@ import java.util.List;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class HakukohdeValintakoeViewImpl extends VerticalLayout {
+public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Property.ValueChangeListener {
 
     private static final long serialVersionUID = -3141387197879909448L;
     private transient I18NHelper i18n = new I18NHelper(this);
@@ -82,6 +83,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
     private ValintakoeViewModel editableValintakoe;
     private boolean aikaAdded = false;
     private TarjontaDialogWindow dialogWindow;
+    private boolean modelEdited = false;
 
     public HakukohdeValintakoeViewImpl(ErrorMessage errorView, TarjontaPresenter presenter, UiBuilder uiBuilder, KoulutusasteTyyppi koulutustyyppi) {
         super();
@@ -90,7 +92,18 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
         this.errorView = errorView;
         this.koulutustyyppi = koulutustyyppi;
         buildMainLayout();
+        addValueChangeListeners();
+    }
 
+    private void addValueChangeListeners() {
+        valintakoeTyyppi.addListener(this);
+        valintaKoeAikaEditView.addValueChangeListener(this);
+        valintaKoeAikaForm.addListener(this);
+    }
+
+    @Override
+    public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+        modelEdited = true;
     }
 
     private void initForm() {
@@ -124,6 +137,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
     private VerticalLayout buildOsoiteEditLayout() {
         aikaInputFormLayout = new VerticalLayout();
         valintaKoeAikaEditView = new HakukohdeValintaKoeAikaEditView();
+
         valintaKoeAikaForm = new ValidatingViewBoundForm(valintaKoeAikaEditView);
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(valintaKoeAikaForm);
 
@@ -363,12 +377,13 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
 
     private KoodistoComponent buildValintakokeenTyyppi() {
         valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_VALINTAKOE_TYYPPI_URI);
+
         return valintakoeTyyppi;
     }
 
     private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
         valintaKoeKuvaus = new ValintakoeKuvausTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
-
+        valintaKoeKuvaus.addValueChangeListener(this);
         valintaKoeKuvaus.setSizeUndefined();
         return valintaKoeKuvaus;
 
@@ -387,13 +402,8 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout {
     }
 
     private boolean isModelEdited() {
-        if (editableValintakoe.getSanallisetKuvaukset() != null && editableValintakoe.getSanallisetKuvaukset().size() > 0) {
-            return true;
-        }
-        if (editableValintakoe.getValintakoeTyyppi() != null && editableValintakoe.getValintakoeTyyppi().trim().length() > 1) {
-            return true;
-        }
-        if (editableValintakoe.getLisanayttoKuvaukset() != null && editableValintakoe.getLisanayttoKuvaukset().size() > 0) {
+
+        if (modelEdited) {
             return true;
         }
 

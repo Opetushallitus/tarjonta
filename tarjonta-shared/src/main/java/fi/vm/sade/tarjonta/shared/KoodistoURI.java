@@ -108,6 +108,13 @@ public class KoodistoURI {
      * For tutkinto dialog
      */
     public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
+    
+    public static String KOODI_LISAHAKU_URI;
+    
+    @Value("${koodisto-uris.lisahaku:hakutyyppi_03#1}")
+    public void setKoodiLisahakuUri(String uri) {
+        KOODI_LISAHAKU_URI = uri;
+    }
 
     @Value("${koodisto.language.fi.uri:kieli_fi}")
     public void setKoodiLangFiUri(String uri) {

@@ -106,9 +106,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }
         
         for (String language : languages) {
-            List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
-            ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language,
+            final String[] langParts = tarjontaUIHelper.splitKoodiURI(language);
+            final List<KoodiType> koodit = tarjontaUIHelper.getKoodis(langParts[0]);
+
+            ShowKoulutusViewTab tab=null;
+            if(koodit.size()>0) {
+                tab = new ShowKoulutusViewTab(language,
                     new Locale(koodit.get(0).getKoodiArvo()));
+            } else {
+                tab = new ShowKoulutusViewTab(language,
+                        new Locale(language));
+            }
             tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
         }
 
@@ -152,16 +160,19 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
 
 
+    	
+    	
 
     	final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
-    		private static final long serialVersionUID = 5019806363620874205L;
+    	    private static final long serialVersionUID = 5019806363620874205L;
 
-    		@Override
-    		public void buttonClick(Button.ClickEvent event) {
-    			showRemoveDialog();
+    	    @Override
+    	    public void buttonClick(Button.ClickEvent event) {
+    	        showRemoveDialog();
 
-    		}
+    	    }
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+    	
 
       /* Removed because functionality is not yet implemented OVT-4450 */
     /*	final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
@@ -206,7 +217,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     	//check permissions
     	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
     	poista.setVisible(TarjontaTila.valueOf(presenter.getModel().getKoulutusPerustiedotModel().getTila()).isRemovable()
-    			&& permissions.userCanDeleteKoulutus(context));
+    			&& permissions.userCanDeleteKoulutus(context, presenter.isHakuStartedForKoulutus(presenter.getModel().getKoulutusPerustiedotModel().getOid())));
     	
 //    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
     	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));

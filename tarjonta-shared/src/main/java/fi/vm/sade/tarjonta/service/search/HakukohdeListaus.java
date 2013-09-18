@@ -25,6 +25,8 @@ public class HakukohdeListaus implements Serializable
     protected Date hakuAlkamisPvm;
     protected Date hakuPaattymisPvm;
     protected MonikielinenTekstiTyyppi hakukohteenKoulutuslaji;
+    protected String hakutyyppiUri;
+
 
     /**
      * Default no-arg constructor
@@ -38,7 +40,7 @@ public class HakukohdeListaus implements Serializable
      * Fully-initialising value constructor
      * 
      */
-    public HakukohdeListaus(final String oid, final MonikielinenTekstiTyyppi nimi, final String koodistoNimi, final TarjontaTila tila, final String aloituspaikat, final String koulutuksenAlkamiskausiUri, final String koulutuksenAlkamisvuosi, final KoodistoKoodiTyyppi hakutapaKoodi, final TarjoajaTyyppi tarjoaja, final Date hakuAlkamisPvm, final Date hakuPaattymisPvm, final MonikielinenTekstiTyyppi hakukohteenKoulutuslaji) {
+    public HakukohdeListaus(final String oid, final MonikielinenTekstiTyyppi nimi, final String koodistoNimi, final TarjontaTila tila, final String aloituspaikat, final String koulutuksenAlkamiskausiUri, final String koulutuksenAlkamisvuosi, final KoodistoKoodiTyyppi hakutapaKoodi, final TarjoajaTyyppi tarjoaja, final Date hakuAlkamisPvm, final Date hakuPaattymisPvm, final MonikielinenTekstiTyyppi hakukohteenKoulutuslaji, final String hakutyyppiUri) {
         this.oid = oid;
         this.nimi = nimi;
         this.koodistoNimi = koodistoNimi;
@@ -51,6 +53,7 @@ public class HakukohdeListaus implements Serializable
         this.hakuAlkamisPvm = hakuAlkamisPvm;
         this.hakuPaattymisPvm = hakuPaattymisPvm;
         this.hakukohteenKoulutuslaji = hakukohteenKoulutuslaji;
+        this.hakutyyppiUri = hakutyyppiUri;
     }
 
     /**
@@ -339,6 +342,15 @@ public class HakukohdeListaus implements Serializable
      */
     public void setHakukohteenKoulutuslaji(MonikielinenTekstiTyyppi value) {
         this.hakukohteenKoulutuslaji = value;
+    }
+    
+
+    public String getHakutyyppiUri() {
+        return hakutyyppiUri;
+    }
+
+    public void setHakutyyppiUri(String hakutyyppiUri) {
+        this.hakutyyppiUri = hakutyyppiUri;
     }
 
 }

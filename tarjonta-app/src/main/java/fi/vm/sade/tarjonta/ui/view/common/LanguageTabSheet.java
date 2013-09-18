@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.data.Property;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet.Tab;
@@ -59,6 +60,7 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     private boolean useRichText = false;
     private String TABSHEET_WIDTH = "500px";
     private String TABSHEET_HEIGHT = "300px";
+    private Property.ValueChangeListener valueChangeListener;
 
     public LanguageTabSheet() {
     }
@@ -151,12 +153,17 @@ public abstract class LanguageTabSheet extends VerticalLayout {
              */
             String totalHack = TABSHEET_HEIGHT.replace("px", "");
             richText.setHeight(Integer.parseInt(totalHack) - 48, UNITS_PIXELS);
-
+            if (valueChangeListener != null) {
+                richText.addListener(valueChangeListener);
+            }
             return richText;
         } else {
             TextField textField = UiUtil.textField(null);
             textField.setSizeFull();
             textField.setValue(value);
+            if (valueChangeListener != null) {
+                textField.addListener(valueChangeListener);
+            }
             return textField;
         }
     }
@@ -172,6 +179,10 @@ public abstract class LanguageTabSheet extends VerticalLayout {
 
     public Set<String> getRemovedTabs() {
         return _languageTabsheet.getRemoved();
+    }
+
+    public void addValueChangeListener(Property.ValueChangeListener listener) {
+        this.valueChangeListener = listener;
     }
 
     public void initializeTabsheet() {

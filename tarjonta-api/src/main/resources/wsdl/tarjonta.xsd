@@ -83,6 +83,11 @@
                         maxOccurs="1"
                         minOccurs="1"/>
                         
+            <xs:element name="hakukohteenHakutyyppiUri"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+                        
             <xs:element name="sisaisetHakuajat"
                         minOccurs="0"
                         maxOccurs="1"
@@ -193,6 +198,9 @@
                         minOccurs="0"
                         maxOccurs="1"/>
         
+        
+            <xs:element name="opetuskieliUris" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            
             <!-- optimistic locking -->
             <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>            
         

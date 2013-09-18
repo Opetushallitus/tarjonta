@@ -73,7 +73,6 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -194,6 +193,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Value("${koodisto-uris.yhteishaku}")
     private String hakutapaYhteishakuUrl;
+    
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
     /*
      *
      * Init view with new model
@@ -736,16 +738,57 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      *
      */
 
-    private boolean accepts(HakuaikaViewModel ham) {
-    	return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+    private boolean accepts(HakuaikaViewModel ham, boolean isLisahaku) {
+        //Oph user has her own rules
+        if (presenter.getPermission().userIsOphCrud()) {
+            return acceptsForOph(ham);
+        }
+        if (isLisahaku) {
+            return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+        }
+    	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
     
+    private boolean acceptsForOph(HakuaikaViewModel ham) {
+        return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
+    }
+    
+    private boolean acceptsForOph(HakuViewModel hm) {
+        
+        if (hm.getPaattymisPvm() ==null || !hm.getPaattymisPvm().before(new Date())) {
+                return true;
+        }
+        for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
+                if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
+                        return true;
+                }
+        }
+        return false;
+    }
+    
+    /*
+     * Checking if the haku is acceptable for hakukohde
+     */
     private boolean accepts(HakuViewModel hm) {
-    	if (hm.getPaattymisPvm()==null || hm.getPaattymisPvm().after(new Date())) {
+        
+        //Oph user has her own rules
+        if (presenter.getPermission().userIsOphCrud()) {
+            return acceptsForOph(hm);
+        }
+        
+        //If it is lisahaku it is ok for hakukohde if the haku has not ended
+        if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
+                && (hm.getPaattymisPvm() != null || hm.getPaattymisPvm().after(new Date()))) {
+            return true;
+        }
+        //If haku has not started it is ok for hakukohde
+    	if (hm.getAlkamisPvm() ==null || hm.getAlkamisPvm().before(new Date())) {
     		return true;
     	}
+    	
+    	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-    		if (accepts(ham)) {
+    		if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
     			return true;
     		}
     	}
@@ -790,18 +833,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             if (hk.getSisaisetHakuajat().isEmpty()) {
                 ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
                 lht.setHakuOid(hk.getHakuOid());
-                List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
-                if (hakus.size() != 1) {
-                    LOG.warn("Hakua ei löytynyt: {}", hk.getHakuOid());
-                } else {
-                    hk = new HakuViewModel(hakus.iterator().next());
-                }
+                hk = presenter.findHakuByOid(hk.getHakuOid());
             }
 
         	List<HakuaikaViewModel> hvms = new ArrayList<HakuaikaViewModel>();
 
             for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
-            	if (accepts(ham)) {
+            	if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hk.getHakutyyppi()))) {
             		hvms.add(ham);
             	}
             }
