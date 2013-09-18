@@ -15,17 +15,32 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Date;
-import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -89,10 +104,12 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
-    @Deprecated
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sorakuvaus_teksti_id")
+    private MonikielinenTeksti soraKuvaus;
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
@@ -400,7 +417,6 @@ public class Hakukohde extends TarjontaBaseEntity {
     /**
      * @return the valintaperusteKuvaus
      */
-    @Deprecated
     public MonikielinenTeksti getValintaperusteKuvaus() {
         return valintaperusteKuvaus;
     }
@@ -408,7 +424,6 @@ public class Hakukohde extends TarjontaBaseEntity {
     /**
      * @param valintaperusteKuvaus the valintaperusteKuvaus to set
      */
-    @Deprecated
     public void setValintaperusteKuvaus(MonikielinenTeksti valintaperusteKuvaus) {
         this.valintaperusteKuvaus = valintaperusteKuvaus;
     }
@@ -442,7 +457,15 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.soraKuvausKoodiUri = soraKuvausKoodiUri;
     }
 
-    /**
+    public MonikielinenTeksti getSoraKuvaus() {
+		return soraKuvaus;
+	}
+
+	public void setSoraKuvaus(MonikielinenTeksti soraKuvaus) {
+		this.soraKuvaus = soraKuvaus;
+	}
+
+	/**
      * @return the alinHyvaksyttavaKeskiarvo
      */
     public Double getAlinHyvaksyttavaKeskiarvo() {

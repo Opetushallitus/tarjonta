@@ -157,12 +157,22 @@
                         type="xs:string"
                         minOccurs="0"
                         maxOccurs="1"/>
+                        
+            <xs:element name="valintaperustekuvausTeksti"
+                        type="tns:MonikielinenTekstiTyyppi"
+                        minOccurs="0"
+                        maxOccurs="1"/>
               
             <xs:element name="soraKuvausKoodiUri"
                         type="xs:string"
                         minOccurs="0"
                         maxOccurs="1"/>
             
+            <xs:element name="soraKuvausTeksti"
+                        type="tns:MonikielinenTekstiTyyppi"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+              
             <xs:element  name="painotettavatOppiaineet"
                          type="tns:PainotettavaOppiaineTyyppi"
                          minOccurs="0"
