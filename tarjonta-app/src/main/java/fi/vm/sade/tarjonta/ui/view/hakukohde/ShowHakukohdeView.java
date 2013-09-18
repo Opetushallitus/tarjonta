@@ -33,6 +33,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -212,10 +213,10 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
         Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
         Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         Date tanaan = new Date();
-        if (tanaan.after(haunAlkamisPvm) && tanaan.before(haunPaattymisPvm)) {
-            return false;
-        } else {
+        if (!tanaan.after(haunAlkamisPvm) || KoodistoURI.KOODI_LISAHAKU_URI.equals(tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {
             return true;
+        } else {
+            return false;
         }
     }
 
