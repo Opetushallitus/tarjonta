@@ -14,7 +14,10 @@
         <script src="lib/angular/angular.js"></script>
         <script src="lib/angular/angular-resource.js"></script>
         <script src="lib/angular/angular-route.js"></script>
-        <script src="js/libs/underscore/underscore.js"></script>
+        <script src="lib/underscore/underscore.js"></script>
+        <script src="lib/jquery-1.10.2.min.js"></script>
+
+        <script src="js/shared/loading.js"></script>
         <script src="js/shared/constant.js"></script>
 
         <script src="js/kkTutkinto/services.js"></script>
@@ -62,6 +65,13 @@
                     <div data-ng-view></div>
                 </div>
             </div>
+        </div>
+
+        <div ng-controller="LoadingCtrl"
+             ng-show="loading"
+             style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
+            Käsitellään...
+            <img alt="Loading  Content" src="img/ajax-loader-big.gif" />
         </div>
     </body>
 </html>

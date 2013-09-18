@@ -23,7 +23,8 @@ angular.module('tarjontaApp',
             'tarjontaApp.controllers',
             'kkTutkintoApp',
             'ngRoute',
-            'ngResource'
+            'ngResource',
+            'loading'
         ]);
 
 angular.module('tarjontaApp').config(['$routeProvider', function($routeProvider)
