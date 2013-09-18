@@ -1,9 +1,9 @@
-var app = angular.module('tarjontaApp.controllers', ['tarjontaApp.services']);
-
+angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
 
 app.controller('RootCtrl', function($scope, Localisation) {
     console.log("RootCtrl()");
 
+    // TODO how to get browser locale ? use locale?
     $scope.locale = "fi";
     $scope.localisations = [];
 
