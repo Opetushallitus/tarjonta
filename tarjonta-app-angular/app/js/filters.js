@@ -18,3 +18,22 @@ app.filter('startFrom', function() {
         return input.slice(start);
     }
 });
+
+app.filter('reverse', function() {
+    return function(input) {
+        // console.log("reverse() " + input + " type = "+ (typeof(input)));
+
+        if (typeof input === "string") {
+            return input.split("").reverse().join("");
+        }
+
+        if (input instanceof Array) {
+            return input.reverse();
+        }
+
+        // console.log("  sheisse... not string or array, gonna fail now");
+
+        throw "filter reverse expects arcument to be array or string";
+    }
+
+});

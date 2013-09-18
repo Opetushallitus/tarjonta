@@ -5,6 +5,7 @@ module.exports = function(config){
     files : [
       JASMINE,
       JASMINE_ADAPTER,
+      'app/lib/underscore/underscore.js',
       'app/lib/angular/angular.js',
       'app/lib/angular/angular-resource.js',
       'test/lib/angular/angular-mocks.js',

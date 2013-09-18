@@ -1,5 +1,8 @@
 'use strict';
 
+// Mark arrays as arrays :)
+Array.prototype.isArray = true;
+
 // Declare app level module which depends on filters, and services
 var app = angular.module('tarjontaApp',
         ['tarjontaApp.filters', 'tarjontaApp.services', 'tarjontaApp.directives', 'tarjontaApp.controllers', 'ngRoute', 'ngResource']
