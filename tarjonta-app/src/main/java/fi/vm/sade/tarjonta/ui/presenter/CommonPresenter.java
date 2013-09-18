@@ -93,6 +93,9 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
 
     public abstract boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState);
 
+    /**
+     * Näyttää käyttäjälle notifikaation.
+     */
     public void showNotification(final UserNotification msg){
         LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
         if (msg != null && getRootView() != null) {
@@ -117,11 +120,18 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
         return tarjontaPermissionService;
     }
 
+    /**
+     * Hakee haun hakuoidilla. jos ei löydy, palauttaa nullin.
+     */
     public HakuViewModel findHakuByOid(String oid) {
-        ListaaHakuTyyppi hakuehdot = new ListaaHakuTyyppi();
+        final ListaaHakuTyyppi hakuehdot = new ListaaHakuTyyppi();
         hakuehdot.setHakuOid(oid);
-        ListHakuVastausTyyppi vastaus = tarjontaPublicService.listHaku(hakuehdot);
-        return new HakuViewModel(vastaus.getResponse().get(0));
+        final ListHakuVastausTyyppi vastaus = tarjontaPublicService.listHaku(hakuehdot);
+        if(vastaus.getResponse().size()>0) {
+            return new HakuViewModel(vastaus.getResponse().get(0));
+        } else {
+            return null;        
+        }
     }
     
 
