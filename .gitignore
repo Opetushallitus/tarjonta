@@ -8,3 +8,4 @@ target/
 *~
 **/*~
 *.iml
+tarjonta-app-angular/node_modules
