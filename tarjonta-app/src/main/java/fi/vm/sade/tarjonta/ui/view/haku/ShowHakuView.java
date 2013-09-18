@@ -72,7 +72,7 @@ public class ShowHakuView extends AbstractVerticalInfoLayout {
 
     private HakuViewModel model;
 
-    private I18NHelper i18n = new I18NHelper("ShowHakuViewImpl.");
+    private I18NHelper i18n = new I18NHelper("ShowHakuView.");
 
     private final String datePattern = "dd.MM.yyyy HH:mm";
 
