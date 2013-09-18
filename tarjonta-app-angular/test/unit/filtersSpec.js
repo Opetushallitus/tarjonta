@@ -19,18 +19,18 @@ describe('filter', function() {
     // Testing filter "reverse"
     //
     describe('reverse', function() {
-        console.log("TEST filter 'reverse'");
+        // console.log("TEST filter 'reverse'");
 
         beforeEach(module(function($provide) {
         }));
 
         it('should reverse string', inject(function(reverseFilter) {
-            console.log("  ...string");
+            // console.log("  ...string");
             expect(reverseFilter("12345")).toEqual("54321");
         }));
 
         it('should reverse array', inject(function(reverseFilter) {
-            console.log("  ...array");
+            // console.log("  ...array");
             var tmpOriginal = ["1", "2", "3"];
             var tmpResult = ["3", "2", "1"];
 
@@ -38,7 +38,7 @@ describe('filter', function() {
         }));
 
         it('should throw error with object', inject(function(reverseFilter) {
-            console.log("  ...object");
+            // console.log("  ...object");
             try {
                 reverseFilter(xxx);
                 expect(true).toEqual(false);
