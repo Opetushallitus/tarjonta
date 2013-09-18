@@ -150,6 +150,8 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
     
     private void addPermissionSpecificCommands() {
+//        rowMenuBar.clear();
+
         
         final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
         
@@ -322,8 +324,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
 
             HorizontalLayout hl = UiUtil.horizontalLayout();
-            OphRowMenuBar menubar = newMenuBar();
-            hl.addComponent(menubar);
+            rowMenuBar = newMenuBar();
+            hl.addComponent(rowMenuBar);
             hl.addListener(new LayoutClickListener() {
 
                 private static final long serialVersionUID = -4622160054223438418L;
@@ -425,7 +427,11 @@ public class KoulutusResultRow extends HorizontalLayout {
 
     public void reinitMenubar() {
         rowMenuBar.clear();
+        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
+
+        
         commandsAdded=false;
+        
     }
 
 
