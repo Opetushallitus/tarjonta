@@ -23,13 +23,17 @@ module.exports = function(config){
     plugins : [
             'karma-junit-reporter',
             'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
             'karma-firefox-launcher',
             'karma-jasmine'
             ],
 
-    junitReporter : {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
-    }
+    reporters: ['progress', 'junit'],
 
-})}
+    junitReporter : {
+      outputFile: 'target/karma-junit-report.xml',
+      suite: ''
+    }
+    });
+    };
+
