@@ -55,6 +55,20 @@ public class TestIntegraatioTarjonta {
 	//Tarjonnan koulutus
 	@Test
     public void test_T_INT_TAR_KOUL001() throws Exception {
+    	try {
+    		KOUL001loop();
+    	} catch (Exception e) {
+    		try {
+    			doit.printMyStackTrace(e);
+    			KOUL001loop();
+    		} catch (Exception e2) {
+    			doit.printMyStackTrace(e2);
+    			KOUL001loop();
+    		}
+    	}
+    }
+
+    public void KOUL001loop() throws Exception {
     	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_KOUL001 ...");
     	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
@@ -70,6 +84,20 @@ public class TestIntegraatioTarjonta {
     //Tarjonnan hakukohde
 	@Test
     public void test_T_INT_TAR_HKOH001() throws Exception {
+    	try {
+    		HKOH001loop();
+    	} catch (Exception e) {
+    		try {
+    			doit.printMyStackTrace(e);
+    			HKOH001loop();
+    		} catch (Exception e2) {
+    			doit.printMyStackTrace(e2);
+    			HKOH001loop();
+    		}
+    	}
+    }
+
+    public void HKOH001loop() throws Exception {
     	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_HKOH001 ...");
         doit.ValikotHakukohteidenYllapito(driver, baseUrl);
@@ -91,6 +119,20 @@ public class TestIntegraatioTarjonta {
 	//(Tarjonnan) haun etusivu
 	@Test
     public void test_T_INT_TAR_HAKU001() throws Exception {
+    	try {
+    		HAKU001loop();
+    	} catch (Exception e) {
+    		try {
+    			doit.printMyStackTrace(e);
+    			HAKU001loop();
+    		} catch (Exception e2) {
+    			doit.printMyStackTrace(e2);
+    			HAKU001loop();
+    		}
+    	}
+    }
+
+    public void HAKU001loop() throws Exception {
     	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_HAKU001 ...");
         doit.ValikotHakujenYllapito(driver, baseUrl);
