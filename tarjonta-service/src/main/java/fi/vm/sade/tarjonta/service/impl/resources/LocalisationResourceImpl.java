@@ -36,7 +36,7 @@ public class LocalisationResourceImpl implements LocalisationResource {
 
     @Override
     public Map<String, LocalisationRDTO> getLocalisations(String requestedLocale, boolean includeAllLanguages) {
-        LOG.info("getLocalisations()");
+        LOG.info("getLocalisations({}, {})", requestedLocale, includeAllLanguages);
         Map<String, LocalisationRDTO> result = new HashMap<String, LocalisationRDTO>();
 
         if (requestedLocale == null) {
@@ -52,22 +52,22 @@ public class LocalisationResourceImpl implements LocalisationResource {
         }
 
         {
-            LocalisationRDTO t = new LocalisationRDTO("this", "fi", "Tämä tosiaankin");
+            LocalisationRDTO t = new LocalisationRDTO("this", requestedLocale, "Tämä tosiaankin");
             t.setValues(allLangsMap);
             result.put(t.getKey(), t);
         }
         {
-            LocalisationRDTO t = new LocalisationRDTO("is", "fi", "ollakko (vai eikö olla)");
+            LocalisationRDTO t = new LocalisationRDTO("is", requestedLocale, "ollakko (vai eikö olla)");
             t.setValues(allLangsMap);
             result.put(t.getKey(), t);
         }
         {
-            LocalisationRDTO t = new LocalisationRDTO("a", "fi", "jonkinlainen");
+            LocalisationRDTO t = new LocalisationRDTO("a", requestedLocale, "jonkinlainen");
             t.setValues(allLangsMap);
             result.put(t.getKey(), t);
         }
         {
-            LocalisationRDTO t = new LocalisationRDTO("test", "fi", "testi tms. kokeilu");
+            LocalisationRDTO t = new LocalisationRDTO("test", requestedLocale, "testi tms. kokeilu");
             t.setValues(allLangsMap);
             result.put(t.getKey(), t);
         }
@@ -77,18 +77,23 @@ public class LocalisationResourceImpl implements LocalisationResource {
 
     @Override
     public LocalisationRDTO getLocalisation(String key) {
-        LOG.info("getLocalisation()");
+        LOG.info("getLocalisation({})", key);
         return new LocalisationRDTO();
     }
 
     @Override
     public void updateLocalization(String key, LocalisationRDTO data) {
-        LOG.info("updateLocalization()");
+        LOG.info("updateLocalization({})", key);
     }
 
     @Override
     public LocalisationRDTO createLocalization(String key, LocalisationRDTO data) {
-        LOG.info("createLocalization()");
+        LOG.info("createLocalization({})", key);
         return data;
+    }
+
+    @Override
+    public void deleteLocalization(String key) {
+        LOG.info("deleteLocalization({})", key);
     }
 }

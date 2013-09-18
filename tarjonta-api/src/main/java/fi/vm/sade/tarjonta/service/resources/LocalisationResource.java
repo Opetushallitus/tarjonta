@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.resources;
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -27,6 +28,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * <pre>
+ * http://localhost:8084/tarjonta-service/rest/localisation?locale=sv&allLanguages=true
+ * http://localhost:8084/tarjonta-service/rest/localisation/xxx (GET, PUT, POST, DELETE)
+ * </pre>
  *
  * @author mlyly
  */
@@ -58,4 +63,9 @@ public interface LocalisationResource {
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public LocalisationRDTO createLocalization(@PathParam("key") String key, LocalisationRDTO data);
+
+    @DELETE
+    @Path("{key}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public void deleteLocalization(@PathParam("key") String key);
 }
