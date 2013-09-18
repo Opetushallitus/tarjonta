@@ -732,32 +732,40 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return alinHyvaksyttavaKeskiarvoText;
     }
 
-    /*
-     *
-     * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
-     *
-     */
 
+    /*
+     * Checks if the hakuaika is acceptable for hakukohde
+     */
     private boolean accepts(HakuaikaViewModel ham, boolean isLisahaku) {
         //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(ham);
         }
+        //If it is lisahaku it is acceptable if hakuaika has not ended yet.
         if (isLisahaku) {
             return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
         }
+        //Hakuaika is ok if it has not started yet.
     	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
     
+    /*
+     * Checks if hakuaika is acceptable for hakukohde in case the user is oph user
+     */
     private boolean acceptsForOph(HakuaikaViewModel ham) {
+        //If hakuaika has not ended it is acceptable for hakukohde
         return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
     }
     
+    /*
+     * Checks if haku is acceptable for hakukohde in case the user is oph user
+     */
     private boolean acceptsForOph(HakuViewModel hm) {
-        
+        //If hakuaika has not ended it is ok
         if (hm.getPaattymisPvm() ==null || !hm.getPaattymisPvm().before(new Date())) {
                 return true;
         }
+        //If at least 1 hakuaika is acceptabe, then the haku is acceptable.
         for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
                 if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
                         return true;
@@ -795,6 +803,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	return false;
     }
     
+
+    /*
+     *
+     * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
+     *
+     */
     @Override
     public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
