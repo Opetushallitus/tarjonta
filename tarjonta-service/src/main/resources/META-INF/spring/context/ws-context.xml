@@ -18,8 +18,8 @@
     <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
 
     <jaxws:client id="organisaatioService"
-                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                   address="${organisaatio.webservice.url.backend}"/>
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${organisaatio.webservice.url.backend}"/>
 
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
@@ -39,6 +39,7 @@
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
+    <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -68,11 +69,11 @@
         <property name="mapper" ref="tarjontaObjectMapper"/>
     </bean>
 
-     <!-- CORS (cross domain) support for rest services -->
+    <!-- CORS (cross domain) support for rest services -->
     <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
-<!--     <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
-    <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
- -->
+    <!--     <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
+       <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
+    -->
     <!--
         REST Services
     -->
@@ -84,6 +85,7 @@
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
             <ref bean="indexerResource"/>
+            <ref bean="tarjontaKoulutusResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="cors-filter" />

@@ -1,0 +1,18 @@
+<div data-ng-controller="FormTutkintoController">
+    <code>
+        {{data}}
+    </code>
+    <form name="luoTutkinto">
+        <div>
+            <input type="text" data-ng-model="searchByOid" />
+            <input type="button" data-ng-click="search()"  name="Hae">
+        </div>
+        <div>
+            {{data.koulutuskoodi.teksti}}
+            <input type="text" name="koulutuskoodi" data-ng-model="data.koulutuskoodi.arvo" required />
+        </div>
+        <div data-ng-repeat="teksti in data.koulutusohjelma.teksti">
+            <input type="text" data-ng-model="teksti.value" required />
+        </div>
+    </form>
+</div>

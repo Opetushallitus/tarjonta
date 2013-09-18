@@ -1,7 +1,3 @@
-'use strict';
-
-/* Controllers */
-
 var app = angular.module('tarjontaApp.controllers', ['tarjontaApp.services']);
 
 app.controller('MyCtrl1', [function() {
