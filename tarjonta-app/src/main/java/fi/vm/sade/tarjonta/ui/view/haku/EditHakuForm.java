@@ -378,7 +378,7 @@ public class EditHakuForm extends VerticalLayout {
     	if (Strings.isNullOrEmpty(mt.getTextFi())
     		&& Strings.isNullOrEmpty(mt.getTextSv())
     		&& Strings.isNullOrEmpty(mt.getTextEn())) {
-    		return Collections.singletonList("EditHakuFormImpl.validation.nimiNull"); 
+    		return Collections.singletonList("EditHakuForm.validation.nimiNull"); 
     	} else {
     		return Collections.emptyList();
     	}
