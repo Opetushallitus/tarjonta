@@ -24,7 +24,9 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 
 /**
  * Conversion services for REST service.
@@ -80,8 +82,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
 
         convertTekstit(t.getTekstit(), s.getTekstit());
-        
-        
+
+
         // TODO t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
 
         //
@@ -121,6 +123,36 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
                 LOG.debug("  4. ---> parent komoto = {}", t.getParentKomotoOid());
             }
         }
+
+        // OVT-5745 Added yhteyshenkilo inormation
+        for (Yhteyshenkilo yhteyshenkilo : s.getYhteyshenkilos()) {
+            t.getYhteyshenkilos().add(convert(yhteyshenkilo));
+        }
+
+        return t;
+    }
+
+    private YhteyshenkiloRDTO convert(Yhteyshenkilo yhteyshenkilo) {
+        if (yhteyshenkilo == null) {
+            return null;
+        }
+
+        YhteyshenkiloRDTO t = new YhteyshenkiloRDTO();
+        t.setEtunimet(yhteyshenkilo.getEtunimis());
+        t.setTyyppi(yhteyshenkilo.getHenkiloTyyppi() != null ? yhteyshenkilo.getHenkiloTyyppi().name() : null);
+        t.setHenkiloOid(yhteyshenkilo.getHenkioOid());
+
+        if (yhteyshenkilo.getKielis() != null) {
+            for (String kieli : yhteyshenkilo.getKielis()) {
+                t.getKielet().add(kieli);
+            }
+        }
+
+        t.setPuhelin(yhteyshenkilo.getPuhelin());
+        t.setEmail(yhteyshenkilo.getSahkoposti());
+        t.setSukunimi(yhteyshenkilo.getSukunimi());
+        t.setTitteli(yhteyshenkilo.getTitteli());
+        t.setOid("" + yhteyshenkilo.getId());
 
         return t;
     }
