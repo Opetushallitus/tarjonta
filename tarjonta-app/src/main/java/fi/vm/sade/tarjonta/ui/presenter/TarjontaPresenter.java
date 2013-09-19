@@ -2530,4 +2530,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         return hakuStarted;
     }
+    
+    public void setTarjontaSearchService(TarjontaSearchService tarjontaSearchService) {
+        this.tarjontaSearchService = tarjontaSearchService;
+    }
 }
