@@ -326,6 +326,9 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());
         hakukohde.setHakuaika(perustiedot.getSelectedHakuaika());
+        if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
+          validateHakukohdeHakuaika(hakukohde);  
+        } 
         if (!perustiedot.isSahkoinenToimOsoiteChecked()) {
             hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
         }
@@ -380,6 +383,19 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         addTitleLayout();
         return getHakukohdeOid();
+    }
+    
+    private void validateHakukohdeHakuaika(HakukohdeViewModel hakukohde) {
+        if (hakukohde.getHakuaika() == null) {
+            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.hakuaika.notSelected"));
+        }
+        Date specialAlku = hakukohde.getHakuaikaAlkuPvm();
+        Date specialLoppu = hakukohde.getHakuaikaLoppuPvm();
+        Date hakuaikaAlku = hakukohde.getHakuaika().getAlkamisPvm();
+        Date hakuaikaLoppu = hakukohde.getHakuaika().getPaattymisPvm();
+        if (specialAlku.before(hakuaikaAlku) || specialAlku.after(hakuaikaLoppu) || specialLoppu.before(hakuaikaAlku) || specialLoppu.after(hakuaikaLoppu)) {
+            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.hakuajat.outOfRange"));
+        }   
     }
 
     @Override
