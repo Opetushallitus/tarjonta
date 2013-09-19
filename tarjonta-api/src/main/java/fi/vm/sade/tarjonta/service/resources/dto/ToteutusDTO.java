@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,9 +33,9 @@ public abstract class ToteutusDTO extends BaseRDTO {
     private static final long serialVersionUID = 1L;
     private String komoOid;
     private TarjontaTila tila;
-    private KoodiUriDTO koulutuskoodi;
+    private UiListDTO koulutuskoodi;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-    private Map<KomoTeksti, MonikielinenTekstiTyyppi> tekstis;
+    private Map<KomoTeksti, UiListDTO> tekstis;
     /*
      * Contact person
      */
@@ -53,31 +55,21 @@ public abstract class ToteutusDTO extends BaseRDTO {
         this.tila = tila;
     }
 
-    /**
-     * @return the koulutuskoodi
-     */
-    public KoodiUriDTO getKoulutuskoodi() {
-        return koulutuskoodi;
-    }
-
-    /**
-     * @param koulutuskoodi the koulutuskoodi to set
-     */
-    public void setKoulutuskoodi(KoodiUriDTO koulutuskoodi) {
-        this.koulutuskoodi = koulutuskoodi;
-    }
 
     /**
      * @return the tekstis
      */
-    public Map<KomoTeksti, MonikielinenTekstiTyyppi> getTekstis() {
+    public Map<KomoTeksti, UiListDTO> getTekstis() {
+        if (tekstis == null) {
+            tekstis = new EnumMap<KomoTeksti, UiListDTO>(KomoTeksti.class);
+        }
         return tekstis;
     }
 
     /**
      * @param tekstis the tekstis to set
      */
-    public void setTekstis(Map<KomoTeksti, MonikielinenTekstiTyyppi> tekstis) {
+    public void setTekstis(Map<KomoTeksti, UiListDTO> tekstis) {
         this.tekstis = tekstis;
     }
 
@@ -114,5 +106,19 @@ public abstract class ToteutusDTO extends BaseRDTO {
      */
     public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
+
+    /**
+     * @return the koulutuskoodi
+     */
+    public UiListDTO getKoulutuskoodi() {
+        return koulutuskoodi;
+    }
+
+    /**
+     * @param koulutuskoodi the koulutuskoodi to set
+     */
+    public void setKoulutuskoodi(UiListDTO koulutuskoodi) {
+        this.koulutuskoodi = koulutuskoodi;
     }
 }

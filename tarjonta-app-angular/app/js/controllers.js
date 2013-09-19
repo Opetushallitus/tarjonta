@@ -1,10 +1,10 @@
-var app = angular.module('tarjontaApp.controllers', ['tarjontaApp.services']);
+angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
 
-app.controller('MyCtrl1', [function() {
+.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
-    }]);
+    }])
 
-app.controller('MyCtrl2', function($scope, instagram) {
+.controller('MyCtrl2', function($scope, instagram) {
     console.log("MyCtrl2()");
 
     $scope.pics = [];
@@ -14,6 +14,4 @@ app.controller('MyCtrl2', function($scope, instagram) {
     instagram.fetchPopular(function(data) {
         $scope.pics = data;
     });
-
-
 });
