@@ -116,7 +116,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
     }
 
     private void buildValintaPerusteetLayout(VerticalLayout layout) {
-        if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().size() > 0) {
+        if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && !presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().isEmpty()) {
             VerticalLayout valintaperusteetLayout = new VerticalLayout();
             valintaperusteetLayout.setMargin(true);
             //if (checkHaunAlkaminen()) {
@@ -135,7 +135,8 @@ public class ShowHakukohdeTab extends VerticalLayout {
             grid.setWidth("100%");
             grid.setMargin(true);
 
-            addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
+            // TODO kuvaukset näyttäminen + sama sorakuvauksille
+            //addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
 
             grid.setColumnExpandRatio(1, 1f);
             valintaperusteetLayout.addComponent(grid);

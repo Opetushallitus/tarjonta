@@ -10,14 +10,11 @@ public class ValintaPerusteKuvausTabSheet extends HakukohdeLanguageTabSheet {
 
 	private static final long serialVersionUID = 1L;
 
-	public ValintaPerusteKuvausTabSheet(boolean useRichText, String width,
-			String height) {
-		super(useRichText, width, height);
-	}
 
-	public ValintaPerusteKuvausTabSheet(TarjontaPresenter presenter,
-			boolean useRichText, String width, String height) {
-		super(presenter, useRichText, width, height);
+	public ValintaPerusteKuvausTabSheet(TarjontaPresenter presenter, String width, String height) {
+		super(presenter, true, width, height);
+		setEnabled(false);
+		setReadOnly(true);
 	}
 
 	@Override
