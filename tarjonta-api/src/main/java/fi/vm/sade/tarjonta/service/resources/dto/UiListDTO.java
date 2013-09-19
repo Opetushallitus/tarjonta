@@ -15,58 +15,32 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoodiUriDTO implements Serializable {
+public class UiListDTO extends UiDTO {
 
     private static final long serialVersionUID = 1L;
-    private String uri;
-    private String versio;
-    private String arvo;
+    private Set<UiDTO> tekstis;
 
     /**
-     * @return the uri
+     * @return the tekstis
      */
-    public String getUri() {
-        return uri;
+    public Set<UiDTO> getTekstis() {
+        if (tekstis == null) {
+            tekstis = new HashSet<UiDTO>();
+        }
+        return tekstis;
     }
 
     /**
-     * @param uri the uri to set
+     * @param tekstis the tekstis to set
      */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    /**
-     * @return the versio
-     */
-    public String getVersio() {
-        return versio;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersio(String versio) {
-        this.versio = versio;
-    }
-
-    /**
-     * @return the arvo
-     */
-    public String getArvo() {
-        return arvo;
-    }
-
-    /**
-     * @param arvo the arvo to set
-     */
-    public void setArvo(String arvo) {
-        this.arvo = arvo;
+    public void setTekstis(Set<UiDTO> tekstis) {
+        this.tekstis = tekstis;
     }
 }

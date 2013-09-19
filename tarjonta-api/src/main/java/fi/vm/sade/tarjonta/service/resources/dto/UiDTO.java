@@ -21,39 +21,25 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class KoodiUriDTO implements Serializable {
+public class UiDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String uri;
-    private String versio;
+    private String teksti;
+    private KoodiUriDTO koodi;
     private String arvo;
 
     /**
-     * @return the uri
+     * @return the teksti
      */
-    public String getUri() {
-        return uri;
+    public String getTeksti() {
+        return teksti;
     }
 
     /**
-     * @param uri the uri to set
+     * @param teksti the teksti to set
      */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    /**
-     * @return the versio
-     */
-    public String getVersio() {
-        return versio;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersio(String versio) {
-        this.versio = versio;
+    public void setTeksti(String teksti) {
+        this.teksti = teksti;
     }
 
     /**
@@ -68,5 +54,19 @@ public class KoodiUriDTO implements Serializable {
      */
     public void setArvo(String arvo) {
         this.arvo = arvo;
+    }
+
+    /**
+     * @return the koodi
+     */
+    public KoodiUriDTO getKoodi() {
+        return koodi;
+    }
+
+    /**
+     * @param koodi the koodi to set
+     */
+    public void setKoodi(KoodiUriDTO koodi) {
+        this.koodi = koodi;
     }
 }

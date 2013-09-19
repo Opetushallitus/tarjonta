@@ -15,11 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -27,7 +24,7 @@ import java.util.Set;
  */
 public class KorkeakouluDTO extends ToteutusDTO {
 
-    private KoodiUriListDTO koulutusohjelma;
+    private UiListDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
@@ -35,15 +32,15 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     private Date koulutuksenAlkamisPvm;
     private String suunniteltuKesto;
-    private String suunniteltuKestoTyyppi;
-    private Set<KoodiUriListDTO> opetuskielis;
-    private Set<KoodiUriListDTO> opetusmuodos;
+    private UiDTO suunniteltuKestoTyyppi;
+    private UiListDTO opetuskielis;
+    private UiListDTO opetusmuodos;
     /*
      * KK
      */
     private Boolean opintojenMaksullisuus;
-    private Set<KoodiUriListDTO> pohjakoulutusvaatimukset;
-    private Set<KoodiUriListDTO> teemas;
+    private UiDTO pohjakoulutusvaatimukset;
+    private UiListDTO teemas;
     /*
      * Other contact persons
      */
@@ -52,14 +49,14 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the koulutusohjelma
      */
-    public KoodiUriListDTO getKoulutusohjelma() {
+    public UiListDTO getKoulutusohjelma() {
         return koulutusohjelma;
     }
 
     /**
      * @param koulutusohjelma the koulutusohjelma to set
      */
-    public void setKoulutusohjelma(KoodiUriListDTO koulutusohjelma) {
+    public void setKoulutusohjelma(UiListDTO koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
     }
 
@@ -106,20 +103,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
     }
 
     /**
-     * @return the suunniteltuKestoTyyppi
-     */
-    public String getSuunniteltuKestoTyyppi() {
-        return suunniteltuKestoTyyppi;
-    }
-
-    /**
-     * @param suunniteltuKestoTyyppi the suunniteltuKestoTyyppi to set
-     */
-    public void setSuunniteltuKestoTyyppi(String suunniteltuKestoTyyppi) {
-        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
-    }
-
-    /**
      * @return the opintojenMaksullisuus
      */
     public Boolean getOpintojenMaksullisuus() {
@@ -150,60 +133,70 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the opetuskielis
      */
-    public Set<KoodiUriListDTO> getOpetuskielis() {
+    public UiListDTO getOpetuskielis() {
         return opetuskielis;
     }
 
     /**
      * @param opetuskielis the opetuskielis to set
      */
-    public void setOpetuskielis(Set<KoodiUriListDTO> opetuskielis) {
+    public void setOpetuskielis(UiListDTO opetuskielis) {
         this.opetuskielis = opetuskielis;
     }
 
     /**
      * @return the opetusmuodos
      */
-    public Set<KoodiUriListDTO> getOpetusmuodos() {
+    public UiListDTO getOpetusmuodos() {
         return opetusmuodos;
     }
 
     /**
      * @param opetusmuodos the opetusmuodos to set
      */
-    public void setOpetusmuodos(Set<KoodiUriListDTO> opetusmuodos) {
+    public void setOpetusmuodos(UiListDTO opetusmuodos) {
         this.opetusmuodos = opetusmuodos;
     }
 
     /**
      * @return the pohjakoulutusvaatimukset
      */
-    public Set<KoodiUriListDTO> getPohjakoulutusvaatimukset() {
+    public UiDTO getPohjakoulutusvaatimukset() {
         return pohjakoulutusvaatimukset;
     }
 
     /**
      * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
      */
-    public void setPohjakoulutusvaatimukset(Set<KoodiUriListDTO> pohjakoulutusvaatimukset) {
+    public void setPohjakoulutusvaatimukset(UiDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
 
     /**
      * @return the teemas
      */
-    public Set<KoodiUriListDTO> getTeemas() {
-        if (teemas == null) {
-            teemas = new HashSet<KoodiUriListDTO>();
-        }
-
+    public UiListDTO getTeemas() {
         return teemas;
     }
 
     /**
      * @param teemas the teemas to set
      */
-    public void setTeemas(Set<KoodiUriListDTO> teemas) {
+    public void setTeemas(UiListDTO teemas) {
         this.teemas = teemas;
+    }
+
+    /**
+     * @return the suunniteltuKestoTyyppi
+     */
+    public UiDTO getSuunniteltuKestoTyyppi() {
+        return suunniteltuKestoTyyppi;
+    }
+
+    /**
+     * @param suunniteltuKestoTyyppi the suunniteltuKestoTyyppi to set
+     */
+    public void setSuunniteltuKestoTyyppi(UiDTO suunniteltuKestoTyyppi) {
+        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 }
