@@ -35,7 +35,7 @@ app.factory('instagram', function($resource) {
 
             });
         }
-    }
+    };
 
 });
 
@@ -50,8 +50,7 @@ app.factory('TarjontaConfig', function($resource) {
 
 app.factory('TarjontaService', function($resource) {
     var CONFIG;
-    
-    
+
 //    dataFactory.insertTutkinto = function (cust) {
 //        return $http.post(urlBase, cust);
 //    };
@@ -63,7 +62,7 @@ app.factory('TarjontaService', function($resource) {
 //    dataFactory.deleteTutkinto = function (id) {
 //        return $http.delete(urlBase + '/' + id);
 //    };
-//    
+//
 //     dataFactory.getTutkinto = function (id) {
 //        return $http.delete(urlBase + '/' + id);
 //    };
@@ -93,4 +92,14 @@ app.factory('TarjontaService', function($resource) {
 //                withCredentials: true
 //            }}
 //    });
+});
+
+app.factory('Localisation', function($resource) {
+    return $resource('localisation.json', {}, {
+        query: {method: 'GET', headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }}
+    });
+
 });

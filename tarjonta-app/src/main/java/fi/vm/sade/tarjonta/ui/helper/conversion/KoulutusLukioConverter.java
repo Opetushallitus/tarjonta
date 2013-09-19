@@ -33,11 +33,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -52,6 +53,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -110,13 +112,13 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale) {
+    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdeTulos> hakukohteet) {
         //set tarjoaja data to UI model
         tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
         KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
-        perustiedot.setKoulutuksenHakukohteet(getKoulutusHakukohdes(koulutus));
+        perustiedot.setKoulutuksenHakukohteet(getKoulutusHakukohdes(koulutus, hakukohteet));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
             perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
         }
@@ -129,16 +131,17 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         perustiedot.getLukiolinjas().add(perustiedot.getLukiolinja());
     }
 
-    private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi) {
+    private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi, List<HakukohdeTulos> hakukohteetDTO) {
         List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
-
+        
         if (koulutusVastausTyyppi.getHakukohteet() != null) {
-            for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
+            for (HakukohdeTulos hakukohdeKoosteTyyppi : hakukohteetDTO) {//HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
                 SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
-                hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
-                hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
-                hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getHakukohde().getKoodistoNimi());// getKoodistoNimi());
+                hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getHakukohde().getNimi()).getValue());// getNimi());
+                hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getHakukohde().getOid());
+                hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getHakukohde().getTila().value());
+                hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakukohde().getHakuAlkamisPvm());
                 hakukohteet.add(hakukohdeViewModel);
             }
 

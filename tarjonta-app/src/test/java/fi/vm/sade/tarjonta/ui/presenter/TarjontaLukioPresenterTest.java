@@ -36,6 +36,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -97,6 +98,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
     private YhteyshenkiloModel yhteyshenkiloModel;
     private TarjontaPresenter tarjontaPresenter;
     private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
+    private TarjontaSearchService tarjontaSearchServiceMock;
 
     public TarjontaLukioPresenterTest() {
     }
@@ -148,6 +150,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
 
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
+        tarjontaSearchServiceMock = createMock(TarjontaSearchService.class);
 
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
@@ -164,6 +167,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelperMock);
 
         tarjontaPresenter.getTarjoaja().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
+        tarjontaPresenter.setTarjontaSearchService(tarjontaSearchServiceMock);
 
 
         /*

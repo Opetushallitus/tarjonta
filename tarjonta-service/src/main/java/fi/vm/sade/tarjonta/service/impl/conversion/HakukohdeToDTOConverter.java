@@ -86,8 +86,15 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setValinnanAloituspaikat(s.getValintojenAloituspaikatLkm());
         hakukohde.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         hakukohde.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
+
+        // sora- ja vape-kuvaus: varmistetaan, että joko url, teksti tai molemmat ovat null
         hakukohde.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
+        hakukohde.setSoraKuvausTeksti(s.getSoraKuvausKoodiUri()!=null ? null :
+        	CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(s.getSoraKuvaus()) );
         hakukohde.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
+        hakukohde.setValintaperustekuvausTeksti(s.getValintaperustekuvausKoodiUri()!=null ? null :
+        	CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(s.getValintaperusteKuvaus()) );
+
         if (s.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(osoiteTyyppiFromOsoite(s.getLiitteidenToimitusOsoite()));
         }

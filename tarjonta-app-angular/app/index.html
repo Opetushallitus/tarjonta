@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="fi" data-ng-app="tarjontaApp">
+<html lang="fi" data-ng-app="tarjontaApp" ng-controller="RootCtrl">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Tarjonta">
         <meta name="author" content="Opetushallitus">
-        <title>OPH :: Tarjonta</title>
+        <title>{{ t("tarjonta.title") }}</title>
 
         <!--
           Angular, see version.txt for version.
@@ -14,7 +14,10 @@
         <script src="lib/angular/angular.js"></script>
         <script src="lib/angular/angular-resource.js"></script>
         <script src="lib/angular/angular-route.js"></script>
-        <script src="js/libs/underscore.js-1.4.3/underscore-min.js"></script>
+        <script src="lib/underscore/underscore.js"></script>
+        <script src="lib/jquery-1.10.2.min.js"></script>
+
+        <script src="js/shared/loading.js"></script>
         <script src="js/shared/constant.js"></script>
 
         <script src="js/kkTutkinto/services.js"></script>
@@ -22,7 +25,6 @@
         <script src="js/kkTutkinto/filters.js"></script>
         <script src="js/kkTutkinto/directives.js"></script>
         <!--script src="js/kkTutkinto/app.js"></script-->
-        
 
         <script src="js/services.js"></script>
         <script src="js/controllers.js"></script>
@@ -54,6 +56,22 @@
         <link rel="stylesheet" href="css/app.css"/>
     </head>
     <body>
-        <div data-ng-view></div>  
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3 sidebar-nav well">
+                    sidebar
+                </div>
+                <div class="span9">
+                    <div data-ng-view></div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-controller="LoadingCtrl"
+             ng-show="loading"
+             style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
+            Käsitellään...
+            <img alt="Loading  Content" src="img/ajax-loader-big.gif" />
+        </div>
     </body>
 </html>

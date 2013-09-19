@@ -1,0 +1,57 @@
+{
+    "tarjonta.organisaationHaku.hae":
+            {
+                "key": "tarjonta.organisaationHaku.hae",
+                "locale": "fi",
+                "value": "Tee haku",
+                "values": {
+                    "fi": "Tee haku",
+                    "en": "Perform the search",
+                    "sv": "Sök - sök!"
+                }
+            },
+    "tarjonta.organisaationHaku.hakutulos":
+            {
+                "key": "tarjonta.organisaationHaku.hakutulos",
+                "locale": "fi",
+                "value": "Haulla {0} löytyi {1} osumaa",
+                "values": {
+                    "fi": "Haulla {0} löytyi {1} osumaa",
+                    "en": "Search of {0} found {1} hits",
+                    "sv": "Sök {0} funnit {1} resultatet"
+                }
+            },
+    "tarjonta.tallenna":
+            {
+                "key": "tarjonta.tallenna",
+                "locale": "fi",
+                "value": "Tallenna",
+                "values": {
+                    "fi": "Tallenna",
+                    "en": "Save",
+                    "sv": "Annulera"
+                }
+            },
+    "tarjonta.peruuta":
+            {
+                "key": "tarjonta.peruuuta",
+                "locale": "fi",
+                "value": "Peruuta",
+                "values": {
+                    "fi": "Peruuta",
+                    "en": "Cancel",
+                    "sv": "Diskutera"
+                }
+            },
+    "tarjonta.title":
+            {
+                "key": "tarjonta.title",
+                "locale": "fi",
+                "value": "Tarjonnan otsikko",
+                "values": {
+                    "fi": "Tarjonnan otsikko",
+                    "en": "Title for Tarjonta",
+                    "sv": "Titeln för Tarjonta"
+                }
+            }
+}

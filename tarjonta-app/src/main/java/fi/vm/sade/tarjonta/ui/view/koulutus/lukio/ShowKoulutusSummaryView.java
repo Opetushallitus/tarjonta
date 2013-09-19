@@ -82,6 +82,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private TarjontaDialogWindow tarjontaDialog;
     private final String datePattern = "dd.MM.yyyy HH:mm";
     private OrganisaatioContext context;
+    private boolean hakuStarted = false;
 
     public ShowKoulutusSummaryView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -89,6 +90,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+        hakuStarted = _presenter.isHakuStartedForKoulutus(_presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid());//getKoulutusPerustiedotModel().getOid());
         context = OrganisaatioContext.getContext(_presenter.getTarjoaja().getSelectedOrganisationOid());
         LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURI.KOODISTO_HAKUTYYPPI_URI);
         final KoulutusLukioPerustiedotViewModel perustiedot = _presenter.getModel().getKoulutusLukioPerustiedot();
@@ -216,7 +218,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 _presenter.getLukioPresenter().showEditKoulutusView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        },viimeisinPaivitysPvm, _presenter.getPermission().userCanUpdateKoulutus(context)));
+        },viimeisinPaivitysPvm, _presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)));
         
         FormGridBuilder grid = new FormGridBuilder(getClass());
         
@@ -412,7 +414,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
-            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter.getNavigationOrganisation().getOrganisationOid())));
+            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)); //OrganisaatioContext.getContext(_presenter.getNavigationOrganisation().getOrganisationOid()
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
@@ -495,7 +497,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         //check permissions
         final TarjontaPermissionServiceImpl permissions = _presenter.getPermission();
-        poista.setVisible(permissions.userCanDeleteKoulutus(context));
+        poista.setVisible(permissions.userCanDeleteKoulutus(context, hakuStarted));
       /*  kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
         siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
         lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));*/

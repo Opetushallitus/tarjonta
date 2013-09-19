@@ -5,6 +5,7 @@ module.exports = function(config){
     files : [
       JASMINE,
       JASMINE_ADAPTER,
+      'app/lib/underscore/underscore.js',
       'app/lib/angular/angular.js',
       'app/lib/angular/angular-resource.js',
       'test/lib/angular/angular-mocks.js',
@@ -22,13 +23,17 @@ module.exports = function(config){
     plugins : [
             'karma-junit-reporter',
             'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
             'karma-firefox-launcher',
             'karma-jasmine'
             ],
 
-    junitReporter : {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
-    }
+    reporters: ['progress', 'junit'],
 
-})}
+    junitReporter : {
+      outputFile: 'target/karma-junit-report.xml',
+      suite: ''
+    }
+    });
+    };
+
