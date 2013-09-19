@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -221,7 +223,10 @@ public class TarjontaLukioPresenter {
         if (komotoOid != null) {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             Preconditions.checkNotNull(koulutus);
-            lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
+            HakukohteetVastaus vastaus = this.presenter.getHakukohteetForKoulutus(komotoOid);//.getHakukohdeTulos();
+            List<HakukohdeTulos> hakukohteet = vastaus != null ? vastaus.getHakukohdeTulos() : new ArrayList<HakukohdeTulos>();
+            
+            lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale(), hakukohteet);
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");   
             getPerustiedotModel().clearModel();

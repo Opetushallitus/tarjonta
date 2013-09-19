@@ -2474,5 +2474,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public List<MonikielinenMetadataTyyppi> haeMetadata(String avain, String kategoria) {
         return tarjontaAdminService.haeMetadata(avain, kategoria);
     }
+    
+    public void setTarjontaSearchService(TarjontaSearchService tarjontaSearchService) {
+        this.tarjontaSearchService = tarjontaSearchService;
+    }
 
 }
