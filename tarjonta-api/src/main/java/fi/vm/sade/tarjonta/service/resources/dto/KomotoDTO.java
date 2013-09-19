@@ -21,6 +21,7 @@ import java.util.Map;
 
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.ArrayList;
 
 /**
  * REST DTO for LOI / Komoto / Koulutusmoduulin toteutus
@@ -30,7 +31,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class KomotoDTO extends BaseRDTO {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Date _koulutuksenAlkamisDate;
     private boolean _maksullisuus;
     private String _komoOid;
@@ -53,13 +54,15 @@ public class KomotoDTO extends BaseRDTO {
 
     private Map<KomotoTeksti, Map<String,String>> _tekstit;
 
+    private List<YhteyshenkiloRDTO> _yhteyshenkilos;
+
     public Map<KomotoTeksti, Map<String, String>> getTekstit() {
     	if (_tekstit==null) {
     		_tekstit = new EnumMap<KomotoTeksti, Map<String,String>>(KomotoTeksti.class);
     	}
 		return _tekstit;
 	}
-    
+
     public void setTekstit(Map<KomotoTeksti, Map<String, String>> _tekstit) {
 		this._tekstit = _tekstit;
 	}
@@ -270,48 +273,48 @@ public class KomotoDTO extends BaseRDTO {
         return _koulutusAsteUri;
     }
 
-    public void setKoulutusAsteUri(String _koulutusAsteUri) {
-        this._koulutusAsteUri = _koulutusAsteUri;
+    public void setKoulutusAsteUri(String koulutusAsteUri) {
+        this._koulutusAsteUri = koulutusAsteUri;
     }
 
     public String getLaajuusArvo() {
         return _laajuusArvo;
     }
 
-    public void setLaajuusArvo(String _laajuusArvo) {
-        this._laajuusArvo = _laajuusArvo;
+    public void setLaajuusArvo(String laajuusArvo) {
+        this._laajuusArvo = laajuusArvo;
     }
 
     public String getLaajuusYksikkoUri() {
         return _laajuusYksikkoUri;
     }
 
-    public void setLaajuusYksikkoUri(String _laajuusYksikkoUri) {
-        this._laajuusYksikkoUri = _laajuusYksikkoUri;
+    public void setLaajuusYksikkoUri(String laajuusYksikkoUri) {
+        this._laajuusYksikkoUri = laajuusYksikkoUri;
     }
 
     public String getTarjoajaOid() {
         return _tarjoajaOid;
     }
 
-    public void setTarjoajaOid(String _tarjoajaOid) {
-        this._tarjoajaOid = _tarjoajaOid;
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this._tarjoajaOid = tarjoajaOid;
     }
 
     public TarjontaTila getTila() {
         return _tila;
     }
 
-    public void setTila(TarjontaTila _tila) {
-        this._tila = _tila;
+    public void setTila(TarjontaTila tila) {
+        this._tila = tila;
     }
 
     public String getUlkoinenTunniste() {
         return _ulkoinenTunniste;
     }
 
-    public void setUlkoinenTunniste(String _ulkoinenTunniste) {
-        this._ulkoinenTunniste = _ulkoinenTunniste;
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this._ulkoinenTunniste = ulkoinenTunniste;
     }
 
     /**
@@ -325,7 +328,19 @@ public class KomotoDTO extends BaseRDTO {
         return _parentKomotoOid;
     }
 
-    public void setParentKomotoOid(String _parentKomotoOid) {
-        this._parentKomotoOid = _parentKomotoOid;
+    public void setParentKomotoOid(String parentKomotoOid) {
+        this._parentKomotoOid = parentKomotoOid;
     }
+
+    public List<YhteyshenkiloRDTO> getYhteyshenkilos() {
+        if (_yhteyshenkilos == null) {
+            _yhteyshenkilos = new ArrayList<YhteyshenkiloRDTO>();
+        }
+        return _yhteyshenkilos;
+    }
+
+    public void setYhteyshenkilos(List<YhteyshenkiloRDTO> yhteyshenkilos) {
+        this._yhteyshenkilos = yhteyshenkilos;
+    }
+
 }

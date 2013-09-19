@@ -1,3 +1,6 @@
+// ROOT organisation
+var OPH_ORG_OID = "1.2.246.562.10.00000000001";
+
 //All application directory names:
 var KK_TUTKINTO = 'kkTutkinto';
 var MAIN = 'tarjonta';

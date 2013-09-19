@@ -24,21 +24,22 @@ angular.module('tarjontaApp',
             'kkTutkintoApp',
             'ngRoute',
             'ngResource',
-            'loading'
+            'loading',
+            'localisation'
         ]);
 
 angular.module('tarjontaApp').config(['$routeProvider', function($routeProvider)
     {
         $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
         .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
-        
+
         .when('/luoKorkeakoulu',
                 {
                     templateUrl: 'partials/kkTutkinto/formTutkinto.html',
                     action: 'tarjontaApp.FormTutkintoController'
                 }
         )
-        
+
         .otherwise({redirectTo: '/view1'});
 
     }]);

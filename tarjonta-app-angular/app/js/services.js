@@ -40,6 +40,7 @@ app.factory('instagram', function($resource) {
 });
 
 app.factory('TarjontaConfig', function($resource) {
+    // TODO hardcoded, read from service
     return $resource('config.json', {}, {
         query: {method: 'GET', headers: {
                 'Content-Type': 'application/json',
@@ -94,12 +95,3 @@ app.factory('TarjontaService', function($resource) {
 //    });
 });
 
-app.factory('Localisation', function($resource) {
-    return $resource('localisation.json', {}, {
-        query: {method: 'GET', headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }}
-    });
-
-});
