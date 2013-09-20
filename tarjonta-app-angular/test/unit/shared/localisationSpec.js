@@ -19,7 +19,7 @@ describe('localisation', function() {
     describe('LocalisationCtrl', function() {
         var scope, controller;
 
-        beforeEach(inject(function ($rootScope, $controller) {
+        beforeEach(inject(function ($rootScope, $controller, $log) {
             scope = $rootScope.$new();
             controller = $controller("LocalisationCtrl", { $scope: scope});
         }));
@@ -52,7 +52,6 @@ describe('localisation', function() {
 
             expect(scope.t(key)).toEqual("Tee haku");
         }));
-
 
     });
 });
