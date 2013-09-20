@@ -385,7 +385,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         List<String> parentOids = new ArrayList<String>();
         for (OrganisaatioPerustieto curOrg : organisaatios) {
                 hc.addItem(curOrg);
-                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curOrg));
+                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(String.format("%s%s", OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curOrg), getTilaStr(curOrg)));
                 oidToOrgMap.put(curOrg.getOid(), curOrg);
                 parentOids.add(curOrg.getParentOid());
             
@@ -398,6 +398,17 @@ public class OrganisaatiohakuView extends VerticalLayout {
             }
             hc.setChildrenAllowed(curOrg, parentOids.contains(curOrg.getOid()));
         }
+    }
+
+    private Object getTilaStr(OrganisaatioPerustieto curOrg) {
+        Date today = new Date();
+        if ((curOrg.getAlkuPvm() != null) && curOrg.getAlkuPvm().after(today)) {
+            return String.format("%s%s", " ", T("suunnitteilla"));
+        }
+        if ((curOrg.getLakkautusPvm() != null) && curOrg.getLakkautusPvm().before(today)) {
+            return String.format("%s%s", " ", T("lakkautettu"));
+        }
+        return "";
     }
 
     /**

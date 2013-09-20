@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -620,7 +621,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @param tarjoaja
      */
     private void checkOrganisationExists(String tarjoaja) {
-        if(organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja)).size()!=1){
+        List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
+        if(orgs.size()!=1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))){
             throw new RuntimeException("nonexisting.organisation.error");
         }
     }
