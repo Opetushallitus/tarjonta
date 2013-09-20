@@ -123,7 +123,7 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
                     case AMMATILLINEN_PERUSKOULUTUS:
                     String pkVaatimus = (String)kcPohjakoulutusvaatimus.getValue();
                     if (pkVaatimus != null) {
-                    presenter.copyKoulutusToOrganizations(selectedOrgs.values(),pkVaatimus);
+                        presenter.copyKoulutusToOrganizations(selectedOrgs.values(),pkVaatimus);
                     } else {
                         addErrorMessage(_i18n.getMessage("valitsePohjakoulutus"));
                         return;

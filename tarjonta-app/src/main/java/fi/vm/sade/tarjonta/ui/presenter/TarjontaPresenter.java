@@ -810,9 +810,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void showNewKoulutusEditView(final KoulutusActiveTab tab) {
     }
 
-    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusVaatimus) {
-        getTarjoaja().addSelectedOrganisations(orgs);
-        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(), orgs, pohjakoulutusVaatimus);
+    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustieto> targetOrgs, String pohjakoulutusVaatimus) {
+        getTarjoaja().addSelectedOrganisations(targetOrgs);
+        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(), targetOrgs, pohjakoulutusVaatimus);
         getModel().getSelectedKoulutukset().clear();
     }
 
@@ -885,10 +885,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
                 getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
                 for (OrganisaatioPerustieto org : orgs) {
-                    OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-
-                    String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org);
-                    oidNamePair.setOrganisationName(nimi);
+                    OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair(org.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org));
                     getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
                 }
             }

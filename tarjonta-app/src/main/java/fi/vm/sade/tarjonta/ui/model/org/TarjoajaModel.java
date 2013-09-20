@@ -132,9 +132,10 @@ public class TarjoajaModel extends BaseUIViewModel {
      */
     public void addSelectedOrganisations(Collection<OrganisaatioPerustieto> orgs) {
         getOrganisationOidNamePairs().clear();
-        List<OrganisaatioPerustieto> tempOrgs = new ArrayList<OrganisaatioPerustieto>(orgs);
-        String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), tempOrgs.get(0));
-        addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), nimi));
+        for(OrganisaatioPerustieto org: orgs) {
+            String nimi = OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), org);
+            addOrganisation(new OrganisationOidNamePair(org.getOid(), nimi));
+        }
     }
 
     /*
