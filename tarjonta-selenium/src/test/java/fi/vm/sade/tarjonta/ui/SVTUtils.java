@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import junit.framework.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -166,6 +168,52 @@ public class SVTUtils {
             if (mm > 9) { zero = ""; }
             String yyyymm = yyyy + zero + mm;
             return yyyymm;
+    }
+
+    public String yyyymmddString()
+    {
+        String zero = "0";
+        String zerodd = "0";
+            int yyyy = Calendar.getInstance().get(Calendar.YEAR);
+            int mm = Calendar.getInstance().get(Calendar.MONTH) + 1;
+            int dd = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            if (mm > 9) { zero = ""; }
+            if (dd > 9) { zerodd = ""; }
+            String yyyymmdd = yyyy + zero + mm + zerodd + dd;
+            return yyyymmdd;
+    }
+
+    public String ddmmyyyyString()
+    {
+        String zero = "0";
+        String zerodd = "0";
+            int yyyy = Calendar.getInstance().get(Calendar.YEAR);
+            int mm = Calendar.getInstance().get(Calendar.MONTH) + 1;
+            int dd = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            if (mm > 9) { zero = ""; }
+            if (dd > 9) { zerodd = ""; }
+            String ddmmyyyy = zerodd + dd + "." + zero + mm + "." + yyyy;
+            return ddmmyyyy;
+    }
+
+    public String ddmmyyyyhhmiString()
+    {
+        String zero = "0";
+        String zerodd = "0";
+        String mzero = "0"; 
+        String hzero = "0";
+        int yyyy = Calendar.getInstance().get(Calendar.YEAR);
+        int mm = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int dd = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int mi = Calendar.getInstance().get(Calendar.MINUTE);
+        int hh = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if (mi < 50) { mi = mi + 10; } else { hh++; } // kelloa 10 min eteenpain haun luonnin takia
+        if (mm > 9) { zero = ""; }
+        if (dd > 9) { zerodd = ""; }
+        if (mi > 9) { mzero = ""; }
+        if (hh > 9) { hzero = ""; }
+        String ddmmyyyyhhmi = zerodd + dd + "." + zero + mm + "." + yyyy + " " + hzero + hh + ":" + mzero + mi ;
+        return ddmmyyyyhhmi;
     }
 
     public String ddhhmmssString()
@@ -451,7 +499,16 @@ public class SVTUtils {
 
 		String ancestor = "//*[contains(text(), '" + text  + "') and not(ancestor::div[contains(@style,'display:none')]) and not(ancestor::div[contains(@style,'display: none')])]";
 		String xpathExpression = "//*[contains(text(), '" + text  + "')]";
-		WebElement koe = driver.findElement(By.xpath(ancestor));
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    	try {
+    		driver.findElement(By.xpath(ancestor));
+    	} catch (NoSuchElementException e) {
+    		this.screenShot(text, driver);
+        	this.echo("ERROR. text=" + text);
+        	driver.findElement(By.xpath(ancestor));
+        	int a = 1 / 0;
+    	} catch (Exception e) {
+    	}
         Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
         WebElement el = null;
         WebElement el2 = null;
@@ -468,8 +525,11 @@ public class SVTUtils {
 				}
                 return el;
         }
-        this.tauko(30);
+        this.tauko(10);
         if (this.listXpathElements(driver, xpathExpression)) { return textElement(driver, text); };
+		this.screenShot(text, driver);
+    	this.echo("ERROR. text=" + text);
+    	driver.findElement(By.xpath(ancestor));
         int a = 1 / 0;
         return null;
 	}
@@ -877,7 +937,7 @@ public class SVTUtils {
     public void messagesPropertiesInit() throws IOException
     {
     	if (propMessages != null && propMessages.size() > 0) { return; }
-    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages.properties";
+    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages_fi.properties";
     	File mFile = new File(messagesFile);
     	if (mFile.exists())
     	{
@@ -900,7 +960,7 @@ public class SVTUtils {
     public void messagesProperties2Init() throws IOException
     {
     	if (propMessages2 != null && propMessages2.size() > 0) { return; }
-    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages.properties";
+    	String messagesFile = "../tarjonta-app/src/main/resources/i18n/messages_fi.properties";
     	File mFile = new File(messagesFile);
     	if (mFile.exists())
     	{
@@ -1305,10 +1365,10 @@ public class SVTUtils {
     	taulukko.KattavuusTaulukko.setProperty("Firefox__22.0", Kattavuus.KATTAVUUSNOTEST);
     }
 
-    public void menuOperaatio(WebDriver driver, String operaatio, String kohde)
+    public Boolean menuOperaatio(WebDriver driver, String operaatio, String kohde)
     {
     	WebElement menu = getMenuNearestText(driver, kohde);
-    	menu.click();
+    	if (! this.isPresentText(driver, "Tarkastele")) { menu.click(); }
     	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     	tauko(1);
     	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
@@ -1321,10 +1381,14 @@ public class SVTUtils {
     		WebElement menu3 = getMenuNearestText(driver, kohde);
     		menu3.click();
     		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
-    		tauko(1);
+    		if (! this.isPresentText(driver, htmlOperaatio)) 
+    		{
+    			this.echo("Operaatio " + operaatio + " ei ole valittavissa.");
+    			return false; 
+    		}
     	}
     	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    	return true;
     }
 
     public void menuOperaatioFirstMenu(WebDriver driver, String operaatio)
@@ -1586,14 +1650,46 @@ public class SVTUtils {
     		tauko(10);
     		return false; 
     	}
-    	WebElement triangle = getTriangleForFirstItem(driver);
-        Assert.assertNotNull("Running koulutushaku triangle ei toimi.", triangle);
-    	tauko(1);
-    	triangle.click();
-    	WebElement link = driver.findElement(By.className("v-button-link-row"));
-        Assert.assertNotNull("Running koulutushaku link ei toimi.", link);
+    	clickFirstTriangle(driver);
         haku = haku.replace("*", "");
-        this.menuOperaatio(driver, "Poista", haku);
+        if (! this.menuOperaatio(driver, "Poista", haku))
+        {
+        	this.echo("Ei voi heti poistaa.");
+        	if (this.menuOperaatio(driver, "Peruuta koulutus", haku))
+        	{
+        		this.echo("Perutaan koulutus");
+        		Assert.assertNotNull("Running peruuta koulutus ei toimi."
+        				, this.textElement(driver, "Olet peruuttamassa koulutusta"));
+        		tauko(1);
+        		this.textClick(driver, "Kyllä");
+                Assert.assertNotNull("Running Peruutus ei toimi."
+                		, this.textElement(driver, "Toiminto onnistui"));
+        		tauko(1);
+        		this.textElement(driver, "Toiminto onnistui").click();
+        		tauko(1);
+        	}
+            // Kay tallentamassa valilla
+    		this.echo("Tallennetaan koulutus valmiina");
+        	if (! this.isPresentText(driver, haku)) { clickFirstTriangle(driver); tauko(1); }
+            this.menuOperaatio(driver, "Muokkaa", haku);
+            Assert.assertNotNull("Running Muokkaa ei toimi."
+            		, this.textElement(driver, "Tallenna valmiina"));
+            this.tauko(1);
+            this.textClick(driver, "Tallenna valmiina");
+            Assert.assertNotNull("Running Tallenna ei toimi."
+            		, this.textElement(driver, "Tallennus onnistui"));
+            this.tauko(1);
+            driver.findElement(By.className("v-button-back")).click();
+            this.tauko(10);
+            driver.navigate().refresh();
+            this.tauko(1);
+            Assert.assertNotNull("Running valikot ei toimi."
+                    , this.textElement(driver, "Koulutuksen alkamisvuosi"));
+            // Poista
+        	this.echo("Nyt voi poistaa...");
+        	if (! this.isPresentText(driver, haku)) { clickFirstTriangle(driver); tauko(1); }
+            this.menuOperaatio(driver, "Poista", haku);
+        }
     	Assert.assertNotNull("Running poistaa koulutus ei toimi."
     			, this.textElement(driver, "Haluatko varmasti poistaa alla olevan koulutuksen?"));
         this.tauko(1);
@@ -1602,6 +1698,16 @@ public class SVTUtils {
         return true;
 	}
 
+	public void clickFirstTriangle(WebDriver driver)
+	{
+		WebElement triangle = getTriangleForFirstItem(driver);
+		Assert.assertNotNull("Running koulutushaku triangle ei toimi.", triangle);
+		tauko(1);
+		triangle.click();
+		WebElement link = driver.findElement(By.className("v-button-link-row"));
+		Assert.assertNotNull("Running koulutushaku link ei toimi.", link);
+		tauko(1);
+	}
 	public WebElement TarkasteleKoulutusLuonnosta(WebDriver driver, String haku) throws Exception {
     	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
     	search.clear();
@@ -1744,12 +1850,17 @@ public class SVTUtils {
     	return str;
     }
 
-    public void screenShot(String comment, WebDriver driver) throws IOException
+    public void screenShot(String comment, WebDriver driver)
     {
     	String millis = System.currentTimeMillis() + "";
     	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+    	comment = comment.replace(" ", "_").replace("-", "_");
     	String fileName = System.getProperty("user.home") + "/screenshot_" + comment + "_" + millis + ".png";
-    	FileUtils.copyFile(scrFile, new File(fileName));
+    	try {
+			FileUtils.copyFile(scrFile, new File(fileName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
 }
