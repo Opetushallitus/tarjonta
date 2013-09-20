@@ -6,29 +6,28 @@ app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
     }]);
 
-
-app.controller('KoodistoTestController', function($scope, KoodiService) {
+app.controller('KoodistoTestController', function($scope, Koodisto) {
 
     $scope.locale = 'FI';
     $scope.koodistoUri = 'hakukohteetkk';
 
-    //$scope.koodis = KoodiService.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
+        //$scope.koodis = Koodisto.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
 
-    var koodiPromise = KoodiService.getKoodistoWithKoodiUri($scope.koodistoUri, $scope.locale);
-    koodiPromise.then(function(data) {
+        var koodiPromise = Koodisto.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
+        koodiPromise.then(function(data){
 
-        console.log('Promise got : ');
-        console.log(data);
-
-        $scope.koodi = data;
-
+            console.log('Got data');
+            console.log(data);
+            $scope.koodis = data;
 
     });
 
 });
 
-app.controller('MyCtrl2', function($scope, instagram, AuthService, MyRoles) {
+app.controller('MyCtrl2', function($scope, instagram) {
     console.log("MyCtrl2()");
+//    console.log("MyCtrl2() - as = " + AuthService);
+//    console.log("MyCtrl2() - mr = " + MyRoles);
 
     $scope.pics = [];
     $scope.page = 0;

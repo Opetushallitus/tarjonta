@@ -20,7 +20,18 @@ app.factory('Koodisto',function($resource, $log,$q){
         }
     } ;
 
-
+    var getKoodiViewModelFromKoodi = function(koodi,locale) {
+        var tarjontaKoodi  = {
+            koodiArvo : koodi.koodiArvo,
+            koodiUri : koodi.koodiUri,
+            koodiTila : koodi.tila,
+            koodiVersio : koodi.versio,
+            koodiKoodisto : koodi.koodisto.koodistoUri,
+            koodiOrganisaatioOid : koodi.koodisto.organisaatioOid,
+            koodiNimi : nimiWithLocale(locale,koodi.metadata)
+        };
+        return tarjontaKoodi
+    };
 
     return {
 
@@ -35,17 +46,7 @@ app.factory('Koodisto',function($resource, $log,$q){
             $resource(ylapuoliKoodiUri,{koodiUri:'@koodiUri'}).query({koodiUri:koodiUriParam},function(koodis){
                 angular.forEach(koodis,function(koodi){
 
-                    var tarjontaKoodi  = {
-                        koodiArvo : koodi.koodiArvo,
-                        koodiUri : koodi.koodiUri,
-                        koodiTila : koodi.tila,
-                        koodiVersio : koodi.versio,
-                        koodiKoodisto : koodi.koodisto.koodistoUri,
-                        koodiOrganisaatioOid : koodi.koodisto.organisaatioOid,
-                        koodiNimi : nimiWithLocale(locale,koodi.metadata)
-                    };
-
-                    returnKoodis.push(tarjontaKoodi);
+                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi,locale));
                 });
                 returnYlapuoliKoodis.resolve(returnKoodis);
             });
@@ -73,17 +74,9 @@ app.factory('Koodisto',function($resource, $log,$q){
 
                 angular.forEach(koodis,function(koodi){
 
-                    var tarjontaKoodi  = {
-                        koodiArvo : koodi.koodiArvo,
-                        koodiUri : koodi.koodiUri,
-                        koodiTila : koodi.tila,
-                        koodiVersio : koodi.versio,
-                        koodiKoodisto : koodi.koodisto.koodistoUri,
-                        koodiOrganisaatioOid : koodi.koodisto.organisaatioOid,
-                        koodiNimi : nimiWithLocale(locale,koodi.metadata)
-                    };
 
-                    returnKoodis.push(tarjontaKoodi);
+
+                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi,locale));
                 });
                 returnKoodisPromise.resolve(returnKoodis);
             });
