@@ -22,29 +22,29 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
  * REST services for haku's.
- * 
+ *
  * <pre>
  * GET    /haku/hello
  * GET    /haku  (?searchTerms... - list of { oid : xxx }
- * 
+ *
  * GET    /haku/OID
  * POST   /haku/OID - create haku
  * PUT    /haku/OID - replace existing haku
  * DELETE /haku/OID - delete haku
- * 
+ *
  * PUT    /haku/OID/state - update state (state string as body)
- * 
+ *
  * GET    /haku/OID/hakukohde - list of {oid : xxx}
  * GET    /haku/OID/hakukohdetulos - list of {kokonaismaara: xxx, tulokset: []}
  * GET    /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
- * 
+ *
  * PUT    /haku/OID/hakuaika - creates a hakuaika for a haku
- * 
+ *
  * PUT    /haku/hakuaika/OID - replaces existing hakuaika
  * DELETE /haku/hakuaika/OID - deletes a hakuaika
- * 
+ *
  * </pre>
- * 
+ *
  * @author mlyly
  */
 @Path("/haku")
@@ -58,7 +58,7 @@ public interface HakuResource {
     /**
      * /haku?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&
      * lastModifiedSince=XX
-     * 
+     *
      * @param searchTerms
      * @param count
      * @param startIndex
@@ -74,7 +74,7 @@ public interface HakuResource {
 
     /**
      * /haku/OID
-     * 
+     *
      * @param oid
      * @return HakuDTO
      */
@@ -85,13 +85,15 @@ public interface HakuResource {
 
     /**
      * /haku/OID/hakukohde
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
+     * @param organisationOidsStr  limit result under these OIDs
+     * @param hakukohdeTilasStr  return only results with these states
      * @return list of Haku's Hakokohde OIDs
      */
     @GET
@@ -100,17 +102,22 @@ public interface HakuResource {
     public List<OidRDTO> getByOIDHakukohde(@PathParam("oid") String oid, @QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count, @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince);
+            @QueryParam("lastModifiedSince") Date lastModifiedSince,
+            @QueryParam("organisationOids") String organisationOidsStr,
+            @QueryParam("hakukohdeTilas") String hakukohdeTilasStr);
+
 
     /**
      * /haku/OID/hakukohdeTulos
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
+     * @param organisationOidsStr
+     * @param hakukohdeTilasStr
      * @return list of Haku's HakukohdeTulosRDTOs
      */
     @GET
@@ -119,18 +126,23 @@ public interface HakuResource {
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince);
+            @QueryParam("lastModifiedSince") Date lastModifiedSince,
+            @QueryParam("organisationOids") String organisationOidsStr,
+            @QueryParam("hakukohdeTilas") String hakukohdeTilasStr);
+
 
     /**
      * Same as "getByOIDHakukohde" but resolves the koodisto name for
      * hakukohde...
-     * 
+     *
      * @param oid
      * @param searchTerms
      * @param count
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
+     * @param organisationOidsStr
+     * @param hakukohdeTilasStr
      * @return
      */
     @GET
@@ -139,12 +151,13 @@ public interface HakuResource {
     public List<Map<String, String>> getByOIDHakukohdeExtra(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince);
-    
-    
+            @QueryParam("lastModifiedSince") Date lastModifiedSince,
+            @QueryParam("organisationOids") String organisationOidsStr,
+            @QueryParam("hakukohdeTilas") String hakukohdeTilasStr);
+
     /**
      * Creates a haku.
-     * 
+     *
      * @return Oid of the created haku.
      */
     @POST
@@ -152,7 +165,7 @@ public interface HakuResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String createHaku(HakuDTO dto);
-    
+
     /**
      * Updates a haku.
      */
@@ -160,7 +173,7 @@ public interface HakuResource {
     @Path("{oid}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void replaceHaku(HakuDTO dto);
-    
+
     /**
      * Deletes a haku by oid.
      */
