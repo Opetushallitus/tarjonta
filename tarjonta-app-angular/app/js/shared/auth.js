@@ -43,11 +43,23 @@ app.factory('MyRolesModel', function($http) {
 
         instance.refresh = function() {
             if (instance.myroles.length == 0) {
-                $http.get(CAS_URL).success(function(result) {
+                $http.get(CAS_URL)
+                        .success(function(result) {
+                    console.log("MyRolesModel.factory() - roles loaded successfully from: " + CAS_URL);
                     instance.myroles = result;
+                })
+                        .error(function(data, status, headers, config) {
+                    console.log("MyRolesModel.factory() - FAILED to load roles from: " + CAS_URL);
+                    console.log("MyRolesModel.factory() - status: " + status);
+                    console.log("MyRolesModel.factory() - headers: " + headers);
                 });
             }
-        }
+        };
+
+        instance.debug = function () {
+            console.log("MyRolesModel.debug():");
+            console.log("  roles: " + instance);
+        };
 
         return instance;
     })();
