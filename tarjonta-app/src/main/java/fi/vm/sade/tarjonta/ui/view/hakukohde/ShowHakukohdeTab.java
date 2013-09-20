@@ -562,6 +562,9 @@ public class ShowHakukohdeTab extends VerticalLayout {
     
     private String getHakuaikaStr() {
     	HakukohdeViewModel hm = presenter.getModel().getHakukohde();
+    	if (hm.getHakuaikaAlkuPvm() != null && hm.getHakuaikaLoppuPvm() != null) {
+    	    return HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm());
+    	}
     	HakuaikaViewModel hvm = hm.getHakuaika();
     	return hvm==null ? HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm()): hvm.toString();
     }

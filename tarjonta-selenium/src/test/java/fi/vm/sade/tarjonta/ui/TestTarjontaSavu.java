@@ -488,7 +488,7 @@ public class TestTarjontaSavu {
         	doit.tauko(1);
 
         	// HAKUKOHTEEN MUOKKAUS
-        	if (! doit.isPresentText(driver, "julkaistu") || ! doit.isPresentText(driver, "Ylioppilastutkinto"))
+        	if (! doit.isPresentText(driver, "julkaistu") || ! doit.isPresentText(driver, "Ylioppilastutkinto") || ! doit.isPresentText(driver, "Lukion"))
         	{
         	t01 = doit.millis();
         	doit.textClick(driver, "muokkaa");
@@ -664,7 +664,7 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "OPH"));
         doit.tauko(1);
-        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastutkint*");
+        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastutkint");
         if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
         {
         	doit.notPresentText(driver, "Koulutukset (0)"
@@ -828,7 +828,7 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Koulutukset ("));
         doit.textClick(driver, "[Poista valinta]");
-        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "*tusohjel*");
+        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "tusohjel");
         if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
         {
         	doit.notPresentText(driver, "Koulutukset (0)"

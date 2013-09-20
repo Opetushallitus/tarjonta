@@ -2,24 +2,33 @@
 
 /* Filters */
 
-angular.module('tarjontaApp.filters', [])
-
-.filter('interpolate', ['version', function(version) {
-    return function(text) {
-      return String(text).replace(/\%VERSION\%/mg, version);
-    };
-  }])
+var app = angular.module('tarjontaApp.filters', []);
 
 
-// http://jsfiddle.net/2ZzZB/56/
-.filter('startFrom', function() {
+app.filter('interpolate', ['version', function(version) {
+        return function(text) {
+            return String(text).replace(/\%VERSION\%/mg, version);
+        };
+    }]);
+
+/**
+ *For simple paging, use "startFrom" filter to set the star page / beginning AND
+ *basic "limitTo" filter to set the "page size".
+ *
+ *For example: ng-repeat="p in pics | startFrom: pageSize * page | limitTo: pageSize"
+ */
+app.filter('startFrom', function() {
     return function(input, start) {
         start = +start; //parse to int
         return input.slice(start);
     };
-})
+});
 
-.filter('reverse', function() {
+/**
+ * @returns reversed string or array
+ * @throws exception when input is not array or string
+ */
+app.filter('reverse', function() {
     return function(input) {
         // console.log("reverse() " + input + " type = "+ (typeof(input)));
 

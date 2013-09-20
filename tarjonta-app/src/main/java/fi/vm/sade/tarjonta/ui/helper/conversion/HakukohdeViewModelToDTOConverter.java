@@ -188,11 +188,13 @@ public class HakukohdeViewModelToDTOConverter {
         if (hakukohdeTyyppi.getSisaisetHakuajat() != null) {
             hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
             hakukohdeVM.setCustomHakuaikaEnabled(false);
-        } else {
+        } //else {
         	hakukohdeVM.setHakuaikaAlkuPvm(hakukohdeTyyppi.getHakuaikaAlkuPvm());
         	hakukohdeVM.setHakuaikaLoppuPvm(hakukohdeTyyppi.getHakuaikaLoppuPvm());
+        if (hakukohdeVM.getHakuaikaAlkuPvm() != null && hakukohdeVM.getHakuaikaLoppuPvm() != null) {
             hakukohdeVM.setCustomHakuaikaEnabled(true);
         }
+        //}
 
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeVM.setHakuViewModel(haku);
