@@ -5,21 +5,20 @@ angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
     }])
 
 
-.controller('KoodistoTestController', function($scope,KoodiService){
+.controller('KoodistoTestController', function($scope,Koodisto){
 
         $scope.locale = 'FI';
         $scope.koodistoUri = 'hakukohteetkk';
 
 
-        //$scope.koodis = KoodiService.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
+        //$scope.koodis = Koodisto.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
 
-        var koodiPromise = KoodiService.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
+        var koodiPromise = Koodisto.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
         koodiPromise.then(function(data){
 
-            console.log('Promise got : ');
+            console.log('Got data');
             console.log(data);
-
-            $scope.koodi = data;
+            $scope.koodis = data;
 
 
         });
