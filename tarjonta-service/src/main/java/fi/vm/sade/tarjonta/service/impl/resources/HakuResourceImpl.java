@@ -99,7 +99,7 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/hello
     @Override
     public String hello() {
-        LOG.info("/haku/hello -- hello()");
+        LOG.debug("/haku/hello -- hello()");
         return "Well Hello! " + new Date();
     }
 
@@ -146,13 +146,13 @@ public class HakuResourceImpl implements HakuResource {
             Date lastModifiedSince,
             String organisationOidsStr,
             String hakukohdeTilasStr) {
-        LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
+        LOG.debug("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
         List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
 
-        LOG.info("  oids = {}", organisationOids);
-        LOG.info("  tilas = {}", hakukohdeTilas);
+        LOG.debug("  oids = {}", organisationOids);
+        LOG.debug("  tilas = {}", hakukohdeTilas);
 
         if (!organisationOids.isEmpty()) {
             throw new IllegalArgumentException("organisationOids - parameter not supported yet");
@@ -174,7 +174,7 @@ public class HakuResourceImpl implements HakuResource {
 
 
     private List<String> splitToList(String input, String separator) {
-        LOG.info("splitToList({}, {})", input, separator);
+        LOG.debug("splitToList({}, {})", input, separator);
 
         if (input == null || input.trim().isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -190,7 +190,7 @@ public class HakuResourceImpl implements HakuResource {
             String organisationOidsStr,
             String hakukohdeTilasStr) {
 
-        LOG.info("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
+        LOG.debug("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
 
         final String kieliAvain = StringUtils.upperCase("fi"); // TODO: lisää rajapintaan
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
@@ -198,8 +198,8 @@ public class HakuResourceImpl implements HakuResource {
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
         List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
 
-        LOG.info("  oids = {}", organisationOids);
-        LOG.info("  tilas = {}", hakukohdeTilas);
+        LOG.debug("  oids = {}", organisationOids);
+        LOG.debug("  tilas = {}", hakukohdeTilas);
 
         if (count <= 0) {
             count = 100;
