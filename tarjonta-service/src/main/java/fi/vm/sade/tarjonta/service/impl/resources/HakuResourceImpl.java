@@ -45,23 +45,23 @@ import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Arrays;
 
 /**
  * Run:
- * 
+ *
  * <pre>
  * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
  * </pre>
- * 
+ *
  * Test:
- * 
+ *
  * <pre>
  * http://localhost:8084/tarjonta-service/rest?_wadl
  * </pre>
- * 
- * Internal documentation:
- * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- * 
+ *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ *
  * @author mlyly
  * @see HakuResource
  */
@@ -71,22 +71,18 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
-
     @Autowired
     private HakuDAO hakuDAO;
     @Autowired
     private HakuaikaDAO hakuaikaDAO;
-
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
     @Autowired(required = true)
@@ -109,10 +105,13 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku?...
     @Override
-    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore,
+    public List<OidRDTO> search(String searchTerms,
+            int count,
+            int startIndex,
+            Date lastModifiedBefore,
             Date lastModifiedSince) {
-        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[] { searchTerms, count, startIndex,
-                lastModifiedBefore, lastModifiedSince });
+        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex,
+            lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -139,9 +138,28 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohde
     @Override
-    public List<OidRDTO> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.debug("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
+    public List<OidRDTO> getByOIDHakukohde(String oid,
+            String searchTerms,
+            int count,
+            int startIndex,
+            Date lastModifiedBefore,
+            Date lastModifiedSince,
+            String organisationOidsStr,
+            String hakukohdeTilasStr) {
+        LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
+
+        List<String> organisationOids = splitToList(organisationOidsStr, ",");
+        List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
+
+        LOG.info("  oids = {}", organisationOids);
+        LOG.info("  tilas = {}", hakukohdeTilas);
+
+        if (!organisationOids.isEmpty()) {
+            throw new IllegalArgumentException("organisationOids - parameter not supported yet");
+        }
+        if (!hakukohdeTilas.isEmpty()) {
+            throw new IllegalArgumentException("hakukohdeTilas - parameter not supported yet");
+        }
 
         if (count <= 0) {
             count = 100;
@@ -154,23 +172,58 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-    // /haku/OID/hakukohdetulos
+
+    private List<String> splitToList(String input, String separator) {
+        LOG.info("splitToList({}, {})", input, separator);
+
+        if (input == null || input.trim().isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        String[] params = input.split(separator);
+        return Arrays.asList(params);
+    }
+
+    // /haku/OID/hakukohdeTulos
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince) {
-        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: <-
-        // rajapintaan
+            Date lastModifiedBefore, Date lastModifiedSince,
+            String organisationOidsStr,
+            String hakukohdeTilasStr) {
+
+        LOG.info("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
+
+        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: lisää rajapintaan
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
-        LOG.debug("/haku/{}/hakukohdetulos -- getByOIDHakukohdeTulos()", oid);
+
+        List<String> organisationOids = splitToList(organisationOidsStr, ",");
+        List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
+
+        LOG.info("  oids = {}", organisationOids);
+        LOG.info("  tilas = {}", hakukohdeTilas);
 
         if (count <= 0) {
             count = 100;
             LOG.debug("  autolimit search to {} entries!", count);
         }
+
         HakukohteetKysely hakukohteetKysely = new HakukohteetKysely();
         hakukohteetKysely.setHakuOid(oid);
+        hakukohteetKysely.getTarjoajaOids().addAll(organisationOids);
+
+        if (hakukohdeTilas.size() > 1) {
+            LOG.error("  CANNOT USE MORE THAT ONE STATE: {} -- returning with any state", hakukohdeTilas);
+        }
+        if (hakukohdeTilas.size() == 1) {
+            TarjontaTila tila = TarjontaTila.valueOf(hakukohdeTilas.get(0));
+            if (tila != null) {
+                hakukohteetKysely.setTilat(tila);
+            } else {
+                LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+            }
+        }
+
         HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
-        LOG.debug("  kysely for haku '{}' found '{}'", new Object[] { oid, v.getHakukohdeTulos().size() });
+        LOG.debug("  kysely for haku '{}' found '{}'", new Object[]{oid, v.getHakukohdeTulos().size()});
         Collection<HakukohdeTulos> tulokset = v.getHakukohdeTulos();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
         // mukaan!
@@ -247,20 +300,21 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdeWithName
     @Override
-    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid,
+            String searchTerms,
+            int count,
+            int startIndex,
+            Date lastModifiedBefore,
+            Date lastModifiedSince,
+            String organisationOidsStr,
+            String hakukohdeTilasStr) {
         LOG.debug("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
 
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
-
         // Get list of oids
         List<OidRDTO> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore,
-                lastModifiedSince);
+                lastModifiedSince, organisationOidsStr, hakukohdeTilasStr);
 
         // Loop the result
         for (OidRDTO oidRDTO : hakukohdeOids) {

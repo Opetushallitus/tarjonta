@@ -13,6 +13,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.ArrayList;
@@ -44,23 +46,30 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     @Autowired
     private HakuDAO hakuDAO;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired
     private ConversionService conversionService;
-
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-
     @Autowired
     private OrganisaatioService organisaatioService;
 
     // /hakukohde?...
     @Override
-    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.debug("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+    public List<OidRDTO> search(String searchTerms,
+            int count,
+            int startIndex,
+            Date lastModifiedBefore,
+            Date lastModifiedSince,
+            List<String> organisationOids,
+            List<String> hakukohdeTilas) {
+
+        organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+        hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
+
+        LOG.debug("/hakukohde -- search({}, {}, {}, {}, {}, {}, {})",
+                new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince, organisationOids, hakukohdeTilas});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -222,5 +231,4 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         cal.setTime(d);
         return cal.get(Calendar.YEAR);
     }
-
 }

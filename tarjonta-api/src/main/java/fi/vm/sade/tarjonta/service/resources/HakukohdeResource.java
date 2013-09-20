@@ -41,6 +41,8 @@ public interface HakukohdeResource {
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
+     * @param organisationOids filter result to be in or "under" given organisations
+     * @param hakukohdeTilas  filter result to be only in states given
      * @return
      */
     @GET
@@ -49,7 +51,9 @@ public interface HakukohdeResource {
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-            @QueryParam("lastModifiedSince") Date lastModifiedSince);
+            @QueryParam("lastModifiedSince") Date lastModifiedSince,
+            @QueryParam("organisationOid") List<String> organisationOids,
+            @QueryParam("hakukohdeTila") List<String> hakukohdeTilas);
 
     /**
      * /hakukohde/{oid}

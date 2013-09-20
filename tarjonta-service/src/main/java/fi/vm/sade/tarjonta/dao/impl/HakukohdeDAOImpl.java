@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.model.QHakukohdeLiite;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  */
