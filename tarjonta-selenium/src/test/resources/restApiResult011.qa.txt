@@ -8,35 +8,35 @@
     "oid" : "57931",
     "version" : 0,
     "kuvaus" : {
-      "kieli_fi#1" : ""
     },
     "valintakoeAjankohtas" : [ ],
     "valintakoePisterajas" : [ {
       "oid" : "57934",
       "version" : 0,
-      "alinHyvaksyttyPistemaara" : 5,
-      "alinPistemaara" : 0,
-      "ylinPistemaara" : 10,
+      "alinHyvaksyttyPistemaara" : 5.0,
+      "alinPistemaara" : 0.0,
+      "ylinPistemaara" : 10.0,
       "tyyppi" : "Paasykoe",
       "api_VERSION" : 4
     } ],
     "api_VERSION" : 4
   } ],
-  "hakukohdeKoodistoNimi" : "Gymnasiets danslinje Lukion tanssilinja ",
-  "alinValintaPistemaara" : 0,
+  "hakuOid" : "1.2.246.562.5.2013080813081926341927",
   "aloituspaikatLkm" : 27,
+  "valintaperustekuvausKoodiUri" : "valintaperustekuvausryhma_1#1",
+  "hakukohdeKoodistoNimi" : "Gymnasiets danslinje Lukion tanssilinja ",
+  "lisatiedot" : {
+  },
+  "kaytetaanHaunPaattymisenAikaa" : false,
+  "alinHyvaksyttavaKeskiarvo" : 7.0,
+  "hakuaikaAlkuPvm" : 1393218000000,
+  "hakuaikaLoppuPvm" : 1394802000000,
   "hakukelpoisuusvaatimus" : {
     "kieli_sv" : "Om du har slutfört den grundläggande utbildningens lärokurs eller motsvarande lärokurs kan du söka till gymnasieutbildning. Om du har avlagt din examen utomlands eller avbrutit läroplikten kan du söka till gymnasieutbildning genom ansökan enligt prövning. Utbildningsanordnaren bedömer då skilt ditt utbildningsbehov och förutsättningar att klara av studierna.",
     "kieli_fi" : "Perusopetuksen tai sitä vastaavan aiemman oppimäärän suorittaneet voivat hakea lukiokoulutukseen. Jos hakijalla on ulkomailla suoritettu tutkinto tai hänen oppivelvollisuutensa on keskeytynyt, hän voi hakea lukiokoulutukseen harkintaan perustuvan haun kautta. Tällöin koulutuksen järjestäjä arvioi erikseen hakijan koulutustarpeen ja edellytykset suoriutua opinnoista."
   },
-  "hakuOid" : "1.2.246.562.5.2013080813081926341927",
-  "valintaperustekuvausKoodiUri" : "valintaperustekuvausryhma_1#1",
-  "lisatiedot" : {
-    "kieli_fi#1" : ""
-  },
-  "kaytetaanHaunPaattymisenAikaa" : false,
-  "alinHyvaksyttavaKeskiarvo" : 7.0,
   "valintojenAloituspaikatLkm" : 27,
+  "alinValintaPistemaara" : 0,
   "edellisenVuodenHakijatLkm" : 0,
   "hakukohdeNimiUri" : "hakukohteet_806#1",
   "liitteidenToimitusosoite" : {
@@ -47,7 +47,11 @@
     "api_VERSION" : 4
   },
   "ylinValintapistemaara" : 0,
+  "kaytetaanHakukohdekohtaistaHakuaikaa" : false,
   "hakukelpoisuusvaatimusUri" : "hakukelpoisuusvaatimusta_5#1",
+  "valintaperustekuvaus" : {
+    "kieli_fi#1" : "<p>lukio yksi</p>"
+  },
   "opetuskielet" : [ "kieli_fi#1" ],
   "api_VERSION" : 4
 }

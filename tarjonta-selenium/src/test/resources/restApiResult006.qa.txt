@@ -1,9 +1,32 @@
 {
-  "modified" : 1378290838718,
+  "modified" : 1379512224345,
   "oid" : "1.2.246.562.5.2013061010184768943288",
-  "version" : 176,
+  "version" : 182,
   "tila" : "JULKAISTU",
   "moduuliTyyppi" : "TUTKINTO",
+  "tekstit" : {
+    "KOULUTUKSEN_RAKENNE" : {
+      "kieli_sv" : "<p>Examensdel som är obligatorisk för alla är att verka inom logi- och restaurangverksamhet (20 sv).  I utbildningsprogrammet för kundservice ingår som obligatoriska studier kundservice och försäljning (20 sv) och servering av mat i portioner och drycker (20 sv). I utbildningsprogrammet för hotellservice ingår som obligatoriska studier kundservice och försäljning (20 sv) och kundservice i reception (20 sv). Obligatoriska examnesdelar i utbildningsprogrammet för kock är  tillredning av lunchrätter (20 sv) och tillredning av mat i portioner (20 sv).  Utöver dessa obligatoriska examnesdelar ska studerande avlägga valfria studier som individuellt fördjupar yrkeskompetensen.</p>  <p>Omfattningen av de yrkesinriktade examensdelarna är sammanlagt 90 studieveckor. (Examensdelarna i de fristående examina bygger inte på ett visst antal studieveckor). I den yrkesinriktade (läroplansbaserade) grundutbildningen ingår dessutom 20 sv kompletterande och 10 sv valfria examensdelar.</p>",
+      "kieli_fi" : "<p>Tutkinnon kaikille yhteinen pakollinen osa on majoitus- ja ravitsemispalveluissa toimiminen (20 ov). Asiakaspalvelun koulutusohjelmassa/osaamisalalla suoritetaan lisäksi pakollisina tutkinnon osina: asiakaspalvelu ja myynti (20 ov) ja annosruokien ja juomien tarjoilu (20 ov). Hotellipalvelun koulutusohjelmassa/osaamisalalla suoritetaan yhteisen osan lisäksi tutkinnon osat: asiakaspalvelu ja myynti (20 ov) ja vastaanoton asiakaspalvelu (20 ov). Kokin koulutusohjelmassa/osaamisalalla suoritetaan osat: lounasruokien valmistus (20 ov) ja annosruokien valmistus (20 ov). Lisäksi suoritetaan valinnaisia osia, jotka tukevat ammatillista suuntautumista.</p>  <p>Ammatillisten tutkinnon osien laajuus on yhteensä 90 opintoviikkoa. (Näyttötutkinnossa tutkinnon osilla ei ole laajuuksia.) Ammatillisessa peruskoulutuksessa (opetussuunnitelmaperusteisessa) opiskellaan lisäksi 20 ov ammattitaitoa täydentäviä ja 10 ov vapaasti valittavia tutkinnon osia.</p>"
+    },
+    "JATKOOPINTO_MAHDOLLISUUDET" : {
+      "kieli_sv" : "<p>De yrkesinriktade grundexamina samt yrkesoch specialyrkesexamina ger allmän behörighet för fortsatta studier vid yrkeshögskolor och universitet. En naturlig väg till fortsatta studier för den som avlagt t.ex. en yrkesinriktad grundexamen är en yrkeshögskoleexamen inom turism och kosthållsbranschen, restonom (YH). Vid universitet kan man avlägga till exempel kandidat- eller magisterexamen i livsmedelsvetenskaper (specialisering inom livsmedelsekonomi), samhällsvetenskaper (specialisering inom turism) eller ekonomiska vetenskaper. De pedagogiska studierna för yrkeslärare ger möjlighet till påbyggnadsutbildning för yrkeslärarens arbetsuppgifter.</p>",
+      "kieli_fi" : "<p>Ammatillisista perustutkinnoista sekä ammattija erikoisammattitutkinnoista saa yleisen jatko-opintokelpoisuuden ammattikorkeakouluihin ja yliopistoihin. Luonteva jatko-opintoväylä esim. ammatillisen perustutkinnon suorittaneilla on matkailu- ja ravitsemisalan ammattikorkeakoulututkinto, restonomi (AMK). Yliopistossa voi suorittaa esimerkiksi elintarviketieteiden (erikoistuen elintarvike-ekonomiaan), yhteiskuntatieteiden (erikoistuen matkailualaan) tai kauppatieteiden kandidaatin tai maisterin tutkinnon. Ammatillisen opettajan pedagogiset opinnot antavat jatkokoulutusmahdollisuuden ammatillisen opettajan työtehtäviin.</p>"
+    },
+    "TAVOITTEET" : {
+      "kieli_sv" : "<p>De som har avlagt grundexamen inom hotell-, restaurang- och cateringbranschen är språkkunniga och inriktade på försäljning och kundservice. De planerar, framställer och säljer produkter och tjänster. De arbetar utifrån arbetsplatsens affärsidé och den finländska matkulturen. De behärskar egenkontrollen och bestämmelserna om alkoholutskänkning och jobbar lönsamt enligt ett hållbart verksamhetssätt. Den som har avlagt grundexamen inom hotell-, restaurang- och cateringbranschen har utöver basfärdigheter i branschen även specialiserat sig på arbetsuppgifter inom kundbetjäning, hotellservice eller restaurangservice.</p>",
+      "kieli_fi" : "<p>Hotelli-, ravintola- ja catering-alan perustutkinnon suorittanut on kielitaitoinen sekä myynti- ja asiakaspalveluhenkinen. Hän suunnittelee, toteuttaa, valmistaa ja myy tuotteita ja -palveluja. Hän toimii työpaikan ja toimintaympäristön liikeidean sekä suomalaisen ruoka- ja tapakulttuurin mukaisesti. Hän hallitsee omavalvonnan ja alkoholin anniskelumääräykset ja toimii kannattavasti ja kestävän toimintatavan mukaisesti. Hotelli-, ravintola- ja catering-alan perustutkinnon suorittaneella on alan perusvalmiuksien lisäksi valintojen mukaan erikoistunut osaaminen asiakaspalvelun, hotellipalvelun tai kokin työtehtävissä.</p>"
+    }
+  },
+  "opintoalaUri" : "opintoalaoph2002_802#1",
+  "koulutusAlaUri" : "koulutusalaoph2002_8#1",
+  "koulutusAsteUri" : "koulutusasteoph2002_32#1",
+  "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
+  "laajuusArvo" : "120",
+  "laajuusYksikkoUri" : "opintojenlaajuusyksikko_1#1",
+  "koulutusKoodiUri" : "koulutus_381112#1",
+  "ylaModuulit" : [ ],
+  "alaModuulit" : [ "1.2.246.562.5.2013061010184768995895", "1.2.246.562.5.2013061010185110245464", "1.2.246.562.5.2013061010184810220641" ],
   "koulutuksenRakenne" : {
     "kieli_sv" : "<p>Examensdel som är obligatorisk för alla är att verka inom logi- och restaurangverksamhet (20 sv).  I utbildningsprogrammet för kundservice ingår som obligatoriska studier kundservice och försäljning (20 sv) och servering av mat i portioner och drycker (20 sv). I utbildningsprogrammet för hotellservice ingår som obligatoriska studier kundservice och försäljning (20 sv) och kundservice i reception (20 sv). Obligatoriska examnesdelar i utbildningsprogrammet för kock är  tillredning av lunchrätter (20 sv) och tillredning av mat i portioner (20 sv).  Utöver dessa obligatoriska examnesdelar ska studerande avlägga valfria studier som individuellt fördjupar yrkeskompetensen.</p>  <p>Omfattningen av de yrkesinriktade examensdelarna är sammanlagt 90 studieveckor. (Examensdelarna i de fristående examina bygger inte på ett visst antal studieveckor). I den yrkesinriktade (läroplansbaserade) grundutbildningen ingår dessutom 20 sv kompletterande och 10 sv valfria examensdelar.</p>",
     "kieli_fi" : "<p>Tutkinnon kaikille yhteinen pakollinen osa on majoitus- ja ravitsemispalveluissa toimiminen (20 ov). Asiakaspalvelun koulutusohjelmassa/osaamisalalla suoritetaan lisäksi pakollisina tutkinnon osina: asiakaspalvelu ja myynti (20 ov) ja annosruokien ja juomien tarjoilu (20 ov). Hotellipalvelun koulutusohjelmassa/osaamisalalla suoritetaan yhteisen osan lisäksi tutkinnon osat: asiakaspalvelu ja myynti (20 ov) ja vastaanoton asiakaspalvelu (20 ov). Kokin koulutusohjelmassa/osaamisalalla suoritetaan osat: lounasruokien valmistus (20 ov) ja annosruokien valmistus (20 ov). Lisäksi suoritetaan valinnaisia osia, jotka tukevat ammatillista suuntautumista.</p>  <p>Ammatillisten tutkinnon osien laajuus on yhteensä 90 opintoviikkoa. (Näyttötutkinnossa tutkinnon osilla ei ole laajuuksia.) Ammatillisessa peruskoulutuksessa (opetussuunnitelmaperusteisessa) opiskellaan lisäksi 20 ov ammattitaitoa täydentäviä ja 10 ov vapaasti valittavia tutkinnon osia.</p>"
@@ -12,19 +35,9 @@
     "kieli_sv" : "<p>De yrkesinriktade grundexamina samt yrkesoch specialyrkesexamina ger allmän behörighet för fortsatta studier vid yrkeshögskolor och universitet. En naturlig väg till fortsatta studier för den som avlagt t.ex. en yrkesinriktad grundexamen är en yrkeshögskoleexamen inom turism och kosthållsbranschen, restonom (YH). Vid universitet kan man avlägga till exempel kandidat- eller magisterexamen i livsmedelsvetenskaper (specialisering inom livsmedelsekonomi), samhällsvetenskaper (specialisering inom turism) eller ekonomiska vetenskaper. De pedagogiska studierna för yrkeslärare ger möjlighet till påbyggnadsutbildning för yrkeslärarens arbetsuppgifter.</p>",
     "kieli_fi" : "<p>Ammatillisista perustutkinnoista sekä ammattija erikoisammattitutkinnoista saa yleisen jatko-opintokelpoisuuden ammattikorkeakouluihin ja yliopistoihin. Luonteva jatko-opintoväylä esim. ammatillisen perustutkinnon suorittaneilla on matkailu- ja ravitsemisalan ammattikorkeakoulututkinto, restonomi (AMK). Yliopistossa voi suorittaa esimerkiksi elintarviketieteiden (erikoistuen elintarvike-ekonomiaan), yhteiskuntatieteiden (erikoistuen matkailualaan) tai kauppatieteiden kandidaatin tai maisterin tutkinnon. Ammatillisen opettajan pedagogiset opinnot antavat jatkokoulutusmahdollisuuden ammatillisen opettajan työtehtäviin.</p>"
   },
-  "opintoalaUri" : "opintoalaoph2002_802#1",
-  "koulutusAlaUri" : "koulutusalaoph2002_8#1",
-  "koulutusAsteUri" : "koulutusasteoph2002_32#1",
-  "koulutusTyyppiUri" : "AmmatillinenPeruskoulutus",
-  "laajuusArvo" : "120",
-  "laajuusYksikkoUri" : "opintojenlaajuusyksikko_1#1",
   "tavoitteet" : {
     "kieli_sv" : "<p>De som har avlagt grundexamen inom hotell-, restaurang- och cateringbranschen är språkkunniga och inriktade på försäljning och kundservice. De planerar, framställer och säljer produkter och tjänster. De arbetar utifrån arbetsplatsens affärsidé och den finländska matkulturen. De behärskar egenkontrollen och bestämmelserna om alkoholutskänkning och jobbar lönsamt enligt ett hållbart verksamhetssätt. Den som har avlagt grundexamen inom hotell-, restaurang- och cateringbranschen har utöver basfärdigheter i branschen även specialiserat sig på arbetsuppgifter inom kundbetjäning, hotellservice eller restaurangservice.</p>",
-    "kieli_en" : "NULL",
     "kieli_fi" : "<p>Hotelli-, ravintola- ja catering-alan perustutkinnon suorittanut on kielitaitoinen sekä myynti- ja asiakaspalveluhenkinen. Hän suunnittelee, toteuttaa, valmistaa ja myy tuotteita ja -palveluja. Hän toimii työpaikan ja toimintaympäristön liikeidean sekä suomalaisen ruoka- ja tapakulttuurin mukaisesti. Hän hallitsee omavalvonnan ja alkoholin anniskelumääräykset ja toimii kannattavasti ja kestävän toimintatavan mukaisesti. Hotelli-, ravintola- ja catering-alan perustutkinnon suorittaneella on alan perusvalmiuksien lisäksi valintojen mukaan erikoistunut osaaminen asiakaspalvelun, hotellipalvelun tai kokin työtehtävissä.</p>"
   },
-  "koulutusKoodiUri" : "koulutus_381112#1",
-  "ylaModuulit" : [ ],
-  "alaModuulit" : [ "1.2.246.562.5.2013061010184768995895", "1.2.246.562.5.2013061010185110245464", "1.2.246.562.5.2013061010184810220641" ],
   "api_VERSION" : 4
 }

@@ -4,11 +4,6 @@
   "oid" : "1.2.246.562.5.2013080813081926341927",
   "version" : 2,
   "tila" : "VALMIS",
-  "nimi" : {
-    "kieli_sv" : "Gemensam ansökan till yrkes- och gymnasieutbildning",
-    "kieli_en" : null,
-    "kieli_fi" : "Ammatillisen koulutuksen ja lukiokoulutuksen yhteishaku"
-  },
   "koulutuksenAlkamisVuosi" : 2014,
   "hakuaikas" : [ {
     "oid" : "5474",
@@ -18,6 +13,10 @@
     "api_VERSION" : 4
   } ],
   "koulutuksenAlkamiskausiUri" : "kausi_s#1",
+  "nimi" : {
+    "kieli_sv" : "Gemensam ansökan till yrkes- och gymnasieutbildning",
+    "kieli_fi" : "Ammatillisen koulutuksen ja lukiokoulutuksen yhteishaku"
+  },
   "hakukausiUri" : "kausi_k#1",
   "hakukausiVuosi" : 2014,
   "hakutapaUri" : "hakutapa_01#1",

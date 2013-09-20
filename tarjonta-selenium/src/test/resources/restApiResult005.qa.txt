@@ -4,7 +4,8 @@
   "version" : 0,
   "tila" : "LUONNOS",
   "tarjoajaOid" : "1.2.246.562.10.67048326663",
-  "koulutusohjelmanValinta" : {
+  "komoOid" : "1.2.246.562.5.2013061010184768943288",
+  "tekstit" : {
   },
   "maksullisuus" : false,
   "ammattinimikeUris" : [ ],
@@ -17,6 +18,5 @@
   "opetusmuodotUris" : [ ],
   "pohjakoulutusVaatimusUri" : "pohjakoulutusvaatimustoinenaste_yo#1",
   "teematUris" : [ ],
-  "komoOid" : "1.2.246.562.5.2013061010184768943288",
   "api_VERSION" : 4
 }
