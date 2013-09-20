@@ -26,7 +26,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.copyFields;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KoodiUriDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
@@ -35,10 +34,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -50,9 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.google.common.collect.Sets;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import org.joda.time.DateTime;
 
 /**
  *
