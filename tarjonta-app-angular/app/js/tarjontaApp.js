@@ -17,6 +17,7 @@ angular.module('kkTutkintoApp',
  *******************************************************/
 angular.module('tarjontaApp',
         [
+            'ui.bootstrap',
             'tarjontaApp.directives',
             'tarjontaApp.filters',
             'tarjontaApp.services',
