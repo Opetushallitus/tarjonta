@@ -4,6 +4,28 @@ angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
         console.log("MyCtrl1()");
     }])
 
+
+.controller('KoodistoTestController', function($scope,KoodiService){
+
+        $scope.locale = 'FI';
+        $scope.koodistoUri = 'hakukohteetkk';
+
+
+        //$scope.koodis = KoodiService.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
+
+        var koodiPromise = KoodiService.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
+        koodiPromise.then(function(data){
+
+            console.log('Promise got : ');
+            console.log(data);
+
+            $scope.koodi = data;
+
+
+        });
+
+    })
+
 .controller('MyCtrl2', function($scope, instagram) {
     console.log("MyCtrl2()");
 
@@ -15,3 +37,5 @@ angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
         $scope.pics = data;
     });
 });
+
+
