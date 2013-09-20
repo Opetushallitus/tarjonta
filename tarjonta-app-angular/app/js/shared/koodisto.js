@@ -35,6 +35,16 @@ app.factory('Koodisto',function($resource, $log,$q){
 
     return {
 
+        convertKoodistoKoodiToViewModelKoodi : function(koodisParam,locale) {
+
+            var koodis = [];
+
+            angular.forEach(koodisParam,function(koodi){
+                koodis.push(getKoodiViewModelFromKoodi(koodi,locale));
+            });
+            return koodis;
+        },
+
         getYlapuolisetKoodit : function(koodiUriParam,locale) {
 
             var returnYlapuoliKoodis= $q.defer();
