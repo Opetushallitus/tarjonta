@@ -24,24 +24,12 @@ import java.io.Serializable;
 public class UiDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String teksti;
     private KoodiUriDTO koodi;
     private String arvo;
 
-    /**
-     * @return the teksti
-     */
-    public String getTeksti() {
-        return teksti;
+    public UiDTO() {
     }
-
-    /**
-     * @param teksti the teksti to set
-     */
-    public void setTeksti(String teksti) {
-        this.teksti = teksti;
-    }
-
+    
     /**
      * @return the arvo
      */
