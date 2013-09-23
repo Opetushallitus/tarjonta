@@ -1,6 +1,6 @@
 
 
-var app = angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
+var app = angular.module('app.controllers', ['app.services'])
 
 app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");

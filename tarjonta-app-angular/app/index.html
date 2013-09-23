@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fi" data-ng-app="tarjontaApp" ng-controller="LocalisationCtrl">
+<html lang="fi" data-ng-app="app" data-ng-controller="LocalisationCtrl">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,23 +20,23 @@
         <script src="lib/underscore/underscore.js"></script>
         <script src="lib/jquery-1.10.2.min.js"></script>
 
-        <script src="js/shared/constant.js"></script>
-        <script src="js/shared/loading.js"></script>
         <script src="js/shared/auth.js"></script>
-        <script src="js/shared/localisation.js"></script>
+        <script src="js/shared/constant.js"></script>
         <script src="js/shared/koodisto.js"></script>
+        <script src="js/shared/loading.js"></script>
+        <script src="js/shared/localisation.js"></script>
 
-        <script src="js/kkTutkinto/services.js"></script>
-        <script src="js/kkTutkinto/controllers.js"></script>
-        <script src="js/kkTutkinto/filters.js"></script>
-        <script src="js/kkTutkinto/directives.js"></script>
-        <!--script src="js/kkTutkinto/app.js"></script-->
+        <script src="partials/controllers.js"></script>
+        <script src="partials/directives.js"></script>
+        <script src="partials/filters.js"></script>
+        <script src="partials/services.js"></script>
 
-        <script src="js/services.js"></script>
-        <script src="js/controllers.js"></script>
-        <script src="js/filters.js"></script>
-        <script src="js/directives.js"></script>
-        <script src="js/tarjontaApp.js"></script>
+        <script src="partials/kk/directives.js"></script>
+        <script src="partials/kk/edit/controllers.js"></script>
+        <script src="partials/kk/filters.js"></script>
+        <script src="partials/kk/services.js"></script>
+
+        <script src="partials/tarjontaApp.js"></script>
 
         <!-- Le styles -->
         <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -73,11 +73,11 @@
             </div>
         </div>
 
-        <div ng-controller="LoadingCtrl"
-             ng-show="loading"
+        <div data-ng-controller="LoadingCtrl"
+             data-ng-show="loading"
              style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
-            Käsitellään...
-            <img alt="Loading  Content" src="img/ajax-loader-big.gif" />
+            <t>loading</t>
+            <img alt="{{t('loading')}}t" src="img/ajax-loader-big.gif" />
         </div>
     </body>
 </html>

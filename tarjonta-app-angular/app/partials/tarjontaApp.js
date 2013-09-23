@@ -2,35 +2,35 @@
 /*******************************************************/
 /* Define all project sub-modules with no dependencies */
 /*******************************************************/
-angular.module('kkTutkintoApp',
+angular.module('app.kk',
         [
-            'kkTutkintoApp.directives',
-            'kkTutkintoApp.filters',
-            'kkTutkintoApp.services',
-            'kkTutkintoApp.controllers',
-            'tarjontaApp.services',
+            'app.kk.directives',
+            'app.kk.filters',
+            'app.kk.services',
+            'app.kk.edit.ctrl',
+            'app.kk.services',
             'ngRoute'
         ]);
 
 /*******************************************************
  * Main module dependecies                             *
  *******************************************************/
-angular.module('tarjontaApp',
+angular.module('app',
         [
-            'ui.bootstrap',
-            'tarjontaApp.directives',
-            'tarjontaApp.filters',
-            'tarjontaApp.services',
-            'tarjontaApp.controllers',
-            'kkTutkintoApp',
+            'app.directives',
+            'app.filters',
+            'app.services',
+            'app.controllers',
+            'app.kk',
             'ngRoute',
             'ngResource',
+            'ui.bootstrap',
             'loading',
             'localisation',
             'Koodisto'
         ]);
 
-angular.module('tarjontaApp').config(['$routeProvider', function($routeProvider)
+angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
@@ -40,10 +40,17 @@ angular.module('tarjontaApp').config(['$routeProvider', function($routeProvider)
         //Remove this when done Tuomas
             .when ('/koodistoTest',{templateUrl:'partials/koodistoTest.html',controller:'KoodistoTestController'})
 
-        .when('/luoKorkeakoulu',
+        .when('/kk/edit/:id/:view',
                 {
-                    templateUrl: 'partials/kkTutkinto/formTutkinto.html',
-                    action: 'tarjontaApp.FormTutkintoController'
+                    templateUrl: 'partials/kk/edit/Edit.html',
+                    action: 'app.kk.edit.ctrl.EditController'
+                }
+        )
+
+        .when('/kk/review/:id/:view',
+                {
+                    templateUrl: 'partials/kk/review/review.html',
+                    action: 'app.kk.review.ctrl.ReviewController'
                 }
         )
 
