@@ -13,6 +13,24 @@ app.controller('KKReviewController', ['$scope', 'TarjontaService', '$routeParams
         $scope.dynamicPopoverText = "dynamic";
         $scope.dynamicPopoverTitle = "Title";
 
+
+        $scope.basicInfoisCollapsed = false;
+        $scope.basicInfoisCollapsed = false;
+        $scope.basicInfoisCollapsed = false;
+        $scope.basicInfoisCollapsed = false;
+        $scope.basicInfoisCollapsed = false;
+
+
+    <div>koulutuksen perustiedot</div>
+    <div>koulutuksen kuvailevat tiedot</div>
+    <div>sisältyvät opintokokonaisuudet</div>
+    <div>hakukohteet</div>
+
+        <div collapse="isCollapsed">
+            <div class="well well-large">Some content</div>
+        </div>
+
+
         $scope.search = function() {
             console.info("search()");
             tarjontaService.get({oid: $scope.searchByOid}, function(data) {

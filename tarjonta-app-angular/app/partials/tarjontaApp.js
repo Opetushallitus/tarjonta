@@ -30,7 +30,8 @@ angular.module('app',
             'loading',
             'localisation',
             'Koodisto',
-            'KoodistoCombo'
+            'KoodistoCombo',
+            'zippy'
         ]);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
