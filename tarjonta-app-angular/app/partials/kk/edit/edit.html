@@ -1,4 +1,4 @@
-<div data-ng-controller="FormTutkintoController">
+<div>
     <code>
         {{model}}
     </code>
@@ -35,10 +35,10 @@
             Tutkintonimike {{model.tutkintonimike.arvo}}
         </div>
         <div>
-            Eqf-luokitus {{model.eqf.arvo}}   
+            Eqf-luokitus {{model.eqf.arvo}}
         </div>
         <div>
-            Tutkinto-ohjelman tunniste 
+            Tutkinto-ohjelman tunniste
             <input type="text" data-ng-model="model.tunniste.arvo" required />
         </div>
         <div>
@@ -49,15 +49,17 @@
 
         <div>
             Koulutuksen alkamispäivä
-            <input type="text" 
-                   data-datepicker-popup="dd.MM.yyyy" 
-                   data-ng-model="model.koulutuksenAlkamisPvm" 
-                   data-is-open="opened" 
-                   data-min="minDate" 
-                   data-max="'2015-06-22'" 
-                   data-datepicker-options="dateOptions" 
-                   data-date-disabled="disabled(date, mode)" 
+<!--
+            <input type="text"
+                   data-datepicker-popup="dd.MM.yyyy"
+                   data-ng-model="model.koulutuksenAlkamisPvm"
+                   data-is-open="opened"
+                   data-min="minDate"
+                   data-max="'2015-06-22'"
+                   data-datepicker-options="dateOptions"
+                   data-date-disabled="disabled(date, mode)"
                    data-ng-required="true" />
+-->
         </div>
 
 
