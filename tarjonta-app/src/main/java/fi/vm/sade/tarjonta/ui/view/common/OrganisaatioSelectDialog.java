@@ -256,12 +256,12 @@ public abstract class OrganisaatioSelectDialog extends Window {
             return;
         }
         SelectableItem<OrganisaatioPerustieto> link = null ;
-        if (org.getNimiFi() != null && org.getNimiFi().trim().length() > 0) {
-          link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiFi");
-        } else if (org.getNimiSv() != null && org.getNimiSv().trim().length() > 0) {
-            link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiSv");
-        } else if (org.getNimiEn() != null && org.getNimiEn().trim().length() > 0) {
-            link  = new SelectableItem<OrganisaatioPerustieto>(org,"nimiEn");
+        for(String lang:new String[]{"fi","sv","en"}){
+            final String nimi = org.getNimi(lang);
+            if(nimi!=null) {
+                link  = new SelectableItem<OrganisaatioPerustieto>(org, nimi);
+                break;
+            }
         }
         selectedOrgs.put(org.getOid(),org);
         link.setMargin(false);
