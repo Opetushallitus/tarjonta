@@ -33,9 +33,11 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -44,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.LinkitettyTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.model.PisterajaRow;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
@@ -110,37 +113,45 @@ public class ShowHakukohdeTab extends VerticalLayout {
         addLayoutSplit(layout);
         buildLiiteLayout(layout);
         addLayoutSplit(layout);
-        buildValintaPerusteetLayout(layout);
+        buildKuvauksetLayout(layout);
         addLayoutSplit(layout);
         buildKoulutuksesLayout(layout);
     }
 
-    private void buildValintaPerusteetLayout(VerticalLayout layout) {
-        if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().size() > 0) {
-            VerticalLayout valintaperusteetLayout = new VerticalLayout();
-            valintaperusteetLayout.setMargin(true);
-            //if (checkHaunAlkaminen()) {
-                valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintaPerusteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                        new ClickListener() {
-                    private static final long serialVersionUID = 5019806363620874205L;
-
-                    @Override
-                    public void buttonClick(ClickEvent clickEvent) {
-                        getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
-                    }
-                }, null, presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
-            //}
-
-            final GridLayout grid = new GridLayout(2, 1);
-            grid.setWidth("100%");
-            grid.setMargin(true);
-
-            addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
-
-            grid.setColumnExpandRatio(1, 1f);
-            valintaperusteetLayout.addComponent(grid);
-            layout.addComponent(valintaperusteetLayout);
+    private void buildKuvauksetLayout(VerticalLayout layout) {
+    	
+        if (!presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS)
+    		|| !presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
+           return;
         }
+
+    	
+    	//if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && !presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().isEmpty()) {
+        VerticalLayout valintaperusteetLayout = new VerticalLayout();
+        valintaperusteetLayout.setMargin(true);
+        //if (checkHaunAlkaminen()) {
+            valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("vapeSoraKuvauksetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                    new ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent clickEvent) {
+                    getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
+                }
+            }, null, presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+        //}
+
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth("100%");
+        grid.setMargin(true);
+
+        addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus(), MetaCategory.VALINTAPERUSTEKUVAUS));
+        addRichTextToGrid(grid, "soraKuvausTeksti", getLanguageString(presenter.getModel().getHakukohde().getSoraKuvaus(), MetaCategory.SORA_KUVAUS));
+
+        grid.setColumnExpandRatio(1, 1f);
+        valintaperusteetLayout.addComponent(grid);
+        layout.addComponent(valintaperusteetLayout);
+        //}
     }
 
     private void buildLiiteLayout(VerticalLayout layout) {
@@ -657,7 +668,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private void addRichTextToGrid(final GridLayout grid,
             final String labelCaptionKey, final Object labelCaptionValue) {
 
-
         Label lbl = new Label(labelCaptionValue == null ? null : labelCaptionValue.toString());
         lbl.setContentMode(Label.CONTENT_XHTML);
 
@@ -717,6 +727,20 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
     }
 
+    private String getLanguageString(LinkitettyTekstiModel teksti, MetaCategory mc) {
+    	if (teksti.getUri()==null) {
+    		return getLanguageString(teksti.getKaannokset());
+    	} else {
+    		for (MonikielinenMetadataTyyppi mt : presenter.haeMetadata(teksti.getUri(), mc.toString())) {
+    			if (mt.getKieli().equals(language)) {
+    				return mt.getArvo();
+    			}
+    		}
+    		return "-"; // TODO pitäiskö näyttää "ei kuvausta tällä kielellä tjsp.."
+    	}
+    }
+    
+    	
     private String getLanguageString(List<KielikaannosViewModel> tekstit) {
 
 

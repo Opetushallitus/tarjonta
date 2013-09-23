@@ -2,9 +2,9 @@
 
 /* Controllers */
 
-var app_kk_edit_ctrl = angular.module('app.kk.edit.ctrl', []);
+var app = angular.module('app.kk.edit.ctrl', []);
 
-app_kk_edit_ctrl.controller('KKEditController', ['$scope', 'TarjontaService',
+app.controller('KKEditController', ['$scope', 'TarjontaService',
     function FormTutkintoController($scope, tarjontaService) {
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
