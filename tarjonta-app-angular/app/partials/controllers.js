@@ -8,9 +8,17 @@ app.controller('MyCtrl1', [function() {
 
 app.controller('KoodistoTestController', function($scope, Koodisto) {
 
+    $scope.testKoodisto = function() {
+        console.log('Following selected: ');
+        console.log($scope.koodiuri);
+
+    };
+
     $scope.locale = 'FI';
     $scope.koodistouri = 'hakukohteetkk';
     $scope.koodiuri = '';
+
+
 
 
 });
