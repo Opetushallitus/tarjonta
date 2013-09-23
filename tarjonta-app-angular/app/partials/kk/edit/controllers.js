@@ -18,4 +18,23 @@ angular.module('app.kk.edit.ctrl', []).controller('EditController', ['$scope', '
         };
 
         $scope.search();
+    }])
+    .controller('SelectTutkintoOhjelmaController', ['$scope', function($scope) {
+    	
+    	$scope.stoModel = {koulutusala: 'Humanistinen ja kasvatusala', 
+    						hakuteksti: '',
+    						hakutulokset: [{nimi: 'Tanssinopettaja AMK', tkKoodi: '611201', uri: 'koulutus_1'},
+    							               {nimi: 'Taideteollisuusopiston tutkinto', tkKoodi: '622951', uri: 'koulutus_2'}],
+    						active: {}};
+    	
+    	
+    	$scope.toggleItem = function(hakutulos) {
+    		console.log(hakutulos.uri);
+    		$scope.stoModel.active = hakutulos;
+    	};
+    	
+    	$scope.isActive = function(hakutulos) {
+    		console.log(hakutulos.uri==$scope.stoModel.active.uri);
+    		return hakutulos.uri==$scope.stoModel.active.uri;
+    	}
     }]);

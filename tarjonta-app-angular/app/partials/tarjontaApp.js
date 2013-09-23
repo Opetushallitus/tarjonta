@@ -71,6 +71,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     action: 'app.kk.review.ctrl.ReviewController'
                 }
         )
+        		
+        		.when('/kk/tutkintOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html'})
 
                 .otherwise({redirectTo: '/view1'});
 
