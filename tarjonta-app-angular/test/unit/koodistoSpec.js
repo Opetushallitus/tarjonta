@@ -12,7 +12,16 @@ describe('koodistoServiceTest', function() {
 
     beforeEach(module('Koodisto'));
 
+    describe('Test koodi value converter returns localized nimi',function(){
+        it('should return array with 2 elements with localized name',inject(function(Koodisto){
+            var koodis = Koodisto.convertKoodistoKoodiToViewModelKoodi(koodistoMockData,'FI');
 
+            var koodi = koodis[0];
+
+
+            expect(koodi.koodiNimi).toBe('Tekn. lis., tietotekniikka');
+        }));
+    });
 
     describe('Test koodi value converter',function(){
 

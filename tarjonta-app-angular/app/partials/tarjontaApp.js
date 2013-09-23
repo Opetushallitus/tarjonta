@@ -27,7 +27,8 @@ angular.module('app',
             'ui.bootstrap',
             'loading',
             'localisation',
-            'Koodisto'
+            'Koodisto',
+            'KoodistoCombo'
         ]);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
