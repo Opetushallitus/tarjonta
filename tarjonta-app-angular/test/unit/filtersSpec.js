@@ -3,7 +3,7 @@
 /* jasmine specs for filters go here */
 
 describe('filter', function() {
-    beforeEach(module('tarjontaApp.filters'));
+    beforeEach(module('app.filters'));
 
     describe('interpolate', function() {
         beforeEach(module(function($provide) {

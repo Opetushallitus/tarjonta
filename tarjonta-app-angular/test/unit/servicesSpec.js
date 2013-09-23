@@ -3,7 +3,7 @@
 /* jasmine specs for services go here */
 
 describe('service', function() {
-  beforeEach(module('tarjontaApp.services'));
+  beforeEach(module('app.services'));
 
 
   describe('version', function() {
