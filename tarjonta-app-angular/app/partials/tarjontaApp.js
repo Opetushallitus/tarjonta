@@ -34,26 +34,44 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
-        .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
+                .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
 
 
-        //Remove this when done Tuomas
-            .when ('/koodistoTest',{templateUrl:'partials/koodistoTest.html',controller:'KoodistoTestController'})
+                //Remove this when done Tuomas
+                .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
 
-        .when('/kk/edit/:id/:view',
+                //
+                // EDIT
+                //
+                .when('/kk/edit/:id',
                 {
-                    templateUrl: 'partials/kk/edit/Edit.html',
+                    templateUrl: 'partials/kk/edit/edit.html',
+                    action: 'app.kk.edit.ctrl.EditController'
+                }
+        )
+                .when('/kk/edit/:id/:view',
+                {
+                    templateUrl: 'partials/kk/edit/edit.html',
                     action: 'app.kk.edit.ctrl.EditController'
                 }
         )
 
-        .when('/kk/review/:id/:view',
+                //
+                // REVIEW
+                //
+                .when('/kk/review/:id',
+                {
+                    templateUrl: 'partials/kk/review/review.html',
+                    action: 'app.kk.review.ctrl.ReviewController'
+                }
+        )
+                .when('/kk/review/:id/:view',
                 {
                     templateUrl: 'partials/kk/review/review.html',
                     action: 'app.kk.review.ctrl.ReviewController'
                 }
         )
 
-        .otherwise({redirectTo: '/view1'});
+                .otherwise({redirectTo: '/view1'});
 
     }]);
