@@ -8,7 +8,9 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.ctrl',
+            'app.kk.review.ctrl',
             'app.kk.services',
+            'ui.bootstrap',
             'ngRoute'
         ]);
 
@@ -62,12 +64,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/review/:id',
                 {
                     templateUrl: 'partials/kk/review/review.html',
-                    action: 'app.kk.review.ctrl.ReviewController'
+                    controller: 'KKReviewController'
                 })
                 .when('/kk/review/:id/:view',
                 {
                     templateUrl: 'partials/kk/review/review.html',
-                    action: 'app.kk.review.ctrl.ReviewController'
+                    controller: 'KKReviewController'
                 })
 
                 .otherwise({redirectTo: '/view1'});

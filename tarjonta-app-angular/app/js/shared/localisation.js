@@ -67,7 +67,9 @@ app.controller('LocalisationCtrl', function($scope, Localisation) {
         } else {
             // Unknown translation, maybe create placeholder for it?
             console.log("UNKNOWN TRANSLATION: " + key);
-            return "[" + key + "]";
+            var value = "[" + key + "]";
+            $scope.localisations[key] = value;
+            return value;
         }
     };
 });

@@ -1,14 +1,17 @@
-'use strict';
 
-/* Controllers */
+var app = angular.module('app.kk.review.ctrl', ['ui.bootstrap']);
 
-var app = angular.module('app.kk.edit.ctrl', []);
-
-app.controller('KKEditController', ['$scope', 'TarjontaService',
-    function FormTutkintoController($scope, tarjontaService) {
+app.controller('KKReviewController', ['$scope', 'TarjontaService', '$routeParams',
+    function FormTutkintoController($scope, tarjontaService, $routeParams) {
+        $scope.routeParams = $routeParams;
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
+
+        $scope.isCollapsed = false;
+        $scope.dynamicPopover = "Hello, World!";
+        $scope.dynamicPopoverText = "dynamic";
+        $scope.dynamicPopoverTitle = "Title";
 
         $scope.search = function() {
             console.info("search()");
