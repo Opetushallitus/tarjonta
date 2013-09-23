@@ -1,20 +1,25 @@
 module.exports = function(config){
     config.set({
-    basePath : '../',
+    basePath : '../app',
 
     files : [
       JASMINE,
       JASMINE_ADAPTER,
-      'app/lib/underscore/underscore.js',
-      'app/lib/angular/angular.js',
-      'app/lib/angular/angular-resource.js',
-      'test/lib/angular/angular-mocks.js',
-      'app/js/**/*.js',
-      'app/partials/**/*.js',
-      'test/unit/**/*.js'
+      'lib/underscore/underscore.js',
+      'lib/angular/angular.js',
+      'lib/angular/angular-resource.js',
+      '../test/lib/angular/angular-mocks.js',
+      'js/**/*.js',
+      'js/shared/directives/*.html',
+      'partials/**/*.js',
+      '../test/unit/**/*.js'
     ],
 
     autoWatch : true,
+
+        preprocessors : {
+        'js/shared/directives/*.html': ['html2js']
+    },
 
 
     frameworks: ['jasmine'],
@@ -26,6 +31,8 @@ module.exports = function(config){
             'karma-chrome-launcher',
             'karma-phantomjs-launcher',
             'karma-firefox-launcher',
+            //Install this to node using -> npm install karma-html2js-preprocessor
+            'karma-html2js-preprocessor',
             'karma-jasmine'
             ],
 
