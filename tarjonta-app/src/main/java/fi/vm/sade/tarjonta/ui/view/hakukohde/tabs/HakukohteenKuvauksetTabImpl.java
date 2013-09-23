@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -35,11 +37,22 @@ public class HakukohteenKuvauksetTabImpl extends
 	@Autowired
 	private TarjontaAdminService tarjontaService;
 	
+	private boolean changed = false;
+	
+	private final ValueChangeListener changeListener = new ValueChangeListener() {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public void valueChange(ValueChangeEvent event) {
+			changed = true;
+		}
+	};
+
 	public HakukohteenKuvauksetTabImpl(TarjontaPresenter presenter) {
-		super();
 		this.presenter = presenter;
 		vapeTabs = new HakukohteenKuvausContainer(presenter, Mode.VAPE);
+		vapeTabs.addListener(changeListener);
 		soraTabs = new HakukohteenKuvausContainer(presenter, Mode.SORA);
+		soraTabs.addListener(changeListener);
 	}
 
 	@Override
@@ -114,15 +127,25 @@ public class HakukohteenKuvauksetTabImpl extends
 	}
 	
 	private void setModel(Mode mode, LinkitettyTekstiModel model) {
+		changed = true;
 		switch(mode) {
 		case SORA:
 			presenter.getModel().getHakukohde().setSoraKuvaus(model);
+			soraTabs.refresh();
 			break;			
 		case VAPE:
 			presenter.getModel().getHakukohde().setValintaPerusteidenKuvaus(model);
+			vapeTabs.refresh();
 			break;
 		}
 	}
 	
+	public boolean isChanged() {
+		return changed;
+	}
+	
+	public void setChanged(boolean changed) {
+		this.changed = changed;
+	}
 
 }

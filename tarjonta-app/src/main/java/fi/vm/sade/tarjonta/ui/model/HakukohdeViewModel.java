@@ -198,7 +198,9 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         .append(selectedHakukohdeNimi)
         .append(alinHyvaksyttavaKeskiarvo)
         .append(viimeisinPaivittaja)
-        .append(viimeisinPaivitysPvm);
+        .append(viimeisinPaivitysPvm)
+        .append(soraKuvaus)
+        .append(valintaPerusteidenKuvaus);
         
         if (lisatiedot != null) {
             for (KielikaannosViewModel curKaannos : lisatiedot) {
