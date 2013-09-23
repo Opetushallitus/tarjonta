@@ -8,10 +8,19 @@
     <div>TABS</div>
     <div>[esikatsele...]</div>
 
-    <div>koulutuksen perustiedot</div>
-    <div>koulutuksen kuvailevat tiedot</div>
-    <div>sisältyvät opintokokonaisuudet</div>
-    <div>hakukohteet</div>
+    <div class="collapsed_{{basicInfoIsCollapsed}}"  ng-click="basicInfoIsCollapsed = !basicInfoIsCollapsed" >
+        koulutuksen perustiedot
+    </div>
+    <div collapse="basicInfoIsCollapsed">koulutuksen perustiedot</div>
+
+    <div collapse="descriptionInfoIsCollapsed">koulutuksen kuvailevat tiedot</div>
+    <div collapse="descriptionInfoIsCollapsed">koulutuksen kuvailevat tiedot</div>
+
+    <div collapse="includedKoulutusIsCollapsed">sisältyvät opintokokonaisuudet</div>
+    <div collapse="includedKoulutusIsCollapsed">sisältyvät opintokokonaisuudet</div>
+
+    <div collapse="hakukohteetIsCollapsed">hakukohteet</div>
+    <div collapse="hakukohteetIsCollapsed">hakukohteet</div>
 
     <div>< edellinen  1/100 seuraava ></div>
 
