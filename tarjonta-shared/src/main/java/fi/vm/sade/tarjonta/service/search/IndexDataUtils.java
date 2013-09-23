@@ -209,23 +209,12 @@ public class IndexDataUtils {
             OrganisaatioPerustieto org) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
         if (org != null) {
-            if (org.getNimiFi() != null) {
-                Teksti nimiFi = new Teksti();
-                nimiFi.setKieliKoodi(LANG_FI);
-                nimiFi.setValue(org.getNimiFi());
-                nimi.getTeksti().add(nimiFi);
-            }
-            if (org.getNimiSv() != null) {
-                Teksti nimiSv = new Teksti();
-                nimiSv.setKieliKoodi(LANG_SV);
-                nimiSv.setValue(org.getNimiSv());
-                nimi.getTeksti().add(nimiSv);
-            }
-            if (org.getNimiEn() != null) {
-                Teksti nimiEn = new Teksti();
-                nimiEn.setKieliKoodi(LANG_EN);
-                nimiEn.setValue(org.getNimiEn());
-                nimi.getTeksti().add(nimiEn);
+            for(String lang: new String[]{"fi, sv, en"}){
+                final String val = org.getNimi("fi");
+                if(val!=null) {
+                    Teksti nimiFi = new Teksti(val, lang);
+                    nimi.getTeksti().add(nimiFi);
+                }
             }
         }
         

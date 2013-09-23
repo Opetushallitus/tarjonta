@@ -133,7 +133,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
 
         orgPerus = new OrganisaatioPerustieto();
         orgPerus.setOid(ORGANISAATIO_OID);
-        orgPerus.setNimiFi(ORGANISATION_NAME);
+        orgPerus.setNimi("fi", ORGANISATION_NAME);
         orgPerus.setOid(ORGANISAATIO_OID);
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi omtt = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi();
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti();

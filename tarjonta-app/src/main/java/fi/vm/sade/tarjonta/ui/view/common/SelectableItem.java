@@ -16,12 +16,9 @@ package fi.vm.sade.tarjonta.ui.view.common;/*
  */
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.apache.commons.beanutils.BeanUtils;
 import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +35,7 @@ public class SelectableItem<T> extends HorizontalLayout {
 
      private List<SelectableItemListener> listeners;
 
-    public SelectableItem(T selectableItem, String captionProperty) {
+    public SelectableItem(T selectableItem, String captionText) {
          item = selectableItem;
 
          xButton = UiUtil.buttonLink(null, "(X)", new Button.ClickListener() {
@@ -53,19 +50,8 @@ public class SelectableItem<T> extends HorizontalLayout {
          });
          addComponent(xButton);
 
-         String labelStr = null;
 
-        try {
-            labelStr  = BeanUtils.getProperty(item,captionProperty);
-        } catch (IllegalAccessException e) {
-            labelStr = "";
-        } catch (InvocationTargetException e) {
-            labelStr = "";
-        } catch (NoSuchMethodException e) {
-            labelStr = "";
-        }
-
-        label = UiUtil.buttonLink(null, labelStr, new Button.ClickListener() {
+        label = UiUtil.buttonLink(null, captionText, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
 
