@@ -547,6 +547,16 @@ public final class EntityUtils {
         }
 
     }
+    
+     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Set<YhteyshenkiloTyyppi> toList) {
+
+        for (Yhteyshenkilo fromHenkilo : fromList) {
+            YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
+            copyFields(fromHenkilo, toHenkilo);
+            toList.add(toHenkilo);
+        }
+
+    }
 
     public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();

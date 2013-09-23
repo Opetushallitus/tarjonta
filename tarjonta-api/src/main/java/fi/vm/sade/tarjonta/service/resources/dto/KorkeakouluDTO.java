@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import java.util.Date;
 
 /**
@@ -26,12 +25,11 @@ public class KorkeakouluDTO extends ToteutusDTO {
 
     private UiListDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
-    private String tunniste; //tutkinto-ohjelman tunniste
+    private UiDTO tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
      */
-    private Date koulutuksenAlkamisPvm;
-    private String suunniteltuKesto;
+    private UiDTO suunniteltuKesto;
     private UiDTO suunniteltuKestoTyyppi;
     private UiListDTO opetuskielis;
     private UiListDTO opetusmuodos;
@@ -41,10 +39,11 @@ public class KorkeakouluDTO extends ToteutusDTO {
     private Boolean opintojenMaksullisuus;
     private UiDTO pohjakoulutusvaatimukset;
     private UiListDTO teemas;
-    /*
-     * Other contact persons
-     */
-    private YhteyshenkiloTyyppi ectsKoordinaattori;
+    private UiDTO opintojenLaajuus;
+    private Date koulutuksenAlkamisPvm;
+
+    public KorkeakouluDTO() {
+    }
 
     /**
      * @return the koulutusohjelma
@@ -61,48 +60,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
     }
 
     /**
-     * @return the tunniste
-     */
-    public String getTunniste() {
-        return tunniste;
-    }
-
-    /**
-     * @param tunniste the tunniste to set
-     */
-    public void setTunniste(String tunniste) {
-        this.tunniste = tunniste;
-    }
-
-    /**
-     * @return the koulutuksenAlkamisPvm
-     */
-    public Date getKoulutuksenAlkamisPvm() {
-        return koulutuksenAlkamisPvm;
-    }
-
-    /**
-     * @param koulutuksenAlkamisPvm the koulutuksenAlkamisPvm to set
-     */
-    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
-        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
-    }
-
-    /**
-     * @return the suunniteltuKesto
-     */
-    public String getSuunniteltuKesto() {
-        return suunniteltuKesto;
-    }
-
-    /**
-     * @param suunniteltuKesto the suunniteltuKesto to set
-     */
-    public void setSuunniteltuKesto(String suunniteltuKesto) {
-        this.suunniteltuKesto = suunniteltuKesto;
-    }
-
-    /**
      * @return the opintojenMaksullisuus
      */
     public Boolean getOpintojenMaksullisuus() {
@@ -114,20 +71,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
         this.opintojenMaksullisuus = opintojenMaksullisuus;
-    }
-
-    /**
-     * @return the ectsKoordinaattori
-     */
-    public YhteyshenkiloTyyppi getEctsKoordinaattori() {
-        return ectsKoordinaattori;
-    }
-
-    /**
-     * @param ectsKoordinaattori the ectsKoordinaattori to set
-     */
-    public void setEctsKoordinaattori(YhteyshenkiloTyyppi ectsKoordinaattori) {
-        this.ectsKoordinaattori = ectsKoordinaattori;
     }
 
     /**
@@ -198,5 +141,61 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setSuunniteltuKestoTyyppi(UiDTO suunniteltuKestoTyyppi) {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
+    }
+
+    /**
+     * @return the tunniste
+     */
+    public UiDTO getTunniste() {
+        return tunniste;
+    }
+
+    /**
+     * @param tunniste the tunniste to set
+     */
+    public void setTunniste(UiDTO tunniste) {
+        this.tunniste = tunniste;
+    }
+
+    /**
+     * @return the suunniteltuKesto
+     */
+    public UiDTO getSuunniteltuKesto() {
+        return suunniteltuKesto;
+    }
+
+    /**
+     * @param suunniteltuKesto the suunniteltuKesto to set
+     */
+    public void setSuunniteltuKesto(UiDTO suunniteltuKesto) {
+        this.suunniteltuKesto = suunniteltuKesto;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public UiDTO getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisPvm
+     */
+    public Date getKoulutuksenAlkamisPvm() {
+        return koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * @param koulutuksenAlkamisPvm the koulutuksenAlkamisPvm to set
+     */
+    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
+        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
     }
 }

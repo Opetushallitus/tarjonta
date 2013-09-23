@@ -443,7 +443,7 @@ public class TestTarjontaElements {
 //        		+ ".*18KPL" + htmlAbsoluteLeft18 // vaihtelee
         		+ ".*11KPL<span class=\"v-button-caption\">"
         		+ ".*5KPLv-required-field-indicator"
-        		+ ".*3KPLv-textfield v-textfield-prompt"
+//        		+ ".*3KPLv-textfield v-textfield-prompt" // vaihtelee
         		+ ".*4KPL<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*4KPL<div class=\"v-filterselect-button\"></div>"
 //        		+ ".*1KPL<div class=\"v-label v-label-undef-w\">Koulutusaste</div>"
@@ -638,7 +638,7 @@ public class TestTarjontaElements {
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
-        		+ ".*" + textAlignRight + ".*>Koulutuksen yhteishenkilö</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutuksen yhteyshenkilö</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen kuvailevat tiedot</div>"

@@ -38,7 +38,7 @@ app.factory('Localisation', function($resource) {
  * LocalisationCtrl - a localisation controller.
  */
 app.controller('LocalisationCtrl', function($scope, Localisation) {
-    console.log("LocalisationCtrl()");
+    // console.log("LocalisationCtrl()");
 
     // TODO how to get browser locale ? use locale?
     $scope.locale = "fi";

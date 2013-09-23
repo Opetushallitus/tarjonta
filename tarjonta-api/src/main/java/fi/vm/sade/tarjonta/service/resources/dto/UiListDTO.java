@@ -27,6 +27,9 @@ public class UiListDTO extends UiDTO {
     private static final long serialVersionUID = 1L;
     private Set<UiDTO> tekstis;
 
+    public UiListDTO() {
+    }
+
     /**
      * @return the tekstis
      */

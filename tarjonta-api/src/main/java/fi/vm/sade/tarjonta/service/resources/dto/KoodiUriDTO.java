@@ -28,6 +28,15 @@ public class KoodiUriDTO implements Serializable {
     private String versio;
     private String arvo;
 
+    public KoodiUriDTO() {
+    }
+
+    public KoodiUriDTO(String uri, String versio, String arvo) {
+        this.uri = uri;
+        this.versio = versio;
+        this.arvo = arvo;
+    }
+    
     /**
      * @return the uri
      */

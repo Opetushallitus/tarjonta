@@ -31,7 +31,7 @@ module.exports = function(config){
     reporters: ['progress', 'junit'],
 
     junitReporter : {
-      outputFile: 'target/karma-junit-report.xml',
+      outputFile: 'target/surefire-reports/karma-junit-report.xml',
       suite: ''
     }
     });

@@ -17,6 +17,7 @@ angular.module('kkTutkintoApp',
  *******************************************************/
 angular.module('tarjontaApp',
         [
+            'ui.bootstrap',
             'tarjontaApp.directives',
             'tarjontaApp.filters',
             'tarjontaApp.services',
@@ -25,13 +26,19 @@ angular.module('tarjontaApp',
             'ngRoute',
             'ngResource',
             'loading',
-            'localisation'
+            'localisation',
+            'Koodisto'
         ]);
 
 angular.module('tarjontaApp').config(['$routeProvider', function($routeProvider)
     {
+
         $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
         .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
+
+
+        //Remove this when done Tuomas
+            .when ('/koodistoTest',{templateUrl:'partials/koodistoTest.html',controller:'KoodistoTestController'})
 
         .when('/luoKorkeakoulu',
                 {

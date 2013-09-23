@@ -1,30 +1,144 @@
 {
-  "oid" : "1.2.246.562.5.2013091114080489552096",
+  "oid" : "1.2.246.562.5.32352475076",
   "version" : 0,
-  "komoOid" : "1.2.246.562.5.2013061010184627561236",
+  "komoOid" : "1.2.246.562.5.2013061010185253634167",
   "koulutuskoodi" : {
-    "teksti" : "Talotekniikan perustutkinto",
-    "uri" : "koulutus_351203",
-    "arvo" : "351203",
-    "version" : "1"
+    "koodi" : {
+      "uri" : "koulutus_351605",
+      "versio" : "1",
+      "arvo" : "351605"
+    },
+    "arvo" : "Prosessiteollisuuden perustutkinto",
+    "tekstis" : [ {
+      "koodi" : {
+        "uri" : "kieli_en",
+        "versio" : "-1",
+        "arvo" : "EN"
+      },
+      "arvo" : "Processing Industry, VQ"
+    }, {
+      "koodi" : {
+        "uri" : "kieli_sv",
+        "versio" : "-1",
+        "arvo" : "SV"
+      },
+      "arvo" : "Processindustrin, grundexamen"
+    }, {
+      "koodi" : {
+        "uri" : "kieli_fi",
+        "versio" : "-1",
+        "arvo" : "FI"
+      },
+      "arvo" : "Prosessiteollisuuden perustutkinto"
+    } ]
   },
   "koulutusmoduuliTyyppi" : "TUTKINTO_OHJELMA",
-  "koulutusohjelma" : {
-    "teksti" : [ {
-      "value" : "Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä",
-      "kieliKoodi" : "kieli_fi"
-    } ],
-    "uri" : "koulutusohjelmaamm_16481",
-    "version" : "1",
-    "availableLanguages" : [ {
-      "value" : "suomi",
-      "kieliKoodi" : "kieli_fi"
-    }, {
-      "value" : "ruotsi",
-      "kieliKoodi" : "kieli_sv"
-    } ],
-    "arvo" : "16481"
+  "koulutusaste" : {
+    "arvo" : ""
   },
-  "teemas" : [ ],
+  "koulutusala" : {
+    "arvo" : ""
+  },
+  "opintoala" : {
+    "arvo" : ""
+  },
+  "tutkinto" : {
+    "arvo" : ""
+  },
+  "tutkintonimike" : {
+    "koodi" : {
+      "uri" : "tutkintonimikkeet_10042",
+      "versio" : "1",
+      "arvo" : "10042"
+    },
+    "arvo" : "Prosessinhoitaja",
+    "tekstis" : [ {
+      "koodi" : {
+        "uri" : "kieli_sv",
+        "versio" : "-1",
+        "arvo" : "SV"
+      },
+      "arvo" : "Processkötare"
+    }, {
+      "koodi" : {
+        "uri" : "kieli_fi",
+        "versio" : "-1",
+        "arvo" : "FI"
+      },
+      "arvo" : "Prosessinhoitaja"
+    } ]
+  },
+  "eqf" : {
+    "arvo" : "4#1"
+  },
+  "tekstis" : {
+    "PATEVYYS" : {
+      "tekstis" : [ ]
+    }
+  },
+  "yhteyshenkilos" : [ ],
+  "koulutusohjelma" : {
+    "koodi" : {
+      "uri" : "koulutusohjelmaamm_1543",
+      "versio" : "1",
+      "arvo" : "1543"
+    },
+    "arvo" : "Kemiantekniikan koulutusohjelma, prosessinhoitaja",
+    "tekstis" : [ {
+      "koodi" : {
+        "uri" : "kieli_fi",
+        "versio" : "-1",
+        "arvo" : "FI"
+      },
+      "arvo" : "Kemiantekniikan koulutusohjelma, prosessinhoitaja"
+    }, {
+      "koodi" : {
+        "uri" : "kieli_sv",
+        "versio" : "-1",
+        "arvo" : "SV"
+      },
+      "arvo" : "Utbildningsprogrammet för kemisk teknik, processkötare"
+    } ]
+  },
+  "tunniste" : {
+    "arvo" : ""
+  },
+  "suunniteltuKesto" : {
+    "arvo" : "3"
+  },
+  "suunniteltuKestoTyyppi" : {
+    "arvo" : "Vuosi"
+  },
+  "opetuskielis" : {
+    "tekstis" : [ {
+      "koodi" : {
+        "uri" : "kieli_fi",
+        "versio" : "1",
+        "arvo" : "FI"
+      },
+      "arvo" : "suomi"
+    } ]
+  },
+  "opetusmuodos" : {
+    "tekstis" : [ {
+      "koodi" : {
+        "uri" : "opetusmuoto_p",
+        "versio" : "1",
+        "arvo" : "P"
+      },
+      "arvo" : "Päiväopetus"
+    } ]
+  },
+  "opintojenMaksullisuus" : false,
+  "pohjakoulutusvaatimukset" : {
+    "arvo" : "Peruskoulu"
+  },
+  "teemas" : {
+    "tekstis" : [ ]
+  },
+  "opintojenLaajuus" : {
+    "arvo" : "unavailable"
+  },
+  "koulutuksenAlkamisPvm" : "2014-08-11",
   "api_VERSION" : 4
 }

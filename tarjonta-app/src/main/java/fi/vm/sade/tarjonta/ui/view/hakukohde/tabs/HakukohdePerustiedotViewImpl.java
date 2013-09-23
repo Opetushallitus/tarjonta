@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 
+import java.util.Date;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,10 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         formView.reloadLisatiedot(hakukohde.getLisatiedot());
         hakukohde.setHakuaika(formView.getSelectedHakuaika());
+        if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
+          validateHakukohdeHakuaika(hakukohde);  
+        } 
+        
         if (!formView.isSahkoinenToimOsoiteChecked()) {
             hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
         }
@@ -115,6 +120,20 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         return getHakukohdeOid();
     }
     
+    private void validateHakukohdeHakuaika(HakukohdeViewModel hakukohde) {
+        if (hakukohde.getHakuaika() == null) {
+            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.hakuaika.notSelected"));
+        }
+        Date specialAlku = hakukohde.getHakuaikaAlkuPvm();
+        Date specialLoppu = hakukohde.getHakuaikaLoppuPvm();
+        Date hakuaikaAlku = hakukohde.getHakuaika().getAlkamisPvm();
+        Date hakuaikaLoppu = hakukohde.getHakuaika().getPaattymisPvm();
+        if (specialAlku.before(hakuaikaAlku) || specialAlku.after(hakuaikaLoppu) || specialLoppu.before(hakuaikaAlku) || specialLoppu.after(hakuaikaLoppu)) {
+            throw new Validator.InvalidValueException(I18N.getMessage("validation.PerustiedotView.hakuajat.outOfRange"));
+        }
+        
+    }
+
     private String getHakukohdeOid() {
         return presenter.getModel().getHakukohde() != null ? presenter.getModel().getHakukohde().getOid() : null;
     }
