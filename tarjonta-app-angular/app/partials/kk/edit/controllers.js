@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('app.kk.edit.controllers', []).controller('EditController', ['$scope', 'TarjontaService',
+angular.module('app.kk.edit.ctrl', []).controller('EditController', ['$scope', 'TarjontaService',
     function FormTutkintoController($scope, tarjontaService) {
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
