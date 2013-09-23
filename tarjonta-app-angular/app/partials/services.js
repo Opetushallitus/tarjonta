@@ -39,9 +39,11 @@ app.factory('instagram', function($resource) {
 
 });
 
+// FIXME? Path?
+
 app.factory('TarjontaConfig', function($resource) {
     // TODO hardcoded, read from service
-    return $resource('config.json', {}, {
+    return $resource('partials/kk/edit/config.json', {}, {
         query: {method: 'GET', headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -75,7 +77,7 @@ app.factory('TarjontaService', function($resource) {
 //        }
 //    });
 
-    return $resource("js/" + KK_TUTKINTO + '/koulutusData.json', {}, {
+    return $resource('partials/kk/edit/koulutusData.json', {}, {
         query: {method: 'GET', headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
