@@ -1,3 +1,45 @@
 <div>
-    TARKASTELU
-</div>
+
+    <div>BREADCRUMBS</div>
+    <div>BUTTONS</div>
+    <div>NIMI</div>
+    <div>< edellinen  1/100 seuraava ></div>
+
+    <div>TABS</div>
+
+    <div>koulutuksen perustiedot</div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+
+
+
+    Route params: {{ routeParams }}
+
+    1. <div data-t>kk.review.title</div>
+    2. <div t>kk.review.title</div>
+
+
+    <div >
+        <button class="btn" ng-click="isCollapsed = !isCollapsed">Toggle collapse</button>
+        <div collapse="isCollapsed">
+            <div class="well well-large">Some content</div>
+        </div>
+    </div>
+
+
+    <div>
+        <h4>Dynamic</h4>
+        <div>Dynamic Popover : <input type="text" ng-model="dynamicPopoverText"></div>
+        <div>Dynamic Popover Popup Text: <input type="text" ng-model="dynamicPopover"></div>
+        <div>Dynamic Popover Popup Title: <input type="text" ng-model="dynamicPopoverTitle"></div>
+        <div><button popover="{{dynamicPopover}}" popover-title="{{dynamicPopoverTitle}}" class="btn">{{dynamicPopoverText}}</button></div>
+    </div>
+
+
+    </div>

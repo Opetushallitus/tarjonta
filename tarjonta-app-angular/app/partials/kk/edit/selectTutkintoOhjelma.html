@@ -1,0 +1,16 @@
+<div ng-controller="SelectTutkintoOhjelmaController">
+Valitse tutkinto-ohjelma
+<table class="table table-bordered">
+
+    
+    
+    <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
+    <tr ng-class="{true: 'active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'light-gray'" ng-class-odd="'dark-gray'">
+        <td>{{hakutulos.tkKoodi}}</td>
+        <td>{{hakutulos.nimi}}</td>
+        <!--<td>{{hakutulos.uri}}</td>-->
+    </tr>
+    <!-- </tbody>-->
+</table>
+
+</div>

@@ -61,8 +61,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         OrganisaatioPerustieto perus = new OrganisaatioPerustieto();
         perus.setOid(orgOid);
         perus.setParentOidPath(Joiner.on("/").join(ophOid, orgOid));
-        perus.setNimiFi("org nimi fi for oid:" + orgOid);
-        perus.setNimiSv("org nimi sv for oid:" + orgOid);
+        perus.setNimi("fi", "org nimi fi for oid:" + orgOid);
+        perus.setNimi("sv", "org nimi sv for oid:" + orgOid);
         return perus;
     }
 

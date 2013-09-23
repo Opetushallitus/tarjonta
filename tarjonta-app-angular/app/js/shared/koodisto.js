@@ -20,6 +20,24 @@ app.factory('Koodisto',function($resource, $log,$q){
         }
     } ;
 
+
+    /*
+        This JS-object is view representation of koodisto koodi.
+        Example koodisto Koodi:
+
+       {
+            koodiArvo :"",
+            koodiUri  : "",
+            koodiTila : "",
+            koodiVersio : "",
+            koodiKoodisto : "",
+            koodiOrganisaatioOid :"",
+            -> Koodinimi is localized with given locale
+            koodiNimi : ""
+       }
+
+     */
+
     var getKoodiViewModelFromKoodi = function(koodi,locale) {
         var tarjontaKoodi  = {
             koodiArvo : koodi.koodiArvo,
@@ -35,6 +53,12 @@ app.factory('Koodisto',function($resource, $log,$q){
 
     return {
 
+        /*
+            @param {array} array of koodis received from Koodisto.
+            @param {string} locale in which koodi name should be shown
+            @returns {array} array of koodi view model objects
+         */
+
         convertKoodistoKoodiToViewModelKoodi : function(koodisParam,locale) {
 
             var koodis = [];
@@ -44,6 +68,12 @@ app.factory('Koodisto',function($resource, $log,$q){
             });
             return koodis;
         },
+
+        /*
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
 
         getYlapuolisetKoodit : function(koodiUriParam,locale) {
 
@@ -65,6 +95,12 @@ app.factory('Koodisto',function($resource, $log,$q){
             return  returnYlapuoliKoodis.promise;
 
         },
+
+        /*
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
 
         getAllKoodisWithKoodiUri : function(koodistoUriParam, locale) {
 
@@ -94,7 +130,11 @@ app.factory('Koodisto',function($resource, $log,$q){
             return returnKoodisPromise.promise  ;
         } ,
 
-
+        /*
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {array} array of koodisto view model objects
+         */
 
         getKoodistoWithKoodiUri : function(koodiUriParam,locale) {
 
