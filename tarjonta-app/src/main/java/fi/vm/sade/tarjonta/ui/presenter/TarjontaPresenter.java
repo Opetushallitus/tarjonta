@@ -738,7 +738,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
 
         criteria.getOidResctrictionList().addAll(organisaatioOids);
-        criteria.setMaxResults(400);
         criteria.setSuunnitellut(true);
 
         return organisaatioSearchService.searchBasicOrganisaatios(criteria);
@@ -1962,7 +1961,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        criteria.setMaxResults(1000);
         List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustieto curChild : childOrgs) {

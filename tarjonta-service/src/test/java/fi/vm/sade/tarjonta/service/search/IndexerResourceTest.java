@@ -78,7 +78,7 @@ public class IndexerResourceTest {
         OrganisaatioPerustieto organisaatio = new OrganisaatioPerustieto();
         organisaatio.setOid(oid);
         organisaatio.setParentOidPath("010101");
-        organisaatio.setNimiFi("nimi for " + oid);
+        organisaatio.setNimi("fi", "nimi for " + oid);
         return organisaatio;
     }
 

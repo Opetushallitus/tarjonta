@@ -116,7 +116,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         LoggerHelper.init(new LoggerMock());
 
         OrganisaatioPerustieto perustieto = new OrganisaatioPerustieto();
-        perustieto.setNimiFi("org nimi fi");
+        perustieto.setNimi("fi", "org nimi fi");
         perustieto.setOid("1.2.3.4.5");
         Mockito.reset(organisaatioSearchService);
         Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.5"))).toReturn(Lists.newArrayList(perustieto));

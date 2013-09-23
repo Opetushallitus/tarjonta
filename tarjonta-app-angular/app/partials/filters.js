@@ -2,7 +2,7 @@
 
 /* Filters */
 
-var app = angular.module('tarjontaApp.filters', []);
+var app = angular.module('app.filters', []);
 
 
 app.filter('interpolate', ['version', function(version) {

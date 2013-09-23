@@ -117,7 +117,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         orgDto.setOid(ORGANISAATIO_OID);
         orgPerus = new OrganisaatioPerustieto();
         orgPerus.setOid(ORGANISAATIO_OID);
-        orgPerus.setNimiFi(ORGANISATION_NAME);
+        orgPerus.setNimi("fi", ORGANISATION_NAME);
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi omtt = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi();
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti();
         teksti.setKieliKoodi(LANGUAGE_FI);

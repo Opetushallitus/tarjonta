@@ -2,7 +2,7 @@
 
 /* Filters */
 
-angular.module('kkTutkintoApp.filters', []).
+angular.module('app.kk.filters', []).
         filter('interpolate', ['version', function(version) {
         return function(text) {
             return String(text).replace(/\%VERSION\%/mg, version);

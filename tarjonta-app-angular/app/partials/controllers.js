@@ -1,6 +1,6 @@
 
 
-var app = angular.module('tarjontaApp.controllers', ['tarjontaApp.services'])
+var app = angular.module('app.controllers', ['app.services'])
 
 app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
@@ -8,19 +8,18 @@ app.controller('MyCtrl1', [function() {
 
 app.controller('KoodistoTestController', function($scope, Koodisto) {
 
+    $scope.testKoodisto = function() {
+        console.log('Following selected: ');
+        console.log($scope.koodiuri);
+
+    };
+
     $scope.locale = 'FI';
-    $scope.koodistoUri = 'hakukohteetkk';
+    $scope.koodistouri = 'hakukohteetkk';
+    $scope.koodiuri = '';
 
-        //$scope.koodis = Koodisto.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
 
-        var koodiPromise = Koodisto.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
-        koodiPromise.then(function(data){
 
-            console.log('Got data');
-            console.log(data);
-            $scope.koodis = data;
-
-    });
 
 });
 
