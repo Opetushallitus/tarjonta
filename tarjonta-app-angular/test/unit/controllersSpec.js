@@ -14,3 +14,68 @@ describe('controllers', function(){
     //spec body
   }));
 });
+
+describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
+	beforeEach(module('app.kk.edit.ctrl'));
+	var $scope, $modalInstance;
+	beforeEach(inject(function($rootScope){
+		$scope = $rootScope.$new();
+		$modalInstance = {
+			$scope: $scope,
+			templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+			controller: 'SelectTutkintoOhjelmaController'
+		};
+	}));
+	it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
+		$controller('SelectTutkintoOhjelmaController', {
+			$scope: $scope,
+			$modalInstance: $modalInstance
+		});
+		expect($scope.stoModel.hakutulokset).toEqual([]);
+		expect($scope.stoModel.koulutusala).toEqual('Humanistinen ja kasvatusala');
+		expect($scope.stoModel.active).toEqual({});
+		
+	}));
+	it('Testing the SelectTutkintoOhjelmaController toggleItem', inject(function($controller) {
+		$controller('SelectTutkintoOhjelmaController', {
+			$scope: $scope,
+			$modalInstance: $modalInstance
+		});
+		$scope.toggleItem($scope.rawData[0]);
+		expect($scope.stoModel.active).toEqual($scope.rawData[0]);
+	}));
+	it('Testing the SelectTutkintoOhjelmaController isActive', inject(function($controller) {
+		$controller('SelectTutkintoOhjelmaController', {
+			$scope: $scope,
+			$modalInstance: $modalInstance
+		});
+		$scope.toggleItem($scope.rawData[0]);
+		
+		expect($scope.isActive($scope.rawData[1])).toEqual(false);
+		expect($scope.isActive($scope.rawData[0])).toEqual(true);
+		
+	}));
+	it('Testing the SelectTutkintoOhjelmaController searchTutkinnot', inject(function($controller) {
+		$controller('SelectTutkintoOhjelmaController', {
+			$scope: $scope,
+			$modalInstance: $modalInstance
+		});
+		
+		expect($scope.stoModel.hakutulokset.length).toEqual(0);
+		$scope.searchTutkinnot();
+		expect($scope.stoModel.hakutulokset.length).toEqual($scope.rawData.length);
+		$scope.stoModel.hakulause = 'AMK';
+		$scope.searchTutkinnot();
+		expect($scope.stoModel.hakutulokset.length).toEqual(3);
+	}));
+	it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
+		$controller('SelectTutkintoOhjelmaController', {
+			$scope: $scope,
+			$modalInstance: $modalInstance
+		});
+		
+		$scope.stoModel.hakulause = 'AMK';
+		$scope.clearCriteria();
+		expect($scope.stoModel.hakulause).toEqual('');
+	}));
+});
