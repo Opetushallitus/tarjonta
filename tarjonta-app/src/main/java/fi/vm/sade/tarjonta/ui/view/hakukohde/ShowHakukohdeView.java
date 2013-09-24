@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -46,7 +47,6 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.springframework.beans.factory.annotation.Value;
 
 /*
  * Author: Tuomas Katva
@@ -105,11 +105,8 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
         for (KielikaannosViewModel kieli : lisatietoKielet) {
             kielet.add(kieli.getKielikoodi());
         }
-        List<KielikaannosViewModel> valintakoeKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getValintaPerusteidenKuvaus();
-        for (KielikaannosViewModel kieli : valintakoeKielet) {
-            kielet.add(kieli.getKielikoodi());
-        }
-
+        kielet.addAll(tarjontaPresenterPresenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().getKielet());
+        kielet.addAll(tarjontaPresenterPresenter.getModel().getHakukohde().getSoraKuvaus().getKielet());
         return kielet;
     }
 
@@ -210,7 +207,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
     private boolean checkHaunAlkaminen() {
         tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
-        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
+        //Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
         Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         Date tanaan = new Date();
         if (!tanaan.after(haunAlkamisPvm) || KoodistoURI.KOODI_LISAHAKU_URI.equals(tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {

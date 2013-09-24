@@ -1,7 +1,12 @@
 <h2>Koodisto test</h2>
 
 
-<input type="button"  ng-click="testKoodisto()" value="test me"/>
 
-        <koodistocombo koodistouri="koodistouri" locale="locale" koodiuri="koodiuri"/>
 
+        <koodistocombo isdependent="false" onchangecallback="testcallback" koodistouri="koodistouri" locale="locale" koodiuri="koodiuri"></koodistocombo>
+
+
+<h3>Toinen koodisto</h3>
+
+
+    <koodistocombo isdependent="true" filterwithkoodistouri="koodistofilter" isalakoodi="true" locale="locale" koodiuri="alakoodiuri" parentkoodiuri="parenturi"></koodistocombo>

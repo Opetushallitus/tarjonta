@@ -13,6 +13,12 @@ app.controller('KKReviewController', ['$scope', 'TarjontaService', '$routeParams
         $scope.dynamicPopoverText = "dynamic";
         $scope.dynamicPopoverTitle = "Title";
 
+
+        $scope.basicInfoIsCollapsed = false;
+        $scope.descriptionInfoIsCollapsed = false;
+        $scope.includedKoulutusIsCollapsed = false;
+        $scope.hakukohteetIsCollapsed = false;
+
         $scope.search = function() {
             console.info("search()");
             tarjontaService.get({oid: $scope.searchByOid}, function(data) {

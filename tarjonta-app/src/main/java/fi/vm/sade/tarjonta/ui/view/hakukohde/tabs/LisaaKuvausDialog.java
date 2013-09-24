@@ -47,12 +47,9 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	
 	public static interface LisaaKuvausListener {
 		
-		/**
-		 * @param asTemplate Jos tosi, kuvaus haetaan muokattavaksi pohjaksi (muutoin linkitetään).
-		 * @param kuvaus
-		 * @param langs
-		 */
-		void lisaaKuvaukset(boolean asTemplate, String kuvaus, Set<String> langs);
+		void onReference(String kuvausUri);
+		
+		void onTemplate(String kuvausUri, Set<String> langUris);
 		
 	}
 
@@ -71,7 +68,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	private final CheckBox hakuPohjaksi = new CheckBox();
 	private final Table table = new Table();
 	private final CheckBox tuoMuutKielet = new CheckBox();
-	
+	private final GridLayout langSels = new GridLayout(3,1);
+
 	private final Set<String> valitutMuutKielet = new TreeSet<String>();
 	
 	private final KoodistoComponent langChooser = new KoodistoComponent(KoodistoURI.KOODISTO_KIELI_URI){
@@ -114,7 +112,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	};
 	
 	private final Button importBtn = new Button();
-
+	
 	public LisaaKuvausDialog(TarjontaPresenter presenter, Mode mode, LisaaKuvausListener listener) {
 		super(WINDOW_WIDTH, WINDOW_HEIGHT);
 		this.presenter = presenter;
@@ -132,8 +130,8 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		langChooser.setEnabled(false);
 		langList.setEnabled(false);
 
-		hakuLinkitys.addListener(new CheckboxSwitcher(hakuLinkitys, hakuPohjaksi));
-		hakuPohjaksi.addListener(new CheckboxSwitcher(hakuPohjaksi, hakuLinkitys));
+		hakuLinkitys.addListener(new CheckboxSwitcher(hakuLinkitys, hakuPohjaksi, false));
+		hakuPohjaksi.addListener(new CheckboxSwitcher(hakuPohjaksi, hakuLinkitys, true));
 		tuoMuutKielet.addListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -175,7 +173,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 	}
 	
 	private String getKieliKoodi(Object token) {
-		// TODO purkkaratkaisu, tee parempi (eli mistä token -> kielikoodi-muunnos)
+		// TODO purkkaratkaisu, tee parempi (eli mistä token -> kielikoodi-muunnos); toisaalta tämä tuskin hajoaa koskaan ellei koodistoon tehä suomi v2 yms. kieliä...
 		return "kieli_"+String.valueOf(token).toLowerCase()+"#1";
 	}
 
@@ -218,13 +216,13 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		layout.addComponent(muut);
 		
 		tuoMuutKielet.setCaption(super.T("tuoMuutKuvaukset"));
+		tuoMuutKielet.setEnabled(false);
 		muut.addComponent(tuoMuutKielet);
 		HorizontalLayout muut2 = new HorizontalLayout();
 		muut.addComponent(muut2);
 		muut2.setWidth("100%");
 		muut2.setMargin(false, false, false, true);
 
-		final GridLayout langSels = new GridLayout(3,1);
 		langList.setSelectionComponent(langChooser);
 		langList.setSelectionLayout(langSels);
 		langList.setFormatter(new SelectedTokenToTextFormatter() {
@@ -238,14 +236,7 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(ClickEvent event) {
-				if (!tuoMuutKielet.booleanValue()) {
-					langSels.removeAllComponents();
-					for (String s : valitutMuutKielet) {
-						langList.removeToken(s);
-					}
-					valitutMuutKielet.clear();
-				}
-
+				selectOtherLangs(tuoMuutKielet.booleanValue());
 			}
 		});
 		
@@ -294,25 +285,44 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(ClickEvent event) {
-				
-				String kuvausUri = (String) table.getValue();
-				Set<String> langs = new TreeSet<String>();
-				
-				// opetuskielet
-				langs.addAll(presenter.getModel().getHakukohde().getOpetusKielet());
-	
-				// muut valitut kielet
-				if (tuoMuutKielet.booleanValue()) {
-					langs.addAll(valitutMuutKielet);
-				}
-				
-				// poistetaan kielet joilla em. kuvausta ei ole
-				langs.retainAll(getKuvaukset().get(kuvausUri));
+				String kuvausUri = (String) table.getValue();				
+				if (hakuLinkitys.booleanValue()) {
+					listener.onReference(kuvausUri);
+				} else {					
+					Set<String> langs = new TreeSet<String>();
+					
+					// opetuskielet
+					langs.addAll(presenter.getModel().getHakukohde().getOpetusKielet());
+		
+					// muut valitut kielet
+					if (tuoMuutKielet.booleanValue()) {
+						for (String lang : valitutMuutKielet) {
+							langs.add(getKieliKoodi(lang));
+						}
+						//langs.addAll(valitutMuutKielet);
+					}
+					
+					// poistetaan kielet joilla em. kuvausta ei ole
+					langs.retainAll(getKuvaukset().get(kuvausUri));
 
-				listener.lisaaKuvaukset(hakuPohjaksi.booleanValue(), kuvausUri, langs);
-				
+					listener.onTemplate(kuvausUri, langs);
+				}
+				getParent().removeWindow(LisaaKuvausDialog.this);
 			}
 		});
+		
+	}
+	
+	private void selectOtherLangs(boolean selected) {
+		if (!selected) {
+			langSels.removeAllComponents();
+			for (String s : valitutMuutKielet) {
+				langList.removeToken(s);
+			}
+			valitutMuutKielet.clear();
+			tuoMuutKielet.setValue(false);
+		}
+		langChooser.setEnabled(selected);
 	}
 	
 	private CheckBox buildOption(VerticalLayout dst, String title, String descr, CheckBox cb) {
@@ -343,11 +353,13 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 		
 		private final CheckBox checkbox;
 		private final CheckBox other;
+		private final boolean enableLangSelection;
 		
-		public CheckboxSwitcher(CheckBox checkbox, CheckBox other) {
+		public CheckboxSwitcher(CheckBox checkbox, CheckBox other, boolean enableLangSelection) {
 			super();
 			this.checkbox = checkbox;
 			this.other = other;
+			this.enableLangSelection = enableLangSelection;
 		}
 		
 		@Override
@@ -355,6 +367,11 @@ public class LisaaKuvausDialog extends TarjontaWindow {
 			if ((Boolean) checkbox.getValue()) {
 				other.setValue(false);
 			}
+			tuoMuutKielet.setEnabled(enableLangSelection);
+			if (!enableLangSelection) {
+				selectOtherLangs(false);
+			}
+			tuoMuutKielet.requestRepaint();
 		}
 
 	}
