@@ -32,7 +32,7 @@ module.exports = function(config){
             'karma-phantomjs-launcher',
             'karma-firefox-launcher',
             'karma-ng-html2js-preprocessor',
-            //Install this to node using -> npm install karma-html2js-preprocessor
+            //Install this to node using -> npm -g install karma-ng-html2js-preprocessor
             //'karma-html2js-preprocessor',
             'karma-jasmine'
             ],
