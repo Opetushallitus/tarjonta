@@ -50,7 +50,7 @@
   "kaytetaanHakukohdekohtaistaHakuaikaa" : false,
   "hakukelpoisuusvaatimusUri" : "hakukelpoisuusvaatimusta_5#1",
   "valintaperustekuvaus" : {
-    "kieli_fi#1" : "<p>lukio yksi</p>"
+    "kieli_fi#1" : "<p>kuvaus muutos 1379919057979</p>"
   },
   "opetuskielet" : [ "kieli_fi#1" ],
   "api_VERSION" : 4

@@ -33,25 +33,25 @@ describe('localisation', function() {
         }));
 
 
-        it('known translation should be returned', inject(function() {
-
-            var key = "tarjonta.organisaationHaku.hae";
-            var data = {
-                "key": key,
-                "locale": "fi",
-                "value": "Tee haku",
-                "values": {
-                    "fi": "Tee haku",
-                    "en": "Perform the search",
-                    "sv": "Sök - sök!"
-                }
-            };
-
-            scope.locale = "fi";
-            scope.localisations[key] = data;
-
-            expect(scope.t(key)).toEqual("Tee haku");
-        }));
+//        it('known translation should be returned', inject(function() {
+//
+//            var key = "tarjonta.organisaationHaku.hae";
+//            var data = {
+//                "key": key,
+//                "locale": "fi",
+//                "value": "Tee haku",
+//                "values": {
+//                    "fi": "Tee haku",
+//                    "en": "Perform the search",
+//                    "sv": "Sök - sök!"
+//                }
+//            };
+//
+//            scope.locale = "fi";
+//            scope.localisations[key] = data;
+//
+//            expect(scope.t(key)).toEqual("Tee haku");
+//        }));
 
     });
 });

@@ -34,43 +34,77 @@ app.factory('Localisation', function($resource) {
     });
 });
 
+
 /**
- * LocalisationCtrl - a localisation controller.
+ * Singleton service for localisations.
+ *
+ * Saves localisations to this.
+ *
+ * Usage:
+ * <pre>
+ * LocalisationService.t("this.is.the.key")  == localized value
+ * </pre>
  */
-app.controller('LocalisationCtrl', function($scope, Localisation) {
-    // console.log("LocalisationCtrl()");
+app.service('LocalisationService', function(Localisation) {
 
-    // TODO how to get browser locale ? use locale?
-    $scope.locale = "fi";
-    $scope.localisations = [];
+    console.log("LocalisationService()");
 
+    // Singleton state
+    this.locale = "fi";
+    this.localisations = [];
+
+    console.log("  loading()...");
     Localisation.query(function(data) {
-        console.log("Loaded: " + data);
-        $scope.localisations = data;
+        console.log("  loading()... done: " + data);
+        this.localisations = data;
     });
 
-    // Returns translation if it exists
-    $scope.t = function(key, params) {
-        // console.log("t(" + key + ", " + params + ")");
-        var v = $scope.localisations[key];
+    this.t = function(key, params) {
+        // Get translation
+        var v = this.localisations[key];
+        var result;
 
         if (v != undefined) {
-            var result = v.value;
+            // Extract result and replace parameters if any
+            result = v.value;
 
             if (params != undefined) {
                 result = result.replace(/{(\d+)}/g, function(match, number) {
                     return typeof params[number] != 'undefined' ? params[number] : match;
                 });
             }
-
-            return result;
         } else {
             // Unknown translation, maybe create placeholder for it?
             console.log("UNKNOWN TRANSLATION: " + key);
-            var value = "[" + key + "]";
-            $scope.localisations[key] = value;
-            return value;
+
+            // TODO Fake "creation", really call service to create the translation placeholder for real
+            v = {
+                value : "[" + key + "]"
+            };
+            this.localisations[key] = v;
+
+            result = v.value;
         }
+
+        return result;
+    };
+
+});
+
+/**
+ * LocalisationCtrl - a localisation controller.
+ * An easy way to bind "t" function to gobal scope.
+ */
+app.controller('LocalisationCtrl', function($scope, LocalisationService) {
+    console.log("LocalisationCtrl()");
+
+    // Returns translation if it exists
+    $scope.t = function(key, params) {
+        console.log("LocalisationCtrl.t");
+        return LocalisationService.t(key, params);
     };
 });
 
+//
+// TODO Add directive "t" since {{}} cause too many? bindings to be done.
+//

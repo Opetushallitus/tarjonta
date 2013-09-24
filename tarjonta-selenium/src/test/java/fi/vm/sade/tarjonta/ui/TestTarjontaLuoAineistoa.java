@@ -130,17 +130,23 @@ public class TestTarjontaLuoAineistoa {
         haeKentta.sendKeys(reppu + "laitos");
         doit.tauko(1);
         doit.textClick(driver, "Hae");
-        Assert.assertNotNull("Running LuoKoulutusAMK Hae Lihateollisuuden tutkimuskeskus ei toimi."
-                , doit.textElement(driver, reppu + "laitos2013"));
+        Assert.assertNotNull("Running LuoKoulutusAMK Hae " + reppu + "laitos2013 ei toimi."
+        		, doit.textElement(driver, reppu + "laitos2013"));
         doit.tauko(1);
         String yyyymmdd = doit.yyyymmddString();
-        doit.textClick(driver, reppu + "laitos" + yyyymmdd);
+        String organisaatio = reppu + "laitos" + yyyymmdd;
+        try {
+			doit.textClick(driver, organisaatio);
+		} catch (Exception e) {
+	        organisaatio = reppu + "laitos2013";
+			doit.textClick(driver, organisaatio);
+		}
         doit.tauko(1);
         
         // poistetaan aikaisemmin mahdollisesti luotu hevoskoulutus
         if (doit.PoistaKoulutus(driver, "Hevo"))
         {
-        	doit.textClick(driver, reppu + "laitos" + yyyymmdd);
+        	doit.textClick(driver, organisaatio);
         	doit.tauko(1);
         }
         //
