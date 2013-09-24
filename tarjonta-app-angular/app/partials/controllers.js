@@ -6,7 +6,7 @@ app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
     }]);
 
-app.controller('KoodistoTestController', function($scope,$route, Koodisto) {
+app.controller('KoodistoTestController', function($scope,$route) {
 
 
 
@@ -18,8 +18,7 @@ app.controller('KoodistoTestController', function($scope,$route, Koodisto) {
 
 
 
-    $scope.locale = 'FI';
-    $scope.koodistouri = 'koulutusohjelmaamm';
+   $scope.selectedKoodis = [];
 
     $scope.koodistofilter='hakukohteet';
 
@@ -43,6 +42,10 @@ app.controller('KoodistoTestController', function($scope,$route, Koodisto) {
       console.log($scope.parenturi);
 
 
+    };
+
+    $scope.testit = function() {
+      alert ($scope.selectedKoodis);
     };
 
 

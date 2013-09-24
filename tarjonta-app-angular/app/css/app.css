@@ -3,3 +3,75 @@
 .nav, .pagination, .carousel a {
     cursor: pointer;
 }
+
+.light-gray{
+	background-color: rgba(248,248,248,1);
+}
+
+.dark-gray{
+	background-color: rgba(112,112,112,1)
+}
+
+.active{
+    background-color: rgba(255,0,0,1);
+}
+
+.float-left {
+	float:left;	
+}
+
+.float-right {
+	float:right;	
+}
+
+/* tarjonnan hakunäkymä */
+
+div#searchSpec {
+	height:96px;
+	position:relative;
+	min-width:960px;
+}
+
+div#searchSpec > div.title {
+}
+
+div#searchSpec > div.title > span {
+	font-size:150%;
+	font-weight:bold;	
+}
+
+div#searchSpec > table.spec {
+	position:absolute;
+	right:0;
+	bottom:0;
+	max-width:80%;
+}
+
+div#searchSpec > table.spec th {
+	text-align:left;
+	font-weight:normal;
+	padding-right:1em;
+}
+
+div#searchSpec > table.spec td.controls {
+	vertical-align:top;
+	padding-left:1em;	
+}
+
+div#searchSpec > table.spec select {
+	width:100%;
+		
+}
+
+div#searchSpec > div.search {
+	position:absolute;
+	left:0;
+	bottom:0;
+	width:20%;
+}
+
+div#searchSpec > div.search > input {
+	width:100%;
+	position:relative;
+	top:-1px;
+}

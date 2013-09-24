@@ -1,0 +1,44 @@
+
+<div>
+<form>
+	<input name="tekstihaku" ng-model="hakuehdot.tekstihaku" type="text"
+		value="" name="searchString" class="text search"
+		placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
+
+	<select ng-model="hakuehdot.organisaatiotyyppi"
+		ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.value for organisaatiotyyppi in organisaatiotyypit">
+	    <option value="">{{t("organisaatiohaku.organisaatiotyypit.kaikki")}}</option>
+	</select> <select ng-model="hakuehdot.oppilaitostyyppi"
+		ng-options="oppilaitostyyppi.koodi as oppilaitostyyppi.nimi for oppilaitostyyppi in organisaatiotyypit">
+		<option value="">{{t("organisaatiohaku.oppilaitostyypit.kaikki")}}</option>
+	</select>
+
+	<div class="field-container-checkbox">
+		<input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
+		<label for="passiiviset">{{
+			t("organisaatiohaku.label.nayta.myos.lakkautetut") }}</label>
+	</div>
+
+	<div class="field-container-checkbox">
+		<input ng-model="hakuehdot.suunnitellut" type="checkbox" name="includePlanned" id="suunnitellut" value="true">
+		<label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label>
+	</div>
+
+	<div class="buttons">
+		<input type="button" ng-click="reset()" class="button small"
+			value="{{ t('organisaatiohaku.button.tyhjenna') }}" />
+	    <input type="submit" ng-click="submit()" class="button primary small"
+			value="{{ t('organisaatiohaku.button.hae') }}" />
+	</div>
+
+</div>
+
+{{organisaatio.currentNode}}
+
+<div data-angular-treeview="true"
+		data-tree-id="organisaatio"
+		data-tree-model="tulos"
+		data-node-id="oid"
+		data-node-label="nimi.fi"
+		data-node-children="children" >
+</div>

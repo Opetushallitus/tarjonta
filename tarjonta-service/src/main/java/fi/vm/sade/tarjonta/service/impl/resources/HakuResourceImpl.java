@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,23 +46,23 @@ import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.Arrays;
 
 /**
  * Run:
- *
+ * 
  * <pre>
  * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
  * </pre>
- *
+ * 
  * Test:
- *
+ * 
  * <pre>
  * http://localhost:8084/tarjonta-service/rest?_wadl
  * </pre>
- *
- * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- *
+ * 
+ * Internal documentation:
+ * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ * 
  * @author mlyly
  * @see HakuResource
  */
@@ -105,13 +106,10 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku?...
     @Override
-    public List<OidRDTO> search(String searchTerms,
-            int count,
-            int startIndex,
-            Date lastModifiedBefore,
+    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore,
             Date lastModifiedSince) {
-        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex,
-            lastModifiedBefore, lastModifiedSince});
+        LOG.debug("/haku -- search({}, {}, {}, {}, {})", new Object[] { searchTerms, count, startIndex,
+                lastModifiedBefore, lastModifiedSince });
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
@@ -138,14 +136,8 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohde
     @Override
-    public List<OidRDTO> getByOIDHakukohde(String oid,
-            String searchTerms,
-            int count,
-            int startIndex,
-            Date lastModifiedBefore,
-            Date lastModifiedSince,
-            String organisationOidsStr,
-            String hakukohdeTilasStr) {
+    public List<OidRDTO> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex,
+            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr) {
         LOG.debug("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
@@ -172,7 +164,6 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
-
     private List<String> splitToList(String input, String separator) {
         LOG.debug("splitToList({}, {})", input, separator);
 
@@ -186,13 +177,12 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/OID/hakukohdeTulos
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince,
-            String organisationOidsStr,
-            String hakukohdeTilasStr) {
+            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr) {
 
         LOG.debug("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
 
-        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: lisää rajapintaan
+        final String kieliAvain = "fi"; // TODO: lisää
+                                        // rajapintaan
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
@@ -223,7 +213,7 @@ public class HakuResourceImpl implements HakuResource {
         }
 
         HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
-        LOG.debug("  kysely for haku '{}' found '{}'", new Object[]{oid, v.getHakukohdeTulos().size()});
+        LOG.debug("  kysely for haku '{}' found '{}'", new Object[] { oid, v.getHakukohdeTulos().size() });
         Collection<HakukohdeTulos> tulokset = v.getHakukohdeTulos();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
         // mukaan!
@@ -231,11 +221,10 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (kieliAvain.equals(StringUtils.upperCase(teksti.getKieliKoodi()))) {
+                        if (teksti.getKieliKoodi().contains(kieliAvain)) {
                             return StringUtils.upperCase(teksti.getValue());
                         }
                     }
-                    LOG.debug("Avain {} doesnt match any languages!", kieliAvain);
                     return StringUtils.EMPTY;
                 }
 
@@ -275,9 +264,9 @@ public class HakuResourceImpl implements HakuResource {
                 HakukohdeListaus hakukohde = tulos.getHakukohde();
                 HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
                 // tarvitaanko?
-                // result.setHakukohdeNimi(...)
                 // result.setHakuVuosi(haku.getHakukausiVuosi());
                 // result.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
+                rdto.setTarjoajaOid(hakukohde.getTarjoaja().getTarjoajaOid());
                 rdto.setHakukohdeNimi(convertMonikielinenToMap(hakukohde.getNimi()));
                 rdto.setTarjoajaNimi(convertMonikielinenToMap(hakukohde.getTarjoaja().getNimi()));
                 rdto.setHakukohdeOid(hakukohde.getOid());
@@ -300,14 +289,8 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohdeWithName
     @Override
-    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid,
-            String searchTerms,
-            int count,
-            int startIndex,
-            Date lastModifiedBefore,
-            Date lastModifiedSince,
-            String organisationOidsStr,
-            String hakukohdeTilasStr) {
+    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid, String searchTerms, int count, int startIndex,
+            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr) {
         LOG.debug("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
 
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();

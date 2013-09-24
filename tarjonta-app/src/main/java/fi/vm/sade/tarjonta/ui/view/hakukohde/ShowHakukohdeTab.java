@@ -121,7 +121,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private void buildKuvauksetLayout(VerticalLayout layout) {
     	
         if (!presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS)
-    		|| !presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
+    		&& !presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
            return;
         }
 

@@ -1,0 +1,54 @@
+<div id="searchSpec">
+
+	<div class="title">
+		<span>{{selectedOrgName}}</span>
+		<a href="" ng-click="resetOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
+	</div>
+	
+	<table class="spec">
+	<!-- otsikkorivi -->
+	<tr>
+		<th>{{t('tarjonta.haku.tila')}}</th>
+		<th>{{t('tarjonta.haku.alkamisVuosi')}}</th>
+		<th>{{t('tarjonta.haku.alkamisKausi')}}</th>
+		<th colspan="2">&nbsp;</th>
+	</tr>
+	<!-- kontrollit -->
+	<tr>
+		<td class="state">
+			<select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
+		</td>
+		<td class="year">
+			<select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
+		</td>
+		<td class="season">
+			<select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
+		</td>
+		<td class="controls">
+			<input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
+			<input class="btn btn-primary" type="button" value="{{t('tarjonta.haku.hae')}}" ng-click="search()"/>
+		</td>
+		<td class="controls">
+			<input class="btn" type="button" value="{{t('tarjonta.haku.tulosta_raportti')}}" ng-click="report()" disabled="true"/>
+		</td>
+	
+	</tr>
+	</table>
+		
+	<div class="search">
+		<input type="text" ng-model="searchTerms" ng-enter="search()"/>
+	</div>
+	
+
+<span></span>
+</div>
+
+<tabset>
+	<tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
+		// koulutukset
+	</tab>
+	<tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
+		// hakukohteet
+	</tab>
+
+</tabset>
