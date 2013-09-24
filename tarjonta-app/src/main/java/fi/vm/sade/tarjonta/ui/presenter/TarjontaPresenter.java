@@ -76,7 +76,6 @@ import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -254,7 +253,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         refreshHakukohdeUIModel(fresh);
     }
-
+    
     // Figure out the type
     private void updateHakukohdeKoulutusasteTyyppi(HakukohdeViewModel hakukohde) {
         Preconditions.checkNotNull(hakukohde);

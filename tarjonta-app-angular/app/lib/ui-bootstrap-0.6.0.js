@@ -2555,7 +2555,7 @@ function TabsetCtrl($scope, $element) {
         <tab heading="Tab 1">First Tab</tab>
         <tab select="alertMe()">
           <tab-heading><i class="icon-bell"></i> Alert me!</tab-heading>
-          Second Tab, with alert callback and html heading!
+          Second Tab, with alert onchangecallback and html heading!
         </tab>
         <tab ng-repeat="item in items"
           heading="{{item.title}}"
@@ -2617,7 +2617,7 @@ function($parse, $http, $templateCache, $compile) {
     transclude: true,
     scope: {
       heading: '@',
-      onSelect: '&select', //This callback is called in contentHeadingTransclude
+      onSelect: '&select', //This onchangecallback is called in contentHeadingTransclude
                           //once it inserts the tab's content into the dom
       onDeselect: '&deselect'
     },
@@ -3033,7 +3033,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
       //binding to a variable that indicates if matches are being retrieved asynchronously
       var isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop;
 
-      //a callback executed when a match is selected
+      //a onchangecallback executed when a match is selected
       var onSelectCallback = $parse(attrs.typeaheadOnSelect);
 
       var inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : undefined;

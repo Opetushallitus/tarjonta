@@ -81,9 +81,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private TabSheet.Tab perustiedotTab;
     private TabSheet.Tab liitteetTab;
     private TabSheet.Tab valintakokeetTab;
+    private TabSheet.Tab kuvauksetTab;
     private HakukohteenLiitteetTabImpl liitteet;
     private HakukohdeValintakoeTabImpl valintakokeet;
     private PerustiedotViewImpl perustiedot;
+    private HakukohteenKuvauksetTabImpl kuvaukset;
     private HakukohdeActiveTab activeTab = HakukohdeActiveTab.PERUSTIEDOT;
     
     
@@ -431,12 +433,16 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid, presenter.getModel().getHakukohde().getKoulutusasteTyyppi());
-        HakukohteenKuvauksetTabImpl sovapeKuvaukset = new HakukohteenKuvauksetTabImpl(presenter);
+        kuvaukset = new HakukohteenKuvauksetTabImpl(presenter);
         
         perustiedotTab = tabs.addTab(wrapperVl, T("tabNimi"));
         valintakokeetTab = tabs.addTab(valintakokeet, T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
-        tabs.addTab(sovapeKuvaukset, T("sovapeTab"));
+        if (presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS)
+    		|| presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
+            kuvauksetTab = tabs.addTab(kuvaukset, T("sovapeTab"));
+        }
+        
         
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
@@ -453,11 +459,10 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
                     handlePerustiedotTabChange(wrapperVl);
                     break;
                 case VALINTAKOKEET:
-                    handleValintakokeetTabChange (wrapperVl);
+                    handleValintakokeetTabChange(wrapperVl);
                     break;
-                case LIITTEET:
-                    changeTab(wrapperVl);
-                    break;
+                case KUVAUKSET:
+                	handleKuvauksetTabChange(wrapperVl);
                  default:
                      changeTab(wrapperVl);
                 }
@@ -494,7 +499,19 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             changeTab(perustiedotContainer);
         }
     }
-    
+        
+    /*
+     * Handles tab change in the case that user's current tab is valintakokeet
+     */
+    private void handleKuvauksetTabChange (VerticalLayout perustiedotContainer) {
+        if (kuvaukset.isChanged()) {
+            tabs.setSelectedTab(kuvaukset);
+            presenter.showNotification(UserNotification.UNSAVED);
+        } else {
+            changeTab(perustiedotContainer);
+        }
+    }
+        
     /*
      * Changes the tab
      */
@@ -506,8 +523,18 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             activeTab = HakukohdeActiveTab.PERUSTIEDOT;
         } else if (tabs.getSelectedTab().equals(liitteet)) {
             activeTab = HakukohdeActiveTab.LIITTEET;   
+        } else if (tabs.getSelectedTab().equals(kuvaukset)) {
+        	activeTab = HakukohdeActiveTab.KUVAUKSET;
         }
         makeFormDataUnmodified();
+    }
+    
+    @Override
+    public int makeFormDataUnmodified() {
+    	if (kuvaukset!=null) {
+    		kuvaukset.setChanged(false);
+    	}
+    	return super.makeFormDataUnmodified();
     }
 
     /*

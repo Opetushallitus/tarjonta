@@ -1,1 +1,1 @@
-<select ng-model="koodiuri" ng-options="koodi.koodiNimi for koodi in koodis"></select>
+<select ng-model="koodiuri" ng-change="onKoodistoComboChange()" ng-options="koodi.koodiNimi for koodi in koodis"></select>

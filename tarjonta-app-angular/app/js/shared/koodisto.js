@@ -77,11 +77,36 @@ app.factory('Koodisto',function($resource, $log,$q){
 
         getYlapuolisetKoodit : function(koodiUriParam,locale) {
 
+            $log.info('getYlapuolisetKoodit called with : ' + koodiUriParam + ' locale : ' + locale );
+
             var returnYlapuoliKoodis= $q.defer();
 
             var returnKoodis = [];
 
             var ylapuoliKoodiUri = host + '/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/:koodiUri';
+
+            $resource(ylapuoliKoodiUri,{koodiUri:'@koodiUri'}).query({koodiUri:koodiUriParam},function(koodis){
+                angular.forEach(koodis,function(koodi){
+
+                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi,locale));
+                });
+                returnYlapuoliKoodis.resolve(returnKoodis);
+            });
+
+
+            return  returnYlapuoliKoodis.promise;
+
+        },
+
+        getAlapuolisetKoodit : function(koodiUriParam,locale) {
+
+            $log.info('getAlapuolisetKoodi called with : ' + koodiUriParam + ' locale : ' + locale );
+
+            var returnYlapuoliKoodis= $q.defer();
+
+            var returnKoodis = [];
+
+            var ylapuoliKoodiUri = host + '/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/:koodiUri';
 
             $resource(ylapuoliKoodiUri,{koodiUri:'@koodiUri'}).query({koodiUri:koodiUriParam},function(koodis){
                 angular.forEach(koodis,function(koodi){

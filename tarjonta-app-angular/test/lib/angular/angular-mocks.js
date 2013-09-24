@@ -878,7 +878,7 @@ function createHttpBackendMock($delegate, $browser) {
     };
   }
 
-  // TODO(vojta): change params to: method, url, data, headers, callback
+  // TODO(vojta): change params to: method, url, data, headers, onchangecallback
   function $httpBackend(method, url, data, callback, headers) {
     var xhr = new MockXhr(),
         expectation = expectations[0],
