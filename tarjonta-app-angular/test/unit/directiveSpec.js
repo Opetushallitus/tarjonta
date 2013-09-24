@@ -5,6 +5,7 @@ describe('Koodisto Component directive test', function() {
 
     var el;
 
+
     var mockData = [
         {
             koodiUri : 'uriuriuriuriuri',
@@ -18,10 +19,13 @@ describe('Koodisto Component directive test', function() {
 
 
 
-    beforeEach(module('KoodistoCombo',function($provide,$q){
-        $provide.provider('Koodisto',{
+   beforeEach(module('KoodistoCombo', function($provide){
 
-            $get: function () {
+  $provide.provider('Koodisto',{
+
+
+
+            $get: function ($q) {
                 return {
 
                     getYlapuolisetKoodit : function(koodiUriParam,locale) {
@@ -42,21 +46,28 @@ describe('Koodisto Component directive test', function() {
                 };
             }
         });
+
+
     }));
+
+
     beforeEach(module('js/shared/directives/koodistoCombo.html'));
 
     beforeEach(inject(function($compile,$rootScope){
+
         var scope = $rootScope;
         scope.locale = 'FI';
+
         el = angular.element('<koodistocombo isdependent="false" koodistouri="koodistouri" locale="locale" koodiuri="koodiuri"></koodistocombo>');
         $compile(el)(scope);
         scope.$digest();
         console.log(el[0].outerHTML);
     }));
 
-    /*it('should render koodistocombo with mock data',function(){
+    it('should render koodistocombo with mock data',function(){
         console.log('Testing IT');
         expect(el.text()).toContain('nimi');
-    });*/
+        //expect(true).toBe(true);
+    });
 
 });

@@ -19,7 +19,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
         restrict:'E',
         replace:true,
-        templateUrl : "/js/shared/directives/koodistoCombo.html",
+        templateUrl : "js/shared/directives/koodistoCombo.html",
         scope: {
             koodistouri : "=",
             koodiuri : "=",
