@@ -17,6 +17,7 @@
 div#searchSpec {
 	height:96px;
 	position:relative;
+	min-width:960px;
 }
 
 div#searchSpec > div.title {
@@ -35,7 +36,19 @@ div#searchSpec > table.spec {
 }
 
 div#searchSpec > table.spec th {
-	text-align:left;	
+	text-align:left;
+	font-weight:normal;
+	padding-right:1em;
+}
+
+div#searchSpec > table.spec td.controls {
+	vertical-align:top;
+	padding-left:1em;	
+}
+
+div#searchSpec > table.spec select {
+	width:100%;
+		
 }
 
 div#searchSpec > div.search {
@@ -47,6 +60,8 @@ div#searchSpec > div.search {
 
 div#searchSpec > div.search > input {
 	width:100%;
+	position:relative;
+	top:-1px;
 }
 
 

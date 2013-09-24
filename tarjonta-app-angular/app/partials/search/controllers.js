@@ -1,15 +1,28 @@
 
-angular.module('app.controllers', ['app.services']).controller('SearchController', function($scope, $routeParams) {
+angular.module('app.controllers', ['app.services']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService) {
+
+    // hakuparametrit ja organisaatiovalinta
+    function fromParams(key, def="*") {
+    	return $routeParams[key] != null ? $routeParams[key] : def;
+    }
+    
+    $scope.selectedOrgOid = fromParams("oid", "12345");
+    $scope.searchTerms = fromParams("terms","");
+    $scope.selectedState = fromParams("state");
+    $scope.selectedYear = fromParams("year");
+    $scope.selectedSeason = fromParams("season");
+
+    var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
     // TODO Generoi automaattisesti enumin fi.vm.sade.tarjonta.shared.types.TarjontaTila mukaan
     var states = [ "LUONNOS", "VALMIS", "JULKAISTU", "PERUTTU", "KOPIOITU" ];
-    
-    var stateMap = {};
-    
+        
+    var stateMap = {"*": msgKaikki};
+        
     for (var i in states) {
     	var s = states[i];
-    	stateMap[s] = "["+s+"]"; // TODO i18n
+    	stateMap[s] = LocalisationService.t("tarjonta.tila."+s); // TODO i18n
     }
     
     $scope.states = stateMap;
@@ -17,48 +30,59 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
     // alkamiskaudet
     // TODO koodistosta
     $scope.seasons = {
-    		"kausi_kevat#1": "Kevät",
-    		"kausi_syksy#1": "Syksy",
+    		"*": msgKaikki,
+    		"kausi_kevat": "Kevät",
+    		"kausi_syksy": "Syksy",
     };
 
     // alkamisvuodet; 2012 .. nykyhetki + 10v
-    $scope.years = [];
+    $scope.years = {"*": msgKaikki};
     var lyr = new Date().getFullYear()+10;
     for (var y = 2012; y<lyr; y++) {
-    	$scope.years.push(y);
+    	$scope.years[y] = y;
     }
 
-    $scope.searchTerms = ""; // TODO parametrista
-    $scope.selectedState = "*"; // TODO parametrista
-    $scope.selectedYear = "*"; // TODO parametrista
-    $scope.selectedSeason = "*"; // TODO parametrista
-    
-    $scope.selectedOrgOid = "12345";  // TODO oid-parametrista
+
     $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
 
-    $scope.resetOrg = function() {
-        
-        $scope.selectedOrgOid = "12345";  // TODO oph-oid
-        $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
+    function updateLocation() {
+    	var url = "/search/";
+    	if ($scope.selectedOrgOid != null) {
+    		url = url+$scope.selectedOrgOid+"/";
+    	}
+    	
+    	url = url+"?terms="+$scope.searchTerms+"&state="+$scope.selectedState+"&year="+$scope.selectedYear+"&season="+$scope.selectedSeason;
+    	
+    	$location.url(url);    
 
+    }
+
+    $scope.resetOrg = function() {
+        $scope.selectedOrgOid = "12345";  // TODO oph-oid?
+        $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
+        updateLocation();
     }
     
     $scope.reset = function() {
-        
-    	$scope.searchTerms = "";
-        $scope.selectedState = "*";
-        $scope.selectedYear = "*";
-        $scope.selectedSeason = "*";
-
+    	 $scope.searchTerms = "";
+         $scope.selectedState = "*";
+         $scope.selectedYear = "*";
+         $scope.selectedSeason = "*";
     }
     
     $scope.search = function() {
-    	console.log("search!!");
+    	console.log("search", {
+    		oid: $scope.selectedOrgOid,
+    		terms: $scope.searchTerms,
+    		state: $scope.selectedState,
+    		year: $scope.selectedYear,
+    		season: $scope.selectedSeason
+    	});    	
+    	updateLocation();
     }
     
     $scope.report = function() {
     	console.log("TODO raportti");
     }
-    
 
 });

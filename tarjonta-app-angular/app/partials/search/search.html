@@ -2,48 +2,41 @@
 
 	<div class="title">
 		<span>{{selectedOrgName}}</span>
-		<a href="" ng-click="resetOrg()">[Poista valinta]</a>
+		<a href="" ng-click="resetOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
 	</div>
 	
 	<table class="spec">
 	<!-- otsikkorivi -->
 	<tr>
-		<th>[Tila]</th>
-		<th>[Koulutuksen alkamisvuosi]</th>
-		<th>[Koulutuksen alkamiskausi]</th>
-		<th>&nbsp;</th>
+		<th>{{t('tarjonta.haku.tila')}}</th>
+		<th>{{t('tarjonta.haku.alkamisVuosi')}}</th>
+		<th>{{t('tarjonta.haku.alkamisKausi')}}</th>
+		<th colspan="2">&nbsp;</th>
 	</tr>
 	<!-- kontrollit -->
 	<tr>
 		<td class="state">
-			<select ng-model="selectedState">
-				<option value="*">[Kaikki]</option>
-				<option ng-repeat="(s,t) in states" value="{{s}}">{{t}}</option>
-			</select>
+			<select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
 		</td>
 		<td class="year">
-			<select ng-model="selectedYear">
-				<option value="*">[Kaikki]</option>
-				<option ng-repeat="s in years">{{s}}</option>
-			</select>
+			<select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
 		</td>
 		<td class="season">
-			<select ng-model="selectedSeason">
-				<option value="*">[Kaikki]</option>
-				<option ng-repeat="(s,t) in seasons" value="{{s}}">{{t}}</option>
-			</select>
+			<select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
 		</td>
 		<td class="controls">
-			<input type="button" value="[Tyhjennä]" ng-click="reset()"/>
-			<input type="button" value="[Hae]" ng-click="search()"/>
-			<input type="button" value="[Tulosta raportti]" ng-click="report()" disabled="true"/>
+			<input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
+			<input class="btn btn-primary" type="button" value="{{t('tarjonta.haku.hae')}}" ng-click="search()"/>
+		</td>
+		<td class="controls">
+			<input class="btn" type="button" value="{{t('tarjonta.haku.tulosta_raportti')}}" ng-click="report()" disabled="true"/>
 		</td>
 	
 	</tr>
 	</table>
 		
 	<div class="search">
-		<input type="text" ng-model="searchTerms"/>
+		<input type="text" ng-model="searchTerms" ng-enter="search()"/>
 	</div>
 	
 
@@ -51,10 +44,10 @@
 </div>
 
 <tabset>
-	<tab heading="Koulutukset">
+	<tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
 		// koulutukset
 	</tab>
-	<tab heading="Hakukohteet">
+	<tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
 		// hakukohteet
 	</tab>
 
