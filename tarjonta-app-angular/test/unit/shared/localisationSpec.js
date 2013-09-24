@@ -13,17 +13,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
+
+/**
+ * Tests for Localisation.
+ */
 describe('localisation', function() {
     beforeEach(module('localisation'));
 
     describe('LocalisationCtrl', function() {
         var scope, controller;
 
+        // Create controller with scope
         beforeEach(inject(function ($rootScope, $controller, $log) {
             scope = $rootScope.$new();
             controller = $controller("LocalisationCtrl", { $scope: scope});
         }));
 
+        // When an unknown translation is referred to - a "["+key+"]" value should be returned
         it('unknown keys should be wrapped to []', inject(function() {
             var key1 = "this.is.a.test";
             expect(scope.t(key1)).toEqual("[" + key1 + "]");
@@ -31,27 +37,6 @@ describe('localisation', function() {
             var key2 = "this.is.a.test.too";
             expect(scope.t(key2)).toEqual("[" + key2 + "]");
         }));
-
-
-//        it('known translation should be returned', inject(function() {
-//
-//            var key = "tarjonta.organisaationHaku.hae";
-//            var data = {
-//                "key": key,
-//                "locale": "fi",
-//                "value": "Tee haku",
-//                "values": {
-//                    "fi": "Tee haku",
-//                    "en": "Perform the search",
-//                    "sv": "Sök - sök!"
-//                }
-//            };
-//
-//            scope.locale = "fi";
-//            scope.localisations[key] = data;
-//
-//            expect(scope.t(key)).toEqual("Tee haku");
-//        }));
 
     });
 });
