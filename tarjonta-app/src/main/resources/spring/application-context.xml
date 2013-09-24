@@ -23,7 +23,7 @@
       Load configuration settings
     -->
     <context:property-placeholder
-        location="classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
+        location="classpath:tarjonta-rest.properties, classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
         ignore-resource-not-found="true" properties-ref="defaultProps" />
 
     <!--
@@ -92,5 +92,4 @@
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
     <import resource="tarjonta-cache-context.xml"/>
-
 </beans>
