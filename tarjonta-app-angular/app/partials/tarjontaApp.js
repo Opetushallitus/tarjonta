@@ -38,6 +38,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider
+        
+        		// tarjontatiedon haku
+        		.when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
+        
                 .when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
 
                 .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})

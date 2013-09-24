@@ -3,3 +3,50 @@
 .nav, .pagination, .carousel a {
     cursor: pointer;
 }
+
+.float-left {
+	float:left;	
+}
+
+.float-right {
+	float:right;	
+}
+
+/* tarjonnan hakunäkymä */
+
+div#searchSpec {
+	height:96px;
+	position:relative;
+}
+
+div#searchSpec > div.title {
+}
+
+div#searchSpec > div.title > span {
+	font-size:150%;
+	font-weight:bold;	
+}
+
+div#searchSpec > table.spec {
+	position:absolute;
+	right:0;
+	bottom:0;
+	max-width:80%;
+}
+
+div#searchSpec > table.spec th {
+	text-align:left;	
+}
+
+div#searchSpec > div.search {
+	position:absolute;
+	left:0;
+	bottom:0;
+	width:20%;
+}
+
+div#searchSpec > div.search > input {
+	width:100%;
+}
+
+
