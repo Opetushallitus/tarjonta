@@ -31,7 +31,7 @@ var CAS_URL = "cas_myroles.json";
 
 // var ORGANISAATIO_URL_BASE = "xxx";
 
-app.factory('MyRolesModel', function($http) {
+app.factory('MyRolesModel', function($http, $log) {
 
     console.log("MyRolesModel()");
 

@@ -34,6 +34,7 @@ angular.module('app',
             'zippy'
         ]);
 
+
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
@@ -73,9 +74,19 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     templateUrl: 'partials/kk/review/review.html',
                     controller: 'KKReviewController'
                 })
-        		
-        		.when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
-        		
+
+                .when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
+
                 .otherwise({redirectTo: '/view1'});
 
     }]);
+
+
+
+
+//
+// "Production" mode
+//
+//angular.module('app').config(function($logProvider) {
+//    $logProvider.debugEnabled(false);
+//});
