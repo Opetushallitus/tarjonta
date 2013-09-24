@@ -18,7 +18,7 @@ app.controller('KoodistoTestController', function($scope,$route) {
 
 
 
-
+   $scope.selectedKoodis = [];
 
     $scope.koodistofilter='hakukohteet';
 
@@ -42,6 +42,10 @@ app.controller('KoodistoTestController', function($scope,$route) {
       console.log($scope.parenturi);
 
 
+    };
+
+    $scope.testit = function() {
+      alert ($scope.selectedKoodis);
     };
 
 

@@ -31,6 +31,7 @@ angular.module('app',
             'localisation',
             'Koodisto',
             'KoodistoCombo',
+            'KoodistoMultiSelect',
             'zippy'
         ]);
 
