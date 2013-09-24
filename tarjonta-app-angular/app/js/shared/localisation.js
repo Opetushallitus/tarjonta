@@ -48,8 +48,8 @@ app.factory('Localisation', function($resource) {
  * LocalisationService.t("this.is.the.key")  == localized value
  * </pre>
  */
-app.service('LocalisationService', function(Localisation) {
-    console.log("LocalisationService()");
+app.service('LocalisationService', function(Localisation, $log) {
+    $log.debug("LocalisationService()");
 
     // Singleton state
     this.locale = "fi";
@@ -60,21 +60,21 @@ app.service('LocalisationService', function(Localisation) {
 
     var service = this;
 
-    console.log("  loading()... ");
+    $log.debug("  loading()... ");
     Localisation.query(function(data) {
-        console.log("*********************  loading()... done: " + data);
+        $log.debug("*********************  loading()... done: " + data);
         service.localisationData = data;
 
         for (key in data) {
-            console.log(" key = " + key);
+            $log.debug(" key = " + key);
 
             var v = service.localisationData[key];
 
             if (v != undefined && v.value != undefined) {
-                console.log("SAVE: " + key + " --> " + v.value);
+                $log.debug("SAVE: " + key + " --> " + v.value);
                 service.localisations[key] = v.value;
             } else {
-                console.log("SKIPPING: " + key + " --> " + v.value);
+                $log.debug("SKIPPING: " + key + " --> " + v.value);
             }
         }
 
@@ -104,7 +104,7 @@ app.service('LocalisationService', function(Localisation) {
             }
         } else {
             // Unknown translation, maybe create placeholder for it?
-            console.log("UNKNOWN TRANSLATION: " + key);
+            $log.debug("UNKNOWN TRANSLATION: " + key);
 
             // TODO Fake "creation", really call service to create the translation placeholder for real
             v = {
@@ -116,7 +116,7 @@ app.service('LocalisationService', function(Localisation) {
             result = v.value;
         }
 
-        console.log("getTranslation(" + key + ") --> " + result);
+        $log.debug("getTranslation(" + key + ") --> " + result);
         return result;
     };
 
@@ -130,12 +130,12 @@ app.service('LocalisationService', function(Localisation) {
  * LocalisationCtrl - a localisation controller.
  * An easy way to bind "t" function to gobal scope.
  */
-app.controller('LocalisationCtrl', function($scope, LocalisationService) {
-    console.log("LocalisationCtrl()");
+app.controller('LocalisationCtrl', function($scope, LocalisationService, $log) {
+    $log.debug("LocalisationCtrl()");
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        console.log("LocalisationCtrl.t");
+        $log.debug("t(): " + key  + ", " + params);
         return LocalisationService.t(key, params);
     };
 });
