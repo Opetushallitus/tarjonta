@@ -1,16 +1,31 @@
-<div ng-controller="SelectTutkintoOhjelmaController">
-Valitse tutkinto-ohjelma
-<table class="table table-bordered">
-
+<div>
+    <div class="modal-header">
+        <h3>Valitse tutkinto-ohjelma</h3>
+    </div>
     
+    <div class="modal-body">
     
-    <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
-    <tr ng-class="{true: 'active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'light-gray'" ng-class-odd="'dark-gray'">
-        <td>{{hakutulos.tkKoodi}}</td>
-        <td>{{hakutulos.nimi}}</td>
-        <!--<td>{{hakutulos.uri}}</td>-->
-    </tr>
-    <!-- </tbody>-->
-</table>
+        <h4>Tekstihaku</h4>
+        <div>
+            <input type="text" data-ng-model="stoModel.hakulause" />
+            <button class="btn btn-warning" ng-click="clearCriteria()">Tyhjennä</button>
+            <button class="btn btn-primary" ng-click="searchTutkinnot()">Hae</button>
+        </div>
+        
+        <h4>Hakutulokset</h4>
+        <table class="table table-bordered">
+    
+            <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
+                <tr ng-class="{true: 'active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'light-gray'" ng-class-odd="'dark-gray'">
+                    <td>{{hakutulos.tkKoodi}}</td>
+                    <td>{{hakutulos.nimi}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()">Peruuta</button>
+        <button class="btn btn-primary" ng-click="ok()">Jatka</button>
+    </div>
 
 </div>

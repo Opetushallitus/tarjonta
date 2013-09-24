@@ -74,8 +74,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KKReviewController'
                 })
         		
-        		.when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html'})
-
+        		.when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
+        		
                 .otherwise({redirectTo: '/view1'});
 
     }]);
