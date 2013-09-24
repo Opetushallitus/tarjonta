@@ -123,7 +123,7 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview' ])
 
 	//"organisaatioservice"
 	.factory('organisaatioService', function ($resource, $log, $q) {
-		var OrganisaatioService = $resource('http://127.0.0.1:7003/organisaatio-service/rest/organisaatio/hae?searchStr=:query');
+		var OrganisaatioService = $resource('https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/hae?searchStr=:query');
 		
    return {
 	   
