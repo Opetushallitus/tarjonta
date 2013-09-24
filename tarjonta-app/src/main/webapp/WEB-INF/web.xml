@@ -25,6 +25,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:spring/application-context.xml</param-value>
     </context-param>
+    
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -155,7 +156,21 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-
+    
+    <servlet>
+        <servlet-name>configuration-rest-servlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/rest-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>configuration-rest-servlet</servlet-name>
+        <url-pattern>/tarjontaapp/rest/*</url-pattern>
+    </servlet-mapping>
+     
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
@@ -184,6 +199,8 @@
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
+    
+ 
 
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>

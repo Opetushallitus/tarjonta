@@ -181,8 +181,8 @@ public class HakuResourceImpl implements HakuResource {
 
         LOG.debug("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
 
-        final String kieliAvain = StringUtils.upperCase("fi"); // TODO: lisää
-                                                               // rajapintaan
+        final String kieliAvain = "fi"; // TODO: lisää
+                                        // rajapintaan
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
@@ -221,11 +221,10 @@ public class HakuResourceImpl implements HakuResource {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (kieliAvain.equals(StringUtils.upperCase(teksti.getKieliKoodi()))) {
+                        if (teksti.getKieliKoodi().contains(kieliAvain)) {
                             return StringUtils.upperCase(teksti.getValue());
                         }
                     }
-                    LOG.debug("Avain {} doesnt match any languages!", kieliAvain);
                     return StringUtils.EMPTY;
                 }
 

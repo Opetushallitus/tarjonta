@@ -4,6 +4,18 @@
     cursor: pointer;
 }
 
+.light-gray{
+	background-color: rgba(248,248,248,1);
+}
+
+.dark-gray{
+	background-color: rgba(112,112,112,1)
+}
+
+.active{
+    background-color: rgba(255,0,0,1);
+}
+
 .float-left {
 	float:left;	
 }
@@ -63,5 +75,3 @@ div#searchSpec > div.search > input {
 	position:relative;
 	top:-1px;
 }
-
-

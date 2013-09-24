@@ -63,7 +63,7 @@ HttpServer.prototype.handleRequest_ = function(req, res) {
     res.end();
   } else {
     handler.call(this, req, res);
-  }
+  };
 };
 
 /**
@@ -82,7 +82,7 @@ StaticServlet.MimeMap = {
   'jpeg': 'image/jpeg',
   'gif': 'image/gif',
   'png': 'image/png',
-  'svg': 'image/svg+xml'
+  'svg': 'image/svg+xml'
 };
 
 StaticServlet.prototype.handleRequest = function(req, res) {
@@ -169,7 +169,10 @@ StaticServlet.prototype.sendFile_ = function(req, res, path) {
   var file = fs.createReadStream(path);
   res.writeHead(200, {
     'Content-Type': StaticServlet.
-      MimeMap[path.split('.').pop()] || 'text/plain'
+      MimeMap[path.split('.').pop()] || 'text/plain',
+    'Cache-Control': 'no-cache, must-revalidate',
+    'Pragma':'no-cache',
+    'Expires': 'Sat, 26 Jul 1997 05:00:00 GMT'
   });
   if (req.method === 'HEAD') {
     res.end();
@@ -181,7 +184,7 @@ StaticServlet.prototype.sendFile_ = function(req, res, path) {
     file.on('error', function(error) {
       self.sendError_(req, res, error);
     });
-  }
+  };
 };
 
 StaticServlet.prototype.sendDirectory_ = function(req, res, path) {
