@@ -25,6 +25,10 @@ describe('localisation', function() {
 
         // Create controller with scope
         beforeEach(inject(function ($rootScope, $controller, $log) {
+            $log.debug = function(args) {
+              $log.info(args);
+            };
+
             scope = $rootScope.$new();
             controller = $controller("LocalisationCtrl", { $scope: scope});
         }));
