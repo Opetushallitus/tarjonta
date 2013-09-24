@@ -1445,24 +1445,55 @@ public class SVTUtils {
 
     public void menuOperaatioMenuLuonnos(WebDriver driver, WebElement menu, String operaatio)
     {
-    	menu.click();
+    	if (! this.isPresentText(driver, "Tarkastele")) { menu.click(); }
     	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     	tauko(1);
     	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
-    	if (! this.isPresentText(driver, htmlOperaatio))
+    	int count = 0;
+    	while (! this.isPresentText(driver, htmlOperaatio))
     	{
     		// avataan menu uudestaan
     		WebElement menu2 = this.getMenuNearestText(driver, "luonnos"); 
     		menu2.click();
     		tauko(1);
-    		WebElement menu3 = this.getMenuNearestText(driver, "luonnos"); 
-    		menu3.click();
-    		tauko(1);
+    		menuWakeLuonnos(driver, htmlOperaatio);
     		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
-    		tauko(1);
+    		count++;
+    		if (count > 30)
+    		{
+    			Assert.assertTrue("Operaatio " + operaatio + "ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+    			tauko(1);
+    		}
     	}
     	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+    
+    public void menuWakeLuonnos(WebDriver driver, String htmlOperaatio)
+    {
+    	int counter = 0;
+		while (! this.isPresentText(driver, htmlOperaatio))
+		{
+			WebElement menu3 = this.getMenuNearestText(driver, "luonnos"); 
+			//    		menu3.click();
+			tauko(1);
+			menuOpen(driver, menu3);
+			tauko(1);
+			WebElement menu4 = this.getMenuNearestText(driver, "luonnos"); 
+			menu4.click();
+			counter++;
+			if (counter > 30) 
+			{ 
+				this.echo("ERROR: Menun aukaisu ei onnistu. (luonnos)");
+				return; 
+			}
+		}
+    }
+    
+    public void menuOpen(WebDriver driver, WebElement element)
+    {
+    	Actions builder = new Actions(driver);
+    	Actions moveNow = builder.moveToElement(element, 2, 2).click(element).click(element).clickAndHold(element).release(element);
+    	moveNow.perform();
     }
 
     public void sendInput(WebDriver driver, String label, String value)
@@ -1854,7 +1885,7 @@ public class SVTUtils {
     {
     	String millis = System.currentTimeMillis() + "";
     	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-    	comment = comment.replace(" ", "_").replace("-", "_");
+    	comment = comment.replace(" ", "_").replace("-", "_").replace(":", "_");
     	String fileName = System.getProperty("user.home") + "/screenshot_" + comment + "_" + millis + ".png";
     	try {
 			FileUtils.copyFile(scrFile, new File(fileName));

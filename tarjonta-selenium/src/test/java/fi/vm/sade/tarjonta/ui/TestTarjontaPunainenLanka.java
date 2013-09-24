@@ -357,17 +357,17 @@ public class TestTarjontaPunainenLanka {
     //TC0804	Muokkaa koulutusta
     @Test
     public void testTC0804() throws Exception {
-    	try {
-    		testTC0804loop();
-    	} catch (Exception e) {
-    		try {
-    			doit.printMyStackTrace(e);
-    			testTC0804loop();
-    		} catch (Exception e2) {
-    			doit.printMyStackTrace(e2);
-    			testTC0804loop();
-    		}
-    	}
+		try {
+			testTC0804loop();
+		} catch (Exception e) {
+			try {
+				doit.printMyStackTrace(e);
+				testTC0804loop();
+			} catch (Exception e2) {
+				doit.printMyStackTrace(e2);
+				testTC0804loop();
+			}
+		}
     }
 
     public void testTC0804loop() throws Exception {
@@ -488,7 +488,20 @@ public class TestTarjontaPunainenLanka {
 		Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Hae ei toimi."
 				, doit.textElement(driver, nimi));
         doit.tauko(1);
-		
+        
+        // POISTA LUOTU HAKU
+        doit.menuOperaatio(driver, "Poista", nimi);
+		Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Haun poisto ei toimi."
+				, doit.textElement(driver, "Haluatko varmasti poistaa alla mainitun haun"));
+        doit.textClick(driver, "Jatka");
+        doit.tauko(1);
+        driver.navigate().refresh();
+        doit.tauko(1);
+        if (doit.isPresentText(driver, nimi)) 
+        { 	
+        	Assert.assertNull("Running TarjontaPunainenLanka TC0807 Haun poisto ei toimi."
+				, doit.textElement(driver, nimi));
+        }
     	doit.echo("SUCCESSFUL testTC0807");
     	TarjontaTapaukset.setKattavuus("TC0807", Kattavuus.KATTAVUUSOK);
     }
@@ -723,8 +736,8 @@ public class TestTarjontaPunainenLanka {
         doit.sendInput(driver, "Hakijoille ilmoitettavat aloituspaikat", ilmoitettavat);
         doit.sendInput(driver, "Valinnoissa käytettävät aloituspaikat", "10");
         
-        doit.sendInputPlusX(driver, "Alku:", "31.07.2014 15:24", 20);
-        doit.sendInput(driver, "Loppu:", "30.09.2014 15:24");
+//        doit.sendInputPlusX(driver, "Alku:", "31.07.2014 15:24", 20);
+//        doit.sendInput(driver, "Loppu:", "30.09.2014 15:24");
         
         // Tallenna
         doit.textClick(driver, "Tallenna luonnoksena");
@@ -772,17 +785,17 @@ public class TestTarjontaPunainenLanka {
     //  TC0812	Muokkaa hakukohdetta 
     @Test
     public void testTC0812() throws Exception {
-    	try {
-    		testTC0812loop();
-    	} catch (Exception e) {
-    		try {
-    			doit.printMyStackTrace(e);
-    			testTC0812loop();
-    		} catch (Exception e2) {
-    			doit.printMyStackTrace(e2);
-    			testTC0812loop();
-    		}
-    	}
+		try {
+			testTC0812loop();
+		} catch (Exception e) {
+			try {
+				doit.printMyStackTrace(e);
+				testTC0812loop();
+			} catch (Exception e2) {
+				doit.printMyStackTrace(e2);
+				testTC0812loop();
+			}
+		}
     }
 
     public void testTC0812loop() throws Exception {
@@ -821,7 +834,7 @@ public class TestTarjontaPunainenLanka {
         doit.tauko(1);
         
         // Tallenna
-        doit.textClick(driver, "Tallenna valmiina");
+        doit.textClick(driver, "Tallenna luonnoksena");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0812 Tallenna ei toimi."
                         , doit.textElement(driver, "Tallennus onnistui"));
 
