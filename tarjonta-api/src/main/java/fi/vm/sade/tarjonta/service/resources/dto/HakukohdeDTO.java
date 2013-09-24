@@ -20,14 +20,17 @@ import java.util.Map;
 
 /**
  * REST DTO for Hakukohde. (Application Option)
- *
+ * 
  * @author mlyly
  */
 public class HakukohdeDTO extends BaseRDTO {
 
-	private static final long serialVersionUID = 1L;
-	
-	private String _hakuOid;
+    private static final long serialVersionUID = 1L;
+
+    private Map<String, String> _tarjoajaNimi;
+    private Map<String, String> _hakukohdeNimi;
+    private String _tarjoajaOid;
+    private String _hakuOid;
     private double _alinHyvaksyttavaKeskiarvo;
     private int _alinValintaPistemaara;
     private int _aloituspaikatLkm;
@@ -57,7 +60,7 @@ public class HakukohdeDTO extends BaseRDTO {
 
     // NOTE: this is deducted from the komotos this hakukohde is nailed to
     private List<String> _opetuskielet;
-    
+
     public String getHakuOid() {
         return _hakuOid;
     }
@@ -259,27 +262,50 @@ public class HakukohdeDTO extends BaseRDTO {
     }
 
     public Date getHakuaikaAlkuPvm() {
-		return _hakuaikaAlkuPvm;
-	}
-    
+        return _hakuaikaAlkuPvm;
+    }
+
     public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
-		this._hakuaikaAlkuPvm = hakuaikaAlkuPvm;
-	}
-    
+        this._hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+    }
+
     public Date getHakuaikaLoppuPvm() {
-		return _hakuaikaLoppuPvm;
-	}
-    
+        return _hakuaikaLoppuPvm;
+    }
+
     public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
-		this._hakuaikaLoppuPvm = hakuaikaLoppuPvm;
-	}
-    
-    public void setKaytetaanHakukohdekohtaistaHakuaikaa(
-			boolean _kaytetaanHakukohdekohtaistaHakuaikaa) {
-		this._kaytetaanHakukohdekohtaistaHakuaikaa = _kaytetaanHakukohdekohtaistaHakuaikaa;
-	}
-    
+        this._hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+    }
+
+    public void setKaytetaanHakukohdekohtaistaHakuaikaa(boolean _kaytetaanHakukohdekohtaistaHakuaikaa) {
+        this._kaytetaanHakukohdekohtaistaHakuaikaa = _kaytetaanHakukohdekohtaistaHakuaikaa;
+    }
+
     public boolean isKaytetaanHakukohdekohtaistaHakuaikaa() {
-		return _kaytetaanHakukohdekohtaistaHakuaikaa;
-	}
+        return _kaytetaanHakukohdekohtaistaHakuaikaa;
+    }
+
+    public String getTarjoajaOid() {
+        return _tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this._tarjoajaOid = tarjoajaOid;
+    }
+
+    public Map<String, String> getHakukohdeNimi() {
+        return _hakukohdeNimi;
+    }
+
+    public void setHakukohdeNimi(Map<String, String> hakukohdeNimi) {
+        this._hakukohdeNimi = hakukohdeNimi;
+    }
+
+    public Map<String, String> getTarjoajaNimi() {
+        return _tarjoajaNimi;
+    }
+
+    public void setTarjoajaNimi(Map<String, String> tarjoajaNimi) {
+        this._tarjoajaNimi = tarjoajaNimi;
+    }
 }
