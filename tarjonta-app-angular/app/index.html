@@ -43,6 +43,9 @@
         <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
 
         <script src="partials/tarjontaApp.js"></script>
+        <script src="partials/organisaatio/organisaatiohaku.js"></script>
+        <script src="partials/organisaatio/angular.treeview.js"></script>
+        
 
         <!-- Le styles -->
 <!--
@@ -69,18 +72,20 @@
 -->
 
         <link rel="stylesheet" href="css/app.css"/>
+        <link rel="stylesheet" href="css/tree.css"/>
     </head>
     <body>
-        <div class="container-fluid">
+    <!--     <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span3 sidebar-nav well">
                     sidebar
                 </div>
-                <div class="span9">
+                <div class="span9"> -->
                     <div data-ng-view></div>
-                </div>
+                <!--  </div>
             </div>
         </div>
+        -->
 
         <div data-ng-controller="LoadingCtrl"
              data-ng-show="loading"
