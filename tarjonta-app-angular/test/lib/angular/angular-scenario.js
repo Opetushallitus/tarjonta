@@ -67,7 +67,7 @@ var jQuery = function( selector, context ) {
 	rdashAlpha = /-([a-z]|[0-9])/ig,
 	rmsPrefix = /^-ms-/,
 
-	// Used by jQuery.camelCase as callback to replace()
+	// Used by jQuery.camelCase as onchangecallback to replace()
 	fcamelCase = function( all, letter ) {
 		return ( letter + "" ).toUpperCase();
 	},
@@ -265,7 +265,7 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	// Execute a callback for every element in the matched set.
+	// Execute a onchangecallback for every element in the matched set.
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
@@ -276,7 +276,7 @@ jQuery.fn = jQuery.prototype = {
 		// Attach the listeners
 		jQuery.bindReady();
 
-		// Add the callback
+		// Add the onchangecallback
 		readyList.add( fn );
 
 		return this;
@@ -458,7 +458,7 @@ jQuery.extend({
 
 		// Mozilla, Opera and webkit nightlies currently support this event
 		if ( document.addEventListener ) {
-			// Use the handy event callback
+			// Use the handy event onchangecallback
 			document.addEventListener( "DOMContentLoaded", DOMContentLoaded, false );
 
 			// A fallback to window.onload, that will always work
@@ -999,25 +999,25 @@ function createFlags( flags ) {
 }
 
 /*
- * Create a callback list using the following parameters:
+ * Create a onchangecallback list using the following parameters:
  *
  *	flags:	an optional list of space-separated flags that will change how
- *			the callback list behaves
+ *			the onchangecallback list behaves
  *
- * By default a callback list will act like an event callback list and can be
+ * By default a onchangecallback list will act like an event onchangecallback list and can be
  * "fired" multiple times.
  *
  * Possible flags:
  *
- *	once:			will ensure the callback list can only be fired once (like a Deferred)
+ *	once:			will ensure the onchangecallback list can only be fired once (like a Deferred)
  *
- *	memory:			will keep track of previous values and will call any callback added
+ *	memory:			will keep track of previous values and will call any onchangecallback added
  *					after the list has been fired right away with the latest "memorized"
  *					values (like a Deferred)
  *
- *	unique:			will ensure a callback can only be added once (no duplicate in the list)
+ *	unique:			will ensure a onchangecallback can only be added once (no duplicate in the list)
  *
- *	stopOnFalse:	interrupt callings when a callback returns false
+ *	stopOnFalse:	interrupt callings when a onchangecallback returns false
  *
  */
 jQuery.Callbacks = function( flags ) {
@@ -1026,7 +1026,7 @@ jQuery.Callbacks = function( flags ) {
 	// (we check in cache first)
 	flags = flags ? ( flagsCache[ flags ] || createFlags( flags ) ) : {};
 
-	var // Actual callback list
+	var // Actual onchangecallback list
 		list = [],
 		// Stack of fire calls for repeatable lists
 		stack = [],
@@ -1036,11 +1036,11 @@ jQuery.Callbacks = function( flags ) {
 		fired,
 		// Flag to know if list is currently firing
 		firing,
-		// First callback to fire (used internally by add and fireWith)
+		// First onchangecallback to fire (used internally by add and fireWith)
 		firingStart,
 		// End of the loop when firing
 		firingLength,
-		// Index of currently firing callback (modified by remove if needed)
+		// Index of currently firing onchangecallback (modified by remove if needed)
 		firingIndex,
 		// Add one or several callbacks to the list
 		add = function( args ) {
@@ -1056,7 +1056,7 @@ jQuery.Callbacks = function( flags ) {
 					// Inspect recursively
 					add( elem );
 				} else if ( type === "function" ) {
-					// Add if not in unique mode and callback is not in
+					// Add if not in unique mode and onchangecallback is not in
 					if ( !flags.unique || !self.has( elem ) ) {
 						list.push( elem );
 					}
@@ -1094,7 +1094,7 @@ jQuery.Callbacks = function( flags ) {
 		},
 		// Actual Callbacks object
 		self = {
-			// Add a callback or a collection of callbacks to the list
+			// Add a onchangecallback or a collection of callbacks to the list
 			add: function() {
 				if ( list ) {
 					var length = list.length;
@@ -1113,7 +1113,7 @@ jQuery.Callbacks = function( flags ) {
 				}
 				return this;
 			},
-			// Remove a callback from the list
+			// Remove a onchangecallback from the list
 			remove: function() {
 				if ( list ) {
 					var args = arguments,
@@ -1144,7 +1144,7 @@ jQuery.Callbacks = function( flags ) {
 				}
 				return this;
 			},
-			// Control if a given callback is in the list
+			// Control if a given onchangecallback is in the list
 			has: function( fn ) {
 				if ( list ) {
 					var i = 0,
@@ -7146,7 +7146,7 @@ jQuery.fn.extend({
 		if ( params ) {
 			// If it's a function
 			if ( jQuery.isFunction( params ) ) {
-				// We assume that it's the callback
+				// We assume that it's the onchangecallback
 				callback = params;
 				params = undefined;
 
@@ -7165,7 +7165,7 @@ jQuery.fn.extend({
 			type: type,
 			dataType: "html",
 			data: params,
-			// Complete callback (responseText is used internally)
+			// Complete onchangecallback (responseText is used internally)
 			complete: function( jqXHR, status, responseText ) {
 				// Store the response as specified by the jqXHR object
 				responseText = jqXHR.responseText;
@@ -7974,7 +7974,7 @@ var jsc = jQuery.now(),
 
 // Default jsonp settings
 jQuery.ajaxSetup({
-	jsonp: "callback",
+	jsonp: "onchangecallback",
 	jsonpCallback: function() {
 		return jQuery.expando + "_" + ( jsc++ );
 	}
@@ -8004,7 +8004,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 					data = data.replace( jsre, replace );
 				}
 				if ( s.data === data ) {
-					// Add callback manually
+					// Add onchangecallback manually
 					url += (/\?/.test( url ) ? "&" : "?") + s.jsonp + "=" + jsonpCallback;
 				}
 			}
@@ -8013,14 +8013,14 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 		s.url = url;
 		s.data = data;
 
-		// Install callback
+		// Install onchangecallback
 		window[ jsonpCallback ] = function( response ) {
 			responseContainer = [ response ];
 		};
 
 		// Clean-up function
 		jqXHR.always(function() {
-			// Set callback back to previous value
+			// Set onchangecallback back to previous value
 			window[ jsonpCallback ] = previous;
 			// Call if it was a function and we have a response
 			if ( responseContainer && jQuery.isFunction( previous ) ) {
@@ -8328,7 +8328,7 @@ if ( jQuery.support.ajax ) {
 
 					// if we're in sync mode or it's in cache
 					// and has been retrieved directly (IE6 & IE7)
-					// we need to manually fire the callback
+					// we need to manually fire the onchangecallback
 					if ( !s.async || xhr.readyState === 4 ) {
 						callback();
 					} else {
@@ -9667,9 +9667,9 @@ function inherit(parent, extra) {
  * A function that performs no operations. This function can be useful when writing code in the
  * functional style.
    <pre>
-     function foo(callback) {
+     function foo(onchangecallback) {
        var result = calculateResult();
-       (callback || angular.noop)(result);
+       (onchangecallback || angular.noop)(result);
      }
    </pre>
  */
@@ -12586,7 +12586,7 @@ function Browser(window, document, $log, $sniffer) {
    * @TODO(vojta): refactor to use node's syntax for events
    *
    * @description
-   * Register callback function that will be called, when url changes.
+   * Register onchangecallback function that will be called, when url changes.
    *
    * It's only called when the url is changed by outside of angular:
    * - user types different url into address bar
@@ -16086,7 +16086,7 @@ function $ParseProvider() {
  * [guarantees that promise and deferred APIs make](https://github.com/kriskowal/uncommonjs/blob/master/promises/specification.md).
  *
  * Additionally the promise api allows for composition that is very hard to do with the
- * traditional callback ([CPS](http://en.wikipedia.org/wiki/Continuation-passing_style)) approach.
+ * traditional onchangecallback ([CPS](http://en.wikipedia.org/wiki/Continuation-passing_style)) approach.
  * For more on this please see the [Q documentation](https://github.com/kriskowal/q) especially the
  * section on serial or parallel joining of promises.
  *
@@ -16305,7 +16305,7 @@ function qFactory(nextTick, exceptionHandler) {
    *
    * When comparing deferreds/promises to the familiar behavior of try/catch/throw, think of
    * `reject` as the `throw` keyword in JavaScript. This also means that if you "catch" an error via
-   * a promise error callback and you want to forward the error to the promise derived from the
+   * a promise error onchangecallback and you want to forward the error to the promise derived from the
    * current promise, you have to "rethrow" the error by returning a rejection constructed via
    * `reject`.
    *
@@ -17161,7 +17161,7 @@ function $RootScopeProvider(){
        * @function
        *
        * @description
-       * Registers a `listener` callback to be executed whenever the `watchExpression` changes.
+       * Registers a `listener` onchangecallback to be executed whenever the `watchExpression` changes.
        *
        * - The `watchExpression` is called on every call to {@link ng.$rootScope.Scope#$digest $digest()} and
        *   should return the value which will be watched. (Since {@link ng.$rootScope.Scope#$digest $digest()}
@@ -18013,7 +18013,7 @@ function $HttpProvider() {
      * <pre>
      *   $http({method: 'GET', url: '/someUrl'}).
      *     success(function(data, status, headers, config) {
-     *       // this callback will be called asynchronously
+     *       // this onchangecallback will be called asynchronously
      *       // when the response is available
      *     }).
      *     error(function(data, status, headers, config) {
@@ -18028,8 +18028,8 @@ function $HttpProvider() {
      * details.
      *
      * A response status code between 200 and 299 is considered a success status and
-     * will result in the success callback being called. Note that if the response is a redirect,
-     * XMLHttpRequest will transparently follow it, meaning that the error callback will not be
+     * will result in the success onchangecallback being called. Note that if the response is a redirect,
+     * XMLHttpRequest will transparently follow it, meaning that the error onchangecallback will not be
      * called for such responses.
      *
      * # Shortcut methods
@@ -18237,7 +18237,7 @@ function $HttpProvider() {
      *
      * @returns {HttpPromise} Returns a {@link ng.$q promise} object with the
      *   standard `then` method and two http specific methods: `success` and `error`. The `then`
-     *   method takes two arguments a success and an error callback which will be called with a
+     *   method takes two arguments a success and an error onchangecallback which will be called with a
      *   response object. The `success` and `error` methods take a single argument - a function that
      *   will be called when the request succeeds or fails respectively. The arguments passed into
      *   these functions are destructured representation of the response object passed into the
@@ -18263,8 +18263,8 @@ function $HttpProvider() {
             <input type="text" ng-model="url" size="80"/>
             <button ng-click="fetch()">fetch</button><br>
             <button ng-click="updateModel('GET', 'http-hello.html')">Sample GET</button>
-            <button ng-click="updateModel('JSONP', 'http://angularjs.org/greet.php?callback=JSON_CALLBACK&name=Super%20Hero')">Sample JSONP</button>
-            <button ng-click="updateModel('JSONP', 'http://angularjs.org/doesntexist&callback=JSON_CALLBACK')">Invalid JSONP</button>
+            <button ng-click="updateModel('JSONP', 'http://angularjs.org/greet.php?onchangecallback=JSON_CALLBACK&name=Super%20Hero')">Sample JSONP</button>
+            <button ng-click="updateModel('JSONP', 'http://angularjs.org/doesntexist&onchangecallback=JSON_CALLBACK')">Invalid JSONP</button>
             <pre>http status code: {{status}}</pre>
             <pre>http response data: {{data}}</pre>
           </div>
@@ -24733,7 +24733,7 @@ angular.scenario.Application.prototype.navigateTo = function(url, loadFn, errorF
  * Executes a function in the context of the tested application. Will wait
  * for all pending angular xhr requests before executing.
  *
- * @param {function()} action The callback to execute. function($window, $document)
+ * @param {function()} action The onchangecallback to execute. function($window, $document)
  *  $document is a jQuery wrapped document.
  */
 angular.scenario.Application.prototype.executeAction = function(action) {
@@ -24919,7 +24919,7 @@ angular.scenario.Describe.prototype.getSpecs = function() {
  * A future action in a spec.
  *
  * @param {string} name of the future action
- * @param {function()} future callback(error, result)
+ * @param {function()} future onchangecallback(error, result)
  * @param {function()} Optional. function that returns the file/line number.
  */
 angular.scenario.Future = function(name, behavior, line) {

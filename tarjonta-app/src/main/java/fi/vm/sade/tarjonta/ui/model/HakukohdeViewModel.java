@@ -36,7 +36,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String osoiteRivi2 = "";
     private String postinumero;
     private String postitoimipaikka = "";
-    private List<KielikaannosViewModel> valintaPerusteidenKuvaus;
+    private LinkitettyTekstiModel valintaPerusteidenKuvaus;
+    private LinkitettyTekstiModel soraKuvaus;
     private List<KielikaannosViewModel> lisatiedot;
     private List<String> komotoOids;
     private List<KoulutusOidNameViewModel> koulukses;
@@ -92,7 +93,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         setValinnoissaKaytettavatPaikat(0);
         setTila(TarjontaTila.LUONNOS);
         setHakuViewModel(null);
-        this.valintaPerusteidenKuvaus = Lists.<KielikaannosViewModel>newArrayList();
+        this.valintaPerusteidenKuvaus = new LinkitettyTekstiModel();
+        soraKuvaus = new LinkitettyTekstiModel();
         this.lisatiedot = Lists.<KielikaannosViewModel>newArrayList();
         this.koulukses = Lists.<KoulutusOidNameViewModel>newArrayList();
         this.liites = Lists.<HakukohdeLiiteViewModel>newArrayList();
@@ -196,7 +198,9 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         .append(selectedHakukohdeNimi)
         .append(alinHyvaksyttavaKeskiarvo)
         .append(viimeisinPaivittaja)
-        .append(viimeisinPaivitysPvm);
+        .append(viimeisinPaivitysPvm)
+        .append(soraKuvaus)
+        .append(valintaPerusteidenKuvaus);
         
         if (lisatiedot != null) {
             for (KielikaannosViewModel curKaannos : lisatiedot) {
@@ -320,15 +324,28 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.hakukelpoisuusVaatimus = hakukelpoisuusVaatimus;
     }
 
-    /**
-     * @return the valintaPerusteidenKuvaus
-     */
-    public List<KielikaannosViewModel> getValintaPerusteidenKuvaus() {
-        if (valintaPerusteidenKuvaus == null) {
-            valintaPerusteidenKuvaus = new ArrayList<KielikaannosViewModel>();
-        }
-        return valintaPerusteidenKuvaus;
-    }
+    public LinkitettyTekstiModel getSoraKuvaus() {
+    	if (soraKuvaus==null) {
+    		soraKuvaus = new LinkitettyTekstiModel();
+    	}
+		return soraKuvaus;
+	}
+    
+    public void setSoraKuvaus(LinkitettyTekstiModel soraKuvaus) {
+		this.soraKuvaus = soraKuvaus;
+	}
+    
+    public LinkitettyTekstiModel getValintaPerusteidenKuvaus() {
+    	if (valintaPerusteidenKuvaus==null) {
+    		valintaPerusteidenKuvaus = new LinkitettyTekstiModel();
+    	}
+		return valintaPerusteidenKuvaus;
+	}
+    
+    public void setValintaPerusteidenKuvaus(
+			LinkitettyTekstiModel valintaPerusteidenKuvaus) {
+		this.valintaPerusteidenKuvaus = valintaPerusteidenKuvaus;
+	}
 
     /**
      * @return the lisatiedot

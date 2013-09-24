@@ -1,0 +1,33 @@
+
+/*
+ * AUTHOR: http://jsfiddle.net/Ftbkk/
+ */
+
+.zippy {
+    display: inline-block;
+}
+
+.zippy.opened > .title:before { content: '▼ '; }
+
+.zippy.opened > .body { display: block; }
+
+.zippy.closed > .title:before { content: '► '; }
+
+.zippy.closed > .body { display: none; }
+
+.zippy > .title {
+    background-color: gainsboro;
+    padding: .1em .3em;
+    cursor: pointer;
+}
+
+.zippy > .body {
+    padding: .5em .5em;
+}
+
+
+
+
+.collapsed_true > div.body:before {content: '▼ '; }
+
+.collapsed_false > div.body:before {content: '► '; }

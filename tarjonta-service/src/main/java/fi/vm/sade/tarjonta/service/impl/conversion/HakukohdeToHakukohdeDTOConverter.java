@@ -14,6 +14,20 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
@@ -27,28 +41,26 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
  * Conversion for the REST services.
- *
+ * 
  * @author mlyly
  */
 public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohde, HakukohdeDTO> {
 
     @SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
 
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
+
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
 
     @Override
     public HakukohdeDTO convert(Hakukohde s) {
@@ -57,10 +69,35 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setOid(s.getOid());
         t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : -1);
 
-        t.setAlinHyvaksyttavaKeskiarvo(s.getAlinHyvaksyttavaKeskiarvo() != null ? s.getAlinHyvaksyttavaKeskiarvo().doubleValue() : 0.0d);
+        // tarjoajaOid, tarjoajaNimi
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : s.getKoulutusmoduuliToteutuses()) {
+            if (koulutusmoduuliToteutus.getTarjoaja() != null) {
+                // Assumes that only one provider for koulutus - is this true?
+                String organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
+                t.setTarjoajaOid(organisaatioOid);
+                if (organisaatioOid != null) {
+                    OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
+                    if (organisaatio != null) {
+                        Map<String, String> map = new HashMap<String, String>();
+                        for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
+                            map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
+                                    teksti.getValue());
+                        }
+                        t.setTarjoajaNimi(map);
+                    }
+                }
+                break;
+            }
+        }
+        // hakukohdeNimi
+        t.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(s.getHakukohdeNimi()));
+
+        t.setAlinHyvaksyttavaKeskiarvo(s.getAlinHyvaksyttavaKeskiarvo() != null ? s.getAlinHyvaksyttavaKeskiarvo()
+                .doubleValue() : 0.0d);
         t.setAlinValintaPistemaara(s.getAlinValintaPistemaara() != null ? s.getAlinValintaPistemaara().intValue() : 0);
         t.setAloituspaikatLkm(s.getAloituspaikatLkm() != null ? s.getAloituspaikatLkm().intValue() : 0);
-        t.setEdellisenVuodenHakijatLkm(s.getEdellisenVuodenHakijat() != null ? s.getEdellisenVuodenHakijat().intValue() : 0);
+        t.setEdellisenVuodenHakijatLkm(s.getEdellisenVuodenHakijat() != null ? s.getEdellisenVuodenHakijat().intValue()
+                : 0);
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
         t.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
@@ -75,43 +112,47 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
         t.setValintakoes(convertValintakokeet(s.getValintakoes()));
 
-        t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm().intValue() : 0);
+        t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm()
+                .intValue() : 0);
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
 
         t.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
 
         t.setLiitteet(convertLiitteet(s.getLiites()));
 
-        if (s.getHakuaikaAlkuPvm()!=null && s.getHakuaikaLoppuPvm()!=null) {
-        	t.setKaytetaanHakukohdekohtaistaHakuaikaa(true);
+        if (s.getHakuaikaAlkuPvm() != null && s.getHakuaikaLoppuPvm() != null) {
+            t.setKaytetaanHakukohdekohtaistaHakuaikaa(true);
             t.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
             t.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
         } else {
-        	t.setKaytetaanHakukohdekohtaistaHakuaikaa(false);
-        	if (s.getHakuaika()!=null) {
+            t.setKaytetaanHakukohdekohtaistaHakuaikaa(false);
+            if (s.getHakuaika() != null) {
                 t.setHakuaikaAlkuPvm(s.getHakuaika().getAlkamisPvm());
                 t.setHakuaikaLoppuPvm(s.getHakuaika().getPaattymisPvm());
-        	}
+            }
         }
 
-        // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from koodisto)
+        // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from
+        // koodisto)
         {
             String uri = getTarjontaKoodistoHelper().getHakukelpoisuusvaatimusrymaUriForHakukohde(s.getHakukohdeNimi());
             t.setHakukelpoisuusvaatimusUri(uri);
             t.setHakukelpoisuusvaatimus(getTarjontaKoodistoHelper().getKoodiMetadataKuvaus(uri));
         }
 
-        // VALINTAPERUSTEKUVAUS DESCRIPTION (relation from koodisto, data from metadata)
+        // VALINTAPERUSTEKUVAUS DESCRIPTION (relation from koodisto, data from
+        // metadata)
         {
             String uri = getTarjontaKoodistoHelper().getValintaperustekuvausryhmaUriForHakukohde(s.getHakukohdeNimi());
             t.setValintaperustekuvausKoodiUri(uri);
             if (t.getValintaperustekuvausKoodiUri() != null) {
-                t.setValintaperustekuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(t.getValintaperustekuvausKoodiUri(),
-                        MetaCategory.VALINTAPERUSTEKUVAUS.name())));
+                t.setValintaperustekuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(
+                        t.getValintaperustekuvausKoodiUri(), MetaCategory.VALINTAPERUSTEKUVAUS.name())));
             }
         }
 
-        // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data from metadata)
+        // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data
+        // from metadata)
         {
             String uri = getTarjontaKoodistoHelper().getSORAKysymysryhmaUriForHakukohde(s.getHakukohdeNimi());
             t.setSoraKuvausKoodiUri(uri);
@@ -145,10 +186,9 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         return result.isEmpty() ? null : result;
     }
 
-
     /**
      * Convert PainotettavaOppiaine to list of [ [ "oppiaine", "9.7"], ... ]
-     *
+     * 
      * @param s
      * @return
      */
@@ -168,7 +208,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
     /**
      * Convert liite information.
-     *
+     * 
      * @param s
      * @return
      */
@@ -182,10 +222,10 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         return result.isEmpty() ? null : result;
     }
 
-
     /**
-     * Extract metadata - key + category ("uri: soste-alue", "SORA") from many languages.
-     *
+     * Extract metadata - key + category ("uri: soste-alue", "SORA") from many
+     * languages.
+     * 
      * @param metas
      * @return map if language keyed translations
      */
@@ -193,7 +233,8 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         Map<String, String> result = new HashMap<String, String>();
 
         for (MonikielinenMetadata monikielinenMetadata : metas) {
-            result.put(getTarjontaKoodistoHelper().convertKielikoodiToKieliUri(monikielinenMetadata.getKieli()), monikielinenMetadata.getArvo());
+            result.put(getTarjontaKoodistoHelper().convertKielikoodiToKieliUri(monikielinenMetadata.getKieli()),
+                    monikielinenMetadata.getArvo());
         }
 
         return result.isEmpty() ? null : result;

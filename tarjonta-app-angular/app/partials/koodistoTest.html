@@ -1,8 +1,12 @@
-<h1>Koodisto test</h1>
+<h2>Koodisto test</h2>
 
 
-<li ng-repeat="koodi in koodis">
 
-    <h3>{{koodi.koodiNimi}}</h3>
 
-</li>
+        <koodistocombo isdependent="false" onchangecallback="testcallback" koodistouri="koodistouri" locale="locale" koodiuri="koodiuri"></koodistocombo>
+
+
+<h3>Toinen koodisto</h3>
+
+
+    <koodistocombo isdependent="true" filterwithkoodistouri="koodistofilter" isalakoodi="true" locale="locale" koodiuri="alakoodiuri" parentkoodiuri="parenturi"></koodistocombo>

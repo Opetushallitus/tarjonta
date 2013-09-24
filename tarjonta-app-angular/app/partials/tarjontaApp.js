@@ -8,7 +8,9 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.ctrl',
+            'app.kk.review.ctrl',
             'app.kk.services',
+            'ui.bootstrap',
             'ngRoute'
         ]);
 
@@ -27,13 +29,17 @@ angular.module('app',
             'ui.bootstrap',
             'loading',
             'localisation',
-            'Koodisto'
+            'Koodisto',
+            'KoodistoCombo',
+            'zippy'
         ]);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
-        $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
+        $routeProvider
+                .when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'})
+
                 .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
 
 
@@ -46,15 +52,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/edit/:id',
                 {
                     templateUrl: 'partials/kk/edit/edit.html',
-                    action: 'app.kk.edit.ctrl.EditController'
-                }
-        )
+                    controller: 'KKEditController'
+                })
                 .when('/kk/edit/:id/:view',
                 {
                     templateUrl: 'partials/kk/edit/edit.html',
-                    action: 'app.kk.edit.ctrl.EditController'
-                }
-        )
+                    controller: 'KKEditController'
+                })
 
                 //
                 // REVIEW
@@ -62,16 +66,16 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/review/:id',
                 {
                     templateUrl: 'partials/kk/review/review.html',
-                    action: 'app.kk.review.ctrl.ReviewController'
-                }
-        )
+                    controller: 'KKReviewController'
+                })
                 .when('/kk/review/:id/:view',
                 {
                     templateUrl: 'partials/kk/review/review.html',
-                    action: 'app.kk.review.ctrl.ReviewController'
-                }
-        )
-
+                    controller: 'KKReviewController'
+                })
+        		
+        		.when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
+        		
                 .otherwise({redirectTo: '/view1'});
 
     }]);

@@ -676,7 +676,8 @@ public class TestTarjontaElements {
         		+ ".*" + textAlignRight + ".*>Jatko-opintomahdollisuudet</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Hakuko"
+        		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">"
+        		+ ".*akuko"
         		+ ".*<span class=\"v-button-caption\">Luo uusi hakukohde</span>"
 //        		+ ".*" + htmlAbsoluteLeft // ylimaarainen debuggia varten
 //        		+ ".*<div class=\"v-label\" style=\"width:" // ylimaarainen debuggia varten

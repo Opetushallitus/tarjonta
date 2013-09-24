@@ -120,12 +120,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     public OrganisaatiohakuView() {
 
         criteria = new OrganisaatioSearchCriteria();
-        criteria.setFirstResult(1); //HACK, see OVT-4770, to be removed in master
-        try {
-            criteria.setMaxResults(Integer.parseInt(T("maxResults")));
-        } catch (Exception ex) {
-            LOG.warn("max results not set: " + ex.getMessage());
-        }
+        criteria.setSkipParents(true);
     }
 
     public OrganisaatiohakuView(List<String> rootOrgOids) {
@@ -231,14 +226,9 @@ public class OrganisaatiohakuView extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteria();
-                criteria.setFirstResult(1);
+                criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
-                }
-                try {
-                    criteria.setMaxResults(Integer.parseInt(T("maxResults")));
-                } catch (Exception ex) {
-                    LOG.warn("Max results not set: " + ex.getMessage());
                 }
                 bind();
                 //initializeData();

@@ -6,21 +6,45 @@ app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
     }]);
 
-app.controller('KoodistoTestController', function($scope, Koodisto) {
+app.controller('KoodistoTestController', function($scope,$route, Koodisto) {
+
+
+
+    $scope.testKoodisto = function() {
+        console.log('Following selected: ');
+        console.log($scope.koodiuri);
+
+    };
+
+
 
     $scope.locale = 'FI';
-    $scope.koodistoUri = 'hakukohteetkk';
+    $scope.koodistouri = 'koulutusohjelmaamm';
 
-        //$scope.koodis = Koodisto.getAllKoodisWithKoodiUri($scope.koodistoUri,$scope.locale);
+    $scope.koodistofilter='hakukohteet';
 
-        var koodiPromise = Koodisto.getKoodistoWithKoodiUri($scope.koodistoUri,$scope.locale);
-        koodiPromise.then(function(data){
+    $scope.koodiuri = '';
 
-            console.log('Got data');
-            console.log(data);
-            $scope.koodis = data;
+    $scope.$watch('parenturi',function(newVal,oldVal) {
+       console.log('Parent uri change : ' + oldVal + ' new : ' + newVal);
 
-    });
+    } );
+
+    $scope.testThat = function() {
+      console.log('Got called');
+      console.log($scope.parenturi);
+    };
+
+    $scope.testcallback = function(selected) {
+      console.log('Test onchangecallback called');
+      console.log(selected);
+      $scope.parenturi = selected.koodiUri;
+      console.log('Parent uri:');
+      console.log($scope.parenturi);
+
+
+    };
+
 
 });
 

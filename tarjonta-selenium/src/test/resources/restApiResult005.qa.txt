@@ -7,6 +7,7 @@
   "komoOid" : "1.2.246.562.5.2013061010184768943288",
   "tekstit" : {
   },
+  "yhteyshenkilos" : [ ],
   "maksullisuus" : false,
   "ammattinimikeUris" : [ ],
   "avainsanatUris" : [ ],

@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.LinkitettyTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 
 /**
@@ -85,6 +86,19 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohde.setHakuaikaAlkuPvm(null);
             hakukohde.setHakuaikaLoppuPvm(null);
         }
+        
+        if (hakukohdevm.getValintaPerusteidenKuvaus().getUri()!=null) {
+        	hakukohde.setValintaperustekuvausKoodiUri(hakukohdevm.getValintaPerusteidenKuvaus().getUri());
+        } else {
+        	hakukohde.setValintaperustekuvausTeksti(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus().getKaannokset()));
+        }
+        
+        if (hakukohdevm.getSoraKuvaus().getUri()!=null) {
+        	hakukohde.setSoraKuvausKoodiUri(hakukohdevm.getSoraKuvaus().getUri());
+        } else {
+        	hakukohde.setSoraKuvausTeksti(convertTekstis(hakukohdevm.getSoraKuvaus().getKaannokset()));
+        }
+
 
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
@@ -179,6 +193,25 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());;
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
         hakukohdeVM.setOpetusKielet(new TreeSet<String>(hakukohdeTyyppi.getOpetuskieliUris()));
+        
+        hakukohdeVM.setValintaPerusteidenKuvaus(new LinkitettyTekstiModel(hakukohdeTyyppi.getValintaperustekuvausKoodiUri(), convertTekstiToVM(hakukohdeTyyppi.getValintaperustekuvausTeksti())));
+        hakukohdeVM.setSoraKuvaus(new LinkitettyTekstiModel(hakukohdeTyyppi.getSoraKuvausKoodiUri(), convertTekstiToVM(hakukohdeTyyppi.getSoraKuvausTeksti())));
+        
+        if (hakukohdeVM.getValintaPerusteidenKuvaus().getUri()!=null) {
+        	hakukohdeTyyppi.setValintaperustekuvausKoodiUri(hakukohdeVM.getValintaPerusteidenKuvaus().getUri());
+        	hakukohdeTyyppi.setValintaperustekuvausTeksti(null);
+        } else {
+        	hakukohdeTyyppi.setValintaperustekuvausKoodiUri(null);
+        	hakukohdeTyyppi.setValintaperustekuvausTeksti(convertTekstis(hakukohdeVM.getValintaPerusteidenKuvaus().getKaannokset()));
+        }
+        
+        if (hakukohdeVM.getSoraKuvaus().getUri()!=null) {
+        	hakukohdeTyyppi.setSoraKuvausKoodiUri(hakukohdeVM.getSoraKuvaus().getUri());
+        	hakukohdeTyyppi.setSoraKuvausTeksti(null);
+        } else {
+        	hakukohdeTyyppi.setSoraKuvausKoodiUri(null);
+        	hakukohdeTyyppi.setSoraKuvausTeksti(convertTekstis(hakukohdeVM.getSoraKuvaus().getKaannokset()));
+        }
 
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakutyyppi(hakukohdeTyyppi.getHakukohteenHakutyyppiUri());

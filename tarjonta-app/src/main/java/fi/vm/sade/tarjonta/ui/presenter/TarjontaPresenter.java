@@ -76,7 +76,6 @@ import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -254,7 +253,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         refreshHakukohdeUIModel(fresh);
     }
-
+    
     // Figure out the type
     private void updateHakukohdeKoulutusasteTyyppi(HakukohdeViewModel hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -739,7 +738,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
 
         criteria.getOidResctrictionList().addAll(organisaatioOids);
-        criteria.setMaxResults(400);
         criteria.setSuunnitellut(true);
 
         return organisaatioSearchService.searchBasicOrganisaatios(criteria);
@@ -1963,7 +1961,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        criteria.setMaxResults(1000);
         List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustieto curChild : childOrgs) {
