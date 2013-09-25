@@ -43,6 +43,7 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.PisterajaToValintakoePisterajaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToValintakoeRDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeDTOToHakukohdeTyyppiConverter"/>
        
             </list>
         </property>

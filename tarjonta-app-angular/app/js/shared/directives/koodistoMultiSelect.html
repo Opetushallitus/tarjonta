@@ -1,8 +1,12 @@
 <div id="KoodistoMultiSelect">
-<select id="KoodiSelect" ng-model="koodiuri" size="5" ng-click="onKoodistoComboChange()" ng-options="koodi.koodiNimi for koodi in koodis"></select>
-<div id="KoodistoMultiSelectedValues" ng-repeat="koodi in koodiuris">
-    <span id="SelectedKoodiValue">{{koodi.koodiNimi}}</span>
-    <input type="button" value="X" ng-click="removeSelection(koodi)">
+<div class="col-lg-4">
+<select class="form-control" id="KoodiSelect" ng-model="koodiuri" size="10" ng-click="onKoodistoComboChange()" ng-options="koodi.koodiNimi for koodi in koodis"></select>
+</div>
+<div class="col-lg-4" id="KoodistoMultiSelectedValues" ng-repeat="koodi in koodiuris">
+    <span id="SelectedKoodiValue"> {{koodi.koodiNimi}} </span>
+    <button class="close" ng-click="removeSelection(koodi)">
+        <span class="glyphicon glyphicon-remove-circle"></span>
+    </button>
 </div>
 
 </div>

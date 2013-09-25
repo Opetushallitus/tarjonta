@@ -55,6 +55,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private List<HakukohdeLiiteDTO> _liitteet;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
+    private List<String> _hakukohdeKoulutusOids;
     private Date _hakuaikaAlkuPvm;
     private Date _hakuaikaLoppuPvm;
 
@@ -307,5 +308,13 @@ public class HakukohdeDTO extends BaseRDTO {
 
     public void setTarjoajaNimi(Map<String, String> tarjoajaNimi) {
         this._tarjoajaNimi = tarjoajaNimi;
+    }
+
+    public List<String> getHakukohdeKoulutusOids() {
+        return _hakukohdeKoulutusOids;
+    }
+
+    public void setHakukohdeKoulutusOids(List<String> _hakukohdeKoulutusOids) {
+        this._hakukohdeKoulutusOids = _hakukohdeKoulutusOids;
     }
 }

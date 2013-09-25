@@ -109,7 +109,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setPainotettavatOppiaineet(convertPainotettavatOppianeet(s.getPainotettavatOppiaineet()));
         t.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
-
+        t.setHakukohdeKoulutusOids(convertKoulutusOids(s.getKoulutusmoduuliToteutuses()));
         t.setValintakoes(convertValintakokeet(s.getValintakoes()));
 
         t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm()
@@ -184,6 +184,19 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         }
 
         return result.isEmpty() ? null : result;
+    }
+
+    private List<String> convertKoulutusOids(Set<KoulutusmoduuliToteutus> komotos) {
+        if (komotos != null)  {
+             List<String> komotoOids = new ArrayList<String>();
+            for (KoulutusmoduuliToteutus komoto:komotos) {
+                komotoOids.add(komoto.getOid());
+            }
+            return  komotoOids;
+        } else {
+
+            return null;
+        }
     }
 
     /**
