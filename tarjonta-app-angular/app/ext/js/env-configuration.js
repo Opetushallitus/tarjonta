@@ -1,5 +1,5 @@
 var CONFIG = {
-    "properties": [
+    "env": [
         {
             "accessRight.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightService"
         },

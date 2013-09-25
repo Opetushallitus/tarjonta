@@ -204,13 +204,22 @@
                     "fi": "Valitse organisaatiotyyppi"
                 }
             },
-    "organisaatiohaku.organisaatiotyypit.kaikki":
+    "organisaatiohaku.organisaatiotyypit.prompt":
             {
                 "key": "organisaatiohaku.organisaatiotyypit.kaikki",
                 "locale": "fi",
                 "value": "Valitse organisaatiotyyppi",
                 "values": {
                     "fi": "Valitse organisaatiotyyppi"
+                }
+            },
+    "organisaatiohaku.oppilaitostyypit.prompt":
+            {
+                "key": "organisaatiohaku.oppilaitostyypit.prompt",
+                "locale": "fi",
+                "value": "Valitse oppilaitostyyppi",
+                "values": {
+                    "fi": "Valitse oppilaitostyyppi"
                 }
             },
     "organisaatiotyyppi.koulutustoimija":
