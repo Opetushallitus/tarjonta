@@ -56,8 +56,6 @@
 						'</li>' + 
 					'</ul>'; 
 
-				console.log("debug!");
-
 				//check tree id, tree model
 				if( treeId && treeModel ) {
 
@@ -83,7 +81,7 @@
 							}
 
 							//set highlight to selected node
-							selectedNode.selected = 'selected'
+							selectedNode.selected = 'selected';
 
 							//set currentNode
 							scope[treeId].currentNode = selectedNode;

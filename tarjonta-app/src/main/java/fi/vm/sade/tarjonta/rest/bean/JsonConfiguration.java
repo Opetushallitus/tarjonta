@@ -13,17 +13,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.rest;
+package fi.vm.sade.tarjonta.rest.bean;
 
+import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.rest.dto.JsonConfigObject;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Jani Wilén
  */
 @Controller
-@RequestMapping("env")
+@RequestMapping("/")
 public class JsonConfiguration {
 
     @Value("${importAllKeys.startsWith}")
@@ -43,10 +47,21 @@ public class JsonConfiguration {
     @Value("${importAllKeys.contains}")
     private String keysContains;
     private static String configurationJson;
+    @Autowired
+    ApplicationContext context;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String getJsonConfig() {
+    public String help() {
+        return "<p>"
+                + "Return configuration JSON object : <environment>/<a href='/tarjonta-app/kk/ext/json/env-configuration.json'>tarjonta-app/kk/ext/json/env-configuration.json</a>.<br/>"
+                + "Return configuration JSON object in JavaScript variable : <environment>/<a href='/tarjonta-app/kk/ext/js/env-configuration.js'>tarjonta-app/kk/ext/js/env-configuration.js</a>."
+                + "</p>";
+    }
+
+    @RequestMapping(value = "/json/env-configuration.json", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String getEnvJsonConfig() {
         if (configurationJson == null) {
             final Properties propertyes = PropertyPlaceholder.getPropertyes();
             configurationJson = createJsonConfiguration(propertyes);
@@ -55,13 +70,26 @@ public class JsonConfiguration {
         return configurationJson;
     }
 
+    @RequestMapping(value = "/js/env-configuration.js", method = RequestMethod.GET, produces = "text/javascript")
+    @ResponseBody
+    public String getEnvConfigurationJsFile() {
+        if (configurationJson == null) {
+            final Properties propertyes = PropertyPlaceholder.getPropertyes();
+            configurationJson = createJsonConfiguration(propertyes);
+        }
+
+        return "var CONFIG = " + configurationJson + ";";
+    }
+
     private String createJsonConfiguration(Properties propertyes) {
         Set<String> visibleKeys = searchAllRequiredPropertyKeys(propertyes);
 
+        //create configuration object
+        final Configurations conf = context.getBean(Configurations.class);
+
         List<JsonConfigObject> jsons = Lists.<JsonConfigObject>newLinkedList();
         for (final String key : visibleKeys) {
-            final String value = (String) propertyes.get(key);
-            jsons.add(new JsonConfigObject(key, value));
+            jsons.add(new JsonConfigObject(key, conf.getEnv().getProperty(key)));
         }
 
         Collections.sort(jsons, new Comparator<JsonConfigObject>() {
@@ -80,6 +108,7 @@ public class JsonConfiguration {
     }
 
     private Set<String> searchAllRequiredPropertyKeys(Properties propertyes) {
+        Preconditions.checkNotNull(propertyes, "System properties object cannot be null.");
         final String[] arrKeysStartWith = keysStartWith.split(",");
         final String[] arrKeysContains = keysContains.split(",");
 

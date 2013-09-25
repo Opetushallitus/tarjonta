@@ -37,6 +37,34 @@ app.factory('Localisation', function($resource) {
 
 });
 
+app.filter('tt', ['LocalisationService', function(LocalisationService) {
+        return function(text) {
+            return LocalisationService.t(text);
+        };
+    }]);
+
+
+app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService, $timeout) {
+    return {
+        restrict: 'EA',
+        replace: true,
+        template: '<div>TT TEMPLATE</div>',
+        scope: false,
+        compile: function (tElement, tAttrs, transclude) {
+            console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
+
+            var t = LocalisationService.t(tAttrs["tt"]);
+            tElement.text(t);
+
+            return function postLink(scope, iElement, iAttrs, controller) {
+                // $timeout(scope.$destroy.bind(scope), 0);
+            }
+        }
+    }
+}]);
+
+
+
 
 /**
  * Singleton service for localisations.
@@ -116,7 +144,8 @@ app.service('LocalisationService', function(Localisation, $log) {
             result = v.value;
         }
 
-        $log.debug("getTranslation(" + key + ") --> " + result);
+        // result = result + "-" + new Date();
+        // $log.debug(new Date() + ": getTranslation(" + key + ") --> " + result);
         return result;
     };
 

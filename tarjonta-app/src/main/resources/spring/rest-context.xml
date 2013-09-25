@@ -16,9 +16,10 @@
     <!--
       Load configuration settings
     -->
-    <bean id="extendedPropertyConfigurer" class="fi.vm.sade.tarjonta.rest.PropertyPlaceholder">
+    <bean id="extendedPropertyConfigurer" class="fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder">
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
         <property name="ignoreResourceNotFound" value="true" />
+        <property name="searchSystemEnvironment" value="true" />
         <property name="locations">
             <list>
                 <value>classpath:tarjonta-app.properties</value>
@@ -31,6 +32,6 @@
     
     <context:component-scan base-package="fi.vm.sade.tarjonta.rest" />
     <mvc:annotation-driven />
-    <bean id="jsonConfiguration" class="fi.vm.sade.tarjonta.rest.JsonConfiguration"/>
+    <bean id="jsonConfiguration" class="fi.vm.sade.tarjonta.rest.bean.JsonConfiguration"/>
     
 </beans>

@@ -23,33 +23,46 @@ angular.module('app',
             'app.filters',
             'app.services',
             'app.controllers',
+            'app.test.controllers',
             'app.kk',
             'ngRoute',
             'ngResource',
+            'ngSanitize',
             'ui.bootstrap',
             'loading',
             'localisation',
             'Koodisto',
             'KoodistoCombo',
-            'zippy'
+            'KoodistoMultiSelect',
+            'zippy',
+            'app.organisaatiohaku',
+            'angularTreeview',
+            'config'
         ]);
 
+angular.module('app').value("globalConfig", window.CONFIG);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider
-        
+
         		// tarjontatiedon haku
         		.when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
-        
+
         		.when('/etusivu', {templateUrl: 'partials/etusivu.html'})
+
+                // tarjontatiedon haku
+                .when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
+
+                .when('/etusivu', {templateUrl: 'partials/etusivu.html'})
 
                 .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
 
 
                 //Remove this when done Tuomas
                 .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
+
 
                 //
                 // EDIT
@@ -81,7 +94,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                 .when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
 
-        		
+
                 .otherwise({redirectTo: '/etusivu'});
 
     }]);
