@@ -24,12 +24,26 @@ Object.prototype.getName = function() {
 
 var app = angular.module('app.kk.review.ctrl', ['ui.bootstrap']);
 
-app.controller('KKReviewController', ['$scope', 'TarjontaService', '$routeParams', 'LocalisationService',
-    function KKReviewController($scope, tarjontaService, $routeParams, LocalisationService) {
+app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', '$routeParams', 'LocalisationService',
+    function KKReviewController($scope, $location, tarjontaService, $routeParams, LocalisationService) {
         $scope.routeParams = $routeParams;
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
+
+        $scope.count = 0;
+
+        $scope.$on('$locationChangeStart', function(ev) {
+            console.log("$locationChangeStart: count = " + $scope.count + " - event: " + ev);
+            ev.preventDefault();
+            ev.stopPropagation();
+        });
+
+        $scope.doStuff = function(event) {
+            $scope.count = $scope.count + 1 ;
+            $location.hash("count=" + $scope.count);
+            console.log("doStuff: count = " + $scope.count + " - event: " + event);
+        };
 
         $scope.xxx = {
             "t": function(params) {
