@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
@@ -15,6 +16,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.ArrayList;
@@ -55,6 +57,9 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Autowired
     private OrganisaatioService organisaatioService;
 
+
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
     // /hakukohde?...
     @Override
     public List<OidRDTO> search(String searchTerms,
@@ -133,6 +138,24 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     public List<String> getValintakoesByHakukohdeOID(String oid) {
         LOG.debug("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+
+    @Override
+    public String createHakukohde(HakukohdeDTO hakukohdeDTO) {
+        try {
+
+        HakukohdeTyyppi hakukohde =  tarjontaAdminService.lisaaHakukohde(conversionService.convert(hakukohdeDTO, HakukohdeTyyppi.class));
+        LOG.info("Hakukohde created : {}", hakukohde.getOid());
+        return  hakukohde.getOid();
+        } catch (Exception exp) {
+           exp.printStackTrace();
+            LOG.info("Exception creating hakukohde in Rest-service :  {}", exp.toString());
+            return null;
+
+        }
+
     }
 
     // GET /hakukohde/{oid}/nimi

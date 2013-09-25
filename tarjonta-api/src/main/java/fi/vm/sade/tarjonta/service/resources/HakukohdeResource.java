@@ -110,6 +110,12 @@ public interface HakukohdeResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
+    @POST
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createHakukohde(HakukohdeDTO hakukohdeDTO);
+
     /**
      * /hakukohde/OID/nimi
      *
