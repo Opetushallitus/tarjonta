@@ -5,6 +5,9 @@
     
     <div class="modal-body">
     
+        <h4>{{t('selectTutkintoOhjelma.koulutusala')}}</h4>
+        <koodistocombo  koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
+    
         <h4>Tekstihaku</h4>
         <div>
             <input type="text" data-ng-model="stoModel.hakulause" />
@@ -16,9 +19,9 @@
         <table class="table table-bordered">
     
             <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
-                <tr ng-class="{true: 'active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'light-gray'" ng-class-odd="'dark-gray'">
-                    <td>{{hakutulos.tkKoodi}}</td>
-                    <td>{{hakutulos.nimi}}</td>
+                <tr ng-class="{true: 'table-active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'table-light-gray'" ng-class-odd="'table-dark-gray'">
+                    <td>{{hakutulos.koodiArvo}}</td>
+                    <td>{{hakutulos.koodiNimi}}</td>
                 </tr>
             </tbody>
         </table>

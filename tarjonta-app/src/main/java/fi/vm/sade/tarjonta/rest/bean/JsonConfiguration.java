@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Jani Wilén
  */
 @Controller
-@RequestMapping("env")
+@RequestMapping("/")
 public class JsonConfiguration {
 
     @Value("${importAllKeys.startsWith}")
@@ -54,14 +54,14 @@ public class JsonConfiguration {
     @ResponseBody
     public String help() {
         return "<p>"
-                + "Return configuration JSON object : <environment>/<a href='/tarjonta-app/kk/ext/env/configuration.json'>tarjonta-app/kk/ext/env/configuration.json</a>.<br/>"
-                + "Return configuration JSON object in JavaScript variable : <environment>/<a href='/tarjonta-app/kk/ext/env/configuration.js'>tarjonta-app/kk/ext/env/configuration.js</a>."
+                + "Return configuration JSON object : <environment>/<a href='/tarjonta-app/kk/ext/json/env-configuration.json'>tarjonta-app/kk/ext/json/env-configuration.json</a>.<br/>"
+                + "Return configuration JSON object in JavaScript variable : <environment>/<a href='/tarjonta-app/kk/ext/js/env-configuration.js'>tarjonta-app/kk/ext/js/env-configuration.js</a>."
                 + "</p>";
     }
 
-    @RequestMapping(value = "/configuration.json", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/json/env-configuration.json", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String getJsonConfig() {
+    public String getEnvJsonConfig() {
         if (configurationJson == null) {
             final Properties propertyes = PropertyPlaceholder.getPropertyes();
             configurationJson = createJsonConfiguration(propertyes);
@@ -70,9 +70,9 @@ public class JsonConfiguration {
         return configurationJson;
     }
 
-    @RequestMapping(value = "/configuration.js", method = RequestMethod.GET, produces = "text/javascript")
+    @RequestMapping(value = "/js/env-configuration.js", method = RequestMethod.GET, produces = "text/javascript")
     @ResponseBody
-    public String getJsFile() {
+    public String getEnvConfigurationJsFile() {
         if (configurationJson == null) {
             final Properties propertyes = PropertyPlaceholder.getPropertyes();
             configurationJson = createJsonConfiguration(propertyes);

@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl', []);
+var app = angular.module('app.kk.edit.ctrl', ['Koodisto']);
 
 app.controller('KKEditController', ['$scope', 'TarjontaService',
     function FormTutkintoController($scope, tarjontaService) {
@@ -21,36 +21,57 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
 
         $scope.search();
     }])
-    .controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', function($scope, $modalInstance) {
+    .controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', function($scope, $modalInstance, Koodisto) {
     	
-    	$scope.rawData = [{nimi: 'Tanssinopettaja AMK', tkKoodi: '611201', uri: 'koulutus_1'},
-			               {nimi: 'Taideteollisuusopiston tutkinto', tkKoodi: '622951', uri: 'koulutus_2'},
-			               {nimi: 'Klarinettiopettaja AMK', tkKoodi: '611202', uri: 'koulutus_3'},
-			               {nimi: 'Huiluopettaja', tkKoodi: '611203', uri: 'koulutus_4'},
-			               {nimi: 'Pianonopettaja AMK', tkKoodi: '611204', uri: 'koulutus_5'},
-			               {nimi: 'Viuluopettaja', tkKoodi: '611205', uri: 'koulutus_6'}];
-    	
-    	$scope.stoModel = {koulutusala: 'Humanistinen ja kasvatusala', 
+    	$scope.stoModel = { koulutusalaKoodistoUri: 'koulutusalaoph2002',//CONFIG.env['koodisto-uris.koulutusala'],
     						hakutulokset: [],
     						active: {},
-    						hakulause: ''};
-    	
+    						hakulause: '',
+    						koulutusala: {}};
     	
     	$scope.toggleItem = function(hakutulos) {
-    		console.log(hakutulos.uri);
+    		console.log(hakutulos.koodiUri);
     		$scope.stoModel.active = hakutulos;
     	};
     	
     	$scope.isActive = function(hakutulos) {
-    		console.log(hakutulos.uri==$scope.stoModel.active.uri);
-    		return hakutulos.uri==$scope.stoModel.active.uri;
+    		console.log(hakutulos.koodiUri==$scope.stoModel.active.koodiUri);
+    		return hakutulos.koodiUri==$scope.stoModel.active.koodiUri;
     	};
     	
     	$scope.searchTutkinnot = function() {
-    		$scope.stoModel.hakutulokset = $scope.rawData.filter(function (element) {
+    		console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
+    		//console.log(CONFIG);
+    		//console.log(CONFIG.env['koodisto-uris.tutkinto']);
+    		if($scope.stoModel.koulutusala.koodiUri.length > 0) {
+    			console.log("Doing koodistorelation things");
+    			var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
+    			hakutulosPromise.then(function(koodisParam) {
+    				var prelHakutulokset = koodisParam.filter(function (koodi) {
+    																	return koodi.koodiKoodisto === 'koulutus';
+    				});
+    				$scope.performStringSearch(prelHakutulokset);
+    			});
+    		} else {
+    			console.log("Doing pure search on tutkinnot");
+    			var tutkinnotPromise = Koodisto.getAllKoodisWithKoodiUri('koulutus','FI');
+    	        tutkinnotPromise.then(function(koodisParam){
+    	            var allTutkinnot = koodisParam;
+    	            $scope.performStringSearch(allTutkinnot);
+    	        });
+    		}
+    		/*$scope.stoModel.hakutulokset = $scope.rawData.filter(function (element) {
     												return element.nimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1;
-    											});
+    											});*/
     	};
+    	
+    	$scope.performStringSearch = function(tutkinnot) {
+    		$scope.stoModel.hakutulokset = tutkinnot.filter(function (element) {
+				return element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1;
+			});
+    	};
+    	
+    	
     	
     	$scope.clearCriteria = function() {
     		$scope.stoModel.hakulause = '';
@@ -79,8 +100,8 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
     			});
     		
     			modalInstance.result.then(function(selectedItem) {
-    				console.log('Ok, dialog closed: ' + selectedItem);
-    				if (selectedItem.uri != null) {
+    				console.log('Ok, dialog closed: ' + selectedItem.koodiUri);
+    				if (selectedItem.koodiUri != null) {
     					$scope.model.selected = selectedItem;
     				} else {
     					$scope.model.selected = null;
