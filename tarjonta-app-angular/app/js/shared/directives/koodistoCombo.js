@@ -27,6 +27,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
             isdependent : "=",
             filterwithkoodistouri : "=",
             parentkoodiuri : "=",
+            prompt : "=",
             isalakoodi : "=",
             onchangecallback : "="
 
