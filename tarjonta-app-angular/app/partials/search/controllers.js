@@ -2,10 +2,10 @@
 angular.module('app.controllers', ['app.services']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService) {
 
     // hakuparametrit ja organisaatiovalinta
-    function fromParams(key, def="*") {
+    function fromParams(key, def) {
     	return $routeParams[key] != null ? $routeParams[key] : def;
     }
-    
+
     $scope.selectedOrgOid = fromParams("oid", "12345");
     $scope.searchTerms = fromParams("terms","");
     $scope.selectedState = fromParams("state");
@@ -17,16 +17,16 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
     // tarjonnan tilat
     // TODO Generoi automaattisesti enumin fi.vm.sade.tarjonta.shared.types.TarjontaTila mukaan
     var states = [ "LUONNOS", "VALMIS", "JULKAISTU", "PERUTTU", "KOPIOITU" ];
-        
+
     var stateMap = {"*": msgKaikki};
-        
+
     for (var i in states) {
     	var s = states[i];
     	stateMap[s] = LocalisationService.t("tarjonta.tila."+s); // TODO i18n
     }
-    
+
     $scope.states = stateMap;
-    
+
     // alkamiskaudet
     // TODO koodistosta
     $scope.seasons = {
@@ -50,10 +50,10 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
     	if ($scope.selectedOrgOid != null) {
     		url = url+$scope.selectedOrgOid+"/";
     	}
-    	
+
     	url = url+"?terms="+$scope.searchTerms+"&state="+$scope.selectedState+"&year="+$scope.selectedYear+"&season="+$scope.selectedSeason;
-    	
-    	$location.url(url);    
+
+    	$location.url(url);
 
     }
 
@@ -62,14 +62,14 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
         $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
         updateLocation();
     }
-    
+
     $scope.reset = function() {
     	 $scope.searchTerms = "";
          $scope.selectedState = "*";
          $scope.selectedYear = "*";
          $scope.selectedSeason = "*";
     }
-    
+
     $scope.search = function() {
     	console.log("search", {
     		oid: $scope.selectedOrgOid,
@@ -77,10 +77,10 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
     		state: $scope.selectedState,
     		year: $scope.selectedYear,
     		season: $scope.selectedSeason
-    	});    	
+    	});
     	updateLocation();
     }
-    
+
     $scope.report = function() {
     	console.log("TODO raportti");
     }
