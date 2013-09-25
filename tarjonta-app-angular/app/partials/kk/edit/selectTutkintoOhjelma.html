@@ -19,7 +19,7 @@
         <table class="table table-bordered">
     
             <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
-                <tr ng-class="{true: 'active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'light-gray'" ng-class-odd="'dark-gray'">
+                <tr ng-class="{true: 'table-active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'table-light-gray'" ng-class-odd="'table-dark-gray'">
                     <td>{{hakutulos.koodiArvo}}</td>
                     <td>{{hakutulos.koodiNimi}}</td>
                 </tr>

@@ -23,7 +23,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
     }])
     .controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', function($scope, $modalInstance, Koodisto) {
     	
-    	$scope.stoModel = { koulutusalaKoodistoUri: CONFIG.properties['koodisto-uris.koulutusala'],
+    	$scope.stoModel = { koulutusalaKoodistoUri: 'koulutusalaoph2002',//CONFIG.env['koodisto-uris.koulutusala'],
     						hakutulokset: [],
     						active: {},
     						hakulause: '',
@@ -41,18 +41,20 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
     	
     	$scope.searchTutkinnot = function() {
     		console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
+    		//console.log(CONFIG);
+    		//console.log(CONFIG.env['koodisto-uris.tutkinto']);
     		if($scope.stoModel.koulutusala.koodiUri.length > 0) {
     			console.log("Doing koodistorelation things");
     			var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
     			hakutulosPromise.then(function(koodisParam) {
     				var prelHakutulokset = koodisParam.filter(function (koodi) {
-    																	return koodi.koodiKoodisto === CONFIG.properties['koodisto-uris.tutkinto'];//'koulutus';
+    																	return koodi.koodiKoodisto === 'koulutus';
     				});
     				$scope.performStringSearch(prelHakutulokset);
     			});
     		} else {
     			console.log("Doing pure search on tutkinnot");
-    			var tutkinnotPromise = Koodisto.getAllKoodisWithKoodiUri(CONFIG.properties['koodisto-uris.tutkinto'],'FI');
+    			var tutkinnotPromise = Koodisto.getAllKoodisWithKoodiUri('koulutus','FI');
     	        tutkinnotPromise.then(function(koodisParam){
     	            var allTutkinnot = koodisParam;
     	            $scope.performStringSearch(allTutkinnot);

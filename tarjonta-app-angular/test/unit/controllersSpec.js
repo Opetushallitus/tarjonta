@@ -41,8 +41,9 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 			$scope: $scope,
 			$modalInstance: $modalInstance
 		});
-		$scope.toggleItem($scope.rawData[0]);
-		expect($scope.stoModel.active).toEqual($scope.rawData[0]);
+		var mockData = [{koodiUri: 'koodi_1'},{koodiUri: 'koodi_2'}];
+		$scope.toggleItem(mockData[0]);
+		expect($scope.stoModel.active).toEqual(mockData[0]);
 	}));
 	it('Testing the SelectTutkintoOhjelmaController isActive', inject(function($controller) {
 		$controller('SelectTutkintoOhjelmaController', {
