@@ -23,6 +23,7 @@ angular.module('app',
             'app.filters',
             'app.services',
             'app.controllers',
+            'app.test.controllers',
             'app.kk',
             'ngRoute',
             'ngResource',
@@ -32,7 +33,10 @@ angular.module('app',
             'localisation',
             'Koodisto',
             'KoodistoCombo',
-            'zippy'
+            'KoodistoMultiSelect',
+            'zippy',
+            'app.organisaatiohaku',
+            'angularTreeview'
         ]);
 
 
@@ -51,6 +55,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                 //Remove this when done Tuomas
                 .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
+
 
                 //
                 // EDIT

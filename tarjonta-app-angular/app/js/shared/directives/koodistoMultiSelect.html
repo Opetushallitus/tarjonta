@@ -1,7 +1,7 @@
 <div id="KoodistoMultiSelect">
-<select ng-model="koodiuri" ng-change="onKoodistoComboChange()" ng-options="koodi.koodiNimi for koodi in koodis"></select>
+<select id="KoodiSelect" ng-model="koodiuri" size="5" ng-click="onKoodistoComboChange()" ng-options="koodi.koodiNimi for koodi in koodis"></select>
 <div id="KoodistoMultiSelectedValues" ng-repeat="koodi in koodiuris">
-    <span>{{koodi.koodiNimi}}</span>
+    <span id="SelectedKoodiValue">{{koodi.koodiNimi}}</span>
     <input type="button" value="X" ng-click="removeSelection(koodi)">
 </div>
 

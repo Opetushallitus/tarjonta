@@ -12,7 +12,7 @@
     <!-- Turn on AspectJ @Configurable support -->
     <context:spring-configured />
     <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.tarjonta" />
+    <context:component-scan base-package="fi.vm.sade.tarjonta.ui" />
     <context:component-scan base-package="fi.vm.sade.security" />
     
     <!-- Turn on @Autowired, @PostConstruct etc support -->
