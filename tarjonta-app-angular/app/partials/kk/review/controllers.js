@@ -31,34 +31,6 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
 
-        $scope.count = 0;
-
-        $scope.$on('$locationChangeStart', function(ev) {
-            console.log("$locationChangeStart: count = " + $scope.count + " - event: " + ev);
-            ev.preventDefault();
-            ev.stopPropagation();
-        });
-
-        $scope.doStuff = function(event) {
-            $scope.count = $scope.count + 1 ;
-            $location.hash("count=" + $scope.count);
-            console.log("doStuff: count = " + $scope.count + " - event: " + event);
-        };
-
-        $scope.xxx = {
-            "t": function(params) {
-                console.log("t! " + params);
-                var val = LocalisationService.t(params);
-
-                console.log("  val == " + val + " - s?: " + val.getName());
-
-                return val;
-            },
-            "name": "Marko"
-        };
-
-
-
         $scope.languages = [
             {
                 name: "Suomi",
