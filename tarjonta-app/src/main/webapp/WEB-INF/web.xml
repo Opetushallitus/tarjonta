@@ -168,7 +168,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>configuration-rest-servlet</servlet-name>
-        <url-pattern>/tarjontaapp/rest/*</url-pattern>
+        <url-pattern>/kk/ext/*</url-pattern>
     </servlet-mapping>
      
     <servlet-mapping>

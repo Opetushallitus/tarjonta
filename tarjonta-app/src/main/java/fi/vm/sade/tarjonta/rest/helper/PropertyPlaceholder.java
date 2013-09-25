@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.rest;
+package fi.vm.sade.tarjonta.rest.helper;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -33,7 +33,7 @@ public class PropertyPlaceholder extends PropertyPlaceholderConfigurer {
         return mergeProperties;
     }
 
-    public static Properties getPropertyes()  {
+    public static Properties getPropertyes() {
         return mergeProperties;
     }
 }
