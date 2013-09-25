@@ -17,6 +17,8 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','loca
 		"suunnitellut" : false
 	};
 	
+	$scope.organisaatio={}; //watchia varten
+	
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
 	    if( $scope.organisaatio && angular.isObject($scope.organisaatio.currentNode) ) {
@@ -73,7 +75,7 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','loca
     	angular.forEach(organisaatioarray, function(organisaatio){
     		//TODO olettaa että käyttäjä suomenkielinen
     		organisaationimi=organisaatio.nimi.fi||organisaatio.nimi.sv||organisaatio.nimi.en;
-    		organisaatio.nimi=organisaationimi
+    		organisaatio.nimi=organisaationimi;
     		if(organisaatio.children){
     			localize(organisaatio.children);
     		}
