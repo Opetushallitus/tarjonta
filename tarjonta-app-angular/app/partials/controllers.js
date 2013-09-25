@@ -1,6 +1,6 @@
 
 
-var app = angular.module('app.controllers', ['app.services'])
+var app = angular.module('app.test.controllers', ['app.services'])
 
 app.controller('MyCtrl1', [function() {
         console.log("MyCtrl1()");
