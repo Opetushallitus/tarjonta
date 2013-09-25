@@ -24,12 +24,12 @@
 	</div>
 
 	<div class="buttons">
-		<input type="button" ng-click="reset()" class="button small"
+		<input type="button" ng-click="reset()" class="btn btn-primary"
 			value="{{ t('organisaatiohaku.button.tyhjenna') }}" />
-	    <input type="submit" ng-click="submit()" class="button primary small"
+	    <input type="submit" ng-click="submit()" class="btn btn-warning"
 			value="{{ t('organisaatiohaku.button.hae') }}" />
 	</div>
-
+</form>
 </div>
 
 {{organisaatio.currentNode}}
@@ -38,6 +38,6 @@
 		data-tree-id="organisaatio"
 		data-tree-model="tulos"
 		data-node-id="oid"
-		data-node-label="nimi.fi"
+		data-node-label="nimi"
 		data-node-children="children" >
 </div>
