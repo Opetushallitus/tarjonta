@@ -158,6 +158,48 @@
                 "key": "tarjonta.hakutulos.hakukohteet",
                 "locale": "fi",
                 "value": "Hakukohteet"
+            },
+    "organisaatiohaku.button.tyhjenna":
+            {
+                "key": "organisaatiohaku.button.tyhjenna",
+                "locale": "fi",
+                "value": "Tyhjennä",
+                "values": {
+                    "fi": "Tyhjennä"
+                }
+            }
+            ,
+                "organisaatiohaku.button.hae":
+            {
+                "key": "organisaatiohaku.button.hae",
+                "locale": "fi",
+                "value": "Hae",
+                "values": {
+                    "fi": "Hae"
+                }
+            }
+            ,
+            
+    "organisaatiohaku.label.nayta.myos.suunnitellut":
+            {
+                "key": "organisaatiohaku.label.nayta.myos.suunnitellut",
+                "locale": "fi",
+                "value": "Myös suunnitellut",
+                "values": {
+                    "fi": "Myös suunnitellut"
+                }
+            }
+            
+                        ,
+            
+    "organisaatiohaku.label.nayta.myos.lakkautetut":
+            {
+                "key": "organisaatiohaku.label.nayta.myos.lakkautetut",
+                "locale": "fi",
+                "value": "Myös lakkautetut",
+                "values": {
+                    "fi": "Myös lakkautetut"
+                }
             }
             
 }

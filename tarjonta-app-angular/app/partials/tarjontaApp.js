@@ -31,7 +31,9 @@ angular.module('app',
             'localisation',
             'Koodisto',
             'KoodistoCombo',
-            'zippy'
+            'zippy',
+            'app.organisaatiohaku',
+            'angularTreeview'
         ]);
 
 

@@ -6,13 +6,12 @@
 		placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
 
 	<select ng-model="hakuehdot.organisaatiotyyppi"
-		ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.value for organisaatiotyyppi in organisaatiotyypit">
+		ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
 	    <option value="">{{t("organisaatiohaku.organisaatiotyypit.kaikki")}}</option>
-	</select> <select ng-model="hakuehdot.oppilaitostyyppi"
-		ng-options="oppilaitostyyppi.koodi as oppilaitostyyppi.nimi for oppilaitostyyppi in organisaatiotyypit">
-		<option value="">{{t("organisaatiohaku.oppilaitostyypit.kaikki")}}</option>
-	</select>
-
+	</select> 
+	
+	<koodistocombo  koodistouri="'oppilaitostyyppi'" locale="'FI'" koodiuri="hakuehdot.oppilaitostyyppi"></koodistocombo>
+	
 	<div class="field-container-checkbox">
 		<input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
 		<label for="passiiviset">{{
