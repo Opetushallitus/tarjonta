@@ -18,11 +18,11 @@
 }
 
 .float-left {
-	float:left;	
+	float:left;
 }
 
 .float-right {
-	float:right;	
+	float:right;
 }
 
 label {
@@ -68,7 +68,7 @@ div#searchSpec > div.title {
 
 div#searchSpec > div.title > span {
 	font-size:150%;
-	font-weight:bold;	
+	font-weight:bold;
 }
 
 div#searchSpec > table.spec {
@@ -86,12 +86,12 @@ div#searchSpec > table.spec th {
 
 div#searchSpec > table.spec td.controls {
 	vertical-align:top;
-	padding-left:1em;	
+	padding-left:1em;
 }
 
 div#searchSpec > table.spec select {
 	width:100%;
-		
+
 }
 
 div#searchSpec > div.search {
@@ -105,4 +105,10 @@ div#searchSpec > div.search > input {
 	width:100%;
 	position:relative;
 	top:-1px;
+}
+
+/* Tarjonnan tarkastelunäkymät / yleiset */
+
+.label-right {
+    text-align: right;
 }

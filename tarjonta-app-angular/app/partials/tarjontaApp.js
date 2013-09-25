@@ -27,6 +27,7 @@ angular.module('app',
             'app.kk',
             'ngRoute',
             'ngResource',
+            'ngSanitize',
             'ui.bootstrap',
             'loading',
             'localisation',
@@ -35,15 +36,17 @@ angular.module('app',
             'KoodistoCombo',
             'KoodistoMultiSelect',
             'zippy',
-            'angularTreeview'
+            'angularTreeview',
+            'angularTreeview',
+            'config'
         ]);
 
+angular.module('app').value("globalConfig", window.CONFIG);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider
-        
         		// etusivu / tarjontatiedon haku
         		.when("/", {templateUrl: 'partials/search/search.html', controller: 'SearchController', reloadOnSearch:false})
         
@@ -84,7 +87,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                 .when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
 
-        		
+
                 .otherwise({redirectTo: '/etusivu'});
 
     }]);

@@ -67,14 +67,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.selectedSeason = fromParams("season","*");
 
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
-
+    
     // tarjonnan tilat
     var stateMap = {"*": msgKaikki};
     for (var i in TARJONTA_TILAT) {
     	var s = TARJONTA_TILAT[i];
+    	if ((i / 1) != i) { // WTF? mistä epä-int tulee??
+    		continue;
+    	}
     	stateMap[s] = LocalisationService.t("tarjonta.tila."+s);
     }
-
+    
     $scope.states = stateMap;
 
     // alkamiskaudet

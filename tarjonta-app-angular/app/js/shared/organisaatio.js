@@ -20,9 +20,9 @@ angular.module('Organisaatio', [ 'ngResource' ])
 		angular.forEach(organisaatioarray, localize);
 		return organisaatioarray;
     }
-	
+
 	return {
-	   
+
 	   /**
 	    * query (hakuehdot)
 	    * @param query
@@ -31,7 +31,7 @@ angular.module('Organisaatio', [ 'ngResource' ])
 	   etsi: function(query){
 		   var ret = $q.defer();
 	       $log.info('searching organisaatiot, q:' + query);
-	       
+
 	       orgHaku.get({'query':query},function(result){
 	           $log.info("resolving promise with hit count:" + result.numHits);
 	           localizeAll(result.organisaatiot);
