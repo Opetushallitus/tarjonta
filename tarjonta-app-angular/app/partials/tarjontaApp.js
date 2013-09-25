@@ -35,19 +35,21 @@ angular.module('app',
             'KoodistoMultiSelect',
             'zippy',
             'app.organisaatiohaku',
-            'angularTreeview'
+            'angularTreeview',
+            'config'
         ]);
 
+angular.module('app').value("globalConfig", CONFIG);
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider
-        
-        		// tarjontatiedon haku
-        		.when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
-        
-        		.when('/etusivu', {templateUrl: 'partials/etusivu.html'})
+
+                // tarjontatiedon haku
+                .when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
+
+                .when('/etusivu', {templateUrl: 'partials/etusivu.html'})
 
                 .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
 
@@ -86,7 +88,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                 .when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
 
-        		
+
                 .otherwise({redirectTo: '/etusivu'});
 
     }]);
