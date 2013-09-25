@@ -4,12 +4,17 @@
     cursor: pointer;
 }
 
-.light-gray{
+
+.table-light-gray{
 	background-color: rgba(248,248,248,1);
 }
 
-.dark-gray{
+.table-dark-gray{
 	background-color: rgba(112,112,112,1)
+}
+
+.table-active{
+    background-color: rgba(255,0,0,1);
 }
 
 .float-left {

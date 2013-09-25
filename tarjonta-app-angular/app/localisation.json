@@ -257,6 +257,16 @@
                 "values": {
                     "fi": "Oppisopimustoimipiste"
                 }
+            },
+     "selectTutkintoOhjelma.koulutusala":
+            {
+                "key": "selectTutkintoOhjelma.koulutusala",
+                "locale": "fi",
+                "value": "Koulutusala",
+                "values": {
+                    "fi": "Koulutusala"
+                }
             }
+           
             
 }
