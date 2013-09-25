@@ -1,13 +1,13 @@
 /**
- * Organisaatio hakulomakkeen controlleri.
+ * Organisaatiohaun kontrolleri.
  */
 angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','localisation' ])
 .config(function($httpProvider) { $httpProvider.defaults.useXDomain = true;}) 
 
 .controller('OrganisaatioHakuFormCtrl', function(LocalisationService, $scope, organisaatioService) {
 
-	/**
-	 * oletus hakuehdot
+	/*
+	 * hakuehdot
 	 */
 	$scope.hakuehdot = $scope.defaultHakuehdot = {
 		"tekstihaku" : "axxe",
@@ -25,11 +25,6 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','loca
 	    }
 	}, false);
 	
-	
-	
-//	$scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
-
-	// hae jostain
 	$scope.organisaatiotyypit = [{
 		nimi : LocalisationService.t("organisaatiotyyppi.koulutustoimija"),
 		koodi : 'KOULUTUSTOIMIJA'
@@ -53,12 +48,13 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','loca
 	 * Kutsutaan formin submitissa, käynnistää haun
 	 */
 	$scope.submit = function() {
-		console.log("organisaatiosearch clicked!" + angular.toJson($scope.hakuehdot));
+		console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
 		hakutulos = organisaatioService.etsi($scope.hakuehdot.tekstihaku);
 		hakutulos.then(function(vastaus){
+			//
+			localize(vastaus.organisaatiot);
 			console.log("result returned, hits:" + vastaus.numHits);
 			$scope.tulos=vastaus.organisaatiot;
-			console.log("result returned, hits:" + angular.toJson(vastaus.organisaatiot));
 		});
     };
 
@@ -66,8 +62,22 @@ angular.module('app.organisaatiohaku', [ 'app.services', 'angularTreeview','loca
 	 * Kutsutaan formin resetissä, palauttaa default syötteet modeliin
 	 */
     $scope.reset = function() {
-		console.log("reset clicked!" + angular.toJson($scope.hakuehdot));
+		console.log("reset clicked!");
     	$scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
+    };
+    
+    /**
+     * Aseta organisaatioille sopivin nimisopivin nimi
+     */
+    localize = function(organisaatioarray){
+    	angular.forEach(organisaatioarray, function(organisaatio){
+    		//TODO olettaa että käyttäjä suomenkielinen
+    		organisaationimi=organisaatio.nimi.fi||organisaatio.nimi.sv||organisaatio.nimi.en;
+    		organisaatio.nimi=organisaationimi
+    		if(organisaatio.children){
+    			localize(organisaatio.children);
+    		}
+    	});
     };
 	
 })

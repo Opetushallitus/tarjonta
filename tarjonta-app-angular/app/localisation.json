@@ -167,9 +167,8 @@
                 "values": {
                     "fi": "Tyhjennä"
                 }
-            }
-            ,
-                "organisaatiohaku.button.hae":
+            },
+    "organisaatiohaku.button.hae":
             {
                 "key": "organisaatiohaku.button.hae",
                 "locale": "fi",
@@ -177,9 +176,7 @@
                 "values": {
                     "fi": "Hae"
                 }
-            }
-            ,
-            
+            },
     "organisaatiohaku.label.nayta.myos.suunnitellut":
             {
                 "key": "organisaatiohaku.label.nayta.myos.suunnitellut",
@@ -188,10 +185,7 @@
                 "values": {
                     "fi": "Myös suunnitellut"
                 }
-            }
-            
-                        ,
-            
+            },
     "organisaatiohaku.label.nayta.myos.lakkautetut":
             {
                 "key": "organisaatiohaku.label.nayta.myos.lakkautetut",
@@ -199,6 +193,69 @@
                 "value": "Myös lakkautetut",
                 "values": {
                     "fi": "Myös lakkautetut"
+                }
+            },
+    "organisaatiohaku.organisaatiotyypit.kaikki":
+            {
+                "key": "organisaatiohaku.organisaatiotyypit.kaikki",
+                "locale": "fi",
+                "value": "Valitse organisaatiotyyppi",
+                "values": {
+                    "fi": "Valitse organisaatiotyyppi"
+                }
+            },
+    "organisaatiohaku.organisaatiotyypit.prompt":
+            {
+                "key": "organisaatiohaku.organisaatiotyypit.kaikki",
+                "locale": "fi",
+                "value": "Valitse organisaatiotyyppi",
+                "values": {
+                    "fi": "Valitse organisaatiotyyppi"
+                }
+            },
+    "organisaatiohaku.oppilaitostyypit.prompt":
+            {
+                "key": "organisaatiohaku.oppilaitostyypit.prompt",
+                "locale": "fi",
+                "value": "Valitse oppilaitostyyppi",
+                "values": {
+                    "fi": "Valitse oppilaitostyyppi"
+                }
+            },
+    "organisaatiotyyppi.koulutustoimija":
+            {
+                "key": "organisaatiotyyppi.koulutustoimija",
+                "locale": "fi",
+                "value": "Koulutustoimija",
+                "values": {
+                    "fi": "Koulutustoimija"
+                }
+            },
+    "organisaatiotyyppi.oppilaitos":
+            {
+                "key": "organisaatiotyyppi.oppilaitos",
+                "locale": "fi",
+                "value": "Oppilaitos",
+                "values": {
+                    "fi": "Oppilaitos"
+                }
+            },
+    "organisaatiotyyppi.toimipiste":
+            {
+                "key": "organisaatiotyyppi.toimipiste",
+                "locale": "fi",
+                "value": "Toimipiste",
+                "values": {
+                    "fi": "Toimipiste"
+                }
+            },
+    "organisaatiotyyppi.oppisopimustoimipiste":
+            {
+                "key": "organisaatiotyyppi.oppisopimustoimipiste",
+                "locale": "fi",
+                "value": "Oppisopimustoimipiste",
+                "values": {
+                    "fi": "Oppisopimustoimipiste"
                 }
             }
             
