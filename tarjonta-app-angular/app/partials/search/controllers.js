@@ -1,6 +1,60 @@
 
-angular.module('app.controllers', ['app.services','localisation','Organisaatio']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService) {
+angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService) {
 
+	// 1. Organisaatiohaku
+	
+	$scope.hakuehdot = $scope.defaultHakuehdot = {
+		"tekstihaku" : "",
+		"organisaatiotyyppi" : "",
+		"oppilaitostyyppi" : "",
+		"lakkautetut" : false,
+		"suunnitellut" : false
+	};
+	
+	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
+	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
+	    if( $scope.organisaatio && angular.isObject($scope.organisaatio.currentNode) ) {
+	    	
+	    	$scope.selectedOrgOid = $scope.organisaatio.currentNode.oid;
+	    	$scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
+	    	
+	    	updateLocation();
+	    }
+	}, false);
+
+	// organisaatiotyypit; TODO jostain jotenkin dynaamisesti
+	$scope.organisaatiotyypit = [{
+		nimi : LocalisationService.t("organisaatiotyyppi.koulutustoimija"),
+		koodi : 'KOULUTUSTOIMIJA'
+	}, {
+		nimi : LocalisationService.t("organisaatiotyyppi.oppilaitos"),
+		koodi : "OPPILAITOS"
+	}, {
+		nimi : LocalisationService.t("organisaatiotyyppi.toimipiste"),
+		koodi : "TOIMIPISTE"
+	}, {
+		nimi : LocalisationService.t("organisaatiotyyppi.oppisopimustoimipiste"),
+		koodi : "OPPISOPIMUSTOIMIPISTE"
+	}];
+	
+	// Kutsutaan formin submitissa, käynnistää haun
+	$scope.submitOrg = function() {
+		//console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
+		hakutulos = OrganisaatioService.etsi($scope.hakuehdot.tekstihaku);
+		hakutulos.then(function(vastaus){
+			console.log("result returned, hits:", vastaus);
+			$scope.tulos = vastaus.organisaatiot;
+		});
+    };
+
+	// Kutsutaan formin resetissä, palauttaa default syötteet modeliin
+    $scope.resetOrg = function() {
+		//console.log("reset clicked!");
+    	$scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
+    };
+    
+	// 2. Koulutusten/Hakujen haku
+	
     // hakuparametrit ja organisaatiovalinta
     function fromParams(key, def) {
     	return $routeParams[key] != null ? $routeParams[key] : def;
@@ -24,9 +78,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio']
     $scope.states = stateMap;
 
     // alkamiskaudet
-    $scope.seasons = {
-    		"*": msgKaikki,
-    };
+    $scope.seasons = {"*": msgKaikki};
     // TODO koodi-locale jostain
     Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit){
     	console.log("koodit",koodit);
@@ -46,8 +98,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio']
     	$scope.years[y] = y;
     }
 
-
-    $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
+    if (!$scope.selectedOrgName) {
+    	$scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
+    }
     
     function toUrl(base, params) {
     	var args = null;
@@ -58,25 +111,32 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio']
     	}
     	return args==null ? base : base+args;
     }
-
-    function updateLocation() {
-    	var url = "/search/";
-    	if ($scope.selectedOrgOid != null && $scope.selectedOrgOid != OPH_ORG_OID) {
-    		url = url+$scope.selectedOrgOid+"/";
+    
+    function copyIfSet(dst, key, value) {
+    	if (value!=null && value!=undefined && (value+"").length>0 && value!="*") {
+    		dst[key] = value;
     	}
-    	
-    	$location.url(toUrl(url, {
-    		terms: $scope.searchTerms,
-    		state: $scope.selectedState,
-    		year: $scope.selectedYear,
-    		season: $scope.selectedSeason
-    	}));
-
     }
 
-    $scope.resetOrg = function() {
+    function updateLocation() {
+    	
+    	var sargs = {};
+    	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
+    		sargs.oid = $scope.selectedOrgOid;
+    	}
+    	copyIfSet(sargs, "terms", $scope.searchTerms);
+    	copyIfSet(sargs, "state", $scope.selectedState);
+    	copyIfSet(sargs, "year", $scope.selectedYear);
+    	copyIfSet(sargs, "season", $scope.selectedSeason);
+    	
+    	$location.search(sargs);
+    }
+
+    $scope.clearOrg = function() {
         $scope.selectedOrgOid = OPH_ORG_OID;
-        $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
+        OrganisaatioService.nimi(OPH_ORG_OID).then(function(n){
+        	$scope.selectedOrgName = n;
+        });
         updateLocation();
     }
 

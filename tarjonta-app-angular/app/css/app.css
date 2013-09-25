@@ -25,6 +25,36 @@
 	float:right;	
 }
 
+label {
+	display:inline;	
+}
+
+/* sivupalkki */
+
+.wsidebar-left {
+	position:absolute;
+	min-height:100%;
+	width:220px;
+	left:20px;
+	top:20px;
+}
+
+.wsidebar-main {
+	margin-left:290px;
+	margin-top:20px;
+	padding-right:20px;
+}
+
+/* organisaatiohaku */
+
+div#orgSearch {
+	margin-bottom:20px;
+}
+
+div#orgSearchResults > ul > li {
+	padding-left:0;
+}
+
 /* tarjonnan hakunäkymä */
 
 div#searchSpec {

@@ -1,54 +1,98 @@
-<div id="searchSpec">
-
-	<div class="title">
-		<span>{{selectedOrgName}}</span>
-		<a href="" ng-click="resetOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
-	</div>
+<div class="wsidebar-left sidebar-nav well">
 	
-	<table class="spec">
-	<!-- otsikkorivi -->
-	<tr>
-		<th>{{t('tarjonta.haku.tila')}}</th>
-		<th>{{t('tarjonta.haku.alkamisVuosi')}}</th>
-		<th>{{t('tarjonta.haku.alkamisKausi')}}</th>
-		<th colspan="2">&nbsp;</th>
-	</tr>
-	<!-- kontrollit -->
-	<tr>
-		<td class="state">
-			<select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
-		</td>
-		<td class="year">
-			<select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
-		</td>
-		<td class="season">
-			<select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
-		</td>
-		<td class="controls">
-			<input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
-			<input class="btn btn-primary" type="button" value="{{t('tarjonta.haku.hae')}}" ng-click="search()"/>
-		</td>
-		<td class="controls">
-			<input class="btn" type="button" value="{{t('tarjonta.haku.tulosta_raportti')}}" ng-click="report()" disabled="true"/>
-		</td>
+	<div id="orgSearch">
+		<input name="tekstihaku" ng-model="hakuehdot.tekstihaku" type="text"
+			value="" name="searchString" class="text search"
+			placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
 	
-	</tr>
-	</table>
+		<select ng-model="hakuehdot.organisaatiotyyppi"
+			ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
+		    <option value="">{{t("organisaatiohaku.organisaatiotyypit.prompt")}}</option>
+		</select> 
 		
-	<div class="search">
-		<input type="text" ng-model="searchTerms" ng-enter="search()"/>
+		<koodistocombo prompt="t('organisaatiohaku.oppilaitostyypit.prompt')" koodistouri="'oppilaitostyyppi'" locale="'FI'" koodiuri="hakuehdot.oppilaitostyyppi"></koodistocombo>
+		
+		<input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
+		<label for="passiiviset">{{t("organisaatiohaku.label.nayta.myos.lakkautetut") }}</label><br/><br/>
+	
+		<input ng-model="hakuehdot.suunnitellut" type="checkbox" name="includePlanned" id="suunnitellut" value="true">
+		<label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
+	
+		<div class="buttons">
+			<input type="button" ng-click="resetOrg()" class="btn btn-primary"
+				value="{{ t('organisaatiohaku.button.tyhjenna') }}" />
+		    <input type="submit" ng-click="submitOrg()" class="btn btn-warning"
+				value="{{ t('organisaatiohaku.button.hae') }}" />
+		</div>
+		
 	</div>
 	
-
-<span></span>
+	<div id="orgSearchResults" data-angular-treeview="true"
+			data-tree-id="organisaatio"
+			data-tree-model="tulos"
+			data-node-id="oid"
+			data-node-label="nimi"
+			data-node-children="children" >
+	</div>
+		
 </div>
 
-<tabset>
-	<tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
-		// koulutukset
-	</tab>
-	<tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
-		// hakukohteet
-	</tab>
+<div class="wsidebar-main">
 
-</tabset>
+	<div id="searchSpec">
+	
+		<div class="title">
+			<span>{{selectedOrgName}}</span>
+			<a href="" ng-click="clearOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
+		</div>
+		
+		<table class="spec">
+		<!-- otsikkorivi -->
+		<tr>
+			<th>{{t('tarjonta.haku.tila')}}</th>
+			<th>{{t('tarjonta.haku.alkamisVuosi')}}</th>
+			<th>{{t('tarjonta.haku.alkamisKausi')}}</th>
+			<th colspan="2">&nbsp;</th>
+		</tr>
+		<!-- kontrollit -->
+		<tr>
+			<td class="state">
+				<select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
+			</td>
+			<td class="year">
+				<select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
+			</td>
+			<td class="season">
+				<select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
+			</td>
+			<td class="controls">
+				<input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
+				<input class="btn btn-primary" type="button" value="{{t('tarjonta.haku.hae')}}" ng-click="search()"/>
+			</td>
+			<td class="controls">
+				<input class="btn" type="button" value="{{t('tarjonta.haku.tulosta_raportti')}}" ng-click="report()" disabled="true"/>
+			</td>
+		
+		</tr>
+		</table>
+			
+		<div class="search">
+			<input type="text" ng-model="searchTerms" ng-enter="search()"/>
+		</div>
+		
+	
+	<span></span>
+	</div>
+	
+	<tabset>
+		<tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
+			// TODO hakutulokset/koulutukset //
+		</tab>
+		<tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
+			// TODO hakutulokset/hakukohteet //
+		</tab>
+	
+	</tabset>
+
+</div>
+

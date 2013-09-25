@@ -31,10 +31,10 @@ angular.module('app',
             'loading',
             'localisation',
             'Koodisto',
+            'Organisaatio',
             'KoodistoCombo',
             'KoodistoMultiSelect',
             'zippy',
-            'app.organisaatiohaku',
             'angularTreeview'
         ]);
 
@@ -44,11 +44,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
         $routeProvider
         
-        		// tarjontatiedon haku
-        		.when("/search/:oid", {templateUrl: 'partials/search/search.html', controller: 'SearchController'})
+        		// etusivu / tarjontatiedon haku
+        		.when("/", {templateUrl: 'partials/search/search.html', controller: 'SearchController', reloadOnSearch:false})
         
-        		.when('/etusivu', {templateUrl: 'partials/etusivu.html'})
-
                 .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
 
 
