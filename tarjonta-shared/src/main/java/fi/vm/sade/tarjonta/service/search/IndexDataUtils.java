@@ -209,8 +209,8 @@ public class IndexDataUtils {
             OrganisaatioPerustieto org) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
         if (org != null) {
-            for(String lang: new String[]{"fi, sv, en"}){
-                final String val = org.getNimi("fi");
+            for(String lang: new String[]{LANG_FI, LANG_SV, LANG_EN}){
+                final String val = org.getNimi(lang);
                 if(val!=null) {
                     Teksti nimiFi = new Teksti(val, lang);
                     nimi.getTeksti().add(nimiFi);
