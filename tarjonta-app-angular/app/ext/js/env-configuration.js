@@ -1,4 +1,4 @@
-var CONFIG = {
+window.CONFIG = {
     "env": {
         "accessRight.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightService",
         "accessRightAdmin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightAdminService",

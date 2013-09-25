@@ -1,39 +1,43 @@
 
-angular.module('app.controllers', ['app.services']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService) {
+angular.module('app.controllers', ['app.services','localisation','Organisaatio']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService) {
 
     // hakuparametrit ja organisaatiovalinta
     function fromParams(key, def) {
     	return $routeParams[key] != null ? $routeParams[key] : def;
     }
 
-    $scope.selectedOrgOid = fromParams("oid", "12345");
+    $scope.selectedOrgOid = fromParams("oid", OPH_ORG_OID);
     $scope.searchTerms = fromParams("terms","");
-    $scope.selectedState = fromParams("state");
-    $scope.selectedYear = fromParams("year");
-    $scope.selectedSeason = fromParams("season");
+    $scope.selectedState = fromParams("state","*");
+    $scope.selectedYear = fromParams("year","*");
+    $scope.selectedSeason = fromParams("season","*");
 
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
-    // TODO Generoi automaattisesti enumin fi.vm.sade.tarjonta.shared.types.TarjontaTila mukaan
-    var states = [ "LUONNOS", "VALMIS", "JULKAISTU", "PERUTTU", "KOPIOITU" ];
-
     var stateMap = {"*": msgKaikki};
-
-    for (var i in states) {
-    	var s = states[i];
-    	stateMap[s] = LocalisationService.t("tarjonta.tila."+s); // TODO i18n
+    for (var i in TARJONTA_TILAT) {
+    	var s = TARJONTA_TILAT[i];
+    	stateMap[s] = LocalisationService.t("tarjonta.tila."+s);
     }
 
     $scope.states = stateMap;
 
     // alkamiskaudet
-    // TODO koodistosta
     $scope.seasons = {
     		"*": msgKaikki,
-    		"kausi_kevat": "Kevät",
-    		"kausi_syksy": "Syksy",
     };
+    // TODO koodi-locale jostain
+    Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit){
+    	console.log("koodit",koodit);
+        $scope.seasons = {"*": msgKaikki};
+
+        for (var i in koodit) {
+        	var k = koodit[i];
+        	$scope.seasons[k.koodiUri] = k.koodiNimi;
+        }
+
+    });
 
     // alkamisvuodet; 2012 .. nykyhetki + 10v
     $scope.years = {"*": msgKaikki};
@@ -44,21 +48,34 @@ angular.module('app.controllers', ['app.services']).controller('SearchController
 
 
     $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
+    
+    function toUrl(base, params) {
+    	var args = null;
+    	for (var p in params) {
+    		if (params[p]!=null && params[p]!=undefined && params[p]!="*" && params[p].trim().length>0) {
+    			args = (args==null ? "?" : args+"&") + p + "=" + escape(params[p]);
+    		}
+    	}
+    	return args==null ? base : base+args;
+    }
 
     function updateLocation() {
     	var url = "/search/";
-    	if ($scope.selectedOrgOid != null) {
+    	if ($scope.selectedOrgOid != null && $scope.selectedOrgOid != OPH_ORG_OID) {
     		url = url+$scope.selectedOrgOid+"/";
     	}
-
-    	url = url+"?terms="+$scope.searchTerms+"&state="+$scope.selectedState+"&year="+$scope.selectedYear+"&season="+$scope.selectedSeason;
-
-    	$location.url(url);
+    	
+    	$location.url(toUrl(url, {
+    		terms: $scope.searchTerms,
+    		state: $scope.selectedState,
+    		year: $scope.selectedYear,
+    		season: $scope.selectedSeason
+    	}));
 
     }
 
     $scope.resetOrg = function() {
-        $scope.selectedOrgOid = "12345";  // TODO oph-oid?
+        $scope.selectedOrgOid = OPH_ORG_OID;
         $scope.selectedOrgName = "OPH";  // TODO hae oidin mukaan
         updateLocation();
     }

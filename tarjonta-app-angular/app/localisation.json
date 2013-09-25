@@ -1,4 +1,16 @@
 {
+    "review.breadcrumb":
+            {
+                "key": "review.breadcrumb",
+                "locale": "fi",
+                "value": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>.",
+                "values": {
+                    "fi": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>.",
+                    "en": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>. EN",
+                    "sv": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>. SV"
+                }
+
+            },
     "tarjonta.organisaationHaku.hae":
             {
                 "key": "tarjonta.organisaationHaku.hae",
@@ -54,105 +66,90 @@
                     "sv": "Titeln för Tarjonta"
                 }
             },
-
     "tarjonta.tila.LUONNOS":
             {
                 "key": "tarjonta.tila.LUONNOS",
                 "locale": "fi",
                 "value": "Luonnos"
             },
-            
     "tarjonta.tila.VALMIS":
             {
                 "key": "tarjonta.tila.VALMIS",
                 "locale": "fi",
                 "value": "Valmis"
             },
-            
     "tarjonta.tila.JULKAISTU":
             {
                 "key": "tarjonta.tila.JULKAISTU",
                 "locale": "fi",
                 "value": "Julkaistu"
             },
-            
     "tarjonta.tila.PERUTTU":
             {
                 "key": "tarjonta.tila.PERUTTU",
                 "locale": "fi",
                 "value": "Peruttu"
             },
-            
     "tarjonta.tila.KOPIOITU":
             {
                 "key": "tarjonta.tila.KOPIOITU",
                 "locale": "fi",
                 "value": "Kopioitu"
             },
-            
     "tarjonta.haku.kaikki":
             {
                 "key": "tarjonta.haku.kaikki",
                 "locale": "fi",
                 "value": "Kaikki"
             },
-            
     "tarjonta.haku.tyhjenna":
             {
                 "key": "tarjonta.haku.tyhjenna",
                 "locale": "fi",
                 "value": "Tyhjennä"
             },
-            
     "tarjonta.haku.hae":
             {
                 "key": "tarjonta.haku.hae",
                 "locale": "fi",
                 "value": "Hae"
             },
-            
     "tarjonta.haku.tulosta_raportti":
             {
                 "key": "tarjonta.haku.tulosta_raportti",
                 "locale": "fi",
                 "value": "Tulosta raportti"
             },
-            
     "tarjonta.haku.poistaOrgValinta":
             {
                 "key": "tarjonta.haku.poistaOrgValinta",
                 "locale": "fi",
                 "value": "Poista valinta"
             },
-            
     "tarjonta.haku.tila":
             {
                 "key": "tarjonta.haku.hae",
                 "locale": "fi",
                 "value": "Tila"
             },
-            
     "tarjonta.haku.alkamisVuosi":
             {
                 "key": "tarjonta.haku.alkamisVuosi",
                 "locale": "fi",
                 "value": "Koulutuksen alkamisvuosi"
             },
-            
     "tarjonta.haku.alkamisKausi":
             {
                 "key": "tarjonta.haku.alkamisKausi",
                 "locale": "fi",
                 "value": "Koulutuksen alkamiskausi"
             },
-            
     "tarjonta.hakutulos.koulutukset":
             {
                 "key": "tarjonta.hakutulos.koulutukset",
                 "locale": "fi",
                 "value": "Koulutukset"
             },
-            
     "tarjonta.hakutulos.hakukohteet":
             {
                 "key": "tarjonta.hakutulos.hakukohteet",
@@ -257,6 +254,14 @@
                 "values": {
                     "fi": "Oppisopimustoimipiste"
                 }
+            },
+    "selectTutkintoOhjelma.koulutusala":
+            {
+                "key": "selectTutkintoOhjelma.koulutusala",
+                "locale": "fi",
+                "value": "Koulutusala",
+                "values": {
+                    "fi": "Koulutusala"
+                }
             }
-            
 }
