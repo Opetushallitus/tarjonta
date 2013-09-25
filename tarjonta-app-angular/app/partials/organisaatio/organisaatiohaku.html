@@ -7,10 +7,10 @@
 
 	<select ng-model="hakuehdot.organisaatiotyyppi"
 		ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
-	    <option value="">{{t("organisaatiohaku.organisaatiotyypit.kaikki")}}</option>
+	    <option value="">{{t("organisaatiohaku.organisaatiotyypit.prompt")}}</option>
 	</select> 
 	
-	<koodistocombo  koodistouri="'oppilaitostyyppi'" locale="'FI'" koodiuri="hakuehdot.oppilaitostyyppi"></koodistocombo>
+	<koodistocombo prompt="t('organisaatiohaku.oppilaitostyypit.prompt')" koodistouri="'oppilaitostyyppi'" locale="'FI'" koodiuri="hakuehdot.oppilaitostyyppi"></koodistocombo>
 	
 	<div class="field-container-checkbox">
 		<input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
