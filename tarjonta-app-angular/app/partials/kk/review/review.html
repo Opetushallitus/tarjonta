@@ -1,40 +1,61 @@
-<div>
 
-    <div>BREADCRUMBS</div>
-    <div>BUTTONS</div>
-    <div>NIMI</div>
-    <div>< edellinen  1/100 seuraava ></div>
-
-    <div>TABS</div>
-    <div>[esikatsele...]</div>
-
-    <div class="collapsed_{{basicInfoIsCollapsed}}"  ng-click="basicInfoIsCollapsed = !basicInfoIsCollapsed" >
-        koulutuksen perustiedot
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div ng-bind-html="t('review.breadcrumb', ['Autoalan perustutkinto', 'Rantalhojan ammattikoulu, autoalan toimipiste'])"></div>
+            <a><div tt='cancel'></div></a>
+        </div>
     </div>
-    <div collapse="basicInfoIsCollapsed">koulutuksen perustiedot</div>
+</div>
 
-    <div collapse="descriptionInfoIsCollapsed">koulutuksen kuvailevat tiedot</div>
-    <div collapse="descriptionInfoIsCollapsed">koulutuksen kuvailevat tiedot</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="btn" ng-click='doStuff($event)'><div tt='back'></div></div>
+            <div class="btn"><div tt='delete'></div></div>
+            <div class="btn"><div tt='copy'></div></div>
+            <div class="btn"><div tt='transfer'>Siirrä osaksi toista koulutusta</div></div>
+            <div class="btn"><div tt='transfer'>Lisää rinnakkainen koulutus</div></div>
+        </div>
+    </div>
+</div>
 
-    <div collapse="includedKoulutusIsCollapsed">sisältyvät opintokokonaisuudet</div>
-    <div collapse="includedKoulutusIsCollapsed">sisältyvät opintokokonaisuudet</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            Sairaanhoidon ja huolenpidon koulutusohjelma, pk
+        </div>
+    </div>
+</div>
 
-    <div collapse="hakukohteetIsCollapsed">hakukohteet</div>
-    <div collapse="hakukohteetIsCollapsed">hakukohteet</div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            < <span tt='previous'></span> 1/100 <span tt='next'></span> >
+        </div>
+    </div>
+</div>
 
-    <div>< edellinen  1/100 seuraava ></div>
+<tabset>
+    <tab ng-repeat="lang in languages" heading="{{lang.name}}">
+        <div ng-include="'partials/kk/review/reviewLanguage.html'"></div>
+    </tab>
+</tabset>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            < <span tt='previous'>edellinen</span> 1/100 <span tt='next'>seuraava</span> >
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<h2>TESTAUSTA</h2>
 
 
-    a
-    <div class="zippy" zippy-title="routeParams">CONTENT</div>
-    b
-
-    Route params: {{ routeParams }}
-
-    1. <div data-t>kk.review.title</div>
-    2. <div t>kk.review.title</div>
-
-
+<div class="container-fluid">
     <div >
         <button class="btn" ng-click="isCollapsed = !isCollapsed">Toggle collapse</button>
         <div collapse="isCollapsed">

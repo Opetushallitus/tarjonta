@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Tarjonta">
         <meta name="author" content="Opetushallitus">
-        <title>{{ t("tarjonta.title") }}</title>
+        <title>Tarjonta</title>
 
         <!--
           App configuration files.
@@ -19,6 +19,8 @@
         <script src="lib/angular/angular.js"></script>
         <script src="lib/angular/angular-resource.js"></script>
         <script src="lib/angular/angular-route.js"></script>
+        <script src="lib/angular/angular.treeview.js"></script>
+        <script src="lib/angular/angular-sanitize.js"></script>
 
         <script src="lib/underscore/underscore.js"></script>
         <script src="lib/jquery-1.10.2.min.js"></script>
@@ -26,10 +28,12 @@
         <script src="js/shared/auth.js"></script>
         <script src="js/shared/constant.js"></script>
         <script src="js/shared/koodisto.js"></script>
+        <script src="js/shared/organisaatio.js"></script>
         <script src="js/shared/directives/koodistoCombo.js"></script>
         <script src="js/shared/directives/koodistoMultiSelect.js"></script>
         <script src="js/shared/loading.js"></script>
         <script src="js/shared/localisation.js"></script>
+        <script src="js/shared/config.js"></script>
         <script src="js/shared/directives/zippy.js"></script>
         <link href="js/shared/directives/zippy.css" rel="stylesheet">
 
@@ -49,56 +53,24 @@
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
         <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
 
-        <script src="partials/tarjontaApp.js"></script>
-        <script src="partials/organisaatio/organisaatiohaku.js"></script>
-        <script src="partials/organisaatio/angular.treeview.js"></script>
-
-
-        <!-- Le styles -->
-        <!--
-                <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-                <style type="text/css">
-                    body {
-                        padding-top: 60px;
-                        padding-bottom: 40px;
-                    }
-                    .sidebar-nav {
-                        padding: 9px 0;
-                    }
-        
-                    @media (max-width: 980px) {
-                        /* Enable use of floated navbar text */
-                        .navbar-text.pull-right {
-                            float: none;
-                            padding-left: 5px;
-                            padding-right: 5px;
-                        }
-                    }
-                </style>
-                <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+		<!-- RIKKOO ETUSIVUN (ja bootstrappi on tossa ylempänä enivei) -timo
+        <link rel="stylesheet" href="css/bootstrap.css"/>
         -->
+
+        <script src="partials/tarjontaApp.js"></script>
 
         <link rel="stylesheet" href="css/app.css"/>
         <link rel="stylesheet" href="css/tree.css"/>
     </head>
     <body>
-        <!--     <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span3 sidebar-nav well">
-                        sidebar
-                    </div>
-                    <div class="span9"> -->
+
         <div data-ng-view></div>
-        <!--  </div>
-    </div>
-</div>
-        -->
 
         <div data-ng-controller="LoadingCtrl"
              data-ng-show="loading"
              style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
-            <t>loading</t>
-            <img alt="{{t('loading')}}t" src="img/ajax-loader-big.gif" />
+            <div tt='loading'></div>
+            <img alt="Loading..." src="img/ajax-loader-big.gif" />
         </div>
     </body>
 </html>

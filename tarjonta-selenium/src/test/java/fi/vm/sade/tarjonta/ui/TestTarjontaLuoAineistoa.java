@@ -38,9 +38,9 @@ public class TestTarjontaLuoAineistoa {
 
     //    Luo haku
     @Test
-    public void testLuoHaku() throws Exception {
+    public void test_T_INT_TAR_LUO001_LuoHaku() throws Exception {
     	this.frontPage();
-    	doit.echo("Running LuoHaku ...");
+    	doit.echo("Running test_T_INT_TAR_LUO001_LuoHaku ...");
         doit.ValikotHakujenYllapito(driver, baseUrl);
         doit.textClick(driver, "Luo uusi haku");
         Assert.assertNotNull("Running LuoHaku Luo uusi haku ei toimi."
@@ -114,14 +114,14 @@ public class TestTarjontaLuoAineistoa {
         Assert.assertNotNull("Running LuoHaku Julkaise ei toimi."
                 , doit.textElement(driver, "Toiminto onnistui"));
         doit.tauko(1);
-    	doit.echo("Running LuoHaku OK");
+    	doit.echo("Running test_T_INT_TAR_LUO001_LuoHaku OK");
     }
 
     //  Luo koulutus (ammatillinen koulutus)
     @Test
-    public void testLuoKoulutusAMK() throws Exception {
+    public void test_T_INT_TAR_LUO002_LuoKoulutusAMK() throws Exception {
     	this.frontPage();
-    	doit.echo("Running LuoKoulutusAMK ...");
+    	doit.echo("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK ...");
     	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
         
         // HAE
@@ -130,7 +130,7 @@ public class TestTarjontaLuoAineistoa {
         haeKentta.sendKeys(reppu + "laitos");
         doit.tauko(1);
         doit.textClick(driver, "Hae");
-        Assert.assertNotNull("Running LuoKoulutusAMK Hae " + reppu + "laitos2013 ei toimi."
+        Assert.assertNotNull("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK Hae " + reppu + "laitos2013 ei toimi."
         		, doit.textElement(driver, reppu + "laitos2013"));
         doit.tauko(1);
         String yyyymmdd = doit.yyyymmddString();
@@ -221,16 +221,16 @@ public class TestTarjontaLuoAineistoa {
         // Julkaise
         if (! doit.isPresentText(driver, "Hevo")) { doit.getTriangleForFirstItem(driver).click(); doit.tauko(1); }
         doit.menuOperaatio(driver, "Julkaise", "Hevo");
-        Assert.assertNotNull("Running LuoKoulutusAMK Julkaise ei toimi."
+        Assert.assertNotNull("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK Julkaise ei toimi."
                 , doit.textElement(driver, "Toiminto onnistui"));
-    	doit.echo("Running LuoKoulutusAMK OK");
+    	doit.echo("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK OK");
     }
 
     //    Luo hakukohde
     @Test
-    public void testLuoHakukohde() throws Exception {
+    public void test_T_INT_TAR_LUO003_LuoHakukohde() throws Exception {
     	this.frontPage();
-    	doit.echo("Running LuoHakukohde ...");
+    	doit.echo("Running test_T_INT_TAR_LUO003_LuoHakukohde ...");
         doit.ValikotHakukohteidenYllapito(driver, baseUrl);
         
         // HAE
@@ -241,7 +241,7 @@ public class TestTarjontaLuoAineistoa {
             haeKentta.sendKeys("alavuden kaupun");
             doit.tauko(1);
             driver.findElement(By.xpath("//*[text()='Hae']")).click();
-            Assert.assertNotNull("Running LuoHakukohde Hae Alavuden kaupunki ei toimi."
+            Assert.assertNotNull("Running test_T_INT_TAR_LUO003_LuoHakukohde Hae Alavuden kaupunki ei toimi."
                             , doit.textElement(driver, "Alavuden kaupunki"));
             doit.tauko(1);
         }
@@ -363,11 +363,11 @@ public class TestTarjontaLuoAineistoa {
         if (! doit.isPresentText(driver, "julkaistu"))
         {
         	doit.menuOperaatio(driver, "Julkaise", "Hevo");
-        	Assert.assertNotNull("Running LuoHakukohde Julkaise ei toimi."
+        	Assert.assertNotNull("Running test_T_INT_TAR_LUO003_LuoHakukohde Julkaise ei toimi."
         			, doit.textElement(driver, "Toiminto onnistui"));
         }
         doit.tauko(1);
-    	doit.echo("Running LuoHakukohde OK");
+    	doit.echo("Running test_T_INT_TAR_LUO003_LuoHakukohde OK");
     }
 
     public void frontPage() throws Exception

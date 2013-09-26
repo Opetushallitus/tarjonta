@@ -5,6 +5,10 @@ var OPH_ORG_OID = "1.2.246.562.10.00000000001";
 var KK_TUTKINTO = 'kkTutkinto';
 var MAIN = 'tarjonta';
 
+// Tarjonnan tilat
+// TODO Generoi automaattisesti enumin fi.vm.sade.tarjonta.shared.types.TarjontaTila mukaan
+var TARJONTA_TILAT = [ "LUONNOS", "VALMIS", "JULKAISTU", "PERUTTU", "KOPIOITU" ];
+
 //Angular modules:
 var NG_ROUTE = 'ngRoute';
 var NG_RESOURCE = 'ngResource';
