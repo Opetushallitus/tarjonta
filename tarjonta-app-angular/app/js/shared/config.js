@@ -14,22 +14,24 @@
  */
 
 angular.module('config', []).factory('Config', function(globalConfig) {
+    var factoryObj = (function() {
+        var ENVINRONMENT_CONFIGURATION = 'env'; //system properties, service uris etc.
+        var APPLICATION_CONFIGURATION = 'app'; //angular application properties
 
-    var ENVINRONMENT_CONFIGURATION = 'env'; //system properties, service uris etc.
-    var APPLICATION_CONFIGURATION = 'app'; //angular application properties
+        if (globalConfig === null)
+            throw "Configuration variable cannot be null.";
 
-    if (globalConfig === null)
-        throw "Configuration variable cannot be null.";
+        if (globalConfig[ENVINRONMENT_CONFIGURATION] === null)
+            throw "Environment data cannot be null.";
 
-    if (globalConfig[ENVINRONMENT_CONFIGURATION] === null)
-        throw "Environment data cannot be null.";
+        if (globalConfig[APPLICATION_CONFIGURATION] === null)
+            throw "Angular application data cannot be null.";
 
-    if (globalConfig[APPLICATION_CONFIGURATION] === null)
-        throw "Angular application data cannot be null.";
-
-    var output = {};
-    output[ENVINRONMENT_CONFIGURATION] = angular.copy(globalConfig[ENVINRONMENT_CONFIGURATION]);
-    output[APPLICATION_CONFIGURATION] = angular.copy(globalConfig[APPLICATION_CONFIGURATION]);
-    return output;
+        var output = {};
+        output[ENVINRONMENT_CONFIGURATION] = angular.copy(globalConfig[ENVINRONMENT_CONFIGURATION]);
+        output[APPLICATION_CONFIGURATION] = angular.copy(globalConfig[APPLICATION_CONFIGURATION]);
+        return output;
+    }());
+    return factoryObj;
 });
 
