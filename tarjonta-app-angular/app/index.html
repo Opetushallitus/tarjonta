@@ -92,15 +92,18 @@
 
 
         <script>
+            // DEFERRED APP INITIALIZATION SO THAT WE CAN PRELOAD LOCALISATIONS
             var APP_LOCALISATION_DATA = {};
 
             // TODO get current root uri
-            var uri = "localisation.json";
-            jQuery.ajax(uri, {
+            var tarjontaAppLocalisationLocationUri = "localisation.json";
+            console.log("Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
+
+            jQuery.ajax(tarjontaAppLocalisationLocationUri, {
                 dataType: "json",
                 complete: function(xhr, status) {
-                    console.log("*********************************************************** COMPLETE: ", status);
-                    console.log("*********************************************************** COMPLETE: ", xhr);
+                    console.log("Localisation load complete, status", status);
+                    console.log("  got data: ", xhr);
 
                     APP_LOCALISATION_DATA = xhr.responseJSON;
 
