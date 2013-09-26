@@ -200,15 +200,14 @@ public class HakuResourceImpl implements HakuResource {
         hakukohteetKysely.setHakuOid(oid);
         hakukohteetKysely.getTarjoajaOids().addAll(organisationOids);
 
-        if (hakukohdeTilas.size() > 1) {
-            LOG.error("  CANNOT USE MORE THAT ONE STATE: {} -- returning with any state", hakukohdeTilas);
-        }
-        if (hakukohdeTilas.size() == 1) {
-            TarjontaTila tila = TarjontaTila.valueOf(hakukohdeTilas.get(0));
-            if (tila != null) {
-                hakukohteetKysely.setTilat(tila);
-            } else {
-                LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+        if (hakukohdeTilas.size() >0 ) {
+            for(String tilaString: hakukohdeTilas) {
+                TarjontaTila tila = TarjontaTila.valueOf(tilaString);
+                if (tila != null) {
+                    hakukohteetKysely.addTila(tila);
+                } else {
+                    LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+                }
             }
         }
 

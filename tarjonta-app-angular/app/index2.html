@@ -40,13 +40,12 @@
         <script src="partials/directives.js"></script>
         <script src="partials/filters.js"></script>
         <script src="partials/services.js"></script>
-        <script src="partials/kk/edit/selectTutkintoControllers.js"></script>
 
         <script src="partials/search/controllers.js"></script>
 
         <script src="partials/kk/directives.js"></script>
         <script src="partials/kk/edit/controllers.js"></script>
-        <script src="partials/kk/review/reviewControllers.js"></script>
+        <script src="partials/kk/review/controllers.js"></script>
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
 
@@ -60,32 +59,49 @@
     </head>
 
     <body ng-controller="AppRoutingCtrl">
+
+        <!--
+        <h1>TEST {{ count }}</h1>
+
+        <pre>
+        Action: {{ renderAction }}
+        Path {{ renderPath }}
+        Route params {{routeParams}}
+        </pre>
+
+        <hr>
+        -->
+
         <div ng-switch on="renderPath[0]">
             <div ng-switch-when="home">
-                <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
+              <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
             </div>
             <div ng-switch-when="kk">
+                kk
                 <div ng-switch on="renderPath[1]">
                     <div ng-switch-when="edit">
-                        <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
+                        edit
+                      <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
                     </div>
                     <div ng-switch-when="review">
-                        <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
+                        review
+                      <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
                     </div>
                 </div><!-- /renderPath[1] -->
             </div>
         </div><!-- /renderPath[0] -->
 
         <div class="wsidebar-main">
-            <hr>
-            Footer, route counter = {{count}}<br>
-            <a href="#/etusivu">Etusivulle</a>
+        Footer
+        <a href="#/etusivu">Etusivulle</a>
+        {{count}}
         </div>
+
 
         <div data-ng-controller="LoadingCtrl"
              data-ng-show="loading"
              style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
-            {{ t("loading") }}
+            <div tt='loading'></div>
             <img alt="Loading..." src="img/ajax-loader-big.gif" />
         </div>
     </body>

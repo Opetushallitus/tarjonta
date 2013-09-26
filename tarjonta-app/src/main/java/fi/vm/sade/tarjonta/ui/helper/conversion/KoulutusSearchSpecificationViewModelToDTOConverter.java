@@ -32,7 +32,7 @@ public class KoulutusSearchSpecificationViewModelToDTOConverter {
 		kysely.getTarjoajaOids().addAll(viewModel.getOrganisaatioOids());
 		kysely.setKoulutuksenAlkamiskausi(viewModel.getKoulutuksenAlkamiskausi());
         if (viewModel.getKoulutuksenTila() != null) {
-            kysely.setTilat(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(viewModel.getKoulutuksenTila()));
+            kysely.addTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(viewModel.getKoulutuksenTila()));
         }
 		kysely.setKoulutuksenAlkamisvuosi(viewModel.getKoulutuksenAlkamisvuosi());
 		return kysely;
