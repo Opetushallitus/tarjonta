@@ -31,27 +31,27 @@ describe('config', function() {
     beforeEach(module('config'));
 
     describe('Config', function() {
-        var config, global;
+        var cgf, global;
 
         beforeEach(function() {
             //inject your service for testing.
             inject(function(globalConfig, Config) {
                 global = globalConfig; //the mock data
-                config = Config; //the factory we are trying to test
+                cgf = Config; //the factory we are trying to test
             });
         });
 
         it('should have object instances', inject(function() {
-            expect(config).toBeDefined();
-            expect(config.env).toBeDefined();
-            expect(config.app).toBeDefined();
+            expect(cgf).toBeDefined();
+            expect(cgf.env).toBeDefined();
+            expect(cgf.app).toBeDefined();
         }));
 
         it('should return env and app values by given keys', inject(function() {
-            expect(config.env["key-env-1"]).toBe("mock-value-env-1");
-            expect(config.env["key-env-2"]).toBe(CONFIG_ENV_MOCK.env[ "key-env-2"]);
-            expect(config.env["key-env-3"]).toBe(undefined);
-            expect(config.app["key-app-1"]).toBe(CONFIG_ENV_MOCK.app[ "key-app-1"]);
+            expect(cgf.env["key-env-1"]).toBe("mock-value-env-1");
+            expect(cgf.env["key-env-2"]).toBe(CONFIG_ENV_MOCK.env[ "key-env-2"]);
+            expect(cgf.env["key-env-3"]).toBe(undefined);
+            expect(cgf.app["key-app-1"]).toBe(CONFIG_ENV_MOCK.app[ "key-app-1"]);
         }));
     });
 });

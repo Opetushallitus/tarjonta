@@ -49,19 +49,18 @@
 
         <div>
             Koulutuksen alkamispäivä
-<!--
-            <input type="text"
-                   data-datepicker-popup="dd.MM.yyyy"
-                   data-ng-model="model.koulutuksenAlkamisPvm"
-                   data-is-open="opened"
-                   data-min="minDate"
-                   data-max="'2015-06-22'"
-                   data-datepicker-options="dateOptions"
-                   data-date-disabled="disabled(date, mode)"
-                   data-ng-required="true" />
--->
+            <!--
+                        <input type="text"
+                               data-datepicker-popup="dd.MM.yyyy"
+                               data-ng-model="model.koulutuksenAlkamisPvm"
+                               data-is-open="opened"
+                               data-min="minDate"
+                               data-max="'2015-06-22'"
+                               data-datepicker-options="dateOptions"
+                               data-date-disabled="disabled(date, mode)"
+                               data-ng-required="true" />
+            -->
         </div>
-
 
         <div>
             Suunniteltu kesto
@@ -74,6 +73,7 @@
             Opetuskielet
             <select data-ng-model="opetuskieli" data-ng-options="kieli.koodi.uri as kieli.arvo for kieli in model.opetuskielis.tekstis">
             </select>
+            <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect>
         </div>
 
 
