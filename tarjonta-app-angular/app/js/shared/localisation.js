@@ -20,13 +20,23 @@
  *
  * @author mlyly
  */
-var app = angular.module('localisation', ['ngResource'])
+var app = angular.module('localisation', ['ngResource']);
+
+app.config(function () {
+    console.log("*** localisation CONFIG");
+});
+
+app.run(function () {
+    console.log("*** localisation RUN");
+});
+
 
 /**
  * "Localisation" factory, returns resource for operating on localisations.
  */
 
 app.factory('Localisation', function($resource) {
+    console.log("*** localisation FACTORY Localisation");
 
     return $resource('localisation.json', {}, {
         query: {method: 'GET', headers: {

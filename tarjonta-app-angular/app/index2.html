@@ -40,7 +40,6 @@
         <script src="partials/directives.js"></script>
         <script src="partials/filters.js"></script>
         <script src="partials/services.js"></script>
-        <script src="partials/kk/edit/selectTutkintoControllers.js"></script>
 
         <script src="partials/search/controllers.js"></script>
 
@@ -60,29 +59,42 @@
     </head>
 
     <body ng-controller="AppRoutingCtrl">
+
+        <!--
+        <h1>TEST {{ count }}</h1>
+
+        <pre>
+        Action: {{ renderAction }}
+        Path {{ renderPath }}
+        Route params {{routeParams}}
+        </pre>
+
+        <hr>
+        -->
+
         <div ng-switch on="renderPath[0]">
             <div ng-switch-when="home">
-                <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
+              <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
             </div>
             <div ng-switch-when="kk">
                 kk
                 <div ng-switch on="renderPath[1]">
                     <div ng-switch-when="edit">
                         edit
-                        <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
+                      <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
                     </div>
                     <div ng-switch-when="review">
                         review
-                        <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
+                      <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
                     </div>
                 </div><!-- /renderPath[1] -->
             </div>
         </div><!-- /renderPath[0] -->
 
         <div class="wsidebar-main">
-            <hr>
-            Footer, route counter = {{count}}<br>
-            <a href="#/etusivu">Etusivulle</a>
+        Footer
+        <a href="#/etusivu">Etusivulle</a>
+        {{count}}
         </div>
 
 
