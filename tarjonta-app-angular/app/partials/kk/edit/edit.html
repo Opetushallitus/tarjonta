@@ -1,119 +1,22 @@
 <div>
-    <code>
-        {{model}}
-    </code>
-    <form name="luoTutkinto">
-        <div>  <input type="button"  value="Peruuta"><input type="button"  value="Tallenna luonnoksena"><input type="button"  value="Tallennan valmiina"><input type="button"  value="Jatka"></div>
-
-        <div>
-            <input type="text" data-ng-model="searchByOid" />
-            <input type="button" data-ng-click="search()"  value="Hae">
-        </div>
-        <div>
-            {{data.koulutuskoodi.arvo}}
-            <input type="text" name="koulutuskoodi" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
-        </div>
-        <div>
-            Koulutusohjelma
-            <div data-ng-repeat="teksti in model.koulutusohjelma.tekstis">
-                <input type="text" data-ng-model="teksti.arvo" required />
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="btn" ng-click='doStuff($event)'><div tt='back'></div></div>
+                <div class="btn"><div tt='delete'></div></div>
+                <div class="btn"><div tt='copy'></div></div>
+                <div class="btn"><div tt='transfer'>Siirrä osaksi toista koulutusta</div></div>
+                <div class="btn"><div tt='transfer'>Lisää rinnakkainen koulutus</div></div>
             </div>
         </div>
-        <div>
-            Koulutusaste {{model.koulutusaste.arvo}}
-        </div>
-        <div>
-            Koulutusala {{model.koulutusala.arvo}}
-        </div>
-        <div>
-            Opintoala {{model.opintoala.arvo}}
-        </div>
-        <div>
-            Tutkinto {{model.tutkinto.arvo}}
-        </div>
-        <div>
-            Tutkintonimike {{model.tutkintonimike.arvo}}
-        </div>
-        <div>
-            Eqf-luokitus {{model.eqf.arvo}}
-        </div>
-        <div>
-            Tutkinto-ohjelman tunniste
-            <input type="text" data-ng-model="model.tunniste.arvo" required />
-        </div>
-        <div>
-            Opintojen laajuus
-            <select data-ng-model="model.laajuus.arvo">
-            </select>
-        </div>
+    </div>
 
-        <div>
-            Koulutuksen alkamispäivä
-            <!--
-                        <input type="text"
-                               data-datepicker-popup="dd.MM.yyyy"
-                               data-ng-model="model.koulutuksenAlkamisPvm"
-                               data-is-open="opened"
-                               data-min="minDate"
-                               data-max="'2015-06-22'"
-                               data-datepicker-options="dateOptions"
-                               data-date-disabled="disabled(date, mode)"
-                               data-ng-required="true" />
-            -->
-        </div>
-
-        <div>
-            Suunniteltu kesto
-            <input type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
-            <select data-ng-model="model.suunniteltuKestoTyyppi.arvo">
-            </select>
-        </div>
-
-        <div>
-            Opetuskielet
-            <select data-ng-model="opetuskieli" data-ng-options="kieli.koodi.uri as kieli.arvo for kieli in model.opetuskielis.tekstis">
-            </select>
-            <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect>
-        </div>
-
-
-        <div>
-            Maksullisuus
-            <input type="checkbox" data-ng-model="model.maksullisuus.arvo" />
-        </div>
-
-        <div>
-            Opetusmuodot
-            <select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.opetusmuodot.tekstis">
-            </select>
-        </div>
-
-        <div>
-            Pohjakoulutusvaatimus
-            <select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.pohjakoulutusvaatimus.tekstis">
-            </select>
-        </div>
-
-        <div>
-            Teemat
-            <select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.Teemat.tekstis">
-            </select>
-        </div>
-        <div>
-            Yhteyshenkilö
-            <div data-ng-repeat="yhteyshenkilo in model.yhteyshenkilos | filter: {henkiloTyyppi : 'YHTEYSHENKILO'}" >
-                <input type="text" data-ng-model="yhteyshenkilo.etunimet" required />
-                <input type="text" data-ng-model="yhteyshenkilo.titteli" required />
-                <input type="text" data-ng-model="yhteyshenkilo.puhelin" required />
-            </div>
-        </div>
-        <div>
-            ECTS-kordinaattori
-            <div data-ng-repeat="yhteyshenkilo in model.yhteyshenkilos | filter: {henkiloTyyppi : 'ECTS_KOORDINAATTORI'}" >
-                <input type="text" data-ng-model="yhteyshenkilo.etunimet" required />
-                <input type="text" data-ng-model="yhteyshenkilo.titteli" required />
-                <input type="text" data-ng-model="yhteyshenkilo.puhelin" required />
-            </div>
-        </div>
-    </form>
+    <tabset>
+        <tab heading="perustiedot">
+            <div ng-include="'partials/kk/edit/editPerustiedot.html'"></div>
+        </tab>
+        <tab heading="lisatiedot">
+        
+        </tab>
+    </tabset>
 </div>
