@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl', ['Koodisto']);
+var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource']);
 
 app.controller('KKEditController', ['$scope', 'TarjontaService',
     function FormTutkintoController($scope, tarjontaService) {
@@ -15,19 +15,48 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
             tarjontaService.get({oid: $scope.searchByOid}, function(data) {
                 $scope.model = data;
                 $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
-                console.info($scope.model)
+                console.info($scope.model);
             });
         };
 
         $scope.search();
     }])
-    .controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', function($scope, $modalInstance, Koodisto) {
+    .controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', '$q', function($scope, $modalInstance, Koodisto, $q) {
     	
-    	$scope.stoModel = { koulutusalaKoodistoUri: 'koulutusalaoph2002',//CONFIG.env['koodisto-uris.koulutusala'],
+    	$scope.stoModel = { koulutusalaKoodistoUri: 'koulutusalaoph2002',
+    						tutkinnotFetched: false,
+    						korkeakoulututkinnot: [],
     						hakutulokset: [],
     						active: {},
     						hakulause: '',
     						koulutusala: {}};
+    	
+    	$scope.getKkTutkinnot = function() {
+    		var koulutusasteet = ["koulutusasteoph2002_60", "koulutusasteoph2002_61", "koulutusasteoph2002_62", "koulutusasteoph2002_63", "koulutusasteoph2002_70", "koulutusasteoph2002_71", "koulutusasteoph2002_72", "koulutusasteoph2002_73", "koulutusasteoph2002_80", "koulutusasteoph2002_81", "koulutusasteoph2002_82", "koulutusasteoph2002_90"];
+    		var promises = [];
+    		angular.forEach(koulutusasteet, function(value, key) {
+    			promises.push(Koodisto.getYlapuolisetKoodit(value,'FI'));
+    		});
+    		
+    		var koulutuskooditHaettu = $q.all(promises);
+    		koulutuskooditHaettu.then(function(koodisParam) {
+    			
+    		angular.forEach(koodisParam, function(koodis, key) {
+    			//console.log("koodis: " + koodis.length);
+    			angular.forEach(koodis, function(koodi, key) {
+    				//console.log("Koodi: " + koodi);
+    				if (koodi.koodiKoodisto === 'koulutus') {
+    					//console.log("Adding: " + koodi.koodiUri);
+    					$scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] = koodi;	
+    				}
+    			});
+    			
+    		});
+    		$scope.stoModel.tutkinnotFetched = true;
+    		$scope.searchTutkinnot();
+    		
+    		});
+    	};
     	
     	$scope.toggleItem = function(hakutulos) {
     		console.log(hakutulos.koodiUri);
@@ -40,38 +69,23 @@ app.controller('KKEditController', ['$scope', 'TarjontaService',
     	};
     	
     	$scope.searchTutkinnot = function() {
-    		console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
-    		//console.log(CONFIG);
-    		//console.log(CONFIG.env['koodisto-uris.tutkinto']);
-    		if($scope.stoModel.koulutusala.koodiUri.length > 0) {
-    			console.log("Doing koodistorelation things");
-    			var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
-    			hakutulosPromise.then(function(koodisParam) {
-    				var prelHakutulokset = koodisParam.filter(function (koodi) {
-    																	return koodi.koodiKoodisto === 'koulutus';
-    				});
-    				$scope.performStringSearch(prelHakutulokset);
-    			});
-    		} else {
-    			console.log("Doing pure search on tutkinnot");
-    			var tutkinnotPromise = Koodisto.getAllKoodisWithKoodiUri('koulutus','FI');
-    	        tutkinnotPromise.then(function(koodisParam){
-    	            var allTutkinnot = koodisParam;
-    	            $scope.performStringSearch(allTutkinnot);
-    	        });
+    		if (!$scope.stoModel.tutkinnotFetched) {
+    			console.log("Fetching tutkinnot now");
+    			$scope.getKkTutkinnot();
+    		} else if ($scope.stoModel.koulutusala.koodiUri.length > 0){
+    			console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
+        		
+        		console.log("Doing koodistorelation things");
+        		var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
+        		hakutulosPromise.then(function(koodisParam) {
+        			$scope.hakutulokset = koodisParam.filter(function (koodi) {
+        									//console.log("is koodi in kk: " + $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri]);
+        									//console.log("boolean: " + ($scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined));
+        									return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined;//koodi.koodiKoodisto === 'koulutus';
+        			});
+        		});
     		}
-    		/*$scope.stoModel.hakutulokset = $scope.rawData.filter(function (element) {
-    												return element.nimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1;
-    											});*/
     	};
-    	
-    	$scope.performStringSearch = function(tutkinnot) {
-    		$scope.stoModel.hakutulokset = tutkinnot.filter(function (element) {
-				return element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1;
-			});
-    	};
-    	
-    	
     	
     	$scope.clearCriteria = function() {
     		$scope.stoModel.hakulause = '';
