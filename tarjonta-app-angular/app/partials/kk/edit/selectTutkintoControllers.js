@@ -4,9 +4,10 @@
 
 var app = angular.module('app.kk.edit.ctrl');
 
-app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', '$q', function($scope, $modalInstance, Koodisto, $q) {
+app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', '$q',  'Config', function($scope, $modalInstance, Koodisto, $q, config) {
 	
-	$scope.stoModel = { koulutusalaKoodistoUri: 'koulutusalaoph2002',
+	//filtterisivun malli
+	$scope.stoModel = { koulutusalaKoodistoUri: config.env["koodisto-uris.koulutusala"],
 						tutkinnotFetched: false,
 						korkeakoulututkinnot: [],
 						hakutulokset: [],
@@ -14,67 +15,64 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						hakulause: '',
 						koulutusala: {}};
 	
+	//Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
+	//Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
 	$scope.getKkTutkinnot = function() {
-		var koulutusasteet = ["koulutusasteoph2002_60", "koulutusasteoph2002_61", "koulutusasteoph2002_62", "koulutusasteoph2002_63", "koulutusasteoph2002_70", "koulutusasteoph2002_71", "koulutusasteoph2002_72", "koulutusasteoph2002_73", "koulutusasteoph2002_80", "koulutusasteoph2002_81", "koulutusasteoph2002_82", "koulutusasteoph2002_90"];
+		var koulutusasteet = config.app["tarjonta.koulutusaste.korkeakoulu-uris"];
+		//Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
 		var promises = [];
 		angular.forEach(koulutusasteet, function(value, key) {
 			promises.push(Koodisto.getYlapuolisetKoodit(value,'FI'));
 		});
-		
 		var koulutuskooditHaettu = $q.all(promises);
 		koulutuskooditHaettu.then(function(koodisParam) {
 			
-		angular.forEach(koodisParam, function(koodis, key) {
-			//console.log("koodis: " + koodis.length);
-			angular.forEach(koodis, function(koodi, key) {
-				//console.log("Koodi: " + koodi);
-				if (koodi.koodiKoodisto === 'koulutus') {
-					//console.log("Adding: " + koodi.koodiUri);
-					$scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] = koodi;	
-				}
-			});
+			//laitetaan korkeakoulututkinnot koodiuri: koodi -mappiin
+			angular.forEach(koodisParam, function(koodis, key) {
+				angular.forEach(koodis, function(koodi, key) {
+					if (koodi.koodiKoodisto === config.env["koodisto-uris.tutkinto"]) {
+						$scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] = koodi;	
+					}
+				});
 			
-		});
+			});
+			//sitten aloitetaan varsinainen haku
 			$scope.stoModel.tutkinnotFetched = true;
 			$scope.searchTutkinnot();
 		
 		});
 	};
 	
+	//Tulosrivin valinta
 	$scope.toggleItem = function(hakutulos) {
 		console.log(hakutulos.koodiUri);
 		$scope.stoModel.active = hakutulos;
 	};
 	
+	//Onko hakutulosrivi valittu
 	$scope.isActive = function(hakutulos) {
 		console.log(hakutulos.koodiUri==$scope.stoModel.active.koodiUri);
 		return hakutulos.koodiUri==$scope.stoModel.active.koodiUri;
 	};
 	
+	//Haun suorittaminen
 	$scope.searchTutkinnot = function() {
 		var tempTutkinnot = [];
+		//Jos kk-tutkintoja ei haettu ne haetaan ensin
 		if (!$scope.stoModel.tutkinnotFetched) {
-			console.log("FETCHING TUTKINNOT NOW");
 			$scope.getKkTutkinnot();
+		//Jos koulutusalavalittu filtteroidaan koulutusala -> koulutusrelaation avulla minka jalkeen string-haku
 		} else if ($scope.stoModel.koulutusala.koodiUri != undefined && $scope.stoModel.koulutusala.koodiUri.length > 0){
-			console.log("FILTERING BY KOULUTUSALA");
 			console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
-    		
-    		console.log("Doing koodistorelation things");
     		var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
     		hakutulosPromise.then(function(koodisParam) {
     			tempTutkinnot = koodisParam.filter(function (koodi) {
-    									//console.log("is koodi in kk: " + $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri]);
-    									//console.log("boolean: " + ($scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined));
-    									return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined;//koodi.koodiKoodisto === 'koulutus';
+    									return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined;
     			});
     			$scope.performStringSearch(tempTutkinnot);
     		});
+    	//Muuten kaikki kk-tutkinnot ok suoritetaan vain string-haku
 		} else {
-			console.log("PURE STRING SEARCH!!!");
-			/*angular.forEach($scope.stoModel.korkeakoulututkinnot, function(value, key) {
-				$scope.stoModel.hakutulokset.push(value);
-			});*/
 			for (var k in $scope.stoModel.korkeakoulututkinnot) {
 				if ($scope.stoModel.korkeakoulututkinnot.hasOwnProperty(k))
 				tempTutkinnot.push($scope.stoModel.korkeakoulututkinnot[k]);
@@ -83,27 +81,27 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 		}
 	};
 	
+	//string-haun suorittaminen
 	$scope.performStringSearch = function(tutkinnot) {
-		 console.log("PERFORMING STRING SEARCH");
-		 console.log(tutkinnot);
-		 console.log("hakulause: " + $scope.stoModel.hakulause);
+		 console.log("Performing string search");
 	     $scope.stoModel.hakutulokset = tutkinnot.filter(function (element) {
 	return (element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1) || (element.koodiArvo.indexOf($scope.stoModel.hakulause) > -1);
 	});
 	     };
 	
+	//Hakukriteerien tyhjennys
 	$scope.clearCriteria = function() {
 		$scope.stoModel.hakulause = '';
 		$scope.stoModel.koulutusala = {};
 	};
 	
+	//dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
 	$scope.ok = function() {
-		console.log('Dialog ok pressed');
 		$modalInstance.close($scope.stoModel.active);
 	};
 	
+	//dialogin sulkeminen peruuta-napista
 	$scope.cancel = function() {
-		console.log('Dialog cancel pressed');
 		$modalInstance.dismiss();
 	};
 	
