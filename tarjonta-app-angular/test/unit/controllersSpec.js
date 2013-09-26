@@ -16,9 +16,23 @@ describe('controllers', function(){
 });
 
 describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
+	var CONFIG_ENV_MOCK = {
+	    "env": {
+	        "key-env-1": "mock-value-env-1",
+	        "key-env-2": "mock-value-env-2"
+	    }, "app": {
+	        "key-app-1": "mock-value-app-1"
+	    }
+	}
+	    
+	//set mock data to module by using the value-method,
+	var mockModule = angular.module('test.module', []);
+	mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+
+	beforeEach(module('test.module')); //mock module with the mock data
 	beforeEach(module('app.kk.edit.ctrl'));
 	beforeEach(module('config'));
-	var $scope, $modalInstance, config;
+	var $scope, $modalInstance;
 	beforeEach(inject(function($rootScope){
 		$scope = $rootScope.$new();
 		$modalInstance = {
@@ -26,11 +40,8 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 			templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
 			controller: 'SelectTutkintoOhjelmaController'
 		};
-		config =  {
-			
-		};
 	}));
-	/*it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
+	it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
 		$controller('SelectTutkintoOhjelmaController', {
 			$scope: $scope,
 			$modalInstance: $modalInstance
@@ -76,7 +87,7 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 		$scope.stoModel.hakulause = 'AMK';
 		$scope.searchTutkinnot();
 		expect($scope.stoModel.hakutulokset.length).toEqual(3);
-	}));
+	}));*/
 	it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
 		$controller('SelectTutkintoOhjelmaController', {
 			$scope: $scope,
@@ -86,5 +97,5 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 		$scope.stoModel.hakulause = 'AMK';
 		$scope.clearCriteria();
 		expect($scope.stoModel.hakulause).toEqual('');
-	}));*/
+	}));
 });
