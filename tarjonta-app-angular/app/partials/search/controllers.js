@@ -2,7 +2,7 @@
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService) {
 
 	// 1. Organisaatiohaku
-	
+
 	$scope.hakuehdot = $scope.defaultHakuehdot = {
 		"tekstihaku" : "",
 		"organisaatiotyyppi" : "",
@@ -10,14 +10,19 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		"lakkautetut" : false,
 		"suunnitellut" : false
 	};
-	
+
+    $scope.organisaatio = {};
+
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
+
+        console.log("$scope.$watch( 'organisaatio.currentNode')");
+
 	    if( $scope.organisaatio && angular.isObject($scope.organisaatio.currentNode) ) {
-	    	
+
 	    	$scope.selectedOrgOid = $scope.organisaatio.currentNode.oid;
 	    	$scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
-	    	
+
 	    	updateLocation();
 	    }
 	}, false);
@@ -36,7 +41,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		nimi : LocalisationService.t("organisaatiotyyppi.oppisopimustoimipiste"),
 		koodi : "OPPISOPIMUSTOIMIPISTE"
 	}];
-	
+
 	// Kutsutaan formin submitissa, käynnistää haun
 	$scope.submitOrg = function() {
 		//console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
@@ -52,22 +57,26 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		//console.log("reset clicked!");
     	$scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
     };
-    
+
 	// 2. Koulutusten/Hakujen haku
-	
+
     // hakuparametrit ja organisaatiovalinta
     function fromParams(key, def) {
     	return $routeParams[key] != null ? $routeParams[key] : def;
     }
 
-    $scope.selectedOrgOid = fromParams("oid", OPH_ORG_OID);
+    // $scope.selectedOrgOid = fromParams("oid", OPH_ORG_OID);
+
+    $scope.selectedOrgOid = $scope.routeParams.id ? $scope.routeParams.id : OPH_ORG_OID;
+    // fromParams("oid", OPH_ORG_OID);
+
     $scope.searchTerms = fromParams("terms","");
     $scope.selectedState = fromParams("state","*");
     $scope.selectedYear = fromParams("year","*");
     $scope.selectedSeason = fromParams("season","*");
 
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
-    
+
     // tarjonnan tilat
     var stateMap = {"*": msgKaikki};
     for (var i in TARJONTA_TILAT) {
@@ -77,7 +86,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	}
     	stateMap[s] = LocalisationService.t("tarjonta.tila."+s);
     }
-    
+
     $scope.states = stateMap;
 
     // alkamiskaudet
@@ -104,7 +113,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     if (!$scope.selectedOrgName) {
     	$scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
     }
-    
+
     function toUrl(base, params) {
     	var args = null;
     	for (var p in params) {
@@ -114,7 +123,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	}
     	return args==null ? base : base+args;
     }
-    
+
     function copyIfSet(dst, key, value) {
     	if (value!=null && value!=undefined && (value+"").length>0 && value!="*") {
     		dst[key] = value;
@@ -122,7 +131,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     function updateLocation() {
-    	
+
     	var sargs = {};
     	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
     		sargs.oid = $scope.selectedOrgOid;
@@ -131,8 +140,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	copyIfSet(sargs, "state", $scope.selectedState);
     	copyIfSet(sargs, "year", $scope.selectedYear);
     	copyIfSet(sargs, "season", $scope.selectedSeason);
-    	
-    	$location.search(sargs);
+
+    	$location.path("/etusivu/" + sargs.oid);
+        $location.search(sargs);
+
     }
 
     $scope.clearOrg = function() {
