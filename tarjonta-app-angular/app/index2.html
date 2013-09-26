@@ -26,7 +26,6 @@
         <script src="lib/jquery-1.10.2.min.js"></script>
 
         <script src="js/shared/auth.js"></script>
-        <script src="js/shared/constant.js"></script>
         <script src="js/shared/koodisto.js"></script>
         <script src="js/shared/organisaatio.js"></script>
         <script src="js/shared/directives/koodistoCombo.js"></script>
@@ -61,6 +60,7 @@
 
     <body ng-controller="AppRoutingCtrl">
 
+        <!--
         <h1>TEST {{ count }}</h1>
 
         <pre>
@@ -70,6 +70,7 @@
         </pre>
 
         <hr>
+        -->
 
         <div ng-switch on="renderPath[0]">
             <div ng-switch-when="home">
@@ -90,9 +91,12 @@
             </div>
         </div><!-- /renderPath[0] -->
 
-        <hr>
+        <div class="wsidebar-main">
         Footer
         <a href="#/etusivu">Etusivulle</a>
+        {{count}}
+        </div>
+
 
         <div data-ng-controller="LoadingCtrl"
              data-ng-show="loading"

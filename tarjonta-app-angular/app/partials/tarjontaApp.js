@@ -39,7 +39,6 @@ angular.module('app',
             'zippy',
             'angularTreeview',
             'angularTreeview',
-            'config'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -123,6 +122,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams) {
 
     console.log("app.AppRoutingCtrl()");
+
+    $scope.count = 0;
 
     var render = function() {
         console.log("app.AppRoutingCtrl.render()");
