@@ -16,7 +16,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuaikaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
@@ -128,7 +127,10 @@ public interface HakuResource {
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince,
             @QueryParam("organisationOids") String organisationOidsStr,
-            @QueryParam("hakukohdeTilas") String hakukohdeTilasStr);
+            @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @QueryParam("alkamisKausi") String alkamisKausi
+            );
 
 
     /**

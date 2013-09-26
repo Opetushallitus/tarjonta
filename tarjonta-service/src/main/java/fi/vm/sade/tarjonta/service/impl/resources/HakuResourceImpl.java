@@ -177,7 +177,7 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/OID/hakukohdeTulos
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr) {
+            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr, Integer alkamisVuosi, String alkamisKausi) {
 
         LOG.debug("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
 
@@ -199,6 +199,8 @@ public class HakuResourceImpl implements HakuResource {
         HakukohteetKysely hakukohteetKysely = new HakukohteetKysely();
         hakukohteetKysely.setHakuOid(oid);
         hakukohteetKysely.getTarjoajaOids().addAll(organisationOids);
+        hakukohteetKysely.setKoulutuksenAlkamiskausi(alkamisKausi);
+        hakukohteetKysely.setKoulutuksenAlkamisvuosi(alkamisVuosi);
 
         if (hakukohdeTilas.size() >0 ) {
             for(String tilaString: hakukohdeTilas) {
