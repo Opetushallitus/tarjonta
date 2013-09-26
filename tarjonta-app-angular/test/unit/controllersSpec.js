@@ -16,7 +16,22 @@ describe('controllers', function(){
 });
 
 describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
+	var CONFIG_ENV_MOCK = {
+	    "env": {
+	        "key-env-1": "mock-value-env-1",
+	        "key-env-2": "mock-value-env-2"
+	    }, "app": {
+	        "key-app-1": "mock-value-app-1"
+	    }
+	}
+	    
+	//set mock data to module by using the value-method,
+	var mockModule = angular.module('test.module', []);
+	mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+
+	beforeEach(module('test.module')); //mock module with the mock data
 	beforeEach(module('app.kk.edit.ctrl'));
+	beforeEach(module('config'));
 	var $scope, $modalInstance;
 	beforeEach(inject(function($rootScope){
 		$scope = $rootScope.$new();
@@ -30,6 +45,7 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 		$controller('SelectTutkintoOhjelmaController', {
 			$scope: $scope,
 			$modalInstance: $modalInstance
+			
 		});
 		expect($scope.stoModel.hakutulokset).toEqual([]);
 		expect($scope.stoModel.koulutusala).toEqual({});

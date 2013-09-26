@@ -11,7 +11,8 @@ angular.module('app.kk',
             'app.kk.review.ctrl',
             'app.kk.services',
             'ui.bootstrap',
-            'ngRoute'
+            'ngRoute',
+            'config'
         ]);
 
 /*******************************************************

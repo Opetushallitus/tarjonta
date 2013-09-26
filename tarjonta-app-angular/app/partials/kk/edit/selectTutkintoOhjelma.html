@@ -1,6 +1,6 @@
 <div>
     <div class="modal-header">
-        <h3>Valitse tutkinto-ohjelma</h3>
+        <h3>{{t('selectTutkintoOhjelma.dialogTitle')}}</h3>
     </div>
     
     <div class="modal-body">
@@ -8,17 +8,17 @@
         <h4>{{t('selectTutkintoOhjelma.koulutusala')}}</h4>
         <koodistocombo  koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
     
-        <h4>Tekstihaku</h4>
+        <h4>{{t('selectTutkintoOhjelma.tekstihaku')}}</h4>
         <div>
             <input type="text" data-ng-model="stoModel.hakulause" />
-            <button class="btn btn-warning" ng-click="clearCriteria()">Tyhjennä</button>
-            <button class="btn btn-primary" ng-click="searchTutkinnot()">Hae</button>
+            <button class="btn btn-warning" ng-click="clearCriteria()">{{t('selectTutkintoOhjelma.tyhjenna')}}</button>
+            <button class="btn btn-primary" ng-click="searchTutkinnot()">{{t('selectTutkintoOhjelma.hae')}}</button>
         </div>
         
-        <h4>Hakutulokset</h4>
+        <h4>{{t('selectTutkintoOhjelma.hakutulokset')}}</h4>
         <table class="table table-bordered">
     
-            <tbody ng-repeat="hakutulos in stoModel.hakutulokset">
+            <tbody ng-repeat="hakutulos in stoModel.hakutulokset"> 
                 <tr ng-class="{true: 'table-active', false:''}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="'table-light-gray'" ng-class-odd="'table-dark-gray'">
                     <td>{{hakutulos.koodiArvo}}</td>
                     <td>{{hakutulos.koodiNimi}}</td>
@@ -27,8 +27,8 @@
         </table>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="cancel()">Peruuta</button>
-        <button class="btn btn-primary" ng-click="ok()">Jatka</button>
+        <button class="btn btn-warning" ng-click="cancel()">{{t('selectTutkintoOhjelma.peruuta')}}</button>
+        <button class="btn btn-primary" ng-click="ok()">{{t('selectTutkintoOhjelma.jatka')}}</button>
     </div>
 
 </div>

@@ -263,5 +263,62 @@
                 "values": {
                     "fi": "Koulutusala"
                 }
-            }
+            },
+    "selectTutkintoOhjelma.dialogTitle": {
+            "key": "selectTutkintoOhjelma.dialogTitle",
+             "locale": "fi",
+             "value": "Valitse tutkinto-ohjelma",
+             "values": {
+                "fi": "Valitse tutkinto-ohjelma"
+             }
+    },
+    "selectTutkintoOhjelma.tekstihaku": {
+            "key": "selectTutkintoOhjelma.tekstihaku",
+             "locale": "fi",
+             "value": "Tekstihaku",
+             "values": {
+                "fi": "Tekstihaku"
+             }
+    },
+    "selectTutkintoOhjelma.tyhjenna": {
+            "key": "selectTutkintoOhjelma.tyhjenna",
+             "locale": "fi",
+             "value": "Tyhjennä",
+             "values": {
+                "fi": "Tyhjennä"
+             }
+    },
+    "selectTutkintoOhjelma.hae": {
+            "key": "selectTutkintoOhjelma.hae",
+             "locale": "fi",
+             "value": "Hae",
+             "values": {
+                "fi": "Hae"
+             }
+    },
+    "selectTutkintoOhjelma.hakutulokset": {
+            "key": "selectTutkintoOhjelma.hakutulokset",
+             "locale": "fi",
+             "value": "Hakutulokset",
+             "values": {
+                "fi": "Hakutulokset"
+             }
+    },
+    "selectTutkintoOhjelma.peruuta": {
+            "key": "selectTutkintoOhjelma.peruuta",
+             "locale": "fi",
+             "value": "Peruuta",
+             "values": {
+                "fi": "Peruuta"
+             }
+    },
+    "selectTutkintoOhjelma.jatka": {
+            "key": "selectTutkintoOhjelma.jatka",
+             "locale": "fi",
+             "value": "Jatka",
+             "values": {
+                "fi": "Jatka"
+             }
+    }
+    
 }

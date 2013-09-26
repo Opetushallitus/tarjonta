@@ -22,6 +22,7 @@ public class HakukohdeDTOToHakukohdeTyyppiConverter implements Converter<Hakukoh
     public HakukohdeTyyppi convert(HakukohdeDTO hakukohdeDTO) {
         HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
         hakukohdeTyyppi.setHakukohdeNimi(hakukohdeDTO.getHakukohdeNimiUri());
+        hakukohdeTyyppi.setOid(hakukohdeDTO.getOid());
         hakukohdeTyyppi.setHakukohteenHakuOid(hakukohdeDTO.getHakuOid());
         hakukohdeTyyppi.setAloituspaikat(hakukohdeDTO.getAloituspaikatLkm());
         hakukohdeTyyppi.setValintaperustekuvausKoodiUri(hakukohdeDTO.getValintaperustekuvausKoodiUri());

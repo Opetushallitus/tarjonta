@@ -1,7 +1,10 @@
 
-angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview']).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService) {
+angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
+
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, Config) {
 
 	// 1. Organisaatiohaku
+    var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
 	$scope.hakuehdot = $scope.defaultHakuehdot = {
 		"tekstihaku" : "",
@@ -52,24 +55,23 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		});
     };
 
-	// Kutsutaan formin resetissä, palauttaa default syötteet modeliin
+    // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
     $scope.resetOrg = function() {
-		//console.log("reset clicked!");
-    	$scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
+        //console.log("reset clicked!");
+        $scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
     };
 
 	// 2. Koulutusten/Hakujen haku
 
     // hakuparametrit ja organisaatiovalinta
     function fromParams(key, def) {
-    	return $routeParams[key] != null ? $routeParams[key] : def;
+        return $routeParams[key] != null ? $routeParams[key] : def;
     }
 
-    // $scope.selectedOrgOid = fromParams("oid", OPH_ORG_OID);
 
+
+    // Selected org from route path
     $scope.selectedOrgOid = $scope.routeParams.id ? $scope.routeParams.id : OPH_ORG_OID;
-    // fromParams("oid", OPH_ORG_OID);
-
     $scope.searchTerms = fromParams("terms","");
     $scope.selectedState = fromParams("state","*");
     $scope.selectedYear = fromParams("year","*");
@@ -79,12 +81,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // tarjonnan tilat
     var stateMap = {"*": msgKaikki};
+    var TARJONTA_TILAT = Config.app["tarjonta.tilat"];
     for (var i in TARJONTA_TILAT) {
-    	var s = TARJONTA_TILAT[i];
-    	if ((i / 1) != i) { // WTF? mistä epä-int tulee??
-    		continue;
-    	}
-    	stateMap[s] = LocalisationService.t("tarjonta.tila."+s);
+        var s = TARJONTA_TILAT[i];
+        if ((i / 1) != i) { // WTF? mistä epä-int tulee??
+            continue;
+        }
+        stateMap[s] = LocalisationService.t("tarjonta.tila." + s);
     }
 
     $scope.states = stateMap;
@@ -92,42 +95,42 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     // alkamiskaudet
     $scope.seasons = {"*": msgKaikki};
     // TODO koodi-locale jostain
-    Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit){
-    	console.log("koodit",koodit);
+    Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit) {
+        console.log("koodit", koodit);
         $scope.seasons = {"*": msgKaikki};
 
         for (var i in koodit) {
-        	var k = koodit[i];
-        	$scope.seasons[k.koodiUri] = k.koodiNimi;
+            var k = koodit[i];
+            $scope.seasons[k.koodiUri] = k.koodiNimi;
         }
 
     });
 
     // alkamisvuodet; 2012 .. nykyhetki + 10v
     $scope.years = {"*": msgKaikki};
-    var lyr = new Date().getFullYear()+10;
-    for (var y = 2012; y<lyr; y++) {
-    	$scope.years[y] = y;
+    var lyr = new Date().getFullYear() + 10;
+    for (var y = 2012; y < lyr; y++) {
+        $scope.years[y] = y;
     }
 
     if (!$scope.selectedOrgName) {
-    	$scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
+        $scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
     }
 
     function toUrl(base, params) {
-    	var args = null;
-    	for (var p in params) {
-    		if (params[p]!=null && params[p]!=undefined && params[p]!="*" && params[p].trim().length>0) {
-    			args = (args==null ? "?" : args+"&") + p + "=" + escape(params[p]);
-    		}
-    	}
-    	return args==null ? base : base+args;
+        var args = null;
+        for (var p in params) {
+            if (params[p] != null && params[p] != undefined && params[p] != "*" && params[p].trim().length > 0) {
+                args = (args == null ? "?" : args + "&") + p + "=" + escape(params[p]);
+            }
+        }
+        return args == null ? base : base + args;
     }
 
     function copyIfSet(dst, key, value) {
-    	if (value!=null && value!=undefined && (value+"").length>0 && value!="*") {
-    		dst[key] = value;
-    	}
+        if (value != null && value != undefined && (value + "").length > 0 && value != "*") {
+            dst[key] = value;
+        }
     }
 
     function updateLocation() {
@@ -143,37 +146,36 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     	$location.path("/etusivu/" + sargs.oid);
         $location.search(sargs);
-
     }
 
     $scope.clearOrg = function() {
         $scope.selectedOrgOid = OPH_ORG_OID;
-        OrganisaatioService.nimi(OPH_ORG_OID).then(function(n){
-        	$scope.selectedOrgName = n;
+        OrganisaatioService.nimi(OPH_ORG_OID).then(function(n) {
+            $scope.selectedOrgName = n;
         });
         updateLocation();
     }
 
     $scope.reset = function() {
-    	 $scope.searchTerms = "";
-         $scope.selectedState = "*";
-         $scope.selectedYear = "*";
-         $scope.selectedSeason = "*";
+        $scope.searchTerms = "";
+        $scope.selectedState = "*";
+        $scope.selectedYear = "*";
+        $scope.selectedSeason = "*";
     }
 
     $scope.search = function() {
-    	console.log("search", {
-    		oid: $scope.selectedOrgOid,
-    		terms: $scope.searchTerms,
-    		state: $scope.selectedState,
-    		year: $scope.selectedYear,
-    		season: $scope.selectedSeason
-    	});
-    	updateLocation();
+        console.log("search", {
+            oid: $scope.selectedOrgOid,
+            terms: $scope.searchTerms,
+            state: $scope.selectedState,
+            year: $scope.selectedYear,
+            season: $scope.selectedSeason
+        });
+        updateLocation();
     }
 
     $scope.report = function() {
-    	console.log("TODO raportti");
+        console.log("TODO raportti");
     }
 
 });

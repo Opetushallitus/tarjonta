@@ -1,3 +1,17 @@
+/*
+ * Help: 
+ * Add service factory(/js/shared/config.js) to your module.
+ * Module name : 'config'.
+ * Factory name : 'Config'.
+ * 
+ * FAQ:
+ * How to get an environment variable by a key: <factory-object>.env[<string-key>].
+ * How to get AngularJS application variable by a key: <factory-object>.app[<string-key>].
+ * 
+ * Example:
+ * cfg.env["koodi-uri.koulutuslaji.nuortenKoulutus"];
+ * result value : "koulutuslaji_n"
+ */
 window.CONFIG = {
     "env": {
         "accessRight.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightService",

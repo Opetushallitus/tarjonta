@@ -21,6 +21,8 @@ package fi.vm.sade.tarjonta.rest.dto;
  */
 public class JsonConfigObject {
 
+    private static final String SEPARATOR_QUOTE = "\"";
+    private static final String SEPARATOR = "\":\"";
     private String key;
     private String value;
 
@@ -35,13 +37,11 @@ public class JsonConfigObject {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("{\"");
+        sb.append(SEPARATOR_QUOTE);
         sb.append(getKey());
-        sb.append("\":\"");
+        sb.append(SEPARATOR);
         sb.append(getValue());
-        sb.append("\"}");
-
+        sb.append(SEPARATOR_QUOTE);
         return sb.toString();
     }
 
