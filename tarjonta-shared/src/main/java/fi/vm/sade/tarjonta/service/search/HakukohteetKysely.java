@@ -12,13 +12,13 @@ public class HakukohteetKysely implements Serializable
 {
 
     private final static long serialVersionUID = 100L;
-    protected String nimi;
-    protected String nimiKoodiUri;
-    protected List<String> tarjoajaOids;
-    protected List<String> koulutusOids;
-    protected Integer koulutuksenAlkamisvuosi;
-    protected TarjontaTila tilat;
-    protected String koulutuksenAlkamiskausi;
+    private String nimi;
+    private String nimiKoodiUri;
+    private List<String> tarjoajaOids;
+    private List<String> koulutusOids;
+    private Integer koulutuksenAlkamisvuosi;
+    private List<TarjontaTila> tilat = new ArrayList<TarjontaTila>();
+    private String koulutuksenAlkamiskausi;
     private String hakuOid;
     private String hakukohdeOid;
 
@@ -177,27 +177,22 @@ public class HakukohteetKysely implements Serializable
     }
 
     /**
-     * Gets the value of the tilat property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TarjontaTila }
-     *     
+     * Palauta hakuehdon tilat.
      */
-    public TarjontaTila getTilat() {
+    public List<TarjontaTila> getTilat() {
         return tilat;
     }
 
     /**
-     * Sets the value of the tilat property.
+     * Lisää tila hakuehtoihin (haussa käytetään OR).
      * 
      * @param value
      *     allowed object is
      *     {@link TarjontaTila }
      *     
      */
-    public void setTilat(TarjontaTila value) {
-        this.tilat = value;
+    public void addTila(TarjontaTila value) {
+        this.tilat.add(value);
     }
 
     /**

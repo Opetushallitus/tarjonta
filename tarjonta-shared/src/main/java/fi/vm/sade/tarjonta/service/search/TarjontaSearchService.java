@@ -34,13 +34,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
@@ -50,6 +53,7 @@ public class TarjontaSearchService {
 
     private static final String QUERY_ALL = "*:*";
     private static final String TEKSTIHAKU_TEMPLATE = "%s:*%s*";
+    private static final String TILAHAKU_TEMPLATE = "%s:*%s*";
     @Value("${root.organisaatio.oid}")
     private String rootOrganisaatioOid;
     private final SolrServer koulutusSolr;
@@ -155,7 +159,14 @@ public class TarjontaSearchService {
         final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
-        final String tila = kysely.getTilat() != null ? kysely.getTilat().name() : null;
+        //final String tila = kysely.getTilat() != null ? kysely.getTilat().name() : null;
+        
+        final List<String> tilat = Lists.newArrayList(Iterables.transform(kysely.getTilat(), new Function<TarjontaTila, String>() {
+            public String apply(TarjontaTila tila) {
+                return tila != null ? tila.name() : null;
+            } 
+        }));
+        
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
 
@@ -170,11 +181,9 @@ public class TarjontaSearchService {
             queryParts.clear();
         }
 
-        if (tila != null ) {
-
-            q.addFilterQuery(String.format("%s:%s", Hakukohde.TILA, tila));
+        if (tilat.size()>0) {
+            q.addFilterQuery(String.format("%s:(%s)", Hakukohde.TILA, Joiner.on(' ').skipNulls().join(tilat)));
         }
-
         
         if(kysely.getHakuOid()!=null) {
             addFilterForHakuOid(kysely.getHakuOid(), q);
