@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fi" data-ng-app="app" data-ng-controller="LocalisationCtrl">
+<html lang="fi">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,6 @@
         <script src="partials/directives.js"></script>
         <script src="partials/filters.js"></script>
         <script src="partials/services.js"></script>
-        <script src="partials/kk/edit/selectTutkintoControllers.js"></script>
 
         <script src="partials/search/controllers.js"></script>
 
@@ -60,33 +59,59 @@
     </head>
 
     <body ng-controller="AppRoutingCtrl">
-        <div ng-switch on="renderPath[0]">
-            <div ng-switch-when="home">
-                <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
-            </div>
-            <div ng-switch-when="kk">
-                <div ng-switch on="renderPath[1]">
-                    <div ng-switch-when="edit">
-                        <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
-                    </div>
-                    <div ng-switch-when="review">
-                        <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
-                    </div>
-                </div><!-- /renderPath[1] -->
-            </div>
-        </div><!-- /renderPath[0] -->
+        <div data-ng-controller="LocalisationCtrl">
+            <div ng-switch on="renderPath[0]">
+                <div ng-switch-when="home">
+                    <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
+                </div>
+                <div ng-switch-when="kk">
+                    <div ng-switch on="renderPath[1]">
+                        <div ng-switch-when="edit">
+                            <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
+                        </div>
+                        <div ng-switch-when="review">
+                            <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
+                        </div>
+                    </div><!-- /renderPath[1] -->
+                </div>
+            </div><!-- /renderPath[0] -->
 
-        <div class="wsidebar-main">
-            <hr>
-            Footer, route counter = {{count}}<br>
-            <a href="#/etusivu">Etusivulle</a>
+            <div class="wsidebar-main">
+                <hr>
+                Footer, route counter = {{count}}<br>
+                <a href="#/etusivu">Etusivulle</a>
+            </div>
+
+            <div data-ng-controller="LoadingCtrl"
+                 data-ng-show="loading"
+                 style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
+                {{ t("loading") }}
+                <img alt="Loading..." src="img/ajax-loader-big.gif" />
+            </div>
         </div>
 
-        <div data-ng-controller="LoadingCtrl"
-             data-ng-show="loading"
-             style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
-            {{ t("loading") }}
-            <img alt="Loading..." src="img/ajax-loader-big.gif" />
-        </div>
+
+        <script>
+            var APP_LOCALISATION_DATA = {};
+
+            // TODO get current root uri
+            var uri = "localisation.json";
+            jQuery.ajax(uri, {
+                dataType: "json",
+                complete: function(xhr, status) {
+                    console.log("*********************************************************** COMPLETE: ", status);
+                    console.log("*********************************************************** COMPLETE: ", xhr);
+
+                    APP_LOCALISATION_DATA = xhr.responseJSON;
+
+                    angular.element(document).ready(function() {
+                        angular.module('myApp', ['app']);
+                        angular.bootstrap(document, ['myApp']);
+                    });
+                }
+            });
+
+        </script>
+
     </body>
 </html>
