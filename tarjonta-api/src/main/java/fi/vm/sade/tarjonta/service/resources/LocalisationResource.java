@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
 import java.util.Map;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -68,6 +69,7 @@ public interface LocalisationResource {
     @PUT
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public void updateLocalization(@PathParam("key") String key, LocalisationRDTO data);
 
     /**
@@ -80,6 +82,7 @@ public interface LocalisationResource {
     @POST
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public LocalisationRDTO createLocalization(@PathParam("key") String key, LocalisationRDTO data);
 
     /**
