@@ -15,7 +15,23 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Preconditions;
+
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
@@ -27,26 +43,21 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoodiUriDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.UiListDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -63,6 +74,11 @@ public class KoulutusResourceImpl implements KoulutusResource {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    @Autowired
+    private ConversionService conversionService;
+    @Autowired
+    private TarjontaSearchService tarjontaSearchService;
+
     private static final String DEMO_LOCALE = "fi";
     
     @Override
@@ -72,6 +88,35 @@ public class KoulutusResourceImpl implements KoulutusResource {
                 + "/tekstis?lang=<koodi-kieli-URI>\n"
                 + "/tekstis/<KOMO-OID>\n";
     }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+    public HakutuloksetRDTO<KoulutusHakutulosRDTO> searchInfo(
+    		String searchTerms,
+    		List<String> organisationOids,
+    		String hakukohdeTila,
+    		String alkamisKausi,
+    		Integer alkamisVuosi) {
+
+		try {
+			organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+			
+			KoulutuksetKysely q = new KoulutuksetKysely();
+			q.setNimi(searchTerms);
+			q.setKoulutuksenAlkamiskausi(alkamisKausi);
+			q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+			q.getTarjoajaOids().addAll(organisationOids);
+			q.setKoulutuksenTila(hakukohdeTila==null ? null : TarjontaTila.valueOf(hakukohdeTila));
+
+			KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
+			
+			return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
+		} catch (RuntimeException e) {
+			e.printStackTrace(System.err);
+			throw e;
+		}
+    }
+    
     
     @Override
     public ToteutusDTO getToteutus(final String komotoOid) {

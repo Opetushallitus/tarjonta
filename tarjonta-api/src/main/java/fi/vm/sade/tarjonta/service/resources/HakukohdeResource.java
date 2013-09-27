@@ -1,15 +1,23 @@
 package fi.vm.sade.tarjonta.service.resources;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import java.util.Date;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.Map;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
  * REST service for hakukohde's.
@@ -54,6 +62,24 @@ public interface HakukohdeResource {
             @QueryParam("lastModifiedSince") Date lastModifiedSince,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("hakukohdeTila") List<String> hakukohdeTilas);
+
+    /**
+     * Hakukysely tarjonnan käyttöliittymää varten.
+     *
+     * @param searchTerms
+     * @param organisationOids filter result to be in or "under" given organisations
+     * @param hakukohdeTilas  filter result to be only in states given
+     * @return
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(@QueryParam("searchTerms") String searchTerms,
+            @QueryParam("organisationOid") List<String> organisationOids,
+            @QueryParam("tila") List<String> hakukohdeTilas,
+            @QueryParam("alkamisKausi") String alkamisKausi,
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi
+            );
 
     /**
      * /hakukohde/{oid}
