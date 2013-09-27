@@ -48,6 +48,7 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> ret = tarjoajat.get(ht.getKoulutus().getTarjoaja().getTarjoajaOid());
 		if (ret==null) {
 			ret = new TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>();
+			tarjoajat.put(ht.getKoulutus().getTarjoaja().getTarjoajaOid(), ret);
 			ret.setOid(ht.getKoulutus().getTarjoaja().getTarjoajaOid());
 			ret.setNimi(convertToMap(ht.getKoulutus().getTarjoaja().getNimi()));
 			tulos.getTulokset().add(ret);
