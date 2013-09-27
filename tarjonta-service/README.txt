@@ -2,6 +2,11 @@
 			   Tarjonta Service
 ======================================================================
 
+Runing:
+
+  mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties jetty:run
+
+
 Tietokannan alustaminen lokaaliin "tarjonta" kantaan:
 ----------------------------------------------------------------------
 1. Luo kanta
