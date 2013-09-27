@@ -15,6 +15,18 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						hakulause: '',
 						koulutusala: {}};
 	
+	//ng-grid malli
+	$scope.gridOptions = { data: 'stoModel.hakutulokset',			
+							columnDefs: [{field: 'koodiArvo', displayName: 'Koodi'}, {field:'koodiNimi', displayName: 'Nimi'}],
+							multiSelect: false,
+							beforeSelectionChange: function(rowItem, event) {
+								console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
+								
+								$scope.gridOptions.selectedItems = [];
+								$scope.stoModel.active = rowItem.entity;
+								return true;
+							}};
+	
 	//Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
 	//Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
 	$scope.getKkTutkinnot = function() {
@@ -41,18 +53,6 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 			$scope.searchTutkinnot();
 		
 		});
-	};
-	
-	//Tulosrivin valinta
-	$scope.toggleItem = function(hakutulos) {
-		console.log(hakutulos.koodiUri);
-		$scope.stoModel.active = hakutulos;
-	};
-	
-	//Onko hakutulosrivi valittu
-	$scope.isActive = function(hakutulos) {
-		console.log(hakutulos.koodiUri==$scope.stoModel.active.koodiUri);
-		return hakutulos.koodiUri==$scope.stoModel.active.koodiUri;
 	};
 	
 	//Haun suorittaminen
@@ -97,6 +97,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	
 	//dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
 	$scope.ok = function() {
+		console.log("CLOSING WITH SELECTION: " + $scope.stoModel.active);
 		$modalInstance.close($scope.stoModel.active);
 	};
 	
@@ -118,7 +119,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 			});
 		
 			modalInstance.result.then(function(selectedItem) {
-				console.log('Ok, dialog closed: ' + selectedItem.koodiUri);
+				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
 				if (selectedItem.koodiUri != null) {
 					$scope.model.selected = selectedItem;
 				} else {
@@ -128,6 +129,5 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 				$scope.model.selected = null;
 				console.log('Cancel, dialog closed');
 			});
-
 	};
 }]);

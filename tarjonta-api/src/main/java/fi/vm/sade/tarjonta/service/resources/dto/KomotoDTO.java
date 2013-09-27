@@ -49,7 +49,6 @@ public class KomotoDTO extends BaseRDTO {
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
     private TarjontaTila _tila;
     private String _ulkoinenTunniste;
-    private String _koulutusAsteUri;
     private String _parentKomotoOid;
 
     private Map<KomotoTeksti, Map<String,String>> _tekstit;
@@ -267,14 +266,6 @@ public class KomotoDTO extends BaseRDTO {
 
     public void setTeematUris(List<String> teematUris) {
         this._teematUris = teematUris;
-    }
-
-    public String getKoulutusAsteUri() {
-        return _koulutusAsteUri;
-    }
-
-    public void setKoulutusAsteUri(String koulutusAsteUri) {
-        this._koulutusAsteUri = koulutusAsteUri;
     }
 
     public String getLaajuusArvo() {

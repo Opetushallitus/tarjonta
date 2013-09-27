@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource']);
+var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource', 'ngGrid']);
 
 app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
     function FormTutkintoController($scope, tarjontaService, cfg) {
