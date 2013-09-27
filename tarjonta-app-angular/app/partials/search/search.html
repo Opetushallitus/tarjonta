@@ -20,10 +20,8 @@
             <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
 
             <div class="buttons">
-                <input type="button" ng-click="resetOrg()" class="btn btn-primary"
-                       value="{{ t('organisaatiohaku.button.tyhjenna') }}" />
-                <input type="submit" ng-click="submitOrg()" class="btn btn-warning"
-                       value="{{ t('organisaatiohaku.button.hae') }}" />
+                <div class="btn btn-primary" ng-click="resetOrg()"><div tt="organisaatiohaku.button.tyhjenna"></div></div>
+                <div class="btn btn-primary" ng-click="submitOrg()"><div tt="organisaatiohaku.button.hae"></div></div>
             </div>
         </form>
     </div>
