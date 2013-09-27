@@ -88,6 +88,6 @@ window.CONFIG = {
         
         //käsin lisätyt:
         
-        "organisaatioRestUrlPrefix": "http://127.0.0.1:7003/organisaatio-service/rest/"
+        "organisaatioRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/"
     }
 };

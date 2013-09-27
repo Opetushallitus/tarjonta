@@ -25,7 +25,16 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 
 	   /**
 	    * query (hakuehdot)
-	    * @param query
+	    * @param hakuehdot, muodossa:
+	    * {
+		*   "searchStr" : "",
+		*   "organisaatiotyyppi" : "",
+		*   "oppilaitostyyppi" : "",
+		*   "lakkautetut" : false,
+		*   "suunnitellut" : false
+	    * } 
+	    * 
+	    * 
 	    * @returns promise
 	    */
 	   etsi: function(hakuehdot){
