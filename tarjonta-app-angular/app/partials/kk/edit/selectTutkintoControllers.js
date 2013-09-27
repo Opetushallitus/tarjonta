@@ -110,18 +110,6 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 .controller('TutkintoOhjelmaSelectOpenerCtrl', ['$scope', '$modal', function($scope, $modal) {	
 	$scope.model = {};
 	
-	$scope.myData = [{name: "Moroni", age: 50},
-	                 {name: "Tiancum", age: 43},
-	                 {name: "Jacob", age: 27},
-	                 {name: "Nephi", age: 29},
-	                 {name: "Enos", age: 34}];
-	
-	$scope.gridOptions = { data: 'myData',
-							rowTemplate:'<div ng-class="{true: \'table-active\', false:\'\'}[isActive(hakutulos)]" ng-click="toggleItem(hakutulos)" ng-class-even="\'table-light-gray\'" ng-class-odd="\'table-dark-gray\'">' +
-	                           '<div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }"> </div>' +
-	                           '<div ng-cell></div>' +
-	                     		'</div></div>'};
-	
 	$scope.open = function() {
 		
 			var modalInstance = $modal.open({
@@ -129,8 +117,6 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
 				controller: 'SelectTutkintoOhjelmaController'
 			});
-			
-			
 		
 			modalInstance.result.then(function(selectedItem) {
 				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
@@ -143,6 +129,5 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 				$scope.model.selected = null;
 				console.log('Cancel, dialog closed');
 			});
-
 	};
 }]);
