@@ -1,4 +1,12 @@
 {
+    "review.basicInfo.organisaatio" :
+            {
+                "key": "review.basicInfo.organisaatio",
+                "locale": "fi",
+                "value": "Organisaatio"
+            },
+
+
     "review.breadcrumb":
             {
                 "key": "review.breadcrumb",
@@ -320,5 +328,5 @@
                 "fi": "Jatka"
              }
     }
-    
+
 }
