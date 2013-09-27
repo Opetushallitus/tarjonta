@@ -60,7 +60,6 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         // t.set(s.getHakukohdes()); TODO list OIDs
 
         t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
-        t.setKoulutusAsteUri(s.getKoulutusaste());
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
         t.setModified(s.getUpdated());
         t.setModifiedBy(s.getLastUpdatedByOid());

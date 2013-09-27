@@ -1,5 +1,19 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -12,27 +26,16 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * REST API impl.
@@ -56,10 +59,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
-
-
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
+    @Autowired
+    private TarjontaSearchService tarjontaSearchService;
+
     // /hakukohde?...
     @Override
     public List<OidRDTO> search(String searchTerms,
@@ -86,6 +90,38 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.debug("  result={}", result);
         return result;
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+    public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(
+    		String searchTerms,
+    		List<String> organisationOids,
+    		List<String> hakukohdeTilas,
+    		String alkamisKausi,
+    		Integer alkamisVuosi) {
+
+		try {
+			organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+			hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
+			
+			HakukohteetKysely q = new HakukohteetKysely();
+			q.setNimi(searchTerms);
+			q.setKoulutuksenAlkamiskausi(alkamisKausi);
+			q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+			q.getTarjoajaOids().addAll(organisationOids);
+
+			for (String s : hakukohdeTilas) {
+			    q.getTilat().add(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
+			}
+
+			HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+			
+			return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
+		} catch (RuntimeException e) {
+			e.printStackTrace(System.err);
+			throw e;
+		}
     }
 
     // /hakukohde/OID

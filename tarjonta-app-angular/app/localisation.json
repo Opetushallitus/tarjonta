@@ -1,4 +1,12 @@
 {
+    "review.basicInfo.organisaatio" :
+            {
+                "key": "review.basicInfo.organisaatio",
+                "locale": "fi",
+                "value": "Organisaatio"
+            },
+
+
     "review.breadcrumb":
             {
                 "key": "review.breadcrumb",
@@ -319,6 +327,13 @@
              "values": {
                 "fi": "Jatka"
              }
+    },
+    "selectTutkintoOhjelma.kuvaus": {
+            "key": "selectTutkintoOhjelma.kuvaus",
+             "locale": "fi",
+             "value": "Valitse koulutusohjelma, lorem ipsum whatever",
+             "values": {
+                "fi": "Valitse koulutusohjelma, lorem ipsum whatever"
+             }
     }
-    
 }

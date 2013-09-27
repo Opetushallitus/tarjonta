@@ -115,7 +115,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/review/:id/:part', {
             action: "kk.review"
         })
-                .otherwise({redirectTo: "/etusivu"});
+        .otherwise({redirectTo: "/etusivu"});
     }]);
 
 

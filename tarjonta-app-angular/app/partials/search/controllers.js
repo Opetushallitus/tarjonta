@@ -3,11 +3,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
         .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, Config) {
 
-	// 1. Organisaatiohaku
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
+	// 1. Organisaatiohaku
 	$scope.hakuehdot = $scope.defaultHakuehdot = {
-		"tekstihaku" : "",
+		"searchStr" : "",
 		"organisaatiotyyppi" : "",
 		"oppilaitostyyppi" : "",
 		"lakkautetut" : false,
@@ -33,22 +33,22 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	// organisaatiotyypit; TODO jostain jotenkin dynaamisesti
 	$scope.organisaatiotyypit = [{
 		nimi : LocalisationService.t("organisaatiotyyppi.koulutustoimija"),
-		koodi : 'KOULUTUSTOIMIJA'
+		koodi : 'Koulutustoimija'
 	}, {
 		nimi : LocalisationService.t("organisaatiotyyppi.oppilaitos"),
-		koodi : "OPPILAITOS"
+		koodi : "Oppilaitos"
 	}, {
 		nimi : LocalisationService.t("organisaatiotyyppi.toimipiste"),
-		koodi : "TOIMIPISTE"
+		koodi : "Toimipiste"
 	}, {
 		nimi : LocalisationService.t("organisaatiotyyppi.oppisopimustoimipiste"),
-		koodi : "OPPISOPIMUSTOIMIPISTE"
+		koodi : "Oppisopimustoimipiste"
 	}];
 
 	// Kutsutaan formin submitissa, käynnistää haun
 	$scope.submitOrg = function() {
 		//console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
-		hakutulos = OrganisaatioService.etsi($scope.hakuehdot.tekstihaku);
+		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
 			$scope.tulos = vastaus.organisaatiot;

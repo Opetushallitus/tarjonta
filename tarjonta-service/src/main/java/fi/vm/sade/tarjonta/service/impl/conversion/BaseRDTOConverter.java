@@ -14,28 +14,31 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.WebLinkki;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.WebLinkki;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
  * Some basic functionality for REST DTO converters.
  *
  * @author mlyly
  */
-public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends AbstractFromDomainConverter<FROM, TO> {
+public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO> {
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -99,7 +102,14 @@ public abstract class BaseRDTOConverter<FROM extends BaseEntity, TO> extends Abs
         return result;
     }
 
-
+	public static Map<String,String> convertToMap(MonikielinenTekstiTyyppi mt) {
+		Map<String, String> ret = new HashMap<String, String>();
+		for (Teksti t : mt.getTeksti()) {
+			ret.put(t.getKieliKoodi(), t.getValue());
+		}
+		return ret;
+	}
+	
     public Map<String, String> convertWebLinkkisToMap(Set<WebLinkki> s) {
         if (s == null) {
             return null;

@@ -2,7 +2,7 @@
 
     <div id="orgSearch">
         <form ng-submit="submitOrg()">
-            <input name="tekstihaku" ng-model="hakuehdot.tekstihaku" type="text"
+            <input name="tekstihaku" ng-model="hakuehdot.searchStr" type="text"
                    value="" name="searchString" class="text search"
                    placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
 
@@ -20,10 +20,8 @@
             <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
 
             <div class="buttons">
-                <input type="button" ng-click="resetOrg()" class="btn btn-primary"
-                       value="{{ t('organisaatiohaku.button.tyhjenna') }}" />
-                <input type="submit" ng-click="submitOrg()" class="btn btn-warning"
-                       value="{{ t('organisaatiohaku.button.hae') }}" />
+                <div class="btn btn-primary" ng-click="resetOrg()"><div tt="organisaatiohaku.button.tyhjenna"></div></div>
+                <div class="btn btn-primary" ng-click="submitOrg()"><div tt="organisaatiohaku.button.hae"></div></div>
             </div>
         </form>
     </div>
@@ -95,6 +93,13 @@
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
     <a href="#/kk/edit/12345/xxx">EDIT?</a>
+    
+    <div ng-controller="TutkintoOhjelmaSelectOpenerCtrl">
+
+        <button class="btn" ng-click="open()">Avaa dialogi</button>
+        <div ng-show="model.selected">Valittu tutkinto: {{model.selected.koodiNimi}}</div>
+    
+    </div>
 
 </div>
 

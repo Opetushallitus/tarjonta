@@ -1,15 +1,15 @@
-angular.module('Organisaatio', [ 'ngResource' ])
-//.config(function($httpProvider) { $httpProvider.defaults.useXDomain = true;}) 
+angular.module('Organisaatio', [ 'ngResource', 'config' ])
 
 //"organisaatioservice"
-.factory('OrganisaatioService', function ($resource, $log, $q) {
-	var orgHaku = $resource('https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/hae?searchStr=:query');
-	var orgLuku = $resource('https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/:oid');
+.factory('OrganisaatioService', function ($resource, $log, $q, Config) {
+	
+	var orgHaku = $resource(Config.env.organisaatioRestUrlPrefix + "organisaatio/hae");
+	var orgLuku = $resource(Config.env.organisaatioRestUrlPrefix + "organisaatio/:oid");
 	
 	function localize(organisaatio){
 		//TODO olettaa että käyttäjä suomenkielinen
 		organisaationimi=organisaatio.nimi.fi||organisaatio.nimi.sv||organisaatio.nimi.en;
-		organisaatio.nimi=organisaationimi
+		organisaatio.nimi=organisaationimi;
 		if(organisaatio.children){
 			localizeAll(organisaatio.children);
 		}
@@ -25,14 +25,23 @@ angular.module('Organisaatio', [ 'ngResource' ])
 
 	   /**
 	    * query (hakuehdot)
-	    * @param query
+	    * @param hakuehdot, muodossa:
+	    * {
+		*   "searchStr" : "",
+		*   "organisaatiotyyppi" : "",
+		*   "oppilaitostyyppi" : "",
+		*   "lakkautetut" : false,
+		*   "suunnitellut" : false
+	    * } 
+	    * 
+	    * 
 	    * @returns promise
 	    */
-	   etsi: function(query){
+	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-	       $log.info('searching organisaatiot, q:' + query);
+	       $log.info('searching organisaatiot, q:', hakuehdot);
 
-	       orgHaku.get({'query':query},function(result){
+	       orgHaku.get(hakuehdot,function(result){
 	           $log.info("resolving promise with hit count:" + result.numHits);
 	           localizeAll(result.organisaatiot);
 	           ret.resolve(result);

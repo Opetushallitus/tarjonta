@@ -44,6 +44,8 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToValintakoeRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeDTOToHakukohdeTyyppiConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohteetVastausToHakukohdeTulosRDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutuksetVastausToHakukohdeTulosRDTOConverter"/>
        
             </list>
         </property>
