@@ -113,6 +113,10 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
+div#searchResults table {
+	width:100%;
+}
+
 /* Tarjonnan tarkastelunäkymät / yleiset */
 
 .label-right {
