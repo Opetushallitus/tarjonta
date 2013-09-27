@@ -15,6 +15,15 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						hakulause: '',
 						koulutusala: {}};
 	
+	/*$scope.myData = [{name: "Moroni", age: 50},
+	                 {name: "Tiancum", age: 43},
+	                 {name: "Jacob", age: 27},
+	                 {name: "Nephi", age: 29},
+	                 {name: "Enos", age: 34}];*/
+	
+	$scope.gridOptions = { data: 'stoModel.hakutulokset',
+			columnDefs: [{field: 'koodiArvo', displayName: 'Koodi'}, {field:'koodiNimi', displayName: 'Nimi'}]};
+	
 	//Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
 	//Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
 	$scope.getKkTutkinnot = function() {
@@ -109,6 +118,14 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 .controller('TutkintoOhjelmaSelectOpenerCtrl', ['$scope', '$modal', function($scope, $modal) {	
 	$scope.model = {};
 	
+	$scope.myData = [{name: "Moroni", age: 50},
+	                 {name: "Tiancum", age: 43},
+	                 {name: "Jacob", age: 27},
+	                 {name: "Nephi", age: 29},
+	                 {name: "Enos", age: 34}];
+	
+	$scope.gridOptions = { data: 'myData' };
+	
 	$scope.open = function() {
 		
 			var modalInstance = $modal.open({
@@ -116,6 +133,8 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
 				controller: 'SelectTutkintoOhjelmaController'
 			});
+			
+			
 		
 			modalInstance.result.then(function(selectedItem) {
 				console.log('Ok, dialog closed: ' + selectedItem.koodiUri);
