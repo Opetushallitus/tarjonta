@@ -81,15 +81,47 @@
 
     </div>
 
+	<div id="searchResults">
     <tabset>
-        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
-        	{{koulutusResults}}
+        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}} ({{koulutusResults.tuloksia}})">
+        
+        	<table>
+        	<tbody ng-repeat="tarjoaja in koulutusResults.tulokset">
+        		<tr>
+		        	<td colspan="4">{{tarjoaja.nimi}}</td>
+        		</tr>
+        		<tr ng-repeat="koulutus in tarjoaja.tulokset">
+        			<td><a href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a></td>
+        			<td>{{koulutus.kausiUri}} {{koulutus.vuosi}}</td>
+        			<td>TODO k.laji</td>
+        			<td>{{koulutus.tila}}</td>
+        		</tr>
+        	</tbody>
+        	</table>
+        
         </tab>
-        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
-        	{{hakukohdeResults}}
+        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}} ({{hakukohdeResults.tuloksia}})">
+
+        	<table>
+        	<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
+        		<tr>
+		        	<td colspan="4">{{tarjoaja.nimi}}</td>
+        		</tr>
+        		<tr ng-repeat="hakukohde in tarjoaja.tulokset">
+        			<td><a href="#/koulutus/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
+        			<td>{{hakukohde.kausiUri}} {{hakukohde.vuosi}}</td>
+        			<td>{{hakukohde.hakutapa}}</td>
+        			<td>{{hakukohde.aloituspaikat}}</td>
+        			<td>{{hakukohde.koulutusLaji}}</td>
+        			<td>{{hakukohde.tila}}</td>
+        		</tr>
+        	</tbody>
+        	</table>
+        	
         </tab>
 
     </tabset>
+    </div>
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
     <a href="#/kk/edit/12345/xxx">EDIT?</a>
