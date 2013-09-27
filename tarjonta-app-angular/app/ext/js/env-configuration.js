@@ -83,6 +83,11 @@ window.CONFIG = {
         "user.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userService",
         "userData.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userDataService",
         "userManagement.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userManagementService",
-        "usermanagement.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userManagementService"
+        "usermanagement.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userManagementService",
+        
+        
+        //käsin lisätyt:
+        
+        "organisaatioRestUrlPrefix": "http://127.0.0.1:7003/organisaatio-service/rest/"
     }
 };
