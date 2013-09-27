@@ -1,7 +1,7 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
 
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, Config) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -164,14 +164,22 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     $scope.search = function() {
-        console.log("search", {
+    	var spec = {
             oid: $scope.selectedOrgOid,
             terms: $scope.searchTerms,
-            state: $scope.selectedState,
-            year: $scope.selectedYear,
-            season: $scope.selectedSeason
-        });
+            state: $scope.selectedState == "*" ? null : $scope.selectedState,
+            year: $scope.selectedYear == "*" ? null : $scope.selectedYear,
+            season: $scope.selectedSeason == "*" ? null : $scope.selectedSeason
+        };
+        console.log("search", spec);
         updateLocation();
+        TarjontaService.haeKoulutukset(spec).then(function(data){
+        	$scope.koulutusResults = data;
+        });
+        TarjontaService.haeHakukohteet(spec).then(function(data){
+        	$scope.hakukohdeResults = data;
+        });
+        
     }
 
     $scope.report = function() {

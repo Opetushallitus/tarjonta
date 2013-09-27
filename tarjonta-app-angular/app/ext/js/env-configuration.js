@@ -88,6 +88,7 @@ window.CONFIG = {
         
         //käsin lisätyt:
         
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",
         "organisaatioRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/"
     }
 };
