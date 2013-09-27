@@ -26,7 +26,7 @@
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
 		<echo>Wait Tomcat to stop...</echo>
-        <waitfor maxwait="3000" checkevery="500">
+        <waitfor maxwait="30000" checkevery="500">
             <not>
                 <socket server="${tomcat-host}" port="${tomcat-port}" />
             </not>
