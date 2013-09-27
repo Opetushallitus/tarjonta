@@ -13,7 +13,10 @@ module.exports = function(config){
       'js/**/*.js',
       'js/shared/directives/*.html',
       'partials/**/*.js',
-      '../test/unit/**/*.js'
+      '../test/unit/**/*.js',
+      'lib/jquery-1.10.2.min.js',
+      'jquery-1.10.2.min.map',
+      'lib/ngGrid/ng-grid-2.0.7.min.js'
     ],
 
     autoWatch : true,
