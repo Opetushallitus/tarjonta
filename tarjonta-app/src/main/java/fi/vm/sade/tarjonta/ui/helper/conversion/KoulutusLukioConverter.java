@@ -38,7 +38,7 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -112,7 +112,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdeTulos> hakukohteet) {
+    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdePerustieto> hakukohteet) {
         //set tarjoaja data to UI model
         tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
@@ -131,17 +131,17 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         perustiedot.getLukiolinjas().add(perustiedot.getLukiolinja());
     }
 
-    private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi, List<HakukohdeTulos> hakukohteetDTO) {
+    private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi, List<HakukohdePerustieto> hakukohteetDTO) {
         List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
         
         if (koulutusVastausTyyppi.getHakukohteet() != null) {
-            for (HakukohdeTulos hakukohdeKoosteTyyppi : hakukohteetDTO) {//HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
+            for (HakukohdePerustieto hakukohde : hakukohteetDTO) {//HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
                 SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getHakukohde().getKoodistoNimi());// getKoodistoNimi());
-                hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getHakukohde().getNimi()).getValue());// getNimi());
-                hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getHakukohde().getOid());
-                hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getHakukohde().getTila().value());
-                hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakukohde().getHakuAlkamisPvm());
+                hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohde.getKoodistoNimi());// getKoodistoNimi());
+                hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohde.getNimi()).getValue());// getNimi());
+                hakukohdeViewModel.setHakukohdeOid(hakukohde.getOid());
+                hakukohdeViewModel.setHakukohdeTila(hakukohde.getTila().value());
+                hakukohdeViewModel.setHakuStarted(hakukohde.getHakuAlkamisPvm());
                 hakukohteet.add(hakukohdeViewModel);
             }
 

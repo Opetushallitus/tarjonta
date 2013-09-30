@@ -15,45 +15,56 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
-import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
-import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
+
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.apache.commons.beanutils.BeanComparator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -224,7 +235,7 @@ public class TarjontaLukioPresenter {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             Preconditions.checkNotNull(koulutus);
             HakukohteetVastaus vastaus = this.presenter.getHakukohteetForKoulutus(komotoOid);//.getHakukohdeTulos();
-            List<HakukohdeTulos> hakukohteet = vastaus != null ? vastaus.getHakukohdeTulos() : new ArrayList<HakukohdeTulos>();
+            List<HakukohdePerustieto> hakukohteet = vastaus != null ? vastaus.getHakukohteet() : new ArrayList<HakukohdePerustieto>();
             
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale(), hakukohteet);
         } else {

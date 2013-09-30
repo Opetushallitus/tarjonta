@@ -71,15 +71,15 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return $routeParams[key] != null ? $routeParams[key] : def;
     }
 
-
-
     // Selected org from route path
-    $scope.selectedOrgOid = $scope.routeParams.id ? $scope.routeParams.id : OPH_ORG_OID;
-    $scope.searchTerms = fromParams("terms","");
-    $scope.selectedState = fromParams("state","*");
-    $scope.selectedYear = fromParams("year","*");
-    $scope.selectedSeason = fromParams("season","*");
-
+    $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
+    $scope.spec = {
+    		terms: fromParams("terms",""),
+    	    state: fromParams("state","*"),
+    	    year: fromParams("year","*"),
+    	    season: fromParams("season","*")
+    };
+    
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
@@ -130,9 +130,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return args == null ? base : base + args;
     }
 
-    function copyIfSet(dst, key, value) {
+    function copyIfSet(dst, key, value, def) {
         if (value != null && value != undefined && (value + "").length > 0 && value != "*") {
             dst[key] = value;
+        } else if (def != undefined) {
+            dst[key] = def;
         }
     }
 
@@ -142,11 +144,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
     		sargs.oid = $scope.selectedOrgOid;
     	}
-    	copyIfSet(sargs, "terms", $scope.searchTerms);
-    	copyIfSet(sargs, "state", $scope.selectedState);
-    	copyIfSet(sargs, "year", $scope.selectedYear);
-    	copyIfSet(sargs, "season", $scope.selectedSeason);
-
+    	copyIfSet(sargs, "terms", $scope.spec.terms, "*");
+    	copyIfSet(sargs, "state", $scope.spec.state);
+    	copyIfSet(sargs, "year", $scope.spec.year);
+    	copyIfSet(sargs, "season", $scope.spec.season);
+    	
     	$location.path("/etusivu/" + sargs.oid);
         $location.search(sargs);
     }
@@ -160,29 +162,37 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     $scope.reset = function() {
-        $scope.searchTerms = "";
-        $scope.selectedState = "*";
-        $scope.selectedYear = "*";
-        $scope.selectedSeason = "*";
+        $scope.spec.terms = "";
+        $scope.spec.state = "*";
+        $scope.spec.year = "*";
+        $scope.spec.season = "*";
     }
 
     $scope.search = function() {
     	var spec = {
             oid: $scope.selectedOrgOid,
-            terms: $scope.searchTerms,
-            state: $scope.selectedState == "*" ? null : $scope.selectedState,
-            year: $scope.selectedYear == "*" ? null : $scope.selectedYear,
-            season: $scope.selectedSeason == "*" ? null : $scope.selectedSeason
+            terms: $scope.spec.terms,
+            state: $scope.spec.state == "*" ? null : $scope.spec.state,
+            year: $scope.spec.year == "*" ? null : $scope.spec.year,
+            season: $scope.spec.season == "*" ? null : $scope.spec.season
         };
         console.log("search", spec);
         updateLocation();
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResults = data;
+        	$scope.koulutusResultCount = " ("+data.tuloksia+")";
         });
         TarjontaService.haeHakukohteet(spec).then(function(data){
         	$scope.hakukohdeResults = data;
+        	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
         });
-        
+    }
+    
+    if ($scope.spec.terms=="*") {
+    	$scope.spec.terms="";
+    	$scope.search();
+    } else if ($scope.spec.terms!="") {
+    	$scope.search();
     }
 
     $scope.report = function() {

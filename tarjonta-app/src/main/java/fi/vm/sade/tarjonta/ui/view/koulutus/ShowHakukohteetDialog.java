@@ -30,7 +30,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -46,10 +46,10 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
     
     private static final long serialVersionUID = -4621899734019988734L;
     
-    private List<HakukohdeTulos> hakukohteet;
+    private List<HakukohdePerustieto> hakukohteet;
     private KoulutusTulos koulutus;
 
-    public ShowHakukohteetDialog(List<HakukohdeTulos>hakukohteet, KoulutusTulos koulutus, TarjontaPresenter presenter) {
+    public ShowHakukohteetDialog(List<HakukohdePerustieto>hakukohteet, KoulutusTulos koulutus, TarjontaPresenter presenter) {
         super(presenter);
         this.hakukohteet = hakukohteet;
         this.koulutus = koulutus;
@@ -89,23 +89,23 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
 
     @Override
     protected void populateTree() {
-        Set<Map.Entry<String, List<HakukohdeTulos>>> set = createDataMap();
+        Set<Map.Entry<String, List<HakukohdePerustieto>>> set = createDataMap();
         HierarchicalContainer hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_A, CaptionItem.class, new CaptionItem());
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
         
-        for (Map.Entry<String, List<HakukohdeTulos>>e : set) {
+        for (Map.Entry<String, List<HakukohdePerustieto>>e : set) {
             
             Object rootItem = hc.addItem();
             
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(new CaptionItem(e.getKey(), false));
-            for (final HakukohdeTulos curHakukohde : e.getValue()) {
+            for (final HakukohdePerustieto curHakukohde : e.getValue()) {
                 
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
                 CaptionItem ci = new CaptionItem(
-                        TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getHakukohde().getNimi()).getValue(), 
+                        TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue(), 
                         true);
                 ci.getLinkButton().addListener( new Button.ClickListener() {
 
@@ -119,24 +119,24 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(
                         ci);
                 hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getHakukohdeAjankohtaStr(curHakukohde));
-                hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(T(curHakukohde.getHakukohde().getTila().value()));
+                hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(T(curHakukohde.getTila().value()));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
         
         tree.setContainerDataSource(hc);
         
-        for (HakukohdeTulos curTulos : hakukohteet) {
+        for (HakukohdePerustieto curTulos : hakukohteet) {
             tree.setCollapsed(tree.getParent(curTulos), false);
         }
     }
     
-    private Set<Map.Entry<String, List<HakukohdeTulos>>> createDataMap() {
-        Map<String, List<HakukohdeTulos>> dataMap = new HashMap<String, List<HakukohdeTulos>>();
-        for (HakukohdeTulos curHakukohde : hakukohteet) {
-            String hakukohdeKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curHakukohde.getHakukohde().getTarjoaja().getNimi()).getValue();
+    private Set<Map.Entry<String, List<HakukohdePerustieto>>> createDataMap() {
+        Map<String, List<HakukohdePerustieto>> dataMap = new HashMap<String, List<HakukohdePerustieto>>();
+        for (HakukohdePerustieto curHakukohde : hakukohteet) {
+            String hakukohdeKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curHakukohde.getTarjoaja().getNimi()).getValue();
             if (!dataMap.containsKey(hakukohdeKey)) {
-                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
+                List<HakukohdePerustieto> hakukohteetM = new ArrayList<HakukohdePerustieto>();
                 hakukohteetM.add(curHakukohde);
                 dataMap.put(hakukohdeKey, hakukohteetM);
             } else {
@@ -146,9 +146,9 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
         return dataMap.entrySet();
     }
     
-    private String getHakukohdeAjankohtaStr(HakukohdeTulos hakukohde) {
-        return I18N.getMessage(hakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri()) 
-                +  " " + hakukohde.getHakukohde().getKoulutuksenAlkamisvuosi();
+    private String getHakukohdeAjankohtaStr(HakukohdePerustieto hakukohde) {
+        return I18N.getMessage(hakukohde.getKoulutuksenAlkamiskausiUri()) 
+                +  " " + hakukohde.getKoulutuksenAlkamisvuosi();
     }
     
 
@@ -159,19 +159,19 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
                 + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getKoulutus().getTarjoaja().getNimi()).getValue();
     }
     
-    private void showSummaryView(HakukohdeTulos hakukohde) {
-        final String hakukohdeOid = hakukohde.getHakukohde().getOid();
+    private void showSummaryView(HakukohdePerustieto hakukohde) {
+        final String hakukohdeOid = hakukohde.getOid();
         presenter.closeKoulutusRemovalDialog();
-        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
+        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
         presenter.getModel().setSelectedHakuStarted(isHakuStarted(hakukohde));
         presenter.showHakukohdeViewImpl(hakukohdeOid);
 
     }
 
-    private boolean isHakuStarted(HakukohdeTulos hakukohde) {
+    private boolean isHakuStarted(HakukohdePerustieto hakukohde) {
         if (hakukohde != null
-                && hakukohde.getHakukohde().getHakuAlkamisPvm() != null
-                && hakukohde.getHakukohde().getHakuAlkamisPvm().before(new Date())) {
+                && hakukohde.getHakuAlkamisPvm() != null
+                && hakukohde.getHakuAlkamisPvm().before(new Date())) {
             return true;
         }
         return false;

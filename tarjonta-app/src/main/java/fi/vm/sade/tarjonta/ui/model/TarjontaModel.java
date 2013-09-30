@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import com.google.common.base.Preconditions;
 
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -68,7 +68,7 @@ public class TarjontaModel extends BaseUIViewModel {
     /*
      * Hakutulos
      */
-    private List<HakukohdeTulos> _selectedhakukohteet;
+    private List<HakukohdePerustieto> _selectedhakukohteet;
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
     private HakukohdeViewModel hakukohde;
@@ -182,9 +182,9 @@ public class TarjontaModel extends BaseUIViewModel {
         return _searchSpec;
     }
 
-    public List<HakukohdeTulos> getSelectedhakukohteet() {
+    public List<HakukohdePerustieto> getSelectedhakukohteet() {
         if (_selectedhakukohteet == null) {
-            _selectedhakukohteet = new ArrayList<HakukohdeTulos>();
+            _selectedhakukohteet = new ArrayList<HakukohdePerustieto>();
         }
         return _selectedhakukohteet;
     }
