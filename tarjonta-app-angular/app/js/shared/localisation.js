@@ -126,7 +126,17 @@ app.service('LocalisationService', function($log, Localisations) {
             };
 
             // Try to save to the server?
-            Localisations.save(newEntry)
+            Localisations.save(newEntry, function(data, status, headers, config) {
+                console.log("1FAILURE?", data);
+                console.log("2FAILURE?", status);
+                console.log("3FAILURE?", headers);
+                console.log("4FAILURE?", config);
+            }, function(data, status, headers, config) {
+                console.log("1success?", data);
+                console.log("2success?", status);
+                console.log("3success?", headers);
+                console.log("4success?", config);
+            });
 
             // TODO Fake "creation", really call service to create the translation placeholder for real
             APP_LOCALISATION_DATA[key] = newEntry;
