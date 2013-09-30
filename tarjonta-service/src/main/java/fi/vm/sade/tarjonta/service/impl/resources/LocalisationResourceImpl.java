@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author mlyly
  */
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class LocalisationResourceImpl implements LocalisationResource {
 
@@ -86,12 +86,19 @@ public class LocalisationResourceImpl implements LocalisationResource {
     public LocalisationRDTO createLocalization(String key, LocalisationRDTO data) {
         LOG.info("createLocalization({}, {})", key, data);
 
-        Localisation l = new Localisation();
-        l.setKey(data.getKey());
-        l.setLanguage(data.getKey());
-        l.setValue(data.getValue());
-
-        localisationDAO.insert(l);
+        Localisation l = localisationDAO.findByKeyAndLocale(data.getKey(), data.getLocale());
+        if (l != null) {
+            LOG.info("  update exisiting.");
+            l.setValue(data.getValue());
+            localisationDAO.update(l);
+        } else {
+            LOG.info("  create new.");
+            l = new Localisation();
+            l.setKey(data.getKey());
+            l.setLanguage(data.getLocale());
+            l.setValue(data.getValue());
+            localisationDAO.insert(l);
+        }
 
         return data;
     }
