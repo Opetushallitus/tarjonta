@@ -16,26 +16,31 @@
 /**
  * Localisation support for Angular apps.
  * + registers module "localisation".
- * + Requires "ngResource".
+ *
+ * NOTE: this module assumes that all the translations are PRELOADED in
+ * global scope to object: "APP_LOCALISATION_DATA".
+ *
+ * @see index.html for implementation
  *
  * @author mlyly
  */
-var app = angular.module('localisation', ['ngResource'])
+var app = angular.module('localisation', []);
 
 /**
  * "Localisation" factory, returns resource for operating on localisations.
  */
 
-app.factory('Localisation', function($resource) {
-
-    return $resource('localisation.json', {}, {
-        query: {method: 'GET', headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }}
-    });
-
-});
+//app.factory('Localisation', function($resource) {
+//    console.log("*** localisation FACTORY Localisation");
+//
+//    return $resource('localisation.json', {}, {
+//        query: {method: 'GET', headers: {
+//                'Content-Type': 'application/json',
+//                'Accept': 'application/json'
+//            }}
+//    });
+//
+//});
 
 app.filter('tt', ['LocalisationService', function(LocalisationService) {
         return function(text) {
@@ -45,23 +50,23 @@ app.filter('tt', ['LocalisationService', function(LocalisationService) {
 
 
 app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService, $timeout) {
-    return {
-        restrict: 'EA',
-        replace: true,
-        template: '<div>TT TEMPLATE</div>',
-        scope: false,
-        compile: function (tElement, tAttrs, transclude) {
-            console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
+        return {
+            restrict: 'EA',
+            replace: true,
+            template: '<div>TT TEMPLATE</div>',
+            scope: false,
+            compile: function(tElement, tAttrs, transclude) {
+                console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
 
-            var t = LocalisationService.t(tAttrs["tt"]);
-            tElement.text(t);
+                var t = LocalisationService.t(tAttrs["tt"]);
+                tElement.text(t);
 
-            return function postLink(scope, iElement, iAttrs, controller) {
-                // $timeout(scope.$destroy.bind(scope), 0);
+                return function postLink(scope, iElement, iAttrs, controller) {
+                    // $timeout(scope.$destroy.bind(scope), 0);
+                }
             }
         }
-    }
-}]);
+    }]);
 
 
 
@@ -74,39 +79,14 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * Usage:
  * <pre>
  * LocalisationService.t("this.is.the.key")  == localized value
+ * LocalisationService.t("this.is.the.key2", ["array", "of", "values"])  == localized value
  * </pre>
  */
-app.service('LocalisationService', function(Localisation, $log) {
+app.service('LocalisationService', function($log) {
     $log.debug("LocalisationService()");
 
     // Singleton state
     this.locale = "fi";
-    this.localisations = [];
-
-    // Raw localisation data here
-    this.localisationData = [];
-
-    var service = this;
-
-    $log.debug("  loading()... ");
-    Localisation.query(function(data) {
-        $log.debug("*********************  loading()... done: " + data);
-        service.localisationData = data;
-
-        for (key in data) {
-            $log.debug(" key = " + key);
-
-            var v = service.localisationData[key];
-
-            if (v != undefined && v.value != undefined) {
-                $log.debug("SAVE: " + key + " --> " + v.value);
-                service.localisations[key] = v.value;
-            } else {
-                $log.debug("SKIPPING: " + key + " --> " + v.value);
-            }
-        }
-
-    });
 
     /**
      * Get translation, fill in possible parameters.
@@ -116,11 +96,11 @@ app.service('LocalisationService', function(Localisation, $log) {
      * @returns {unresolved}
      */
     this.getTranslation = function(key, params) {
-        // Get translation
-        var v = this.localisationData[key];
+
+        var v = APP_LOCALISATION_DATA[key];
         var result;
 
-        if (v != undefined) {
+        if (v) {
             // Extract result and replace parameters if any
             result = v.value;
 
@@ -132,16 +112,15 @@ app.service('LocalisationService', function(Localisation, $log) {
             }
         } else {
             // Unknown translation, maybe create placeholder for it?
-            $log.debug("UNKNOWN TRANSLATION: " + key);
+            $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
             // TODO Fake "creation", really call service to create the translation placeholder for real
-            v = {
-                value: "[" + key + "]"
+            APP_LOCALISATION_DATA[key] = {
+                "key": key,
+                "value": "[" + key + "]"
             };
-            this.localisationData[key] = v;
-            this.localisations[key] = v.value;
 
-            result = v.value;
+            result = APP_LOCALISATION_DATA[key].value;
         }
 
         // result = result + "-" + new Date();
@@ -164,11 +143,7 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log) {
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        $log.debug("t(): " + key  + ", " + params);
+        $log.debug("t(): " + key + ", " + params);
         return LocalisationService.t(key, params);
     };
 });
-
-//
-// TODO Add directive "t" since {{}} cause too many? bindings to be done.
-//

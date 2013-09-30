@@ -45,7 +45,7 @@ public class LocalisationRDTO extends BaseRDTO {
     private String key;
     private String locale;
     private String value;
-    private Map<String, String> _values = new HashMap<String, String>();
+    private Map<String, String> _values = null;
 
     public LocalisationRDTO() {
         super();

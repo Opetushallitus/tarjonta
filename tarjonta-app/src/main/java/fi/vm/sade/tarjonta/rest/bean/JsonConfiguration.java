@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.rest.bean;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder;
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -54,8 +56,8 @@ public class JsonConfiguration {
     @ResponseBody
     public String help() {
         return "<p>"
-                + "Return configuration JSON object : <environment>/<a href='/tarjonta-app/kk/ext/json/env-configuration.json'>tarjonta-app/kk/ext/json/env-configuration.json</a>.<br/>"
-                + "Return configuration JSON object in JavaScript variable : <environment>/<a href='/tarjonta-app/kk/ext/js/env-configuration.js'>tarjonta-app/kk/ext/js/env-configuration.js</a>."
+                + "Output configuration JSON object : <environment><a href=\"json/env-configuration.json\">/kk/ext/json/env-configuration.json</a>.<br/>"
+                + "Output configuration JSON object in JavaScript variable : <environment>/<a href=\"js/env-configuration.js\">/kk/ext/js/env-configuration.js</a>."
                 + "</p>";
     }
 
@@ -78,7 +80,7 @@ public class JsonConfiguration {
             configurationJson = createJsonConfiguration(propertyes);
         }
 
-        return "var CONFIG = " + configurationJson + ";";
+        return "window.CONFIG = " + configurationJson + ";";
     }
 
     private String createJsonConfiguration(Properties propertyes) {
@@ -101,9 +103,9 @@ public class JsonConfiguration {
         });
 
         StringBuilder outputJson = new StringBuilder();
-        outputJson.append("{ \"properties\" : ");
-        outputJson.append(jsons.toString());
-        outputJson.append("}");
+        outputJson.append("{ \"env\" : {");
+        outputJson.append(StringUtils.join(jsons.toArray(), ","));
+        outputJson.append("}}");
         return outputJson.toString();
     }
 

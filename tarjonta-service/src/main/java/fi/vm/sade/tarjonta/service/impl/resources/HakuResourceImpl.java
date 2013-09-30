@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdeListaus;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
@@ -177,7 +177,7 @@ public class HakuResourceImpl implements HakuResource {
     // /haku/OID/hakukohdeTulos
     @Override
     public HakukohdeTulosRDTO getByOIDHakukohdeTulos(String oid, String searchTerms, int count, int startIndex,
-            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr) {
+            Date lastModifiedBefore, Date lastModifiedSince, String organisationOidsStr, String hakukohdeTilasStr, Integer alkamisVuosi, String alkamisKausi) {
 
         LOG.debug("/haku/{}/hakukohdeTulos -- getByOIDHakukohdeTulos()", oid);
 
@@ -199,16 +199,17 @@ public class HakuResourceImpl implements HakuResource {
         HakukohteetKysely hakukohteetKysely = new HakukohteetKysely();
         hakukohteetKysely.setHakuOid(oid);
         hakukohteetKysely.getTarjoajaOids().addAll(organisationOids);
+        hakukohteetKysely.setKoulutuksenAlkamiskausi(alkamisKausi);
+        hakukohteetKysely.setKoulutuksenAlkamisvuosi(alkamisVuosi);
 
-        if (hakukohdeTilas.size() > 1) {
-            LOG.error("  CANNOT USE MORE THAT ONE STATE: {} -- returning with any state", hakukohdeTilas);
-        }
-        if (hakukohdeTilas.size() == 1) {
-            TarjontaTila tila = TarjontaTila.valueOf(hakukohdeTilas.get(0));
-            if (tila != null) {
-                hakukohteetKysely.setTilat(tila);
-            } else {
-                LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+        if (hakukohdeTilas.size() >0 ) {
+            for(String tilaString: hakukohdeTilas) {
+                TarjontaTila tila = TarjontaTila.valueOf(tilaString);
+                if (tila != null) {
+                    hakukohteetKysely.addTila(tila);
+                } else {
+                    LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+                }
             }
         }
 
@@ -261,7 +262,7 @@ public class HakuResourceImpl implements HakuResource {
                 break; // done!
             }
             if (index >= startIndex) {
-                HakukohdeListaus hakukohde = tulos.getHakukohde();
+                HakukohdePerustieto hakukohde = tulos.getHakukohde();
                 HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
                 // tarvitaanko?
                 // result.setHakuVuosi(haku.getHakukausiVuosi());

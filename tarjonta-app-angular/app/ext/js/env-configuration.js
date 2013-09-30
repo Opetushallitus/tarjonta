@@ -1,18 +1,23 @@
+/*
+ * Help: 
+ * Add service factory(/js/shared/config.js) to your module.
+ * Module name : 'config'.
+ * Factory name : 'Config'.
+ * 
+ * FAQ:
+ * How to get an environment variable by a key: <factory-object>.env[<string-key>].
+ * How to get AngularJS application variable by a key: <factory-object>.app[<string-key>].
+ * 
+ * Example:
+ * cfg.env["koodi-uri.koulutuslaji.nuortenKoulutus"];
+ * result value : "koulutuslaji_n"
+ */
 window.CONFIG = {
     "env": {
-        "accessRight.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightService",
-        "accessRightAdmin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightAdminService",
-        "accessRightHistory.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/accessRightHistoryService",
-        "authentication.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/authenticationService",
-        "customAttribute.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/customAttributeService",
-        "grantedAccessRight.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/grantedAccessRightService",
-        "grantedAccessRightAdmin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/grantedAccessRightAdminService",
+        "authentication-service.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/",
         "koodi-uri.koulutuslaji.nuortenKoulutus": "koulutuslaji_n",
         "koodi-uri.lukio.pohjakoulutusvaatimus": "peruskoulu",
-        "koodi.admin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/koodiAdminService",
-        "koodi.download.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/downloadService",
-        "koodi.public.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/koodiService",
-        "koodi.upload.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/uploadService",
+        "koodi.public.rest.address": "https://itest-virkailija.oph.ware.fi:443/koodi/rest/",
         "koodisto-uris.alkamiskausi": "kausi",
         "koodisto-uris.ammattinimikkeet": "ammattiluokitus",
         "koodisto-uris.hakukausi": "kausi",
@@ -48,27 +53,20 @@ window.CONFIG = {
         "koodisto-uris.valintakokeentyyppi": "valintakokeentyyppi",
         "koodisto-uris.valintaperustekuvausryhma": "valintaperustekuvausryhma",
         "koodisto-uris.yhteishaku": "hakutapa_01#1",
-        "koodisto.admin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/koodistoAdminService",
         "koodisto.lang.en.uri": "kieli_en",
         "koodisto.lang.fi.uri": "kieli_fi",
         "koodisto.lang.sv.uri": "kieli_sv",
-        "koodisto.public.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/koodisto-service/services/koodistoService",
-        "koulutustarjoajaPublicService.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/organisaatio-service/services/koulutustarjoajaPublicService",
-        "oid.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/oid-service/services/oidService",
-        "organisaatio.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/organisaatio-service/services/organisaatioService",
-        "personalInformation.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/personalInformationService",
-        "requisition.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/requisitionService",
-        "requisitionAdmin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/requisitionAdminService",
+        "koodisto.public.rest.address": "https://itest-virkailija.oph.ware.fi:443/koodisto/rest/",
+        "oid.rest.url.backend": "https://itest-virkailija.oph.ware.fi:443/oid-service/rest/oid",
+        "organisaatio.api.rest.url": "https://itest-virkailija.oph.ware.fi:443/organisaatio-service/rest/",
         "root.organisaatio.oid": "1.2.246.562.10.00000000001",
-        "serviceProvider.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/serviceProviderService",
         "tarjonta.admin.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/services/tarjontaAdminService",
         "tarjonta.koulutusaste.korkeakoulut": "60,61,62,63,70,71,72,73,80,81,82,90",
         "tarjonta.public.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/services/tarjontaPublicService",
         "tarjonta.showUnderConstruction": "true",
         "tarjonta.solr.baseurl": "http://luokka.hard.ware.fi:8312/solr",
-        "user.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userService",
-        "userData.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userDataService",
-        "userManagement.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userManagementService",
-        "usermanagement.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/authentication-service/services/userManagementService"
+        "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest",
+        //käsin lisätyt:   
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/"
     }
 };
