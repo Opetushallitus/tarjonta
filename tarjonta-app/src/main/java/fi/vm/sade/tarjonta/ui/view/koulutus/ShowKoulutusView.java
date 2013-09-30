@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,7 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
@@ -246,7 +244,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
                 KoulutusTulos koulutus = new KoulutusTulos();
-                KoulutusListausTyyppi koulutusKooste = new KoulutusListausTyyppi();
+                KoulutusPerustieto koulutusKooste = new KoulutusPerustieto();
                 koulutusKooste.setKoulutusmoduuliToteutus(getEditViewOid());
                 koulutus.setKoulutus(koulutusKooste);
                 boolean removeSuccess = presenter.removeKoulutus(koulutus);

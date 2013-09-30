@@ -6,7 +6,7 @@ import java.util.Map;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TarjoajaHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdeListaus;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
@@ -30,7 +30,7 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		return ret;
 	}
 	
-	private HakukohdeHakutulosRDTO convert(HakukohdeListaus ht) {
+	private HakukohdeHakutulosRDTO convert(HakukohdePerustieto ht) {
 		HakukohdeHakutulosRDTO ret = new HakukohdeHakutulosRDTO();
 
 		ret.setNimi(convertToMap(ht.getNimi()));

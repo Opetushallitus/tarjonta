@@ -40,7 +40,7 @@ public class HakukohteetVastaus implements Serializable
     {
 
         private final static long serialVersionUID = 100L;
-        protected HakukohdeListaus hakukohde;
+        protected HakukohdePerustieto hakukohde;
 
         /**
          * Default no-arg constructor
@@ -54,7 +54,7 @@ public class HakukohteetVastaus implements Serializable
          * Fully-initialising value constructor
          * 
          */
-        public HakukohdeTulos(final HakukohdeListaus hakukohde) {
+        public HakukohdeTulos(final HakukohdePerustieto hakukohde) {
             this.hakukohde = hakukohde;
         }
 
@@ -63,10 +63,10 @@ public class HakukohteetVastaus implements Serializable
          * 
          * @return
          *     possible object is
-         *     {@link HakukohdeListaus }
+         *     {@link HakukohdePerustieto }
          *     
          */
-        public HakukohdeListaus getHakukohde() {
+        public HakukohdePerustieto getHakukohde() {
             return hakukohde;
         }
 
@@ -75,10 +75,10 @@ public class HakukohteetVastaus implements Serializable
          * 
          * @param value
          *     allowed object is
-         *     {@link HakukohdeListaus }
+         *     {@link HakukohdePerustieto }
          *     
          */
-        public void setHakukohde(HakukohdeListaus value) {
+        public void setHakukohde(HakukohdePerustieto value) {
             this.hakukohde = value;
         }
 
