@@ -37,7 +37,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
@@ -214,12 +213,12 @@ public class HakuResourceImpl implements HakuResource {
         }
 
         HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
-        LOG.debug("  kysely for haku '{}' found '{}'", new Object[] { oid, v.getHakukohdeTulos().size() });
-        Collection<HakukohdeTulos> tulokset = v.getHakukohdeTulos();
+        LOG.debug("  kysely for haku '{}' found '{}'", new Object[] { oid, v.getHakukohteet().size() });
+        Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
         // mukaan!
         if (!filtterointiTeksti.isEmpty()) {
-            tulokset = Collections2.filter(tulokset, new Predicate<HakukohdeTulos>() {
+            tulokset = Collections2.filter(tulokset, new Predicate<HakukohdePerustieto>() {
                 private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
                     for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
                         if (teksti.getKieliKoodi().contains(kieliAvain)) {
@@ -229,20 +228,20 @@ public class HakuResourceImpl implements HakuResource {
                     return StringUtils.EMPTY;
                 }
 
-                public boolean apply(@Nullable HakukohdeTulos tulos) {
-                    return haeTekstiAvaimella(tulos.getHakukohde().getTarjoaja().getNimi())
+                public boolean apply(@Nullable HakukohdePerustieto tulos) {
+                    return haeTekstiAvaimella(tulos.getTarjoaja().getNimi())
                             .contains(filtterointiTeksti)
-                            || haeTekstiAvaimella(tulos.getHakukohde().getNimi()).contains(filtterointiTeksti);
+                            || haeTekstiAvaimella(tulos.getNimi()).contains(filtterointiTeksti);
                 }
             });
         }
         // sortataan tarjoajanimen mukaan!
-        List<HakukohdeTulos> sortattuLista = new ArrayList<HakukohdeTulos>(tulokset);
-        Collections.sort(sortattuLista, new Comparator<HakukohdeTulos>() {
-            public int compare(HakukohdeTulos o1, HakukohdeTulos o2) {
-                for (MonikielinenTekstiTyyppi.Teksti t1 : o1.getHakukohde().getTarjoaja().getNimi().getTeksti()) {
+        List<HakukohdePerustieto> sortattuLista = new ArrayList<HakukohdePerustieto>(tulokset);
+        Collections.sort(sortattuLista, new Comparator<HakukohdePerustieto>() {
+            public int compare(HakukohdePerustieto o1, HakukohdePerustieto o2) {
+                for (MonikielinenTekstiTyyppi.Teksti t1 : o1.getTarjoaja().getNimi().getTeksti()) {
                     if (kieliAvain.equals(t1.getKieliKoodi())) {
-                        for (MonikielinenTekstiTyyppi.Teksti t2 : o2.getHakukohde().getTarjoaja().getNimi().getTeksti()) {
+                        for (MonikielinenTekstiTyyppi.Teksti t2 : o2.getTarjoaja().getNimi().getTeksti()) {
                             if (kieliAvain.equals(t2.getKieliKoodi())) {
                                 return t1.getValue().compareTo(t2.getValue());
                             }
@@ -257,12 +256,12 @@ public class HakuResourceImpl implements HakuResource {
         LOG.debug("  after filtering results found '{}'", size);
         List<HakukohdeNimiRDTO> results = new ArrayList<HakukohdeNimiRDTO>();
         int index = 0;
-        for (HakukohdeTulos tulos : sortattuLista) {
+        for (HakukohdePerustieto tulos : sortattuLista) {
             if (index >= startIndex + count) {
                 break; // done!
             }
             if (index >= startIndex) {
-                HakukohdePerustieto hakukohde = tulos.getHakukohde();
+                HakukohdePerustieto hakukohde = tulos;
                 HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
                 // tarvitaanko?
                 // result.setHakuVuosi(haku.getHakukausiVuosi());

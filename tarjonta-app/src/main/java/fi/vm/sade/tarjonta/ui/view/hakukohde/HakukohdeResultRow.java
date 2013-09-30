@@ -28,7 +28,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
@@ -41,7 +41,6 @@ import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.List;
@@ -63,7 +62,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     /**
      * The hakukohde to display on the row.
      */
-    private HakukohdeTulos hakukohde;
+    private HakukohdePerustieto hakukohde;
     private String hakukohdeNimi;
     /**
      * Checkbox to indicate if this row is selected.
@@ -77,13 +76,13 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
-    private List<HakukohdeTulos> children;
+    private List<HakukohdePerustieto> children;
 
     public HakukohdeResultRow() {
-        this.hakukohde = new HakukohdeTulos();
+        this.hakukohde = new HakukohdePerustieto();
     }
 
-    public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
+    public HakukohdeResultRow(HakukohdePerustieto hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
         
 
@@ -112,9 +111,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     void reinitMenubar() {
-        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getTarjoaja().getTarjoajaOid());
 
-        final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getHakukohde().getTila());
+        final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getTila());
         rowMenuBar.clear();
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
        
@@ -148,12 +147,12 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * @param selection the selection in the menu.
      */
     private void menuItemClicked(String selection) {
-        final String hakukohdeOid = hakukohde.getHakukohde().getOid();
+        final String hakukohdeOid = hakukohde.getOid();
 
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             openHakukohdeView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
+            tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
             tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid, null, null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
@@ -163,7 +162,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
             tarjontaPresenter.changeStateToPublished(hakukohdeOid, HAKUKOHDE);
-            tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getHakukohde().getOid()));
+            tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getOid()));
 
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
@@ -173,7 +172,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     
     private void showPeruutaDialog() {
         String peruutaQ = T("peruutaQ", 
-                hakukohdeNimi, hakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri() + " " + hakukohde.getHakukohde().getKoulutuksenAlkamisvuosi());
+                hakukohdeNimi, hakukohde.getKoulutuksenAlkamiskausiUri() + " " + hakukohde.getKoulutuksenAlkamisvuosi());
         RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(peruutaQ, null, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
 
@@ -182,8 +181,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
-                tarjontaPresenter.changeStateToCancelled(hakukohde.getHakukohde().getOid(), HAKUKOHDE);
-                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getHakukohde().getOid()));
+                tarjontaPresenter.changeStateToCancelled(hakukohde.getOid(), HAKUKOHDE);
+                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getOid()));
 
             }
 
@@ -209,8 +208,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
-                tarjontaPresenter.removeHakukohde(hakukohde);
-                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.delete(hakukohde.getHakukohde().getOid()));
+                tarjontaPresenter.removeHakukohde(hakukohde.getOid());
+                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.delete(hakukohde.getOid()));
             }
         },
                 new Button.ClickListener() {
@@ -243,10 +242,10 @@ public class HakukohdeResultRow extends HorizontalLayout {
         Date today = new Date();
         //Haku has started if the start date of the haku is is in the past and if the haku is not a lisahaku
         if  ((hakukohde != null
-                    && hakukohde.getHakukohde() != null
-                    && hakukohde.getHakukohde().getHakuAlkamisPvm() != null
-                    && hakukohde.getHakukohde().getHakuAlkamisPvm().before(today))
-                    && !KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde.getHakukohde().getHakutyyppiUri())) {
+                    && hakukohde != null
+                    && hakukohde.getHakuAlkamisPvm() != null
+                    && hakukohde.getHakuAlkamisPvm().before(today))
+                    && !KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde.getHakutyyppiUri())) {
             hakuStarted = true;
         }
         
@@ -258,11 +257,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (hakukohde != null
-                		&& hakukohde.getHakukohde() != null
+                		&& hakukohde != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedhakukohteet().add(hakukohde);
                 } else if (hakukohde != null 
-                		&& hakukohde.getHakukohde() != null) {
+                		&& hakukohde != null) {
                     tarjontaPresenter.getSelectedhakukohteet().remove(hakukohde);
                 }
                 //tarjontaPresenter.togglePoistaHakukohdeB();
@@ -327,9 +326,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     private void openHakukohdeView() {
-        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
+        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
-        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
+        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getOid());
     }
 
     /**
@@ -349,14 +348,14 @@ public class HakukohdeResultRow extends HorizontalLayout {
     /**
      * @return the children
      */
-    public List<HakukohdeTulos> getChildren() {
+    public List<HakukohdePerustieto> getChildren() {
         return children;
     }
 
     /**
      * @param children the children to set
      */
-    public void setChildren(List<HakukohdeTulos> children) {
+    public void setChildren(List<HakukohdePerustieto> children) {
         this.children = children;
     }
 }
