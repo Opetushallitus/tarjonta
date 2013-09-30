@@ -8,7 +8,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TarjoajaHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
+import fi.vm.sade.tarjonta.service.search.KoulutusListaus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOConverter<KoulutuksetVastaus, HakutuloksetRDTO<KoulutusHakutulosRDTO>> {
@@ -29,7 +29,7 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		return ret;
 	}
 	
-	private KoulutusHakutulosRDTO convert(KoulutusListausTyyppi ht) {
+	private KoulutusHakutulosRDTO convert(KoulutusListaus ht) {
 		KoulutusHakutulosRDTO ret = new KoulutusHakutulosRDTO();
 
 		ret.setNimi(convertToMap(ht.getNimi()));

@@ -66,6 +66,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusListaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
@@ -80,7 +81,6 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
@@ -1211,7 +1211,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
 
             if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {
-                KoulutusListausTyyppi firstKoulutus = getModel().getSelectedKoulutukset().get(0).getKoulutus();
+                KoulutusListaus firstKoulutus = getModel().getSelectedKoulutukset().get(0).getKoulutus();
 
                 //set tarjoaja
                 getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getTarjoajaOid());
