@@ -10,7 +10,7 @@ import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 
-public class KoulutusListaus implements Serializable
+public class KoulutusPerustieto implements Serializable
 {
 
     private final static long serialVersionUID = 100L;

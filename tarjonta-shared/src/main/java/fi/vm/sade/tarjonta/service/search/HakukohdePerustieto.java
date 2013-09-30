@@ -9,7 +9,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
-public class HakukohdeListaus implements Serializable
+public class HakukohdePerustieto implements Serializable
 {
 
     private final static long serialVersionUID = 100L;
@@ -32,7 +32,7 @@ public class HakukohdeListaus implements Serializable
      * Default no-arg constructor
      * 
      */
-    public HakukohdeListaus() {
+    public HakukohdePerustieto() {
         super();
     }
 
@@ -40,7 +40,7 @@ public class HakukohdeListaus implements Serializable
      * Fully-initialising value constructor
      * 
      */
-    public HakukohdeListaus(final String oid, final MonikielinenTekstiTyyppi nimi, final String koodistoNimi, final TarjontaTila tila, final String aloituspaikat, final String koulutuksenAlkamiskausiUri, final String koulutuksenAlkamisvuosi, final KoodistoKoodiTyyppi hakutapaKoodi, final TarjoajaTyyppi tarjoaja, final Date hakuAlkamisPvm, final Date hakuPaattymisPvm, final MonikielinenTekstiTyyppi hakukohteenKoulutuslaji, final String hakutyyppiUri) {
+    public HakukohdePerustieto(final String oid, final MonikielinenTekstiTyyppi nimi, final String koodistoNimi, final TarjontaTila tila, final String aloituspaikat, final String koulutuksenAlkamiskausiUri, final String koulutuksenAlkamisvuosi, final KoodistoKoodiTyyppi hakutapaKoodi, final TarjoajaTyyppi tarjoaja, final Date hakuAlkamisPvm, final Date hakuPaattymisPvm, final MonikielinenTekstiTyyppi hakukohteenKoulutuslaji, final String hakutyyppiUri) {
         this.oid = oid;
         this.nimi = nimi;
         this.koodistoNimi = koodistoNimi;

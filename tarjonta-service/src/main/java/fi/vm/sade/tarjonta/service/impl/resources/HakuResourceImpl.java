@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdeListaus;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
@@ -262,7 +262,7 @@ public class HakuResourceImpl implements HakuResource {
                 break; // done!
             }
             if (index >= startIndex) {
-                HakukohdeListaus hakukohde = tulos.getHakukohde();
+                HakukohdePerustieto hakukohde = tulos.getHakukohde();
                 HakukohdeNimiRDTO rdto = new HakukohdeNimiRDTO();
                 // tarvitaanko?
                 // result.setHakuVuosi(haku.getHakukausiVuosi());

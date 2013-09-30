@@ -39,7 +39,7 @@ public class KoulutuksetVastaus implements Serializable
     {
 
         private final static long serialVersionUID = 100L;
-        protected KoulutusListaus koulutus;
+        protected KoulutusPerustieto koulutus;
 
         /**
          * Default no-arg constructor
@@ -53,7 +53,7 @@ public class KoulutuksetVastaus implements Serializable
          * Fully-initialising value constructor
          * 
          */
-        public KoulutusTulos(final KoulutusListaus koulutus) {
+        public KoulutusTulos(final KoulutusPerustieto koulutus) {
             this.koulutus = koulutus;
         }
 
@@ -65,7 +65,7 @@ public class KoulutuksetVastaus implements Serializable
          *     {@link KoulutusListausTyyppi }
          *     
          */
-        public KoulutusListaus getKoulutus() {
+        public KoulutusPerustieto getKoulutus() {
             return koulutus;
         }
 
@@ -77,7 +77,7 @@ public class KoulutuksetVastaus implements Serializable
          *     {@link KoulutusListausTyyppi }
          *     
          */
-        public void setKoulutus(KoulutusListaus value) {
+        public void setKoulutus(KoulutusPerustieto value) {
             this.koulutus = value;
         }
 

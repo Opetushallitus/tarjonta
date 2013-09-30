@@ -32,7 +32,7 @@ public class SolrDocumentToHakukohdeConverter {
     private HakukohdeTulos convertHakukohde(SolrDocument hakukohdeDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
         HakukohdeTulos vastaus = new HakukohdeTulos();
-        HakukohdeListaus hakukohde = new HakukohdeListaus();
+        HakukohdePerustieto hakukohde = new HakukohdePerustieto();
         hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));

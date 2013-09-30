@@ -48,7 +48,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     
     private KoulutusTulos convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutusTulos tulos = new KoulutusTulos();
-        KoulutusListaus koulutus = new KoulutusListaus();
+        KoulutusPerustieto koulutus = new KoulutusPerustieto();
         koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutuskoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
