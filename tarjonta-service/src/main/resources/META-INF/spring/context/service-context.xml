@@ -10,7 +10,7 @@
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 
-	<context:annotation-config/>
+    <context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.security" />
 
     <!--
@@ -46,7 +46,8 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeDTOToHakukohdeTyyppiConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohteetVastausToHakukohdeTulosRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutuksetVastausToHakukohdeTulosRDTOConverter"/>
-       
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KomotoConverterToKorkeakouluDTO"/>   
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto"/>     
             </list>
         </property>
 

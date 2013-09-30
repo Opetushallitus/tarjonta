@@ -1,10 +1,10 @@
 <form name="luoTutkinto">     
     <div>
-      
-        
+
+
     </div>
-    
-     <div class="container-fluid ">
+
+    <div class="container-fluid ">
         <div class="row-fluid">
             <div class="span2 label-right"><input type="text" data-ng-model="searchByOid" /></div>
             <div class="span10"><input type="button" data-ng-click="search()"  value="Hae"></div>
@@ -174,23 +174,29 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.yhteyshenkilo'></div>
             <div class="span10">
-                <div data-ng-repeat="yhteyshenkilo in model.yhteyshenkilos | filter: {henkiloTyyppi : 'YHTEYSHENKILO'}" >
-                    <input type="text" data-ng-model="yhteyshenkilo.etunimet" required />
-                    <input type="text" data-ng-model="yhteyshenkilo.titteli" required />
-                    <input type="text" data-ng-model="yhteyshenkilo.puhelin" required />
+                <div>
+                    <div style="float: left;"><input type="text" data-ng-model="contactPerson.nimet" /></div>
+                    <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
+                </div>
+                <div style="clear: left;">
+                    <input type="text" data-ng-model="contactPerson.sahkoposti" /><br/>
+                    <input type="text" data-ng-model="contactPerson.titteli" /><br/>
+                    <input type="text" data-ng-model="contactPerson.puhelin" />
                 </div>
             </div>
         </div>
     </div>
-
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.ects-koordinaattori'></div>
             <div class="span10">
-                <div data-ng-repeat="yhteyshenkilo in model.yhteyshenkilos | filter: {henkiloTyyppi : 'ECTS_KOORDINAATTORI'}" >
-                    <input type="text" data-ng-model="yhteyshenkilo.etunimet" required />
-                    <input type="text" data-ng-model="yhteyshenkilo.titteli" required />
-                    <input type="text" data-ng-model="yhteyshenkilo.puhelin" required />
+                <div>
+                    <div style="float: left;"><input type="text" data-ng-model="ectsCoordinator.nimet" /></div>
+                    <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
+                </div>
+                <div style="clear: left;">
+                    <input type="text" data-ng-model="ectsCoordinator.titteli" /><br/>
+                    <input type="text" data-ng-model="ectsCoordinator.puhelin" />
                 </div>
             </div>
         </div>

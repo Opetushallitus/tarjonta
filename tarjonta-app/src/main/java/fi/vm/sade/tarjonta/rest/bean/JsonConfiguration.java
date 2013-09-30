@@ -56,8 +56,8 @@ public class JsonConfiguration {
     @ResponseBody
     public String help() {
         return "<p>"
-                + "Return configuration JSON object : <environment>/<a href='/tarjonta-app/kk/ext/json/env-configuration.json'>tarjonta-app/kk/ext/json/env-configuration.json</a>.<br/>"
-                + "Return configuration JSON object in JavaScript variable : <environment>/<a href='/tarjonta-app/kk/ext/js/env-configuration.js'>tarjonta-app/kk/ext/js/env-configuration.js</a>."
+                + "Output configuration JSON object : <environment><a href=\"json/env-configuration.json\">/kk/ext/json/env-configuration.json</a>.<br/>"
+                + "Output configuration JSON object in JavaScript variable : <environment>/<a href=\"js/env-configuration.js\">/kk/ext/js/env-configuration.js</a>."
                 + "</p>";
     }
 
