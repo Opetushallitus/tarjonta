@@ -79,7 +79,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	    year: fromParams("year","*"),
     	    season: fromParams("season","*")
     };
-    
+
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
@@ -148,7 +148,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	copyIfSet(sargs, "state", $scope.spec.state);
     	copyIfSet(sargs, "year", $scope.spec.year);
     	copyIfSet(sargs, "season", $scope.spec.season);
-    	
+
     	$location.path("/etusivu/" + sargs.oid);
         $location.search(sargs);
     }
@@ -187,7 +187,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
         });
     }
-    
+
     if ($scope.spec.terms=="*") {
     	$scope.spec.terms="";
     	$scope.search();

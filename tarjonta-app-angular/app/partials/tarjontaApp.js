@@ -98,14 +98,14 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
         $routeProvider
-        .when("/etusivu", {
+                .when("/etusivu", {
             action: "home.default",
-            reloadOnSearch:false,
+            reloadOnSearch: false,
         })
-        /* .when("/etusivu/:oid", {
+                .when("/etusivu/:oid", {
             action: "home.default",
-            reloadOnSearch:false
-        })*/
+            reloadOnSearch: false
+        })
                 .when("/kk/edit/:id", {
             action: "kk.edit"
         })
@@ -119,7 +119,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/review/:id/:part', {
             action: "kk.review"
         })
-        .otherwise({redirectTo: "/etusivu"});
+                .otherwise({redirectTo: "/etusivu"});
     }]);
 
 
@@ -133,7 +133,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
         console.log("app.AppRoutingCtrl.render()");
 
         var renderAction = $route.current.action;
-        var renderPath = renderAction ? renderAction.split( "." ) : [];
+        var renderPath = renderAction ? renderAction.split(".") : [];
 
         // Store the values in the model.
         $scope.renderAction = renderAction;

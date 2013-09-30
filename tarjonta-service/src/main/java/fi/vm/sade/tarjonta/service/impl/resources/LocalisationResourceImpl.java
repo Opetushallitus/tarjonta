@@ -73,13 +73,8 @@ public class LocalisationResourceImpl implements LocalisationResource {
 
     @Override
     public void updateLocalization(String key, LocalisationRDTO data) {
-        LOG.info("updateLocalization({})", key);
-
-        Localisation l = localisationDAO.findByKeyAndLocale(data.getKey(), data.getLocale());
-        if (l != null) {
-            l.setValue(data.getValue());
-            localisationDAO.update(l);
-        }
+        LOG.info("updateLocalization({}) , delegate to createLocalization...", key);
+        this.createLocalization(key, data);
     }
 
     @Override
