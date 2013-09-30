@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -514,16 +515,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
     }
     
-    private String getHakukohdeTulosKoodistoNimi(fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos hakukohdeTulos) {
+    private String getHakukohdeTulosKoodistoNimi(HakukohdePerustieto hakukohde) {
         String koodistoNimi = null;
         
-        for (MonikielinenTekstiTyyppi.Teksti teksti : hakukohdeTulos.getHakukohde().getNimi().getTeksti()) {
+        for (MonikielinenTekstiTyyppi.Teksti teksti : hakukohde.getNimi().getTeksti()) {
             if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
                 koodistoNimi = teksti.getValue();
             }
         }
         if (koodistoNimi != null) {
-            koodistoNimi = koodistoNimi + ", " + hakukohdeTulos.getHakukohde().getTila().value();
+            koodistoNimi = koodistoNimi + ", " + hakukohde.getTila().value();
         }
         
         return koodistoNimi;
@@ -540,12 +541,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kysely.setKoulutuksenAlkamisvuosi(0);
         HakukohteetVastaus vastaus = searchService.haeHakukohteet(kysely);
         if (fromKoulutus.getHakukohdes() != null) {
-            for (fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos hakukohde : vastaus.getHakukohdeTulos()) {
+            for (HakukohdePerustieto hakukohde : vastaus.getHakukohteet()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
-                hakukohdeKoosteTyyppi.setOid(hakukohde.getHakukohde().getOid());
+                hakukohdeKoosteTyyppi.setOid(hakukohde.getOid());
                 hakukohdeKoosteTyyppi.setKoodistoNimi(getHakukohdeTulosKoodistoNimi(hakukohde));
-                hakukohdeKoosteTyyppi.setNimi(hakukohde.getHakukohde().getKoodistoNimi());
-                hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getHakukohde().getTila().name()));
+                hakukohdeKoosteTyyppi.setNimi(hakukohde.getKoodistoNimi());
+                hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
                 toKoulutus.getHakukohteet().add(hakukohdeKoosteTyyppi);
             }
         }

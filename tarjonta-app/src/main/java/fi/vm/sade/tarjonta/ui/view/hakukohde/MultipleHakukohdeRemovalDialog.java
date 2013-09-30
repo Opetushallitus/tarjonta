@@ -26,9 +26,7 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -92,14 +90,14 @@ public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
     private void createOptionGroupLayout() {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setMargin(true,false,false,false);
-        BeanItemContainer<HakukohdeTulos> hakukohteet = new BeanItemContainer<HakukohdeTulos>(HakukohdeTulos.class, presenter.getSelectedhakukohteet());
+        BeanItemContainer<HakukohdePerustieto> hakukohteet = new BeanItemContainer<HakukohdePerustieto>(HakukohdePerustieto.class, presenter.getSelectedhakukohteet());
 
         hakukohdeOptions = new OptionGroup(null,hakukohteet);
         hakukohdeOptions.setMultiSelect(true);
         //Set all selected as default
         for (Object obj: hakukohdeOptions.getItemIds()) {
-        	HakukohdeTulos curHakuk = (HakukohdeTulos)obj;
-        	String nimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakuk.getHakukohde().getNimi()).getValue();
+        	HakukohdePerustieto curHakuk = (HakukohdePerustieto)obj;
+        	String nimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakuk.getNimi()).getValue();
         	hakukohdeOptions.setItemCaption(obj, nimi);
             hakukohdeOptions.select(obj);
         }
@@ -111,9 +109,9 @@ public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
     
     private void removeSelectedHakukohteet() {
     	Object values = hakukohdeOptions.getValue();
-    	Collection<HakukohdeTulos> selectedHakukohdeOptions = null;
+    	Collection<HakukohdePerustieto> selectedHakukohdeOptions = null;
     	if (values instanceof  Collection) {
-    		selectedHakukohdeOptions = (Collection<HakukohdeTulos>)values;
+    		selectedHakukohdeOptions = (Collection<HakukohdePerustieto>)values;
     		presenter.getSelectedhakukohteet().clear();
     		presenter.getSelectedhakukohteet().addAll(selectedHakukohdeOptions);
     		presenter.removeSelectedHakukohteet();

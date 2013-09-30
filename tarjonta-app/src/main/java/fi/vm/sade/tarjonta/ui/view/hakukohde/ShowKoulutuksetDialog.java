@@ -28,7 +28,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -45,9 +45,9 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     private static final long serialVersionUID = 6521526287528256527L;
     
     private List<KoulutusTulos> koulutukset;
-    private HakukohdeTulos selectedHakukohde;
+    private HakukohdePerustieto selectedHakukohde;
     
-    public ShowKoulutuksetDialog(List<KoulutusTulos> koulutukset, HakukohdeTulos selectedHakukohde, TarjontaPresenter presenter) {
+    public ShowKoulutuksetDialog(List<KoulutusTulos> koulutukset, HakukohdePerustieto selectedHakukohde, TarjontaPresenter presenter) {
         super(presenter);
         this.koulutukset = koulutukset;
         this.selectedHakukohde = selectedHakukohde;
@@ -151,14 +151,14 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     private String resolveHakukohdeNimi() {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getHakukohde().getNimi()).getValue() 
+        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getNimi()).getValue() 
                 + ", " + getHakukohdeAjankohtaStr() 
-                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getHakukohde().getTarjoaja().getNimi()).getValue();        
+                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getTarjoaja().getNimi()).getValue();        
     }
     
     private String getHakukohdeAjankohtaStr() {
-        return I18N.getMessage(selectedHakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri()) 
-                +  " " + selectedHakukohde.getHakukohde().getKoulutuksenAlkamisvuosi();
+        return I18N.getMessage(selectedHakukohde.getKoulutuksenAlkamiskausiUri()) 
+                +  " " + selectedHakukohde.getKoulutuksenAlkamisvuosi();
     }
 
 }

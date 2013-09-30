@@ -8,7 +8,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TarjoajaHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -20,12 +19,13 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 
 		Map<String, TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>>();
 		
-		for (HakukohdeTulos ht : source.getHakukohdeTulos()) {
+		for (HakukohdePerustieto ht : source.getHakukohteet()) {
 			TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> rets = getTarjoaja(ret, tarjoajat, ht);
-			rets.getTulokset().add(convert(ht.getHakukohde()));
+			rets.getTulokset().add(convert(ht));
 		}
 		
-		ret.setTuloksia(source.getHakukohdeTulos().size());
+		//XX use hitCount when implemented
+		ret.setTuloksia(source.getHakukohteet().size());
 		
 		return ret;
 	}
@@ -53,13 +53,13 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 	private TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> getTarjoaja(
 			HakutuloksetRDTO<HakukohdeHakutulosRDTO> tulos,
 			Map<String, TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>> tarjoajat,
-			HakukohdeTulos ht) {
-		TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> ret = tarjoajat.get(ht.getHakukohde().getTarjoaja().getTarjoajaOid());
+			HakukohdePerustieto ht) {
+		TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> ret = tarjoajat.get(ht.getTarjoaja().getTarjoajaOid());
 		if (ret==null) {
 			ret = new TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>();
-			tarjoajat.put(ht.getHakukohde().getTarjoaja().getTarjoajaOid(), ret);
-			ret.setOid(ht.getHakukohde().getTarjoaja().getTarjoajaOid());
-			ret.setNimi(convertToMap(ht.getHakukohde().getTarjoaja().getNimi()));
+			tarjoajat.put(ht.getTarjoaja().getTarjoajaOid(), ret);
+			ret.setOid(ht.getTarjoaja().getTarjoajaOid());
+			ret.setNimi(convertToMap(ht.getTarjoaja().getNimi()));
 			tulos.getTulokset().add(ret);
 		}
 		return ret;

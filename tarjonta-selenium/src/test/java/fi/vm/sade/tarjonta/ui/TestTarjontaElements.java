@@ -645,7 +645,7 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + textAlignRight + ".*>Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*" + textAlignRight + ".*>Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
@@ -711,7 +711,7 @@ public class TestTarjontaElements {
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
                     , doit.textElement(driver, "Tutkinnon koulutukselliset ja ammatilliset tavoitteet"));
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
-                    , doit.textElement(driver, "Koulutuksen koulutukselliset ja ammatilliset tavoitteet"));
+                    , doit.textElement(driver, "Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet"));
         }
         
         String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
@@ -764,7 +764,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">120 ov</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
