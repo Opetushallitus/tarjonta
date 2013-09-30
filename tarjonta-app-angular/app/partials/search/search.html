@@ -56,13 +56,13 @@
             <!-- kontrollit -->
             <tr>
                 <td class="state">
-                    <select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
+                    <select ng-model="spec.state" ng-options="s as t for (s,t) in states"/>
                 </td>
                 <td class="year">
-                    <select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
+                    <select ng-model="spec.year" ng-options="s as t for (s,t) in years"/>
                 </td>
                 <td class="season">
-                    <select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
+                    <select ng-model="spec.season" ng-options="s as t for (s,t) in seasons"/>
                 </td>
                 <td class="controls">
                     <input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
@@ -76,14 +76,14 @@
         </table>
 
         <div class="search">
-            <input type="text" ng-model="searchTerms" ng-enter="search()"/>
+            <input type="text" ng-model="spec.terms" ng-enter="search()"/>
         </div>
 
     </div>
 
 	<div id="searchResults">
     <tabset>
-        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}} ({{koulutusResults.tuloksia}})">
+        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
         
         	<table>
         	<tbody ng-repeat="tarjoaja in koulutusResults.tulokset">
@@ -100,7 +100,7 @@
         	</table>
         
         </tab>
-        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}} ({{hakukohdeResults.tuloksia}})">
+        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
 
         	<table>
         	<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">

@@ -97,12 +97,15 @@ angular.module('app').value("globalConfig", window.CONFIG);
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
-        $routeProvider.when("/etusivu", {
-            action: "home.default"
+        $routeProvider
+        .when("/etusivu", {
+            action: "home.default",
+            reloadOnSearch:false,
         })
-        $routeProvider.when("/etusivu/:id", {
-            action: "home.default"
-        })
+        /* .when("/etusivu/:oid", {
+            action: "home.default",
+            reloadOnSearch:false
+        })*/
                 .when("/kk/edit/:id", {
             action: "kk.edit"
         })
