@@ -102,10 +102,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "home.default",
             reloadOnSearch: false,
         })
-                .when("/etusivu/:oid", {
+       /*         .when("/etusivu/:oid", {
             action: "home.default",
             reloadOnSearch: false
-        })
+        })*/
                 .when("/kk/edit/:id", {
             action: "kk.edit"
         })
