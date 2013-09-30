@@ -273,8 +273,8 @@ public class TestTarjontaSavu {
 //    }
 
     @Test
-    public void test_T_INT_TAR_SAVU021_DialogLuoAMK() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMK ...");
+    public void test_T_INT_TAR_SAVU021_DialogLuoAMP() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMP ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haePalvelunTarjoaja(driver, "optima", "Optima samkommun");
     	doit.textClick(driver, "Optima samkommun");
@@ -297,13 +297,13 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running Luo uusi ammatillinenkoulutus + jatka ei toimi."
         		, doit.textElement(driver, "posti"));
 		doit.footerTest(driver, "Running Luo uusi ammatillinenkoulutus + jatka footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMK OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMP OK");
         doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU022_MuokkaaAMKkoulutusta() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMKkoulutusta ...");
+    public void test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
     	doit.textClick(driver, "muokkaa");
@@ -312,13 +312,13 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Ammattinimikkeet")); // Ammatillinen koulutus
 		doit.footerTest(driver, "Running TARKASTELE AMMATILLISTAKOULUTUSTA footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMKkoulutusta OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta OK");
         doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU023_MuokkaaAMKkoulutustaKuvailevat() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMKkoulutustaKuvailevat ...");
+    public void test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
         // MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot
@@ -326,13 +326,13 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
         		, doit.textElement(driver, "Koulutusohjelman valinta")); // Ammatillinen koulutus
 		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMKkoulutustaKuvailevat OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat OK");
         doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMK() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMK ...");
+    public void test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohje");
     	doit.triangleClickFirstTriangle(driver);
@@ -340,25 +340,25 @@ public class TestTarjontaSavu {
     	doit.textClick(driver, "tai kopioi");
     	String dlgText = "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi";
         Assert.assertNotNull("Running SIIRRA TAI KOPIOI ei toimi.", doit.textElement(driver, dlgText));
-    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMK OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP OK");
         doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU025_TarkasteleAMKkoulutusta() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMKkoulutusta ...");
+    public void test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.tarkasteleKoulutusta(driver, "tusohje", null);
         Assert.assertNotNull("Running TARKASTELE KOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Jatko-opintomahdollisuudet"));
 		doit.footerTest(driver, "Running TARKASTELE KOULUTUSTA footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMKkoulutusta OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta OK");
         doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU026_PoistaAMKstaHakukohde() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMKstaHakukohde ...");
+    public void test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	// hae luonnos hakukohteita
     	doit.haeKoulutuksia(driver, null, "tusohj");
@@ -381,13 +381,13 @@ public class TestTarjontaSavu {
     	WebElement close = driver.findElement(By.id(closeId));
     	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi.", close);
     	doit.footerTest(driver, "Running HAKUKOHTEEN KOULUTUKSESTA footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMKstaHakukohde OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde OK");
     	doit.tauko(1);
     }
     
     @Test
-    public void test_T_INT_TAR_SAVU027_DialogPoistaAMKKoulutus() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMKKoulutus ...");
+    public void test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, "Luonnos", "tusohj");
         doit.triangleClickFirstTriangle(driver);
@@ -397,13 +397,13 @@ public class TestTarjontaSavu {
     	String closeId = doit.idLike(driver, "window_close");
     	WebElement close = driver.findElement(By.id(closeId));
     	Assert.assertNotNull("Running POISTA KOULUTUS ei toimi.", close);
-    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMKKoulutus OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus OK");
     	doit.tauko(1);
     }
     
     @Test
-    public void test_T_INT_TAR_SAVU028_DialogAMKNaytaHakukohteet() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMKNaytaHakukohteet ...");
+    public void test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, "Julkaistu", "tusohj");
         doit.triangleClickFirstTriangle(driver);
@@ -415,27 +415,27 @@ public class TestTarjontaSavu {
 			Assert.assertNotNull("Running NAYTA HAKUKOHTEET ei toimi."
 					, doit.textElement(driver, "Koulutukseen ei ole liitetty hakukohteita"));
 		}
-    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMKNaytaHakukohteet OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU029_DialogRinnakkainenAMKkoulutus() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMKkoulutus ...");
+    public void test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
 		doit.textClick(driver, "rinnakkainen toteutus");
 		Assert.assertNotNull("Running Lisaa rinnakkainen toteutus ei toimi."
 				, doit.textElement(driver, "Valitse pohjakoulutus"));
-    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMKkoulutus OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus OK");
 		doit.tauko(1);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void test_T_INT_TAR_SAVU104_HAKO_LuoAMKHakukohde() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMKHakukohde ...");
+    public void test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.triangleClickFirstTriangle(driver);
@@ -452,13 +452,13 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
         		, doit.textElement(driver, "Tallenna luonnoksena"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
-        doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMKHakukohde OK");
+        doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMKHakukohdetta() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMKHakukohdetta ...");
+    public void test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
         // HAKUKOHTEEN TARKASTELU
@@ -466,13 +466,13 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
         		, doit.textElement(driver, "Koulutukset"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMKHakukohdetta OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMKHakukohdetta() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMKHakukohdetta ...");
+    public void test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -482,13 +482,13 @@ public class TestTarjontaSavu {
     	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS ei toimi."
     			, doit.textElement(driver, "Tallenna valmiina"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMKHakukohdetta OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMKHakukohteenLiitteidenTiedot() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMKHakukohteenLiitteidenTiedot ...");
+    public void test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -497,13 +497,13 @@ public class TestTarjontaSavu {
     	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
     			, doit.textElement(driver, "Toimitusosoite"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMKHakukohteenLiitteidenTiedot OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMKHakukohdeLisaaUusiLiite() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMKHakukohdeLisaaUusiLiite ...");
+    public void test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -516,13 +516,13 @@ public class TestTarjontaSavu {
     	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
     			, doit.textElement(driver, "Voidaan toimittaa my"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMKHakukohdeLisaaUusiLiite OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMKkohdeValintakokeet() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMKkohdeValintakokeet ...");
+    public void test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -533,13 +533,13 @@ public class TestTarjontaSavu {
 		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) ei toimi."
 				, doit.textElement(driver, "Valintakokeen kuvaus"));
 		doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMKkohdeValintakokeet OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMKkohdeUusiValintakoe() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMKkohdeUusiValintakoe ...");
+    public void test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -551,13 +551,13 @@ public class TestTarjontaSavu {
 		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
 				, doit.textElement(driver, "Ajankohta"));
     	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) footer ei toimi.", true);
-    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMKkohdeUusiValintakoe OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMKPoisto() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMKPoisto ...");
+    public void test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, "Luonnos", "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
@@ -571,27 +571,27 @@ public class TestTarjontaSavu {
 			Assert.assertNotNull("Running HAKUKOHTEEN POISTO ei toimi."
 					, doit.textElement(driver, "Hakukohdetta ei voi poistaa koska haku on jo"));
 		}
-    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMKPoisto OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto OK");
     	doit.tauko(1);
     }
 
     @Test
-    public void test_T_INT_TAR_SAVU110_HAKO_DialogKoulutuksenPoistoAMKHakukohteesta() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMKHakukohteesta ...");
+    public void test_T_INT_TAR_SAVU110_HAKO_DialogKoulutuksenPoistoAMPHakukohteesta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMPHakukohteesta ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeKoulutuksia(driver, null, "tusohj");
     	doit.tarkasteleJokuHakukohde(driver);
     	doit.textClick(driver, "Poista hakukohteesta");
 		Assert.assertNotNull("Running Koulutuksen poisto hakukohteesta ei toimi."
 				, doit.textElement(driver, "Haluatko poistaa koulutuksen hakukohteelta"));
-    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMKHakukohteesta OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMPHakukohteesta OK");
     	doit.tauko(1);
     }
 
 
     @Test
-    public void test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMKPeruutus() throws Exception {
-    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMKPeruutus ...");
+    public void test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus ...");
     	doit.tarjonnanEtusivu(driver, baseUrl);
     	doit.haeHakukohteita(driver, "Julkaistu", "tusohj");
 //    	doit.tarkasteleJokuHakukohde(driver);
@@ -602,7 +602,7 @@ public class TestTarjontaSavu {
 //    	doit.textClick(driver, "Peruuta");
 		Assert.assertNotNull("Running HAKUKOHTEEN PERUUTUS ei toimi."
 				, doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
-    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMKPeruutus OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus OK");
     	doit.tauko(1);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
