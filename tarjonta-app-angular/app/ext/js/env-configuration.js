@@ -1,13 +1,13 @@
 /*
- * Help: 
+ * Help:
  * Add service factory(/js/shared/config.js) to your module.
  * Module name : 'config'.
  * Factory name : 'Config'.
- * 
+ *
  * FAQ:
  * How to get an environment variable by a key: <factory-object>.env[<string-key>].
  * How to get AngularJS application variable by a key: <factory-object>.app[<string-key>].
- * 
+ *
  * Example:
  * cfg.env["koodi-uri.koulutuslaji.nuortenKoulutus"];
  * result value : "koulutuslaji_n"
@@ -65,8 +65,10 @@ window.CONFIG = {
         "tarjonta.public.webservice.url.backend": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/services/tarjontaPublicService",
         "tarjonta.showUnderConstruction": "true",
         "tarjonta.solr.baseurl": "http://luokka.hard.ware.fi:8312/solr",
-        "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest",
-        //käsin lisätyt:   
-        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/"
+        "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/",
+        //käsin lisätyt:
+        // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/"
+        "tarjontaRestUrlPrefix": "http://localhost:8084/tarjonta-service/rest/"
+
     }
 };

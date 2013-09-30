@@ -71,11 +71,11 @@ public class TestIntegraatioTarjonta {
     public void KOUL001loop() throws Exception {
     	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_KOUL001 ...");
-    	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastut");
-		doit.menuOperaatioMenuLuonnos(driver, menu, "Muokkaa");
+		WebElement menu = doit.linkKoulutusLuonnosta(driver, "ylioppilastut");
+		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
         Assert.assertNotNull("Running test_T_INT_TAR_KOUL001 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
     	doit.echo("Running test_T_INT_TAR_KOUL001 OK");
@@ -100,7 +100,7 @@ public class TestIntegraatioTarjonta {
     public void HKOH001loop() throws Exception {
     	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_HKOH001 ...");
-        doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         
         doit.textClick(driver, "Hakukohteet");
         doit.tauko(1);

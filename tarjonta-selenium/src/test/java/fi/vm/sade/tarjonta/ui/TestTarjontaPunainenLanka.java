@@ -90,7 +90,7 @@ public class TestTarjontaPunainenLanka {
     	this.frontPage();
     	doit.echo("Running TarjontaPunainenLanka TC0802 ...");
     	TarjontaTapaukset.setKattavuus("TC0802", Kattavuus.KATTAVUUSERROR);
-    	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
@@ -239,7 +239,7 @@ public class TestTarjontaPunainenLanka {
     	this.frontPage();
     	doit.echo("Running TarjontaPunainenLanka TC0802lukio ...");
     	TarjontaTapaukset.setKattavuus("TC0802lukio", Kattavuus.KATTAVUUSERROR);
-    	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
@@ -374,11 +374,11 @@ public class TestTarjontaPunainenLanka {
     	this.frontPage();
     	doit.echo("Running TarjontaPunainenLanka TC0804 ...");
     	TarjontaTapaukset.setKattavuus("TC0804", Kattavuus.KATTAVUUSERROR);
-    	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastut");
-		doit.menuOperaatioMenuLuonnos(driver, menu, "Muokkaa");
+		WebElement menu = doit.linkKoulutusLuonnosta(driver, "ylioppilastut");
+		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0804 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
         String puhelinnumero = (System.currentTimeMillis() + "").substring(6);
@@ -658,7 +658,7 @@ public class TestTarjontaPunainenLanka {
     	this.frontPage();
     	doit.echo("Running TarjontaPunainenLanka TC0811 ...");
     	TarjontaTapaukset.setKattavuus("TC0811", Kattavuus.KATTAVUUSERROR);
-        doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
@@ -802,7 +802,7 @@ public class TestTarjontaPunainenLanka {
     	this.frontPage();
     	doit.echo("Running TarjontaPunainenLanka TC0812 ...");
     	TarjontaTapaukset.setKattavuus("TC0812", Kattavuus.KATTAVUUSERROR);
-        doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         
         doit.textClick(driver, "Hakukohteet");
         doit.tauko(1);
@@ -817,7 +817,7 @@ public class TestTarjontaPunainenLanka {
         organisaatio = organisaatio.substring(0, organisaatio.indexOf("(") - 1);
         
         // muokkaa
-        doit.menuOperaatioMenu(driver, menu, "Muokkaa");
+        doit.menuOperaatio(driver, "Muokkaa", "luonnos");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0812 Menu muokkaa ei toimi."
                 , doit.textElement(driver, "Tallenna valmiina"));
         doit.tauko(1);
