@@ -6,13 +6,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
 	// 1. Organisaatiohaku
-	$scope.hakuehdot = $scope.defaultHakuehdot = {
-		"searchStr" : "",
-		"organisaatiotyyppi" : "",
-		"oppilaitostyyppi" : "",
-		"lakkautetut" : false,
-		"suunnitellut" : false
-	};
+	function setDefaultHakuehdot(){
+		$scope.hakuehdot={
+			"searchStr" : "",
+			"organisaatiotyyppi" : "",
+			"oppilaitostyyppi" : "",
+			"lakkautetut" : false,
+			"suunnitellut" : false
+		};
+	}
+
+	setDefaultHakuehdot();
 
     $scope.organisaatio = {};
 
@@ -57,8 +61,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
     $scope.resetOrg = function() {
-        //console.log("reset clicked!");
-        $scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
+    	setDefaultHakuehdot();
     };
 
 	// 2. Koulutusten/Hakujen haku
