@@ -51,7 +51,7 @@
   "kaytetaanHakukohdekohtaistaHakuaikaa" : false,
   "hakukelpoisuusvaatimusUri" : "hakukelpoisuusvaatimusta_5#1",
   "valintaperustekuvaus" : {
-    "kieli_fi#1" : "<p>kuvaus muutos 1380624342382</p>"
+    "kieli_fi#1" : "<p>kuvaus muutos 1380626709057</p>"
   },
   "opetuskielet" : [ "kieli_fi#1" ],
   "api_VERSION" : 4
