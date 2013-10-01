@@ -57,7 +57,7 @@ import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -165,21 +165,21 @@ public class TarjontaUIHelper {
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
 
         List<String> sourceKoodiUris = new ArrayList<String>();
-        for (KoulutuksetVastaus.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
-            switch (koulutusTulos.getKoulutus().getKoulutustyyppi()) {
+        for (KoulutusPerustieto koulutus : vastaus.getKoulutukset()) {
+            switch (koulutus.getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
-                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
                     break;
                 case LUKIOKOULUTUS:
-                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getLukiolinjakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
                     break;
 
                 case AMMATTIKORKEAKOULUTUS:
                 case PERUSOPETUKSEN_LISAOPETUS:
                 case YLIOPISTOKOULUTUS:
                 default:
-                    LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutusTulos.getKoulutus());
-                    LOG.error(" koulutustyyppi == {}", koulutusTulos.getKoulutus().getKoulutustyyppi());
+                    LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutus);
+                    LOG.error(" koulutustyyppi == {}", koulutus.getKoulutustyyppi());
                     break;
             }
         }
@@ -954,38 +954,38 @@ public class TarjontaUIHelper {
         return result;
     }
 
-    public String getKoulutusNimi(KoulutusTulos curKoulutus) {
+    public String getKoulutusNimi(KoulutusPerustieto curKoulutus) {
 
         List<KoodiType> koodis = null;
-        if (curKoulutus.getKoulutus().getPohjakoulutusVaatimus() != null) {
-            koodis = getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        if (curKoulutus.getPohjakoulutusVaatimus() != null) {
+            koodis = getKoodis(curKoulutus.getPohjakoulutusVaatimus());
         }
         if (koodis == null) {
             koodis = new ArrayList<KoodiType>();
         }
-        if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
-        } else if (curKoulutus.getKoulutus().getNimi() != null) {
-            return getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getNimi()).getValue();
-        } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        if (curKoulutus.getKoulutusohjelmakoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        } else if (curKoulutus.getNimi() != null) {
+            return getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getNimi()).getValue();
+        } else if (curKoulutus.getKoulutuskoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
         }
         return "";
     }
 
-    public String getKoulutuslaji(KoulutusTulos tulos) {
+    public String getKoulutuslaji(KoulutusPerustieto tulos) {
         List<String> uris = new ArrayList<String>();
-        if (tulos.getKoulutus().getKoulutuslaji() != null) {
-            uris.add(tulos.getKoulutus().getKoulutuslaji());
+        if (tulos.getKoulutuslaji() != null) {
+            uris.add(tulos.getKoulutuslaji());
 
             return getKoodiNimi(uris, I18N.getLocale());
         }
         return "";
     }
 
-    public String getAjankohtaStr(KoulutusTulos curKoulutus) {
+    public String getAjankohtaStr(KoulutusPerustieto curKoulutus) {
 
-        String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
+        String[] ajankohtaParts = curKoulutus.getAjankohta().split(" ");
         if (ajankohtaParts.length < 2) {
             return "";
         }

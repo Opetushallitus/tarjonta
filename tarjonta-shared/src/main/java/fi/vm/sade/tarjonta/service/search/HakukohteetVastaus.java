@@ -25,6 +25,7 @@ public class HakukohteetVastaus implements Serializable {
     }
 
     private List<HakukohdePerustieto> hakukohteet = new ArrayList<HakukohdePerustieto>();
+
     private int hitCount;
 
 }

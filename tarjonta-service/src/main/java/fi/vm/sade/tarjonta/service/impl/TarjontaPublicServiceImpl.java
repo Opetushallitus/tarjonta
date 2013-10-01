@@ -57,6 +57,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
@@ -394,20 +395,20 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         KoulutuksetVastaus koulutusVastaus = searchService.haeKoulutukset(kysely);
         
-        for (fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos tulos : koulutusVastaus.getKoulutusTulos()) {
+        for (KoulutusPerustieto tulos : koulutusVastaus.getKoulutukset()) {
             
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
-            koulutus.setTila(tulos.getKoulutus().getTila());
-            koulutus.setKomotoOid(tulos.getKoulutus().getKomotoOid());
-            koulutus.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
-            koulutus.setAjankohta(tulos.getKoulutus().getAjankohta());
-            if (tulos.getKoulutus().getKoulutusohjelmakoodi() != null) {
-                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
-            } else if (tulos.getKoulutus().getLukiolinjakoodi() != null) {
-                koulutus.setLukiolinjakoodi(tulos.getKoulutus().getLukiolinjakoodi().getUri());
+            koulutus.setTila(tulos.getTila());
+            koulutus.setKomotoOid(tulos.getKomotoOid());
+            koulutus.setKoulutustyyppi(tulos.getKoulutustyyppi());
+            koulutus.setAjankohta(tulos.getAjankohta());
+            if (tulos.getKoulutusohjelmakoodi() != null) {
+                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelmakoodi().getUri());
+            } else if (tulos.getLukiolinjakoodi() != null) {
+                koulutus.setLukiolinjakoodi(tulos.getLukiolinjakoodi().getUri());
             }
             
-            koulutus.setKoulutuskoodi(tulos.getKoulutus().getKoulutuskoodi().getUri());
+            koulutus.setKoulutuskoodi(tulos.getKoulutuskoodi().getUri());
             
             hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
         }

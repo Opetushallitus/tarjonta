@@ -7,7 +7,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TarjoajaHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -19,12 +18,13 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 
 		Map<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>>();
 		
-		for (KoulutusTulos ht : source.getKoulutusTulos()) {
+		for (KoulutusPerustieto ht : source.getKoulutukset()) {
 			TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> rets = getTarjoaja(ret, tarjoajat, ht);
-			rets.getTulokset().add(convert(ht.getKoulutus()));
+			rets.getTulokset().add(convert(ht));
 		}
 		
-		ret.setTuloksia(source.getKoulutusTulos().size());
+		//XXX use getHitCount when available
+		ret.setTuloksia(source.getKoulutukset().size());
 		
 		return ret;
 	}
@@ -44,13 +44,13 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 	private TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> getTarjoaja(
 			HakutuloksetRDTO<KoulutusHakutulosRDTO> tulos,
 			Map<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>> tarjoajat,
-			KoulutusTulos ht) {
-		TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> ret = tarjoajat.get(ht.getKoulutus().getTarjoaja().getTarjoajaOid());
+			KoulutusPerustieto ht) {
+		TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> ret = tarjoajat.get(ht.getTarjoaja().getTarjoajaOid());
 		if (ret==null) {
 			ret = new TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>();
-			tarjoajat.put(ht.getKoulutus().getTarjoaja().getTarjoajaOid(), ret);
-			ret.setOid(ht.getKoulutus().getTarjoaja().getTarjoajaOid());
-			ret.setNimi(convertToMap(ht.getKoulutus().getTarjoaja().getNimi()));
+			tarjoajat.put(ht.getTarjoaja().getTarjoajaOid(), ret);
+			ret.setOid(ht.getTarjoaja().getTarjoajaOid());
+			ret.setNimi(convertToMap(ht.getTarjoaja().getNimi()));
 			tulos.getTulokset().add(ret);
 		}
 		return ret;

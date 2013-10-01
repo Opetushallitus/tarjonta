@@ -50,7 +50,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.helper.ButtonSynchronizer;
@@ -119,7 +119,7 @@ public class ListKoulutusView extends VerticalLayout {
     private boolean isAttached = false;
     @Autowired(required = true)
     private transient TarjontaUIHelper uiHelper;
-    private Set<Map.Entry<String, List<KoulutusTulos>>> resultSet;
+    private Set<Map.Entry<String, List<KoulutusPerustieto>>> resultSet;
 
     public ListKoulutusView() {
         setSizeFull();
@@ -213,7 +213,7 @@ public class ListKoulutusView extends VerticalLayout {
                 Item item = categoryTree.getItem(event.getItemId());
                 KoulutusResultRow row = (KoulutusResultRow) item.getItemProperty(COLUMN_A).getValue();
 
-                for (KoulutusTulos curKoulutus : row.getChildren()) {
+                for (KoulutusPerustieto curKoulutus : row.getChildren()) {
                     addKoulutusRow(event.getItemId(), curKoulutus);
                 }
                 setPageLength(categoryTree.getItemIds().size());
@@ -225,7 +225,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private void addKoulutusRow(Object parentId,
-            KoulutusTulos curKoulutus) {
+            KoulutusPerustieto curKoulutus) {
         KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, getKoulutusNimi(curKoulutus));
         categoryTree.addItem(curKoulutus);
         categoryTree.setParent(curKoulutus, parentId);
@@ -234,10 +234,10 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.setChildrenAllowed(curKoulutus, false);
     }
 
-    private void setKoulutusRowProperties(KoulutusTulos curKoulutus) {
+    private void setKoulutusRowProperties(KoulutusPerustieto curKoulutus) {
         categoryTree.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(uiHelper.getAjankohtaStr(curKoulutus));
         categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
-        categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getTila().name()));
     }
     
     private void addValitsekaikki() {
@@ -258,8 +258,8 @@ public class ListKoulutusView extends VerticalLayout {
         addComponent(wrapper);
     }
 
-    private String getKoulutusNimi(KoulutusTulos koulutus) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getKoulutus().getNimi()).getValue();
+    private String getKoulutusNimi(KoulutusPerustieto koulutus) {
+        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getNimi()).getValue();
     }
 
     /**
@@ -269,7 +269,7 @@ public class ListKoulutusView extends VerticalLayout {
      * @param map the data map provided by the presenter.
      * @return the hierarchical container for Koulutus listing.
      */
-    private Container createDataSource(Map<String, List<KoulutusTulos>> map) {
+    private Container createDataSource(Map<String, List<KoulutusPerustieto>> map) {
 
         resultSet = map.entrySet();
         HierarchicalContainer hc = new HierarchicalContainer();
@@ -281,7 +281,7 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         int index = 0;
-        for (Map.Entry<String, List<KoulutusTulos>> e : resultSet) {
+        for (Map.Entry<String, List<KoulutusPerustieto>> e : resultSet) {
             if (index > MAX_PARENT_ROWS) {
                 //A quick hack, it would be great, if data was limited in back-end service.
                 errorView.addError(I18N.getMessage("liianMontaHakutulosta"));
@@ -299,14 +299,14 @@ public class ListKoulutusView extends VerticalLayout {
         return hc;
     }
 
-    private String getKoulutusTutkintoNimike(KoulutusTulos curKoulutus) {
-        if (curKoulutus.getKoulutus().getTarjoaja() != null) {
-            return uiHelper.getKoodiNimi(curKoulutus.getKoulutus().getTutkintonimike());
+    private String getKoulutusTutkintoNimike(KoulutusPerustieto curKoulutus) {
+        if (curKoulutus.getTarjoaja() != null) {
+            return uiHelper.getKoodiNimi(curKoulutus.getTutkintonimike());
         }
         return "";
     }
 
-    private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusTulos>> e) {
+    private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusPerustieto>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
 
@@ -346,14 +346,14 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent clickEvent) {
-                List<KoulutusTulos> valitutKoulutukset = presenter.getSelectedKoulutukset();
+                List<KoulutusPerustieto> valitutKoulutukset = presenter.getSelectedKoulutukset();
 
                 if (valitutKoulutukset != null && valitutKoulutukset.size() > 0) {
                     if (valitutKoulutukset.size() > 1) {
                         getWindow().showNotification(i18n.getMessage("yksiKopioitavaKoulutus"));
                     } else {
-                        presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKoulutus().getKomotoOid());
-                        KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px", valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
+                        presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKomotoOid());
+                        KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px", valitutKoulutukset.get(0).getKoulutustyyppi());
 
                         getWindow().addWindow(synchronizer.synchronize(kopiointiDialog));
 
@@ -394,10 +394,10 @@ public class ListKoulutusView extends VerticalLayout {
                         dialog.center();
                         getWindow().addWindow(synchronizer.synchronize(dialog));
                     } else {
-                        //presenter.getTarjoaja().setSelectedOrganisationOid(presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
+                        //presenter.getTarjoaja().setSelectedOrganisationOid(presenter.getModel().getSelectedKoulutukset().get(0).getTarjoaja().getTarjoajaOid());
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(), null);
                         presenter.getTarjoaja().setSelectedResultRowOrganisationOid(
-                                presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
+                                presenter.getModel().getSelectedKoulutukset().get(0).getTarjoaja().getTarjoajaOid());
                     }
                 }
             }
@@ -441,9 +441,9 @@ public class ListKoulutusView extends VerticalLayout {
     private IntTuple checkForLukioKoulutus() {
         int lukioKoulutusCounter = 0;
         int koulutusCounter = 0;
-        for (KoulutusTulos koulutus : presenter.getSelectedKoulutukset()) {
+        for (KoulutusPerustieto koulutus : presenter.getSelectedKoulutukset()) {
             koulutusCounter++;
-            if (koulutus.getKoulutus().getKoulutustyyppi() != null && koulutus.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
                 lukioKoulutusCounter++;
             }
         }
@@ -558,7 +558,7 @@ public class ListKoulutusView extends VerticalLayout {
         clearAllDataItems();
         this.btnSiirraJaKopioi.setEnabled(false);
         this.luoHakukohdeB.setEnabled(false);
-        Map<String, List<KoulutusTulos>> koulutusDataSource = presenter.getKoulutusDataSource();
+        Map<String, List<KoulutusPerustieto>> koulutusDataSource = presenter.getKoulutusDataSource();
         categoryTree.setContainerDataSource(createDataSource(koulutusDataSource));
         setPageLength(categoryTree.getItemIds().size());
         attachTree();
@@ -620,7 +620,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void showHakukohteetForKoulutus(List<HakukohdePerustieto> hakukohteet,
-            KoulutusTulos koulutus) {
+            KoulutusPerustieto koulutus) {
 
         ShowHakukohteetDialog hakukohteetDialog = new ShowHakukohteetDialog(hakukohteet, koulutus, presenter);
         koulutusDialog = new TarjontaDialogWindow(hakukohteetDialog, T("hakukohteetDialog"));
@@ -642,13 +642,13 @@ public class ListKoulutusView extends VerticalLayout {
         presenter.getSelectedKoulutukset().addAll(getCheckedKoulutukset());
     }
 
-    private List<KoulutusTulos> getCheckedKoulutukset() {
+    private List<KoulutusPerustieto> getCheckedKoulutukset() {
 
-        List<KoulutusTulos> checkedKoulutukset = new ArrayList<KoulutusTulos>();
+        List<KoulutusPerustieto> checkedKoulutukset = new ArrayList<KoulutusPerustieto>();
         if (categoryTree == null || categoryTree.getContainerDataSource() == null) {
             return checkedKoulutukset;
         }
-        for (KoulutusTulos curKoulutus : presenter.getModel().getKoulutukset()) {
+        for (KoulutusPerustieto curKoulutus : presenter.getModel().getKoulutukset()) {
             if (categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A) == null
                     || categoryTree.getContainerDataSource().getContainerProperty(curKoulutus, COLUMN_A).getValue() == null) {
                 continue;
@@ -671,7 +671,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
     
     /**
-     * Event listeneri joka saa viestejä koulutustulospuun muutostarpeista, katso
+     * Event listeneri joka saa viestejä KoulutusPerustietopuun muutostarpeista, katso
      * {@link TarjontaPresenter#sendEvent(Object)}
      */
     @Subscribe 
@@ -684,9 +684,9 @@ public class ListKoulutusView extends VerticalLayout {
         case DELETE:
             
             
-            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusTulos.class))){
-                    final KoulutusTulos currentKoulutus = (KoulutusTulos)itemid;
-                    if(currentKoulutus.getKoulutus().getKomotoOid().equals(eventKoulutusOid)) {
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusPerustieto.class))){
+                    final KoulutusPerustieto currentKoulutus = (KoulutusPerustieto)itemid;
+                    if(currentKoulutus.getKomotoOid().equals(eventKoulutusOid)) {
                         categoryTree.removeItem(currentKoulutus);
                     }
             }
@@ -694,11 +694,11 @@ public class ListKoulutusView extends VerticalLayout {
 
         case UPDATE:
             
-            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusTulos.class))){
-                    KoulutusTulos currentKoulutus = (KoulutusTulos)itemid;
-                    if(currentKoulutus.getKoulutus().getKomotoOid().equals(eventKoulutusOid)) {
+            for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusPerustieto.class))){
+                    KoulutusPerustieto currentKoulutus = (KoulutusPerustieto)itemid;
+                    if(currentKoulutus.getKomotoOid().equals(eventKoulutusOid)) {
                         //hae tuore koulutus
-                        final KoulutusTulos freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutusTulos().get(0);
+                        final KoulutusPerustieto freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutukset().get(0);
                         copyData(currentKoulutus, freshKoulutus);
                         final KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerProperty(itemid, COLUMN_A).getValue());
                         setKoulutusRowProperties(currentKoulutus);
@@ -708,8 +708,8 @@ public class ListKoulutusView extends VerticalLayout {
             break;
 
         case CREATE:
-            final KoulutusTulos freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutusTulos().get(0);
-            Object parent = findParent(freshKoulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+            final KoulutusPerustieto freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutukset().get(0);
+            Object parent = findParent(freshKoulutus.getTarjoaja().getTarjoajaOid());
             if(parent==null) {
                 //need to add new org to tree, falling back to reload for now!
                 reload();
@@ -737,7 +737,7 @@ public class ListKoulutusView extends VerticalLayout {
             final KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerProperty(itemId, COLUMN_A).getValue());
             if (curRow.getChildren() != null) {
                 if (tarjoajaOid.equals(curRow.getChildren().get(0)
-                        .getKoulutus().getTarjoaja().getTarjoajaOid())) {
+                        .getTarjoaja().getTarjoajaOid())) {
                     return itemId;
                 }
             }

@@ -27,7 +27,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
@@ -38,16 +37,15 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
             SolrDocument curDoc = solrKomotoList.get(i);
-            KoulutusTulos tulos = convertKoulutus(curDoc, orgs);
-            if (tulos != null) {
-                vastaus.getKoulutusTulos().add(tulos);
+            KoulutusPerustieto koulutus = convertKoulutus(curDoc, orgs);
+            if (koulutus != null) {
+                vastaus.getKoulutukset().add(koulutus);
             }
         }
         return vastaus;
     }
     
-    private KoulutusTulos convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
-        KoulutusTulos tulos = new KoulutusTulos();
+    private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutusPerustieto koulutus = new KoulutusPerustieto();
         koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
@@ -81,8 +79,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         if (koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI) != null) {
             koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
         }
-        tulos.setKoulutus(koulutus);
-        return tulos;
+        return koulutus;
     }
 
     private String getKoulutuslaji(SolrDocument doc) {

@@ -34,8 +34,6 @@ import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
@@ -243,11 +241,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
-                KoulutusTulos koulutus = new KoulutusTulos();
-                KoulutusPerustieto koulutusKooste = new KoulutusPerustieto();
-                koulutusKooste.setKoulutusmoduuliToteutus(getEditViewOid());
-                koulutus.setKoulutus(koulutusKooste);
-                boolean removeSuccess = presenter.removeKoulutus(koulutus);
+                boolean removeSuccess = presenter.removeKoulutus(getEditViewOid());
                 presenter.getHakukohdeListView().reload();
                 if (removeSuccess) {
                     presenter.showMainDefaultView();

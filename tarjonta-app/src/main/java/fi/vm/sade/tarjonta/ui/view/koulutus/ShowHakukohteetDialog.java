@@ -31,7 +31,7 @@ import com.vaadin.ui.Label;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
@@ -47,9 +47,9 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
     private static final long serialVersionUID = -4621899734019988734L;
     
     private List<HakukohdePerustieto> hakukohteet;
-    private KoulutusTulos koulutus;
+    private KoulutusPerustieto koulutus;
 
-    public ShowHakukohteetDialog(List<HakukohdePerustieto>hakukohteet, KoulutusTulos koulutus, TarjontaPresenter presenter) {
+    public ShowHakukohteetDialog(List<HakukohdePerustieto>hakukohteet, KoulutusPerustieto koulutus, TarjontaPresenter presenter) {
         super(presenter);
         this.hakukohteet = hakukohteet;
         this.koulutus = koulutus;
@@ -156,7 +156,7 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
         return presenter.getUiHelper().getKoulutusNimi(koulutus) 
                 + ", " + presenter.getUiHelper().getAjankohtaStr(koulutus) 
                 + ", " + presenter.getUiHelper().getKoulutuslaji(koulutus)
-                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getKoulutus().getTarjoaja().getNimi()).getValue();
+                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getTarjoaja().getNimi()).getValue();
     }
     
     private void showSummaryView(HakukohdePerustieto hakukohde) {
