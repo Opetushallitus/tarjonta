@@ -107,7 +107,7 @@ public class TestTarjontaElements {
     }
 
 	@Test
-	public void testEtuSivu() throws Exception {
+	public void test_T_INT_TAR_ELEM001_Etusivu() throws Exception {
         if (! readPageFromFile)
         {
         	this.frontPage();
@@ -187,7 +187,7 @@ public class TestTarjontaElements {
 	
 	// tarkasteleLukioKoulutus
 	@Test
-	public void testTarkasteleLukioKoulutus() throws Exception {
+	public void test_T_INT_TAR_ELEM002_TarkasteleLukioKoulutus() throws Exception {
         if (! readPageFromFile)
         {
         	this.frontPage();
@@ -337,7 +337,7 @@ public class TestTarjontaElements {
 	
 	// muokkaaLukioKoulutuksenPerustiedot
 	@Test
-	public void testMuokkaaLukioKoulutuksenPerustiedot() throws Exception {
+	public void test_T_INT_TAR_ELEM003_MuokkaaLukioKoulutuksenPerustiedot() throws Exception {
         if (! readPageFromFile)
         {
                 this.frontPage();
@@ -459,7 +459,7 @@ public class TestTarjontaElements {
 
 	// muokkaaLukioKoulutusKuvailevatTiedot
 	@Test
-	public void testMuokkaaLukioKoulutusKuvailevatTiedot() throws Exception {
+	public void test_T_INT_TAR_ELEM004_MuokkaaLukioKoulutusKuvailevatTiedot() throws Exception {
         if (! readPageFromFile)
         {
                 this.frontPage();
@@ -549,7 +549,7 @@ public class TestTarjontaElements {
 	
 	// tarkasteleAmmatillinenKoulutus
 	@Test
-	public void testTarkasteleAmmatillinenKoulutus() throws Exception {
+	public void test_T_INT_TAR_ELEM005_TarkasteleAmmatillinenKoulutus() throws Exception {
         String poista = ".*<span class=\"v-button-caption\">Poista</span>";
         if (! readPageFromFile)
         {
@@ -698,7 +698,7 @@ public class TestTarjontaElements {
 
 	// muokkaaAmmatillinenKoulutusKoulutuksenPerustiedot
 	@Test
-	public void testMuokkaaAmmatillinenKoulutuksenPerustiedot() throws Exception {
+	public void test_T_INT_TAR_ELEM006_MuokkaaAmmatillinenKoulutuksenPerustiedot() throws Exception {
         if (! readPageFromFile)
         {
             this.frontPage();
@@ -820,7 +820,7 @@ public class TestTarjontaElements {
 	
 	// muokkaaAmmatillinenKoulutuksenKuvailevatTiedot
 	@Test
-	public void testMuokkaaAmmatillinenKoulutuksenKuvailevatTiedot() throws Exception {
+	public void test_T_INT_TAR_ELEM007_MuokkaaAmmatillinenKoulutuksenKuvailevatTiedot() throws Exception {
         if (! readPageFromFile)
         {
                 this.frontPage();
