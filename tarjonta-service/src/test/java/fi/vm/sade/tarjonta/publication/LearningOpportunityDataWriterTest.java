@@ -486,7 +486,8 @@ public class LearningOpportunityDataWriterTest {
         hakukohde.setOid("hakukohde/1.2.3.4.5");
         hakukohde.setAlinValintaPistemaara(5);
         hakukohde.setAloituspaikatLkm(10);
-        hakukohde.setHakukelpoisuusvaatimus("HKV1");
+        hakukohde.getHakukelpoisuusVaatimukset().add("HKV1");
+
         hakukohde.setHakukohdeNimi("HN1");
         hakukohde.setHakukohdeKoodistoNimi("uri:hakukohde");
         hakukohde.setTila(TarjontaTila.VALMIS);

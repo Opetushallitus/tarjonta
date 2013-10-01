@@ -44,7 +44,7 @@ public class HakukohdeSetToDTOConverter {
                 hakukohdeTyyppi.setOid(hakukohde.getOid());
                 hakukohdeTyyppi.setHakukohteenTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
                 hakukohdeTyyppi.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
-                hakukohdeTyyppi.setHakukelpoisuusVaatimukset(hakukohde.getHakukelpoisuusvaatimus());
+                hakukohdeTyyppi.setHakukelpoisuusVaatimukset(getHakukelpoisuusVaatimus(hakukohde));
                 toHakuTyyppis.add(hakukohdeTyyppi);
             }
 
@@ -52,4 +52,17 @@ public class HakukohdeSetToDTOConverter {
 
         return toHakuTyyppis;
     }
+
+    private static String getHakukelpoisuusVaatimus(Hakukohde hakukohde) {
+        if (hakukohde.getHakukelpoisuusVaatimukset() != null && hakukohde.getHakukelpoisuusVaatimukset().size() > 0) {
+           List<String> vaatimukset = new ArrayList<String>(hakukohde.getHakukelpoisuusVaatimukset());
+            return vaatimukset.get(0);
+        } else {
+            return null;
+        }
+
+    }
+
 }
+
+
