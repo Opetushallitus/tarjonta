@@ -28,17 +28,18 @@
         <link href="lib/ngGrid/ng-grid.min.css" rel="stylesheet">
 
         <script src="lib/underscore/underscore.js"></script>
-        <!--<script src="lib/jquery-1.10.2.min.js"></script>-->
 
         <script src="js/shared/auth.js"></script>
         <script src="js/shared/koodisto.js"></script>
         <script src="js/shared/organisaatio.js"></script>
+        <script src="js/shared/tarjonta.js"></script>
         <script src="js/shared/directives/koodistoCombo.js"></script>
         <script src="js/shared/directives/koodistoMultiSelect.js"></script>
         <script src="js/shared/loading.js"></script>
         <script src="js/shared/localisation.js"></script>
         <script src="js/shared/config.js"></script>
         <script src="js/shared/directives/zippy.js"></script>
+        <script src="js/shared/directives/ngonce.js"></script>
         <link href="js/shared/directives/zippy.css" rel="stylesheet">
 
         <script src="partials/controllers.js"></script>
@@ -54,6 +55,8 @@
         <script src="partials/kk/review/reviewControllers.js"></script>
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
+
+        <script src="partials/helpers/localisationControllers.js"></script>
 
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
         <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
@@ -81,6 +84,13 @@
                         </div>
                     </div><!-- /renderPath[1] -->
                 </div>
+                <div ng-switch-when="helpers">
+                    <div ng-switch on="renderPath[1]">
+                        <div ng-switch-when="localisations">
+                            <div ng-include="'partials/helpers/localisation.html'"></div>
+                        </div>
+                    </div>
+                </div>
             </div><!-- /renderPath[0] -->
 
             <div class="wsidebar-main">
@@ -102,15 +112,14 @@
             // DEFERRED APP INITIALIZATION SO THAT WE CAN PRELOAD LOCALISATIONS
             var APP_LOCALISATION_DATA = {};
 
-            // TODO get current root uri
-            var tarjontaAppLocalisationLocationUri = "localisation.json";
-            console.log("Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
+            var tarjontaAppLocalisationLocationUri = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
+            console.log("** Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
 
             jQuery.ajax(tarjontaAppLocalisationLocationUri, {
                 dataType: "json",
                 complete: function(xhr, status) {
-                    console.log("Localisation load complete, status", status);
-                    console.log("  got data: ", xhr);
+                    console.log("** Localisation load complete, status: ", status);
+                    console.log("**   got data: ", xhr);
 
                     APP_LOCALISATION_DATA = xhr.responseJSON;
 

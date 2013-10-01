@@ -1,15 +1,8 @@
 'use strict';
 
 /* Services */
-
-
-// Demonstrate how to register services
-// In this case it is a simple value service.
 var app = angular.module('app.services', ['ngResource']);
-
 app.value('version', '0.1');
-
-// http://tutorialzine.com/2013/08/learn-angularjs-5-examples/
 app.factory('instagram', function($resource) {
 
     return {
@@ -51,61 +44,14 @@ app.factory('TarjontaConfig', function($resource) {
     });
 });
 
-app.factory('TarjontaService', function($resource) {
-    var CONFIG;
-
-//    dataFactory.insertTutkinto = function (cust) {
-//        return $http.post(urlBase, cust);
-//    };
-//
-//    dataFactory.updateTutkinto = function (cust) {
-//        return $http.put(urlBase + '/' + cust.ID, cust)
-//    };
-//
-//    dataFactory.deleteTutkinto = function (id) {
-//        return $http.delete(urlBase + '/' + id);
-//    };
-//
-//     dataFactory.getTutkinto = function (id) {
-//        return $http.delete(urlBase + '/' + id);
-//    };
-
-//    tarjontaConfig.get(function(jsonObject) {
-//        if (CONFIG === undefined) {
-//            console.info("Tarjonta configuration file loaded.");
-//            CONFIG = jsonObject;
-//        }
-//    });
-
-    return $resource('partials/kk/edit/koulutusData.json', {}, {
-        query: {method: 'GET', headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }}
-    });
-
-//    return $resource('http://localhost:8585/tarjonta-service/rest/koulutus/:oid', {}, {
-//        query: {method: 'GET', headers: {
-//                'Content-Type': 'application/json',
-//                'Accept': 'application/json'
-//            }, params: {
-//                host: CONFIG.host,
-//                port: CONFIG.port,
-//            }, isArray: true, xhrFields: {
-//                withCredentials: true
-//            }}
-//    });
-});
-
-app.factory('KoodiService',function($resource, $log,$q){
+app.factory('KoodiService', function($resource, $log, $q) {
 
 
 
 
 
     return {
-
-        getAllKoodisWithKoodiUri : function(koodistoUriParam, locale) {
+        getAllKoodisWithKoodiUri: function(koodistoUriParam, locale) {
 
 
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
@@ -113,38 +59,38 @@ app.factory('KoodiService',function($resource, $log,$q){
 
             var testKoodiUri = 'https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/:koodistoUri/koodi';
 
-            var resource = $resource(testKoodiUri,{},{getResult : {method : "GET" ,
-                //headers : { "Access-Control-Allow-Origin": "*" },
-                params: {koodistoUri:'@koodistoUri'},isArray:true}});
+            var resource = $resource(testKoodiUri, {}, {getResult: {method: "GET",
+                    //headers : { "Access-Control-Allow-Origin": "*" },
+                    params: {koodistoUri: '@koodistoUri'}, isArray: true}});
 
-            resource.getResult(function(koodis){
-                _(koodis).all(function(koodi){
+            resource.getResult(function(koodis) {
+                _(koodis).all(function(koodi) {
                     log.info('Got koodi' + koodi);
-                    var tarjontaKoodi  = {
-                        koodiArvo : koodi.koodiArvo,
-                        koodiNimi : _.select(koodi.metadata,function(koodiMetaData) {
+                    var tarjontaKoodi = {
+                        koodiArvo: koodi.koodiArvo,
+                        koodiNimi: _.select(koodi.metadata, function(koodiMetaData) {
                             if (koodiMetaData === locale) {
                                 return koodiMetaData.nimi;
                             }
-                        } )
+                        })
                     };
                     returnKoodis.push(tarjontaKoodi);
-                    $log.debug('Got '+ returnKoodis.length + ' koodis ');
+                    $log.debug('Got ' + returnKoodis.length + ' koodis ');
                 });
-            } );
+            });
 
-        } ,
-        getKoodistoWithKoodiUri : function(koodiUriParam,locale) {
+        },
+        getKoodistoWithKoodiUri: function(koodiUriParam, locale) {
 
             var returnKoodi = $q.defer();
 
 
             var testKoodiUri = "https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/:koodistoUri";
 
-            var resource = $resource(testKoodiUri,{koodistoUri : '@koodistoUri'}).get({koodistoUri:koodiUriParam},function(data){
+            var resource = $resource(testKoodiUri, {koodistoUri: '@koodistoUri'}).get({koodistoUri: koodiUriParam}, function(data) {
                 var returnTarjontaKoodi = {
-                    koodistoUri : data.koodistoUri,
-                    tila : data.tila
+                    koodistoUri: data.koodistoUri,
+                    tila: data.tila
                 };
                 returnKoodi.resolve(returnTarjontaKoodi);
 

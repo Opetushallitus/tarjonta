@@ -151,14 +151,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         assertNotNull(vastaus);
 
-        assertEquals(3, vastaus.getHakukohdeTulos().size());
+        assertEquals(3, vastaus.getHakukohteet().size());
 
         kysely.setNimi("foo");
         vastaus = tarjontaSearchService.haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
-        assertEquals(0, vastaus.getHakukohdeTulos().size());
+        assertEquals(0, vastaus.getHakukohteet().size());
 
     }
 
@@ -172,7 +172,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         assertNotNull(vastaus);
 
-        assertEquals(1, vastaus.getHakukohdeTulos().size());
+        assertEquals(1, vastaus.getHakukohteet().size());
     }
 
     @Test
@@ -183,15 +183,15 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kysely.getTarjoajaOids().add("1.2.3.4.555");
         HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
-        assertEquals(1, vastaus.getHakukohdeTulos().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohdeTulos().get(0).getHakukohde().getTarjoaja().getTarjoajaOid());
+        assertEquals(1, vastaus.getHakukohteet().size());
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoaja().getTarjoajaOid());
 
         kysely.getTarjoajaOids().add("1.2.3.4.556");
         vastaus = tarjontaSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
-        assertEquals(2, vastaus.getHakukohdeTulos().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohdeTulos().get(0).getHakukohde().getTarjoaja().getTarjoajaOid());
-        assertEquals("1.2.3.4.556", vastaus.getHakukohdeTulos().get(1).getHakukohde().getTarjoaja().getTarjoajaOid());
+        assertEquals(2, vastaus.getHakukohteet().size());
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoaja().getTarjoajaOid());
+        assertEquals("1.2.3.4.556", vastaus.getHakukohteet().get(1).getTarjoaja().getTarjoajaOid());
 
     }
     

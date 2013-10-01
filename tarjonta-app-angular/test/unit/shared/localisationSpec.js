@@ -18,7 +18,21 @@
  * Tests for Localisation.
  */
 describe('localisation', function() {
+    var CONFIG_ENV_MOCK = {
+        "env": {
+            "key-env-1": "mock-value-env-1",
+            "key-env-2": "mock-value-env-2"
+        }, "app": {
+            "key-app-1": "mock-value-app-1"
+        }
+    }
+
+    //set mock data to module by using the value-method,
+    var mockModule = angular.module('test.module', []);
+    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+
     beforeEach(module('localisation'));
+    beforeEach(module('test.module'));
 
     describe('LocalisationCtrl', function() {
         var scope, controller;

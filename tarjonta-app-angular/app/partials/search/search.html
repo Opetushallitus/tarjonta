@@ -56,13 +56,13 @@
             <!-- kontrollit -->
             <tr>
                 <td class="state">
-                    <select ng-model="selectedState" ng-options="s as t for (s,t) in states"/>
+                    <select ng-model="spec.state" ng-options="s as t for (s,t) in states"/>
                 </td>
                 <td class="year">
-                    <select ng-model="selectedYear" ng-options="s as t for (s,t) in years"/>
+                    <select ng-model="spec.year" ng-options="s as t for (s,t) in years"/>
                 </td>
                 <td class="season">
-                    <select ng-model="selectedSeason" ng-options="s as t for (s,t) in seasons"/>
+                    <select ng-model="spec.season" ng-options="s as t for (s,t) in seasons"/>
                 </td>
                 <td class="controls">
                     <input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
@@ -76,20 +76,62 @@
         </table>
 
         <div class="search">
-            <input type="text" ng-model="searchTerms" ng-enter="search()"/>
+            <input type="text" ng-model="spec.terms" ng-enter="search()"/>
         </div>
 
     </div>
 
+	<div id="searchResults" ng-cloak>
     <tabset>
-        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}">
-            // TODO hakutulokset/koulutukset //
+        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
+        
+        	<table id="koulutuksetResults"></table>
+        	<!-- 
+        	<ng-once>
+        	<tbody ng-repeat="tarjoaja in koulutusResults.tulokset">
+        		<tr>
+		        	<td colspan="4">{{tarjoaja.nimi}}</td>
+        		</tr>
+        		<tr ng-repeat="koulutus in tarjoaja.tulokset">
+        			<ng-once>
+        			<td><a href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a></td>
+        			<td>{{koulutus.kausiUri}} {{koulutus.vuosi}}</td>
+        			<td>TODO k.laji</td>
+        			<td>{{koulutus.tila}}</td>
+        			</ng-once>
+        		</tr>
+        	</tbody>
+        	</ng-once>
+        	</table> -->
+        
         </tab>
-        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}">
-            // TODO hakutulokset/hakukohteet //
+        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+
+        	<table id="hakukohteetResults"></table>
+        	<!-- 
+        	<ng-once>
+        	<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
+        		<tr>
+		        	<td colspan="4">{{tarjoaja.nimi}}</td>
+        		</tr>
+        		<tr ng-repeat="hakukohde in tarjoaja.tulokset">
+	 		       	<ng-once>
+        			<td><a href="#/koulutus/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
+        			<td>{{hakukohde.kausiUri}} {{hakukohde.vuosi}}</td>
+        			<td>{{hakukohde.hakutapa}}</td>
+        			<td>{{hakukohde.aloituspaikat}}</td>
+        			<td>{{hakukohde.koulutusLaji}}</td>
+        			<td>{{hakukohde.tila}}</td>
+        			</ng-once>
+        		</tr>
+        	</tbody>
+        	</ng-once>
+        	</table>
+        	 -->
         </tab>
 
     </tabset>
+    </div>
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
     <a href="#/kk/edit/12345/xxx">EDIT?</a>

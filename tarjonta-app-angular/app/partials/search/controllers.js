@@ -1,18 +1,22 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
 
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, Config) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
 	// 1. Organisaatiohaku
-	$scope.hakuehdot = $scope.defaultHakuehdot = {
-		"searchStr" : "",
-		"organisaatiotyyppi" : "",
-		"oppilaitostyyppi" : "",
-		"lakkautetut" : false,
-		"suunnitellut" : false
-	};
+	function setDefaultHakuehdot(){
+		$scope.hakuehdot={
+			"searchStr" : "",
+			"organisaatiotyyppi" : "",
+			"oppilaitostyyppi" : "",
+			"lakkautetut" : false,
+			"suunnitellut" : false
+		};
+	}
+
+	setDefaultHakuehdot();
 
     $scope.organisaatio = {};
 
@@ -57,8 +61,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
     $scope.resetOrg = function() {
-        //console.log("reset clicked!");
-        $scope.hakuehdot = angular.copy($scope.defaultHakuehdot);
+    	setDefaultHakuehdot();
     };
 
 	// 2. Koulutusten/Hakujen haku
@@ -68,14 +71,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return $routeParams[key] != null ? $routeParams[key] : def;
     }
 
-
-
     // Selected org from route path
-    $scope.selectedOrgOid = $scope.routeParams.id ? $scope.routeParams.id : OPH_ORG_OID;
-    $scope.searchTerms = fromParams("terms","");
-    $scope.selectedState = fromParams("state","*");
-    $scope.selectedYear = fromParams("year","*");
-    $scope.selectedSeason = fromParams("season","*");
+    $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
+    $scope.spec = {
+    		terms: fromParams("terms",""),
+    	    state: fromParams("state","*"),
+    	    year: fromParams("year","*"),
+    	    season: fromParams("season","*")
+    };
 
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
@@ -127,24 +130,32 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return args == null ? base : base + args;
     }
 
-    function copyIfSet(dst, key, value) {
+    function copyIfSet(dst, key, value, def) {
         if (value != null && value != undefined && (value + "").length > 0 && value != "*") {
             dst[key] = value;
+        } else if (def != undefined) {
+            dst[key] = def;
         }
     }
 
     function updateLocation() {
 
+        // Query parameters collected here
     	var sargs = {};
-    	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
-    		sargs.oid = $scope.selectedOrgOid;
-    	}
-    	copyIfSet(sargs, "terms", $scope.searchTerms);
-    	copyIfSet(sargs, "state", $scope.selectedState);
-    	copyIfSet(sargs, "year", $scope.selectedYear);
-    	copyIfSet(sargs, "season", $scope.selectedSeason);
 
-    	$location.path("/etusivu/" + sargs.oid);
+    	copyIfSet(sargs, "terms", $scope.spec.terms, "*");
+    	copyIfSet(sargs, "state", $scope.spec.state);
+    	copyIfSet(sargs, "year", $scope.spec.year);
+    	copyIfSet(sargs, "season", $scope.spec.season);
+
+        // Location should contain selected ORG oid if any
+    	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
+        	$location.path("/etusivu/" + $scope.selectedOrgOid);
+    	} else {
+        	$location.path("/etusivu");
+        }
+
+        // Add query parameters
         $location.search(sargs);
     }
 
@@ -157,21 +168,103 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     $scope.reset = function() {
-        $scope.searchTerms = "";
-        $scope.selectedState = "*";
-        $scope.selectedYear = "*";
-        $scope.selectedSeason = "*";
+        $scope.spec.terms = "";
+        $scope.spec.state = "*";
+        $scope.spec.year = "*";
+        $scope.spec.season = "*";
+    }
+
+    function resultsToTable(results, props, prefix) {
+    	/*
+<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
+        		<tr>
+		        	<td colspan="4">{{tarjoaja.nimi}}</td>
+        		</tr>
+        		<tr ng-repeat="hakukohde in tarjoaja.tulokset">
+	 		       	<ng-once>
+        			<td><a href="#/koulutus/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
+        			<td>{{hakukohde.kausiUri}} {{hakukohde.vuosi}}</td>
+        			<td>{{hakukohde.hakutapa}}</td>
+        			<td>{{hakukohde.aloituspaikat}}</td>
+        			<td>{{hakukohde.koulutusLaji}}</td>
+        			<td>{{hakukohde.tila}}</td>
+        			</ng-once>
+        		</tr>
+        	</tbody>
+    	 */
+
+    	var html = "";
+    	for (var ti in results.tulokset) {
+    		var tarjoaja = results.tulokset[ti];
+    		html = html+"<tbody class=\"folded\" id=\""
+    			+prefix+"_"+tarjoaja.oid
+    			+"\">>"
+    			+"<tr class=\"tgroup\"><th colspan=\""+(3 + props.length)+"\">"
+    			+"<img src=\"img/triangle_down.png\" class=\"folded\"/>"
+    			//+"<img src=\"img/triangle_right.png\" class=\"unfolded\"/>"
+    			+"<input type=\"checkbox\"/>"
+    			+tarjoaja.nimi // TODO lokalisointi
+    			+"</th></tr>";
+
+    		for (var ri in tarjoaja.tulokset) {
+    			var tulos = tarjoaja.tulokset[ri];
+    			html = html+"<tr class=\"tresult\">"
+					+"<td><input type=\"checkbox\"/>"
+					+"<a href=\"#\"><img src=\"img/icon-treetable-button.png\"/></a>"
+					+"<a href=\"#\">"
+					+tulos.nimi
+					+"</a></td>"
+					+"<td>" + tulos.kausiUri + " " + tulos.vuosi + "</td>";
+
+    			for (var pi in props) {
+    				var prop = props[pi];
+    				html = html + "<td>" + tulos[prop] + "</td>";
+    			}
+
+    			html = html
+    				+"<td>" + tulos.tila + "</td>"
+    				+"</tr>";
+    		}
+
+    		html = html+"</tbody>"
+    	}
+
+    	return html;
     }
 
     $scope.search = function() {
-        console.log("search", {
+    	var spec = {
             oid: $scope.selectedOrgOid,
-            terms: $scope.searchTerms,
-            state: $scope.selectedState,
-            year: $scope.selectedYear,
-            season: $scope.selectedSeason
-        });
+            terms: $scope.spec.terms,
+            state: $scope.spec.state == "*" ? null : $scope.spec.state,
+            year: $scope.spec.year == "*" ? null : $scope.spec.year,
+            season: $scope.spec.season == "*" ? null : $scope.spec.season
+        };
+        console.log("search", spec);
         updateLocation();
+        TarjontaService.haeKoulutukset(spec).then(function(data){
+        	$scope.koulutusResultCount = " ("+data.tuloksia+")";
+        	$("#koulutuksetResults").html(resultsToTable(data,[
+                "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
+            ],"koulutus"));
+        	//$scope.koulutusResults = data;
+        });
+        TarjontaService.haeHakukohteet(spec).then(function(data){
+        	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
+        	$("#hakukohteetResults").html(resultsToTable(data,[
+        		"hakutapa",
+    			"aloituspaikat",
+    			"koulutusLaji"
+        	],"hakukohde"));
+        	//$scope.hakukohdeResults = data;
+        });
+    }
+
+    if ($scope.spec.terms=="*") {
+    	$scope.spec.terms="";
+    	$scope.search();
+    } else if ($scope.spec.terms!="") {
+    	$scope.search();
     }
 
     $scope.report = function() {

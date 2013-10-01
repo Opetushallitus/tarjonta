@@ -1,18 +1,34 @@
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_ALKAMISPVM;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_PAATTYMISPVM;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOODI;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 
 public class SolrDocumentToHakukohdeConverter {
     
@@ -20,19 +36,18 @@ public class SolrDocumentToHakukohdeConverter {
         HakukohteetVastaus vastaus = new HakukohteetVastaus();
         for (int i = 0 ; i < solrHakukohdeList.size(); ++i) {
             SolrDocument hakukohdeDoc = solrHakukohdeList.get(i);
-            HakukohdeTulos tulos = convertHakukohde(hakukohdeDoc, orgResponse);
-            if(tulos!=null) {
-                vastaus.getHakukohdeTulos().add(tulos);
+            HakukohdePerustieto hakukohde = convertHakukohde(hakukohdeDoc, orgResponse);
+            if(hakukohde!=null) {
+                vastaus.getHakukohteet().add(hakukohde);
             }
         }
         
         return vastaus;
     }
 
-    private HakukohdeTulos convertHakukohde(SolrDocument hakukohdeDoc,
+    private HakukohdePerustieto convertHakukohde(SolrDocument hakukohdeDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
-        HakukohdeTulos vastaus = new HakukohdeTulos();
-        HakukohdeListaus hakukohde = new HakukohdeListaus();
+        HakukohdePerustieto hakukohde = new HakukohdePerustieto();
         hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
@@ -49,8 +64,7 @@ public class SolrDocumentToHakukohdeConverter {
         if(hakukohde.getTarjoaja().getNimi()==null) {
             return null;
         }
-        vastaus.setHakukohde(hakukohde);
-        return vastaus;
+        return hakukohde;
     }
     
     private MonikielinenTekstiTyyppi createHakukohteenKoulutuslaji(

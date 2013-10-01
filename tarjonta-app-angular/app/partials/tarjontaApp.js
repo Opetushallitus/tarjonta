@@ -34,6 +34,7 @@ angular.module('app',
             'localisation',
             'Koodisto',
             'Organisaatio',
+            'Tarjonta',
             'KoodistoCombo',
             'KoodistoMultiSelect',
             'zippy',
@@ -96,11 +97,14 @@ angular.module('app').value("globalConfig", window.CONFIG);
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
 
-        $routeProvider.when("/etusivu", {
-            action: "home.default"
+        $routeProvider
+                .when("/etusivu", {
+            action: "home.default",
+            reloadOnSearch: false,
         })
-        $routeProvider.when("/etusivu/:id", {
-            action: "home.default"
+                .when("/etusivu/:oid", {
+            action: "home.default",
+            reloadOnSearch: false
         })
                 .when("/kk/edit/:id", {
             action: "kk.edit"
@@ -115,7 +119,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/kk/review/:id/:part', {
             action: "kk.review"
         })
-        .otherwise({redirectTo: "/etusivu"});
+                .when('/helpers/localisations', {
+            action: "helpers.localisations"
+        })
+                .otherwise({redirectTo: "/etusivu"});
     }]);
 
 
@@ -129,7 +136,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
         console.log("app.AppRoutingCtrl.render()");
 
         var renderAction = $route.current.action;
-        var renderPath = renderAction ? renderAction.split( "." ) : [];
+        var renderPath = renderAction ? renderAction.split(".") : [];
 
         // Store the values in the model.
         $scope.renderAction = renderAction;
@@ -137,10 +144,10 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
         $scope.routeParams = $routeParams ? $routeParams : {};
         $scope.count++;
 
-        console.log("  renderAction" + $scope.renderAction);
-        console.log("  renderPath" + $scope.renderPath);
-        console.log("  routeParams" + $scope.routeParams);
-        console.log("  count" + $scope.count);
+        console.log("  renderAction: ", $scope.renderAction);
+        console.log("  renderPath: ", $scope.renderPath);
+        console.log("  routeParams: ", $scope.routeParams);
+        console.log("  count: ", $scope.count);
     };
 
     $scope.$on(

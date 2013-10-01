@@ -49,7 +49,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
@@ -619,10 +619,10 @@ public class ListKoulutusView extends VerticalLayout {
         return i18n.getMessage(key, args);
     }
 
-    public void showHakukohteetForKoulutus(List<HakukohdeTulos> hakukohdeTulos,
+    public void showHakukohteetForKoulutus(List<HakukohdePerustieto> hakukohteet,
             KoulutusTulos koulutus) {
 
-        ShowHakukohteetDialog hakukohteetDialog = new ShowHakukohteetDialog(hakukohdeTulos, koulutus, presenter);
+        ShowHakukohteetDialog hakukohteetDialog = new ShowHakukohteetDialog(hakukohteet, koulutus, presenter);
         koulutusDialog = new TarjontaDialogWindow(hakukohteetDialog, T("hakukohteetDialog"));
         getWindow().addWindow(koulutusDialog);
     }

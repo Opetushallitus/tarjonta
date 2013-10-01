@@ -59,13 +59,13 @@ import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
-import fi.vm.sade.tarjonta.service.search.HakukohdeListaus;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
@@ -80,7 +80,6 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
@@ -1009,13 +1008,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             if (rawKoulutus.getHakukohteet() != null) {
                 koulutus.getKoulutuksenHakukohteet().clear();
                 HakukohteetVastaus hakukVastaus = this.getHakukohteetForKoulutus(koulutusOid);
-                for (HakukohdeTulos hakukohdeKoosteTyyppi : hakukVastaus.getHakukohdeTulos()) {//rawKoulutus.getHakukohteet()) {
+                for (HakukohdePerustieto hakukohdeKoosteTyyppi : hakukVastaus.getHakukohteet()) {//rawKoulutus.getHakukohteet()) {
                     SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getHakukohde().getKoodistoNimi());// getKoodistoNimi());
-                    hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getHakukohde().getNimi()).getValue());// getNimi());
-                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getHakukohde().getOid());
-                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getHakukohde().getTila().value());
-                    hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakukohde().getHakuAlkamisPvm());
+                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getKoodistoNimi());// getKoodistoNimi());
+                    hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getNimi()).getValue());// getNimi());
+                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
+                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                    hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakuAlkamisPvm());
                     koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
                 }
             }
@@ -1211,7 +1210,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
 
             if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {
-                KoulutusListausTyyppi firstKoulutus = getModel().getSelectedKoulutukset().get(0).getKoulutus();
+                KoulutusPerustieto firstKoulutus = getModel().getSelectedKoulutukset().get(0).getKoulutus();
 
                 //set tarjoaja
                 getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getTarjoajaOid());
@@ -1309,31 +1308,31 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this._hakukohdeListView = hakukohdeListView;
     }
 
-    public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
-        List<HakukohdeTulos> hakukohdetulos = Lists.newArrayList();
-        Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
+    public Map<String, List<HakukohdePerustieto>> getHakukohdeDataSource() {
+        List<HakukohdePerustieto> hakukohdetulos = Lists.newArrayList();
+        Map<String, List<HakukohdePerustieto>> map = new HashMap<String, List<HakukohdePerustieto>>();
         try {
             // Fetching komotos matching currently specified criteria (currently
             // selected organisaatio and written text in search box)
             HakukohteetKysely kysely = koulutusSearchSpecToDTOConverter
                     .convertViewModelToHakukohdeDTO(getModel().getSearchSpec());
-            hakukohdetulos.addAll(tarjontaSearchService.haeHakukohteet(kysely).getHakukohdeTulos());
+            hakukohdetulos.addAll(tarjontaSearchService.haeHakukohteet(kysely).getHakukohteet());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet ", ex);
             throw new RuntimeException(ex);
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(hakukohdetulos.size());
-        for (HakukohdeTulos curHk : hakukohdetulos) {
-            String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getHakukohde().getTarjoaja().getNimi()).getValue();
+        for (HakukohdePerustieto curHk : hakukohdetulos) {
+            String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(hkKey)) {
-                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
+                List<HakukohdePerustieto> hakukohteetM = Lists.newArrayList();
                 hakukohteetM.add(curHk);
                 map.put(hkKey, hakukohteetM);
             } else {
                 map.get(hkKey).add(curHk);
             }
         }
-        TreeMap<String, List<HakukohdeTulos>> sortedMap = new TreeMap<String, List<HakukohdeTulos>>(map);
+        TreeMap<String, List<HakukohdePerustieto>> sortedMap = new TreeMap<String, List<HakukohdePerustieto>>(map);
 
         return sortedMap;
     }
@@ -1343,7 +1342,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      *     
 * @return
      */
-    public List<HakukohdeTulos> getSelectedhakukohteet() {
+    public List<HakukohdePerustieto> getSelectedhakukohteet() {
         return getModel().getSelectedhakukohteet();
     }
 
@@ -1372,13 +1371,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     public void removeSelectedHakukohde() {
         getModel().getSelectedhakukohteet().clear();
-        HakukohdeTulos tmp = new HakukohdeTulos();
-        HakukohdeListaus wtf = new HakukohdeListaus();
-        wtf.setOid(getModel().getHakukohde().getOid());
-        tmp.setHakukohde(wtf);
-        removeHakukohde(tmp);
+        removeHakukohde(getModel().getHakukohde().getOid());
         getRootView().showMainView();
-
     }
 
     /**
@@ -1388,16 +1382,16 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         int removalLaskuri = 0;
         String errorNotes = "";
-        for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
-            String hakukohdeNimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getHakukohde().getNimi()).getValue();
+        for (HakukohdePerustieto curHakukohde : getModel().getSelectedhakukohteet()) {
+            String hakukohdeNimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue();
             try {
-                final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
-                TarjontaTila tila = curHakukohde.getHakukohde().getTila();
+                final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getTarjoaja().getTarjoajaOid());
+                TarjontaTila tila = curHakukohde.getTila();
 
                 if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
                         && getPermission().userCanDeleteHakukohde(context)) {
                     HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
-                    hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+                    hakukohde.setOid(curHakukohde.getOid());
                     tarjontaAdminService.poistaHakukohde(hakukohde);
                     ++removalLaskuri;
                 } else {
@@ -1425,9 +1419,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         getRootView().getSearchResultsView().getHakukohdeList().closeRemoveDialog();
     }
 
-    public void removeHakukohde(HakukohdeTulos curHakukohde) {
+    public void removeHakukohde(String oid) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
-        hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+        hakukohde.setOid(oid);
         try {
             tarjontaAdminService.poistaHakukohde(hakukohde);
             showNotification(UserNotification.DELETE_SUCCESS);
@@ -1742,11 +1736,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      *     
 * @param hakukohde
      */
-    public void showKoulutuksetForHakukohde(HakukohdeTulos hakukohde) {
+    public void showKoulutuksetForHakukohde(HakukohdePerustieto hakukohde) {
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         //kysely.getHakukohdeOids().add(hakukohde);
-        kysely.getHakukohdeOids().add(hakukohde.getHakukohde().getOid());
+        kysely.getHakukohdeOids().add(hakukohde.getOid());
 
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
 
@@ -2398,7 +2392,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
        
         HakukohteetVastaus vastaus = getHakukohteetForKoulutus(koulutus.getKoulutus().getKomotoOid());
-        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohteet(), koulutus);
     }
     
     public HakukohteetVastaus getHakukohteetForKoulutus(String komotoOid) {
@@ -2446,8 +2440,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public boolean isHakuStartedForKoulutus(String komotoOid) {
         boolean hakuStarted = false;
         HakukohteetVastaus hakukVastaus =  getHakukohteetForKoulutus(komotoOid);
-        for (HakukohdeTulos curHakuk : hakukVastaus.getHakukohdeTulos()) {
-            Date hakuAlku = curHakuk.getHakukohde().getHakuAlkamisPvm();
+        for (HakukohdePerustieto curHakuk : hakukVastaus.getHakukohteet()) {
+            Date hakuAlku = curHakuk.getHakuAlkamisPvm();
             Date today = new Date();
             if (today.after(hakuAlku)) {
                 hakuStarted = true;

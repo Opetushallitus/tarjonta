@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -106,7 +106,7 @@ public class ListHakukohdeView extends VerticalLayout {
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private boolean attached = false;
-    private Set<Map.Entry<String, List<HakukohdeTulos>>> resultSet;
+    private Set<Map.Entry<String, List<HakukohdePerustieto>>> resultSet;
     private ErrorMessage errorView;
 
     public ListHakukohdeView() {
@@ -195,7 +195,7 @@ public class ListHakukohdeView extends VerticalLayout {
                 
                 HakukohdeResultRow row = (HakukohdeResultRow) item.getItemProperty(COLUMN_A).getValue();
                 categoryTree.getParent(event);
-                for (HakukohdeTulos curHakukohde : row.getChildren()) {
+                for (HakukohdePerustieto curHakukohde : row.getChildren()) {
                     HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
                     categoryTree.addItem(curHakukohde);
                     categoryTree.setParent(curHakukohde, event.getItemId());
@@ -232,7 +232,7 @@ public class ListHakukohdeView extends VerticalLayout {
      * @param map the data map provided by the presenter.
      * @return the hierarchical container for Hakukokhde listing.
      */
-    private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
+    private Container createDataSource(Map<String, List<HakukohdePerustieto>> map) {
         resultSet = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
@@ -244,7 +244,7 @@ public class ListHakukohdeView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         int index = 0;
-        for (Map.Entry<String, List<HakukohdeTulos>> e : resultSet) {
+        for (Map.Entry<String, List<HakukohdePerustieto>> e : resultSet) {
             if (index > MAX_PARENT_ROWS) {
                 //A quick hack, it would be great, if data was limited in back-end service.
                 errorView.addError(I18N.getMessage("liianMontaHakutulosta"));
@@ -262,24 +262,24 @@ public class ListHakukohdeView extends VerticalLayout {
         return hc;
     }
 
-    private Object getHakutapa(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHakukohde().getHakutapaKoodi());
+    private Object getHakutapa(HakukohdePerustieto curHakukohde) {
+        return getKoodiNimi(curHakukohde.getHakutapaKoodi());
     }
 
-    private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
+    private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdePerustieto>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
 
-    private String getAjankohta(HakukohdeTulos curHakukohde) {
-        return curHakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri() + " " + curHakukohde.getHakukohde().getKoulutuksenAlkamisvuosi();
+    private String getAjankohta(HakukohdePerustieto curHakukohde) {
+        return curHakukohde.getKoulutuksenAlkamiskausiUri() + " " + curHakukohde.getKoulutuksenAlkamisvuosi();
     }
 
-    private String getTilaStr(HakukohdeTulos curHakukohde) {
-        return i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
+    private String getTilaStr(HakukohdePerustieto curHakukohde) {
+        return i18n.getMessage(curHakukohde.getTila().name());
     }
 
-    private String getHakukohdeNimi(HakukohdeTulos curHakukohde) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getHakukohde().getNimi()).getValue();
+    private String getHakukohdeNimi(HakukohdePerustieto curHakukohde) {
+        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue();
     }
 
     /**
@@ -353,7 +353,7 @@ public class ListHakukohdeView extends VerticalLayout {
         setPageLength(categoryTree.getItemIds().size());
     }
 
-    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset, HakukohdeTulos hakukohde) {
+    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset, HakukohdePerustieto hakukohde) {
         ShowKoulutuksetDialog koulutusDialog = new ShowKoulutuksetDialog(koulutukset, hakukohde, presenter);
         hakukohdeDialog = new TarjontaDialogWindow(koulutusDialog, T("koulutusDialog"));
         getWindow().addWindow(hakukohdeDialog);
@@ -401,9 +401,9 @@ public class ListHakukohdeView extends VerticalLayout {
         switch (e.type) {
         case REMOVE:
             for(Object itemid: categoryTree.getItemIds()){
-                if (itemid.getClass() == HakukohdeTulos.class) {
-                    HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
-                    if(currentHakukohde.getHakukohde().getOid().equals(eventHakukohdeOid)) {
+                if (itemid.getClass() == HakukohdePerustieto.class) {
+                    HakukohdePerustieto currentHakukohde = (HakukohdePerustieto)itemid;
+                    if(currentHakukohde.getOid().equals(eventHakukohdeOid)) {
                         categoryTree.removeItem(currentHakukohde);
                     }
             
@@ -414,11 +414,11 @@ public class ListHakukohdeView extends VerticalLayout {
         case UPDATE:
             
             for(Object itemid: categoryTree.getItemIds()){
-                if (itemid.getClass() == HakukohdeTulos.class) {
-                    HakukohdeTulos currentHakukohde = (HakukohdeTulos)itemid;
-                    if(currentHakukohde.getHakukohde().getOid().equals(eventHakukohdeOid)) {
+                if (itemid.getClass() == HakukohdePerustieto.class) {
+                    HakukohdePerustieto currentHakukohde = (HakukohdePerustieto)itemid;
+                    if(currentHakukohde.getOid().equals(eventHakukohdeOid)) {
                         //hae tuore hakukohde
-                        final HakukohdeTulos freshHakukohde = presenter.findHakukohdeByHakukohdeOid(eventHakukohdeOid).getHakukohdeTulos().get(0); 
+                        final HakukohdePerustieto freshHakukohde = presenter.findHakukohdeByHakukohdeOid(eventHakukohdeOid).getHakukohteet().get(0); 
                         copyData(currentHakukohde, freshHakukohde);
                         final HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(itemid, COLUMN_A).getValue());
                         setHakukohdeRowProperties(currentHakukohde, curRow);
@@ -444,12 +444,12 @@ public class ListHakukohdeView extends VerticalLayout {
         }
     }
 
-    private void setHakukohdeRowProperties(final HakukohdeTulos curHakukohde,
+    private void setHakukohdeRowProperties(final HakukohdePerustieto curHakukohde,
             final HakukohdeResultRow rowStyleInner) {
         categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
-        categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()).getValue());
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getAloituspaikat());
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohteenKoulutuslaji()).getValue());
         categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
     }
 }

@@ -26,9 +26,9 @@ public class TestTarjontaSavu {
     private WebDriver driver;
     private String baseUrl;
     private StringBuffer verificationErrors = new StringBuffer();
-    private static Kattavuus TarjontaSavuTekstit = new Kattavuus();
-    private static Kattavuus TarjontaSavuSelaimet = new Kattavuus();
-    private static String selain = "";
+    private SVTUtils doit = new SVTUtils();
+    private Boolean qa = false;
+    private Boolean luokka = false;
 
     @Before
     public void setUp() throws Exception {
@@ -49,37 +49,6 @@ public class TestTarjontaSavu {
     		System.setProperty("webdriver.ie.driver", "src/test/resources/IEDriverServer.exe");
     		driver = new InternetExplorerDriver();
     	}
-
-    	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
-    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
-
-    static Boolean first = true;
-	@Test
-    public void testKoulutus() throws Exception {
-		first = true;
-		SVTUtils doit = new SVTUtils();
-    	try {
-    		testKoulutusLoop();
-    	} catch (Exception e) {
-    		try {
-    			doit.printMyStackTrace(e);
-    			testKoulutusLoop();
-    		} catch (Exception e2) {
-    			doit.printMyStackTrace(e2);
-    			testKoulutusLoop();
-    		}
-    	}
-    }
-
-	public void testKoulutusLoop() throws Exception {
-		SVTUtils doit = new SVTUtils();
-        doit.messagesPropertiesInit();
-        TarjontaSavuTekstit.alustaKattavuusKohde("TarjontaSavuTekstit");
-        doit.alustaSelaimet(TarjontaSavuSelaimet, "TarjontaSavuSelaimet");
-        TarjontaSavuTekstit.KattavuusRaporttiHiljaa = true;
-        Boolean qa = false;
-        Boolean luokka = false;
         if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true"))
         {
                 luokka = true;
@@ -88,119 +57,61 @@ public class TestTarjontaSavu {
         {
                 qa = true;
         }
-        if (first)
-        {
-        	selain = doit.palvelimenVersio(driver, baseUrl);
-        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-        	doit.tauko(1);
-        }
-        first = false;
-		doit.reppuLogin(driver);
-		doit.tauko(1);
-		doit.echo("Running -------------------------------------------------------");
-		long t01 = doit.millis();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-url"));
-		Boolean skip = true;
-		while (skip)
-		{
-			if (doit.isPresentText(driver, "Tarjontaan")) { skip = false; }
-			if (doit.isPresentText(driver, "Valitse kaikki")) { skip = false; }
-			doit.tauko(1);
-		}
-		if (doit.isPresentText(driver, "Tarjontaan"))
-		{
-			doit.textClick(driver, "Tarjontaan");
-		}
-		Assert.assertNotNull("Running TarjontaSavu001 Etusivu ei toimi."
+
+    	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU001_Etusivu() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU001_Etusivu ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+		Assert.assertNotNull("Running Etusivu ei toimi."
                 , doit.textElement(driver, "Valitse kaikki"));
-		t01 = doit.millisDiff(t01);
 		doit.footerTest(driver, "Running TarjontaSavu001 Etusivu footer ei toimi.", true);
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.echo("Running TarjontaSavu001 Etusivu OK");
+    	doit.echo("Running test_T_INT_TAR_SAVU001_Etusivu OK");
 		doit.tauko(1);
+    }
 
+    @Test
+    public void test_T_INT_TAR_SAVU002_HaeOrganisaatiota() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU002_HaeOrganisaatiota ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
         // HAE
-        WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
-        haeKentta.clear();
-        haeKentta.sendKeys("optima");
-        doit.tauko(1);
-        t01 = doit.millis();
-        driver.findElement(By.xpath("//*[text()='Hae']")).click();
-        doit.tauko(1);
-        Assert.assertNotNull("Running TarjontaSavu002 Hae Optima samkommun ei toimi."
+    	doit.haePalvelunTarjoaja(driver, "optima", "Optima samkommun");
+        Assert.assertNotNull("Running Hae Optima samkommun ei toimi."
         		, doit.textElement(driver, "Optima samkommun"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu002 Hae Optima samkommun OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+    	doit.echo("Running test_T_INT_TAR_SAVU002_HaeOrganisaatiota OK");
         doit.tauko(1);
+    }
 
+    @Test
+    public void test_T_INT_TAR_SAVU003_HaeKoulutuksia() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU003_HaeKoulutuksia ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haePalvelunTarjoaja(driver, "optima", "Optima samkommun");
         // KOULUTUKSET JA HAKUKOHTEET
         WebElement espoo = driver.findElement(By.xpath("//span[contains(text(), 'Optima samkommun')]"));
-        t01 = doit.millis();
         espoo.click();
-        Assert.assertNotNull("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Koulutukset ("));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Hakukohteet ("));
-        doit.echo("Running TarjontaSavu003 Hae KOULUTUKSET JA HAKUKOHTEET OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+        Assert.assertNotNull("Running Hae KOULUTUKSET ja hakukohteet ei toimi."
+        		, doit.textElement(driver, "Koulutukset ("));
+        Assert.assertNotNull("Running Hae koulutukset ja HAKUKOHTEET ei toimi."
+        		, doit.textElement(driver, "Hakukohteet ("));
+    	doit.echo("Running test_T_INT_TAR_SAVU003_HaeKoulutuksia OK");
         doit.tauko(1);
+    }
 
-        // LUO UUSI AMMATILLINENKOULUTUS (validialog)
-        t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi koulutus");
-        Assert.assertNotNull("Running TarjontaSavu004a Luo uusi ammatillinenkoulutus ei toimi."
-        		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu004a Luo uusi ammatillinenkoulutus OK");
-        doit.tauko(1);
-        
-        // LUO UUSI AMMATILLINENKOULUTUS (validialog + jatka)
-        doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
-        doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
-        Assert.assertNotNull("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka ei toimi."
-        		, doit.textElement(driver, "Pohjakoulutus:"));
-        doit.tauko(1);
-        doit.sendInputPlusY(driver, "Pohjakoulutus:", "Peruskoulu");
-        doit.popupItemClick(driver, "Peruskoulu");
-        doit.tauko(1);
-        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Jatka");
-        Assert.assertNotNull("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka ei toimi."
-        		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu004b Luo uusi ammatillinenkoulutus + jatka OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-
+    @Test
+    public void test_T_INT_TAR_SAVU011_DialogLuoLukiokoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU011_DialogLuoLukiokoulutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
         // LUO UUSI LUKIOKOULUTUS (validialog)
-        // hae kerttulin lukio
-        WebElement haeKentta2 = driver.findElement(By.className("v-textfield-search-box"));
-        haeKentta2.clear();
-        haeKentta2.sendKeys("kerttulin");
-        doit.tauko(1);
-        t01 = doit.millis();
-        driver.findElement(By.xpath("//*[text()='Hae']")).click();
-        doit.tauko(1);
-        Assert.assertNotNull("Running TarjontaSavu002 Hae Kerttulin lukio ei toimi."
-                        , doit.textElement(driver, "Kerttulin lukio"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu002 Hae Kerttulin lukio OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-
         doit.textClick(driver, "Kerttulin lukio");
         doit.tauko(1);
-        t01 = doit.millis();
         doit.textClick(driver, "Luo uusi koulutus");
-        Assert.assertNotNull("Running TarjontaSavu005a Luo uusi lukiokoulutus ei toimi."
+        Assert.assertNotNull("Running Luo uusi lukiokoulutus ei toimi."
         		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu005a Luo uusi lukiokoulutus OK");
-//        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
         doit.tauko(1);
         
         // LUO UUSI LUKIOKOULUTUS (validialog + jatka)
@@ -209,789 +120,727 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Kerttulin lukio']")).click();
         doit.tauko(1);
-        t01 = doit.millis();
         doit.textClick(driver, "Jatka");
-        Assert.assertNotNull("Running TarjontaSavu005b Luo uusi lukiokoulutus + jatka ei toimi."
+        Assert.assertNotNull("Running Luo uusi lukiokoulutus + jatka ei toimi."
         		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu005b Luo uusi lukiokoulutus + jatka footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu005b Luo uusi lukiokoulutus + jatka OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+		doit.footerTest(driver, "Running Luo uusi lukiokoulutus + jatka footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU011_DialogLuoLukiokoulutus OK");
         doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
+    }
 
-        TarkasteleJaMuokkaaLukioKoulutusta();
-        TarkasteleJaMuokkaaAmmatillistaKoulutusta();
+    @Test
+    public void test_T_INT_TAR_SAVU012_MuokkaaLukiokoulutusta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU012_MuokkaaLukiokoulutusta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "ylioppilastut", "Luonnos");
+        doit.textClick(driver, "muokkaa");
+        Assert.assertNotNull("Running MUOKKAA KOULUTUSTA ei toimi."
+        		, doit.textElement(driver, "posti"));
+        Assert.assertNotNull("Running MUOKKAA KOULUTUSTA ei toimi."
+        		, doit.textElement(driver, "Tallenna valmiina"));
+		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU012_MuokkaaLukiokoulutusta OK");
+        doit.tauko(1);
+    }
 
-        // SIIRRA TAI KOPIOI KOULUTUS
-        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi."
-                , doit.textElement(driver, "Koulutukset ("));
-        if (! doit.isPresentText(driver, "Koulutukset (0)"))
-        {
+    @Test
+    public void test_T_INT_TAR_SAVU013_MuokkaaLukiokoulutustaKuvailevat() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU013_MuokkaaLukiokoulutustaKuvailevat ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "ylioppilastut", "Luonnos");
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+        Assert.assertNotNull("Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
+        		, doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus
+		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU013_MuokkaaLukiokoulutustaKuvailevat OK");
+        doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU014_DialogSiirraTaiKopioiLukio() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU014_DialogSiirraTaiKopioiLukio ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
+    	doit.textClick(driver, "Kerttulin lukio");
+    	doit.tauko(1);
+    	// SIIRRA TAI KOPIOI KOULUTUS
+    	Assert.assertNotNull("Running SIIRRA TAI KOPIOI KOULUTUS ei toimi."
+    			, doit.textElement(driver, "Koulutukset ("));
+//        if (! doit.isPresentText(driver, "Koulutukset (0)"))
+//        {
         if (! doit.isPresentText(driver, "v-icon"))
         {
         	driver.findElement(By.className("v-treetable-treespacer")).click();
             doit.tauko(1);
         }
-        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi."
+        Assert.assertNotNull("Running SIIRRA TAI KOPIOI KOULUTUS ei toimi."
                 , driver.findElement(By.xpath("//img[@class='v-icon']")));
         String gwtId = doit.getGwtIdForFirstHakukohde(driver);
         driver.findElement(By.id(gwtId)).click();
         doit.tauko(1);
-        t01 = doit.millis();
         doit.textClick(driver, "tai kopioi");
-//        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi.", doit.textElement(driver
-//           		, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat"));
-        while (! doit.isPresentText(driver, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat")) 
-        { doit.tauko(1); }
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-        doit.textClick(driver, "Peruuta");
-        doit.tauko(1);
-        }
-        else
-        {
-                doit.echo("Running Ei ollut lainkaan koulutuksia valmiina.");
-        }
-        doit.echo("Running TarjontaSavu END OK");
-        // END
-	}
-
-	@Test
-    public void testHakukohteet() throws Exception {
-		first = true;
-		SVTUtils doit = new SVTUtils();
-    	try {
-    		testHakukohteetLoop();
-    	} catch (Exception e) {
-    		try {
-    			doit.printMyStackTrace(e);
-    			testHakukohteetLoop();
-    		} catch (Exception e2) {
-    			doit.printMyStackTrace(e2);
-    			testHakukohteetLoop();
-    		}
-    	}
+//        //        Assert.assertNotNull("Running TarjontaSavu012 SIIRRA TAI KOPIOI KOULUTUS ei toimi.", doit.textElement(driver
+//        //           		, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat"));
+    	while (! doit.isPresentText(driver, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat")) 
+    	{ doit.tauko(1); }
+    	doit.echo("Running test_T_INT_TAR_SAVU014_DialogSiirraTaiKopioiLukio OK");
+    	doit.tauko(1);
     }
 
-	public void testHakukohteetLoop() throws Exception {
-		SVTUtils doit = new SVTUtils();
-        doit.messagesPropertiesInit();
-        if (first)
-        {
-            driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-    		doit.tauko(1);
-        }
-        first = false;
-		doit.reppuLogin(driver);
-		doit.tauko(1);
-		Boolean luokka = false;
-		if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true"))
-		{
-			luokka = true;
-		}
-		doit.echo("Running -------------------------------------------------------");
-		long t01 = doit.millis();
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-url"));
-		Boolean skip = true;
-		while (skip)
-		{
-			if (doit.isPresentText(driver, "Tarjontaan")) { skip = false; }
-			if (doit.isPresentText(driver, "Valitse kaikki")) { skip = false; }
-			doit.tauko(1);
-		}
-		if (doit.isPresentText(driver, "Tarjontaan"))
-		{
-			doit.textClick(driver, "Tarjontaan");
-		}
-		Assert.assertNotNull("Running TarjontaHakukohteetSavu001 Etusivu ei toimi."
-                , doit.textElement(driver, "Valitse kaikki"));
-		t01 = doit.millisDiff(t01);
-//		doit.footerTest(driver, "Running TarjontaHakukohteetSavu001 Etusivu footer ei toimi.", true);
-		doit.echo("Running TarjontaHakukohteetSavu001 Etusivu OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-		doit.tauko(1);
-		
-        // HAE
-        WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
-        haeKentta.clear();
-        haeKentta.sendKeys("espoon");
-        doit.tauko(1);
-        t01 = doit.millis();
-        driver.findElement(By.xpath("//*[text()='Hae']")).click();
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu002 Hae espoo ei toimi.", doit.textElement(driver, "Espoon kaupunki"));
-        t01 = doit.millisDiff(t01);
-        doit.echo("Running TarjontaHakukohteetSavu002 Hae espoo OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-
-        // KOULUTUKSET JA HAKUKOHTEET
-        WebElement espoo = driver.findElement(By.xpath("//span[contains(text(), 'Espoon kaupunki')]"));
-        t01 = doit.millis();
-        espoo.click();
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Koulutukset ("));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu003 Hae KOULUTUKSET JA HAKUKOHTEET ei toimi.", doit.textElement(driver, "Hakukohteet ("));
-        doit.echo("Running TarjontaHakukohteetSavu003 Hae KOULUTUKSET JA HAKUKOHTEET OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-
-        // LUO UUSI HAKUKOHDE (validialog)
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, doit.textElement(driver, "Koulutukset ("));
-        if (! doit.isPresentText(driver, "Koulutukset (0)"))
-        {
-        	doit.notPresentText(driver, "Koulutukset (0)"
-        			, "Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE Ei Koulutuksia. Ei voi testata.");
-        t01 = doit.millis();
-        driver.findElement(By.className("v-treetable-treespacer")).click();
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-        t01 = doit.millisDiff(t01);
-        String gwtId = doit.getGwtIdForFirstHakukohde(driver);
-        // too many dialog
-        doit.notPresentText(driver, "window_close"
-                , "Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE Close nakyy jo. Ei toimi.");
-        WebElement checkBox3 = driver.findElement(By.id("gwt-uid-3"));
-        WebElement checkBoxId = driver.findElement(By.id(gwtId));
-        Boolean a_scenario = false; // Ammatillinen koulutus vain yksi loytyi 
-        Boolean b1_scenario = false; // too many dialog
-        Boolean b2_scenario = false; // too many dialog
-        Boolean c_scenario = false; // Lukiokohde loytyi ja menee jo muokkaa sivulle
-        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
-        String b1_text = "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi a";
-        String b2_text = "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi lukio";
-        String c_text = "tietoja hakemisesta";
-        if (! doit.isPresentText(driver, "Koulutukset (1)"))
-        {
-        t01 = doit.millis();
-        checkBox3.click();
-        while (! checkBoxId.isSelected()) { doit.tauko(1); }
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi.", checkBoxId.isSelected());
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi hakukohde"); // <=================================== 1 / 2
-        Boolean skip2 = true;
-        while (skip2)
-        {
-        	if (doit.isPresentText(driver, a_text)) { a_scenario = true; skip2 = false; }
-        	if (doit.isPresentText(driver, b1_text)) { b1_scenario = true; skip2 = false; }
-        	if (doit.isPresentText(driver, b2_text)) { b2_scenario = true; skip2 = false; }
-        	if (doit.isPresentText(driver, c_text)) { c_scenario = true; skip2 = false; }
-        	doit.tauko(1);
-        }
-        t01 = doit.millisDiff(t01);
-        if (a_scenario)
-        {
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        			, doit.textElement(driver, a_text));
-        	doit.textClick(driver, "Peruuta");
-        	doit.tauko(1);
-        }
-        if (b1_scenario)
-        {
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-            		, doit.textElement(driver, b1_text));
-        	doit.textClick(driver, "Sulje");
-        	doit.tauko(1);
-        }        	
-        if (b2_scenario)
-        {
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-            		, doit.textElement(driver, b2_text));
-        	doit.textClick(driver, "Sulje");
-        	doit.tauko(1);
-        }        	
-        if (c_scenario)
-        {
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-            		, doit.textElement(driver, c_text));
-            doit.tauko(1);
-            driver.findElement(By.className("v-button-back")).click();
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE back ei toimi.", doit.textElement(driver, "Hakukohteet ("));
-            doit.tauko(1);
-            checkBox3 = doit.findNearestElementExact("Valitse kaikki", "//input[@type='checkbox']", driver);
-            gwtId = doit.getGwtIdForFirstHakukohde(driver);
-            checkBoxId = driver.findElement(By.id(gwtId));
-        }        	
-//        checkBox3 = driver.findElement(By.id("gwt-uid-3"));
-    	t01 = doit.millis();
-    	checkBox3.click();
-    	while (checkBoxId.isSelected()) { doit.tauko(1); }
-    	t01 = doit.millisDiff(t01);
-    	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi.", checkBoxId.isSelected());
-    	doit.tauko(1);
-        }
-        // ok to continue
-        checkBoxId.click();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "Luo uusi hakukohde"); // <=================================== 2 / 2
-        if (a_scenario || b1_scenario)
-        {
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        			, doit.textElement(driver, a_text));
-        	t01 = doit.millisDiff(t01);
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Jatka");
-        }
-        if (c_scenario || b2_scenario)
-        {
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        			, doit.textElement(driver, c_text));
-        	t01 = doit.millisDiff(t01);
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "Jatka");
-        }
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, doit.textElement(driver, "tietoja hakemisesta"));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, doit.textElement(driver, "Tallenna luonnoksena"));
-        doit.echo("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-        
-        // HAKUKOHTEEN TARKASTELU
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        		, doit.textElement(driver, "Hakukohteet ("));
-        doit.tauko(1);
-        if (! doit.isPresentText(driver, "Hakukohteet (0)"))
-        {
-        	doit.notPresentText(driver, "Hakukohteet (0)"
-        			, "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU Ei hakukohteita. Ei voi testata.");
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Hakukohteet (");
-        	doit.notPresentText(driver, gwtId
-        			, "Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU " + gwtId + " nakyy viela. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	WebElement lastTriangle = doit.getTriangleForLastHakukohde(driver);
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi.", lastTriangle);
-        	lastTriangle.click();
-        	doit.tauko(1);
-        	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        			, doit.textElement(driver, "Tarkastele"));
-        	doit.tauko(1);
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Tarkastele");
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-        			, doit.textElement(driver, "Koulutukset"));
-        	t01 = doit.millisDiff(t01);
-        	doit.echo("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-
-        	// HAKUKOHTEEN MUOKKAUS
-        	if (! doit.isPresentText(driver, "julkaistu") || ! doit.isPresentText(driver, "Ylioppilastutkinto") || ! doit.isPresentText(driver, "Lukion"))
-        	{
-        	t01 = doit.millis();
-        	doit.textClick(driver, "muokkaa");
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
-        			, doit.textElement(driver, "voidaan kuvata muuta hakemiseen olennaisesti"));
-        	t01 = doit.millisDiff(t01);
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS ei toimi."
-        			, doit.textElement(driver, "Tallenna valmiina"));
-        	doit.echo("Running TarjontaHakukohteetSavu006 HAKUKOHTEEN MUOKKAUS OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-
-        	// HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Liitteiden tiedot");
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
-        			, doit.textElement(driver, "Toimitusosoite"));
-        	t01 = doit.millisDiff(t01);
-        	doit.echo("Running TarjontaHakukohteetSavu007 HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-
-        	// HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite)
-    		// tullaan toista kautta samaan jotta aikaisemmat sivut pyyhkiytyvat hidden osiosta
-            driver.findElement(By.className("v-button-back")).click();
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN TARKASTELU ei toimi."
-            		, doit.textElement(driver, "Hakukohteet ("));
-            doit.tauko(1);
-            lastTriangle = doit.getTriangleForLastHakukohde(driver);
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi.", lastTriangle);
-            lastTriangle.click();
-            doit.tauko(1);
-            driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
-            Assert.assertNotNull("Running TarjontaHakukohteetSavu005 HAKUKOHTEEN TARKASTELU ei toimi."
-                            , doit.textElement(driver, "Tarkastele"));
-            doit.tauko(1);
-            t01 = doit.millis();
-            doit.textClick(driver, "Tarkastele");
-
-            driver.findElement(By.xpath("(//*[text()='muokkaa'])[3]")).click(); // click Muokkaa(3)
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS ei toimi."
-        			, doit.textElement(driver, "Toimitusosoite"));
-        	//
-        	t01 = doit.millis();
-        	doit.textClick(driver, "uusi liite");
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
-        			, doit.textElement(driver, "Voidaan toimittaa my"));
-        	t01 = doit.millisDiff(t01);
-        	doit.echo("Running TarjontaHakukohteetSavu007b HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-        	doit.textClick(driver, "Peruuta");
-        	doit.tauko(1);
-
-        	// HAKUKOHTEEN MUOKKAUS (valintakokeet)
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Valintakokeiden tiedot");
-        	// kahtalajia lomakkeita
-        	skip = true;
-        	Boolean paasykoe = false;
-        	Boolean uusiValintakoe = false;
-        	while (skip)
-        	{
-        		if (doit.isPresentText(driver, "sykoe")) { skip = false; paasykoe = true; }
-        		if (doit.isPresentText(driver, "uusi valintakoe")) { skip = false; uusiValintakoe = true; }
-        		doit.tauko(1);
-        	}
-        	if (paasykoe)
-        	{
-        		String paasykoeCheckBoxId = doit.getGwtIdBeforeText(driver, "sykoe</label>");
-        		WebElement paasykoeCheckBox = driver.findElement(By.id(paasykoeCheckBoxId));
-        		if (paasykoeCheckBox.getAttribute("checked") == null || ! paasykoeCheckBox.getAttribute("checked").equals("true"))
-        		{
-        			paasykoeCheckBox.click();
-        		}
-        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
-        				, doit.textElement(driver, "Ajankohta"));
-        	}
-        	if (uusiValintakoe)
-        	{
-        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
-        				, doit.textElement(driver, "Valintakokeen kuvaus"));
-        	}
-        	t01 = doit.millisDiff(t01);
-        	doit.echo("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-
-        	// UUSI VALINTAKOE
-        	if (uusiValintakoe)
-        	{
-        		t01 = doit.millis();
-        		doit.textClick(driver, "uusi valintakoe");
-        		Assert.assertNotNull("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
-        				, doit.textElement(driver, "Ajankohta"));
-        		t01 = doit.millisDiff(t01);
-        		doit.echo("Running TarjontaHakukohteetSavu008b HAKUKOHTEEN MUOKKAUS (uusi valintakoe) OK");
-                doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        		doit.tauko(1);
-        		doit.textClick(driver, "Peruuta");
-        		doit.tauko(1);
-        	}
-        	doit.textClick(driver, "Hakukohteen perustiedot");
-        	doit.tauko(1);
-        	}
-
-        	// HAKUKOHTEEN POISTO
-        	driver.findElement(By.className("v-button-back")).click();
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-        			, doit.textElement(driver, "Hakukohteet ("));
-        	doit.getTriangleForLastHakukohde(driver).click();
-        	doit.tauko(1);
-        	driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
-        	t01 = doit.millis();
-        	Boolean poista = false;
-        	Boolean peruutaHakukohde = false;
-        	skip = true;
-        	while (skip)
-        	{
-        		if (doit.isPresentText(driver, ">Poista<")) { skip = false; poista = true; }
-        		if (doit.isPresentText(driver, ">Peruuta hakukohde<")) { skip = false; peruutaHakukohde = true; }
-        		doit.tauko(1);
-        	}
-        	if (poista)
-        	{
-        		driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Poista']")).click();
-        		Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-        				, doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
-        	}
-        	if (peruutaHakukohde)
-        	{
-        		driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Peruuta hakukohde']")).click();
-        		Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
-        				, doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
-        	}
-        	t01 = doit.millisDiff(t01);
-        	String closeId2 = doit.idLike(driver, "window_close");
-        	WebElement close = driver.findElement(By.id(closeId2));
-        	Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        }
-        else
-        {
-        	doit.echo("Running TarjontaHakukohteetSavu HAKUKOHTEIDEN TESTAUS SIVUUTETTIIN");
-        }
-        }
-        else
-        {
-        	doit.echo("Running TarjontaHakukohteetSavu HAKUKOHTEIDEN TESTAUS SIVUUTETTIIN");
-        }
-        
-        doit.tauko(1);
-        doit.echo("Running TarjontaHakukohteetSavu END OK");
-	}
-	
-	private void TarkasteleJaMuokkaaLukioKoulutusta() throws Exception
-	{
+    @Test
+    public void test_T_INT_TAR_SAVU015_TarkasteleLukiokoulutusta() throws Exception 
+    {
+    	doit.echo("Running test_T_INT_TAR_SAVU015_TarkasteleLukiokoulutusta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
         // TARKASTELE LUKIOKOULUTUS
-		SVTUtils doit = new SVTUtils();
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "Koulutukset ("));
-        doit.textClick(driver, "[Poista valinta]");
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "OPH"));
-        doit.tauko(1);
-        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "ylioppilastutkint");
-        if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
-        {
-        	doit.notPresentText(driver, "Koulutukset (0)"
-        			, "Running TarjontaSavu006 TARKASTELE KOULUTUSTA Ei koulutuksia. Ei voi testata.");
-//        t01 = doit.millisDiff(t01);
-//        driver.findElement(By.className("v-treetable-treespacer")).click();
-//        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-//        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-//        t01 = doit.millis();
-//            driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-        menu.click();
-        doit.tauko(1);
-        long t01 = doit.millis();
-        doit.textClick(driver, "Tarkastele");
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
+    	doit.tarkasteleKoulutusta(driver, "ylioppilastut", "Luonnos");
+        Assert.assertNotNull("Running TARKASTELE LUKIOKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Lukiokoulutus"));
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA ei toimi."
+        Assert.assertNotNull("Running TARKASTELE LUKIOKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus
-        t01 = doit.millis();
-		doit.footerTest(driver, "Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu006 TARKASTELE LUKIOKOULUTUSTA OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+		doit.footerTest(driver, "Running TARKASTELE LUKIOKOULUTUSTA footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU015_TarkasteleLukiokoulutusta OK");
         doit.tauko(1);
-        
-        // poista hakukohde
-        String closeId = "";
-        WebElement close = null;
-        if (doit.isPresentText(driver, "Poista koulutuksesta"))
-        {
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007a POISTA KOULUTUS Close nakyy jo. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.textClick(driver, "Poista koulutuksesta");
-        	Assert.assertNotNull("Running TarjontaSavu007a POISTA KOULUTUS ei toimi."
-        			, doit.textElement(driver, "Haluatko poistaa hakukohteen koulutukselta"));
-        	t01 = doit.millis();
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu007a POISTA KOULUTUS ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007a POISTA KOULUTUS Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaSavu007a POISTA KOULUTUKSELTA HAKUKOHDE OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        }
-        
-        // POISTA KOULUTUS
-        if (doit.isPresentText(driver, "Poista") 
-        		&& ! doit.isPresentText(driver, "Poista koulutuksesta"))
-        {
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007b POISTA KOULUTUS Close nakyy jo. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.textClick(driver, "Poista");
-        	Assert.assertNotNull("Running TarjontaSavu007b POISTA KOULUTUS ei toimi."
-        			, doit.textElement(driver, "Haluatko varmasti poistaa"));
-        	t01 = doit.millis();
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu007b POISTA KOULUTUS ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007b POISTA KOULUTUS Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaSavu007b POISTA KOULUTUS OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-        
-        	// KOPIOI UUDEKSI
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "Kopioi uudeksi");
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi."
-//        			, doit.textElement(driver, "koulutuksen toiseen organisaatioon"));
-//        	t01 = doit.millisDiff(t01);
-//        	closeId = doit.idLike(driver, "window_close");
-//        	close = driver.findElement(By.id(closeId));
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi.", close);
-//        	doit.tauko(1);
-//        	close.click();
-//        	doit.tauko(1);
-//        	doit.notPresentText(driver, "window_close"
-//        			, "Running TarjontaSavu008 KOPIOI UUDEKSI Close nakyy viela. Ei toimi.");
-//        	doit.echo("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
-//        	doit.tauko(1);
-        
-        }
+    }
 
-    	// Lisaa rinnakkainen toteutus
-        if (doit.isPresentText(driver, "rinnakkainen toteutus"))
-    	{
-    		t01 = doit.millis();
-    		doit.textClick(driver, "rinnakkainen toteutus");
-    		Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
-    				, doit.textElement(driver, "Valitse pohjakoulutus"));
-    		t01 = doit.millisDiff(t01);
-    		doit.echo("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-    		doit.tauko(1);
-    		t01 = doit.millis();
-    		doit.textClick(driver, "Peruuta");
-    		t01 = doit.millisDiff(t01);
-    	}
-//        doit.tauko(1);
-//    	t01 = doit.millis();
-//        driver.findElement(By.className("v-button-back")).click();
-//        t01 = doit.millisDiff(t01);
-//        doit.tauko(1);
-//        driver.findElement(By.className("v-treetable-treespacer")).click();
+    @Test
+    public void test_T_INT_TAR_SAVU016_PoistaLukiokoulutukseltaHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU016_PoistaLukiokoulutukseltaHakukohde ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	// hae lukion hakukohteita
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	Assert.assertNotNull("Running LINK HAKUKOHDE ei toimi."
+    			, doit.textElement(driver, "Liitteet"));
+    	// valitse alhaalta koulutus
+    	WebElement link = doit.findNearestElement("Koulutukset", "//span[contains(@class, 'v-button-wrap')]", driver);
+    	link.click();
+    	Assert.assertNotNull("Running LINK KOULUTUS ei toimi."
+    			, doit.textElement(driver, "Koulutuksen perustiedot"));
+    	doit.tauko(1);
+    	// "poista koulutuksesta"
+    	doit.notPresentText(driver, "window_close"
+    			, "Running POISTA KOULUTUKSESTA Close nakyy jo. Ei toimi.");
+    	doit.textClick(driver, "Poista koulutuksesta");
+    	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi."
+    			, doit.textElement(driver, "Haluatko poistaa hakukohteen koulutukselta"));
+    	String closeId = doit.idLike(driver, "window_close");
+    	WebElement close = driver.findElement(By.id(closeId));
+    	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi.", close);
+    	doit.echo("Running test_T_INT_TAR_SAVU016_PoistaLukiokoulutukseltaHakukohde OK");
+    	doit.tauko(1);
+    }
 
+    @Test
+    public void test_T_INT_TAR_SAVU017_PoistaLukiokoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU017_PoistaLukiokoulutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "luonnos", "ylioppilastut");
+        doit.triangleClickFirstTriangle(driver);
+    	doit.menuOperaatio(driver, "Poista", "luonnos");
+    	Assert.assertNotNull("Running POISTA KOULUTUS ei toimi."
+    			, doit.textElement(driver, "Haluatko varmasti poistaa"));
+    	String closeId = doit.idLike(driver, "window_close");
+    	WebElement close = driver.findElement(By.id(closeId));
+    	Assert.assertNotNull("Running TarjontaSavu007b POISTA KOULUTUS ei toimi.", close);
+    	doit.echo("Running test_T_INT_TAR_SAVU017_PoistaLukiokoulutus OK");
+    	doit.tauko(1);
+    }
 
-        // MUOKKAA KOULUTUSTA
-//        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-//        		, doit.textElement(driver, "Koulutukset ("));
-//        doit.tauko(1);
-//        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-//        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-//        driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-//        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "muokkaa");
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
+    @Test
+    public void test_T_INT_TAR_SAVU018_DialogLukioNaytaHakukohteet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU018_DialogLukioNaytaHakukohteet ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "Julkaistu", "ylioppilastut");
+        doit.triangleClickFirstTriangle(driver);
+    	doit.menuOperaatioFirstMenu(driver, "Näytä hakukohteet");
+    	Assert.assertNotNull("Running NAYTA HAKUKOHTEET ei toimi."
+    			, doit.textElement(driver, "Olet tarkastelemassa hakukohteita, jotka liittyv"));
+    	doit.echo("Running test_T_INT_TAR_SAVU018_DialogLukioNaytaHakukohteet OK");
+    	doit.tauko(1);
+    }
+
+//@Test
+//public void test_T_INT_TAR_SAVU019_RinnakkainenLukiokoulutus() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU019_RinnakkainenLukiokoulutus ...");
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.tarkasteleKoulutusta(driver, "ylioppilastut", "Luonnos");
+//		doit.textClick(driver, "rinnakkainen toteutus");
+//		Assert.assertNotNull("Running Lisaa rinnakkainen toteutus ei toimi."
+//				, doit.textElement(driver, "Valitse pohjakoulutus"));
+//    	doit.echo("Running test_T_INT_TAR_SAVU019_RinnakkainenLukiokoulutus OK");
+//		doit.tauko(1);
+//    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU021_DialogLuoAMP() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMP ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haePalvelunTarjoaja(driver, "optima", "Optima samkommun");
+    	doit.textClick(driver, "Optima samkommun");
+        // LUO UUSI AMMATILLINENKOULUTUS (validialog)
+        doit.textClick(driver, "Luo uusi koulutus");
+        Assert.assertNotNull("Running Luo uusi ammatillinenkoulutus ei toimi."
+        		, doit.textElement(driver, "Olet luomassa uutta koulutusta"));
+        // LUO UUSI AMMATILLINENKOULUTUS (validialog + jatka)
+        doit.sendInputPlusX(driver, "Koulutus:", "Ammatillinen peruskoulutus", 200);
+        doit.popupItemClick(driver, "Ammatillinen peruskoulutus");
+        Assert.assertNotNull("Running Luo uusi ammatillinenkoulutus + jatka ei toimi."
+        		, doit.textElement(driver, "Pohjakoulutus:"));
+        doit.tauko(1);
+        doit.sendInputPlusY(driver, "Pohjakoulutus:", "Peruskoulu");
+        doit.popupItemClick(driver, "Peruskoulu");
+        doit.tauko(1);
+        driver.findElement(By.xpath("//span[@class = 'v-button-caption' and text() = 'Optima samkommun']")).click();
+        doit.tauko(1);
+        doit.textClick(driver, "Jatka");
+        Assert.assertNotNull("Running Luo uusi ammatillinenkoulutus + jatka ei toimi."
         		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "Tallenna valmiina"));
-		doit.footerTest(driver, "Running TarjontaSavu010 MUOKKAA KOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu010 MUOKKAA KOULUTUSTA OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+		doit.footerTest(driver, "Running Luo uusi ammatillinenkoulutus + jatka footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMP OK");
         doit.tauko(1);
-        
-        // MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot
-        t01 = doit.millis();
-        doit.textClick(driver, "Koulutuksen kuvailevat tiedot");
-        Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
-        		, doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-        doit.textClick(driver, "Koulutuksen perustiedot");
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-        doit.tauko(1);
-        }
-        else
-        {
-        	doit.echo("Running Ei ollut lainkaan lukiokoulutuksia luonnostilassa valmiina.");
-        }
-	}
+    }
 
-	private void TarkasteleJaMuokkaaAmmatillistaKoulutusta() throws Exception
-	{
-        // TARKASTELE LUKIOKOULUTUS
-		SVTUtils doit = new SVTUtils();
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "Koulutukset ("));
-        doit.textClick(driver, "[Poista valinta]");
-        WebElement menu = doit.TarkasteleKoulutusLuonnosta(driver, "tusohjel");
-        if (! doit.isPresentText(driver, "Koulutukset (0)") && menu != null)
-        {
-        	doit.notPresentText(driver, "Koulutukset (0)"
-        			, "Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA Ei koulutuksia. Ei voi testata.");
-//        t01 = doit.millisDiff(t01);
-//        driver.findElement(By.className("v-treetable-treespacer")).click();
-//        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE KOULUTUSTA ei toimi."
-//        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-//        t01 = doit.millis();
-//            driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-        menu.click();
-        doit.tauko(1);
-        long t01 = doit.millis();
-        doit.textClick(driver, "Tarkastele");
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
+    @Test
+    public void test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
+    	doit.textClick(driver, "muokkaa");
+        Assert.assertNotNull("Running TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Ammatillinen koulutus"));
-        Assert.assertNotNull("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
+        Assert.assertNotNull("Running TARKASTELE AMMATILLISTAKOULUTUSTA ei toimi."
         		, doit.textElement(driver, "Ammattinimikkeet")); // Ammatillinen koulutus
-        t01 = doit.millis();
-		doit.footerTest(driver, "Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu006 TARKASTELE AMMATILLISTAKOULUTUSTA OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+		doit.footerTest(driver, "Running TARKASTELE AMMATILLISTAKOULUTUSTA footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta OK");
         doit.tauko(1);
-        
-        // poista hakukohde
-        String closeId = "";
-        WebElement close = null;
-        if (doit.isPresentText(driver, "Poista koulutuksesta"))
-        {
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy jo. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.textClick(driver, "Poista koulutuksesta");
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi."
-        			, doit.textElement(driver, "Haluatko poistaa hakukohteen koulutukselta"));
-        	t01 = doit.millis();
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaSavu007 POISTA KOULUTUKSELTA HAKUKOHDE OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        }
-        
-        // POISTA KOULUTUS
-        if (doit.isPresentText(driver, "Poista") 
-        		&& ! doit.isPresentText(driver, "Poista koulutuksesta"))
-        {
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy jo. Ei toimi.");
-        	t01 = doit.millisDiff(t01);
-        	doit.textClick(driver, "Poista");
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi."
-        			, doit.textElement(driver, "Haluatko varmasti poistaa"));
-        	t01 = doit.millis();
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu007 POISTA KOULUTUS ei toimi.", close);
-        	t01 = doit.millisDiff(t01);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu007 POISTA KOULUTUS Close nakyy viela. Ei toimi.");
-        	doit.echo("Running TarjontaSavu007 POISTA KOULUTUS OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        	doit.tauko(1);
-        
-        	// KOPIOI UUDEKSI
-//        	t01 = doit.millis();
-//        	doit.textClick(driver, "Kopioi uudeksi");
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi."
-//        			, doit.textElement(driver, "koulutuksen toiseen organisaatioon"));
-//        	t01 = doit.millisDiff(t01);
-//        	closeId = doit.idLike(driver, "window_close");
-//        	close = driver.findElement(By.id(closeId));
-//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi.", close);
-//        	doit.tauko(1);
-//        	close.click();
-//        	doit.tauko(1);
-//        	doit.notPresentText(driver, "window_close"
-//        			, "Running TarjontaSavu008 KOPIOI UUDEKSI Close nakyy viela. Ei toimi.");
-//        	doit.echo("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
-//        	doit.tauko(1);
-        
-        }
+    }
 
-    	// Lisaa rinnakkainen toteutus
-        if (doit.isPresentText(driver, "rinnakkainen toteutus"))
-    	{
-    		t01 = doit.millis();
-    		doit.textClick(driver, "rinnakkainen toteutus");
-    		Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
-    				, doit.textElement(driver, "Valitse pohjakoulutus"));
-    		t01 = doit.millisDiff(t01);
-    		doit.echo("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
-            doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-    		doit.tauko(1);
-    		t01 = doit.millis();
-    		doit.textClick(driver, "Peruuta");
-    		t01 = doit.millisDiff(t01);
-    		doit.tauko(1);
-    	}
-//        doit.tauko(1);
-//    	t01 = doit.millis();
-//        driver.findElement(By.className("v-button-back")).click();
-//        t01 = doit.millisDiff(t01);
-//        doit.tauko(1);
-//        driver.findElement(By.className("v-treetable-treespacer")).click();
-//
-//
-//        // MUOKKAA KOULUTUSTA
-//        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi.", doit.textElement(driver, "Koulutukset ("));
-//        doit.tauko(1);
-//        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-//        		, driver.findElement(By.xpath("//img[@class='v-icon']")));
-//        driver.findElement(By.xpath("//img[@class='v-icon']")).click();
-//        doit.tauko(1);
-        driver.navigate().refresh();
-        doit.tauko(1);
-        t01 = doit.millis();
-        doit.textClick(driver, "muokkaa");
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "posti"));
-        t01 = doit.millisDiff(t01);
-        Assert.assertNotNull("Running TarjontaSavu010 MUOKKAA KOULUTUSTA ei toimi."
-        		, doit.textElement(driver, "Tallenna valmiina"));
-		doit.footerTest(driver, "Running TarjontaSavu010 MUOKKAA KOULUTUSTA footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu010 MUOKKAA KOULUTUSTA OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
-        doit.tauko(1);
-        
+    @Test
+    public void test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
         // MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot
-        t01 = doit.millis();
-        doit.textClick(driver, "Koulutuksen kuvailevat tiedot");
-        Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+        Assert.assertNotNull("Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
         		, doit.textElement(driver, "Koulutusohjelman valinta")); // Ammatillinen koulutus
-//        	Assert.assertNotNull("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot ei toimi."
-//        			, doit.textElement(driver, "listyminen")); // toinen aste (kansainvalistyminen)
-        t01 = doit.millisDiff(t01);
-		doit.footerTest(driver, "Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
-        doit.echo("Running TarjontaSavu011 MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
+		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat OK");
         doit.tauko(1);
-        doit.textClick(driver, "Koulutuksen perustiedot");
-        doit.tauko(1);
-        driver.findElement(By.className("v-button-back")).click();
-        doit.tauko(1);
-        }
-        else
-        {
-        	doit.echo("Running Ei ollut lainkaan ammatillisia koulutuksia luonnostilassa valmiina.");
-        }
-	}
+    }
 
+    @Test
+    public void test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohje");
+    	doit.triangleClickFirstTriangle(driver);
+    	doit.checkboxSelectFirst(driver);
+    	doit.textClick(driver, "tai kopioi");
+    	String dlgText = "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi";
+        Assert.assertNotNull("Running SIIRRA TAI KOPIOI ei toimi.", doit.textElement(driver, dlgText));
+    	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP OK");
+        doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "tusohje", null);
+        Assert.assertNotNull("Running TARKASTELE KOULUTUSTA ei toimi."
+        		, doit.textElement(driver, "Jatko-opintomahdollisuudet"));
+		doit.footerTest(driver, "Running TARKASTELE KOULUTUSTA footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta OK");
+        doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	// hae luonnos hakukohteita
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	Assert.assertNotNull("Running LINK HAKUKOHDE ei toimi."
+    			, doit.textElement(driver, "Liitteet"));
+    	// valitse alhaalta koulutus
+    	WebElement link = doit.findNearestElement("Koulutukset", "//span[contains(@class, 'v-button-wrap')]", driver);
+    	link.click();
+    	Assert.assertNotNull("Running LINK KOULUTUS ei toimi."
+    			, doit.textElement(driver, "Koulutuksen perustiedot"));
+    	doit.tauko(1);
+    	// "poista koulutuksesta"
+    	doit.notPresentText(driver, "window_close"
+    			, "Running POISTA KOULUTUKSESTA Close nakyy jo. Ei toimi.");
+    	doit.textClick(driver, "Poista koulutuksesta");
+    	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi."
+    			, doit.textElement(driver, "Haluatko poistaa hakukohteen koulutukselta"));
+    	String closeId = doit.idLike(driver, "window_close");
+    	WebElement close = driver.findElement(By.id(closeId));
+    	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi.", close);
+    	doit.footerTest(driver, "Running HAKUKOHTEEN KOULUTUKSESTA footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde OK");
+    	doit.tauko(1);
+    }
+    
+    @Test
+    public void test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "Luonnos", "tusohj");
+        doit.triangleClickFirstTriangle(driver);
+    	doit.menuOperaatio(driver, "Poista", "luonnos");
+    	Assert.assertNotNull("Running POISTA KOULUTUS ei toimi."
+    			, doit.textElement(driver, "Haluatko varmasti poistaa"));
+    	String closeId = doit.idLike(driver, "window_close");
+    	WebElement close = driver.findElement(By.id(closeId));
+    	Assert.assertNotNull("Running POISTA KOULUTUS ei toimi.", close);
+    	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus OK");
+    	doit.tauko(1);
+    }
+    
+    @Test
+    public void test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "Julkaistu", "tusohj");
+        doit.triangleClickFirstTriangle(driver);
+    	doit.menuOperaatioFirstMenu(driver, "Näytä hakukohteet");
+    	try {
+			Assert.assertNotNull("Running NAYTA HAKUKOHTEET ei toimi."
+					, doit.textElement(driver, "Olet tarkastelemassa hakukohteita, jotka liittyv"));
+		} catch (Exception e) {
+			Assert.assertNotNull("Running NAYTA HAKUKOHTEET ei toimi."
+					, doit.textElement(driver, "Koulutukseen ei ole liitetty hakukohteita"));
+		}
+    	doit.echo("Running test_T_INT_TAR_SAVU028_DialogAMPNaytaHakukohteet OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.tarkasteleKoulutusta(driver, "tusohje", "Luonnos");
+		doit.textClick(driver, "rinnakkainen toteutus");
+		Assert.assertNotNull("Running Lisaa rinnakkainen toteutus ei toimi."
+				, doit.textElement(driver, "Valitse pohjakoulutus"));
+    	doit.echo("Running test_T_INT_TAR_SAVU029_DialogRinnakkainenAMPkoulutus OK");
+		doit.tauko(1);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.triangleClickFirstTriangle(driver);
+    	doit.checkboxSelectFirst(driver);
+        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
+        doit.textClick(driver, "Luo uusi hakukohde");
+        Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
+        		, doit.textElement(driver, a_text));
+    	doit.tauko(1);
+
+    	doit.textClick(driver, "Jatka");
+        Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
+        		, doit.textElement(driver, "tietoja hakemisesta"));
+        Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
+        		, doit.textElement(driver, "Tallenna luonnoksena"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
+        doit.echo("Running test_T_INT_TAR_SAVU104_HAKO_LuoAMPHakukohde OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+        // HAKUKOHTEEN TARKASTELU
+    	doit.tarkasteleJokuHakukohde(driver);
+        Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
+        		, doit.textElement(driver, "Koulutukset"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU105_HAKO_TarkasteleAMPHakukohdetta OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.textClick(driver, "muokkaa");
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS ei toimi."
+    			, doit.textElement(driver, "voidaan kuvata muuta hakemiseen olennaisesti"));
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS ei toimi."
+    			, doit.textElement(driver, "Tallenna valmiina"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU106_HAKO_MuokkaaAMPHakukohdetta OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	// HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[3]")).click(); // click Muokkaa(3)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
+    			, doit.textElement(driver, "Toimitusosoite"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[3]")).click(); // click Muokkaa(3)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
+    			, doit.textElement(driver, "Toimitusosoite"));
+    	doit.tauko(1);
+    	// LISAA UUSI LIITE
+    	doit.textClick(driver, "uusi liite");
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
+    			, doit.textElement(driver, "Voidaan toimittaa my"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	// HAKUKOHTEEN MUOKKAUS (valintakokeet)
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) ei toimi."
+    			, doit.textElement(driver, "uusi valintakoe"));
+		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) ei toimi."
+				, doit.textElement(driver, "Valintakokeen kuvaus"));
+		doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU108_HAKO_MuokkausHakuAMPkohdeValintakokeet OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
+    			, doit.textElement(driver, "uusi valintakoe"));
+    	// UUSI VALINTAKOE    	
+		doit.textClick(driver, "uusi valintakoe");
+		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
+				, doit.textElement(driver, "Ajankohta"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU112_HAKO_MuokkausHakuAMPkohdeUusiValintakoe OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "Luonnos", "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.notPresentText(driver, "window_close"
+    			, "Running HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
+    	doit.textClick(driver, "Poista");
+		try {
+			Assert.assertNotNull("Running HAKUKOHTEEN POISTO ei toimi."
+					, doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
+		} catch (Exception e) {
+			Assert.assertNotNull("Running HAKUKOHTEEN POISTO ei toimi."
+					, doit.textElement(driver, "Hakukohdetta ei voi poistaa koska haku on jo"));
+		}
+    	doit.echo("Running test_T_INT_TAR_SAVU109_HAKO_DialogHakukohteenAMPPoisto OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU110_HAKO_DialogKoulutuksenPoistoAMPHakukohteesta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMPHakukohteesta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "tusohj");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.textClick(driver, "Poista hakukohteesta");
+		Assert.assertNotNull("Running Koulutuksen poisto hakukohteesta ei toimi."
+				, doit.textElement(driver, "Haluatko poistaa koulutuksen hakukohteelta"));
+    	doit.echo("Running test_T_INT_TAR_SAVU110_HAKO_KoulutuksenPoistoAMPHakukohteesta OK");
+    	doit.tauko(1);
+    }
+
+
+    @Test
+    public void test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeHakukohteita(driver, "Julkaistu", "tusohj");
+//    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.triangleClickLastTriangle(driver);
+    	doit.notPresentText(driver, "window_close"
+    			, "Running HAKUKOHTEEN PERUUTUS Close nakyy jo. Ei toimi.");
+    	doit.menuOperaatio(driver, "Peruuta hakukohde", "julkaistu");
+//    	doit.textClick(driver, "Peruuta");
+		Assert.assertNotNull("Running HAKUKOHTEEN PERUUTUS ei toimi."
+				, doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
+    	doit.echo("Running test_T_INT_TAR_SAVU101_HAKO_DialogHakukohteenAMPPeruutus OK");
+    	doit.tauko(1);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    @Test
+    public void test_T_INT_TAR_SAVU134_HAKO_LuoLukioHakukohde() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU134_HAKO_LuoLukioHakukohde ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "ylioppilastut");
+    	doit.triangleClickFirstTriangle(driver);
+    	doit.checkboxSelectFirst(driver);
+        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
+        doit.textClick(driver, "Luo uusi hakukohde");
+        Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
+        		, doit.textElement(driver, "tietoja hakemisesta"));
+        Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi."
+        		, doit.textElement(driver, "Tallenna luonnoksena"));
+    	doit.footerTest(driver, "Running Lukio Muokkaa footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU134_HAKO_LuoLukioHakukohde OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU135_HAKO_TarkasteleLukioHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU135_HAKO_TarkasteleLukioHakukohdetta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+        // HAKUKOHTEEN TARKASTELU
+    	doit.tarkasteleJokuHakukohde(driver);
+        Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
+        		, doit.textElement(driver, "Koulutukset"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN TARKASTELU footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU135_HAKO_TarkasteleLukioHakukohdetta OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU136_HAKO_MuokkaaLukioHakukohdetta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU136_HAKO_MuokkaaLukioHakukohdetta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.textClick(driver, "muokkaa");
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS ei toimi."
+    			, doit.textElement(driver, "voidaan kuvata muuta hakemiseen olennaisesti"));
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS ei toimi."
+    			, doit.textElement(driver, "Tallenna valmiina"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU136_HAKO_MuokkaaLukioHakukohdetta OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU137_HAKO_MuokkaaHakuLukiokohteenLiitteidenTiedot() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU137_HAKO_MuokkaaHakuLukiokohteenLiitteidenTiedot ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	// HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot)
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[3]")).click(); // click Muokkaa(3)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) ei toimi."
+    			, doit.textElement(driver, "Toimitusosoite"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Liitteiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU137_HAKO_MuokkaaHakuLukiokohteenLiitteidenTiedot OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU141_HAKO_MuokkaaHakuLukiokohdeLisaaUusiLiite() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU141_HAKO_MuokkaaHakuLukiokohdeLisaaUusiLiite ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[3]")).click(); // click Muokkaa(3)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
+    			, doit.textElement(driver, "Toimitusosoite"));
+    	// LISAA UUSI LIITE
+    	doit.textClick(driver, "uusi liite");
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) ei toimi."
+    			, doit.textElement(driver, "Voidaan toimittaa my"));
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Lisaa uusi liite) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU141_HAKO_MuokkaaHakuLukiokohdeLisaaUusiLiite OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU138_HAKO_MuokkausHakuLukiokohdeValintakokeet() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU138_HAKO_MuokkausHakuLukiokohdeValintakokeet ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	// HAKUKOHTEEN MUOKKAUS (valintakokeet)
+    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) ei toimi."
+    			, doit.textElement(driver, "sykoe"));
+		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) ei toimi."
+				, doit.textElement(driver, "sanallinen kuvaus"));    	
+//    	Boolean paasykoe = false;
+//    	if (doit.isPresentText(driver, "sykoe")) { paasykoe = true; }
+//    	if (paasykoe)
+//    	{
+//    		String paasykoeCheckBoxId = doit.getGwtIdBeforeText(driver, "sykoe</label>");
+//    		WebElement paasykoeCheckBox = driver.findElement(By.id(paasykoeCheckBoxId));
+//    		if (paasykoeCheckBox.getAttribute("checked") == null || ! paasykoeCheckBox.getAttribute("checked").equals("true"))
+//    		{
+//    			paasykoeCheckBox.click();
+//    		}
+//    		Assert.assertNotNull("Running TarjontaHakukohteetSavu008 HAKUKOHTEEN MUOKKAUS (valintakokeet) ei toimi."
+//    				, doit.textElement(driver, "Ajankohta"));
+//    	}
+
+    	doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (Valintakokeiden tiedot) footer ei toimi.", true);
+    	doit.echo("Running test_T_INT_TAR_SAVU138_HAKO_MuokkausHakuLukiokohdeValintakokeet OK");
+    	doit.tauko(1);
+    }
+
+//    @Test
+//    public void test_T_INT_TAR_SAVU142_HAKO_MuokkausHakuLukiokohdeUusiValintakoe() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU142_HAKO_MuokkausHakuLukiokohdeUusiValintakoe ...");
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.haeKoulutuksia(driver, null, "Lukion");
+//    	doit.tarkasteleJokuHakukohde(driver);
+//    	driver.findElement(By.xpath("(//*[text()='muokkaa'])[2]")).click(); // click Muokkaa(2)
+//    	Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
+//    			, doit.textElement(driver, "uusi valintakoe"));
+//    	// UUSI VALINTAKOE    	
+//		doit.textClick(driver, "uusi valintakoe");
+//		Assert.assertNotNull("Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) ei toimi."
+//				, doit.textElement(driver, "Ajankohta"));
+//		doit.footerTest(driver, "Running HAKUKOHTEEN MUOKKAUS (uusi valintakoe) footer ei toimi.", true);
+//    	doit.echo("Running test_T_INT_TAR_SAVU142_HAKO_MuokkausHakuLukiokohdeUusiValintakoe OK");
+//    	doit.tauko(1);
+//    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU139_HAKO_DialogHakukohteenLukioPoisto() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU139_HAKO_DialogHakukohteenLukioPoisto ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, "Julkaistu", "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.notPresentText(driver, "window_close"
+    			, "Running HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
+    	doit.textClick(driver, "Poista");
+    	try {
+    		Assert.assertNotNull("Running HAKUKOHTEEN POISTO ei toimi."
+    				, doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
+    	} catch (Exception e) {
+    		Assert.assertNotNull("Running HAKUKOHTEEN POISTO ei toimi."
+    				, doit.textElement(driver, "Hakukohdetta ei voi poistaa koska haku on jo"));
+    	}
+    	doit.echo("Running test_T_INT_TAR_SAVU139_HAKO_DialogHakukohteenLukioPoisto OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU140_HAKO_DialogKoulutuksenPoistoLukioHakukohteesta() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU140_HAKO_DialogKoulutuksenPoistoLukioHakukohteesta ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeKoulutuksia(driver, null, "Lukion");
+    	doit.tarkasteleJokuHakukohde(driver);
+    	doit.textClick(driver, "Poista hakukohteesta");
+		Assert.assertNotNull("Running Koulutuksen poisto hakukohteesta ei toimi."
+				, doit.textElement(driver, "Haluatko poistaa koulutuksen hakukohteelta"));
+    	doit.echo("Running test_T_INT_TAR_SAVU140_HAKO_DialogKoulutuksenPoistoLukioHakukohteesta OK");
+    	doit.tauko(1);
+    }
+
+    @Test
+    public void test_T_INT_TAR_SAVU131_HAKO_DialogHakukohteenLukioPeruutus() throws Exception {
+    	doit.echo("Running test_T_INT_TAR_SAVU131_HAKO_DialogHakukohteenLukioPeruutus ...");
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.haeHakukohteita(driver, "Julkaistu", "Lukion");
+    	doit.triangleClickLastTriangle(driver);
+		Assert.assertNotNull("Running HAKUKOHTEEN PERUUTUS ei toimi."
+				, doit.textElement(driver, "julkaistu"));
+    	doit.notPresentText(driver, "window_close"
+    			, "Running HAKUKOHTEEN PERUUTUS Close nakyy jo. Ei toimi.");
+    	doit.menuOperaatio(driver, "Peruuta hakukohde", "julkaistu");
+		Assert.assertNotNull("Running HAKUKOHTEEN PERUUTUS ei toimi."
+				, doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
+		doit.echo("Running test_T_INT_TAR_SAVU131_HAKO_DialogHakukohteenLukioPeruutus OK");
+    	doit.tauko(1);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+
+//    @Test
+//    public void test_T_INT_TAR_SAVU201_HAKU_Etusivu() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU201_HAKU_Etusivu ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU201_HAKU_Etusivu OK");
+//    }
+//
+//    @Test
+//    public void test_T_INT_TAR_SAVU202_HAKU_Tarkastele() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU202_HAKU_Tarkastele ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU202_HAKU_Tarkastele OK");
+//    }
+//
+//    @Test
+//    public void test_T_INT_TAR_SAVU203_HAKU_Muokkaa() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU203_HAKU_Muokkaa ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU203_HAKU_Muokkaa OK");
+//    }
+//
+//    @Test
+//    public void test_T_INT_TAR_SAVU204_HAKU_Poista() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU204_HAKU_Poista ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU204_HAKU_Poista OK");
+//    }
+//
+//    @Test
+//    public void test_T_INT_TAR_SAVU301_VAPK_Etusivu() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU301_VAPK_Etusivu ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU301_VAPK_Etusivu OK");
+//    }
+//
+//    @Test
+//    public void test_T_INT_TAR_SAVU401_SORA_Etusivu() throws Exception {
+//    	doit.echo("Running test_T_INT_TAR_SAVU401_SORA_Etusivu ...");
+//    	int a = 1 / 0;
+//    	doit.tarjonnanEtusivu(driver, baseUrl);
+//    	doit.echo("Running test_T_INT_TAR_SAVU401_SORA_Etusivu OK");
+//    }
+
+    ////////////////////////////////////////////////////////////////////////
+	
 	@Test
     public void testHaku() throws Exception {
-		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testHakuLoop();
@@ -1009,11 +858,8 @@ public class TestTarjontaSavu {
 	public void testHakuLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-        if (first)
-        {
-        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-        	doit.tauko(1);
-        }
+        driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        doit.tauko(1);
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
@@ -1024,7 +870,6 @@ public class TestTarjontaSavu {
 		t01 = doit.millisDiff(t01);
 		doit.footerTest(driver, "Running TarjontaHakuSavu001 Etusivu footer ei toimi.", true);
 		doit.echo("Running TarjontaHakuSavu001 Etusivu OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		
 		// LUO UUSI HAKU
@@ -1035,7 +880,6 @@ public class TestTarjontaSavu {
 		t01 = doit.millisDiff(t01);
 		doit.footerTest(driver, "Running TarjontaHakuSavu002 Luo uusi haku footer ei toimi.", true);
 		doit.echo("Running TarjontaHakuSavu002 Luo uusi haku OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		driver.findElement(By.className("v-button-back")).click();
 		Assert.assertNotNull("Running TarjontaHakuSavu002 Luo uusi haku ei toimi."
@@ -1067,7 +911,6 @@ public class TestTarjontaSavu {
                 , doit.textElement(driver, "Haluatko varmasti poistaa seuraavan haun?"));
 		t01 = doit.millisDiff(t01);
 		doit.echo("Running TarjontaHakuSavu003 Poista haku OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		doit.textClick(driver, "Peruuta");
 		Assert.assertNotNull("Running TarjontaHakuSavu003 Poista haku ei toimi."
@@ -1084,13 +927,11 @@ public class TestTarjontaSavu {
 		t01 = doit.millisDiff(t01);
 		doit.echo("Running TarjontaHakuSavu004 Tarkastele hakua OK");
 		doit.echo("Running TarjontaHakuSavu END OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 	}		
 
 	@Test
     public void testValinnat() throws Exception {
-		first = true;
 		SVTUtils doit = new SVTUtils();
     	try {
     		testValinnatLoop();
@@ -1108,11 +949,8 @@ public class TestTarjontaSavu {
 	public void testValinnatLoop() throws Exception {
 		SVTUtils doit = new SVTUtils();
         doit.messagesPropertiesInit();
-        if (first)
-        {
-        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-        	doit.tauko(1);
-        }
+        driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        doit.tauko(1);
 		doit.reppuLogin(driver);
 		doit.tauko(1);
 		doit.echo("Running -------------------------------------------------------");
@@ -1123,7 +961,6 @@ public class TestTarjontaSavu {
 		t01 = doit.millisDiff(t01);
 		doit.footerTest(driver, "Running TarjontaValintaSavu001 Etusivu footer ei toimi.", true);
 		doit.echo("Running TarjontaValintaSavu001 Etusivu OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		
 		// SORA-VAATIMUKSET
@@ -1134,17 +971,8 @@ public class TestTarjontaSavu {
 		doit.footerTest(driver, "Running TarjontaValintaSavu002 Sora-vaatimukset footer ei toimi.", true);
 		doit.echo("Running TarjontaValintaSavu002 Sora-vaatimukset OK");
 		doit.echo("Running TarjontaValintaSavu END OK");
-        doit.messagesPropertiesCoverage(driver, TarjontaSavuTekstit);
 		doit.tauko(1);
 		
-		// END
-        TarjontaSavuTekstit.alustaKattavuusKohde("TarjontaSavuTekstit");
-        doit.messagesPropertiesSave(TarjontaSavuTekstit);
-        if (selain != null && selain.length() > 0)
-        {
-        	TarjontaSavuSelaimet.setKattavuus(selain, Kattavuus.KATTAVUUSOK);
-        	TarjontaSavuSelaimet.KattavuusRaportti();
-        }
 	}
 	
     @After

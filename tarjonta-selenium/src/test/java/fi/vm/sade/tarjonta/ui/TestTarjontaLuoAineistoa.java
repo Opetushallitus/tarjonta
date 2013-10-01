@@ -39,7 +39,6 @@ public class TestTarjontaLuoAineistoa {
     //    Luo haku
     @Test
     public void test_T_INT_TAR_LUO001_LuoHaku() throws Exception {
-    	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_LUO001_LuoHaku ...");
         doit.ValikotHakujenYllapito(driver, baseUrl);
         doit.textClick(driver, "Luo uusi haku");
@@ -120,9 +119,8 @@ public class TestTarjontaLuoAineistoa {
     //  Luo koulutus (ammatillinen koulutus)
     @Test
     public void test_T_INT_TAR_LUO002_LuoKoulutusAMK() throws Exception {
-    	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK ...");
-    	doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.tarjonnanEtusivu(driver, baseUrl);
         
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
@@ -229,9 +227,8 @@ public class TestTarjontaLuoAineistoa {
     //    Luo hakukohde
     @Test
     public void test_T_INT_TAR_LUO003_LuoHakukohde() throws Exception {
-    	this.frontPage();
     	doit.echo("Running test_T_INT_TAR_LUO003_LuoHakukohde ...");
-        doit.ValikotHakukohteidenYllapito(driver, baseUrl);
+    	doit.tarjonnanEtusivu(driver, baseUrl);
         
         // HAE
         WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
@@ -368,21 +365,6 @@ public class TestTarjontaLuoAineistoa {
         }
         doit.tauko(1);
     	doit.echo("Running test_T_INT_TAR_LUO003_LuoHakukohde OK");
-    }
-
-    public void frontPage() throws Exception
-    {
-    	// LOGIN
-    	driver.get(baseUrl);
-    	doit.tauko(1);
-    	doit.reppuLogin(driver);
-    	doit.tauko(1);
-    	driver.get(baseUrl);
-    	doit.tauko(1);
-    	Assert.assertNotNull("Running TarjontaPunainenLanka000 Etusivu ei toimi."
-    			, doit.textElement(driver, "Tervetuloa Opintopolun virkailijan palveluihin!"));
-    	doit.tauko(1);
-    	first = false;
     }
 
     @After

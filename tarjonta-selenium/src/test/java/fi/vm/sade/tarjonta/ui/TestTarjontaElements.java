@@ -570,7 +570,7 @@ public class TestTarjontaElements {
         		+ poista
         		+ ".*<span class=\"v-button-caption\">Lisää rinnakkainen toteutus</span>"
         		+ ".*<div class=\"v-label v-label-h1 h1\" style=\"width: 1...px;\">"
-        		+ ".*<div class=\"v-captiontext\">suomi</div>"
+//        		+ ".*<div class=\"v-captiontext\">suomi</div>" // ei nay yksikielisella
         		+ ".*<div class=\"v-label v-label-h2 h2 v-label-undef-w\">Koulutuksen perustiedot</div>"
         		+ ".*<div class=\"v-label\" style=\"width: 2..px;\">( Tallennettu"
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
@@ -645,7 +645,7 @@ public class TestTarjontaElements {
         		+ ".*<span class=\"v-button-caption\">muokkaa</span>"
         		+ ".*" + textAlignRight + ".*>Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
-        		+ ".*" + textAlignRight + ".*>Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*" + textAlignRight + ".*>Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">"
@@ -711,7 +711,7 @@ public class TestTarjontaElements {
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
                     , doit.textElement(driver, "Tutkinnon koulutukselliset ja ammatilliset tavoitteet"));
             Assert.assertNotNull("Running TarjontaElements006 MuokkaaAmmatillinenKoulutuksenPerustiedot ei toimi."
-                    , doit.textElement(driver, "Koulutuksen koulutukselliset ja ammatilliset tavoitteet"));
+                    , doit.textElement(driver, "Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet"));
         }
         
         String elements = "<div class=\"v-label v-label-light light v-label-undef-w\">Olet "
@@ -764,7 +764,7 @@ public class TestTarjontaElements {
         		+ ".*<div class=\"v-label\" style=\"width: ...px;\">120 ov</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Tutkinnon koulutukselliset ja ammatilliset tavoitteet</div>"
-        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen koulutukselliset ja ammatilliset tavoitteet</div>"
+        		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelman koulutukselliset ja ammatilliset tavoitteet</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutuksen rakenne</div>"
         		+ ".*" + htmlAbsoluteLeft
         		+ ".*<div class=\"v-label v-label-undef-w\">Jatko-opintomahdollisuudet</div>"
@@ -843,7 +843,7 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-filterselect-input\" style=\"width: 1..px;\""
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*<div class=\"v-caption\" style=\"width: 18px;\"><img alt=\"\" class=\"v-icon\" style=\"\" src=\"/tarjonta-app/VAADIN/themes/tarjonta/../../themes/oph/img/icon-add-black.png\""
-        		+ ".*<div class=\"v-captiontext\">suomi</div>"
+//        		+ ".*<div class=\"v-captiontext\">suomi</div>" // ei nay yksikielisella
         		+ ".*<div class=\"v-label v-label-h2 h2\" style=\"width: " 
         		+ ".*px;\">Koulutuksen kuvailevat tiedot</div>"
         		+ ".*<div class=\"v-label v-label-light light\" style=\"width: " 

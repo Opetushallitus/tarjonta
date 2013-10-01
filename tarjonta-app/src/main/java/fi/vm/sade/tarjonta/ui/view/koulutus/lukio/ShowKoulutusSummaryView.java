@@ -22,7 +22,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.*;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusHakukohdeRow;
@@ -521,7 +521,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
                 KoulutusTulos koulutus = new KoulutusTulos();
-                KoulutusListausTyyppi listausTyyppi = new KoulutusListausTyyppi();
+                KoulutusPerustieto listausTyyppi = new KoulutusPerustieto();
                 listausTyyppi.setKoulutusmoduuliToteutus(getEditViewOid());
                 koulutus.setKoulutus(listausTyyppi);
                 boolean removeSuccess = _presenter.removeKoulutus(koulutus);

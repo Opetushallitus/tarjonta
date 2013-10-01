@@ -42,8 +42,6 @@ import org.openqa.selenium.TakesScreenshot;
 public class SVTUtils {
     protected final Logger log = LoggerFactory.getLogger("TEST");
     protected static final Logger log2 = LoggerFactory.getLogger("TEST");
-    private static Kattavuus TarjontaSavuTekstit = new Kattavuus();
-    private static Kattavuus TarjontaSavuSelaimet = new Kattavuus();
 
     static {
 		try {
@@ -100,7 +98,6 @@ public class SVTUtils {
         echo2("Running tarjonta-selenium.oph-url=" + prop.getProperty("tarjonta-selenium.oph-url"));
         echo2("Running tarjonta-selenium.oph-login-url=" + prop.getProperty("tarjonta-selenium.oph-login-url"));
         echo2("Running tarjonta-selenium.tarjonta-url=" + prop.getProperty("tarjonta-selenium.tarjonta-url"));
-        echo2("Running tarjonta-selenium.tomcat-logfile=" + prop.getProperty("tarjonta-selenium.tomcat-logfile"));
         echo2("Running tarjonta-selenium.qa=" + prop.getProperty("tarjonta-selenium.qa"));
         echo2("Running tarjonta-selenium.reppu=" + prop.getProperty("tarjonta-selenium.reppu"));
         echo2("Running tarjonta-selenium.luokka=" + prop.getProperty("tarjonta-selenium.luokka"));
@@ -448,17 +445,8 @@ public class SVTUtils {
 
 	public void textClick(WebDriver driver, String text)
 	{
-        Object[] eles = driver.findElements(By.xpath("//*[contains(text(), '" + text  + "')]")).toArray();
-        WebElement el;
-        for (Object ele : eles)
-        {
-                el = (WebElement)ele;
-                if (! el.isDisplayed() || ! el.isEnabled()) { continue; }
-                el.click();
-                return;
-        }
-        echo("ERROR textClick does not hit. text=" + text);
-        int a = 1 / 0; // never here
+		WebElement el = this.textElement(driver, text);
+		el.click();
 	}
 	
 	public void doubleclick(WebDriver driver, String text)
@@ -1379,7 +1367,8 @@ public class SVTUtils {
     		menu2.click();
     		tauko(1);
     		WebElement menu3 = getMenuNearestText(driver, kohde);
-    		menu3.click();
+//    		menu3.click();
+    		menuWakeTarget(driver, htmlOperaatio, kohde);
     		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     		if (! this.isPresentText(driver, htmlOperaatio)) 
     		{
@@ -1413,7 +1402,8 @@ public class SVTUtils {
     		menu2.click();
     		tauko(1);
     		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
-    		menu3.click();
+//    		menu3.click();
+    		menuWakeTarget(driver, htmlOperaatio, "Valitse kaikki");
     		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
     		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
     		tauko(1);
@@ -1421,52 +1411,53 @@ public class SVTUtils {
     	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
     }
 
-    public void menuOperaatioMenu(WebDriver driver, WebElement menu, String operaatio)
-    {
-    	menu.click();
-    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    	tauko(1);
-    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
-    	if (! this.isPresentText(driver, htmlOperaatio))
-    	{
-    		// avataan menu uudestaan
-    		WebElement menu2 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
-    		menu2.click();
-    		tauko(1);
-    		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
-    		menu3.click();
-    		tauko(1);
-    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
-    		tauko(1);
-    	}
-    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
-    }
+//    public void menuOperaatioMenu(WebDriver driver, WebElement menu, String operaatio)
+//    {
+//    	menu.click();
+//    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+//    	tauko(1);
+//    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+//    	if (! this.isPresentText(driver, htmlOperaatio))
+//    	{
+//    		// avataan menu uudestaan
+//    		WebElement menu2 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+//    		menu2.click();
+//    		tauko(1);
+//    		WebElement menu3 = this.findNearestElement("Valitse kaikki", "//img[@class='v-icon']", driver);
+////    		menu3.click();
+//    		menuWakeTarget(driver, htmlOperaatio, "Valitse kaikki");
+//    		tauko(1);
+//    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+//    		Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+//    		tauko(1);
+//    	}
+//    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+//    }
 
-    public void menuOperaatioMenuLuonnos(WebDriver driver, WebElement menu, String operaatio)
-    {
-    	if (! this.isPresentText(driver, "Tarkastele")) { menu.click(); }
-    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    	tauko(1);
-    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
-    	int count = 0;
-    	while (! this.isPresentText(driver, htmlOperaatio))
-    	{
-    		// avataan menu uudestaan
-    		WebElement menu2 = this.getMenuNearestText(driver, "luonnos"); 
-    		menu2.click();
-    		tauko(1);
-    		menuWakeLuonnos(driver, htmlOperaatio);
-    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
-    		count++;
-    		if (count > 30)
-    		{
-    			Assert.assertTrue("Operaatio " + operaatio + "ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
-    			tauko(1);
-    		}
-    	}
-    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
-    }
+//    public void menuOperaatioMenuLuonnos(WebDriver driver, WebElement menu, String operaatio)
+//    {
+//    	if (! this.isPresentText(driver, "Tarkastele")) { menu.click(); }
+//    	Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+//    	tauko(1);
+//    	String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+//    	int count = 0;
+//    	while (! this.isPresentText(driver, htmlOperaatio))
+//    	{
+//    		// avataan menu uudestaan
+//    		WebElement menu2 = this.getMenuNearestText(driver, "luonnos"); 
+//    		menu2.click();
+//    		tauko(1);
+//    		menuWakeLuonnos(driver, htmlOperaatio);
+//    		Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+//    		count++;
+//    		if (count > 30)
+//    		{
+//    			Assert.assertTrue("Operaatio " + operaatio + "ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+//    			tauko(1);
+//    		}
+//    	}
+//    	driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+//    }
     
     public void menuWakeLuonnos(WebDriver driver, String htmlOperaatio)
     {
@@ -1484,6 +1475,27 @@ public class SVTUtils {
 			if (counter > 30) 
 			{ 
 				this.echo("ERROR: Menun aukaisu ei onnistu. (luonnos)");
+				return; 
+			}
+		}
+    }
+    
+    public void menuWakeTarget(WebDriver driver, String htmlOperaatio, String target)
+    {
+    	int counter = 0;
+		while (! this.isPresentText(driver, htmlOperaatio))
+		{
+			WebElement menu3 = this.getMenuNearestText(driver, target); 
+			//    		menu3.click();
+			tauko(1);
+			menuOpen(driver, menu3);
+			tauko(1);
+			WebElement menu4 = this.getMenuNearestText(driver, target); 
+			menu4.click();
+			counter++;
+			if (counter > 30) 
+			{ 
+				this.echo("ERROR: Menun aukaisu ei onnistu. (" + target + ")");
 				return; 
 			}
 		}
@@ -1728,6 +1740,27 @@ public class SVTUtils {
         this.tauko(1);
         return true;
 	}
+	
+	public void checkboxSelectFirst(WebDriver driver)
+	{
+		String gwtId = this.getGwtIdForFirstHakukohde(driver);
+		WebElement checkBoxId = driver.findElement(By.id(gwtId));
+		checkBoxId.click();
+		this.tauko(1);
+		Assert.assertNotNull("Running Valintaruudun valinta ei toimi."
+                , checkBoxId.isSelected());
+		this.tauko(1);
+	}
+
+	public void triangleClickLastTriangle(WebDriver driver)
+	{
+		this.getTriangleForLastHakukohde(driver).click();
+	}
+
+	public void triangleClickFirstTriangle(WebDriver driver)
+	{
+		clickFirstTriangle(driver);
+	}
 
 	public void clickFirstTriangle(WebDriver driver)
 	{
@@ -1739,7 +1772,7 @@ public class SVTUtils {
 		Assert.assertNotNull("Running koulutushaku link ei toimi.", link);
 		tauko(1);
 	}
-	public WebElement TarkasteleKoulutusLuonnosta(WebDriver driver, String haku) throws Exception {
+	public WebElement linkKoulutusLuonnosta(WebDriver driver, String haku) throws Exception {
     	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
     	search.clear();
     	this.tauko(1);
@@ -1811,7 +1844,7 @@ public class SVTUtils {
     	return link;
     }
 
-	public void ValikotHakukohteidenYllapito(WebDriver driver, String baseUrl)
+	public void ValikotKoulutustenJaHakukohteidenYllapito(WebDriver driver, String baseUrl)
 	{
 		this.textClick(driver, "Suunnittelu ja tarjonta");
 		this.tauko(1);
@@ -1828,8 +1861,9 @@ public class SVTUtils {
 		this.tauko(1);
 	}
 
-	public void ValikotHakujenYllapito(WebDriver driver, String baseUrl)
+	public void ValikotHakujenYllapito(WebDriver driver, String baseUrl) throws Exception
 	{
+		this.virkailijanPalvelut(driver, baseUrl);
 		this.textClick(driver, "Haut");
 		this.tauko(1);
 		this.textClick(driver, "Haun");
@@ -1887,11 +1921,123 @@ public class SVTUtils {
     	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
     	comment = comment.replace(" ", "_").replace("-", "_").replace(":", "_");
     	String fileName = System.getProperty("user.home") + "/screenshot_" + comment + "_" + millis + ".png";
+    	String ArtifactFileName = "target/screenshot_" + comment + "_" + millis + ".png";
     	try {
 			FileUtils.copyFile(scrFile, new File(fileName));
+			FileUtils.copyFile(scrFile, new File(ArtifactFileName));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
 
+    public void tarjonnanEtusivu(WebDriver driver, String baseUrl) throws Exception
+    {
+    	virkailijanPalvelut(driver, baseUrl);
+    	ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
+    }
+
+    public static Boolean firstLogin = true;
+    public void virkailijanPalvelut(WebDriver driver, String baseUrl) throws Exception
+    {
+        if (firstLogin)
+        {
+        	this.echo("Running -------------------------------------------------------");
+        	this.palvelimenVersio(driver, baseUrl);
+        	driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
+        	this.tauko(1);
+        }
+        firstLogin = false;
+    	// LOGIN
+    	driver.get(baseUrl);
+    	this.tauko(1);
+    	this.reppuLogin(driver);
+    	this.tauko(1);
+    	driver.get(baseUrl);
+    	this.tauko(1);
+    	Assert.assertNotNull("Running Virkailijan palvelut ei toimi."
+    			, this.textElement(driver, "Tervetuloa Opintopolun virkailijan palveluihin!"));
+    	this.tauko(1);
+    }
+
+	public void haePalvelunTarjoaja(WebDriver driver, String haku, String vastaus)
+	{
+        WebElement haeKentta = driver.findElement(By.className("v-textfield-search-box"));
+        haeKentta.clear();
+        haeKentta.sendKeys(haku);
+        this.tauko(1);
+        driver.findElement(By.xpath("//*[text()='Hae']")).click();
+        this.tauko(1);
+        Assert.assertNotNull("Running Hae " + vastaus + " ei toimi.", textElement(driver, vastaus));
+	}
+
+    public void haeKoulutuksia(WebDriver driver, String tila, String teksti)
+    {
+    	if (tila != null && tila.length() > 0) { filterTila(driver, tila); }
+    	if (teksti != null && teksti.length() > 0) { filterVapaaTeksti(driver, teksti); }
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae koulutuksia ei toimi."
+                , this.textElement(driver, "Koulutukset ("));
+    	tauko(1);
+    }
+
+    public void haeHakukohteita(WebDriver driver, String tila, String teksti)
+    {
+    	this.textClick(driver, "Hakukohteet");
+    	if (tila != null && tila.length() > 0) { filterTila(driver, tila); }
+    	if (teksti != null && teksti.length() > 0) { filterVapaaTeksti(driver, teksti); }
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae hakukohteita ei toimi."
+                , this.textElement(driver, "Hakukohteet ("));
+    	tauko(1);
+    }
+    
+    public void tarkasteleKoulutusta(WebDriver driver, String vapaaTeksti, String tila)
+    {
+        haeKoulutuksia(driver, tila, vapaaTeksti);
+        this.clickFirstTriangle(driver);
+        this.menuOperaatioFirstMenu(driver, "Tarkastele");
+    }
+    
+    public void operoiKoulutusta1(WebDriver driver, String vapaaTeksti, String tila, String operaatio)
+    {
+        haeKoulutuksia(driver, tila, vapaaTeksti);
+        this.clickFirstTriangle(driver);
+        this.menuOperaatioFirstMenu(driver, operaatio);
+    }
+
+    public void filterTila(WebDriver driver, String tila)
+    {
+    	this.sendInput(driver, "Tila", tila);
+    	this.popupItemClick(driver, tila);
+    	tauko(1);
+    }
+    
+    public void filterVapaaTeksti(WebDriver driver, String teksti)
+    {
+    	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
+    	search.clear();
+    	search.sendKeys(teksti);
+    	tauko(1);
+    }
+
+	public void tarkasteleJokuHakukohde(WebDriver driver) throws Exception
+	{
+		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
+				, this.textElement(driver, "Hakukohteet ("));
+		this.tauko(1);
+		this.textClick(driver, "Hakukohteet (");
+		this.notPresentText(driver, "Hakukohteet (0)", "Running Ei hakukohteita.");
+		this.tauko(1);
+		WebElement lastTriangle = this.getTriangleForLastHakukohde(driver);
+		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi.", lastTriangle);
+		lastTriangle.click();
+		this.tauko(1);
+		driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]")).click();
+		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
+				, this.textElement(driver, "Tarkastele"));
+		this.tauko(1);
+		this.textClick(driver, "Tarkastele");
+		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
+				, this.textElement(driver, "Koulutukset"));
+	}
 }

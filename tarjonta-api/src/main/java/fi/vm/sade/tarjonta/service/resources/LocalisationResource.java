@@ -15,8 +15,8 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
-import java.util.List;
 import java.util.Map;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -49,21 +49,47 @@ public interface LocalisationResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Map<String, LocalisationRDTO> getLocalisations(@QueryParam("locale") String requestedLocale, @QueryParam("allLanguages") boolean includeAllLanguages);
 
+    /**
+     * Retrieves localisations by key.
+     *
+     * @param key
+     * @return
+     */
     @GET
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public LocalisationRDTO getLocalisation(@PathParam("key") String key);
+    public Map<String, LocalisationRDTO> getLocalisation(@PathParam("key") String key);
 
+    /**
+     * Update localisation.
+     *
+     * @param key
+     * @param data
+     */
     @PUT
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public void updateLocalization(@PathParam("key") String key, LocalisationRDTO data);
 
+    /**
+     * Create new localisation.
+     *
+     * @param key
+     * @param data
+     * @return
+     */
     @POST
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public LocalisationRDTO createLocalization(@PathParam("key") String key, LocalisationRDTO data);
 
+    /**
+     * Remove localisation by key.
+     *
+     * @param key
+     */
     @DELETE
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

@@ -24,30 +24,33 @@
  *
  * @author mlyly
  */
-var app = angular.module('localisation', []);
+var app = angular.module('localisation', ['ngResource', 'config']);
+
+app.factory('Localisations', function($log, $resource, Config) {
+
+    var uri = Config.env.tarjontaRestUrlPrefix + "localisation";
+    $log.info("Localisations() - uri = ", uri);
+
+    // return $resource('https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/localisation/:key', {
+    // return $resource('http://localhost:8084/tarjonta-service/rest/localisation/:key', {
+    return $resource(uri + "/:key", {
+        key: '@key'
+    }, {
+        update: {method: 'PUT'}
+    });
+
+});
+
 
 /**
  * "Localisation" factory, returns resource for operating on localisations.
  */
-
-//app.factory('Localisation', function($resource) {
-//    console.log("*** localisation FACTORY Localisation");
-//
-//    return $resource('localisation.json', {}, {
-//        query: {method: 'GET', headers: {
-//                'Content-Type': 'application/json',
-//                'Accept': 'application/json'
-//            }}
-//    });
-//
-//});
 
 app.filter('tt', ['LocalisationService', function(LocalisationService) {
         return function(text) {
             return LocalisationService.t(text);
         };
     }]);
-
 
 app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService, $timeout) {
         return {
@@ -68,9 +71,6 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
         }
     }]);
 
-
-
-
 /**
  * Singleton service for localisations.
  *
@@ -82,11 +82,16 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * LocalisationService.t("this.is.the.key2", ["array", "of", "values"])  == localized value
  * </pre>
  */
-app.service('LocalisationService', function($log) {
+app.service('LocalisationService', function($log, Localisations) {
     $log.debug("LocalisationService()");
 
     // Singleton state
     this.locale = "fi";
+
+    Localisations.get({}, function(data) {
+        console.log("*************** LocalisationService - query: Success! ", data);
+    });
+
 
     /**
      * Get translation, fill in possible parameters.
@@ -114,11 +119,27 @@ app.service('LocalisationService', function($log) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            // TODO Fake "creation", really call service to create the translation placeholder for real
-            APP_LOCALISATION_DATA[key] = {
+            var newEntry = {
                 "key": key,
+                "locale": this.locale,
                 "value": "[" + key + "]"
             };
+
+            // Try to save to the server?
+            Localisations.save(newEntry, function(data, status, headers, config) {
+                console.log("1FAILURE?", data);
+                console.log("2FAILURE?", status);
+                console.log("3FAILURE?", headers);
+                console.log("4FAILURE?", config);
+            }, function(data, status, headers, config) {
+                console.log("1success?", data);
+                console.log("2success?", status);
+                console.log("3success?", headers);
+                console.log("4success?", config);
+            });
+
+            // TODO Fake "creation", really call service to create the translation placeholder for real
+            APP_LOCALISATION_DATA[key] = newEntry;
 
             result = APP_LOCALISATION_DATA[key].value;
         }

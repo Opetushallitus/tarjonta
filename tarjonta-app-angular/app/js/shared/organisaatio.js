@@ -3,8 +3,8 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 //"organisaatioservice"
 .factory('OrganisaatioService', function ($resource, $log, $q, Config) {
 	
-	var orgHaku = $resource(Config.env.organisaatioRestUrlPrefix + "organisaatio/hae");
-	var orgLuku = $resource(Config.env.organisaatioRestUrlPrefix + "organisaatio/:oid");
+	var orgHaku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/hae");
+	var orgLuku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/:oid");
 	
 	function localize(organisaatio){
 		//TODO olettaa että käyttäjä suomenkielinen

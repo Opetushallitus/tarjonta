@@ -5,9 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
-
-
 public class KoulutuksetVastaus implements Serializable
 {
 
@@ -42,7 +39,7 @@ public class KoulutuksetVastaus implements Serializable
     {
 
         private final static long serialVersionUID = 100L;
-        protected KoulutusListausTyyppi koulutus;
+        protected KoulutusPerustieto koulutus;
 
         /**
          * Default no-arg constructor
@@ -56,7 +53,7 @@ public class KoulutuksetVastaus implements Serializable
          * Fully-initialising value constructor
          * 
          */
-        public KoulutusTulos(final KoulutusListausTyyppi koulutus) {
+        public KoulutusTulos(final KoulutusPerustieto koulutus) {
             this.koulutus = koulutus;
         }
 
@@ -68,7 +65,7 @@ public class KoulutuksetVastaus implements Serializable
          *     {@link KoulutusListausTyyppi }
          *     
          */
-        public KoulutusListausTyyppi getKoulutus() {
+        public KoulutusPerustieto getKoulutus() {
             return koulutus;
         }
 
@@ -80,7 +77,7 @@ public class KoulutuksetVastaus implements Serializable
          *     {@link KoulutusListausTyyppi }
          *     
          */
-        public void setKoulutus(KoulutusListausTyyppi value) {
+        public void setKoulutus(KoulutusPerustieto value) {
             this.koulutus = value;
         }
 

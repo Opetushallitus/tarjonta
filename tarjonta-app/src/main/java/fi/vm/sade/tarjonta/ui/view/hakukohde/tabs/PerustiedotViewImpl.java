@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -124,7 +125,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("hakuViewModel")
     private ComboBox hakuCombo;
     private Label hakuAikaLabel;
-    private ComboBox hakuAikaCombo;
+    private ComboBox hakuAikaCombo; //TODO refaktoroi tama kokonaan pois (nyt piilotettu)
+    private Label hakuAikaContentLabel;
     @Min(value = 1, message = "{validation.Hakukohde.aloituspaikat.num}")
     @Max(value = Integer.MAX_VALUE, message = "{validation.Hakukohde.aloituspaikat.max}")
     @NotNull(message = "{validation.Hakukohde.aloitusPaikat.notNull}")
@@ -250,6 +252,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             setCustomHakuaika(hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null), (model.getHakuaikaAlkuPvm() != null) && (model.getHakuaikaLoppuPvm() != null));
             hakuAikaCombo.setEnabled(model.getHakuaika()!=null);
         }
+        hakuAikaCombo.setVisible(false);
     }
 
     /*
@@ -885,11 +888,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         if (hvm == null || hk == null || hk.getSisaisetHakuajat().isEmpty()) {
             hakuAikaCombo.setValue(null);
+            hakuAikaContentLabel.setValue("");
         } else if (hk.getSisaisetHakuajat().size() == 1) {
-            hakuAikaCombo.setValue(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
+            HakuaikaViewModel hakuaikaVM = (HakuaikaViewModel)(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
+            hakuAikaCombo.setValue(hakuaikaVM);
+            hakuAikaContentLabel.setValue(getHakuaikaString(hakuaikaVM.getAlkamisPvm(), hakuaikaVM.getPaattymisPvm()));
         } else {
             hakuAikaCombo.setValue(hvm);
+            hakuAikaContentLabel.setValue(getHakuaikaString(hvm.getAlkamisPvm(), hvm.getPaattymisPvm()));
         }
+    }
+    
+    private String getHakuaikaString(Date alkamisPvm, Date paattymisPvm) {
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        return df.format(alkamisPvm) + " - " + df.format(paattymisPvm) ;
     }
 
     private void setCustomHakuaika(boolean visible, boolean selected) {
@@ -975,7 +987,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakuAikaCombo.setRequired(true);
         hakuAikaCombo.setWidth("500px");
         
+        this.hakuAikaContentLabel = new Label();
+        
         layout.addComponent(hakuAikaCombo);
+        layout.addComponent(hakuAikaContentLabel);
+        
         
         customHakuaika = new CheckBox("Käytetään hakukohdekohtaista hakuaikaa"); // TODO i18n
         customHakuaika.setImmediate(true);

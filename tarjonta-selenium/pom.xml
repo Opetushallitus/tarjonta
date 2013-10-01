@@ -6,7 +6,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>6.2-SNAPSHOT</version>
+        <version>6.3-SNAPSHOT</version>
     </parent>
 
     <groupId>fi.vm.sade.tarjonta</groupId>

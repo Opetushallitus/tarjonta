@@ -14,86 +14,138 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import fi.vm.sade.tarjonta.dao.LocalisationDAO;
+import fi.vm.sade.tarjonta.model.Localisation;
 import fi.vm.sade.tarjonta.service.resources.LocalisationResource;
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * REST services for localisations.
  *
  * @author mlyly
  */
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class LocalisationResourceImpl implements LocalisationResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalisationResourceImpl.class);
 
+    @Autowired
+    private LocalisationDAO localisationDAO;
+
     @Override
     public Map<String, LocalisationRDTO> getLocalisations(String requestedLocale, boolean includeAllLanguages) {
         LOG.info("getLocalisations({}, {})", requestedLocale, includeAllLanguages);
-        Map<String, LocalisationRDTO> result = new HashMap<String, LocalisationRDTO>();
 
         if (requestedLocale == null) {
             requestedLocale = "fi";
         }
 
-        Map<String, String> allLangsMap = null;
+        List<Localisation> localisations;
+
         if (includeAllLanguages) {
-            allLangsMap = new HashMap<String, String>();
-            allLangsMap.put("fi", "Tää");
-            allLangsMap.put("en", "is");
-            allLangsMap.put("sv", "testen");
+            localisations = localisationDAO.findByKeyPrefix("");
+        } else {
+            localisations = localisationDAO.findByKeyPrefixAndLocale("", requestedLocale);
         }
 
-        {
-            LocalisationRDTO t = new LocalisationRDTO("this", requestedLocale, "Tämä tosiaankin");
-            t.setValues(allLangsMap);
-            result.put(t.getKey(), t);
-        }
-        {
-            LocalisationRDTO t = new LocalisationRDTO("is", requestedLocale, "ollakko (vai eikö olla)");
-            t.setValues(allLangsMap);
-            result.put(t.getKey(), t);
-        }
-        {
-            LocalisationRDTO t = new LocalisationRDTO("a", requestedLocale, "jonkinlainen");
-            t.setValues(allLangsMap);
-            result.put(t.getKey(), t);
-        }
-        {
-            LocalisationRDTO t = new LocalisationRDTO("test", requestedLocale, "testi tms. kokeilu");
-            t.setValues(allLangsMap);
-            result.put(t.getKey(), t);
-        }
-
+        Map<String, LocalisationRDTO> result = convertToResult(requestedLocale, includeAllLanguages, localisations);
         return result;
     }
 
     @Override
-    public LocalisationRDTO getLocalisation(String key) {
+    public Map<String, LocalisationRDTO> getLocalisation(String key) {
         LOG.info("getLocalisation({})", key);
-        return new LocalisationRDTO();
+
+        List<Localisation> localisations = localisationDAO.findByKeyPrefix(key);
+
+        Map<String, LocalisationRDTO> result = convertToResult(null, true, localisations);
+        return result;
     }
 
     @Override
     public void updateLocalization(String key, LocalisationRDTO data) {
-        LOG.info("updateLocalization({})", key);
+        LOG.info("updateLocalization({}) , delegate to createLocalization...", key);
+        this.createLocalization(key, data);
     }
 
     @Override
     public LocalisationRDTO createLocalization(String key, LocalisationRDTO data) {
-        LOG.info("createLocalization({})", key);
+        LOG.info("createLocalization({}, {})", key, data);
+
+        Localisation l = localisationDAO.findByKeyAndLocale(data.getKey(), data.getLocale());
+        if (l != null) {
+            LOG.info("  update exisiting.");
+            l.setValue(data.getValue());
+            localisationDAO.update(l);
+        } else {
+            LOG.info("  create new.");
+            l = new Localisation();
+            l.setKey(data.getKey());
+            l.setLanguage(data.getLocale());
+            l.setValue(data.getValue());
+            localisationDAO.insert(l);
+        }
+
         return data;
     }
 
     @Override
     public void deleteLocalization(String key) {
         LOG.info("deleteLocalization({})", key);
+
+        List<Localisation> localisations = localisationDAO.findByKey(key);
+        for (Localisation localisation : localisations) {
+            localisationDAO.remove(localisation);
+        }
+    }
+
+    /**
+     * Convert list to result set.
+     *
+     * @param requestedLocale
+     * @param includeAllLanguages
+     * @param localisations
+     * @return
+     */
+    private Map<String, LocalisationRDTO> convertToResult(String requestedLocale, boolean includeAllLanguages, List<Localisation> localisations) {
+        Map<String, LocalisationRDTO> result = new HashMap<String, LocalisationRDTO>();
+
+        if (requestedLocale == null) {
+            requestedLocale = "fi";
+        }
+
+        for (Localisation localisation : localisations) {
+            // Create OR use placeholder for translations
+            LocalisationRDTO l = result.get(localisation.getKey());
+            if (l == null) {
+                // Create placeholder
+                l = new LocalisationRDTO(localisation.getKey(), requestedLocale, null);
+                result.put(l.getKey(), l);
+            }
+
+            // If locale is selected one, then use this localisations value as "value".
+            if (requestedLocale.equalsIgnoreCase(localisation.getLanguage())) {
+                l.setValue(localisation.getValue());
+            }
+
+            // Add all translated languages?
+            if (includeAllLanguages) {
+                if (l.getValues() == null) {
+                    l.setValues(new HashMap<String, String>());
+                }
+                l.getValues().put(localisation.getLanguage(), localisation.getValue());
+            }
+        }
+
+        return result;
     }
 }

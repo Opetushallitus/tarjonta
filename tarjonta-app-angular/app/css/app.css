@@ -113,6 +113,37 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
+div#searchResults table {
+	width:100%;
+}
+
+div#searchResults table input[type=checkbox] {
+	margin-right:10px;
+	position:relative;
+	top:-0.25em;
+}
+
+div#searchResults table th {
+	font-weight:normal;
+	text-align:left;
+}
+
+div#searchResults table td {
+	min-width:130px;
+}
+
+div#searchResults table td a {
+	font-weight:bold;
+}
+
+div#searchResults table td input[type=checkbox] {
+	margin-left:40px;
+}
+
+div#searchResults table td img {
+	margin-right:10px;
+}
+
 /* Tarjonnan tarkastelunäkymät / yleiset */
 
 .label-right {
