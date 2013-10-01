@@ -34,7 +34,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST001() throws IOException {
+	public void test_T_INT_TAR_REST001_KoMo_Count_2() throws IOException {
 		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
@@ -47,7 +47,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST002() throws IOException {
+	public void test_T_INT_TAR_REST002_KoMo_Oid() throws IOException {
 		if (qa)
 		{
 			restTest(path + "002.qa.txt", http + "/komo/1.2.246.562.5.2013061010185764933625");
@@ -59,7 +59,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST003() throws IOException {
+	public void test_T_INT_TAR_REST003_KoMo_Oid_KoMoTo() throws IOException {
 		if (qa)
 		{
 			restTest(path + "003.qa.txt", http + "/komo/1.2.246.562.5.2013061010184768943288/komoto");
@@ -71,7 +71,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST004() throws IOException {
+	public void test_T_INT_TAR_REST004_KoMoTo_Count_2() throws IOException {
 		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
@@ -84,7 +84,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST005() throws IOException {
+	public void test_T_INT_TAR_REST005_KoMoTo_Oid() throws IOException {
 		if (qa)
 		{
 			restTest(path + "005.qa.txt", http + "/komoto/1.2.246.562.5.93352903079");
@@ -96,7 +96,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST006() throws IOException {
+	public void test_T_INT_TAR_REST006_KoMoTo_Oid_KoMo() throws IOException {
 		if (qa)
 		{
 			restTest(path + "006.qa.txt", http + "/komoto/1.2.246.562.5.93352903079/komo");
@@ -108,7 +108,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST007() throws IOException {
+	public void test_T_INT_TAR_REST007_Haku_Count_2() throws IOException {
 		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
@@ -121,7 +121,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST008() throws IOException {
+	public void test_T_INT_TAR_REST008_Haku_Oid() throws IOException {
 		if (qa)
 		{
 			restTest(path + "008.qa.txt", http + "/haku/1.2.246.562.5.2013080813081926341927");
@@ -133,7 +133,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST009() throws IOException {
+	public void test_T_INT_TAR_REST009_Haku_Oid_Hakukohde() throws IOException {
 		if (qa)
 		{
 			restTest(path + "009.qa.txt", http + "/haku/1.2.246.562.5.2013080813081926341927/hakukohde");
@@ -145,7 +145,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST010() throws IOException {
+	public void test_T_INT_TAR_REST010_Hakukohde_Count_2() throws IOException {
 		TestTUtils run = new TestTUtils();   
 		if (qa)
 		{
@@ -158,7 +158,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST011() throws IOException {
+	public void test_T_INT_TAR_REST011_Hakukohde_Oid() throws IOException {
 		if (qa)
 		{
 			restTest(path + "011.qa.txt", http + "/hakukohde/1.2.246.562.5.60684104718");
@@ -170,7 +170,7 @@ public class TestTarjontaRestApi {
 	}
 	
 	@Test
-	public void test_T_INT_TAR_REST012() throws IOException {
+	public void test_T_INT_TAR_REST012_Hakukohde_Oid_Haku() throws IOException {
 		if (qa)
 		{
 			restTest(path + "012.qa.txt", http + "/hakukohde/1.2.246.562.5.60684104718/haku");
