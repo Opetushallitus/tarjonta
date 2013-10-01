@@ -140,16 +140,22 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     function updateLocation() {
 
+        // Query parameters collected here
     	var sargs = {};
-    	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
-    		sargs.oid = $scope.selectedOrgOid;
-    	}
+
     	copyIfSet(sargs, "terms", $scope.spec.terms, "*");
     	copyIfSet(sargs, "state", $scope.spec.state);
     	copyIfSet(sargs, "year", $scope.spec.year);
     	copyIfSet(sargs, "season", $scope.spec.season);
-    	
-    	//$location.path("/etusivu/" + sargs.oid);
+
+        // Location should contain selected ORG oid if any
+    	if ($scope.selectedOrgOid!=null && $scope.selectedOrgOid!=OPH_ORG_OID) {
+        	$location.path("/etusivu/" + $scope.selectedOrgOid);
+    	} else {
+        	$location.path("/etusivu");
+        }
+
+        // Add query parameters
         $location.search(sargs);
     }
 
@@ -167,7 +173,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.year = "*";
         $scope.spec.season = "*";
     }
-    
+
     function resultsToTable(results, props, prefix) {
     	/*
 <tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
@@ -186,7 +192,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         		</tr>
         	</tbody>
     	 */
-    	
+
     	var html = "";
     	for (var ti in results.tulokset) {
     		var tarjoaja = results.tulokset[ti];
@@ -199,7 +205,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			+"<input type=\"checkbox\"/>"
     			+tarjoaja.nimi // TODO lokalisointi
     			+"</th></tr>";
-    		
+
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
     			html = html+"<tr class=\"tresult\">"
@@ -214,12 +220,12 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     				var prop = props[pi];
     				html = html + "<td>" + tulos[prop] + "</td>";
     			}
-    			
+
     			html = html
     				+"<td>" + tulos.tila + "</td>"
     				+"</tr>";
     		}
-    		
+
     		html = html+"</tbody>"
     	}
 

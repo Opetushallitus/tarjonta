@@ -1,0 +1,20 @@
+
+<div ng-controller="HelpersLocalisatonCtrl">
+    Localisations
+
+    list + select
+    edit
+
+    <pre>{{ model | json}}</pre>
+
+
+    <table>
+        <tr ng-repeat="(key, l) in model.localisations">
+            <td>{{ key }}</td>
+            <td>{{ l.key }}</td>
+            <td>{{ l.locale }}</td>
+            <td>{{ l.value }}</td>
+        </tr>
+    </table>
+
+</div>
