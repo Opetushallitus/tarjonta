@@ -29,58 +29,107 @@ public class LukionKoulutusModuulitRow extends AbstractKoulutuskoodiField {
     public static final String FILENAME = "LUKION_MODUULIT_konversio_html_final";
     public static final Column[] COLUMNS = {
         new Column(KOULUTUSKOODI_PROPERTY, "koulutus", InputColumnType.INTEGER),
-        new Column("koulutuksellisetTeksti", "Koulutukselliset tavoitteet", InputColumnType.STRING),
-        new Column("koulutuksenRakenneTeksti", "Koulutuksen rakenne", InputColumnType.STRING),
-        new Column("jatkoOpintomahdollisuudetTeksti", "Jatko-opintomahdollisuudet", InputColumnType.STRING)};
-    private String koulutuksellisetTeksti;
-    private String koulutuksenRakenneTeksti;
-    private String jatkoOpintomahdollisuudetTeksti;
-
-    /**
-     * @return the koulutuksellisetTeksti
-     */
-    public String getKoulutuksellisetTeksti() {
-        return koulutuksellisetTeksti;
-    }
-
-    /**
-     * @param koulutuksellisetTeksti the koulutuksellisetTeksti to set
-     */
-    public void setKoulutuksellisetTeksti(String koulutuksellisetTeksti) {
-        this.koulutuksellisetTeksti = koulutuksellisetTeksti;
-    }
-
-    /**
-     * @return the koulutuksenRakenneTeksti
-     */
-    public String getKoulutuksenRakenneTeksti() {
-        return koulutuksenRakenneTeksti;
-    }
-
-    /**
-     * @param koulutuksenRakenneTeksti the koulutuksenRakenneTeksti to set
-     */
-    public void setKoulutuksenRakenneTeksti(String koulutuksenRakenneTeksti) {
-        this.koulutuksenRakenneTeksti = koulutuksenRakenneTeksti;
-    }
-
-    /**
-     * @return the jatkoOpintomahdollisuudetTeksti
-     */
-    public String getJatkoOpintomahdollisuudetTeksti() {
-        return jatkoOpintomahdollisuudetTeksti;
-    }
-
-    /**
-     * @param jatkoOpintomahdollisuudetTeksti the
-     * jatkoOpintomahdollisuudetTeksti to set
-     */
-    public void setJatkoOpintomahdollisuudetTeksti(String jatkoOpintomahdollisuudetTeksti) {
-        this.jatkoOpintomahdollisuudetTeksti = jatkoOpintomahdollisuudetTeksti;
-    }
+        new Column("koulutuksellisetTekstiFi", "Koulutukselliset tavoitteet", InputColumnType.STRING),
+        new Column("koulutuksenRakenneTekstiFi", "Koulutuksen rakenne", InputColumnType.STRING),
+        new Column("jatkoOpintomahdollisuudetTekstiFi", "Jatko-opintomahdollisuudet", InputColumnType.STRING),
+        new Column("koulutuksellisetTekstiSv", "Koulutukselliset tavoitteet sv", InputColumnType.STRING),
+        new Column("koulutuksenRakenneTekstiSv", "Koulutuksen rakenne sv", InputColumnType.STRING),
+        new Column("jatkoOpintomahdollisuudetTekstiSv", "Jatko-opintomahdollisuudet sv", InputColumnType.STRING)};
+    private String koulutuksellisetTekstiFi;
+    private String koulutuksenRakenneTekstiFi;
+    private String jatkoOpintomahdollisuudetTekstiFi;
+    private String koulutuksellisetTekstiSv;
+    private String koulutuksenRakenneTekstiSv;
+    private String jatkoOpintomahdollisuudetTekstiSv;
 
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    /**
+     * @return the koulutuksellisetTekstiSv
+     */
+    public String getKoulutuksellisetTekstiSv() {
+        return koulutuksellisetTekstiSv;
+    }
+
+    /**
+     * @param koulutuksellisetTekstiSv the koulutuksellisetTekstiSv to set
+     */
+    public void setKoulutuksellisetTekstiSv(String koulutuksellisetTekstiSv) {
+        this.koulutuksellisetTekstiSv = koulutuksellisetTekstiSv;
+    }
+
+    /**
+     * @return the koulutuksenRakenneTekstiSv
+     */
+    public String getKoulutuksenRakenneTekstiSv() {
+        return koulutuksenRakenneTekstiSv;
+    }
+
+    /**
+     * @param koulutuksenRakenneTekstiSv the koulutuksenRakenneTekstiSv to set
+     */
+    public void setKoulutuksenRakenneTekstiSv(String koulutuksenRakenneTekstiSv) {
+        this.koulutuksenRakenneTekstiSv = koulutuksenRakenneTekstiSv;
+    }
+
+    /**
+     * @return the jatkoOpintomahdollisuudetTekstiSv
+     */
+    public String getJatkoOpintomahdollisuudetTekstiSv() {
+        return jatkoOpintomahdollisuudetTekstiSv;
+    }
+
+    /**
+     * @param jatkoOpintomahdollisuudetTekstiSv the
+     * jatkoOpintomahdollisuudetTekstiSv to set
+     */
+    public void setJatkoOpintomahdollisuudetTekstiSv(String jatkoOpintomahdollisuudetTekstiSv) {
+        this.jatkoOpintomahdollisuudetTekstiSv = jatkoOpintomahdollisuudetTekstiSv;
+    }
+
+    /**
+     * @return the koulutuksellisetTekstiFi
+     */
+    public String getKoulutuksellisetTekstiFi() {
+        return koulutuksellisetTekstiFi;
+    }
+
+    /**
+     * @param koulutuksellisetTekstiFi the koulutuksellisetTekstiFi to set
+     */
+    public void setKoulutuksellisetTekstiFi(String koulutuksellisetTekstiFi) {
+        this.koulutuksellisetTekstiFi = koulutuksellisetTekstiFi;
+    }
+
+    /**
+     * @return the koulutuksenRakenneTekstiFi
+     */
+    public String getKoulutuksenRakenneTekstiFi() {
+        return koulutuksenRakenneTekstiFi;
+    }
+
+    /**
+     * @param koulutuksenRakenneTekstiFi the koulutuksenRakenneTekstiFi to set
+     */
+    public void setKoulutuksenRakenneTekstiFi(String koulutuksenRakenneTekstiFi) {
+        this.koulutuksenRakenneTekstiFi = koulutuksenRakenneTekstiFi;
+    }
+
+    /**
+     * @return the jatkoOpintomahdollisuudetTekstiFi
+     */
+    public String getJatkoOpintomahdollisuudetTekstiFi() {
+        return jatkoOpintomahdollisuudetTekstiFi;
+    }
+
+    /**
+     * @param jatkoOpintomahdollisuudetTekstiFi the
+     * jatkoOpintomahdollisuudetTekstiFi to set
+     */
+    public void setJatkoOpintomahdollisuudetTekstiFi(String jatkoOpintomahdollisuudetTekstiFi) {
+        this.jatkoOpintomahdollisuudetTekstiFi = jatkoOpintomahdollisuudetTekstiFi;
     }
 }

@@ -50,9 +50,9 @@ public class DataReaderTest {
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getTavoiteTeksti().getTeksti().size());
 
-        assertEquals(1, result.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
-        assertEquals(1, result.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
-        assertEquals(1, result.getTutkinnonKuvaukset().getTavoiteTeksti().getTeksti().size());
+        assertEquals(2, result.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
+        assertEquals(2, result.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
+        assertEquals(2, result.getTutkinnonKuvaukset().getTavoiteTeksti().getTeksti().size());
     }
 
     @Test
