@@ -33,6 +33,7 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 	private HakukohdeHakutulosRDTO convert(HakukohdePerustieto ht) {
 		HakukohdeHakutulosRDTO ret = new HakukohdeHakutulosRDTO();
 
+		ret.setOid(ht.getOid());
 		ret.setNimi(convertToMap(ht.getNimi()));
 		ret.setKausiUri(ht.getKoulutuksenAlkamiskausiUri());
 		ret.setVuosi(Integer.parseInt(ht.getKoulutuksenAlkamisvuosi()));

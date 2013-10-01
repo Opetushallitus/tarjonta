@@ -40,7 +40,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -66,7 +66,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     /**
      * The koulutus to display on the row.
      */
-    private KoulutusTulos koulutus;
+    private KoulutusPerustieto koulutus;
     /**
      * Checkbox to indicate if this row is selected.
      */
@@ -76,7 +76,7 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     private String koulutusNimi;
     private String rowKey;
-    private List<KoulutusTulos> children;
+    private List<KoulutusPerustieto> children;
     
     private Window dialogWindow;
 
@@ -89,12 +89,12 @@ public class KoulutusResultRow extends HorizontalLayout {
 
     public KoulutusResultRow(TarjontaUIHelper tarjontaUIHelper) {
     	this.tarjontaUIHelper = tarjontaUIHelper;
-        this.koulutus = new KoulutusTulos();
+        this.koulutus = new KoulutusPerustieto();
         this.setHeight(-1, UNITS_PIXELS);
         this.setWidth(-1, UNITS_PIXELS);
     }
 
-    public KoulutusResultRow(TarjontaUIHelper tarjontaUIHelper, KoulutusTulos koulutus, String koulutusNimi) {
+    public KoulutusResultRow(TarjontaUIHelper tarjontaUIHelper, KoulutusPerustieto koulutus, String koulutusNimi) {
     	this.tarjontaUIHelper = tarjontaUIHelper;
         this.koulutus = koulutus;
         this.koulutusNimi = koulutusNimi;
@@ -102,8 +102,8 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
 
     private void formatKoulutusName() {
-        if (this.koulutusNimi != null && koulutus.getKoulutus() != null && koulutus.getKoulutus().getPohjakoulutusVaatimus() != null && this.koulutusNimi.length() > 0) {
-            List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getKoulutus().getPohjakoulutusVaatimus());
+        if (this.koulutusNimi != null && koulutus != null && koulutus.getPohjakoulutusVaatimus() != null && this.koulutusNimi.length() > 0) {
+            List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getPohjakoulutusVaatimus());
             if (koodis != null && koodis.size() > 0) {
                 this.koulutusNimi = this.koulutusNimi + ", " + tryGetKoodistoLyhytNimi(koodis.get(0));
             }
@@ -150,11 +150,11 @@ public class KoulutusResultRow extends HorizontalLayout {
 //        rowMenuBar.clear();
 
         
-        final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getKoulutus().getTila());
+        final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getTila());
         
-        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getTarjoaja().getTarjoajaOid());
 
-        boolean hakuStarted = tarjontaPresenter.isHakuStartedForKoulutus(koulutus.getKoulutus().getKomotoOid());
+        boolean hakuStarted = tarjontaPresenter.isHakuStartedForKoulutus(koulutus.getKomotoOid());
         
         if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
@@ -189,10 +189,10 @@ public class KoulutusResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             showSummaryView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
-            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+            final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
+            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getTarjoaja().getTarjoajaOid());
 
-            switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+            switch (koulutus.getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
@@ -208,8 +208,8 @@ public class KoulutusResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
-            tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
-            tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKoulutus().getKomotoOid()));
+            tarjontaPresenter.changeStateToPublished(koulutus.getKomotoOid(), KOMOTO);
+            tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKomotoOid()));
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             showPeruutaDialog();
         } else if (selection.equals(i18n.getMessage("naytaHakukohteet"))) {
@@ -225,8 +225,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 closeDialogWindow();
-                tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
-                tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKoulutus().getKomotoOid()));
+                tarjontaPresenter.changeStateToCancelled(koulutus.getKomotoOid(), KOMOTO);
+                tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKomotoOid()));
             }
         },
                 new Button.ClickListener() {
@@ -250,8 +250,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 closeDialogWindow();
-                tarjontaPresenter.removeKoulutus(koulutus);
-                tarjontaPresenter.sendEvent(KoulutusContainerEvent.delete(koulutus.getKoulutus().getKomotoOid()));
+                tarjontaPresenter.removeKoulutus(koulutus.getKomotoOid());
+                tarjontaPresenter.sendEvent(KoulutusContainerEvent.delete(koulutus.getKomotoOid()));
             }
         },
                 new Button.ClickListener() {
@@ -288,13 +288,13 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (koulutus != null
-                        && koulutus.getKoulutus() != null
+                        && koulutus != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
-                    tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
+                    tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getTarjoaja().getTarjoajaOid());
 
                 } else if (koulutus != null
-                        && koulutus.getKoulutus() != null) {
+                        && koulutus != null) {
                     tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
                 }
 
@@ -353,9 +353,9 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
     
     private void removeKoulutusSelection() {
-        KoulutusTulos selectionToRemove = null;
-        for (KoulutusTulos curKoul : tarjontaPresenter.getModel().getSelectedKoulutukset()) {
-            if (curKoul.getKoulutus().getKomotoOid().equals(koulutus.getKoulutus().getKomotoOid())) {
+        KoulutusPerustieto selectionToRemove = null;
+        for (KoulutusPerustieto curKoul : tarjontaPresenter.getModel().getSelectedKoulutukset()) {
+            if (curKoul.getKomotoOid().equals(koulutus.getKomotoOid())) {
                 selectionToRemove = curKoul;
                 break;
             }
@@ -379,9 +379,9 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
 
     private void showSummaryView() {
-        final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+        final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
 
-        switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+        switch (koulutus.getKoulutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;
@@ -411,14 +411,14 @@ public class KoulutusResultRow extends HorizontalLayout {
     /**
      * @return the children
      */
-    public List<KoulutusTulos> getChildren() {
+    public List<KoulutusPerustieto> getChildren() {
         return children;
     }
 
     /**
      * @param children the children to set
      */
-    public void setChildren(List<KoulutusTulos> children) {
+    public void setChildren(List<KoulutusPerustieto> children) {
         this.children = children;
     }
 

@@ -32,7 +32,7 @@ import javax.jws.WebParam;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
@@ -334,11 +334,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
             KoulutuksetKysely koulutusKysely = new KoulutuksetKysely();
             koulutusKysely.getKoulutusOids().addAll(hakukohde.getHakukohteenKoulutusOidit());
-            List<KoulutuksetVastaus.KoulutusTulos> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutusTulos();
+            List<KoulutusPerustieto> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutukset();
             //Loop through hakukohtee's koulutukses and check all koulutukses and check that all have the same alkamiskausi and vuosi as the haku
-            for (KoulutuksetVastaus.KoulutusTulos koulutusTulos : koulutusTuloses) {
-                if (!koulutusTulos.getKoulutus().getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
-                        || !koulutusTulos.getKoulutus().getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
+            for (KoulutusPerustieto koulutusTulos : koulutusTuloses) {
+                if (!koulutusTulos.getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
+                        || !koulutusTulos.getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
                     return false;
                 }
             }

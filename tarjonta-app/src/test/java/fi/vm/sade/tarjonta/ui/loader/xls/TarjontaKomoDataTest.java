@@ -222,9 +222,13 @@ public class TarjontaKomoDataTest {
         LukionKoulutusModuulitRow next = result.iterator().next();
 
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
-        assertNotNull("JatkoOpintomahdollisuudetTeksti", next.getJatkoOpintomahdollisuudetTeksti());
-        assertNotNull("KoulutuksellisetTeksti", next.getKoulutuksellisetTeksti());
-        assertNotNull("KoulutuksenRakenneTeksti", next.getKoulutuksenRakenneTeksti());
+        assertNotNull("JatkoOpintomahdollisuudetTeksti fi", next.getJatkoOpintomahdollisuudetTekstiFi());
+        assertNotNull("KoulutuksellisetTeksti fi", next.getKoulutuksellisetTekstiFi());
+        assertNotNull("KoulutuksenRakenneTeksti fi", next.getKoulutuksenRakenneTekstiFi());
+
+        assertNotNull("JatkoOpintomahdollisuudetTeksti sv", next.getJatkoOpintomahdollisuudetTekstiSv());
+        assertNotNull("KoulutuksellisetTeksti sv ", next.getKoulutuksellisetTekstiSv());
+        assertNotNull("KoulutuksenRakenneTeksti sv", next.getKoulutuksenRakenneTekstiSv());
     }
 
     @Test

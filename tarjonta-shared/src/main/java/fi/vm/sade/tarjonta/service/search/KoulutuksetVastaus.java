@@ -9,78 +9,20 @@ public class KoulutuksetVastaus implements Serializable
 {
 
     private final static long serialVersionUID = 100L;
-    protected List<KoulutuksetVastaus.KoulutusTulos> koulutusTulos;
+    private List<KoulutusPerustieto> koulutukset = new ArrayList<KoulutusPerustieto>();
+    private int hitCount;
 
-    /**
-     * Default no-arg constructor
-     * 
-     */
-    public KoulutuksetVastaus() {
-        super();
+    public List<KoulutusPerustieto> getKoulutukset() {
+        return koulutukset;
     }
-
-    /**
-     * Fully-initialising value constructor
-     * 
-     */
-    public KoulutuksetVastaus(final List<KoulutuksetVastaus.KoulutusTulos> koulutusTulos) {
-        this.koulutusTulos = koulutusTulos;
+    public void setKoulutukset(List<KoulutusPerustieto> koulutukset) {
+        this.koulutukset = koulutukset;
     }
-
-    public List<KoulutuksetVastaus.KoulutusTulos> getKoulutusTulos() {
-        if (koulutusTulos == null) {
-            koulutusTulos = new ArrayList<KoulutuksetVastaus.KoulutusTulos>();
-        }
-        return this.koulutusTulos;
+    public int getHitCount() {
+        return hitCount;
     }
-
-
-    public static class KoulutusTulos implements Serializable
-    {
-
-        private final static long serialVersionUID = 100L;
-        protected KoulutusPerustieto koulutus;
-
-        /**
-         * Default no-arg constructor
-         * 
-         */
-        public KoulutusTulos() {
-            super();
-        }
-
-        /**
-         * Fully-initialising value constructor
-         * 
-         */
-        public KoulutusTulos(final KoulutusPerustieto koulutus) {
-            this.koulutus = koulutus;
-        }
-
-        /**
-         * Gets the value of the koulutus property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link KoulutusListausTyyppi }
-         *     
-         */
-        public KoulutusPerustieto getKoulutus() {
-            return koulutus;
-        }
-
-        /**
-         * Sets the value of the koulutus property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link KoulutusListausTyyppi }
-         *     
-         */
-        public void setKoulutus(KoulutusPerustieto value) {
-            this.koulutus = value;
-        }
-
+    public void setHitCount(int hitCount) {
+        this.hitCount = hitCount;
     }
 
 }

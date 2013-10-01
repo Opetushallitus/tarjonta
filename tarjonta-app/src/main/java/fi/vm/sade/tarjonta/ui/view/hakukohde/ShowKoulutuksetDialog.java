@@ -29,7 +29,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
@@ -44,10 +44,10 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
 
     private static final long serialVersionUID = 6521526287528256527L;
     
-    private List<KoulutusTulos> koulutukset;
+    private List<KoulutusPerustieto> koulutukset;
     private HakukohdePerustieto selectedHakukohde;
     
-    public ShowKoulutuksetDialog(List<KoulutusTulos> koulutukset, HakukohdePerustieto selectedHakukohde, TarjontaPresenter presenter) {
+    public ShowKoulutuksetDialog(List<KoulutusPerustieto> koulutukset, HakukohdePerustieto selectedHakukohde, TarjontaPresenter presenter) {
         super(presenter);
         this.koulutukset = koulutukset;
         this.selectedHakukohde = selectedHakukohde;
@@ -76,23 +76,23 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     protected void populateTree() {
-       Set<Map.Entry<String, List<KoulutusTulos>>> set = createDataMap();
+       Set<Map.Entry<String, List<KoulutusPerustieto>>> set = createDataMap();
        HierarchicalContainer hc = new HierarchicalContainer();
        hc.addContainerProperty(COLUMN_A, CaptionItem.class, new CaptionItem());
        hc.addContainerProperty(COLUMN_PVM, String.class, "");
        hc.addContainerProperty(COLUMN_TILA, String.class, "");
        
-       for (Map.Entry<String, List<KoulutusTulos>>e : set) {
+       for (Map.Entry<String, List<KoulutusPerustieto>>e : set) {
            
            Object rootItem = hc.addItem();
            
            hc.getContainerProperty(rootItem, COLUMN_A).setValue(new CaptionItem(e.getKey(), false));
-           for (final KoulutusTulos curKoulutus : e.getValue()) {
+           for (final KoulutusPerustieto curKoulutus : e.getValue()) {
                
                hc.addItem(curKoulutus);
                hc.setParent(curKoulutus, rootItem);
                CaptionItem ci = new CaptionItem(
-                       TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getNimi()).getValue(), 
+                       TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getNimi()).getValue(), 
                        true);
                ci.getLinkButton().addListener( new Button.ClickListener() {
 
@@ -106,7 +106,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(
                        ci);
                hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(presenter.getUiHelper().getAjankohtaStr(curKoulutus));
-               hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(T(curKoulutus.getKoulutus().getTila().value()));
+               hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(T(curKoulutus.getTila().value()));
                hc.setChildrenAllowed(curKoulutus, false);
               
            }
@@ -114,16 +114,16 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
        
        tree.setContainerDataSource(hc);
        
-       for (KoulutusTulos curTulos : koulutukset) {
+       for (KoulutusPerustieto curTulos : koulutukset) {
            tree.setCollapsed(tree.getParent(curTulos), false);
        }
     }
     
     @SuppressWarnings("incomplete-switch")
-    private void showSummaryView(KoulutusTulos koulutus) {
-        final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+    private void showSummaryView(KoulutusPerustieto koulutus) {
+        final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
 
-        switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+        switch (koulutus.getKoulutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 presenter.closeHakukohdeRemovalDialog();
                 presenter.showShowKoulutusView(komotoOid);
@@ -135,12 +135,12 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
         }
     }
     
-    private Set<Map.Entry<String, List<KoulutusTulos>>> createDataMap() {
-        Map<String, List<KoulutusTulos>> dataMap = new HashMap<String, List<KoulutusTulos>>();
-        for (KoulutusTulos curKoulutus : this.koulutukset) {
-            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curKoulutus.getKoulutus().getTarjoaja().getNimi()).getValue();
+    private Set<Map.Entry<String, List<KoulutusPerustieto>>> createDataMap() {
+        Map<String, List<KoulutusPerustieto>> dataMap = new HashMap<String, List<KoulutusPerustieto>>();
+        for (KoulutusPerustieto curKoulutus : this.koulutukset) {
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curKoulutus.getTarjoaja().getNimi()).getValue();
             if (!dataMap.containsKey(koulutusKey)) {
-                List<KoulutusTulos> koulutuksetM = new ArrayList<KoulutusTulos>();
+                List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
                 koulutuksetM.add(curKoulutus);
                 dataMap.put(koulutusKey, koulutuksetM);
             } else {

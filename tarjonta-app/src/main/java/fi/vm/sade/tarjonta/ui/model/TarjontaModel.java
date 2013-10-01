@@ -18,7 +18,7 @@ package fi.vm.sade.tarjonta.ui.model;
 import com.google.common.base.Preconditions;
 
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 
@@ -69,8 +69,8 @@ public class TarjontaModel extends BaseUIViewModel {
      * Hakutulos
      */
     private List<HakukohdePerustieto> _selectedhakukohteet;
-    private List<KoulutusTulos> _koulutukset;
-    private List<KoulutusTulos> _selectedKoulutukset;
+    private List<KoulutusPerustieto> _koulutukset;
+    private List<KoulutusPerustieto> _selectedKoulutukset;
     private HakukohdeViewModel hakukohde;
     private HakukohdeLiiteViewModel selectedLiite;
     private ValintakoeViewModel selectedValintaKoe;
@@ -205,9 +205,9 @@ public class TarjontaModel extends BaseUIViewModel {
      *     
 * @return the selected koulutukset
      */
-    public List<KoulutusTulos> getSelectedKoulutukset() {
+    public List<KoulutusPerustieto> getSelectedKoulutukset() {
         if (_selectedKoulutukset == null) {
-            _selectedKoulutukset = new ArrayList<KoulutusTulos>();
+            _selectedKoulutukset = new ArrayList<KoulutusPerustieto>();
         }
         return _selectedKoulutukset;
     }
@@ -218,7 +218,7 @@ public class TarjontaModel extends BaseUIViewModel {
      *     
 * @param koulutusTulos the koulutus objects to set
      */
-    public void setKoulutukset(List<KoulutusTulos> koulutusTulos) {
+    public void setKoulutukset(List<KoulutusPerustieto> koulutusTulos) {
         _koulutukset = koulutusTulos;
     }
 
@@ -228,9 +228,9 @@ public class TarjontaModel extends BaseUIViewModel {
      *     
 * @return
      */
-    public List<KoulutusTulos> getKoulutukset() {
+    public List<KoulutusPerustieto> getKoulutukset() {
         if (_koulutukset == null) {
-            _koulutukset = new ArrayList<KoulutusTulos>();
+            _koulutukset = new ArrayList<KoulutusPerustieto>();
         }
         return _koulutukset;
     }

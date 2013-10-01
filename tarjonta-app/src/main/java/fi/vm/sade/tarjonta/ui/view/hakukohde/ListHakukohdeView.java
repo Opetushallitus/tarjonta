@@ -21,7 +21,7 @@ import java.util.Set;
 
 
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
@@ -353,7 +353,7 @@ public class ListHakukohdeView extends VerticalLayout {
         setPageLength(categoryTree.getItemIds().size());
     }
 
-    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset, HakukohdePerustieto hakukohde) {
+    public void showKoulutuksetForHakukohde(List<KoulutusPerustieto> koulutukset, HakukohdePerustieto hakukohde) {
         ShowKoulutuksetDialog koulutusDialog = new ShowKoulutuksetDialog(koulutukset, hakukohde, presenter);
         hakukohdeDialog = new TarjontaDialogWindow(koulutusDialog, T("koulutusDialog"));
         getWindow().addWindow(hakukohdeDialog);

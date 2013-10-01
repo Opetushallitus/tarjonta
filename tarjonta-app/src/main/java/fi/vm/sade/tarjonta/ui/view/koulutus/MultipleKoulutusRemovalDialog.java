@@ -26,7 +26,7 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -95,16 +95,16 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
     private void createOptionGroupLayout() {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setMargin(true,false,false,false);
-        BeanItemContainer<KoulutusTulos> haut = new BeanItemContainer<KoulutusTulos>(KoulutusTulos.class, presenter.getSelectedKoulutukset());
+        BeanItemContainer<KoulutusPerustieto> haut = new BeanItemContainer<KoulutusPerustieto>(KoulutusPerustieto.class, presenter.getSelectedKoulutukset());
 
         koulutusOptions = new OptionGroup(null,haut);
         koulutusOptions.setMultiSelect(true);
         //Set all selected as default
         for (Object obj: koulutusOptions.getItemIds()) {
-        	KoulutusTulos curKoul = (KoulutusTulos)obj;
-        	String nimi = curKoul.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) 
-        			? getKoodiNimi(curKoul.getKoulutus().getKoulutuskoodi()) 
-        					: getKoodiNimi(curKoul.getKoulutus().getKoulutusohjelmakoodi());
+        	KoulutusPerustieto curKoul = (KoulutusPerustieto)obj;
+        	String nimi = curKoul.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) 
+        			? getKoodiNimi(curKoul.getKoulutuskoodi()) 
+        					: getKoodiNimi(curKoul.getKoulutusohjelmakoodi());
         	koulutusOptions.setItemCaption(obj, nimi);
             koulutusOptions.select(obj);
         }
@@ -116,9 +116,9 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
     
     private void removeSelectedKoulutukset() {
     	Object values = koulutusOptions.getValue();
-    	Collection<KoulutusTulos> selectedKoulutusOptions = null;
+    	Collection<KoulutusPerustieto> selectedKoulutusOptions = null;
     	if (values instanceof  Collection) {
-    		selectedKoulutusOptions = (Collection<KoulutusTulos>)values;
+    		selectedKoulutusOptions = (Collection<KoulutusPerustieto>)values;
     		presenter.getSelectedKoulutukset().clear();
     		presenter.getSelectedKoulutukset().addAll(selectedKoulutusOptions);
     		presenter.removeSelectedKoulutukset();
@@ -132,7 +132,6 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
      * @return
      */
     private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
         for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
             if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
                 return curNimi.getValue();

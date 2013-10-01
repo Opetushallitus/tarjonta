@@ -41,19 +41,23 @@ public class LukionModuulitMap extends KoulutuskoodiMap< KuvausDTO> {
             checkKey(koodiarvo, row, "Koulutuskoodi", rowIndex);
 
             KuvausDTO kuvausDTO = new KuvausDTO();
-            final String jatkoOpintomahdollisuudetTeksti = row.getJatkoOpintomahdollisuudetTeksti();
-            final String koulutuksellisetTeksti = row.getKoulutuksellisetTeksti();
-            final String koulutuksenRakenneTeksti = row.getKoulutuksenRakenneTeksti();
+            final String jatkoOpintomahdollisuudetTekstiFi = row.getJatkoOpintomahdollisuudetTekstiFi();
+            final String koulutuksellisetTekstiFi = row.getKoulutuksellisetTekstiFi();
+            final String koulutuksenRakenneTekstiFi = row.getKoulutuksenRakenneTekstiFi();
 
-            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(jatkoOpintomahdollisuudetTeksti), null, null));
-            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksenRakenneTeksti), null, null));
-            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksellisetTeksti), null, null));
+            final String jatkoOpintomahdollisuudetTekstiSv = row.getJatkoOpintomahdollisuudetTekstiSv();
+            final String koulutuksellisetTekstiSv = row.getKoulutuksellisetTekstiSv();
+            final String koulutuksenRakenneTekstiSv = row.getKoulutuksenRakenneTekstiSv();
+
+            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(jatkoOpintomahdollisuudetTekstiFi), jatkoOpintomahdollisuudetTekstiSv, null));
+            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksenRakenneTekstiFi), koulutuksenRakenneTekstiSv, null));
+            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksellisetTekstiFi), koulutuksellisetTekstiSv, null));
 
             this.put(koodiarvo, kuvausDTO);
             rowIndex++;
         }
     }
-    
+
     private String nullToEmptyStr(final String s) {
         if (s == null) {
             return "";
