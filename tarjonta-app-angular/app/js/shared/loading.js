@@ -3,6 +3,7 @@ angular.module('loading', [])
 .factory('loadingService', function() {
   var service = {
     requestCount: 0,
+    modal: false,
     isLoading: function() {
       return service.requestCount > 0;
     }
@@ -12,6 +13,9 @@ angular.module('loading', [])
 
 .factory('onStartInterceptor', function(loadingService) {
     return function (data, headersGetter) {
+    	if (loadingService.requestCount==0) {
+    		loadingService.modal = true;
+    	}
         loadingService.requestCount++;
         return data;
     };
@@ -50,4 +54,14 @@ angular.module('loading', [])
           $rootElement.removeClass('spinner');
         }
     });
+    
+    $scope.isModal = function() {
+    	return loadingService.modal;
+    }
+    
+    $scope.demodalize = function() {
+    	loadingService.modal = false;
+    }
+
+    
 });

@@ -72,7 +72,7 @@ public class TestTarjontaPunainenLanka {
 
     //  TC0802	Luo koulutus (ammatillinen koulutus)
     @Test
-    public void testTC0802() throws Exception {
+    public void test_T_INT_TAR_PUNA001_TC0802_AMPLuokoulutus() throws Exception {
     	try {
     		testTC0802loop();
     	} catch (Exception e) {
@@ -221,7 +221,7 @@ public class TestTarjontaPunainenLanka {
 
     //  TC0802lukio	Luo koulutus (lukio koulutus)
     @Test
-    public void testTC0802lukio() throws Exception {
+    public void test_T_INT_TAR_PUNA002_TC0802_lukioLuoKoulutus() throws Exception {
     	try {
     		testTC0802lukioloop();
     	} catch (Exception e) {
@@ -354,9 +354,27 @@ public class TestTarjontaPunainenLanka {
     	TarjontaTapaukset.setKattavuus("TC0802lukio", Kattavuus.KATTAVUUSOK);
     }
 
+    public static String kouluTyypinValinta = "ylioppilastut";
     //TC0804	Muokkaa koulutusta
     @Test
-    public void testTC0804() throws Exception {
+    public void test_T_INT_TAR_PUNA004_TC0804_LukioMuokkaaKoulutus() throws Exception {
+		try {
+			testTC0804loop();
+		} catch (Exception e) {
+			try {
+				doit.printMyStackTrace(e);
+				testTC0804loop();
+			} catch (Exception e2) {
+				doit.printMyStackTrace(e2);
+				testTC0804loop();
+			}
+		}
+    }
+
+    //TC0804	Muokkaa koulutusta
+    @Test
+    public void test_T_INT_TAR_PUNA003_TC0804_AMP_MuokkaaKoulutus() throws Exception {
+    	kouluTyypinValinta = "tusohjel";
 		try {
 			testTC0804loop();
 		} catch (Exception e) {
@@ -377,7 +395,7 @@ public class TestTarjontaPunainenLanka {
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.linkKoulutusLuonnosta(driver, "ylioppilastut");
+		WebElement menu = doit.linkKoulutusLuonnosta(driver, kouluTyypinValinta);
 		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0804 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
@@ -408,7 +426,7 @@ public class TestTarjontaPunainenLanka {
 
     //    TC0807	Luo haku
     @Test
-    public void testTC0807() throws Exception {
+    public void test_T_INT_TAR_PUNA005_TC0807_LuoHaku() throws Exception {
     	try {
     		testTC0807loop();
     	} catch (Exception e) {
@@ -439,14 +457,14 @@ public class TestTarjontaPunainenLanka {
         doit.popupItemClick(driver, "Varsinainen haku");
         doit.sendInput(driver, "Hakukausi ja -vuosi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014\t", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
         doit.sendInput(driver, "Koulutuksen alkamiskausi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
+        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014\t", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
         doit.sendInput(driver, "Haun kohdejoukko", "Aikuiskoulutus");
         doit.popupItemClick(driver, "Aikuiskoulutus");
         doit.sendInput(driver, "Hakutapa", "Erillishaku");
@@ -508,7 +526,7 @@ public class TestTarjontaPunainenLanka {
 
     //    TC0808	Muokkaa hakua
     @Test
-    public void testTC0808() throws Exception {
+    public void test_T_INT_TAR_PUNA006_TC0808_MuokkaaHakua() throws Exception {
     	try {
     		testTC0808loop();
     	} catch (Exception e) {
@@ -556,7 +574,7 @@ public class TestTarjontaPunainenLanka {
 
     //    TC0816	Luo yhteiset valintaperustekuvaukset
     @Test
-    public void testTC0816() throws Exception {
+    public void test_T_INT_TAR_PUNA007_TC0816_Valintaperustekuvaus() throws Exception {
     	try {
     		testTC0816loop();
     	} catch (Exception e) {
@@ -602,7 +620,7 @@ public class TestTarjontaPunainenLanka {
 
     //    TC0817	Muokkaa valintaperustekuvauksia
     @Test
-    public void testTC0817() throws Exception {
+    public void test_T_INT_TAR_PUNA008_TC0817_MuokkaaValintaperustekuvaus() throws Exception {
     	try {
     		testTC0817loop();
     	} catch (Exception e) {
@@ -640,7 +658,7 @@ public class TestTarjontaPunainenLanka {
 
     //    TC0811	Luo hakukohde
     @Test
-    public void testTC0811() throws Exception {
+    public void test_T_INT_TAR_PUNA009_TC0811_LuoHakukohde() throws Exception {
     	try {
     		testTC0811loop();
     	} catch (Exception e) {
@@ -784,7 +802,7 @@ public class TestTarjontaPunainenLanka {
     
     //  TC0812	Muokkaa hakukohdetta 
     @Test
-    public void testTC0812() throws Exception {
+    public void test_T_INT_TAR_PUNA010_TC0812_MuokkaaHakukohdetta() throws Exception {
 		try {
 			testTC0812loop();
 		} catch (Exception e) {

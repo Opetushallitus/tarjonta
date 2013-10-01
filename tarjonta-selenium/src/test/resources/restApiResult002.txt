@@ -1,7 +1,7 @@
 {
-  "modified" : 1378904555750,
+  "modified" : 1380110816988,
   "oid" : "1.2.246.562.5.2013061010184768943288",
-  "version" : 173,
+  "version" : 176,
   "moduuliTyyppi" : "TUTKINTO",
   "tila" : "JULKAISTU",
   "tekstit" : {
