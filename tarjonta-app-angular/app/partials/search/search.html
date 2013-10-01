@@ -85,49 +85,19 @@
     <tabset>
         <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
         
-        	<table id="koulutuksetResults"></table>
-        	<!-- 
-        	<ng-once>
-        	<tbody ng-repeat="tarjoaja in koulutusResults.tulokset">
-        		<tr>
-		        	<td colspan="4">{{tarjoaja.nimi}}</td>
-        		</tr>
-        		<tr ng-repeat="koulutus in tarjoaja.tulokset">
-        			<ng-once>
-        			<td><a href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a></td>
-        			<td>{{koulutus.kausiUri}} {{koulutus.vuosi}}</td>
-        			<td>TODO k.laji</td>
-        			<td>{{koulutus.tila}}</td>
-        			</ng-once>
-        		</tr>
-        	</tbody>
-        	</ng-once>
-        	</table> -->
+        	<input type="checkbox" class="selectAll"/>
+        	<label>Valitse kaikki</label>
+        	
+        	<table id="koulutuksetResults"><!-- jquery --></table>
         
         </tab>
         <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+        
+	        <input type="checkbox" class="selectAll"/>
+        	<label>Valitse kaikki</label>
 
-        	<table id="hakukohteetResults"></table>
-        	<!-- 
-        	<ng-once>
-        	<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
-        		<tr>
-		        	<td colspan="4">{{tarjoaja.nimi}}</td>
-        		</tr>
-        		<tr ng-repeat="hakukohde in tarjoaja.tulokset">
-	 		       	<ng-once>
-        			<td><a href="#/koulutus/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
-        			<td>{{hakukohde.kausiUri}} {{hakukohde.vuosi}}</td>
-        			<td>{{hakukohde.hakutapa}}</td>
-        			<td>{{hakukohde.aloituspaikat}}</td>
-        			<td>{{hakukohde.koulutusLaji}}</td>
-        			<td>{{hakukohde.tila}}</td>
-        			</ng-once>
-        		</tr>
-        	</tbody>
-        	</ng-once>
-        	</table>
-        	 -->
+        	<table id="hakukohteetResults"><!-- jquery --></table>
+
         </tab>
 
     </tabset>
