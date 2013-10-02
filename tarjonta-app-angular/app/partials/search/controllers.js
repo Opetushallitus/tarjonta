@@ -248,6 +248,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     
     }
     
+    $scope.canMoveOrCopy = function() {
+    	return true;
+    }
+
+    $scope.canCreateHakukohde = function() {
+    	return true;
+    }
+
+    $scope.canCreateKoulutus = function() {
+    	return true;
+    }
 
     $scope.search = function() {
     	var spec = {

@@ -87,7 +87,7 @@
                 <div ng-switch-when="helpers">
                     <div ng-switch on="renderPath[1]">
                         <div ng-switch-when="localisations">
-                            <div ng-include="'partials/helpers/localisation.html'"></div>
+                            <div ng-include="'partials/helpers/localisation.html'" ng-controller="HelpersLocalisationCtrl"></div>
                         </div>
                     </div>
                 </div>
@@ -101,16 +101,20 @@
 
             <div data-ng-controller="LoadingCtrl"
                  data-ng-show="loading"
-                 style="position: fixed; top: 0; right: 0; background: gold; padding: 0.5em; font-weight: bold;">
-                {{ t("loading") }}
-                <img alt="Loading..." src="img/ajax-loader-big.gif" />
+                 id="ajax-loader"
+                 class="{{ isModal() ? 'max' : 'min' }}"
+                 ng-click="demodalize()">
+                <div>
+             		<img alt="{{ t('loading') }}" src="img/ajax-loader-big.gif" />
+					<span>{{ t("loading") }}</span>
+           		</div>
             </div>
         </div>
 
 
         <script>
             // DEFERRED APP INITIALIZATION SO THAT WE CAN PRELOAD LOCALISATIONS
-            var APP_LOCALISATION_DATA = {};
+            var APP_LOCALISATION_DATA = [];
 
             var tarjontaAppLocalisationLocationUri = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
             console.log("** Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
@@ -119,7 +123,7 @@
                 dataType: "json",
                 complete: function(xhr, status) {
                     console.log("** Localisation load complete, status: ", status);
-                    console.log("**   got data: ", xhr);
+                    console.log("**   got localisation data: ", xhr);
 
                     APP_LOCALISATION_DATA = xhr.responseJSON;
 

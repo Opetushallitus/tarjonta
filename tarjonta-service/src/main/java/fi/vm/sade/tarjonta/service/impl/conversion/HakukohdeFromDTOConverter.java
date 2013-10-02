@@ -40,7 +40,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setVersion(from.getVersion());
         hakukohde.setAloituspaikatLkm(from.getAloituspaikat());
-        hakukohde.setHakukelpoisuusvaatimus(from.getHakukelpoisuusVaatimukset());
+        //hakukohde.setHakukelpoisuusvaatimus(from.getHakukelpoisuusVaatimukset());
         hakukohde.setHakukohdeNimi(from.getHakukohdeNimi());
         hakukohde.setOid(from.getOid());
         hakukohde.setLisatiedot(EntityUtils.copyFields(from.getLisatiedot(), hakukohde.getLisatiedot()));

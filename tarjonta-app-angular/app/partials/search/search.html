@@ -85,6 +85,12 @@
     <tabset>
         <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
         
+        	<div>
+        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" disabled="{{!canMoveOrCopy()}}"/>
+        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" disabled="{{!canCreateHakukohde()}}"/>
+        		<input class="btn float-right" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" disabled="{{!canCreateKoulutus()}}"/>
+        	</div>
+        
         	<input type="checkbox" class="selectAll"/>
         	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
         	

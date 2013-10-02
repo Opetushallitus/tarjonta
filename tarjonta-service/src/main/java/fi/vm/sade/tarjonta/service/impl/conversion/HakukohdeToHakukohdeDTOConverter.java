@@ -136,7 +136,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         // koodisto)
         {
             String uri = getTarjontaKoodistoHelper().getHakukelpoisuusvaatimusrymaUriForHakukohde(s.getHakukohdeNimi());
-            t.setHakukelpoisuusvaatimusUri(uri);
+            t.getHakukelpoisuusvaatimusUris().add(uri);
             t.setHakukelpoisuusvaatimus(getTarjontaKoodistoHelper().getKoodiMetadataKuvaus(uri));
         }
 

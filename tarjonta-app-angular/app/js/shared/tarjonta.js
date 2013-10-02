@@ -5,7 +5,22 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     var tutkintoHaku = $resource('partials/kk/edit/koulutusData.json');
 
     function localize(txt) {
-        return txt.fi == undefined ? txt : txt.fi;
+    	// TODO käyttäjän localen mukaan
+    	if (txt.fi!=undefined) {
+    		return txt.fi;
+    	} else if (txt.se!=undefined) {
+    		return txt.se;
+    	} else if (txt.en!=undefined) {
+    		return txt.en;
+    	} else {
+            return txt+""; // tostring
+    	}
+    }
+    
+    function compareByName(a, b) {
+    	var an = a.nimi;
+    	var bn = b.nimi;
+    	return an.localeCompare(bn);
     }
 
     var dataFactory = {};
@@ -29,7 +44,9 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                     r.hakutapa = localize(r.hakutapa);
                     r.tila = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
+                t.tulokset.sort(compareByName);
             }
+            result.tulokset.sort(compareByName);
             ret.resolve(result);
         });
         return ret.promise;
@@ -52,7 +69,9 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                     r.nimi = localize(r.nimi);
                     r.tila = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
+                t.tulokset.sort(compareByName);
             }
+            result.tulokset.sort(compareByName);
             ret.resolve(result);
         });
         return ret.promise;

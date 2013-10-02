@@ -77,7 +77,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
 
-        LOG.debug("/hakukohde -- search({}, {}, {}, {}, {}, {}, {})",
+        LOG.info("/hakukohde -- search({}, {}, {}, {}, {}, {}, {})",
                 new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince, organisationOids, hakukohdeTilas});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
@@ -181,7 +181,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Override
     public String createHakukohde(HakukohdeDTO hakukohdeDTO) {
         try {
-
+            LOG.info("CREATE HAKUKOHDE");
+        LOG.info("CREATE HAKUKOHDE : " + hakukohdeDTO.getOid());
         HakukohdeTyyppi hakukohde =  tarjontaAdminService.lisaaHakukohde(conversionService.convert(hakukohdeDTO, HakukohdeTyyppi.class));
         LOG.info("Hakukohde created : {}", hakukohde.getOid());
         return  hakukohde.getOid();

@@ -20,22 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import fi.vm.sade.security.xssfilter.FilterXss;
@@ -46,10 +31,11 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  *
  */
 @Entity
-@Table(name = "hakukohde")
+@Table(name = Hakukohde.TABLE_NAME)
 @EntityListeners(XssFilterListener.class)
 public class Hakukohde extends TarjontaBaseEntity {
 
+    public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
     @Column(name = "oid", unique=true)
     private String oid;
@@ -79,12 +65,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Integer aloituspaikatLkm;
     private Integer valintojenAloituspaikatLkm;
     private boolean kaytetaanHaunPaattymisenAikaa;
+    @Column(name = "kaytetaanJarjestelmanValintapalvelua")
+    private boolean kaytetaanJarjestelmanValintapalvelua;
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
-    @Column(name = "hakukelpoisuusvaatimus")
+    /*@Column(name = "hakukelpoisuusvaatimus")
     @FilterXss
     private String hakukelpoisuusvaatumus;
-
+    */
     /* todo: double check if this is koodisto uri. */
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
@@ -104,6 +92,10 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<String> hakukelpoisuusVaatimukset = new HashSet<String>();
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
@@ -262,14 +254,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void removeValintakoe(Valintakoe valintakoe) {
         valintakoes.remove(valintakoe);
     }
-
+    /*
     public String getHakukelpoisuusvaatimus() {
         return hakukelpoisuusvaatumus;
     }
 
     public void setHakukelpoisuusvaatimus(String hakukelpoisuusvaatimus) {
         this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
-    }
+    } */
 
     public TarjontaTila getTila() {
         return tila;
@@ -517,4 +509,22 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.viimIndeksointiPvm = viimIndeksointiPvm;
     }
 
+    public Set<String> getHakukelpoisuusVaatimukset() {
+        if (hakukelpoisuusVaatimukset == null) {
+            hakukelpoisuusVaatimukset = new HashSet<String>();
+        }
+        return hakukelpoisuusVaatimukset;
+    }
+
+    public void setHakukelpoisuusVaatimukset(Set<String> hakukelpoisuusVaatimukset) {
+        this.hakukelpoisuusVaatimukset = hakukelpoisuusVaatimukset;
+    }
+
+    public boolean isKaytetaanJarjestelmanValintapalvelua() {
+        return kaytetaanJarjestelmanValintapalvelua;
+    }
+
+    public void setKaytetaanJarjestelmanValintapalvelua(boolean kaytetaanJarjestelmanValintapalvelua) {
+        this.kaytetaanJarjestelmanValintapalvelua = kaytetaanJarjestelmanValintapalvelua;
+    }
 }
