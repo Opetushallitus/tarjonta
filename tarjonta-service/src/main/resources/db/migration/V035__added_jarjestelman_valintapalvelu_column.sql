@@ -1,0 +1,1 @@
+ALTER TABLE hakukohde ADD COLUMN kaytetaanJarjestelmanValintapalvelua boolean not null DEFAULT FALSE;

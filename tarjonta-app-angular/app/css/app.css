@@ -35,6 +35,71 @@ label {
 	display:inline;	
 }
 
+/* latauspylpyrä (kokosivu) */
+
+div#ajax-loader {
+	font-size:24px;
+	background-color:#ffffff;
+	opacity:0.75;
+}
+
+div#ajax-loader.max {
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+}
+
+div#ajax-loader.max div {
+	position: absolute;
+	margin-left:50%;
+	width:50%;
+	height:100%;
+}
+
+div#ajax-loader.max img {
+	position:absolute;
+	left:-16px;
+	bottom:55%;
+	display:block;
+}
+
+div#ajax-loader.max span {
+	position:absolute;
+	width:200px;
+	left:-100px;
+	top:55%;
+	display:block;
+	text-align:center;
+}
+
+/* pienempi latauspylpyrä */
+div#ajax-loader.min {
+	position:fixed;
+	bottom:0;
+	width:100%;
+	height:48px;
+	text-align:center;
+	padding-top:8px;
+	padding-bottom:8px;
+}
+
+div#ajax-loader.min div {
+	width:100%;
+}
+
+div#ajax-loader.min img {
+	display:inline;
+	position:relative;
+}
+
+div#ajax-loader.min span {
+	display:inline;
+	position:relative;
+}
+
+
 /* sivupalkki */
 
 .wsidebar-left {
@@ -113,6 +178,17 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
+div#searchResults input.selectAll {
+	margin-left:23px;
+	margin-bottom:20px;
+}
+
+div#searchResults input.selectAll + label {
+	position:relative;
+	top:-0.5em;
+	left:0.25em;
+}
+
 div#searchResults table {
 	width:100%;
 }
@@ -128,10 +204,6 @@ div#searchResults table th {
 	text-align:left;
 }
 
-div#searchResults table td {
-	min-width:130px;
-}
-
 div#searchResults table td a {
 	font-weight:bold;
 }
@@ -142,6 +214,24 @@ div#searchResults table td input[type=checkbox] {
 
 div#searchResults table td img {
 	margin-right:10px;
+}
+
+
+/* avoin taulukkorivi */
+div#searchResults table tbody img.unfolded {
+	display:none;
+}
+
+/* suljettu taulukkorivi */
+div#searchResults table tbody.folded img.folded {
+	display:none;
+}
+div#searchResults table tbody.folded img.unfolded {
+	display:inline-block;
+}
+
+div#searchResults table tbody.folded tr.tresult {
+	display:none;
 }
 
 /* Tarjonnan tarkastelunäkymät / yleiset */

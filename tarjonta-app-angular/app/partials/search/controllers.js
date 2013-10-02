@@ -174,51 +174,38 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.season = "*";
     }
 
+    // taulukon renderöinti
+    
     function resultsToTable(results, props, prefix) {
-    	/*
-<tbody ng-repeat="tarjoaja in hakukohdeResults.tulokset">
-        		<tr>
-		        	<td colspan="4">{{tarjoaja.nimi}}</td>
-        		</tr>
-        		<tr ng-repeat="hakukohde in tarjoaja.tulokset">
-	 		       	<ng-once>
-        			<td><a href="#/koulutus/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
-        			<td>{{hakukohde.kausiUri}} {{hakukohde.vuosi}}</td>
-        			<td>{{hakukohde.hakutapa}}</td>
-        			<td>{{hakukohde.aloituspaikat}}</td>
-        			<td>{{hakukohde.koulutusLaji}}</td>
-        			<td>{{hakukohde.tila}}</td>
-        			</ng-once>
-        		</tr>
-        	</tbody>
-    	 */
-
+    	
     	var html = "";
     	for (var ti in results.tulokset) {
     		var tarjoaja = results.tulokset[ti];
-    		html = html+"<tbody class=\"folded\" id=\""
-    			+prefix+"_"+tarjoaja.oid
-    			+"\">>"
+    		html = html+"<tbody class=\"folded\" tarjoaja-oid=\""
+    			+tarjoaja.oid
+    			+"\">"
     			+"<tr class=\"tgroup\"><th colspan=\""+(3 + props.length)+"\">"
+    			+"<a href=\"#\" class=\"fold\">"
     			+"<img src=\"img/triangle_down.png\" class=\"folded\"/>"
-    			//+"<img src=\"img/triangle_right.png\" class=\"unfolded\"/>"
-    			+"<input type=\"checkbox\"/>"
-    			+tarjoaja.nimi // TODO lokalisointi
+    			+"<img src=\"img/triangle_right.png\" class=\"unfolded\"/>"
+    			+"</a>"
+    			+"<input type=\"checkbox\" class=\"selectRows\"/>"
+    			+tarjoaja.nimi
     			+"</th></tr>";
 
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
-    			html = html+"<tr class=\"tresult\">"
-					+"<td><input type=\"checkbox\"/>"
+    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos[prefix+"Oid"]+"\">"
+					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
 					+"<a href=\"#\"><img src=\"img/icon-treetable-button.png\"/></a>"
-					+"<a href=\"#\">"
+					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
 					+tulos.nimi
 					+"</a></td>"
-					+"<td>" + tulos.kausiUri + " " + tulos.vuosi + "</td>";
+					+"<td>" + tulos.kausiUri + "&nbsp;" + tulos.vuosi + "</td>";
 
     			for (var pi in props) {
     				var prop = props[pi];
-    				html = html + "<td>" + tulos[prop] + "</td>";
+    				html = html + "<td>" + (tulos[prop]==undefined ? "" : (tulos[prop]+"").replace(" ", "&nbsp;")) + "</td>";
     			}
 
     			html = html
@@ -231,6 +218,36 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     	return html;
     }
+        
+    function initTable(selector, prefix, data, cols) {
+    	var em = $(selector);
+    	
+    	em.html(resultsToTable(data, cols, prefix));
+
+    	// valitse-kaikki-nappi päälle/pois tulosten mukaan
+    	$("input.selectAll", em.parent())
+    		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
+    		.click(function(ev){
+    			var sel = $(ev.currentTarget).is(":checked");
+    			//console.log("select/unselect all", sel);
+    			$("input.selectRows, input.selectRow", em).prop("checked", sel);
+    		});
+    	
+    	// lapsinodejen valitse-kaikki
+    	$("input.selectRows", em).click(function(ev){
+			var sel = $(ev.currentTarget).is(":checked");
+			//console.log("select="+sel, ev.currentTarget.parentNode.parentNode.parentNode);
+			$("input.selectRow", $(ev.currentTarget.parentNode.parentNode.parentNode)).prop("checked", sel);
+    	});
+    	
+    	// foldaus
+    	$("a.fold",em).click(function(ev){
+    		ev.preventDefault();
+    		$(ev.currentTarget.parentElement.parentElement.parentElement).toggleClass("folded");
+    	});
+    
+    }
+    
 
     $scope.search = function() {
     	var spec = {
@@ -244,19 +261,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         updateLocation();
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
-        	$("#koulutuksetResults").html(resultsToTable(data,[
+        	initTable("#koulutuksetResults", "koulutus", data,[
                 "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
-            ],"koulutus"));
-        	//$scope.koulutusResults = data;
+            ]);
         });
         TarjontaService.haeHakukohteet(spec).then(function(data){
         	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
-        	$("#hakukohteetResults").html(resultsToTable(data,[
-        		"hakutapa",
-    			"aloituspaikat",
-    			"koulutusLaji"
-        	],"hakukohde"));
-        	//$scope.hakukohdeResults = data;
+        	initTable("#hakukohteetResults", "hakukohde", data,[
+	       		"hakutapa",
+				"aloituspaikat",
+				"koulutusLaji"
+            ]);
         });
     }
 

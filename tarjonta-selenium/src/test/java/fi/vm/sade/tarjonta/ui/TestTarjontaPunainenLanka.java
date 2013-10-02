@@ -374,7 +374,7 @@ public class TestTarjontaPunainenLanka {
     //TC0804	Muokkaa koulutusta
     @Test
     public void test_T_INT_TAR_PUNA003_TC0804_AMP_MuokkaaKoulutus() throws Exception {
-    	kouluTyypinValinta = "tusohjl";
+    	kouluTyypinValinta = "tusohjel";
 		try {
 			testTC0804loop();
 		} catch (Exception e) {
