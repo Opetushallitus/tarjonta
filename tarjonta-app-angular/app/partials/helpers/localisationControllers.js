@@ -8,7 +8,9 @@ app.controller('HelpersLocalisationCtrl', function($scope, $q, $log, Localisatio
     $scope.model = {
         supported: ["fi", "en", "sv"],
         locale: "sv",
-        localisations: []
+        localisations: [],
+        filterKey: "",
+        filterLocale: "fi"
     };
 
     $scope.save = function(entry) {
