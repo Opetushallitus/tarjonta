@@ -166,6 +166,6 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
 //
 // "Production" mode
 //
-//angular.module('app').config(function($logProvider) {
-//    $logProvider.debugEnabled(false);
-//});
+angular.module('app').config(function($logProvider) {
+    $logProvider.debugEnabled(false);
+});
