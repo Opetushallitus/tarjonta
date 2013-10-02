@@ -151,9 +151,9 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     private String resolveHakukohdeNimi() {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getNimi()).getValue() 
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), selectedHakukohde.getNimi()) 
                 + ", " + getHakukohdeAjankohtaStr() 
-                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getTarjoaja().getNimi()).getValue();        
+                + ", " + TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), selectedHakukohde.getTarjoajaNimi());        
     }
     
     private String getHakukohdeAjankohtaStr() {

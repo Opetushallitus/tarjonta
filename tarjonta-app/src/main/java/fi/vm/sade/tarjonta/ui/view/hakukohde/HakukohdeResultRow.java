@@ -111,7 +111,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     void reinitMenubar() {
-        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getTarjoaja().getTarjoajaOid());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getTarjoajaOid());
 
         final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getTila());
         rowMenuBar.clear();
@@ -152,7 +152,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             openHakukohdeView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
+            tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getTarjoajaOid());
             tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid, null, null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
@@ -326,7 +326,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     private void openHakukohdeView() {
-        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
+        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoajaOid());
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getOid());
     }

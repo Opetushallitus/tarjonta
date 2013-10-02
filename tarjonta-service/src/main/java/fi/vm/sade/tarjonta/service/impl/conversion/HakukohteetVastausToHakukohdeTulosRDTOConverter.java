@@ -34,7 +34,7 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		HakukohdeHakutulosRDTO ret = new HakukohdeHakutulosRDTO();
 
 		ret.setOid(ht.getOid());
-		ret.setNimi(convertToMap(ht.getNimi()));
+		ret.setNimi(ht.getNimi());
 		ret.setKausiUri(ht.getKoulutuksenAlkamiskausiUri());
 		ret.setVuosi(Integer.parseInt(ht.getKoulutuksenAlkamisvuosi()));
 		
@@ -55,12 +55,12 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 			HakutuloksetRDTO<HakukohdeHakutulosRDTO> tulos,
 			Map<String, TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>> tarjoajat,
 			HakukohdePerustieto ht) {
-		TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> ret = tarjoajat.get(ht.getTarjoaja().getTarjoajaOid());
+		TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO> ret = tarjoajat.get(ht.getTarjoajaOid());
 		if (ret==null) {
 			ret = new TarjoajaHakutulosRDTO<HakukohdeHakutulosRDTO>();
-			tarjoajat.put(ht.getTarjoaja().getTarjoajaOid(), ret);
-			ret.setOid(ht.getTarjoaja().getTarjoajaOid());
-			ret.setNimi(convertToMap(ht.getTarjoaja().getNimi()));
+			tarjoajat.put(ht.getTarjoajaOid(), ret);
+			ret.setOid(ht.getTarjoajaOid());
+			ret.setNimi(ht.getTarjoajaNimi());
 			tulos.getTulokset().add(ret);
 		}
 		return ret;
