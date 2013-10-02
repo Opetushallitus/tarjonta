@@ -1,12 +1,16 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,8 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
+import javax.annotation.Nullable;
+
 /**
  * REST API impl.
  *
@@ -53,6 +59,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private HakuDAO hakuDAO;
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+    @Autowired(required = true)
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private ConversionService conversionService;
     @Autowired
@@ -60,9 +68,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
-    private TarjontaAdminService tarjontaAdminService;
-    @Autowired
     private TarjontaSearchService tarjontaSearchService;
+    @Autowired(required = true)
+    private PublicationDataService publication;
+    @Autowired
+    private IndexerResource solrIndexer;
 
     // /hakukohde?...
     @Override
@@ -181,11 +191,28 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Override
     public String createHakukohde(HakukohdeDTO hakukohdeDTO) {
         try {
-            LOG.info("CREATE HAKUKOHDE");
-        LOG.info("CREATE HAKUKOHDE : " + hakukohdeDTO.getOid());
-        HakukohdeTyyppi hakukohde =  tarjontaAdminService.lisaaHakukohde(conversionService.convert(hakukohdeDTO, HakukohdeTyyppi.class));
-        LOG.info("Hakukohde created : {}", hakukohde.getOid());
-        return  hakukohde.getOid();
+
+            final String hakuOid = hakukohdeDTO.getHakuOid();
+            Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+            Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
+
+            Haku haku = hakuDAO.findByOid(hakuOid);
+            //TODO: Add hakukohde koulutusalkamisaika validation
+            Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
+            hakukohde.setHaku(haku);
+            //TODO: Add haun sisaiset hakuajat
+            hakukohde = hakukohdeDAO.insert(hakukohde);
+            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(),hakukohde));
+            hakukohdeDAO.update(hakukohde);
+            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+            solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+                public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                    return arg0.getId();
+                }
+            })));
+            publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+            return hakukohde.getOid();
+
         } catch (Exception exp) {
            exp.printStackTrace();
             LOG.info("Exception creating hakukohde in Rest-service :  {}", exp.toString());
@@ -193,6 +220,33 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         }
 
+    }
+
+    private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
+        if (hk.getHakuaikas().size() == 1) {
+            return hk.getHakuaikas().iterator().next();
+        }
+        if (ha != null && ha.getOid() != null) {
+            long id = Long.parseLong(ha.getOid());
+            for (Hakuaika hka : hk.getHakuaikas()) {
+                if (hka.getId() == id) {
+                    return hka;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
+        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
+
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            komoto.addHakukohde(hakukohde);
+            komotos.add(komoto);
+        }
+
+        return komotos;
     }
 
     // GET /hakukohde/{oid}/nimi
