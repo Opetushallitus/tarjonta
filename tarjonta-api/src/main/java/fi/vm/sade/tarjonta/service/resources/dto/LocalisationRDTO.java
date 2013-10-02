@@ -28,11 +28,11 @@ import java.util.Map;
  *     key : "tarjonta.organisaationHaku.hae"
  *     locale: "fi",
  *     value: "Tee haku",
- *     values: {
- *       "fi" : "Tee haku",
- *       "en" : "Perform the search",
- *       "sv" : "Sök - sök!"
- *     }
+ *   },
+ *   {
+ *     key : "tarjonta.organisaationHaku.hae"
+ *     locale: "sv",
+ *     value: "Sök!",
  *   },
  *   ...
  * ]
@@ -45,7 +45,6 @@ public class LocalisationRDTO extends BaseRDTO {
     private String key;
     private String locale;
     private String value;
-    private Map<String, String> _values = null;
 
     public LocalisationRDTO() {
         super();
@@ -81,13 +80,5 @@ public class LocalisationRDTO extends BaseRDTO {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Map<String, String> getValues() {
-        return _values;
-    }
-
-    public void setValues(Map<String, String> _values) {
-        this._values = _values;
     }
 }

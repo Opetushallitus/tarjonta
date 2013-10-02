@@ -47,7 +47,8 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohteetVastausToHakukohdeTulosRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutuksetVastausToHakukohdeTulosRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KomotoConverterToKorkeakouluDTO"/>   
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto"/>     
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeRDTOToHakukohdeConverter"/>
             </list>
         </property>
 

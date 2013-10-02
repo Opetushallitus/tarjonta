@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class HakukohdeDTO extends BaseRDTO {
 
     private Map<String, String> _tarjoajaNimi;
     private Map<String, String> _hakukohdeNimi;
+    private String _hakukohteenNimi;
     private String _tarjoajaOid;
     private String _hakuOid;
     private double _alinHyvaksyttavaKeskiarvo;
@@ -37,7 +39,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private int _edellisenVuodenHakijatLkm;
     private int _valintojenAloituspaikatLkm;
     private int _ylinValintapistemaara;
-    private String _hakukelpoisuusvaatimusUri;
+    private List<String> _hakukelpoisuusvaatimusUris;
     private String _hakukohdeKoodistoNimi;
     private String _hakukohdeNimiUri;
     private String _sahkoinenToimitusOsoite;
@@ -52,6 +54,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private List<List<String>> _painotettavatOppiaineet;
     private boolean _kaytetaanHaunPaattymisenAikaa;
     private boolean _kaytetaanHakukohdekohtaistaHakuaikaa;
+    private boolean _kaytetaanJarjestelmanValintaPalvelua;
     private List<HakukohdeLiiteDTO> _liitteet;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
@@ -118,12 +121,15 @@ public class HakukohdeDTO extends BaseRDTO {
         this._ylinValintapistemaara = ylinValintapistemaara;
     }
 
-    public String getHakukelpoisuusvaatimusUri() {
-        return _hakukelpoisuusvaatimusUri;
+    public List<String> getHakukelpoisuusvaatimusUris() {
+        if (_hakukelpoisuusvaatimusUris == null) {
+            _hakukelpoisuusvaatimusUris = new ArrayList<String>();
+        }
+        return _hakukelpoisuusvaatimusUris;
     }
 
-    public void setHakukelpoisuusvaatimusUri(String hakukelpoisuusvaatimusUri) {
-        this._hakukelpoisuusvaatimusUri = hakukelpoisuusvaatimusUri;
+    public void setHakukelpoisuusvaatimusUris(List<String> hakukelpoisuusvaatimusUri) {
+        this._hakukelpoisuusvaatimusUris = hakukelpoisuusvaatimusUri;
     }
 
     public String getHakukohdeKoodistoNimi() {
@@ -316,5 +322,21 @@ public class HakukohdeDTO extends BaseRDTO {
 
     public void setHakukohdeKoulutusOids(List<String> _hakukohdeKoulutusOids) {
         this._hakukohdeKoulutusOids = _hakukohdeKoulutusOids;
+    }
+
+    public String getHakukohteenNimi() {
+        return _hakukohteenNimi;
+    }
+
+    public void setHakukohteenNimi(String _hakukohteenNimi) {
+        this._hakukohteenNimi = _hakukohteenNimi;
+    }
+
+    public boolean isKaytetaanJarjestelmanValintaPalvelua() {
+        return _kaytetaanJarjestelmanValintaPalvelua;
+    }
+
+    public void setKaytetaanJarjestelmanValintaPalvelua(boolean _kaytetaanJarjestelmanValintaPalvelua) {
+        this._kaytetaanJarjestelmanValintaPalvelua = _kaytetaanJarjestelmanValintaPalvelua;
     }
 }

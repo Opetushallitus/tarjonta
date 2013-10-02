@@ -38,7 +38,7 @@ describe('localisation', function() {
         var scope, controller;
 
         // "inject" data to localisation service
-        APP_LOCALISATION_DATA = {};
+        APP_LOCALISATION_DATA = [];
 
         // Create controller with scope
         beforeEach(inject(function ($rootScope, $controller, $log) {

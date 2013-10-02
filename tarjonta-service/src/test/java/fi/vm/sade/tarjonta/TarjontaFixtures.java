@@ -23,9 +23,8 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -231,7 +230,9 @@ public class TarjontaFixtures {
         hakukohde.setHakukohdeNimi(randomUri("hakukohde"));
         hakukohde.setAlinValintaPistemaara(10);
         hakukohde.setAloituspaikatLkm(100);
-        hakukohde.setHakukelpoisuusvaatimus(randomUri("koulutustaso"));
+        List<String> hakukelpoisuusUris = new ArrayList<String>();
+        hakukelpoisuusUris.add(randomUri("koulutustaso"));
+        hakukohde.getHakukelpoisuusVaatimukset().addAll(hakukelpoisuusUris);
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohde.setYlinValintaPistemaara(200);
         hakukohde.setLastUpdateDate(new Date());

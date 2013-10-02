@@ -137,7 +137,7 @@ public interface HakukohdeResource {
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
     @POST
-    @Path("lisaa")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String createHakukohde(HakukohdeDTO hakukohdeDTO);
