@@ -279,7 +279,7 @@ public class ListHakukohdeView extends VerticalLayout {
     }
 
     private String getHakukohdeNimi(HakukohdePerustieto curHakukohde) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getNimi());
     }
 
     /**

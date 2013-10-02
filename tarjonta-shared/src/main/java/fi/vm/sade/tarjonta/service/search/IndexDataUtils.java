@@ -205,7 +205,7 @@ public class IndexDataUtils {
         return tarjoaja;
     }
 
-    private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
+   private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
             OrganisaatioPerustieto org) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
         if (org != null) {

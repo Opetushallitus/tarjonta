@@ -2,10 +2,14 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.springframework.core.convert.converter.Converter;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 
 /*
@@ -16,6 +20,10 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
     @Override
     public Hakukohde convert(HakukohdeDTO hakukohdeDTO) {
         Hakukohde hakukohde = new Hakukohde();
+
+        if (hakukohdeDTO.getOid() != null) {
+            hakukohde.setOid(hakukohdeDTO.getOid());
+        }
 
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
         if (hakukohdeDTO.getHakukohteenNimi() != null) {
@@ -41,11 +49,37 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
 
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeDTO.getValintaperustekuvausKoodiUri());
         hakukohde.setValintaperusteKuvaus(hakukohdeDTO.getValintaperustekuvausKoodiUri() != null  ? null : convertMapToMonikielinenTeksti(hakukohdeDTO.getValintaperustekuvaus()));
+        hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdeDTO.getAlinHyvaksyttavaKeskiarvo());
+        hakukohde.setAlinValintaPistemaara(hakukohdeDTO.getAlinValintaPistemaara());
+        hakukohde.setYlinValintaPistemaara(hakukohdeDTO.getYlinValintapistemaara());
+        hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
 
+        hakukohde.setLiitteidenToimitusOsoite(convertRDTOOsoiteToOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
+
+        hakukohde.setHakukelpoisuusVaatimukset(new HashSet<String>(hakukohdeDTO.getHakukelpoisuusvaatimusUris()));
+
+        hakukohde.setLastUpdateDate(new Date());
 
 
 
         return hakukohde;
+    }
+
+
+
+    private Osoite convertRDTOOsoiteToOsoite(OsoiteRDTO osoiteRDTO) {
+
+        if (osoiteRDTO != null) {
+            Osoite osoite = new Osoite();
+
+            osoite.setOsoiterivi1(osoiteRDTO.getOsoiterivi1());
+            osoite.setOsoiterivi2(osoiteRDTO.getOsoiterivi2());
+            osoite.setPostinumero(osoiteRDTO.getPostinumero());
+            osoite.setPostitoimipaikka(osoiteRDTO.getPostitoimipaikka());
+
+            return osoite;
+        } else return null;
+
     }
 
 

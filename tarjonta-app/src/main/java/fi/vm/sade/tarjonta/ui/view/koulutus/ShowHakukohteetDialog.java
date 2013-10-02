@@ -105,7 +105,7 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
                 CaptionItem ci = new CaptionItem(
-                        TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue(), 
+                        TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getNimi()), 
                         true);
                 ci.getLinkButton().addListener( new Button.ClickListener() {
 
@@ -134,7 +134,7 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
     private Set<Map.Entry<String, List<HakukohdePerustieto>>> createDataMap() {
         Map<String, List<HakukohdePerustieto>> dataMap = new HashMap<String, List<HakukohdePerustieto>>();
         for (HakukohdePerustieto curHakukohde : hakukohteet) {
-            String hakukohdeKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curHakukohde.getTarjoaja().getNimi()).getValue();
+            String hakukohdeKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),curHakukohde.getTarjoajaNimi());
             if (!dataMap.containsKey(hakukohdeKey)) {
                 List<HakukohdePerustieto> hakukohteetM = new ArrayList<HakukohdePerustieto>();
                 hakukohteetM.add(curHakukohde);
@@ -162,7 +162,7 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
     private void showSummaryView(HakukohdePerustieto hakukohde) {
         final String hakukohdeOid = hakukohde.getOid();
         presenter.closeKoulutusRemovalDialog();
-        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoaja().getTarjoajaOid());
+        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoajaOid());
         presenter.getModel().setSelectedHakuStarted(isHakuStarted(hakukohde));
         presenter.showHakukohdeViewImpl(hakukohdeOid);
 
