@@ -22,7 +22,7 @@
 //}]);
 //
 
-var app = angular.module('app.kk.review.ctrl', ['ui.bootstrap']);
+var app = angular.module('app.kk.review.ctrl', []);
 
 app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', '$routeParams', 'LocalisationService',
     function KKReviewController($scope, $location, tarjontaService, $routeParams, LocalisationService) {
@@ -49,32 +49,21 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
             },
         ];
 
-
-        $scope.isCollapsed = false;
-        $scope.dynamicPopover = "Hello, World!";
-        $scope.dynamicPopoverText = "dynamic";
-        $scope.dynamicPopoverTitle = "Title";
-
-
-        $scope.basicInfoIsCollapsed = false;
-        $scope.descriptionInfoIsCollapsed = false;
-        $scope.includedKoulutusIsCollapsed = false;
-        $scope.hakukohteetIsCollapsed = false;
+        $scope.model.basicInfoIsCollapsed = false;
+        $scope.model.descriptionInfoIsCollapsed = false;
+        $scope.model.includedKoulutusIsCollapsed = false;
+        $scope.model.hakukohteetIsCollapsed = false;
 
         $scope.search = function() {
             console.info("search()");
 
-            tarjontaService.get({oid: $scope.searchByOid}, function(data) {
-                $scope.model = data;
-                $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
-                console.info($scope.model)
-            });
+//            tarjontaService.get({oid: $scope.searchByOid}, function(data) {
+//                $scope.model = data;
+//                $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
+//                console.info($scope.model)
+//            });
         };
 
-
-        for(i = 0; i < $scope.$watch; i++) {
-            console.log("kello: " + $scope.$watch[i]);
-        }
 
         $scope.search();
     }]);

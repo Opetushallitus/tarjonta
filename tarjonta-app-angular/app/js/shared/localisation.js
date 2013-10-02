@@ -128,12 +128,15 @@ app.service('LocalisationService', function($log, $q, Localisations) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            var newEntry = this.createMissingTranslation(key, this.locale, "[" + key + "]");
+            this.createMissingTranslation(key, this.locale, "[" + key + " " + this.locale + "]")
+                    .then(function(newEntry) {
+                $log.info("  created: ", newEntry);
+                APP_LOCALISATION_DATA.push(newEntry);
+            }, function(value) {
+                $log.error("  FAILED TO CREATE ", value);
+            });
 
-            // TODO Fake "creation", really call service to create the translation placeholder for real
-            APP_LOCALISATION_DATA[key] = newEntry;
-
-            result = APP_LOCALISATION_DATA[key].value;
+            result = "[" + key + "]";
         }
 
         // result = result + "-" + new Date();
@@ -166,13 +169,13 @@ app.service('LocalisationService', function($log, $q, Localisations) {
 
         var parent = this;
         Localisations.delete(entry, function(data, status, headers, config) {
-                $log.debug("delete() - OK", data, status, headers, config);
-                parent.updateLookupMap();
-                deferred.resolve(entry);
-            }, function(data, status, headers, config) {
-                $log.error("save() - ERROR", data, status, headers, config, entry);
-                deferred.reject(entry);
-            });
+            $log.debug("delete() - OK", data, status, headers, config);
+            parent.updateLookupMap();
+            deferred.resolve(entry);
+        }, function(data, status, headers, config) {
+            $log.error("save() - ERROR", data, status, headers, config, entry);
+            deferred.reject(entry);
+        });
 
         return  deferred.promise;
     };
@@ -193,7 +196,7 @@ app.service('LocalisationService', function($log, $q, Localisations) {
             var parent = this;
 
             // Is this new translation?
-            if (!this.localisationMapByLocaleAndKey[newEntry.locale][newEntry.key]) {
+            if (!this.localisationMapByLocaleAndKey[newEntry.locale] || !this.localisationMapByLocaleAndKey[newEntry.locale][newEntry.key]) {
                 // Update in memory storage
                 APP_LOCALISATION_DATA.push(newEntry);
             }
@@ -221,8 +224,8 @@ app.service('LocalisationService', function($log, $q, Localisations) {
      * @returns promise whic will be filled with the create "entry" {key, locale, value} object when save was succesfull.
      */
     this.createMissingTranslation = function(key, locale, value) {
-        $log.debug("createMissingTranslation()", key, locale, value);
-        return this.save(key, locale, value);
+        $log.info("createMissingTranslation()", key, locale, value);
+        return this.save({key : key, locale: locale, value: value});
     };
 
     /**
