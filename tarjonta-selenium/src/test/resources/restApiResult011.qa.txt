@@ -10,19 +10,19 @@
     "kuvaus" : {
     },
     "valintakoeAjankohtas" : [ ],
-    "valintakoePisterajas" : [ {
-      "oid" : "57934",
-      "version" : 0,
-      "alinHyvaksyttyPistemaara" : 5.0,
-      "alinPistemaara" : 0.0,
-      "ylinPistemaara" : 10.0,
-      "tyyppi" : "Paasykoe",
-      "api_VERSION" : 4
-    } ],
+    "valintakoePisterajas" : [ ],
     "api_VERSION" : 4
   } ],
   "hakuOid" : "1.2.246.562.5.2013080813081926341927",
+  "tarjoajaOid" : "1.2.246.562.10.23082783798",
   "aloituspaikatLkm" : 27,
+  "hakukohdeNimi" : {
+    "kieli_sv" : "Gymnasiets danslinje",
+    "kieli_fi" : "Lukion tanssilinja"
+  },
+  "tarjoajaNimi" : {
+    "kieli_fi" : "Sibelius-lukio"
+  },
   "valintaperustekuvausKoodiUri" : "valintaperustekuvausryhma_1#1",
   "hakukohdeKoodistoNimi" : "Gymnasiets danslinje Lukion tanssilinja ",
   "lisatiedot" : {
@@ -46,11 +46,12 @@
     "postitoimipaikka" : "HELSINGIN KAUPUNKI",
     "api_VERSION" : 4
   },
+  "hakukohdeKoulutusOids" : [ "1.2.246.562.5.74372211164" ],
   "ylinValintapistemaara" : 0,
   "kaytetaanHakukohdekohtaistaHakuaikaa" : false,
   "hakukelpoisuusvaatimusUri" : "hakukelpoisuusvaatimusta_5#1",
   "valintaperustekuvaus" : {
-    "kieli_fi#1" : "<p>kuvaus muutos 1379919057979</p>"
+    "kieli_fi#1" : "<p>kuvaus muutos 1380713127156</p>"
   },
   "opetuskielet" : [ "kieli_fi#1" ],
   "api_VERSION" : 4
