@@ -31,10 +31,9 @@ app.factory('Localisations', function($log, $resource, Config) {
     var uri = Config.env.tarjontaRestUrlPrefix + "localisation";
     $log.info("Localisations() - uri = ", uri);
 
-    // return $resource('https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/localisation/:key', {
-    // return $resource('http://localhost:8084/tarjonta-service/rest/localisation/:key', {
-    return $resource(uri + "/:key", {
-        key: '@key'
+    return $resource(uri + "/:locale/:key", {
+        key: '@key',
+        locale: '@locale',
     }, {
         update: {method: 'PUT'}
     });
@@ -52,14 +51,14 @@ app.filter('tt', ['LocalisationService', function(LocalisationService) {
         };
     }]);
 
-app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService, $timeout) {
+app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService) {
         return {
             restrict: 'EA',
             replace: true,
             template: '<div>TT TEMPLATE</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
-                console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
+                // console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
 
                 var t = LocalisationService.t(tAttrs["tt"]);
                 tElement.text(t);
@@ -88,10 +87,7 @@ app.service('LocalisationService', function($log, Localisations) {
     // Singleton state
     this.locale = "fi";
 
-    Localisations.get({}, function(data) {
-        console.log("*************** LocalisationService - query: Success! ", data);
-    });
-
+    this.localisationMapByLocaleAndKey = {};
 
     /**
      * Get translation, fill in possible parameters.
@@ -102,7 +98,8 @@ app.service('LocalisationService', function($log, Localisations) {
      */
     this.getTranslation = function(key, params) {
 
-        var v = APP_LOCALISATION_DATA[key];
+        var v0 = this.localisationMapByLocaleAndKey[this.locale];
+        var v = v0 ? v0[key] : undefined;
         var result;
 
         if (v) {
@@ -119,24 +116,7 @@ app.service('LocalisationService', function($log, Localisations) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            var newEntry = {
-                "key": key,
-                "locale": this.locale,
-                "value": "[" + key + "]"
-            };
-
-            // Try to save to the server?
-            Localisations.save(newEntry, function(data, status, headers, config) {
-                console.log("1FAILURE?", data);
-                console.log("2FAILURE?", status);
-                console.log("3FAILURE?", headers);
-                console.log("4FAILURE?", config);
-            }, function(data, status, headers, config) {
-                console.log("1success?", data);
-                console.log("2success?", status);
-                console.log("3success?", headers);
-                console.log("4success?", config);
-            });
+            result = this.createMissingTranslation(key, this.locale, "[" + key + "]");
 
             // TODO Fake "creation", really call service to create the translation placeholder for real
             APP_LOCALISATION_DATA[key] = newEntry;
@@ -147,6 +127,61 @@ app.service('LocalisationService', function($log, Localisations) {
         // result = result + "-" + new Date();
         // $log.debug(new Date() + ": getTranslation(" + key + ") --> " + result);
         return result;
+    };
+
+    this.createMissingTranslation = function(key, locale, value) {
+        console.log("createMissingTranslation()", key, locale, value);
+
+        var newEntry = {
+            "key": key,
+            "locale": locale,
+            "value": value
+        };
+
+        // in memory storage
+        APP_LOCALISATION_DATA.push(newEntry);
+
+        // Try to save to the server?
+        Localisations.save(newEntry, function(data, status, headers, config) {
+            console.log("createMissingTranslation 1FAILURE?", data);
+            console.log("createMissingTranslation 2FAILURE?", status);
+            console.log("createMissingTranslation 3FAILURE?", headers);
+            console.log("createMissingTranslation 4FAILURE?", config);
+        }, function(data, status, headers, config) {
+            console.log("created new translation to server", data, status, headers, config);
+        });
+
+        this.updateLookupMap();
+    };
+
+    this.reload = function() {
+        console.log("reload()");
+        Localisations.query({}, function(data) {
+            console.log("reload successfull! data = ", data);
+            APP_LOCALISATION_DATA = data;
+
+            this.updateLookupMap();
+        });
+    }
+
+    this.updateLookupMap = function() {
+        console.log("updateLookupMap() - STORE TRANSLATIONS TO MAP FOR FASTER ACCESS!");
+
+        var tmp = {};
+
+        for (var localisationIndex in APP_LOCALISATION_DATA) {
+            var localisation = APP_LOCALISATION_DATA[localisationIndex];
+            var mapByLocale = tmp[localisation.locale];
+            if (!mapByLocale) {
+                tmp[localisation.locale] = {};
+                mapByLocale = tmp[localisation.locale];
+            }
+            mapByLocale[localisation.key] = localisation;
+        }
+
+        this.localisationMapByLocaleAndKey = tmp;
+
+        console.log("===> result ", this.localisationMapByLocaleAndKey);
     };
 
     this.t = function(key, params) {

@@ -67,8 +67,8 @@ window.CONFIG = {
         "tarjonta.solr.baseurl": "http://luokka.hard.ware.fi:8312/solr",
         "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/",
         //käsin lisätyt:
-        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/"
-        // "tarjontaRestUrlPrefix": "http://localhost:8084/tarjonta-service/rest/"
+        // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/"
+        "tarjontaRestUrlPrefix": "http://localhost:8084/tarjonta-service/rest/"
 
     }
 };

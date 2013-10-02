@@ -87,7 +87,7 @@
                 <div ng-switch-when="helpers">
                     <div ng-switch on="renderPath[1]">
                         <div ng-switch-when="localisations">
-                            <div ng-include="'partials/helpers/localisation.html'"></div>
+                            <div ng-include="'partials/helpers/localisation.html'" ng-controller="HelpersLocalisationCtrl"></div>
                         </div>
                     </div>
                 </div>

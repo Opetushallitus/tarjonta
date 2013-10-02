@@ -15,7 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
-import java.util.Map;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,7 +24,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -38,60 +37,34 @@ import javax.ws.rs.core.MediaType;
 @Path("/localisation")
 public interface LocalisationResource {
 
-    /**
-     * Retrieve localizations.
-     *
-     * @param requestedLocale locale "fi", "en", "sv".
-     * @param requestedLocale include also map of all other language translations for same keys
-     * @return List of translations
-     */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Map<String, LocalisationRDTO> getLocalisations(@QueryParam("locale") String requestedLocale, @QueryParam("allLanguages") boolean includeAllLanguages);
+    public List<LocalisationRDTO> getLocalisations();
 
-    /**
-     * Retrieves localisations by key.
-     *
-     * @param key
-     * @return
-     */
     @GET
-    @Path("{key}")
+    @Path("{locale}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Map<String, LocalisationRDTO> getLocalisation(@PathParam("key") String key);
+    public List<LocalisationRDTO> getLocalisationsByLocale(@PathParam("locale") String locale);
 
-    /**
-     * Update localisation.
-     *
-     * @param key
-     * @param data
-     */
+    @GET
+    @Path("{locale}/{key}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public LocalisationRDTO getLocalisationByLocaleAndKey(@PathParam("locale") String locale, @PathParam("key") String key);
+
     @PUT
-    @Path("{key}")
+    @Path("{locale}/{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void updateLocalization(@PathParam("key") String key, LocalisationRDTO data);
+    public LocalisationRDTO updateLocalisationByLocaleAndKey(@PathParam("locale") String locale, @PathParam("key") String key, LocalisationRDTO data);
 
-    /**
-     * Create new localisation.
-     *
-     * @param key
-     * @param data
-     * @return
-     */
     @POST
-    @Path("{key}")
+    @Path("{locale}/{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public LocalisationRDTO createLocalization(@PathParam("key") String key, LocalisationRDTO data);
+    public LocalisationRDTO createLocalisationByLocaleAndKey(@PathParam("locale") String locale, @PathParam("key") String key, LocalisationRDTO data);
 
-    /**
-     * Remove localisation by key.
-     *
-     * @param key
-     */
     @DELETE
-    @Path("{key}")
+    @Path("{locale}/{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void deleteLocalization(@PathParam("key") String key);
+    public LocalisationRDTO deleteLocalisationByLocaleAndKey(@PathParam("locale") String locale, @PathParam("key") String key);
 }
