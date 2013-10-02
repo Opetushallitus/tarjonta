@@ -31,7 +31,7 @@ angular.module('config', []).factory('Config', function(globalConfig) {
     var factoryObj = (function() {
         var ENV_CONF = 'env'; //system properties from common properties files, service uris etc.
         var APP_CONF = 'app'; //AngularJS application properties
-        var DEV_CONF = 'developer.config.location'; //AngularJS developer properties
+        var DEV_CONF = 'developerConfigLocation'; //AngularJS developer properties
 
         if (globalConfig === null || typeof globalConfig === 'undefined')
             throw "Configuration variable cannot be null.";
@@ -45,29 +45,6 @@ angular.module('config', []).factory('Config', function(globalConfig) {
         var output = {};
         output[ENV_CONF] = angular.copy(globalConfig[ENV_CONF]);
         output[APP_CONF] = angular.copy(globalConfig[APP_CONF]);
-
-        if (Boolean(globalConfig[APP_CONF][DEV_CONF])) {
-            /*
-             * Try to load a developer config file:
-             * Overwrites ENVIRONMENT object values with developer config object values, 
-             * also adds developer config values if non existent in environment object.
-             * 
-             * How to configure:
-             * 
-             * 1. Add property like {'developer.config.location' : 'dev/dev-configuration.json'} to your APPLICATION property file.
-             * 2. Create a file to the location : <angular-project-location>/env/dev-configuration.json
-             * 3. Add your own properties to JSON object:
-             * {{tarjonta.admin.webservice.url.backend": "localhost:1234/tarjonta-service/rest/"},{ 'A':'1'}, {...}}
-             */
-            $.get(globalConfig[APP_CONF][DEV_CONF]).done(function(data) {
-                console.log("------------------ DEVELOPER CONFIG LOADED ------------------");
-                console.log(data);
-                console.log("-------------------------------------------------------------");
-                output[ENV_CONF] = $.extend({}, output[ENV_CONF], data);
-            }).fail(function() {
-                //A silent error occured, no developer config loaded.
-            })
-        }
 
         return output;
     }());

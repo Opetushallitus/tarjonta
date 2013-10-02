@@ -35,7 +35,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
     private static final long serialVersionUID = 1L;
     private String komoOid;
     private TarjontaTila tila;
-    private UiListDTO koulutuskoodi;
+    private UiDTO koulutuskoodi;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     private UiDTO koulutusaste;
@@ -118,14 +118,14 @@ public abstract class ToteutusDTO extends BaseRDTO {
     /**
      * @return the koulutuskoodi
      */
-    public UiListDTO getKoulutuskoodi() {
+    public UiDTO getKoulutuskoodi() {
         return koulutuskoodi;
     }
 
     /**
      * @param koulutuskoodi the koulutuskoodi to set
      */
-    public void setKoulutuskoodi(UiListDTO koulutuskoodi) {
+    public void setKoulutuskoodi(UiDTO koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
 

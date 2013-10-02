@@ -10,10 +10,19 @@
         <script src="lib/jquery-1.10.2.min.js"></script>
 
         <!--
-          App configuration files.
+          Environment configuration file(s):
+          Do not add angular application data to 'ext/*' (or 'ext/js/*' etc.)
+          data in the directory will be overridden by tarjontaapp service filter.
         -->
         <script src="ext/js/env-configuration.js"></script>
-        <script src="ext/js/app-configuration.js"></script>
+        <!--
+        Application configuration file(s):
+        -->
+        <script src="js/app-configuration.js"></script>
+        <!--
+         Developer configuration file(s):
+        -->
+        <script src="dev/dev-configuration.js"></script>
 
         <!--
         Angular, see version.txt for version.

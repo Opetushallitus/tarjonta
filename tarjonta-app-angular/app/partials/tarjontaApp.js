@@ -71,6 +71,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/helpers/localisations', {
             action: "helpers.localisations"
         })
+
+                //Remove this when done Tuomas          
+                .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
+
                 .otherwise({redirectTo: "/etusivu"});
     }]);
 

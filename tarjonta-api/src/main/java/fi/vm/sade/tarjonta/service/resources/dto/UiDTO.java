@@ -29,7 +29,19 @@ public class UiDTO implements Serializable {
 
     public UiDTO() {
     }
-    
+
+    /**
+     *
+     * @param arvo //Data in user's language.
+     * @param koodiUri //Koodisto koodi URI like 'kieli_fi'
+     * @param koodiVersio //Koodisto koodi version number in String format '1'
+     * @param koodiArvo //ISO language code like 'EN', 'FI' etc.
+     */
+    public UiDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
+        this.arvo = arvo;
+        koodi = new KoodiUriDTO(koodiUri, koodiVersio, koodiArvo);
+    }
+
     /**
      * @return the arvo
      */
@@ -56,5 +68,9 @@ public class UiDTO implements Serializable {
      */
     public void setKoodi(KoodiUriDTO koodi) {
         this.koodi = koodi;
+    }
+
+    public void setKoodiUri(String uri, String versio, String arvo) {
+        koodi = new KoodiUriDTO(uri, versio, arvo);
     }
 }

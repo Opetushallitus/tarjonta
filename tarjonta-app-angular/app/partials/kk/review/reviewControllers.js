@@ -57,11 +57,11 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
         $scope.search = function() {
             console.info("search()");
 
-//            tarjontaService.get({oid: $scope.searchByOid}, function(data) {
-//                $scope.model = data;
-//                $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
-//                console.info($scope.model)
-//            });
+            tarjontaService.getKoulutus({oid: $scope.searchByOid}, function(data) {
+                $scope.model = data;
+                $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
+                console.info($scope.model)
+            });
         };
 
 

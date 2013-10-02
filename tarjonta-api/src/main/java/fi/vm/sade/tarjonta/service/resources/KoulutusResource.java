@@ -29,6 +29,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
 
@@ -49,13 +50,18 @@ public interface KoulutusResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ToteutusDTO getToteutus(@PathParam("oid") String oid);
     
+    @GET
+    @Path("/koulutuskoodi/{koulutuskoodi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ToteutusDTO getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
+    
     @PUT
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void updateToteutus(ToteutusDTO dto);
+    public void updateToteutus(KorkeakouluDTO dto);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void createToteutus(ToteutusDTO dto);
+    public void createToteutus(KorkeakouluDTO dto);
 
     @DELETE
     @Path("{oid}/tekstis")

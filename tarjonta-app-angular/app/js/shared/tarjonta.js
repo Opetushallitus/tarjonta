@@ -2,7 +2,6 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
-    var tutkintoHaku = $resource('partials/kk/edit/koulutusData.json');
 
     function localize(txt) {
     	// TODO käyttäjän localen mukaan
@@ -77,21 +76,31 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
         return ret.promise;
     }
 
-    dataFactory.insertTutkinto = function(cust) {
-        return $http.post(urlBase, cust);
+    dataFactory.insertKoulutus = function(json) {
+        console.log("insertKoulutus");
+        console.log(json);
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/");
+        koulutus.save(json);
     };
 
-    dataFactory.updateTutkinto = function(cust) {
-        return $http.put(urlBase + '/' + cust.ID, cust)
+    dataFactory.updateKoulutus = function(cust) {
+        return null;
     };
 
-    dataFactory.deleteTutkinto = function(id) {
+    dataFactory.deleteKoulutus = function(id) {
         return $http.delete(urlBase + '/' + id);
     };
 
-    dataFactory.getTutkinto = function(arg, func) {
-        console.log("getTutkinto()");
-        return tutkintoHaku.get(func);
+    dataFactory.getKoulutus = function(arg, func) {
+        console.log("getKoulutus()");
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
+        return koulutus.get(arg, func);
+    };
+
+    dataFactory.getKoulutuskoodiRelations = function(arg, func) {
+        console.log("getKoulutuskoodiRelations()");
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri", {koulutuskoodiUri: '@koulutuskoodiUri'});
+        return koulutus.get(arg, func);
     };
 
     return dataFactory;
