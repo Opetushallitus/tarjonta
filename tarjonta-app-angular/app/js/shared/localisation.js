@@ -36,6 +36,10 @@ app.factory('Localisations', function($log, $resource, Config) {
         locale: '@locale',
     }, {
         update: {method: 'PUT'}
+//        save: {
+//            method: 'POST',
+//            headers: {'Content-Type':'application/json; charset=UTF-8'}
+//        }
     });
 
 });
@@ -83,7 +87,7 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * getTranslations
  * </pre>
  */
-app.service('LocalisationService', function($log, Localisations) {
+app.service('LocalisationService', function($log, $q, Localisations) {
     $log.debug("LocalisationService()");
 
     // Singleton state, default current locale
@@ -137,64 +141,114 @@ app.service('LocalisationService', function($log, Localisations) {
         return result;
     };
 
+
+    this.isEmpty = function(str) {
+        return (!str || 0 === str.length);
+    };
+
+    this.isBlank = function(str) {
+        return (!str || /^\s*$/.test(str));
+    };
+
+
+    /**
+     * Delete a translation.
+     *
+     * @param {translation} newEntry
+     * @returns {Promise}
+     */
+    this.delete = function(entry) {
+        $log.info("delete()", entry);
+
+        var deferred = $q.defer();
+
+        // TODO update in memory storage
+
+        var parent = this;
+        Localisations.delete(entry, function(data, status, headers, config) {
+                $log.debug("delete() - OK", data, status, headers, config);
+                parent.updateLookupMap();
+                deferred.resolve(entry);
+            }, function(data, status, headers, config) {
+                $log.error("save() - ERROR", data, status, headers, config, entry);
+                deferred.reject(entry);
+            });
+
+        return  deferred.promise;
+    };
+
+    /**
+     * Translation storage.
+     *
+     * @param {String} newEntry
+     * @returns {Promise} a promise
+     */
+    this.save = function(newEntry) {
+        $log.debug("save()", newEntry);
+        var deferred = $q.defer();
+
+        if (!newEntry || this.isBlank(newEntry.key) || this.isBlank(newEntry.locale)) {
+            deferred.reject({errors: "INVALID LOCALISATIN, null, empty key and/or localisation", value: newEntry});
+        } else {
+            var parent = this;
+
+            // Is this new translation?
+            if (!this.localisationMapByLocaleAndKey[newEntry.locale][newEntry.key]) {
+                // Update in memory storage
+                APP_LOCALISATION_DATA.push(newEntry);
+            }
+
+            // Try to save to the server
+            Localisations.save(newEntry, function(data, status, headers, config) {
+                $log.debug("save() - OK", data, status, headers, config);
+                parent.updateLookupMap();
+                deferred.resolve(newEntry);
+            }, function(data, status, headers, config) {
+                $log.error("save() - ERROR", data, status, headers, config, newEntry);
+                deferred.reject(newEntry);
+            });
+        }
+
+        return deferred.promise;
+    };
+
     /**
      * Create new translation.
      *
      * @param {String} key
      * @param {String} locale
      * @param {String} value
-     * @returns Object of {key, locale, value}
+     * @returns promise whic will be filled with the create "entry" {key, locale, value} object when save was succesfull.
      */
     this.createMissingTranslation = function(key, locale, value) {
-        $log.info("createMissingTranslation()", key, locale, value);
-
-        var parent = this;
-
-        // Create new translation
-        var newEntry = {
-            "key": key,
-            "locale": locale,
-            "value": value
-        };
-
-        // Update in memory storage
-        APP_LOCALISATION_DATA.push(newEntry);
-
-        // Try to save to the server
-        Localisations.save(newEntry, function(data, status, headers, config) {
-            $log.info("1 createMissingTranslation result: ", data);
-            $log.info("2 createMissingTranslation status: ", status);
-            $log.info("3 createMissingTranslation headers: ", headers);
-            $log.info("4 createMissingTranslation config: ", config);
-        }, function(data, status, headers, config) {
-            $log.info("5 created new translation to server", data, status, headers, config);
-        });
-
-        this.updateLookupMap();
-
-        return newEntry;
+        $log.debug("createMissingTranslation()", key, locale, value);
+        return this.save(key, locale, value);
     };
 
     /**
      * Reload translations from REST.
      * Stores fetched translations to global 'APP_LOCALISATION_DATA' array AND recreates lookup map.
      *
-     * TODO return a promise!
-     *
      * @returns {undefined}
      */
     this.reload = function() {
-        $log.info("reload()");
+        $log.debug("reload()");
         var parent = this;
 
-        Localisations.query({}, function(data) {
-            $log.info("reload successfull! data = ", data);
-            APP_LOCALISATION_DATA = data;
+        var deferred = $q.defer();
 
+        // TODO ERROR HANDLING!
+        Localisations.query({}, function(data) {
+            $log.debug("reload successfull! data = ", data);
+            APP_LOCALISATION_DATA = data;
             parent.updateLookupMap();
+            deferred.resolve(data);
+        }, function(data) {
+            $log.error("LocalisationService.reload() FAILED", data);
+            deferred.reject(data);
         });
 
-        // TODO return a promise!
+        return deferred.promise;
     }
 
     /**
@@ -214,7 +268,7 @@ app.service('LocalisationService', function($log, Localisations) {
      * @returns created lookup map
      */
     this.updateLookupMap = function() {
-        $log.info("updateLookupMap()");
+        $log.debug("updateLookupMap()");
 
         var tmp = {};
 
@@ -230,7 +284,7 @@ app.service('LocalisationService', function($log, Localisations) {
 
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.info("===> result ", this.localisationMapByLocaleAndKey);
+        $log.debug("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 

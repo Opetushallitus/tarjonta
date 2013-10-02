@@ -2,12 +2,14 @@
 <div ng-controller="HelpersLocalisationCtrl">
 
     Filtteröi tällä: <input type="text" ng-model="spec">
-    <div class="btn btn-primary" ng-click="createNew2(spec)">LISÄÄ UUSI</div>
+    <form name="localisationsForm" novalidate>
+    <div class="btn btn-primary" ng-click="createNew(spec)" ng-disabled="!spec" >LISÄÄ UUSI</div>
     <div class="btn btn-primary" ng-click="createMissingTranslations()">Lisää puuttuvat käännökset</div>
     <div class="btn btn-primary" ng-click="reloadData()">Lataa uudelleen</div>
+    <div class="btn btn-primary" ng-click="saveAllModified()" ng-disabled="localisationsForm.$pristine">Tallenna kaikki muuttuneet</div>
 
     <div class="container-fluid">
-        <div class="row-fluid" ng-repeat="l in model.localisations2 | filter: {key: spec} | orderBy: l.key">
+        <div class="row-fluid" ng-repeat="l in model.localisations | filter: {key: spec} | orderBy: l.key">
             <div class="span3">
                 {{ l.key }}
             </div>
@@ -19,9 +21,20 @@
             </div>
         </div>
     </div>
+    </form>
 
     <hr>
 
     <pre>{{ model | json}}</pre>
+
+     <style type="text/css">
+      .css-form input.ng-invalid.ng-dirty {
+        background-color: #FA787E;
+      }
+
+      .css-form input.ng-valid.ng-dirty {
+        background-color: #78FA89;
+      }
+    </style>
 
 </div>
