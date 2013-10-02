@@ -173,6 +173,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.year = "*";
         $scope.spec.season = "*";
     }
+    
+    $scope.menuOptions = {
+        	"#": "Tarkastele",
+        	"#": "Muokkaa",
+        	"#": "Näytä hakukohteet",
+        	"#": "Julkaise"
+    };
 
     // taulukon renderöinti
     
@@ -197,7 +204,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			var tulos = tarjoaja.tulokset[ri];
     			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos[prefix+"Oid"]+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
-					+"<a href=\"#\"><img src=\"img/icon-treetable-button.png\"/></a>"
+					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
 					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
 					+tulos.nimi
 					+"</a></td>"
@@ -218,6 +225,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     	return html;
     }
+    
+    function box(a,b,c) {
+    	return a<b ? b : a>c ? c : a;
+    }  
         
     function initTable(selector, prefix, data, cols) {
     	var em = $(selector);
@@ -238,6 +249,52 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			var sel = $(ev.currentTarget).is(":checked");
 			//console.log("select="+sel, ev.currentTarget.parentNode.parentNode.parentNode);
 			$("input.selectRow", $(ev.currentTarget.parentNode.parentNode.parentNode)).prop("checked", sel);
+    	});
+    	
+    	// kirjapinovalikot
+    	// - sisältö angularilla, sijoittelu jqueyryllä
+    	$(".options", em).click(function(ev){
+    		ev.preventDefault();
+    		var menu = $("#dropdown");
+    		
+    		// TODO aseta ja päivitä sisältö
+    		var row = $(ev.currentTarget.parentNode.parentNode);
+    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("hakukohde-oid"));
+    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("koulutus-oid"));
+    		
+    		
+    		console.log("rivi '"+row.attr("hakukohde-oid")+"' / '"+row.attr("koulutus-oid")+"'");
+    		
+    		$scope.$apply(); // turha?
+    		
+    		// sijoittelu
+    		menu.toggleClass("display-block",true);
+    		menu.css("left", box(ev.pageX-4, 0, $(window).width() - menu.width() - 4));
+    		menu.css("top", box(ev.pageY-4, 0, $(window).height() - menu.height() - 4));
+    		
+    		
+    	
+    		// automaattinen sulkeutuminen hiiren kursorin siirtyessä muualle
+    		menu.mouseenter(function(){
+    			var timer = menu.data("popupTimer");
+    			if (timer!=null) {
+    				clearTimeout(timer);
+    				menu.data("timer", null);
+    			}
+    		});
+    		menu.mouseleave(function(){
+    			menu.data("timer", setTimeout(function(){
+    				menu.toggleClass("display-block",false);
+    			}, 500));
+    		});
+    		
+    		// sulkeutuminen linkkiä klikkaamalla yms.
+    		$("a", menu).click(function(ev){
+    			// tähän voidaan tarvittaessa lisätä
+    			ev.preventDefault(); // TODO poista
+    			menu.toggleClass("display-block",false);
+    		});
+
     	});
     	
     	// foldaus
