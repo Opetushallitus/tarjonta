@@ -1,7 +1,7 @@
 
 var app = angular.module('app.helpers', ['app.services', 'localisation', 'config']);
 
-app.controller('HelpersLocalisationCtrl', function($scope, Localisations, $q) {
+app.controller('HelpersLocalisationCtrl', function($scope, Localisations, $q, LocalisationService) {
 
     console.log("HelpersLocalisationCtrl()");
 
@@ -55,6 +55,10 @@ app.controller('HelpersLocalisationCtrl', function($scope, Localisations, $q) {
 
     $scope.reloadData = function() {
         console.log("reloadData()")
+
+        LocalisationService.reload();
+
+
         $scope.model.selected = undefined;
         $scope.model.locale = "fi";
 

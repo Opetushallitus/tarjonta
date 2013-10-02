@@ -58,8 +58,6 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
             template: '<div>TT TEMPLATE</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
-                // console.log("TT COMPILE, tt=" + tAttrs["tt"] + " - date=" + new Date());
-
                 var t = LocalisationService.t(tAttrs["tt"]);
                 tElement.text(t);
 
@@ -79,31 +77,41 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * <pre>
  * LocalisationService.t("this.is.the.key")  == localized value
  * LocalisationService.t("this.is.the.key2", ["array", "of", "values"])  == localized value
+ *
+ * LocalisationService.reload()
+ * createMissingTranslation(key, locale, value)
+ * getTranslations
  * </pre>
  */
 app.service('LocalisationService', function($log, Localisations) {
     $log.debug("LocalisationService()");
 
-    // Singleton state
+    // Singleton state, default current locale
+    // TODO is there some other gobal / app location for this?
     this.locale = "fi";
 
+    // Localisations: MAP[locale][key] = {key, locale, value};
     this.localisationMapByLocaleAndKey = {};
 
     /**
      * Get translation, fill in possible parameters.
      *
-     * @param {type} key
-     * @param {type} params
-     * @returns {unresolved}
+     * @param {String} key
+     * @param {Array} params
+     * @returns {String} translation value, parameters replaced
      */
     this.getTranslation = function(key, params) {
+        $log.debug("getTranslation(key, params)", key, params);
 
+        // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[this.locale];
+
+        // Get translations by key
         var v = v0 ? v0[key] : undefined;
         var result;
 
         if (v) {
-            // Extract result and replace parameters if any
+            // Found translation, replace possible parameters
             result = v.value;
 
             // Expand parameters
@@ -116,7 +124,7 @@ app.service('LocalisationService', function($log, Localisations) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            result = this.createMissingTranslation(key, this.locale, "[" + key + "]");
+            var newEntry = this.createMissingTranslation(key, this.locale, "[" + key + "]");
 
             // TODO Fake "creation", really call service to create the translation placeholder for real
             APP_LOCALISATION_DATA[key] = newEntry;
@@ -129,43 +137,84 @@ app.service('LocalisationService', function($log, Localisations) {
         return result;
     };
 
+    /**
+     * Create new translation.
+     *
+     * @param {String} key
+     * @param {String} locale
+     * @param {String} value
+     * @returns Object of {key, locale, value}
+     */
     this.createMissingTranslation = function(key, locale, value) {
-        console.log("createMissingTranslation()", key, locale, value);
+        $log.info("createMissingTranslation()", key, locale, value);
 
+        var parent = this;
+
+        // Create new translation
         var newEntry = {
             "key": key,
             "locale": locale,
             "value": value
         };
 
-        // in memory storage
+        // Update in memory storage
         APP_LOCALISATION_DATA.push(newEntry);
 
-        // Try to save to the server?
+        // Try to save to the server
         Localisations.save(newEntry, function(data, status, headers, config) {
-            console.log("createMissingTranslation 1FAILURE?", data);
-            console.log("createMissingTranslation 2FAILURE?", status);
-            console.log("createMissingTranslation 3FAILURE?", headers);
-            console.log("createMissingTranslation 4FAILURE?", config);
+            $log.info("1 createMissingTranslation result: ", data);
+            $log.info("2 createMissingTranslation status: ", status);
+            $log.info("3 createMissingTranslation headers: ", headers);
+            $log.info("4 createMissingTranslation config: ", config);
         }, function(data, status, headers, config) {
-            console.log("created new translation to server", data, status, headers, config);
+            $log.info("5 created new translation to server", data, status, headers, config);
         });
 
         this.updateLookupMap();
+
+        return newEntry;
     };
 
+    /**
+     * Reload translations from REST.
+     * Stores fetched translations to global 'APP_LOCALISATION_DATA' array AND recreates lookup map.
+     *
+     * TODO return a promise!
+     *
+     * @returns {undefined}
+     */
     this.reload = function() {
-        console.log("reload()");
+        $log.info("reload()");
+        var parent = this;
+
         Localisations.query({}, function(data) {
-            console.log("reload successfull! data = ", data);
+            $log.info("reload successfull! data = ", data);
             APP_LOCALISATION_DATA = data;
 
-            this.updateLookupMap();
+            parent.updateLookupMap();
         });
+
+        // TODO return a promise!
     }
 
+    /**
+     * Get list of currently loaded translations.
+     *
+     * @returns global APP_LOCALISATION_DATA, array of {key, locale, value} objects.
+     */
+    this.getTranslations = function() {
+        return APP_LOCALISATION_DATA;
+    };
+
+
+    /**
+     * Loop over all translations, create new lookup map to store translations to
+     * MAP[locale][translation_key] == {key, locale, value};
+     *
+     * @returns created lookup map
+     */
     this.updateLookupMap = function() {
-        console.log("updateLookupMap() - STORE TRANSLATIONS TO MAP FOR FASTER ACCESS!");
+        $log.info("updateLookupMap()");
 
         var tmp = {};
 
@@ -181,12 +230,28 @@ app.service('LocalisationService', function($log, Localisations) {
 
         this.localisationMapByLocaleAndKey = tmp;
 
-        console.log("===> result ", this.localisationMapByLocaleAndKey);
+        $log.info("===> result ", this.localisationMapByLocaleAndKey);
+        return this.localisationMapByLocaleAndKey;
     };
 
+    /**
+     * Get translation value.
+     *
+     * If translation with current locale and key is not found then new translation entry will be created.
+     *
+     * @param {String} key
+     * @param {Array} params
+     * @returns {String} value for translation
+     */
     this.t = function(key, params) {
         return this.getTranslation(key, params);
     };
+
+
+    $log.info("LocalisationService - initialize()");
+
+    // Bootstrap
+    this.updateLookupMap();
 
 });
 
@@ -195,7 +260,7 @@ app.service('LocalisationService', function($log, Localisations) {
  * An easy way to bind "t" function to gobal scope.
  */
 app.controller('LocalisationCtrl', function($scope, LocalisationService, $log) {
-    $log.debug("LocalisationCtrl()");
+    $log.info("LocalisationCtrl()");
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
