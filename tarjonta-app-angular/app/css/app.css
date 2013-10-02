@@ -31,6 +31,10 @@
 	float:right;
 }
 
+.display-block {
+	display:block;
+}
+
 label {
 	display:inline;	
 }
@@ -178,15 +182,18 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
+div#searchResults div.controls {
+	margin-bottom:30px;
+}
+
 div#searchResults input.selectAll {
 	margin-left:23px;
-	margin-bottom:20px;
 }
 
 div#searchResults input.selectAll + label {
 	position:relative;
-	top:-0.5em;
-	left:0.25em;
+	top:0.25em;
+	margin-left:0.25em;
 }
 
 div#searchResults table {

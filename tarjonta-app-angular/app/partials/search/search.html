@@ -82,31 +82,38 @@
     </div>
 
 	<div id="searchResults" ng-cloak>
-    <tabset>
-        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
-        
-        	<div>
-        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" disabled="{{!canMoveOrCopy()}}"/>
-        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" disabled="{{!canCreateHakukohde()}}"/>
-        		<input class="btn float-right" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" disabled="{{!canCreateKoulutus()}}"/>
-        	</div>
-        
-        	<input type="checkbox" class="selectAll"/>
-        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-        	
-        	<table id="koulutuksetResults"><!-- jquery --></table>
-        
-        </tab>
-        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
-        
-	        <input type="checkbox" class="selectAll"/>
-        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-
-        	<table id="hakukohteetResults"><!-- jquery --></table>
-
-        </tab>
-
-    </tabset>
+	    <tabset>
+	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
+	        
+	        	<div class="controls">
+	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" disabled="{{!canMoveOrCopy()}}"/>
+	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" disabled="{{!canCreateHakukohde()}}"/>
+	        		<input class="btn float-right" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" disabled="{{!canCreateKoulutus()}}"/>
+	        	</div>
+	        
+	        	<div class="controls">
+	        		<input type="checkbox" class="selectAll"/>
+			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+				</div>
+				        	
+	        	<table id="koulutuksetResults"><!-- jquery --></table>
+	        
+	        </tab>
+	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+	        
+		        <input type="checkbox" class="selectAll"/>
+	        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+	
+	        	<table id="hakukohteetResults"><!-- jquery --></table>
+	
+	        </tab>
+	
+	    </tabset>
+	    
+	    <ul id="dropdown" class="dropdown-menu">
+	    	<li ng-repeat="(url, title) in menuOptions"><a href="{{url}}">{{title}}</a></li>
+	    </ul>
+    
     </div>
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
