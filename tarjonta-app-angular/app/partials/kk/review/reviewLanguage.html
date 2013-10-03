@@ -8,243 +8,269 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span12 well">
-            <div tt='kk.review.perustiedot.otsikko'></div>
-            lang = {{ lang }}
+        <div class="span12 well" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot">
+            <span class="collapseHeader" ng-class="{isOpen : !model.collapse.perusTiedot}" tt='kk.review.perustiedot.otsikko'></span>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.organisaatio'></div>
+    <div collapse="model.collapse.perusTiedot">
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.oid'></div>
+            </div>
+            <div class="span9">
+                {{model.koulutus.oid}}
+                xxx {{ lang }}
+                xxx
+                {{model.koulutus.jatkoOpintoMahdollisuudet[lang.locale]}} yyy
+            </div>
         </div>
-        <div class="span9">
-            Rantalohjan kunta, Rantalohjan ammattiopisto, Terveyden ja hyvinvoinnin toimipiste
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.organisaatio'></div>
+            </div>
+            <div class="span9">
+                Rantalohjan kunta, Rantalohjan ammattiopisto, Terveyden ja hyvinvoinnin toimipiste
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.koulutus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusohjelma'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.koulutusohjelma'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusaste'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusala'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.koulutusaste'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opintoala'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.tutkintonimike'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.koulutusala'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opintojenLaajuus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutuslaji'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.opintoala'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.pohjakoulutusvaatimus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.alkamispvm'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.tutkintonimike'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.suunniteltuKesto'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opetuskieli'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.opintojenLaajuus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opetusmuoto'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.linkkiOpetussuunnitelmaan'></div>
+            </div>
+            <div class="span9">
+                <a hre="http://linkki">linkki</a>
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.koulutuslaji'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.pohjakoulutusvaatimus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.alkamispvm'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.suunniteltuKesto'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.opetuskieli'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.opetusmuoto'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.linkkiOpetussuunnitelmaan'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.perustiedot.yhteyshenkilo'></div>
-        </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.yhteyshenkilo'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 well">
+        <div class="span12 well" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">
             <div tt='kk.review.kuvailevatTiedot.otsikko'></div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.tavoitteetTutkinto'></div>
+    <div collapse="model.collapse.kuvailevatTiedot">
+
+
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.tavoitteetTutkinto'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.tavoitteetKoulutus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.tavoitteetKoulutus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.sisaltoKoulutus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.rakenneKoulutus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.kansainvalisyys'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.sisaltoKoulutus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.ammattinimikkeet'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.rakenneKoulutus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.kansainvalisyys'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.ammattinimikkeet'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='kk.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
-        </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
     </div>
 </div>
 
+
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 well">
+        <div class="span12 well" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">
             <div tt='kk.review.sisaltyvatOpintokokonaisuudet.otsikko'></div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span12">
-            TULOSSA...
+    <div collapse="model.collapse.sisaltyvatOpintokokonaisuudet">
+        <div class="row-fluid">
+            <div class="span12">
+                TULOSSA...
+            </div>
         </div>
     </div>
+
 </div>
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 well">
+        <div class="span12 well" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">
             <div tt='kk.review.hakukohteet.otsikko'></div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span12">
-            TULOSSA...
+    <div collapse="model.collapse.hakukohteet">
+        <div class="row-fluid">
+            <div class="span12">
+                TULOSSA...
+            </div>
         </div>
     </div>
 </div>
+
+<pre>
+{{ model | json }}
+</pre>
