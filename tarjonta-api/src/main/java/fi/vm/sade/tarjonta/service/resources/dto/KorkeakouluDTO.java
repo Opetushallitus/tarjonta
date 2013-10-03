@@ -25,7 +25,7 @@ public class KorkeakouluDTO extends ToteutusDTO {
 
     private UiListDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
-    private UiDTO tunniste; //tutkinto-ohjelman tunniste
+    private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
      */
@@ -37,7 +37,7 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * KK
      */
     private Boolean opintojenMaksullisuus;
-    private UiDTO pohjakoulutusvaatimukset;
+    private UiListDTO pohjakoulutusvaatimukset;
     private UiListDTO teemas;
     private UiDTO opintojenLaajuus;
     private Date koulutuksenAlkamisPvm;
@@ -104,14 +104,14 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the pohjakoulutusvaatimukset
      */
-    public UiDTO getPohjakoulutusvaatimukset() {
+    public UiListDTO getPohjakoulutusvaatimukset() {
         return pohjakoulutusvaatimukset;
     }
 
     /**
      * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
      */
-    public void setPohjakoulutusvaatimukset(UiDTO pohjakoulutusvaatimukset) {
+    public void setPohjakoulutusvaatimukset(UiListDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
 
@@ -146,14 +146,14 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the tunniste
      */
-    public UiDTO getTunniste() {
+    public String getTunniste() {
         return tunniste;
     }
 
     /**
      * @param tunniste the tunniste to set
      */
-    public void setTunniste(UiDTO tunniste) {
+    public void setTunniste(String tunniste) {
         this.tunniste = tunniste;
     }
 

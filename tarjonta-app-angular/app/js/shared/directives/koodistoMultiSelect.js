@@ -113,7 +113,7 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                  $log.info(selectedValue);
 
                  $scope.koodiuris = _($scope.koodiuris).select(function(koodi){
-                     if (selectedValue.$$hashKey == koodi.$$hashKey) {
+                     if (selectedValue.$$hashKey === koodi.$$hashKey) {
                           return false;
                      }else {
                          return true;
@@ -129,7 +129,7 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
             };
 
             $scope.onKoodistoComboChange = function() {
-                if ($scope.koodiuri != undefined) {
+                if ($scope.koodiuri !== undefined) {
                     $scope.koodiuris.push($scope.koodiuri);
                     $scope.koodiuris = _.uniq($scope.koodiuris);
                 }

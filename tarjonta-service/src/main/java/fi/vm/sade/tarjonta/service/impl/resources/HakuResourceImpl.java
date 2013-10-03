@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Ordering;
 
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -40,7 +41,6 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -219,39 +219,33 @@ public class HakuResourceImpl implements HakuResource {
         // mukaan!
         if (!filtterointiTeksti.isEmpty()) {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdePerustieto>() {
-                private String haeTekstiAvaimella(MonikielinenTekstiTyyppi tekstit) {
-                    for (MonikielinenTekstiTyyppi.Teksti teksti : tekstit.getTeksti()) {
-                        if (teksti.getKieliKoodi().contains(kieliAvain)) {
-                            return StringUtils.upperCase(teksti.getValue());
-                        }
+                
+                private String haeTekstiAvaimella(Map<String, String> tekstit) {
+                    
+                    if(tekstit.containsKey(kieliAvain)) {
+                            return StringUtils.upperCase(tekstit.get(kieliAvain));
                     }
+                    
                     return StringUtils.EMPTY;
                 }
 
-                public boolean apply(@Nullable HakukohdePerustieto tulos) {
-                    return haeTekstiAvaimella(tulos.getTarjoaja().getNimi())
+                public boolean apply(@Nullable HakukohdePerustieto hakukohde) {
+                    return haeTekstiAvaimella(hakukohde.getTarjoajaNimi())
                             .contains(filtterointiTeksti)
-                            || haeTekstiAvaimella(tulos.getNimi()).contains(filtterointiTeksti);
+                            || haeTekstiAvaimella(hakukohde.getNimi()).contains(filtterointiTeksti);
                 }
             });
         }
-        // sortataan tarjoajanimen mukaan!
-        List<HakukohdePerustieto> sortattuLista = new ArrayList<HakukohdePerustieto>(tulokset);
-        Collections.sort(sortattuLista, new Comparator<HakukohdePerustieto>() {
-            public int compare(HakukohdePerustieto o1, HakukohdePerustieto o2) {
-                for (MonikielinenTekstiTyyppi.Teksti t1 : o1.getTarjoaja().getNimi().getTeksti()) {
-                    if (kieliAvain.equals(t1.getKieliKoodi())) {
-                        for (MonikielinenTekstiTyyppi.Teksti t2 : o2.getTarjoaja().getNimi().getTeksti()) {
-                            if (kieliAvain.equals(t2.getKieliKoodi())) {
-                                return t1.getValue().compareTo(t2.getValue());
-                            }
-                        }
-                        break;
-                    }
-                }
-                return 0;
+        // sortataan tarjoajanimen mukaan!, testi olis kiva (tm)
+        
+        Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
+            public Comparable apply(HakukohdePerustieto input) {
+                return input.getTarjoajaNimi().get(kieliAvain); 
             }
         });
+
+        List<HakukohdePerustieto> sortattuLista = ordering.immutableSortedCopy(tulokset);
+
         int size = sortattuLista.size();
         LOG.debug("  after filtering results found '{}'", size);
         List<HakukohdeNimiRDTO> results = new ArrayList<HakukohdeNimiRDTO>();
@@ -266,9 +260,9 @@ public class HakuResourceImpl implements HakuResource {
                 // tarvitaanko?
                 // result.setHakuVuosi(haku.getHakukausiVuosi());
                 // result.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
-                rdto.setTarjoajaOid(hakukohde.getTarjoaja().getTarjoajaOid());
-                rdto.setHakukohdeNimi(convertMonikielinenToMap(hakukohde.getNimi()));
-                rdto.setTarjoajaNimi(convertMonikielinenToMap(hakukohde.getTarjoaja().getNimi()));
+                rdto.setTarjoajaOid(hakukohde.getTarjoajaOid());
+                rdto.setHakukohdeNimi(hakukohde.getNimi());
+                rdto.setTarjoajaNimi(hakukohde.getTarjoajaNimi());
                 rdto.setHakukohdeOid(hakukohde.getOid());
                 rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
                 results.add(rdto);
@@ -276,15 +270,6 @@ public class HakuResourceImpl implements HakuResource {
             ++index;
         }
         return new HakukohdeTulosRDTO(size, results);
-    }
-
-    private Map<String, String> convertMonikielinenToMap(
-            fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
-        Map<String, String> result = new HashMap<String, String>();
-        for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-            result.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()), teksti.getValue());
-        }
-        return result;
     }
 
     // /haku/OID/hakukohdeWithName

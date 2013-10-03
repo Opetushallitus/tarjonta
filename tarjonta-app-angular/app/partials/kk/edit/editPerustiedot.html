@@ -7,14 +7,18 @@
     <div class="container-fluid ">
         <div class="row-fluid">
             <div class="span2 label-right"><input type="text" data-ng-model="searchByOid" /></div>
-            <div class="span10"><input type="button" data-ng-click="search()"  value="Hae"></div>
+            <div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div>
+            <div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div>
+            <div class="span10"><input type="button" data-ng-click="save()"  value="Tallenna"></div>
         </div>
     </div>
 
     <div class="container-fluid ">
         <div class="row-fluid">
             <div class="span2 label-right"></div>
-            <div class="span10">{{model.koulutuskoodi.koodi.arvo}}</div>
+            <div class="span10">
+                <input type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
+            </div>
         </div>
     </div>
 
@@ -53,7 +57,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkinto'></div>
-            <div class="span10 label-right">{{model.tutkinto.arvo}}</div>
+            <div class="span10">{{model.tutkinto.arvo}}</div>
         </div>
     </div>
 
@@ -74,7 +78,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkinto-ohjelman-tunniste'></div>
-            <div class="span10"><input type="text" data-ng-model="model.tunniste.arvo" required /></div>
+            <div class="span10"><input type="text" data-ng-model="model.tunniste"  required /></div>
         </div>
     </div>
 
@@ -82,7 +86,8 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opintojen-laajuus'></div>
             <div class="span10">
-                <select data-ng-model="model.laajuus.arvo">
+                <select data-ng-model="model.opintojenLaajuus.arvo">
+                    <option value="empty">data missing</option>
                 </select>
             </div>
         </div>
@@ -112,7 +117,7 @@
                 <input type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
                 <!--select data-ng-model="model.suunniteltuKestoTyyppi.arvo">
                 </select-->
-                <koodistocombo koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo>
+                <koodistocombo koodiuri="uiModel.suunniteltuKesto"  koodistouri="uiModel.env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo>
             </div>
         </div>
     </div>
@@ -121,7 +126,7 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opetuskielet'></div>
             <div class="span10">
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect>
+                <koodistomultiselect koodiuris="uiModel.opetuskielis" koodistouri="uiModel.env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect>
             </div>
         </div>
     </div>
@@ -141,7 +146,7 @@
             <div class="span10">
                 <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.opetusmuodot.tekstis">
        </select-->
-                <koodistomultiselect koodiuris="xx" koodistouri="env['koodisto-uris.opetusmuoto']" locale="'FI'"></koodistomultiselect>
+                <koodistomultiselect koodiuris="uiModel.opetusmuodos" koodistouri="uiModel.env['koodisto-uris.opetusmuoto']" locale="'FI'"></koodistomultiselect>
             </div>
         </div>
     </div>
@@ -151,9 +156,10 @@
             <div class="span2 label-right"><span tt='kk.edit.pohjakoulutusvaatimus'></div>
             <div class="span10">
                 <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.pohjakoulutusvaatimus.tekstis">
-         </select-->
+                    <option value="pohjakoulutusvaatimus">test data</option>>
+                </select-->
 
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.pohjakoulutusvaatimus']" locale="'FI'"></koodistomultiselect>
+                <koodistomultiselect koodiuris="uiModel.pohjakoulutusvaatimukset" koodistouri="uiModel.env['koodisto-uris.pohjakoulutusvaatimus']" locale="'FI'"></koodistomultiselect>
             </div>
         </div>
     </div>
@@ -165,23 +171,25 @@
 
                 <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.Teemat.tekstis">
                 </select-->
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.teemat']" locale="'FI'"></koodistomultiselect>
+                <koodistomultiselect koodiuris="uiModel.teemas" koodistouri="uiModel.env['koodisto-uris.teemat']" locale="'FI'"></koodistomultiselect>
             </div>
         </div>
     </div>
+    
+    <div ng-include="'partials/kk/edit/editYhteyshenkilo.html'"></div>
 
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.yhteyshenkilo'></div>
             <div class="span10">
                 <div>
-                    <div style="float: left;"><input type="text" data-ng-model="contactPerson.nimet" /></div>
+                    <div style="float: left;"><input type="text" data-ng-model="uiModel.contactPerson.nimet" /></div>
                     <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
                 </div>
                 <div style="clear: left;">
-                    <input type="text" data-ng-model="contactPerson.sahkoposti" /><br/>
-                    <input type="text" data-ng-model="contactPerson.titteli" /><br/>
-                    <input type="text" data-ng-model="contactPerson.puhelin" />
+                    <input type="text" data-ng-model="uiModel.contactPerson.sahkoposti" /><br/>
+                    <input type="text" data-ng-model="uiModel.contactPerson.titteli" /><br/>
+                    <input type="text" data-ng-model="uiModel.contactPerson.puhelin" />
                 </div>
             </div>
         </div>
@@ -191,12 +199,12 @@
             <div class="span2 label-right"><span tt='kk.edit.ects-koordinaattori'></div>
             <div class="span10">
                 <div>
-                    <div style="float: left;"><input type="text" data-ng-model="ectsCoordinator.nimet" /></div>
+                    <div style="float: left;"><input type="text" data-ng-model="uiModel.ectsCoordinator.nimet" /></div>
                     <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
                 </div>
                 <div style="clear: left;">
-                    <input type="text" data-ng-model="ectsCoordinator.titteli" /><br/>
-                    <input type="text" data-ng-model="ectsCoordinator.puhelin" />
+                    <input type="text" data-ng-model="uiModel.ectsCoordinator.titteli" /><br/>
+                    <input type="text" data-ng-model="uiModel.ectsCoordinator.puhelin" />
                 </div>
             </div>
         </div>

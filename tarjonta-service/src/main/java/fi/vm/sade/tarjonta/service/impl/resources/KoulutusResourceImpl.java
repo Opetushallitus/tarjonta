@@ -27,12 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
@@ -43,7 +46,10 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import java.util.Locale;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
@@ -59,17 +65,17 @@ public class KoulutusResourceImpl implements KoulutusResource {
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-    @Autowired
     private ConversionService conversionService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
     @Autowired
     private IndexerResource solrIndexer;
-    @Autowired
-    private TarjontaPublicService publicService;
     @Autowired(required = true)
-    private PublicationDataService publication;
+    private KoulutuskoodiRelations koulutuskoodiRelations;
+    @Autowired(required = true)
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    @Autowired(required = true)
+    private KoodiService koodiService;
 
     @Override
     public String help() {
@@ -77,6 +83,20 @@ public class KoulutusResourceImpl implements KoulutusResource {
                 + "/toteutus/<KOMO-OID>/\n"
                 + "/tekstis?lang=<koodi-kieli-URI>\n"
                 + "/tekstis/<KOMO-OID>\n";
+    }
+
+    @Override
+    public ToteutusDTO getKoulutusRelation(String koulutuskoodi) {
+        Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
+
+        if (koulutuskoodi.contains("_")) {
+            //simple paramter check if data is koodisto service koodi URI.
+            return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
+        } else {
+            SearchKoodisByKoodistoCriteriaType koodisByArvoAndKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
+            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(koodisByArvoAndKoodistoUri);
+            return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -113,7 +133,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
         LOG.info("OID : {}", komotoOid);
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
 
-        
+
         return conversionService.convert(komoto, KorkeakouluDTO.class);
     }
 
@@ -126,18 +146,24 @@ public class KoulutusResourceImpl implements KoulutusResource {
 //        }
 //    }
     @Override
-    public void updateToteutus(ToteutusDTO dto) {
+    public void updateToteutus(KorkeakouluDTO dto) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void createToteutus(ToteutusDTO dto) {
+    public void createToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
+        LOG.info(ReflectionToStringBuilder.toString(dto));
+
         final KoulutusmoduuliToteutus komotoEntity = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
+
+        if (komotoEntity == null) {
+            LOG.error("Cannot convert DTO to entity - DTO conversion returned null object.");
+        }
         koulutusmoduuliDAO.insert(komotoEntity.getKoulutusmoduuli());
         final KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoEntity);
         solrIndexer.indexKoulutukset(Lists.newArrayList(response.getId()));
-        publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
+        // publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
     }
 
     @Override

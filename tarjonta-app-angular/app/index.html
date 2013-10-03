@@ -10,10 +10,19 @@
         <script src="lib/jquery-1.10.2.min.js"></script>
 
         <!--
-          App configuration files.
+          Environment configuration file(s):
+          Do not add angular application data to 'ext/*' (or 'ext/js/*' etc.)
+          data in the directory will be overridden by tarjontaapp service filter.
         -->
         <script src="ext/js/env-configuration.js"></script>
-        <script src="ext/js/app-configuration.js"></script>
+        <!--
+        Application configuration file(s):
+        -->
+        <script src="js/app-configuration.js"></script>
+        <!--
+         Developer configuration file(s):
+        -->
+        <script src="dev/dev-configuration.js"></script>
 
         <!--
         Angular, see version.txt for version.
@@ -53,6 +62,7 @@
         <script src="partials/kk/directives.js"></script>
         <script src="partials/kk/edit/controllers.js"></script>
         <script src="partials/kk/edit/selectTutkintoControllers.js"></script>
+        <script src="partials/kk/edit/editYhteyshenkiloController.js"></script>
         <script src="partials/kk/review/reviewControllers.js"></script>
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
@@ -84,20 +94,21 @@
                             <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
                         </div>
                     </div><!-- /renderPath[1] -->
-                </div>
+                </div><!-- 0:/kk -->
                 <div ng-switch-when="helpers">
                     <div ng-switch on="renderPath[1]">
                         <div ng-switch-when="localisations">
                             <div ng-include="'partials/helpers/localisation.html'" ng-controller="HelpersLocalisationCtrl"></div>
                         </div>
                     </div>
-                </div>
+                </div><!-- 0:/helpers -->
             </div><!-- /renderPath[0] -->
 
             <div class="wsidebar-main">
                 <hr>
                 Footer, route counter = {{count}}<br>
                 <a href="#/etusivu">Etusivulle</a>
+                <a href="#/helpers/localisations">Käännökset</a>
             </div>
 
             <div data-ng-controller="LoadingCtrl"

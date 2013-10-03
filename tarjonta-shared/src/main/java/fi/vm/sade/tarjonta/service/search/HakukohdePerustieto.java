@@ -3,30 +3,54 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdePerustieto implements Serializable
 {
-
+    
     private final static long serialVersionUID = 100L;
     private String oid;
-    private MonikielinenTekstiTyyppi nimi;
+    private Map<String, String> nimi = new HashMap<String, String>();
     private String koodistoNimi;
     private TarjontaTila tila;
     private String aloituspaikat;
     private String koulutuksenAlkamiskausiUri;
     private String koulutuksenAlkamisvuosi;
     private KoodistoKoodiTyyppi hakutapaKoodi;
-    private TarjoajaTyyppi tarjoaja;
+
+    private String tarjoajaOid;
+
+    private Map<String, String> tarjoajaNimi = new HashMap<String, String>();
     private Date hakuAlkamisPvm;
     private Date hakuPaattymisPvm;
     private MonikielinenTekstiTyyppi hakukohteenKoulutuslaji;
     private String hakutyyppiUri;
 
+    
+    public String getTarjoajaOid() {
+        return tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this.tarjoajaOid = tarjoajaOid;
+    }
+    
+    public String getTarjoajaNimi(String locale) {
+        return tarjoajaNimi.get(locale);
+    }
+
+    public void setTarjoajaNimi(String locale, String nimi) {
+        tarjoajaNimi.put(locale, nimi);
+    }
+    
+    public Map<String, String> getTarjoajaNimi() {
+        return tarjoajaNimi;
+    }
 
     public String getOid() {
         return oid;
@@ -36,12 +60,29 @@ public class HakukohdePerustieto implements Serializable
         this.oid = value;
     }
 
-    public MonikielinenTekstiTyyppi getNimi() {
+    /**
+     * Palauta nimi
+     * @param locale kieli (fi,sv,en)
+     * @return
+     */
+    public String getNimi(String locale) {
+        return nimi.get(locale);
+    }
+    
+    /**
+     * Palauta kaiki nimet
+     */
+    public Map<String, String> getNimi() {
         return nimi;
     }
 
-    public void setNimi(MonikielinenTekstiTyyppi value) {
-        this.nimi = value;
+    /**
+     * Aseta nimi
+     * @param locale kieli (fi,sv,en)
+     * @param nimi nimi
+     */
+    public void setNimi(String locale, String nimi) {
+        this.nimi.put(locale,  nimi);
     }
 
     public String getKoodistoNimi() {
@@ -90,14 +131,6 @@ public class HakukohdePerustieto implements Serializable
 
     public void setHakutapaKoodi(KoodistoKoodiTyyppi value) {
         this.hakutapaKoodi = value;
-    }
-
-    public TarjoajaTyyppi getTarjoaja() {
-        return tarjoaja;
-    }
-
-    public void setTarjoaja(TarjoajaTyyppi value) {
-        this.tarjoaja = value;
     }
 
     public Date getHakuAlkamisPvm() {

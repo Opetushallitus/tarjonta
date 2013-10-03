@@ -93,50 +93,50 @@ public final class EntityUtils {
     }
 
     public static MonikielinenTekstiTyyppi copyFields(MonikielinenTeksti from) {
-    	return copyFields(from, new MonikielinenTekstiTyyppi());
+        return copyFields(from, new MonikielinenTekstiTyyppi());
     }
-    
+
     public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi source, MonikielinenTeksti target) {
         return MonikielinenTeksti.merge(target, CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(source));
     }
 
     public static void copyFields(Map<KomoTeksti, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, KomoTeksti... keys) {
-    	copyFields(dst,src, new Function<String, KomoTeksti>(){
-    		public KomoTeksti apply(String input) {
-    			return KomoTeksti.valueOf(input);
-    		}
-    	}, keys.length==0 ? KomoTeksti.values() : keys);
+        copyFields(dst, src, new Function<String, KomoTeksti>() {
+            public KomoTeksti apply(String input) {
+                return KomoTeksti.valueOf(input);
+            }
+        }, keys.length == 0 ? KomoTeksti.values() : keys);
     }
 
     public static void copyFields(Map<KomotoTeksti, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, KomotoTeksti... keys) {
-    	copyFields(dst,src, new Function<String, KomotoTeksti>(){
-    		public KomotoTeksti apply(String input) {
-    			return KomotoTeksti.valueOf(input);
-    		}
-    	}, keys.length==0 ? KomotoTeksti.values() : keys);
+        copyFields(dst, src, new Function<String, KomotoTeksti>() {
+            public KomotoTeksti apply(String input) {
+                return KomotoTeksti.valueOf(input);
+            }
+        }, keys.length == 0 ? KomotoTeksti.values() : keys);
     }
 
     public static <T> void copyFields(Map<T, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, Function<String, T> keyResolver, T... keys) {
-    	Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
-    	for (NimettyMonikielinenTekstiTyyppi nmkt : src) {
-    		T key = keyResolver.apply(nmkt.getTunniste());
-    		if (kenums.contains(key)) {
-    			dst.put(key, copyFields(nmkt, dst.get(key)));
-    		}
-    	}
+        Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
+        for (NimettyMonikielinenTekstiTyyppi nmkt : src) {
+            T key = keyResolver.apply(nmkt.getTunniste());
+            if (kenums.contains(key)) {
+                dst.put(key, copyFields(nmkt, dst.get(key)));
+            }
+        }
     }
 
     public static <T> void copyFields(List<NimettyMonikielinenTekstiTyyppi> dst, Map<T, MonikielinenTeksti> src, T... keys) {
-    	Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
-    	for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
-    		if (kenums.isEmpty() || kenums.contains(e.getKey())) {
-    			List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-    			for (TekstiKaannos tk : e.getValue().getTekstis()) {
-    				txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
-    			}    			
-    			dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));
-    		}
-    	}
+        Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
+        for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
+            if (kenums.isEmpty() || kenums.contains(e.getKey())) {
+                List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
+                for (TekstiKaannos tk : e.getValue().getTekstis()) {
+                    txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
+                }
+                dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));
+            }
+        }
     }
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
@@ -200,7 +200,7 @@ public final class EntityUtils {
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
-        
+
         copyFields(toKoulutus.getTekstit(), fromKoulutus.getTekstit(), KomotoTeksti.PAINOTUS);
         //toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus(), toKoulutus.getPainotus()));
         toKoulutus.setTeemas(toKoodistoUriSet(fromKoulutus.getTeemat()));
@@ -272,13 +272,13 @@ public final class EntityUtils {
         toKoulutus.setLukiodiplomit(lukiodiplomit);
 
         copyFields(toKoulutus.getTekstit(), fromKoulutus.getTekstit());
-        
+
         /*toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot(), toKoulutus.getKuvailevatTiedot()));
-        toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen()));
-        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan()));
-        toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), toKoulutus.getSisalto()));
-        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
-        */
+         toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen()));
+         toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan()));
+         toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), toKoulutus.getSisalto()));
+         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
+         */
     }
 
     private static void copyKielivalikoima(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
@@ -371,7 +371,7 @@ public final class EntityUtils {
         tyyppi.setEqfLuokitus(komo.getEqfLuokitus());
         tyyppi.setNqfLuokitus(komo.getNqfLuokitus());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
-        
+
         copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.TAVOITTEET); // rajaus turha?
         //tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
         //tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
@@ -385,22 +385,22 @@ public final class EntityUtils {
         /*
          * Descriptions
          */
-        
+
         copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, KomoTeksti.KOULUTUKSEN_RAKENNE);
-        
+
         //tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
         //tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
 
         switch (komo.getModuuliTyyppi()) {
             case TUTKINTO:
                 //parent KOMO: tutkinnon-tavoitteet
-            	tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTekstit().get(KomoTeksti.TAVOITTEET)));
-            	//tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTavoitteet()));
+                tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTekstit().get(KomoTeksti.TAVOITTEET)));
+                //tyyppi.setTutkinnonTavoitteet(copyFields(komo.getTavoitteet()));
                 break;
             case TUTKINTO_OHJELMA:
                 //ammatilliset-tavoitteet
-            	copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.TAVOITTEET);
-            	//tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
+                copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.TAVOITTEET);
+                //tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
                 break;
         }
 
@@ -452,7 +452,7 @@ public final class EntityUtils {
         /*
          * Description data
          */
-        
+
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTekstit().get(KomoTeksti.TAVOITTEET)));
         copyFields(tyyppi.getTekstit(), parentKomo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
         copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.TAVOITTEET);
@@ -519,8 +519,8 @@ public final class EntityUtils {
 
         switch (source.getKoulutusmoduuliTyyppi()) {
             case TUTKINTO:
-            	MonikielinenTeksti.merge(target.getTekstit(), KomoTeksti.TAVOITTEET, copyFields(source.getTutkinnonTavoitteet(), target.getTekstit().get(KomoTeksti.TAVOITTEET)));
-            	//target.setTavoitteet(copyFields(source.getTutkinnonTavoitteet(), target.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
+                MonikielinenTeksti.merge(target.getTekstit(), KomoTeksti.TAVOITTEET, copyFields(source.getTutkinnonTavoitteet(), target.getTekstit().get(KomoTeksti.TAVOITTEET)));
+                //target.setTavoitteet(copyFields(source.getTutkinnonTavoitteet(), target.getTavoitteet())); //parent KOMO: tutkinnon-tavoitteet
                 break;
             case TUTKINTO_OHJELMA:
                 copyFields(target.getTekstit(), source.getTekstit(), KomoTeksti.TAVOITTEET);
@@ -547,15 +547,28 @@ public final class EntityUtils {
         }
 
     }
-    
-     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Set<YhteyshenkiloTyyppi> toList) {
+
+    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Set<YhteyshenkiloTyyppi> toList) {
 
         for (Yhteyshenkilo fromHenkilo : fromList) {
             YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
             copyFields(fromHenkilo, toHenkilo);
             toList.add(toHenkilo);
         }
+    }
 
+    public static void copyYhteyshenkilos(Set<YhteyshenkiloTyyppi> fromList, Collection<Yhteyshenkilo> toList) {
+        if (!fromList.isEmpty()) {
+            if (toList == null) {
+                toList = Sets.<Yhteyshenkilo>newHashSet();
+            }
+
+            for (YhteyshenkiloTyyppi tyyppi : fromList) {
+                Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
+                copyFields(tyyppi, newYhteyshenkilo);
+                toList.add(newYhteyshenkilo);
+            }
+        }
     }
 
     public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {

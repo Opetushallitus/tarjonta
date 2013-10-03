@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import net.sf.ehcache.CacheManager;
@@ -659,6 +660,27 @@ public class TarjontaUIHelper {
         return teksti;
     }
 
+    /**
+     * Avaimet mapin avaimet: fi, sv, en
+     * @param locale
+     * @param monikielinenTeksti
+     * @return mapoista parhaan vaihtoehdon
+     */
+    public static String getClosestMonikielinenNimi(Locale locale, Map<String, String> monikielinenTeksti) {
+        final String lang = locale.getLanguage().toLowerCase();
+        LinkedList<String> kielet = new LinkedList<String>(allLanguages);
+        kielet.remove(lang);
+        kielet.addFirst(lang);
+        for(String kieli:kielet) {
+            if(monikielinenTeksti.containsKey(kieli)) {
+                return monikielinenTeksti.get(kieli);
+            }
+        }
+        
+        //happens when map is empty?
+        return null;
+    }
+    
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *     

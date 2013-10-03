@@ -2,20 +2,21 @@
 
 /* jasmine specs for controllers go here */
 
-describe('controllers', function(){
-  beforeEach(module('app.controllers'));
+// Esimerkki:
+//describe('controllers', function(){
+//  beforeEach(module('app.controllers'));
+//
+//
+//  it('should ....', inject(function() {
+//    //spec body
+//  }));
+//
+//  it('should ....', inject(function() {
+//    //spec body
+//  }));
+//});
 
-
-  it('should ....', inject(function() {
-    //spec body
-  }));
-
-  it('should ....', inject(function() {
-    //spec body
-  }));
-});
-
-describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
+describe('Edit koulutus testeja', function() {
 	beforeEach(module('ngGrid'));
 	var CONFIG_ENV_MOCK = {
 	    "env": {
@@ -64,4 +65,22 @@ describe('TutkintoOhjelmaSelectOpenerCtrl testi', function() {
 		$scope.clearCriteria();
 		expect($scope.stoModel.hakulause).toEqual('');
 	}));
+	it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
+		$controller('EditYhteyshenkiloCtrl', {
+			$scope: $scope,
+		});
+		
+		$scope.contactPerson = {};
+		$scope.contactPerson.nimet = 'Testi nimi';
+		$scope.contactPerson.sahkoposti = 'test@oph.fi';
+        $scope.contactPerson.titteli = 'Herra';
+        $scope.contactPerson.puhelin = '050432134534';
+        $scope.contactPerson.etunimet = 'Testi';
+        $scope.contactPerson.sukunimi = 'nimi';
+		
+		$scope.editYhModel.clearYh();
+		expect($scope.contactPerson.nimet).toEqual('');
+	}));
+	
+	
 });

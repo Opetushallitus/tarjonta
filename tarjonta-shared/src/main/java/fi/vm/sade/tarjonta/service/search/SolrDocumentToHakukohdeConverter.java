@@ -22,9 +22,12 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOOD
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+
+import com.google.common.collect.Maps;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -55,13 +58,14 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
         hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
         hakukohde.setKoulutuksenAlkamisvuosi("" + hakukohdeDoc.getFieldValue(VUOSI_KOODI));
-        hakukohde.setNimi(createHakukohdeNimi(hakukohdeDoc));
+        copyHakukohdeNimi(hakukohde, hakukohdeDoc);
         hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
-        hakukohde.setTarjoaja(IndexDataUtils.createTarjoaja(hakukohdeDoc, orgResponse));
-        if(hakukohde.getTarjoaja().getNimi()==null) {
+        hakukohde.setTarjoajaOid((String)hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID));
+        copyTarjoajaNimi(hakukohde, orgResponse.get(hakukohde.getTarjoajaOid()));
+        if(hakukohde.getTarjoajaOid()==null) {
             return null;
         }
         return hakukohde;
@@ -106,21 +110,34 @@ public class SolrDocumentToHakukohdeConverter {
         return null;
     }
     
-    private MonikielinenTekstiTyyppi createHakukohdeNimi(SolrDocument hakukohdeDoc) {
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        Teksti nimiFi = new Teksti();
-        nimiFi.setKieliKoodi("fi");
-        nimiFi.setValue("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI));
-        nimi.getTeksti().add(nimiFi);
-        Teksti nimiSv = new Teksti();
-        nimiSv.setKieliKoodi("sv");
-        nimiSv.setValue("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV));
-        nimi.getTeksti().add(nimiSv);
-        Teksti nimiEn = new Teksti();
-        nimiEn.setKieliKoodi("en");
-        nimiEn.setValue("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN));
-        nimi.getTeksti().add(nimiEn);
-        return nimi;
+    private void copyHakukohdeNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
+        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "fi", HAKUKOHTEEN_NIMI_FI);
+        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "sv", HAKUKOHTEEN_NIMI_SV);
+        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "en", HAKUKOHTEEN_NIMI_EN);
+    }
+
+    private void copyTarjoajaNimi(HakukohdePerustieto hakukohde,
+            OrganisaatioPerustieto organisaatio) {
+        if (organisaatio != null) {
+            for (Entry<String, String> nimi : organisaatio.getNimi().entrySet()) {
+                hakukohde.setTarjoajaNimi(nimi.getKey(), nimi.getValue());
+            }
+        }
+    }
+    
+    /**
+     * Asettaa yhden nimen
+     * @param nimiMap
+     * @param hakukohdeDoc
+     * @param targetLanguage (fi,sv,en)
+     * @param fieldName solr dokumentin kentän nimi josta data otetaan.
+     */
+    private void asetaNimi(Map<String, String> nimiMap,
+            SolrDocument hakukohdeDoc, String targetLanguage, String fieldName) {
+        if (hakukohdeDoc.getFieldValue(fieldName) != null) {
+            nimiMap.put(targetLanguage,
+                    hakukohdeDoc.getFieldValue(fieldName).toString());
+        }
     }
 
 }

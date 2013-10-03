@@ -97,7 +97,7 @@ public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
         //Set all selected as default
         for (Object obj: hakukohdeOptions.getItemIds()) {
         	HakukohdePerustieto curHakuk = (HakukohdePerustieto)obj;
-        	String nimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakuk.getNimi()).getValue();
+        	String nimi = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakuk.getNimi());
         	hakukohdeOptions.setItemCaption(obj, nimi);
             hakukohdeOptions.select(obj);
         }
