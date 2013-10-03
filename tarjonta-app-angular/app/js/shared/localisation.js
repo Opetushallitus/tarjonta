@@ -35,11 +35,11 @@ app.factory('Localisations', function($log, $resource, Config) {
         key: '@key',
         locale: '@locale',
     }, {
-        update: {method: 'PUT'}
-//        save: {
-//            method: 'POST',
-//            headers: {'Content-Type':'application/json; charset=UTF-8'}
-//        }
+        update: {method: 'PUT'},
+        save: {
+            method: 'POST',
+            headers: {'Content-Type':'application/json; charset=UTF-8'}
+        }
     });
 
 });
