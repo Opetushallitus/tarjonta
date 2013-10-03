@@ -34,6 +34,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 1L;
     private String komoOid;
+    private String organisaatioOid;
     private TarjontaTila tila;
     private UiDTO koulutuskoodi;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
@@ -44,12 +45,10 @@ public abstract class ToteutusDTO extends BaseRDTO {
     private UiDTO tutkinto;
     private UiDTO tutkintonimike;
     private UiDTO eqf;
-    private Map<KomoTeksti, UiListDTO> tekstis;
+    private Map<KomoTeksti, UiMetaDTO> kuvaus;
 
     public ToteutusDTO() {
     }
-    
-    
     
     /*
      * Contact persons
@@ -71,20 +70,20 @@ public abstract class ToteutusDTO extends BaseRDTO {
     }
 
     /**
-     * @return the tekstis
+     * @return the description data
      */
-    public Map<KomoTeksti, UiListDTO> getTekstis() {
-        if (tekstis == null) {
-            tekstis = new EnumMap<KomoTeksti, UiListDTO>(KomoTeksti.class);
+    public Map<KomoTeksti, UiMetaDTO> getKuvaus() {
+        if (kuvaus == null) {
+            kuvaus = new EnumMap<KomoTeksti, UiMetaDTO>(KomoTeksti.class);
         }
-        return tekstis;
+        return kuvaus;
     }
 
     /**
-     * @param tekstis the tekstis to set
+     * @param the description data to set
      */
-    public void setTekstis(Map<KomoTeksti, UiListDTO> tekstis) {
-        this.tekstis = tekstis;
+    public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
+        this.kuvaus = tekstis;
     }
 
     /**
@@ -229,6 +228,22 @@ public abstract class ToteutusDTO extends BaseRDTO {
     public void setYhteyshenkilos(Set<YhteyshenkiloTyyppi> yhteyshenkilos) {
         this.yhteyshenkilos = yhteyshenkilos;
     }
+
+    /**
+     * @return the organisaatioOid
+     */
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
+    /**
+     * @param organisaatioOid the organisaatioOid to set
+     */
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    
 
  
 }

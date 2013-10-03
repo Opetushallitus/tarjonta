@@ -23,7 +23,7 @@ import java.util.Date;
  */
 public class KorkeakouluDTO extends ToteutusDTO {
 
-    private UiListDTO koulutusohjelma;
+    private UiMetaDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
@@ -31,14 +31,14 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     private UiDTO suunniteltuKesto;
     private UiDTO suunniteltuKestoTyyppi;
-    private UiListDTO opetuskielis;
-    private UiListDTO opetusmuodos;
+    private UiMetaDTO opetuskielis;
+    private UiMetaDTO opetusmuodos;
     /*
      * KK
      */
     private Boolean opintojenMaksullisuus;
-    private UiListDTO pohjakoulutusvaatimukset;
-    private UiListDTO teemas;
+    private UiMetaDTO pohjakoulutusvaatimukset;
+    private UiMetaDTO teemas;
     private UiDTO opintojenLaajuus;
     private Date koulutuksenAlkamisPvm;
 
@@ -48,14 +48,14 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the koulutusohjelma
      */
-    public UiListDTO getKoulutusohjelma() {
+    public UiMetaDTO getKoulutusohjelma() {
         return koulutusohjelma;
     }
 
     /**
      * @param koulutusohjelma the koulutusohjelma to set
      */
-    public void setKoulutusohjelma(UiListDTO koulutusohjelma) {
+    public void setKoulutusohjelma(UiMetaDTO koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
     }
 
@@ -76,56 +76,56 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /**
      * @return the opetuskielis
      */
-    public UiListDTO getOpetuskielis() {
+    public UiMetaDTO getOpetuskielis() {
         return opetuskielis;
     }
 
     /**
      * @param opetuskielis the opetuskielis to set
      */
-    public void setOpetuskielis(UiListDTO opetuskielis) {
+    public void setOpetuskielis(UiMetaDTO opetuskielis) {
         this.opetuskielis = opetuskielis;
     }
 
     /**
      * @return the opetusmuodos
      */
-    public UiListDTO getOpetusmuodos() {
+    public UiMetaDTO getOpetusmuodos() {
         return opetusmuodos;
     }
 
     /**
      * @param opetusmuodos the opetusmuodos to set
      */
-    public void setOpetusmuodos(UiListDTO opetusmuodos) {
+    public void setOpetusmuodos(UiMetaDTO opetusmuodos) {
         this.opetusmuodos = opetusmuodos;
     }
 
     /**
      * @return the pohjakoulutusvaatimukset
      */
-    public UiListDTO getPohjakoulutusvaatimukset() {
+    public UiMetaDTO getPohjakoulutusvaatimukset() {
         return pohjakoulutusvaatimukset;
     }
 
     /**
      * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
      */
-    public void setPohjakoulutusvaatimukset(UiListDTO pohjakoulutusvaatimukset) {
+    public void setPohjakoulutusvaatimukset(UiMetaDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
 
     /**
      * @return the teemas
      */
-    public UiListDTO getTeemas() {
+    public UiMetaDTO getTeemas() {
         return teemas;
     }
 
     /**
      * @param teemas the teemas to set
      */
-    public void setTeemas(UiListDTO teemas) {
+    public void setTeemas(UiMetaDTO teemas) {
         this.teemas = teemas;
     }
 

@@ -1,186 +1,183 @@
 'use strict';
 
 var TEST = {
-   "oid":"1.2.246.562.5.2013091114080489552096",
-   "version":0,
-   "komoOid":"1.2.246.562.5.2013061010184627561236",
-   "koulutuskoodi":{
-      "koodi":{
-         "uri":"koulutus_351203",
-         "versio":"1",
-         "arvo":671118
-      },
-      "arvo":"Talotekniikan perustutkinto"
-   },
-   "koulutusmoduuliTyyppi":"TUTKINTO_OHJELMA",
-   "koulutusaste":{
-      "koodi":{
-         "uri":"koulutusasteoph2002_62",
-         "versio":"1",
-         "arvo":"62"
-      },
-      "arvo":"Ammattikorkeakoulututkinto"
-   },
-   "koulutusala":{
-      "koodi":{
-         "uri":"koulutusalaoph2002_7",
-         "versio":"1",
-         "arvo":"7"
-      },
-      "arvo":"Sosiaali-, terveys- ja liikunta-ala"
-   },
-   "opintoala":{
-      "koodi":{
-         "uri":"opintoalaoph2002_705",
-         "versio":"1",
-         "arvo":"705"
-      },
-      "arvo":"Kuntoutus ja liikunta"
-   },
-   "tutkinto":{
-      "koodi":{
-         "uri":"tutkinto_547",
-         "versio":"1",
-         "arvo":"547"
-      },
-      "arvo":"Sosiaali- ja terveysalan ammattikorkeakoulututkinto, Kuntoutuksen ohjaaja (AMK)"
-   },
-   "tutkintonimike":{
-      "koodi":{
-         "uri":"tutkintonimikkeet_10147",
-         "versio":"1",
-         "arvo":"10147"
-      },
-      "arvo":"Rakennuspeltiseppä"
-   },
-   "eqf":{
-      "arvo":"4#1"
-   },
-   "tekstis":{
-      "PATEVYYS":{
-         "tekstis":[
-
-         ]
-      }
-   },
-   "yhteyshenkilos":[
-      {
-         "etunimet":"Päivi",
-         "sukunimi":"Hiltunen",
-         "titteli":"opinto-ohjaaja",
-         "sahkoposti":"etunimi.sukunimi@omnia.fi",
-         "puhelin":"0468515025",
-         "henkiloTyyppi":"YHTEYSHENKILO"
-      },
-      {
-
-      }
-   ],
-   "koulutusohjelma":{
-      "koodi":{
-         "uri":"koulutusohjelmaamm_16481",
-         "versio":"1",
-         "arvo":"16481"
-      },
-      "arvo":"Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä",
-      "tekstis":[
-         {
-            "koodi":{
-               "uri":"kieli_sv",
-               "versio":"-1",
-               "arvo":"SV"
+    "organisaatioOid" : "1.2.246.562.10.900951416610",
+    "koulutuskoodi": {
+        "koodi": {
+            "uri": "koulutus_351203",
+            "versio": "1",
+            "arvo": 671118
+        },
+        "arvo": "Talotekniikan perustutkinto"
+    },
+    "koulutusmoduuliTyyppi": "TUTKINTO_OHJELMA",
+    "koulutusaste": {
+        "koodi": {
+            "uri": "koulutusasteoph2002_62",
+            "versio": "1",
+            "arvo": "62"
+        },
+        "arvo": "Ammattikorkeakoulututkinto"
+    },
+    "koulutusala": {
+        "koodi": {
+            "uri": "koulutusalaoph2002_7",
+            "versio": "1",
+            "arvo": "7"
+        },
+        "arvo": "Sosiaali-, terveys- ja liikunta-ala"
+    },
+    "opintoala": {
+        "koodi": {
+            "uri": "opintoalaoph2002_705",
+            "versio": "1",
+            "arvo": "705"
+        },
+        "arvo": "Kuntoutus ja liikunta"
+    },
+    "tutkinto": {
+        "koodi": {
+            "uri": "tutkinto_547",
+            "versio": "1",
+            "arvo": "547"
+        },
+        "arvo": "Sosiaali- ja terveysalan ammattikorkeakoulututkinto, Kuntoutuksen ohjaaja (AMK)"
+    },
+    "tutkintonimike": {
+        "koodi": {
+            "uri": "tutkintonimikkeet_10147",
+            "versio": "1",
+            "arvo": "10147"
+        },
+        "arvo": "Rakennuspeltiseppä"
+    },
+    "eqf": {
+        "arvo": "4#1"
+    },
+    "tekstis": {
+        "PATEVYYS": {
+            "tekstis": [
+            ]
+        }
+    },
+    "yhteyshenkilos": [
+        {
+            "etunimet": "Päivi",
+            "sukunimi": "Hiltunen",
+            "titteli": "opinto-ohjaaja",
+            "sahkoposti": "etunimi.sukunimi@omnia.fi",
+            "puhelin": "0468515025",
+            "henkiloTyyppi": "YHTEYSHENKILO"
+        }
+    ],
+    "koulutusohjelma": {
+        "koodi": {
+            "uri": "koulutusohjelmaamm_16481",
+            "versio": "1",
+            "arvo": "16481"
+        },
+        "arvo": "Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä",
+        "tekstis": [
+            {
+                "koodi": {
+                    "uri": "kieli_sv",
+                    "versio": "-1",
+                    "arvo": "SV"
+                },
+                "arvo": "Utbildningsprogram för isolering och montering av byggnadsplåt, byggnadsplåtslagare"
             },
-            "arvo":"Utbildningsprogram för isolering och montering av byggnadsplåt, byggnadsplåtslagare"
-         },
-         {
-            "koodi":{
-               "uri":"kieli_fi",
-               "versio":"-1",
-               "arvo":"FI"
+            {
+                "koodi": {
+                    "uri": "kieli_fi",
+                    "versio": "-1",
+                    "arvo": "FI"
+                },
+                "arvo": "Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä"
+            }
+        ]
+    },
+    "suunniteltuKesto": {
+        "arvo": null,
+        "koodi": {
+            "arvo": null,
+            "uri": "suunniteltukesto_02",
+            "versio": 1
+        }
+    },
+    "suunniteltuKestoTyyppi": {
+        "arvo": "Vuosi",
+        "koodi": {
+            "arvo": null,
+            "uri": "kieli_fi", //dummy data
+            "versio": 1
+        }
+    },
+    "opetuskielis": {
+        "tekstis": [
+            {
+                "arvo": null,
+                "koodi": {
+                    "arvo": null,
+                    "uri": "kieli_gg",
+                    "versio": 1
+                }
+            }
+        ]
+    },
+    "opetusmuodos": {
+        "tekstis": [
+            {
+                "arvo": null,
+                "koodi": {
+                    "arvo": null,
+                    "uri": "opetusmuoto_p",
+                    "versio": 1
+                }
             },
-            "arvo":"Eristyksen ja rakennuspeltiasennuksen koulutusohjelma, rakennuspeltiseppä"
-         }
-      ]
-   },
-   "suunniteltuKesto":{
-      "arvo":null,
-      "koodi":{
-         "arvo":null,
-         "uri":"suunniteltukesto_02",
-         "versio":1
-      }
-   },
-   "suunniteltuKestoTyyppi":{
-      "arvo":"Vuosi"
-   },
-   "opetuskielis":{
-      "tekstis":[
-         {
-            "arvo":null,
-            "koodi":{
-               "arvo":null,
-               "uri":"kieli_gg",
-               "versio":1
+            {
+                "arvo": null,
+                "koodi": {
+                    "arvo": null,
+                    "uri": "opetusmuoto_l",
+                    "versio": 1
+                }
             }
-         }
-      ]
-   },
-   "opetusmuodos":{
-      "tekstis":[
-         {
-            "arvo":null,
-            "koodi":{
-               "arvo":null,
-               "uri":"opetusmuoto_p",
-               "versio":1
+        ]
+    },
+    "opintojenMaksullisuus": false,
+    "pohjakoulutusvaatimukset": {
+        "tekstis": [
+        ]
+    },
+    "teemas": {
+        "tekstis": [
+            {
+                "arvo": null,
+                "koodi": {
+                    "arvo": null,
+                    "uri": "teemat_2",
+                    "versio": 1
+                }
+            },
+            {
+                "arvo": null,
+                "koodi": {
+                    "arvo": null,
+                    "uri": "teemat_5",
+                    "versio": 1
+                }
             }
-         },
-         {
-            "arvo":null,
-            "koodi":{
-               "arvo":null,
-               "uri":"opetusmuoto_l",
-               "versio":1
-            }
-         }
-      ]
-   },
-   "opintojenMaksullisuus":false,
-   "pohjakoulutusvaatimukset":{
-      "tekstis":[
-
-      ]
-   },
-   "teemas":{
-      "tekstis":[
-         {
-            "arvo":null,
-            "koodi":{
-               "arvo":null,
-               "uri":"teemat_2",
-               "versio":1
-            }
-         },
-         {
-            "arvo":null,
-            "koodi":{
-               "arvo":null,
-               "uri":"teemat_5",
-               "versio":1
-            }
-         }
-      ]
-   },
-   "opintojenLaajuus":{
-      "arvo":"empty"
-   },
-   "koulutuksenAlkamisPvm":1389052800000,
-   "api_VERSION":4,
-   "$promise":{
-
-   },
-   "$resolved":true,
-   "tunniste":"aaaaaa"
+        ]
+    },
+    "opintojenLaajuus": {
+        "arvo": "empty"
+    },
+    "koulutuksenAlkamisPvm": 1389052800000,
+    "api_VERSION": 4,
+    "$promise": {
+    },
+    "$resolved": true,
+    "tunniste": "aaaaaa"
 };
 
 
@@ -189,16 +186,16 @@ var TEST = {
 
 var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource', 'ngGrid']);
 
-app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
-    function FormTutkintoController($scope, tarjontaService, cfg) {
+app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',  '$routeParams',
+    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams) {
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
         $scope.uiModel = {contactPerson: {}, ectsCoordinator: {}, env: cfg.env};
-
-
-
-
+        
+        console.log("foobar", $routeParams);
+  
+        console.log($routeParams.orgOid);
 
         $scope.loadKoodistoData = function() {
             tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $scope.model.koulutuskoodi.koodi.arvo}, function(data) {
@@ -217,7 +214,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
             console.log($scope.uiModel);
             //tarjontaService.insertKoulutus($scope.saveModelConverter());
             tarjontaService.insertKoulutus(TEST);
-            
+
         };
 
         $scope.saveModelConverter = function() {
@@ -229,16 +226,10 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
             delete  m.koulutuskoodi.tekstis;
             delete  m.tutkintonimike.tekstis;
 
-            m.yhteyshenkilos = [uim.contactPerson, uim.ectsCoordinator];
-            var i = 0;
-            for (; i < m.yhteyshenkilos.length; i++) {
-                var henkilo = m.yhteyshenkilos[i];
-                delete henkilo.nimet;
-                delete henkilo.kielet;
-            }
-
+            m.yhteyshenkilos = $scope.convertPersonsUiModelToDto([uim.contactPerson, uim.ectsCoordinator]);
 
             //Convert koodisto komponent object to back-end object format .
+            m.suunniteltuKestoTyyppi = $scope.convertKoodistoComboToKoodiUiDTO({}); //TODO: fix this
             m.suunniteltuKesto = $scope.convertKoodistoComboToKoodiUiDTO(uim.suunniteltuKesto);
             m.teemas.tekstis = $scope.convertKoodistoMultiToKoodiUiDTOs(uim.teemas);
             m.opetuskielis.tekstis = $scope.convertKoodistoMultiToKoodiUiDTOs(uim.opetuskielis);
@@ -310,6 +301,28 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
             }
 
             return arr;
+        };
+
+        $scope.convertPersonsUiModelToDto = function(arrPersons) {
+            var arrOutputPersons = [];
+
+            for (; i < arrPersons.length; i++) {
+                var henkilo = arrPersons[i];
+                if (Boolean(henkilo) && Boolean(henkilo.sahkoposti) && Boolean(henkilo.titteli) && Boolean(henkilo.puhelin)) {
+                    if (Boolean(henkilo.nimet)) {
+                        var lastname = henkilo.nimet.slice(henkilo.length - 1, henkilo.length);
+                        var firstnames = henkilo.nimet.slice(henkilo.nimet, fruits.indexOf(lastname) - 1);
+                        henkilo.etunimet = firstnames.join(' ');
+                        henkilo.sukunimi = lastname;
+                    }
+
+                    delete henkilo.nimet;
+                    delete henkilo.kielet;
+                    arrOutputPersons.push(henkilo)
+                }
+            }
+
+            return arrOutputPersons;
         };
 
     }]);

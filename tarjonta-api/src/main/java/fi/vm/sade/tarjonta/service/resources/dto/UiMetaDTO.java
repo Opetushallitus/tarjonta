@@ -15,35 +15,35 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
  */
-public class UiListDTO extends UiDTO {
+public class UiMetaDTO extends UiDTO {
 
     private static final long serialVersionUID = 1L;
-    private Set<UiDTO> tekstis;
+    private Map<String, UiDTO> meta;
 
-    public UiListDTO() {
+    public UiMetaDTO() {
     }
 
     /**
      * @return the tekstis
      */
-    public Set<UiDTO> getTekstis() {
-        if (tekstis == null) {
-            tekstis = new HashSet<UiDTO>();
+    public Map<String, UiDTO> getMeta() {
+        if (meta == null) {
+            meta = new HashMap<String, UiDTO>();
         }
-        return tekstis;
+        return meta;
     }
 
     /**
      * @param tekstis the tekstis to set
      */
-    public void setTekstis(Set<UiDTO> tekstis) {
-        this.tekstis = tekstis;
+    public void setMeta(Map<String, UiDTO> meta) {
+        this.meta = meta;
     }
 }
