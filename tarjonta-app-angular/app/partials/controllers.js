@@ -1,22 +1,14 @@
 
 
-var app = angular.module('app.test.controllers', ['app.services'])
-
-app.controller('MyCtrl1', [function() {
-        console.log("MyCtrl1()");
-    }]);
+var app = angular.module('app.test.controllers', ['app.services']);
 
 app.controller('KoodistoTestController', function($scope,$route) {
-
-
 
     $scope.testKoodisto = function() {
         console.log('Following selected: ');
         console.log($scope.koodiuri);
 
     };
-
-
 
    $scope.selectedKoodis = [];
 
@@ -48,20 +40,5 @@ app.controller('KoodistoTestController', function($scope,$route) {
       alert ($scope.selectedKoodis);
     };
 
-
-});
-
-app.controller('MyCtrl2', function($scope, instagram) {
-    console.log("MyCtrl2()");
-//    console.log("MyCtrl2() - as = " + AuthService);
-//    console.log("MyCtrl2() - mr = " + MyRoles);
-
-    $scope.pics = [];
-    $scope.page = 0;
-    $scope.pageSize = 2;
-
-    instagram.fetchPopular(function(data) {
-        $scope.pics = data;
-    });
 
 });

@@ -72,7 +72,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "helpers.localisations"
         })
 
-                //Remove this when done Tuomas          
+                //Remove this when done Tuomas
                 .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
 
                 .otherwise({redirectTo: "/etusivu"});
@@ -106,7 +106,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
     $scope.$on(
             "$routeChangeSuccess",
             function($currentRoute, $previousRoute) {
-                $log.debug("app.AppRoutingCtrl.$routeChangeSuccess");
+                $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
                 render();
             }
     );

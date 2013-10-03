@@ -7,11 +7,12 @@
     ({{(model.localisations | filter: {key: model.filterKey, locale: model.filterLocale}).length}} / {{model.localisations.length}})
     <form name="localisationsForm" novalidate>
         <div class="btn btn-primary" ng-click="createNew(spec)" ng-disabled="!spec" >LISÄÄ UUSI</div>
-<!--
-        <div class="btn btn-primary" ng-click="createMissingTranslations()">Lisää puuttuvat käännökset</div>
--->
+        <!--
+                <div class="btn btn-primary" ng-click="createMissingTranslations()">Lisää puuttuvat käännökset</div>
+        -->
         <div class="btn btn-primary" ng-click="reloadData()">Lataa uudelleen</div>
         <div class="btn btn-primary" ng-click="saveAllModified()" ng-disabled="localisationsForm.$pristine">Tallenna kaikki muuttuneet</div>
+        <div class="btn btn-primary" ng-click="openDialog()">Kopiointi</div>
 
         <div class="container-fluid">
             <div class="row-fluid" ng-repeat="l in model.localisations | filter: {key: model.filterKey, locale: model.filterLocale} | orderBy: l.key">
