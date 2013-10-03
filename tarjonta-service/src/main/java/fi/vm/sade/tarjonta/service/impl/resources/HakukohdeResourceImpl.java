@@ -7,8 +7,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -23,17 +24,8 @@ import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
@@ -203,6 +195,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             //TODO: Add haun sisaiset hakuajat
             hakukohde = hakukohdeDAO.insert(hakukohde);
             hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(),hakukohde));
+            List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
+            if (valintakoes != null) {
+
+                hakukohde.getValintakoes().addAll(valintakoes);
+
+            }
+            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet());
+            if (hakukohdeLiites != null ) {
+                hakukohde.getLiites().addAll(hakukohdeLiites);
+            }
+
             hakukohdeDAO.update(hakukohde);
             solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
@@ -221,6 +224,39 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
 
     }
+
+    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs) {
+        if (hakukohdeLiiteDTOs != null) {
+
+            List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
+
+            for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
+                HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
+                hakukohdeLiites.add(hakukohdeLiite);
+            }
+
+            return hakukohdeLiites;
+
+        } else {
+            return null;
+        }
+    }
+
+    private List<Valintakoe> getHakukohdeValintakoes(List<ValintakoeRDTO> valintakoeRDTOs) {
+        if (valintakoeRDTOs != null) {
+          List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+
+            for (ValintakoeRDTO valintakoeRDTO:valintakoeRDTOs) {
+                Valintakoe valintakoe = conversionService.convert(valintakoeRDTO,Valintakoe.class);
+                valintakoes.add(valintakoe);
+            }
+
+          return valintakoes;
+        } else {
+            return null;
+        }
+    }
+
 
     private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
         if (hk.getHakuaikas().size() == 1) {
