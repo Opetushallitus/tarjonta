@@ -10,12 +10,12 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     	// TODO käyttäjän localen mukaan
     	if (txt.fi!=undefined) {
     		return txt.fi;
-    	} else if (txt.se!=undefined) {
-    		return txt.se;
+    	} else if (txt.sv!=undefined) {
+    		return txt.sv;
     	} else if (txt.en!=undefined) {
     		return txt.en;
     	} else {
-            return txt+""; // tostring
+            return "?";
     	}
     }
     
