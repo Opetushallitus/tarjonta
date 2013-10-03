@@ -2,18 +2,19 @@
 
 /* jasmine specs for controllers go here */
 
-describe('controllers', function(){
-  beforeEach(module('app.controllers'));
-
-
-  it('should ....', inject(function() {
-    //spec body
-  }));
-
-  it('should ....', inject(function() {
-    //spec body
-  }));
-});
+// Esimerkki:
+//describe('controllers', function(){
+//  beforeEach(module('app.controllers'));
+//
+//
+//  it('should ....', inject(function() {
+//    //spec body
+//  }));
+//
+//  it('should ....', inject(function() {
+//    //spec body
+//  }));
+//});
 
 describe('Edit koulutus testeja', function() {
 	beforeEach(module('ngGrid'));
