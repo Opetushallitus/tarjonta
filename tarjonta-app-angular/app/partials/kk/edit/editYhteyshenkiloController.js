@@ -17,4 +17,8 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', function($scope) {
         $scope.contactPerson.sukunimi = '';
 	};
 	
+	$scope.$watch('contactPerson.nimet', function() {
+		console.log("Hei there is change, now nimet is: " + $scope.contactPerson.nimet);
+	});
+	
 }]);
