@@ -136,6 +136,11 @@ app.service('LocalisationService', function($log, $q, Localisations) {
                 $log.error("  FAILED TO CREATE ", value);
             });
 
+            // Create temporary placeholder for next requests
+            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
+            this.localisationMapByLocaleAndKey[this.locale] = this.localisationMapByLocaleAndKey[this.locale] || {};
+            this.localisationMapByLocaleAndKey[this.locale][key] = {key : key, locale: this.locale, value : "[" + key + "]"};
+
             result = "[" + key + "]";
         }
 
@@ -271,7 +276,7 @@ app.service('LocalisationService', function($log, $q, Localisations) {
      * @returns created lookup map
      */
     this.updateLookupMap = function() {
-        $log.debug("updateLookupMap()");
+        $log.info("updateLookupMap()");
 
         var tmp = {};
 
