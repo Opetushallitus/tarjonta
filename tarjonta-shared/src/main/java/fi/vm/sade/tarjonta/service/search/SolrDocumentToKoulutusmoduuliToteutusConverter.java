@@ -28,8 +28,6 @@ import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 
 public class SolrDocumentToKoulutusmoduuliToteutusConverter {
 
@@ -61,7 +59,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
             koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
         }
         }
-        koulutus.setNimi(createKoulutusNimi(koulutusDoc));
+        copyKoulutusNimi(koulutus, koulutusDoc);
         koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexDataUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
@@ -96,21 +94,26 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         } else return null;
     }
 
-    private MonikielinenTekstiTyyppi createKoulutusNimi(SolrDocument koulutusDoc) {
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        Teksti nimiFi = new Teksti();
-        nimiFi.setKieliKoodi("fi");
-        nimiFi.setValue("" + koulutusDoc.getFieldValue(KOULUTUSOHJELMA_FI));
-        nimi.getTeksti().add(nimiFi);
-        Teksti nimiSv = new Teksti();
-        nimiSv.setKieliKoodi("sv");
-        nimiSv.setValue("" + koulutusDoc.getFieldValue(KOULUTUSOHJELMA_SV));
-        nimi.getTeksti().add(nimiSv);
-        Teksti nimiEn = new Teksti();
-        nimiEn.setKieliKoodi("en");
-        nimiEn.setValue("" + koulutusDoc.getFieldValue(KOULUTUSOHJELMA_EN));
-        nimi.getTeksti().add(nimiEn);
-        return nimi;
+    private void copyKoulutusNimi(KoulutusPerustieto koulutus, SolrDocument koulutusDoc) {
+        asetaNimi(koulutus.getNimi(), koulutusDoc, "fi", KOULUTUSOHJELMA_FI);
+        asetaNimi(koulutus.getNimi(), koulutusDoc, "sv", KOULUTUSOHJELMA_SV);
+        asetaNimi(koulutus.getNimi(), koulutusDoc, "en", KOULUTUSOHJELMA_EN);
+    }
+        
+    
+    /**
+     * Asettaa yhden nimen
+     * @param nimiMap
+     * @param hakukohdeDoc
+     * @param targetLanguage (fi,sv,en)
+     * @param fieldName solr dokumentin kentän nimi josta data otetaan.
+     */
+    private void asetaNimi(Map<String, String> nimiMap,
+            SolrDocument hakukohdeDoc, String targetLanguage, String fieldName) {
+        if (hakukohdeDoc.getFieldValue(fieldName) != null) {
+            nimiMap.put(targetLanguage,
+                    hakukohdeDoc.getFieldValue(fieldName).toString());
+        }
     }
 
    

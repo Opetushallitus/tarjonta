@@ -2,10 +2,11 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
@@ -14,7 +15,7 @@ public class KoulutusPerustieto implements Serializable
 {
 
     private final static long serialVersionUID = 100L;
-    protected MonikielinenTekstiTyyppi nimi;
+    protected Map<String, String> nimi = new HashMap<String, String>();
     protected String koulutusmoduuli;
     protected String koulutusmoduuliToteutus;
     protected TarjoajaTyyppi tarjoaja;
@@ -32,12 +33,26 @@ public class KoulutusPerustieto implements Serializable
     protected Integer koulutuksenAlkamisVuosi;
 
 
-    public MonikielinenTekstiTyyppi getNimi() {
+    public Map<String, String> getNimi() {
         return nimi;
     }
 
-    public void setNimi(MonikielinenTekstiTyyppi value) {
-        this.nimi = value;
+    /**
+     * Aseta nimi
+     * @param locale (sv,fi,en);
+     * @param nimi
+     */
+    public void setNimi(String locale, String nimi) {
+        this.nimi.put(locale,  nimi);
+    }
+
+    /**
+     * Anna nimi
+     * @param locale (sv, fi, en);
+     * @return nimi tai null jos ei määritelty
+     */
+    public String getNimi(String locale) {
+        return nimi.get(locale);
     }
 
     public String getKoulutusmoduuli() {

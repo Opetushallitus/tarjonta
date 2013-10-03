@@ -259,7 +259,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String getKoulutusNimi(KoulutusPerustieto koulutus) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getNimi()).getValue();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koulutus.getNimi());
     }
 
     /**

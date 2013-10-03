@@ -33,7 +33,7 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		KoulutusHakutulosRDTO ret = new KoulutusHakutulosRDTO();
 
 		ret.setOid(ht.getKomotoOid());
-		ret.setNimi(convertToMap(ht.getNimi()));
+		ret.setNimi(ht.getNimi());
 		ret.setKausiUri(ht.getKoulutuksenAlkamiskausiUri());
 		ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
 		//ret.setKoulutusLaji(convertToMap(ht.getKoulutuslaji()));
