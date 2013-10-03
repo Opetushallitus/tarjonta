@@ -1,7 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -175,10 +174,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
     
     $scope.menuOptions = {
-        	"#": "Tarkastele",
-        	"#": "Muokkaa",
-        	"#": "Näytä hakukohteet",
-        	"#": "Julkaise"
+        	"#a": "Tarkastele",
+        	"#b": "Muokkaa",
+        	"#c": "Näytä hakukohteet",
+        	"#d": "Julkaise"
     };
 
     // taulukon renderöinti
@@ -202,7 +201,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
-    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos[prefix+"Oid"]+"\">"
+    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos.oid+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
 					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
 					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
@@ -259,11 +258,21 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		
     		// TODO aseta ja päivitä sisältö
     		var row = $(ev.currentTarget.parentNode.parentNode);
-    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("hakukohde-oid"));
-    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("koulutus-oid"));
+    		var hkOid = row.attr("hakukohde-oid");
+    		var kmOid = row.attr("koulutus-oid");
     		
-    		
-    		console.log("rivi '"+row.attr("hakukohde-oid")+"' / '"+row.attr("koulutus-oid")+"'");
+    		if (hkOid) {
+    			console.log("hakukohde "+hkOid);
+    			
+    			
+    		} else if (kmOid) {
+    			console.log("koulutus "+kmOid);
+    			
+    		} else {
+    			console.log("row has no oid", row);
+    			return; // ei oidia? -> ei näytetä valikkoa
+    		}
+
     		
     		$scope.$apply(); // turha?
     		
@@ -282,6 +291,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     				menu.data("timer", null);
     			}
     		});
+    		
     		menu.mouseleave(function(){
     			menu.data("timer", setTimeout(function(){
     				menu.toggleClass("display-block",false);

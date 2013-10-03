@@ -24,6 +24,31 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     }
 
     var dataFactory = {};
+    
+    dataFactory.tilat = function() {
+    	// TODO rest-kutsu joka hakee tarjontatilat- ja siirtymät TarjontaTila-enumista
+    	return {
+	    	LUONNOS: {mutable: true, removable: true, cancellable: false},
+	    	VALMIS: {mutable: true, removable: true, cancellable: false},
+	    	JULKAISTU: {mutable: true, removable: true, cancellable: false},
+	    	PERUTTU: {mutable: true, removable: true, cancellable: false},
+	    	KOPIOITU: {mutable: true, removable: true, cancellable: false}
+    	}
+    };
+    /*
+ public boolean isMutable() {
+    	return this==LUONNOS || this==KOPIOITU;
+    }
+    
+    public boolean isRemovable() {
+    	return this==LUONNOS || this==KOPIOITU || this==VALMIS;
+    }
+    
+    public boolean isCancellable() {
+    	return this==JULKAISTU || this==VALMIS;
+    }
+
+     */
 
     dataFactory.haeHakukohteet = function(args) {
         var ret = $q.defer();

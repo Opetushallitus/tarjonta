@@ -101,8 +101,10 @@
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
 	        
-		        <input type="checkbox" class="selectAll"/>
-	        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+	        	<div class="controls">
+	        		<input type="checkbox" class="selectAll"/>
+			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+				</div>
 	
 	        	<table id="hakukohteetResults"><!-- jquery --></table>
 	
