@@ -12,6 +12,19 @@
  * cfg.env["koodi-uri.koulutuslaji.nuortenKoulutus"];
  * result value : "koulutuslaji_n"
  */
+
+/**
+ * Contains application localisations as a list, added here just becase of tests!
+ *
+ * @type Array
+ */
+var APP_LOCALISATION_DATA = APP_LOCALISATION_DATA || [];
+
+/*
+ * Defined for unit tests.
+ */
+window.CONFIG = window.CONFIG || {};
+
 window.CONFIG.app = {
     "tarjonta.tilat": ["LUONNOS", "VALMIS", "JULKAISTU", "PERUTTU", "KOPIOITU"],
     "tarjonta.koulutusaste.korkeakoulut": [60, 61, 62, 63, 70, 71, 72, 73, 80, 81, 82, 90],
