@@ -74,7 +74,7 @@ window.CONFIG = {
         // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
 
         "tarjontaRestUrlPrefix" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
-        "tarjontaLocalisationRestUrl" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation",
+        "tarjontaLocalisationRestUrl" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
 
         "place" : "holder"
     }
