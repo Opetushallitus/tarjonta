@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
 /**
  * REST API impl.
@@ -189,7 +190,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
             Haku haku = hakuDAO.findByOid(hakukohdeDTO.getHakuOid());
             hakukohde.setHaku(haku);
-            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(),hakukohde));
+            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(), hakukohde));
 
 
             List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
@@ -219,7 +220,23 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
     }
 
+    @Override
+    public void deleteHakukohde(String hakukohdeOid) {
+        try {
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
+            if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
+                for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
+                    koulutus.removeHakukohde(hakukohde);
+                }
+            }
 
+            hakukohdeDAO.remove(hakukohde);
+            solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohde.getOid()));
+        } catch (Exception exp) {
+            LOG.warn("Exception occured when removing hakukohde {}, exception : {}" , hakukohdeOid,exp.toString());
+
+        }
+    }
 
     @Override
     public String createHakukohde(HakukohdeDTO hakukohdeDTO) {

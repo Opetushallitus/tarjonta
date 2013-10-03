@@ -142,6 +142,10 @@ public interface HakukohdeResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String updateHakukohde(HakukohdeDTO hakukohdeDTO);
 
+    @DELETE
+    @Path("{oid}")
+    public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
+
     /**
      * /hakukohde/OID/nimi
      *
