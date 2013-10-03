@@ -28,10 +28,10 @@ var app = angular.module('localisation', ['ngResource', 'config']);
 
 app.factory('Localisations', function($log, $resource, Config) {
 
-    var uri = Config.env.tarjontaRestUrlPrefix + "localisation";
+    var uri = Config.env.tarjontaLocalisationRestUrl;
     $log.info("Localisations() - uri = ", uri);
 
-    return $resource(uri + "/:locale/:key", {
+    return $resource(uri + ":locale/:key", {
         key: '@key',
         locale: '@locale',
     }, {
