@@ -1,4 +1,4 @@
-angular.module('Tarjonta', ['ngResource', 'config']).factory('PermissionService', function($resource, $log, $q, Config) {
+angular.module('TarjontaPermissions', ['ngResource', 'config']).factory('PermissionService', function($resource, $log, $q, Config) {
 	
 	return {
 		
