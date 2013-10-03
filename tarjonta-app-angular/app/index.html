@@ -131,6 +131,13 @@
             var tarjontaAppLocalisationLocationUri = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
             console.log("** Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
 
+            jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
+            	dataType: "json",
+            	success: function(xhr, status) {
+            		window.CONFIG.env["tarjonta.tila"] = xhr;
+            	}
+            });
+            
             jQuery.ajax(tarjontaAppLocalisationLocationUri, {
                 dataType: "json",
                 complete: function(xhr, status) {
