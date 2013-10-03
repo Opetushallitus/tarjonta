@@ -16,7 +16,7 @@ public class HakukohdePerustieto implements Serializable
     private Map<String, String> nimi = new HashMap<String, String>();
     private String koodistoNimi;
     private TarjontaTila tila;
-    private String aloituspaikat;
+    private Integer aloituspaikat;
     private String koulutuksenAlkamiskausiUri;
     private Integer koulutuksenAlkamisvuosi;
     private String hakutapaKoodi;
@@ -112,11 +112,11 @@ public class HakukohdePerustieto implements Serializable
         this.tila = value;
     }
 
-    public String getAloituspaikat() {
+    public Integer getAloituspaikat() {
         return aloituspaikat;
     }
 
-    public void setAloituspaikat(String value) {
+    public void setAloituspaikat(Integer value) {
         this.aloituspaikat = value;
     }
 

@@ -48,7 +48,10 @@ public class SolrDocumentToHakukohdeConverter {
     private HakukohdePerustieto convertHakukohde(SolrDocument hakukohdeDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
         HakukohdePerustieto hakukohde = new HakukohdePerustieto();
-        hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
+        
+        if(hakukohdeDoc.getFieldValue(ALOITUSPAIKAT)!=null) {
+            hakukohde.setAloituspaikat(Integer.parseInt((String)hakukohdeDoc.getFieldValue(ALOITUSPAIKAT)));
+        }
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
         copyHakutapaNimi(hakukohde, hakukohdeDoc);
