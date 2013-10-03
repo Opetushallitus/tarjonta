@@ -178,6 +178,47 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public String updateHakukohde(HakukohdeDTO hakukohdeDTO) {
+        try {
+            Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
+
+            Hakukohde tempHakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
+            hakukohde.setId(tempHakukohde.getId());
+            hakukohde.setVersion(tempHakukohde.getVersion());
+
+            Haku haku = hakuDAO.findByOid(hakukohdeDTO.getHakuOid());
+            hakukohde.setHaku(haku);
+            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(),hakukohde));
+
+
+            List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
+            if (valintakoes != null) {
+
+                hakukohde.getValintakoes().addAll(valintakoes);
+
+            }
+            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet(),hakukohde);
+
+            if (hakukohdeLiites != null ) {
+                hakukohde.getLiites().addAll(hakukohdeLiites);
+            }
+
+            hakukohdeDAO.update(hakukohde);
+
+            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+            publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
+
+            return hakukohde.getOid();
+
+        } catch (Exception exp) {
+            exp.printStackTrace();
+            LOG.warn("Exception updating hakukohde: {}" , exp.toString());
+
+            return null;
+        }
+    }
+
 
 
     @Override
@@ -201,7 +242,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                 hakukohde.getValintakoes().addAll(valintakoes);
 
             }
-            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet());
+            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet(),hakukohde);
+
             if (hakukohdeLiites != null ) {
                 hakukohde.getLiites().addAll(hakukohdeLiites);
             }
@@ -218,20 +260,21 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         } catch (Exception exp) {
            exp.printStackTrace();
-            LOG.info("Exception creating hakukohde in Rest-service :  {}", exp.toString());
+            LOG.warn("Exception creating hakukohde in Rest-service :  {}", exp.toString());
             return null;
 
         }
 
     }
 
-    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs) {
+    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs, Hakukohde hakukohde) {
         if (hakukohdeLiiteDTOs != null) {
 
             List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
 
             for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
                 HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
+                hakukohdeLiite.setHakukohde(hakukohde);
                 hakukohdeLiites.add(hakukohdeLiite);
             }
 

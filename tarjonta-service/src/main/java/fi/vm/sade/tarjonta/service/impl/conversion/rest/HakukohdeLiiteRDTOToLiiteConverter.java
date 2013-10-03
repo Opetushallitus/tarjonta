@@ -21,6 +21,7 @@ public class HakukohdeLiiteRDTOToLiiteConverter implements Converter<HakukohdeLi
         hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteDTO.getSahkoinenToimitusosoite());
         hakukohdeLiite.setLastUpdateDate(hakukohdeLiiteDTO.getModified());
         hakukohdeLiite.setLastUpdatedByOid(hakukohdeLiiteDTO.getCreatedBy());
+        hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(hakukohdeLiiteDTO.getLiitteenTyyppiKoodistonNimi());
 
         return hakukohdeLiite;
 
