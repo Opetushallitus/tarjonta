@@ -41,6 +41,7 @@
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl" />
     <bean id="tarjontaLocalisationResource" class="fi.vm.sade.tarjonta.service.impl.resources.LocalisationResourceImpl" />
+    <bean id="tarjontaTilaResource" class="fi.vm.sade.tarjonta.service.impl.resources.TilaResourceImpl" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -88,6 +89,7 @@
             <ref bean="indexerResource"/>
             <ref bean="tarjontaKoulutusResource"/>
             <ref bean="tarjontaLocalisationResource"/>
+            <ref bean="tarjontaTilaResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="cors-filter" />

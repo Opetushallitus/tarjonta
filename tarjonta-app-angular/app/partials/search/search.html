@@ -101,8 +101,10 @@
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
 	        
-		        <input type="checkbox" class="selectAll"/>
-	        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+	        	<div class="controls">
+	        		<input type="checkbox" class="selectAll"/>
+			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+				</div>
 	
 	        	<table id="hakukohteetResults"><!-- jquery --></table>
 	
@@ -111,7 +113,7 @@
 	    </tabset>
 	    
 	    <ul id="dropdown" class="dropdown-menu">
-	    	<li ng-repeat="(url, title) in menuOptions"><a href="{{url}}">{{title}}</a></li>
+	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}">{{o.title}}</a></li>
 	    </ul>
     
     </div>

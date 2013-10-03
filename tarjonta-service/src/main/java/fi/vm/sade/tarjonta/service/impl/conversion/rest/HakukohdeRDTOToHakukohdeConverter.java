@@ -37,7 +37,7 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
         hakukohde.setHakuaikaAlkuPvm(hakukohdeDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeDTO.getHakuaikaLoppuPvm());
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeDTO.getTila()));
-        hakukohde.setLisatiedot(convertMapToMonikielinenTeksti(hakukohdeDTO.getLisatiedot()));
+        hakukohde.setLisatiedot(CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getLisatiedot()));
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeDTO.getValintojenAloituspaikatLkm());
         hakukohde.setLiitteidenToimitusPvm(hakukohdeDTO.getLiitteidenToimitusPvm());
         hakukohde.setSahkoinenToimitusOsoite(hakukohdeDTO.getSahkoinenToimitusOsoite());
@@ -45,16 +45,16 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
         hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeDTO.isKaytetaanJarjestelmanValintaPalvelua());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeDTO.getSoraKuvausKoodiUri());
         hakukohde.setSoraKuvaus(hakukohdeDTO.getSoraKuvausKoodiUri()!=null ? null :
-               convertMapToMonikielinenTeksti(hakukohdeDTO.getSorakuvaus()));
+               CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getSorakuvaus()));
 
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeDTO.getValintaperustekuvausKoodiUri());
-        hakukohde.setValintaperusteKuvaus(hakukohdeDTO.getValintaperustekuvausKoodiUri() != null  ? null : convertMapToMonikielinenTeksti(hakukohdeDTO.getValintaperustekuvaus()));
+        hakukohde.setValintaperusteKuvaus(hakukohdeDTO.getValintaperustekuvausKoodiUri() != null  ? null : CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getValintaperustekuvaus()));
         hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdeDTO.getAlinHyvaksyttavaKeskiarvo());
         hakukohde.setAlinValintaPistemaara(hakukohdeDTO.getAlinValintaPistemaara());
         hakukohde.setYlinValintaPistemaara(hakukohdeDTO.getYlinValintapistemaara());
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
 
-        hakukohde.setLiitteidenToimitusOsoite(convertRDTOOsoiteToOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
+        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
 
         hakukohde.setHakukelpoisuusVaatimukset(new HashSet<String>(hakukohdeDTO.getHakukelpoisuusvaatimusUris()));
 
@@ -67,29 +67,7 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
 
 
 
-    private Osoite convertRDTOOsoiteToOsoite(OsoiteRDTO osoiteRDTO) {
-
-        if (osoiteRDTO != null) {
-            Osoite osoite = new Osoite();
-
-            osoite.setOsoiterivi1(osoiteRDTO.getOsoiterivi1());
-            osoite.setOsoiterivi2(osoiteRDTO.getOsoiterivi2());
-            osoite.setPostinumero(osoiteRDTO.getPostinumero());
-            osoite.setPostitoimipaikka(osoiteRDTO.getPostitoimipaikka());
-
-            return osoite;
-        } else return null;
-
-    }
 
 
-    private MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String,String> map) {
-        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
-        for (String key : map.keySet()) {
-            monikielinenTeksti.addTekstiKaannos(key,map.get(key));
-        }
-
-        return monikielinenTeksti;
-    }
 }

@@ -1,7 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -83,17 +82,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
-    var stateMap = {"*": msgKaikki};
-    var TARJONTA_TILAT = Config.app["tarjonta.tilat"];
-    for (var i in TARJONTA_TILAT) {
-        var s = TARJONTA_TILAT[i];
-        if ((i / 1) != i) { // WTF? mistä epä-int tulee??
-            continue;
-        }
-        stateMap[s] = LocalisationService.t("tarjonta.tila." + s);
+    $scope.states = {"*": msgKaikki};
+    for (var s in CONFIG.env["tarjonta.tila"]) {
+    	$scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
     }
-
-    $scope.states = stateMap;
 
     // alkamiskaudet
     $scope.seasons = {"*": msgKaikki};
@@ -118,16 +110,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     if (!$scope.selectedOrgName) {
         $scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
-    }
-
-    function toUrl(base, params) {
-        var args = null;
-        for (var p in params) {
-            if (params[p] != null && params[p] != undefined && params[p] != "*" && params[p].trim().length > 0) {
-                args = (args == null ? "?" : args + "&") + p + "=" + escape(params[p]);
-            }
-        }
-        return args == null ? base : base + args;
     }
 
     function copyIfSet(dst, key, value, def) {
@@ -174,12 +156,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.season = "*";
     }
     
-    $scope.menuOptions = {
-        	"#": "Tarkastele",
-        	"#": "Muokkaa",
-        	"#": "Näytä hakukohteet",
-        	"#": "Julkaise"
-    };
+    $scope.menuOptions = [];
 
     // taulukon renderöinti
     
@@ -202,7 +179,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
-    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos[prefix+"Oid"]+"\">"
+    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos.oid+"\" tila=\""+tulos.tila+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
 					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
 					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
@@ -216,7 +193,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			}
 
     			html = html
-    				+"<td>" + tulos.tila + "</td>"
+    				+"<td>" + tulos.tilaNimi + "</td>"
     				+"</tr>";
     		}
 
@@ -229,6 +206,45 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     function box(a,b,c) {
     	return a<b ? b : a>c ? c : a;
     }  
+    
+    function rowActions(prefix, oid, tila) {
+    	var ret = [];
+    	var tt = TarjontaService.getTilat()[tila];
+    	
+    	var canRead = PermissionService[prefix].canPreview(oid);
+		// tarkastele
+		if (canRead) {
+			ret.push({url:"#/"+prefix+"/"+oid, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
+		}
+		// muokkaa
+		if (tt.mutable && PermissionService[prefix].canEdit(oid)) {
+			ret.push({url:"#/"+prefix+"/"+oid+"/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
+		}
+		// näytä hakukohteet
+		if (canRead) {
+			ret.push({url:"#/"+prefix+"/"+oid+"/links", title: LocalisationService.t("tarjonta.toiminnot."+prefix+".linkit")});
+		}
+		// tilasiirtymä
+		switch (tila) {
+		case "PERUTTU":
+		case "VALMIS":
+			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
+				ret.push({url:"#/"+prefix+"/"+oid+"/publish", title: LocalisationService.t("tarjonta.toiminnot.julkaise")});
+			}
+			break;
+		case "JULKAISTU":
+			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
+				ret.push({url:"#/"+prefix+"/"+oid+"/cancel", title: LocalisationService.t("tarjonta.toiminnot.peruuta")});
+			}
+			break;
+		}
+		// poista
+		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
+			ret.push({url: "#/"+prefix+"/"+oid+"/delete", title: LocalisationService.t("tarjonta.toiminnot.poista")});
+		}
+		
+		return ret;
+    }
         
     function initTable(selector, prefix, data, cols) {
     	var em = $(selector);
@@ -257,23 +273,30 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		ev.preventDefault();
     		var menu = $("#dropdown");
     		
-    		// TODO aseta ja päivitä sisältö
+    		// popup-valikon sisältö
     		var row = $(ev.currentTarget.parentNode.parentNode);
-    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("hakukohde-oid"));
-    		//console.log("rivi ", ev.currentTarget.parentNode.parentNode.attributes.getNamedItem("koulutus-oid"));
+    		var hkOid = row.attr("hakukohde-oid");
+    		var kmOid = row.attr("koulutus-oid");
+    		var tila = row.attr("tila");
     		
+    		var menuOptions = {}
     		
-    		console.log("rivi '"+row.attr("hakukohde-oid")+"' / '"+row.attr("koulutus-oid")+"'");
-    		
-    		$scope.$apply(); // turha?
-    		
+    		if (hkOid) {
+    			$scope.menuOptions = rowActions("hakukohde", hkOid, tila);
+    		} else if (kmOid) {
+    			$scope.menuOptions = rowActions("koulutus", kmOid, tila);
+    		} else {
+    			console.log("row has no oid", row);
+    			$scope.menuOptions = {}
+    			return; // ei oidia? -> ei näytetä valikkoa
+    		}
+    		    		
     		// sijoittelu
     		menu.toggleClass("display-block",true);
     		menu.css("left", box(ev.pageX-4, 0, $(window).width() - menu.width() - 4));
     		menu.css("top", box(ev.pageY-4, 0, $(window).height() - menu.height() - 4));
     		
-    		
-    	
+    		    	
     		// automaattinen sulkeutuminen hiiren kursorin siirtyessä muualle
     		menu.mouseenter(function(){
     			var timer = menu.data("popupTimer");
@@ -282,6 +305,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     				menu.data("timer", null);
     			}
     		});
+    		
     		menu.mouseleave(function(){
     			menu.data("timer", setTimeout(function(){
     				menu.toggleClass("display-block",false);

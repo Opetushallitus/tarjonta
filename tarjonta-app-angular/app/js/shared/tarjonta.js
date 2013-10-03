@@ -2,7 +2,10 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
-
+    var tilaResource = $resource(Config.env.tarjontaRestUrlPrefix + "tila");
+    var tilaCache = null;
+    
+    
     function localize(txt) {
     	// TODO käyttäjän localen mukaan
     	if (txt.fi!=undefined) {
@@ -23,6 +26,15 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     }
 
     var dataFactory = {};
+    
+    dataFactory.getTilat = function() {
+    	return window.CONFIG.env["tarjonta.tila"];
+    };
+
+    dataFactory.acceptsTransition = function(from, to) {
+    	var s = window.CONFIG.env["tarjonta.tila"][from];
+    	return s!=null && s.transitions.indexOf("to")>=0;
+    };
 
     dataFactory.haeHakukohteet = function(args) {
         var ret = $q.defer();
@@ -41,7 +53,7 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                     r.nimi = localize(r.nimi);
                     r.koulutusLaji = localize(r.koulutusLaji);
                     r.hakutapa = localize(r.hakutapa);
-                    r.tila = LocalisationService.t("tarjonta.tila." + r.tila);
+                    r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
                 t.tulokset.sort(compareByName);
             }
@@ -66,7 +78,7 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi);
-                    r.tila = LocalisationService.t("tarjonta.tila." + r.tila);
+                    r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
                 t.tulokset.sort(compareByName);
             }
