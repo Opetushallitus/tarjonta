@@ -112,10 +112,6 @@ public class KoulutusIndexEntity {
         return koulutusmoduuliOid;
     }
 
-    public String getKoulutustyyppi() {
-        return koulutusTyyppi;
-    }
-
     public String getPohjakoulutusvaatimus() {
         return pohjakoulutusVaatimus;
     }

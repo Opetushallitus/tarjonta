@@ -132,7 +132,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
-        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutustyyppi());
+        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutusTyyppi());
         add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, koulutus.getPohjakoulutusvaatimus());
         
         //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus

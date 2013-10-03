@@ -8,7 +8,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TarjoajaHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOConverter<HakukohteetVastaus, HakutuloksetRDTO<HakukohdeHakutulosRDTO>> {
@@ -36,16 +35,10 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		ret.setOid(ht.getOid());
 		ret.setNimi(ht.getNimi());
 		ret.setKausiUri(ht.getKoulutuksenAlkamiskausiUri());
-		ret.setVuosi(Integer.parseInt(ht.getKoulutuksenAlkamisvuosi()));
-		
-		Map<String,String> htps = new HashMap<String, String>();
-		ret.setHakutapa(htps);
-		for (Nimi n : ht.getHakutapaKoodi().getNimi()) {
-			htps.put(n.getKieli(), n.getValue());
-		}
-		
+		ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
+		ret.setHakutapa(ht.getHakutapaNimi());
 		ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
-		ret.setKoulutusLaji(convertToMap(ht.getHakukohteenKoulutuslaji()));
+		ret.setKoulutusLaji(ht.getKoulutuslajiNimi());
 		ret.setTila(TarjontaTila.valueOf(ht.getTila()));
 
 		return ret;
