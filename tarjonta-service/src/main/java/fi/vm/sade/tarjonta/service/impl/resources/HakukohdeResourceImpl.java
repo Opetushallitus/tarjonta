@@ -201,7 +201,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                 hakukohde.getValintakoes().addAll(valintakoes);
 
             }
-
+            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet());
+            if (hakukohdeLiites != null ) {
+                hakukohde.getLiites().addAll(hakukohdeLiites);
+            }
 
             hakukohdeDAO.update(hakukohde);
             solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
@@ -222,6 +225,22 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     }
 
+    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs) {
+        if (hakukohdeLiiteDTOs != null) {
+
+            List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
+
+            for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
+                HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
+                hakukohdeLiites.add(hakukohdeLiite);
+            }
+
+            return hakukohdeLiites;
+
+        } else {
+            return null;
+        }
+    }
 
     private List<Valintakoe> getHakukohdeValintakoes(List<ValintakoeRDTO> valintakoeRDTOs) {
         if (valintakoeRDTOs != null) {
