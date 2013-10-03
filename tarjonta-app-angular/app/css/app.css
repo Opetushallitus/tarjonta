@@ -19,7 +19,7 @@
 
 .gridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 500px; 
+    width: 500px;
     height: 200px;
 }
 
@@ -36,7 +36,7 @@
 }
 
 label {
-	display:inline;	
+	display:inline;
 }
 
 /* latauspylpyrä (kokosivu) */
@@ -245,4 +245,22 @@ div#searchResults table tbody.folded tr.tresult {
 
 .label-right {
     text-align: right;
+}
+
+
+/*
+ * partials/kk/review/
+ */
+div#koulutusReview .collapseHeader {
+    display: inline;
+    border: 1px solid red;
+}
+
+div#koulutusReview .collapseHeader:before {
+    display: inline;
+    border: 1px solid red;
+    content: '► ';
+}
+div#koulutusReview .collapseHeader.isOpen:before{
+    content: '▼ ';
 }

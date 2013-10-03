@@ -1,9 +1,9 @@
 
 /*Object.prototype.getName = function() {
-    var funcNameRegex = /function (.{1,})\(/;
-    var results = (funcNameRegex).exec((this).constructor.toString());
-    return (results && results.length > 1) ? results[1] : "";
-};*/
+ var funcNameRegex = /function (.{1,})\(/;
+ var results = (funcNameRegex).exec((this).constructor.toString());
+ return (results && results.length > 1) ? results[1] : "";
+ };*/
 
 
 //angular.module('transclude', [])
@@ -26,44 +26,52 @@ var app = angular.module('app.kk.review.ctrl', []);
 
 app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', '$routeParams', 'LocalisationService',
     function KKReviewController($scope, $location, tarjontaService, $routeParams, LocalisationService) {
-        $scope.routeParams = $routeParams;
+        // $scope.routeParams = $routeParams;
+
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
-        $scope.model = {};
+        $scope.model = {
+            routeParams: $routeParams,
+            collapse: {
+                perusTiedot: false,
+                kuvailevatTiedot: false,
+                sisaltyvatOpintokokonaisuudet: false,
+                hakukohteet: false
+            },
+            // TODO default languages from somewhere?
+            languages: [
+                {
+                    name: "Suomi",
+                    locale: "fi",
+                    koodi_uri: "kieli_fi"
+                },
+                {
+                    name: "Ruotsi",
+                    locale: "sv",
+                    koodi_uri: "kieli_sv"
+                },
+                {
+                    name: "Englanti",
+                    locale: "en",
+                    koodi_uri: "kieli_en"
+                },
+            ],
+            koulutus: {},
+            foo: "bar"
+        };
 
-        $scope.languages = [
-            {
-                name: "Suomi",
-                locale: "fi",
-                koodi_uri: "kieli_fi"
-            },
-            {
-                name: "Ruotsi",
-                locale: "sv",
-                koodi_uri: "kieli_sv"
-            },
-            {
-                name: "Englanti",
-                locale: "en",
-                koodi_uri: "kieli_en"
-            },
-        ];
-
-        $scope.model.basicInfoIsCollapsed = false;
-        $scope.model.descriptionInfoIsCollapsed = false;
-        $scope.model.includedKoulutusIsCollapsed = false;
-        $scope.model.hakukohteetIsCollapsed = false;
+        // TODO respect my autoritai!
+        $scope.model.routeParams.id = "1.2.246.562.5.2013091015190138558153";
 
         $scope.search = function() {
             console.info("search()");
 
-            tarjontaService.getKoulutus({oid: $scope.searchByOid}, function(data) {
-                $scope.model = data;
-                $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
-                console.info($scope.model)
+            tarjontaService.getKoulutus({oid: $scope.model.routeParams.id}, function(data) {
+                $scope.model.koulutus = data;
+                $scope.model.koulutus.jatkoOpintoMahdollisuudet = {"fi": "suomeksi", "en": "english"};
+
             });
         };
-
 
         $scope.search();
     }]);

@@ -1,4 +1,4 @@
-<div>
+<div id="koulutusReview"">
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
@@ -12,10 +12,10 @@
         <div class="row-fluid">
             <div class="span12">
                 <div class="btn" ng-click='doStuff($event)'><div tt='kk.review.takaisin'></div></div>
-                <div class="btn"><div tt='kk.review.poista'>xxx</div></div>
-                <div class="btn"><div tt='kk.review.kopioi'>xxx</div></div>
-                <div class="btn"><div tt='kk.review.siirra.osaksi'>Siirrä osaksi toista koulutusta</div></div>
-                <div class="btn"><div tt='kk.review.lisaa.rinnakkainen'>Lisää rinnakkainen koulutus</div></div>
+                <div class="btn"><div tt='kk.review.poista'></div></div>
+                <div class="btn"><div tt='kk.review.kopioi'></div></div>
+                <div class="btn"><div tt='kk.review.siirra.osaksi'></div></div>
+                <div class="btn"><div tt='kk.review.lisaa.rinnakkainen'></div></div>
             </div>
         </div>
     </div>
@@ -31,13 +31,13 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                < <span tt='kk.review.edellinen'></span> 1/100 <span tt='kk.review.seuraava'></span> >
+                < <div tt='kk.review.edellinen'></div> 1/100 <div tt='kk.review.seuraava'></div> >
             </div>
         </div>
     </div>
 
     <tabset>
-        <tab ng-repeat="lang in languages" heading="{{lang.name}}">
+        <tab ng-repeat="lang in model.languages" heading="{{lang.name}}">
             <div ng-include="'partials/kk/review/reviewLanguage.html'"></div>
         </tab>
     </tabset>
@@ -45,7 +45,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                < <span tt='kk.review.edellinen'>edellinen</span> 1/100 <span tt='kk.review.seuraava'>seuraava</span> >
+                < <div tt='kk.review.edellinen'></div> 1/100 <div tt='kk.review.seuraava'></div> >
             </div>
         </div>
     </div>
