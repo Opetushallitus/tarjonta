@@ -84,12 +84,18 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
 
 
     private MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String,String> map) {
-        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
-        for (String key : map.keySet()) {
-            monikielinenTeksti.addTekstiKaannos(key,map.get(key));
+        if (map != null) {
+            MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+
+            for (String key : map.keySet()) {
+                monikielinenTeksti.addTekstiKaannos(key,map.get(key));
+            }
+
+            return monikielinenTeksti;
+        } else {
+            return null;
         }
 
-        return monikielinenTeksti;
     }
 }
