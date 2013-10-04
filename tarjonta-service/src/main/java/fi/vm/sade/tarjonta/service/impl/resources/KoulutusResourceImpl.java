@@ -31,11 +31,14 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
@@ -76,6 +79,8 @@ public class KoulutusResourceImpl implements KoulutusResource {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired(required = true)
     private KoodiService koodiService;
+    @Autowired(required = true)
+    private OrganisaatioService organisaatioService;
 
     @Override
     public String help() {
@@ -93,8 +98,8 @@ public class KoulutusResourceImpl implements KoulutusResource {
             //simple paramter check if data is koodisto service koodi URI.
             return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
         } else {
-            SearchKoodisByKoodistoCriteriaType koodisByArvoAndKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
-            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(koodisByArvoAndKoodistoUri);
+            SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
+            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
             return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
         }
     }
@@ -153,15 +158,38 @@ public class KoulutusResourceImpl implements KoulutusResource {
     @Override
     public void createToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
-        LOG.info(ReflectionToStringBuilder.toString(dto));
-
-        final KoulutusmoduuliToteutus komotoEntity = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
-
-        if (komotoEntity == null) {
-            LOG.error("Cannot convert DTO to entity - DTO conversion returned null object.");
+        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
+        if (dto.getOid() != null) {
+            throw new TarjontaBusinessException("KOULUTUS_011", "An invalid data exception - external KOMOTO OIDs not allowed.");
         }
-        koulutusmoduuliDAO.insert(komotoEntity.getKoulutusmoduuli());
-        final KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoEntity);
+
+        if (dto.getKomoOid() != null) {
+            throw new TarjontaBusinessException("KOULUTUS_012", "An invalid data exception - external KOMO OIDs not allowed.");
+        }
+
+        if (dto.getOrganisaatioOid() == null) {
+            throw new TarjontaBusinessException("KOULUTUS_022", "An invalid data exception - koulutustarjoaja OID is missing.");
+        }
+        OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatioOid());
+
+        if (org == null) {
+            throw new TarjontaBusinessException("KOULUTUS_023", "An invalid data exception - no organisation found by OID '" + dto.getOrganisaatioOid() + "'.");
+        }
+
+        final KoulutusmoduuliToteutus newKomo = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
+
+        if (newKomo == null) {
+            LOG.error(ReflectionToStringBuilder.toString(dto));
+            throw new TarjontaBusinessException("KOULUTUS_033", "An invalid data exception - KOMOTO conversion to database object failed.");
+        }
+
+        if (newKomo.getKoulutusmoduuli() == null) {
+            LOG.error(ReflectionToStringBuilder.toString(newKomo.getKoulutusmoduuli()));
+            throw new TarjontaBusinessException("KOULUTUS_034", "An invalid data exception - KOMO conversion to database object failed.");
+        }
+
+        koulutusmoduuliDAO.insert(newKomo.getKoulutusmoduuli());
+        final KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(newKomo);
         solrIndexer.indexKoulutukset(Lists.newArrayList(response.getId()));
         // publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
     }

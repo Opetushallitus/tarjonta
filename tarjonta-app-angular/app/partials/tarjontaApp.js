@@ -56,13 +56,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "home.default",
             reloadOnSearch: false
         })
-                .when("/kk/edit/:id", {
+                .when("/kk/edit/:orgOid/:komotoOid", {
             action: "kk.edit"
         })
-                .when("/kk/edit/:id/:part", {
+                .when("/kk/edit/:type/:part/:org/:komoto/:koulutuskoodi", {
             action: "kk.edit"
         })
-
                 .when('/kk/review/:id', {
             action: "kk.review"
         })
