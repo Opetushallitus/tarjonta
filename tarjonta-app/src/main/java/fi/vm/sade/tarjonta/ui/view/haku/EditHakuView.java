@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -50,7 +51,12 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     @Autowired(required = true)
     private HakuPresenter presenter;
 
-    public static final String YHTEISHAKU_URI = "hakutapa_01";
+    //public static final String YHTEISHAKU_URI = "hakutapa_01";
+    
+    @Value("${koodisto-uris.yhteishaku}")
+    private String yhteishakuUri;
+    @Value("${koodisto-uris.lisahaku}")
+    private String lisahakuUri;
 
     public EditHakuView(String oid) {
         super(oid, SisaltoTyyppi.HAKU);
@@ -114,13 +120,15 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
 
         String selectedHakutapa = presenter.getModel().getHakutapa();
+        String selectedHakutyyppi = presenter.getModel().getHakutyyppi();
+        
         Date today = new Date();
         Date haunAlkamisPvm = getAlkamisaika();
         if (haunAlkamisPvm.before(today)) {
             errorView.addError(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
             throw new ExceptionMessage(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
         }
-        if (selectedHakutapa.trim().contains(YHTEISHAKU_URI)) {
+        if (selectedHakutapa.equals(yhteishakuUri) && !selectedHakutyyppi.equals(lisahakuUri)) {
             if (!presenter.getHakuModel().isHaussaKaytetaanSijoittelua() || !presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
             errorView.addError(getI18n().getMessage("yhteishakuMsg"));
             throw new ExceptionMessage(getI18n().getMessage("yhteishakuMsg"));
