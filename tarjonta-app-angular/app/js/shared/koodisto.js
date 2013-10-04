@@ -1,8 +1,8 @@
-var app = angular.module('Koodisto', ['ngResource']);
+var app = angular.module('Koodisto', ['ngResource','config']);
 
-app.factory('Koodisto',function($resource, $log,$q){
-    //TODO: This should be replaced with something better, just for testing
-    var host = "https://itest-virkailija.oph.ware.fi";
+app.factory('Koodisto',function($resource, $log,$q, Config){
+
+    var host = Config.env["host.base-uri"];
 
     var nimiWithLocale =   function(locale,metadata) {
         var metas = _.select(metadata,function(koodiMetaData) {
