@@ -15,7 +15,9 @@ module.exports = function(config){
       '../test/unit/**/*.js',
       'lib/jquery-1.10.2.min.js',
       'jquery-1.10.2.min.map',
-      'lib/ngGrid/ng-grid-2.0.7.min.js'
+      'lib/ngGrid/ng-grid-2.0.7.min.js',
+      'lib/jquery-ui.min.js',
+      'lib/autocomplete/autocomplete.js'
     ],
 
     autoWatch : true,

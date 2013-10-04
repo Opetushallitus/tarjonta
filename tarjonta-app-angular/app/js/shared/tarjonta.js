@@ -1,51 +1,62 @@
-angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto) {
+var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
+
+app.factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, AuthService, CacheService) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
-    var tilaResource = $resource(Config.env.tarjontaRestUrlPrefix + "tila");
-    var tilaCache = null;
-    
-    
+
     function localize(txt) {
-    	// TODO käyttäjän localen mukaan
-    	if (txt.fi!=undefined) {
-    		return txt.fi;
-    	} else if (txt.sv!=undefined) {
-    		return txt.sv;
-    	} else if (txt.en!=undefined) {
-    		return txt.en;
-    	} else {
-            return "?";
-    	}
+
+        var userLocale = LocalisationService.getLocale();
+
+        if ("fi" === userLocale) {
+            return txt.fi;
+        } else if ("en" === userLocale) {
+            return txt.en;
+        } else if ("sv" === userLocale) {
+            return txt.sv;
+        } else {
+            return "(TUNTEMATON LOCALE = '"+ userLocale + "', palautetaan suomalainen sisältö) " + txt.fi;
+        }
+    }
+
+    function compareByName(a, b) {
+        var an = a.nimi;
+        var bn = b.nimi;
+        return an.localeCompare(bn);
     }
     
-    function compareByName(a, b) {
-    	var an = a.nimi;
-    	var bn = b.nimi;
-    	return an.localeCompare(bn);
+    function searchCacheKey(prefix, args) {
+    	return prefix+"/?"+
+    		"oid="+args.oid+"&"+
+    		"terms="+escape(args.terms)+"&"+
+    		"state="+escape(args.state)+"&"+
+    		"season="+escape(args.season)+"&"+
+    		"year="+escape(args.year);
     }
 
     var dataFactory = {};
-    
+
     dataFactory.getTilat = function() {
-    	return window.CONFIG.env["tarjonta.tila"];
+        return window.CONFIG.env["tarjonta.tila"];
     };
 
     dataFactory.acceptsTransition = function(from, to) {
-    	var s = window.CONFIG.env["tarjonta.tila"][from];
-    	return s!=null && s.transitions.indexOf("to")>=0;
+        var s = window.CONFIG.env["tarjonta.tila"][from];
+        return s != null && s.transitions.indexOf("to") >= 0;
     };
 
     dataFactory.haeHakukohteet = function(args) {
-        var ret = $q.defer();
-        hakukohdeHaku.get({
-            searchTerms: args.terms,
-            organisationOid: args.oid,
-            tila: args.state,
-            alkamisKausi: args.season,
-            alkamisVuosi: args.year
-        }, function(result) {
-            for (var i in result.tulokset) {
+    	var params = {
+	        searchTerms: args.terms,
+	        organisationOid: args.oid,
+	        tila: args.state,
+	        alkamisKausi: args.season,
+	        alkamisVuosi: args.year
+	    };
+    	
+    	return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
+    		for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
@@ -58,21 +69,21 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            ret.resolve(result);
-        });
-        return ret.promise;
+    		return result;
+    	});
     };
 
     dataFactory.haeKoulutukset = function(args) {
-        var ret = $q.defer();
-        koulutusHaku.get({
-            searchTerms: args.terms,
-            organisationOid: args.oid,
-            tila: args.state,
-            alkamisKausi: args.season,
-            alkamisVuosi: args.year
-        }, function(result) {
-            for (var i in result.tulokset) {
+    	var params = {
+	        searchTerms: args.terms,
+	        organisationOid: args.oid,
+	        tila: args.state,
+	        alkamisKausi: args.season,
+	        alkamisVuosi: args.year
+	    };
+    	
+    	return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
+    		for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
@@ -83,9 +94,8 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            ret.resolve(result);
-        });
-        return ret.promise;
+    		return result;
+    	});
     }
 
     dataFactory.insertKoulutus = function(json) {
@@ -116,4 +126,4 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     };
 
     return dataFactory;
-})
+});

@@ -45,7 +45,8 @@ public class KoulutuskoodiRelations {
         KoodistoURI.KOODISTO_TUTKINTO_NIMI_URI,
         KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
-        KoodistoURI.KOODISTO_KOULUTUSASTE_URI
+        KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
+        KoodistoURI.KOODISTO_EQF_LUOKITUS_URI
     };
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -55,10 +56,10 @@ public class KoulutuskoodiRelations {
         Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri);
 
         KoulutusmoduuliRelationDTO dto = new KoulutusmoduuliRelationDTO();
+        dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, locale));
 
         for (KoodiType type : koodistoRelations) {
-            LOG.info("Relations : {}", type.getKoodisto().getKoodistoUri());
-
+            LOG.info("KOODISTO : " + type.getKoodisto().getKoodistoUri());
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 dto.setKoulutusala(listaaKoodi(type.getKoodiUri(), locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOALA_URI)) {
@@ -69,6 +70,8 @@ public class KoulutuskoodiRelations {
                 dto.setTutkinto(listaaKoodi(type.getKoodiUri(), locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSASTE_URI)) {
                 dto.setKoulutusaste(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_EQF_LUOKITUS_URI)) {
+                dto.setEqf(listaaKoodi(type.getKoodiUri(), locale));
             }
         }
 

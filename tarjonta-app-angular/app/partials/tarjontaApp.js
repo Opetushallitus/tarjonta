@@ -12,7 +12,8 @@ angular.module('app.kk',
             'app.kk.services',
             'ui.bootstrap',
             'ngRoute',
-            'config'
+            'config',
+            'auth'
         ]);
 
 /*******************************************************
@@ -36,6 +37,7 @@ angular.module('app',
             'Koodisto',
             'Organisaatio',
             'TarjontaPermissions',
+            'TarjontaCache',
             'Tarjonta',
             'KoodistoCombo',
             'KoodistoMultiSelect',
@@ -59,7 +61,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when("/kk/edit/:orgOid/:komotoOid", {
             action: "kk.edit"
         })
-                .when("/kk/edit/:type/:part/:orgOid/:komoOid/:koulutuskoodi", {
+                .when("/kk/edit/:type/:part/:org/:komoto/:koulutuskoodi", {
             action: "kk.edit"
         })
                 .when('/kk/review/:id', {

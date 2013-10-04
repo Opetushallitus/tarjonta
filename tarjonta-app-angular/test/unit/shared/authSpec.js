@@ -14,7 +14,39 @@
  */
 
 describe('auth', function() {
-    beforeEach(module('tarjontaApp.auth'));
+
+    var CONFIG_ENV_MOCK = {
+        "env": {
+            "key-env-1": "mock-value-env-1",
+            "key-env-2": "mock-value-env-2",
+            "tarjonta.localisations": [],
+            "casUrl" : "cas_myroles_tiimi2",
+            "cas.myroles" : ["USER_tiimi2"]
+        }, "app": {
+            "key-app-1": "mock-value-app-1"
+        },
+    };
+
+    //set mock data to module by using the value-method,
+    var mockModule = angular.module('test.module', []);
+    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+
+
+    beforeEach(module('auth'));
+    beforeEach(module('config'));
+    beforeEach(module('test.module'));
+
+    describe('AuthService', function() {
+        var scope, controller;
+
+        beforeEach(inject(function($rootScope, $controller) {
+            scope = $rootScope.$new();
+        }));
+
+        it('get user', inject(function(AuthService) {
+            expect("tiimi2").toEqual(AuthService.getUsername());
+        }));
+    });
 
     describe('MyRolesModel', function() {
         var scope, controller;
@@ -23,7 +55,7 @@ describe('auth', function() {
             scope = $rootScope.$new();
         }));
 
-        it('xxx', inject(function(MyRolesModel) {
+        it('MyRolesModel tests', inject(function(MyRolesModel) {
             MyRolesModel.debug();
             MyRolesModel.refresh();
             MyRolesModel.debug();
