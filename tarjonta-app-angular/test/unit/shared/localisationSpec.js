@@ -18,11 +18,13 @@
  * Tests for Localisation.
  */
 describe('localisation', function() {
+    var THE_OFFICIAL_TEST_VALUE_FI = "83989859385938593857ksdjfhskjfhskjhf_fi";
+
     var CONFIG_ENV_MOCK = {
         "env": {
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2",
-            "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: "TEST_VALUE", locale: "fi"}],
+            "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: THE_OFFICIAL_TEST_VALUE_FI, locale: "fi"}],
             "casUrl" : "cas_myroles_tiimi2"
         }, "app": {
             "key-app-1": "mock-value-app-1"
@@ -58,7 +60,7 @@ describe('localisation', function() {
             expect(scope.t(key2)).toEqual("[" + key2 + "]");
 
             var key3 = "this.is.a.test.too_XXX";
-            expect(scope.t(key3)).toEqual("TEST_VALUE");
+            expect(scope.t(key3)).toEqual(THE_OFFICIAL_TEST_VALUE_FI);
         }));
 
     });
