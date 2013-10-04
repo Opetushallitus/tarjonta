@@ -17,30 +17,33 @@
 
 
 /**
- *
- * @type @exp;angular@call;module
+ * Authentication module.
+ * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.myroles"]
  */
-var app = angular.module("tarjontaApp.auth", ['ngResource', 'config']);
 
-// datafile
 
+var app = angular.module("auth", ['ngResource', 'config']);
+
+var USER = "USER_";
 var READ = "_READ";
 var UPDATE = "_READ_UPDATE";
 var CRUD = "_CRUD";
+var OPH_ORG = "xxx";
 
 app.factory('MyRolesModel', function($http, $log, Config) {
 
     console.log("MyRolesModel()");
-
-    var casUrl = Config.env.casUrl;
+    OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
         console.log("MyRolesModel.factory()");
 
         var instance = {};
-        instance.myroles = [];
+        // instance.myroles = [];
+        instance.myroles = Config.env["cas.myroles"] ? Config.env["cas.myroles"] : [];
 
         instance.refresh = function() {
+            // TODO some timeout for the cache?
             if (instance.myroles.length == 0) {
                 $http.get(Config.env.casUrl)
                         .success(function(result) {
@@ -49,15 +52,17 @@ app.factory('MyRolesModel', function($http, $log, Config) {
                 })
                         .error(function(data, status, headers, config) {
                     console.log("MyRolesModel.factory() - FAILED to load roles from: " + Config.env.casUrl);
+                    console.log("MyRolesModel.factory() - data: " + data);
                     console.log("MyRolesModel.factory() - status: " + status);
                     console.log("MyRolesModel.factory() - headers: " + headers);
+                    console.log("MyRolesModel.factory() - config: " + config);
                 });
             }
         };
 
-        instance.debug = function () {
+        instance.debug = function() {
             console.log("MyRolesModel.debug():");
-            console.log("  roles: " + instance);
+            console.log("  roles: ", instance);
         };
 
         return instance;
@@ -68,12 +73,52 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
 
+    var _startsWith = function(str, startWith) {
+        return str.splice(0, startWith.length) === startWith;
+    };
+
+    var _restOf = function(str, startWith) {
+        if (_startsWith(str, startWith)) {
+            return str.splice(startWith.length);
+        } else {
+            return str;
+        }
+    };
+
+    var _endsWith = function(str, endsWith) {
+        return str.splice(-endsWith.length) === endsWith;
+    };
+
+    var _beginningOf = function(str, endsWith) {
+        if (_endsWith(str, endsWith)) {
+            return str.splice(0, str.length - endsWith.length);
+        } else {
+            return str;
+        }
+    };
+
+
+
     var isLoggedIn = function() {
         $log.info("isLoggedIn()");
         if (MyRolesModel.myroles.length > 0) {
             return true;
         }
     };
+
+    var username = function() {
+        $log.info("username()");
+        var entry = _.find(MyRolesModel.myroles, function(x) {
+            return _startsWith(x, USER);
+        });
+
+        if (entry) {
+            return _restOf(entry, USER);
+        } else {
+            return undefined;
+        }
+    };
+
 
     // organisation check
     var readAccess = function(service, org) {
@@ -134,45 +179,6 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
         return deferred.promise;
     };
 
-    // OPH check -- voidaan ohittaa organisaatioiden haku
-    var ophRead = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + READ + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + UPDATE + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophUpdate = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + UPDATE + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophCrud = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophAccessCheck = function(service, accessFunction) {
-        var deferred = $q.defer();
-        var waitTime = 10;
-
-        var check = function() {
-            MyRolesModel.refresh();
-            waitTime = waitTime + 500;
-            if (MyRolesModel.myroles.length === 0) {
-                $timeout(check, waitTime);
-            } else {
-                if (accessFunction(service)) {
-                    deferred.resolve();
-                } else {
-                    deferred.reject();
-                }
-            }
-        }
-
-        $timeout(check, waitTime);
-
-        return deferred.promise;
-    }
-
     return {
         readOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, readAccess);
@@ -182,15 +188,6 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
         },
         crudOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, crudAccess);
-        },
-        readOph: function(service) {
-            return ophAccessCheck(service, ophRead);
-        },
-        updateOph: function(service) {
-            return ophAccessCheck(service, ophUpdate);
-        },
-        crudOph: function(service) {
-            return ophAccessCheck(service, ophCrud);
         },
     };
 });

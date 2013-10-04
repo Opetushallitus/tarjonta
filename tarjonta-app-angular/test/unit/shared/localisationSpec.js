@@ -21,11 +21,13 @@ describe('localisation', function() {
     var CONFIG_ENV_MOCK = {
         "env": {
             "key-env-1": "mock-value-env-1",
-            "key-env-2": "mock-value-env-2"
+            "key-env-2": "mock-value-env-2",
+            "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: "TEST_VALUE", locale: "fi"}],
+            "casUrl" : "cas_myroles_tiimi2"
         }, "app": {
             "key-app-1": "mock-value-app-1"
-        }
-    }
+        },
+    };
 
     //set mock data to module by using the value-method,
     var mockModule = angular.module('test.module', []);
@@ -37,17 +39,14 @@ describe('localisation', function() {
     describe('LocalisationCtrl', function() {
         var scope, controller;
 
-//        // "inject" data to localisation service
-//        APP_LOCALISATION_DATA = [];
-
         // Create controller with scope
-        beforeEach(inject(function ($rootScope, $controller, $log) {
+        beforeEach(inject(function($rootScope, $controller, $log) {
             $log.debug = function(args) {
-              $log.info(args);
+                $log.info(args);
             };
 
             scope = $rootScope.$new();
-            controller = $controller("LocalisationCtrl", { $scope: scope});
+            controller = $controller("LocalisationCtrl", {$scope: scope});
         }));
 
         // When an unknown translation is referred to - a "["+key+"]" value should be returned
@@ -57,6 +56,9 @@ describe('localisation', function() {
 
             var key2 = "this.is.a.test.too";
             expect(scope.t(key2)).toEqual("[" + key2 + "]");
+
+            var key3 = "this.is.a.test.too_XXX";
+            expect(scope.t(key3)).toEqual("TEST_VALUE");
         }));
 
     });
