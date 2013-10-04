@@ -28,6 +28,10 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
     function KKReviewController($scope, $location, tarjontaService, $routeParams, LocalisationService) {
         // $scope.routeParams = $routeParams;
 
+        // org oid = koulutus.organisaatioOid
+        //
+
+
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {

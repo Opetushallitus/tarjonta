@@ -19,9 +19,6 @@
             </div>
             <div class="span9">
                 {{model.koulutus.oid}}
-                xxx {{ lang }}
-                xxx
-                {{model.koulutus.jatkoOpintoMahdollisuudet[lang.locale]}} yyy
             </div>
         </div>
         <div class="row-fluid">
@@ -29,7 +26,7 @@
                 <div tt='kk.review.perustiedot.organisaatio'></div>
             </div>
             <div class="span9">
-                Rantalohjan kunta, Rantalohjan ammattiopisto, Terveyden ja hyvinvoinnin toimipiste
+                [Rantalohjan kunta, Rantalohjan ammattiopisto, Terveyden ja hyvinvoinnin toimipiste]
             </div>
         </div>
         <div class="row-fluid">
@@ -37,7 +34,7 @@
                 <div tt='kk.review.perustiedot.koulutus'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.koulutuskoodi.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -53,7 +50,7 @@
                 <div tt='kk.review.perustiedot.koulutusaste'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.koulutusaste.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -61,7 +58,7 @@
                 <div tt='kk.review.perustiedot.koulutusala'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.koulutusala.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -69,7 +66,7 @@
                 <div tt='kk.review.perustiedot.opintoala'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.opintoala.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -77,7 +74,7 @@
                 <div tt='kk.review.perustiedot.tutkintonimike'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.tutkintonimike.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -85,7 +82,7 @@
                 <div tt='kk.review.perustiedot.opintojenLaajuus'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.opintojenLaajuus.arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -167,7 +164,8 @@
                 <div tt='kk.review.kuvailevatTiedot.tavoitteetTutkinto'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -175,7 +173,8 @@
                 <div tt='kk.review.kuvailevatTiedot.tavoitteetKoulutus'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -183,7 +182,8 @@
                 <div tt='kk.review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -191,7 +191,8 @@
                 <div tt='kk.review.kuvailevatTiedot.sisaltoKoulutus'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -199,7 +200,8 @@
                 <div tt='kk.review.kuvailevatTiedot.rakenneKoulutus'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -207,7 +209,8 @@
                 <div tt='kk.review.kuvailevatTiedot.kansainvalisyys'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -215,7 +218,8 @@
                 <div tt='kk.review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -223,7 +227,8 @@
                 <div tt='kk.review.kuvailevatTiedot.ammattinimikkeet'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -231,7 +236,8 @@
                 <div tt='kk.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
             </div>
             <div class="span9">
-                XXX
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta.kieli_fi.arvo"></div>
             </div>
         </div>
     </div>
