@@ -104,7 +104,9 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
           $scope.onKoodistoComboChange = function() {
               if ($scope.onchangecallback !== undefined) {
-                  $log.info('Calling onchangecallback');
+                  $log.info('Select koodiuri ');
+
+                  $log.info($scope.koodiuri);
 
                   $scope.onchangecallback($scope.koodiuri);
 

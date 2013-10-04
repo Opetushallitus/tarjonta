@@ -105,6 +105,9 @@
                         </div>
                     </div>
                 </div><!-- 0:/helpers -->
+                <div ng-switch-when="koodistoTest">
+                    <div ng-include="'partials/koodistoTest.html'" ng-controller="KoodistoTestController"></div>
+                </div>
             </div><!-- /renderPath[0] -->
 
             <div class="wsidebar-main">
@@ -172,6 +175,7 @@
                     initFunction("AUTHENTICATION", xhr, status);
                 },
                 error: function(xhr, status) {
+                    window.CONFIG.env["cas.myroles"] = [];
                     initFunction("AUTHENTICATION FAILED", xhr, status);
                 }
             });
@@ -188,6 +192,7 @@
                     initFunction("tarjonta.tila", xhr, status);
                 },
                 error: function(xhr, status) {
+                    window.CONFIG.env["tarjonta.tila"] = {};
                     initFunction("tarjonta.tila FAILED", xhr, status);
                 }
             });
@@ -203,6 +208,7 @@
                     initFunction("localisations", xhr, status);
                 },
                 error: function(xhr, status) {
+                    window.CONFIG.env["tarjonta.localisations"] = [];
                     initFunction("localisations FAILED", xhr, status);
                 }
             });

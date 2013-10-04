@@ -10,7 +10,9 @@ app.controller('KoodistoTestController', function($scope,$route) {
 
     };
 
-   $scope.selectedKoodis = [];
+    //$scope.multiselectKoodiUris = [];
+
+    $scope.multiselectKoodiUris = ["koulutusohjelmaamm_16452", "koulutusohjelmaamm_1550", "koulutusohjelmaamm_1600"]
 
     $scope.koodistofilter='hakukohteet';
 
@@ -29,7 +31,7 @@ app.controller('KoodistoTestController', function($scope,$route) {
     $scope.testcallback = function(selected) {
       console.log('Test onchangecallback called');
       console.log(selected);
-      $scope.parenturi = selected.koodiUri;
+      $scope.parenturi = selected;
       console.log('Parent uri:');
       console.log($scope.parenturi);
 
@@ -37,7 +39,8 @@ app.controller('KoodistoTestController', function($scope,$route) {
     };
 
     $scope.testit = function() {
-      alert ($scope.selectedKoodis);
+        console.log('Got following koodis: ', $scope.multiselectKoodiUris);
+      alert ($scope.multiselectKoodiUris);
     };
 
 

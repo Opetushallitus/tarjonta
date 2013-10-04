@@ -75,7 +75,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
         })
 
                 //Remove this when done Tuomas
-                .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
+                .when('/koodistoTest', {action: 'koodistoTest'})
 
                 .otherwise({redirectTo: "/etusivu"});
     }]);
