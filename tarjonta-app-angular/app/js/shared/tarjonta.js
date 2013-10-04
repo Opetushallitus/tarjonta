@@ -1,13 +1,9 @@
-
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, AuthService) {
+app.factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, AuthService, CacheService) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
-    var tilaResource = $resource(Config.env.tarjontaRestUrlPrefix + "tila");
-    var tilaCache = null;
-
 
     function localize(txt) {
 
@@ -29,6 +25,15 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
         var bn = b.nimi;
         return an.localeCompare(bn);
     }
+    
+    function searchCacheKey(prefix, args) {
+    	return prefix+"/?"+
+    		"oid="+args.oid+"&"+
+    		"terms="+escape(args.terms)+"&"+
+    		"state="+escape(args.state)+"&"+
+    		"season="+escape(args.season)+"&"+
+    		"year="+escape(args.year);
+    }
 
     var dataFactory = {};
 
@@ -42,15 +47,16 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
     };
 
     dataFactory.haeHakukohteet = function(args) {
-        var ret = $q.defer();
-        hakukohdeHaku.get({
-            searchTerms: args.terms,
-            organisationOid: args.oid,
-            tila: args.state,
-            alkamisKausi: args.season,
-            alkamisVuosi: args.year
-        }, function(result) {
-            for (var i in result.tulokset) {
+    	var params = {
+	        searchTerms: args.terms,
+	        organisationOid: args.oid,
+	        tila: args.state,
+	        alkamisKausi: args.season,
+	        alkamisVuosi: args.year
+	    };
+    	
+    	return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
+    		for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
@@ -63,21 +69,21 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            ret.resolve(result);
-        });
-        return ret.promise;
+    		return result;
+    	});
     };
 
     dataFactory.haeKoulutukset = function(args) {
-        var ret = $q.defer();
-        koulutusHaku.get({
-            searchTerms: args.terms,
-            organisationOid: args.oid,
-            tila: args.state,
-            alkamisKausi: args.season,
-            alkamisVuosi: args.year
-        }, function(result) {
-            for (var i in result.tulokset) {
+    	var params = {
+	        searchTerms: args.terms,
+	        organisationOid: args.oid,
+	        tila: args.state,
+	        alkamisKausi: args.season,
+	        alkamisVuosi: args.year
+	    };
+    	
+    	return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
+    		for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
@@ -88,9 +94,8 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            ret.resolve(result);
-        });
-        return ret.promise;
+    		return result;
+    	});
     }
 
     dataFactory.insertKoulutus = function(json) {
@@ -121,4 +126,4 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
     };
 
     return dataFactory;
-})
+});
