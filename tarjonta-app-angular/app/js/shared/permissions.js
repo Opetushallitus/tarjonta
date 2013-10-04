@@ -11,7 +11,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config']).factory('Permiss
 			canCreate: function(orgOid) {
 				// TODO
 				console.log("TODO koulutus.canCreate",orgOid);
-				return orgOid!= Config.env["root.organisaatio.oid"];
+				return orgOid != Config.env["root.organisaatio.oid"];
 			},
 			canPreview: function(oid) {
 				// TODO
@@ -39,7 +39,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config']).factory('Permiss
 			canCreate: function(koulutusOids) {
 				// TODO
 				console.log("TODO hakukohde.canCreate ",koulutusOids);
-				return true;
+				return koulutusOids.length>0;
 			},
 			canPreview: function(oid) {
 				// TODO

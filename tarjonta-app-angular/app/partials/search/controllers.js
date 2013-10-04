@@ -147,6 +147,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             $scope.selectedOrgName = n;
         });
         updateLocation();
+        updateSelection();
     }
 
     $scope.reset = function() {
@@ -156,7 +157,16 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.season = "*";
     }
     
+	$scope.selectedKoulutukset = [];
+	$scope.selectedHakukohteet = [];
+
     $scope.menuOptions = [];
+    
+    $scope.koulutusActions = {
+    		canMoveOrCopy: false,
+    		canCreateHakukohde: false,
+    		canCreateKoulutus: false
+    };
 
     // taulukon renderöinti
     
@@ -205,7 +215,25 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     
     function box(a,b,c) {
     	return a<b ? b : a>c ? c : a;
-    }  
+    }
+    
+    function selectedOids(root) {
+    	var oids = [];
+    	$("input.selectRow:checked", root).each(function(i, em){
+    		var tr = $(em.parentNode.parentNode);
+    		oids.push(tr.attr("hakukohde-oid") || tr.attr("koulutus-oid"));
+    	});
+    	return oids;
+    }
+    
+    function updateSelection() {
+    	$scope.selectedKoulutukset = selectedOids("table#koulutuksetResults");
+    	$scope.selectedHakukohteet = selectedOids("table#hakukohteetResults");
+        
+        $scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy($scope.selectedKoulutukset);
+        $scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate($scope.selectedKoulutukset);
+        $scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
+    }
     
     function rowActions(prefix, oid, tila) {
     	var ret = [];
@@ -250,7 +278,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var em = $(selector);
     	
     	em.html(resultsToTable(data, cols, prefix));
-
+        updateSelection();
+    	
     	// valitse-kaikki-nappi päälle/pois tulosten mukaan
     	$("input.selectAll", em.parent())
     		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
@@ -258,6 +287,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			var sel = $(ev.currentTarget).is(":checked");
     			//console.log("select/unselect all", sel);
     			$("input.selectRows, input.selectRow", em).prop("checked", sel);
+
+    			updateSelection();
+        		$scope.$apply();
     		});
     	
     	// lapsinodejen valitse-kaikki
@@ -267,6 +299,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			$("input.selectRow", $(ev.currentTarget.parentNode.parentNode.parentNode)).prop("checked", sel);
     	});
     	
+    	$("input[type=checkbox]").click(function(ev){
+    		updateSelection();
+    		$scope.$apply();
+    	});
+
     	// kirjapinovalikot
     	// - sisältö angularilla, sijoittelu jqueyryllä
     	$(".options", em).click(function(ev){
@@ -290,6 +327,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			$scope.menuOptions = {}
     			return; // ei oidia? -> ei näytetä valikkoa
     		}
+    		
+    		$scope.$apply();
     		    		
     		// sijoittelu
     		menu.toggleClass("display-block",true);
@@ -329,18 +368,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     
     }
     
-    $scope.canMoveOrCopy = function() {
-    	return true;
-    }
-
-    $scope.canCreateHakukohde = function() {
-    	return true;
-    }
-
-    $scope.canCreateKoulutus = function() {
-    	return true;
-    }
-
     $scope.search = function() {
     	var spec = {
             oid: $scope.selectedOrgOid,
@@ -351,6 +378,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         };
         console.log("search", spec);
         updateLocation();
+
+        // valinnat
+        $("input.selectAll").prop("checked", false);
+        
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
         	initTable("#koulutuksetResults", "koulutus", data,[
