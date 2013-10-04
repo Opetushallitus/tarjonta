@@ -7,6 +7,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOO
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_URIS;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSMODUULI_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
@@ -47,21 +50,21 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         KoulutusPerustieto koulutus = new KoulutusPerustieto();
         koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutuskoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
+        koulutus.setKoulutuskoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
         koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
         if(koulutus.getKoulutustyyppi()!=null){
         if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
-            koulutus.setKoulutusohjelmakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
-            koulutus.setKoulutuslaji(getKoulutuslaji(koulutusDoc));
+            koulutus.setKoulutusohjelmakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            koulutus.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URIS, KOULUTUSLAJI_FI, KOULUTUSLAJI_SV, KOULUTUSLAJI_EN, koulutusDoc));
         } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-            koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
         }
         }
         copyKoulutusNimi(koulutus, koulutusDoc);
         koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
-        koulutus.setTutkintonimike(IndexDataUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
+        koulutus.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
         if (koulutusDoc.containsKey(KAUSI_KOODI)) {
             koulutus.setKoulutuksenAlkamiskausiUri("" + koulutusDoc.getFieldValue(KAUSI_KOODI));
@@ -80,14 +83,6 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         return koulutus;
     }
 
-    private String getKoulutuslaji(SolrDocument doc) {
-       try {
-       return (String)doc.getFirstValue(KOULUTUSLAJI_URIS);
-       } catch (Exception exp) {
-           return null;
-       }
-    }
-    
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
         if(koulutusDoc.getFieldValue(KOULUTUSTYYPPI)!=null){
             return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));

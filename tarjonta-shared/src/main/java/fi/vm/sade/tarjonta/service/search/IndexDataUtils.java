@@ -38,8 +38,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
@@ -159,24 +157,22 @@ public class IndexDataUtils {
         return "" + cal.get(Calendar.YEAR);
     }
     
-    public static KoodistoKoodiTyyppi createKoodiTyyppi(String koodiUri,
+    
+    public static KoodistoKoodi createKoodistoKoodi(String koodiUri,
             String koodiFi, String koodiSv,
             String koodiEn, SolrDocument koulutusDoc) {
-        KoodistoKoodiTyyppi koodiTyyppi = new KoodistoKoodiTyyppi();
-        koodiTyyppi.setUri("" + koulutusDoc.getFieldValue(koodiUri));
-        Nimi nimiFi = new Nimi();
-        nimiFi.setKieli(LANG_FI);
-        nimiFi.setValue("" + koulutusDoc.getFieldValue(koodiFi));
-        koodiTyyppi.getNimi().add(nimiFi);
-        Nimi nimiSv = new Nimi();
-        nimiSv.setKieli(LANG_SV);
-        nimiSv.setValue("" + koulutusDoc.getFieldValue(koodiSv));
-        koodiTyyppi.getNimi().add(nimiSv);
-        Nimi nimiEn = new Nimi();
-        nimiEn.setKieli(LANG_EN);
-        nimiEn.setValue("" + koulutusDoc.getFieldValue(koodiEn));
-        koodiTyyppi.getNimi().add(nimiEn);
-        return koodiTyyppi;
+        final Object valueO = koulutusDoc.getFieldValue(koodiUri);
+        String value;
+        if(valueO instanceof List) {
+            value = (String)((List)valueO).get(0);
+        } else {
+            value = (String) valueO;
+        }
+        final KoodistoKoodi koodi = new KoodistoKoodi(value);
+        koodi.getNimi().put(Nimi.FI, (String)koulutusDoc.getFieldValue(koodiFi));
+        koodi.getNimi().put(Nimi.SV, (String)koulutusDoc.getFieldValue(koodiSv));
+        koodi.getNimi().put(Nimi.EN, (String)koulutusDoc.getFieldValue(koodiEn));
+        return koodi;
     }
     
     public static TarjontaTila createTila(SolrDocument doc) {

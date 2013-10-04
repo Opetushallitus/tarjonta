@@ -53,6 +53,9 @@ public class SolrFields {
         protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String HAKUKOHDE_OIDS = "hakukohdeoids_ss";        //this is used in search
         protected static final String KOULUTUSLAJI_URIS = "koulutuslaji_ss";
+        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
+        protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";   
     }
     
     /**

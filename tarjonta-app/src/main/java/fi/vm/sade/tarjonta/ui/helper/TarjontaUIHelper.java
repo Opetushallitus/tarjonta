@@ -986,11 +986,11 @@ public class TarjontaUIHelper {
             koodis = new ArrayList<KoodiType>();
         }
         if (curKoulutus.getKoulutusohjelmakoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
+            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
         } else if (curKoulutus.getNimi() != null) {
             return getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getNimi());
         } else if (curKoulutus.getKoulutuskoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
+            return getKoodiNimi(curKoulutus.getKoulutuskoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
         }
         return "";
     }
@@ -998,7 +998,7 @@ public class TarjontaUIHelper {
     public String getKoulutuslaji(KoulutusPerustieto tulos) {
         List<String> uris = new ArrayList<String>();
         if (tulos.getKoulutuslaji() != null) {
-            uris.add(tulos.getKoulutuslaji());
+            uris.add(tulos.getKoulutuslaji().getUri());
 
             return getKoodiNimi(uris, I18N.getLocale());
         }
