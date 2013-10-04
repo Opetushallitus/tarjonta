@@ -119,27 +119,52 @@
                  class="{{ isModal() ? 'max' : 'min' }}"
                  ng-click="demodalize()">
                 <div>
-             		<img alt="{{ t('loading') }}" src="img/ajax-loader-big.gif" />
-					<span>{{ t("loading") }}</span>
-           		</div>
+                    <img alt="{{ t('loading') }}" src="img/ajax-loader-big.gif" />
+                    <span>{{ t("loading") }}</span>
+                </div>
             </div>
         </div>
 
 
         <script>
+            //
+            // Get current users authorisation info (/cas/myroles)
+            //
+            console.log("** Loading authentication info; from: " + window.CONFIG.env.casUrl);
+            jQuery.ajax(window.CONFIG.env.casUrl, {
+                dataType: "json",
+                success: function(xhr, status) {
+                    console.log("**   authentication load complete, status: ", status);
+                    console.log("**   got authentication data: ", xhr);
+                    window.CONFIG.env["cas.myroles"] = xhr;
+                },
+                error: function(xhr, status) {
+                    console.log("**   authentication load FAILED; status, xhr: ", status, xhr);
+                }
+            });
+
+            //
+            // TODO get something from somewhere?
+            //
+            console.log("** Loading tarjonta.tila info; from: " + window.CONFIG.env.tarjontaRestUrlPrefix + "tila");
+            jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
+                dataType: "json",
+                success: function(xhr, status) {
+                    console.log("**   tarjonta.tila load complete, status: ", status);
+                    console.log("**   got tarjonta.tila data: ", xhr);
+                    window.CONFIG.env["tarjonta.tila"] = xhr;
+                },
+                error: function(xhr, status) {
+                    console.log("**   tarjonta.tila load FAILED; status, xhr: ", status, xhr);
+                }
+            });
+
             // DEFERRED APP INITIALIZATION SO THAT WE CAN PRELOAD LOCALISATIONS
             var APP_LOCALISATION_DATA = [];
 
             var tarjontaAppLocalisationLocationUri = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
             console.log("** Loading localisations... from: " + tarjontaAppLocalisationLocationUri);
 
-            jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
-            	dataType: "json",
-            	success: function(xhr, status) {
-            		window.CONFIG.env["tarjonta.tila"] = xhr;
-            	}
-            });
-            
             jQuery.ajax(tarjontaAppLocalisationLocationUri, {
                 dataType: "json",
                 complete: function(xhr, status) {
@@ -152,6 +177,9 @@
                         angular.module('myApp', ['app']);
                         angular.bootstrap(document, ['myApp']);
                     });
+                },
+                error: function(xhr, status) {
+                    console.log("**   Localisation load FAILED; status, xhr: ", status, xhr);
                 }
             });
 
