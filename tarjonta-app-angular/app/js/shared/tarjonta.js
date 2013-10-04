@@ -1,27 +1,29 @@
-angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, CacheService) {
+var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
+
+app.factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, AuthService, CacheService) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
-    
-    var tilaResource = $resource(Config.env.tarjontaRestUrlPrefix + "tila");
-    
+
     function localize(txt) {
-    	// TODO käyttäjän localen mukaan
-    	if (txt.fi!=undefined) {
-    		return txt.fi;
-    	} else if (txt.sv!=undefined) {
-    		return txt.sv;
-    	} else if (txt.en!=undefined) {
-    		return txt.en;
-    	} else {
-            return "?";
-    	}
+
+        var userLocale = LocalisationService.getLocale();
+
+        if ("fi" === userLocale) {
+            return txt.fi;
+        } else if ("en" === userLocale) {
+            return txt.en;
+        } else if ("sv" === userLocale) {
+            return txt.sv;
+        } else {
+            return "(TUNTEMATON LOCALE = '"+ userLocale + "', palautetaan suomalainen sisältö) " + txt.fi;
+        }
     }
-    
+
     function compareByName(a, b) {
-    	var an = a.nimi;
-    	var bn = b.nimi;
-    	return an.localeCompare(bn);
+        var an = a.nimi;
+        var bn = b.nimi;
+        return an.localeCompare(bn);
     }
     
     function searchCacheKey(prefix, args) {
@@ -34,14 +36,14 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     }
 
     var dataFactory = {};
-    
+
     dataFactory.getTilat = function() {
-    	return window.CONFIG.env["tarjonta.tila"];
+        return window.CONFIG.env["tarjonta.tila"];
     };
 
     dataFactory.acceptsTransition = function(from, to) {
-    	var s = window.CONFIG.env["tarjonta.tila"][from];
-    	return s!=null && s.transitions.indexOf("to")>=0;
+        var s = window.CONFIG.env["tarjonta.tila"][from];
+        return s != null && s.transitions.indexOf("to") >= 0;
     };
 
     dataFactory.haeHakukohteet = function(args) {
@@ -124,4 +126,4 @@ angular.module('Tarjonta', ['ngResource', 'config']).factory('TarjontaService', 
     };
 
     return dataFactory;
-})
+});

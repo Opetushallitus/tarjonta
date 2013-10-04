@@ -12,7 +12,8 @@ angular.module('app.kk',
             'app.kk.services',
             'ui.bootstrap',
             'ngRoute',
-            'config'
+            'config',
+            'auth'
         ]);
 
 /*******************************************************

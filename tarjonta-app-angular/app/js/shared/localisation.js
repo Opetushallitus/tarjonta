@@ -97,6 +97,14 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
     // TODO is there some other gobal / app location for this?
     this.locale = "fi";
 
+    this.getLocale = function() {
+        return this.locale;
+    }
+    this.setLocale = function(value) {
+        this.locale = value;
+    }
+
+
     // Localisations: MAP[locale][key] = {key, locale, value};
     this.localisationMapByLocaleAndKey = {};
 
