@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public class ValintakoeRDTO extends BaseRDTO {
 
+    private String valintakoeId;
     private String _tyyppiUri;
     private Map<String, String> _lisanaytot;
     private Map<String, String> _kuvaus;
@@ -68,5 +69,13 @@ public class ValintakoeRDTO extends BaseRDTO {
 
     public void setValintakoePisterajas(List<ValintakoePisterajaRDTO> _valintakoePisterajas) {
         this._valintakoePisterajas = _valintakoePisterajas;
+    }
+
+    public String getValintakoeId() {
+        return valintakoeId;
+    }
+
+    public void setValintakoeId(String valintakoeId) {
+        this.valintakoeId = valintakoeId;
     }
 }

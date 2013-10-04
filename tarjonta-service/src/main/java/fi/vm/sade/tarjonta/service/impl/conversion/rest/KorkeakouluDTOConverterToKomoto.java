@@ -21,18 +21,19 @@ import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.resources.dto.KoodiUriDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.UiListDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.UiMetaDTO;
+import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,19 +60,24 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
 
         Koulutusmoduuli komo = new Koulutusmoduuli();
         if (dto.getOid() != null) {
+            //update komo & komoto
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
             komo = komoto.getKoulutusmoduuli();
         } else {
+            //insert new komo&komoto data to database.
+            komoto.setKoulutusmoduuli(komo);
             try {
+                komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
                 komoto.setOid(oidService.newOid(NodeClassCode.TEKN_5));
             } catch (ExceptionMessage ex) {
-                LOG.error("OIDService failed", ex);
+                LOG.error("OIDService failed!", ex);
             }
         }
 
         /*
          * KOMO data fields:
          */
+        komo.setOmistajaOrganisaatioOid(dto.getOrganisaatioOid());
         komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), "koulutusaste"));
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), "koulutusala"));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), "opintoala"));
@@ -86,6 +92,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         /*
          * KOMOTO data fields
          */
+        komoto.setTarjoaja(dto.getOrganisaatioOid());
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
         komoto.setKoulutuksenAlkamisPvm(dto.getKoulutuksenAlkamisPvm());
         komoto.setTeemas(convertToUris(dto.getTeemas(), komoto.getTeemas(), "teemas"));
@@ -93,9 +100,9 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
         komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKestoTyyppi(), "SuunniteltuKestoTyyppi"), komoto.getSuunniteltuKestoArvo());
-
-        EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), komoto.getYhteyshenkilos());
-
+        HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
+        EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
+        komoto.setYhteyshenkilos(yhteyshenkilos);
         return komoto;
     }
 
@@ -114,24 +121,25 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         return convertToUri(dto.getKoodi(), msg);
     }
 
-    private static Set<KoodistoUri> convertToUris(final UiListDTO dto, Set<KoodistoUri> koodistoUris, final String msg) {
+    private static Set<KoodistoUri> convertToUris(final UiMetaDTO dto, Set<KoodistoUri> koodistoUris, final String msg) {
         Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error field : " + msg);
-  
+
+        Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
         if (koodistoUris == null) {
-            koodistoUris = Sets.<KoodistoUri>newHashSet();
+            modifiedUris = Sets.<KoodistoUri>newHashSet();
         }
 
-        for (UiDTO uiDto : dto.getTekstis()) {
+        for (UiDTO uiDto : dto.getMeta().values()) {
             Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
-            koodistoUris.add(new KoodistoUri(convertToUri(uiDto.getKoodi(), msg)));
+            modifiedUris.add(new KoodistoUri(convertToUri(uiDto.getKoodi(), msg)));
         }
 
-        return koodistoUris;
+        return modifiedUris;
     }
 
-    private static MonikielinenTeksti convertToText(final UiListDTO dto, MonikielinenTeksti mt, final String msg) {
+    private static MonikielinenTeksti convertToText(final UiMetaDTO dto, MonikielinenTeksti mt, final String msg) {
         Preconditions.checkNotNull(dto, "UiListDTO object cannot be null! Error field : " + msg);
-        Preconditions.checkNotNull(dto.getTekstis(), "UiListDTO's set of UiDTO objects cannot be null! Error in field : " + msg);
+        Preconditions.checkNotNull(dto.getMeta(), "UiListDTO's map of UiDTO objects cannot be null! Error in field : " + msg);
         Preconditions.checkNotNull(dto.getArvo(), "UI text object value cannot be null! Error in field : " + msg);
 
         if (mt == null) {
@@ -141,15 +149,15 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         return mt;
     }
 
-    private static MonikielinenTeksti convertToTexts(final UiListDTO dto, MonikielinenTeksti mt, final String msg) {
+    private static MonikielinenTeksti convertToTexts(final UiMetaDTO dto, MonikielinenTeksti mt, final String msg) {
         Preconditions.checkNotNull(dto, "UiListDTO object cannot be null! Error field : " + msg);
-        Preconditions.checkNotNull(dto.getTekstis(), "UiListDTO's set of UiDTO objects cannot be null! Error in field : " + msg);
+        Preconditions.checkNotNull(dto.getMeta(), "UiListDTO's map of UiDTO objects cannot be null! Error in field : " + msg);
 
         if (mt == null) {
             mt = new MonikielinenTeksti();
         }
 
-        for (UiDTO uiDto : dto.getTekstis()) {
+        for (UiDTO uiDto : dto.getMeta().values()) {
             Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
             Preconditions.checkNotNull(uiDto.getKoodi().getArvo(), "UI text's KoodiUriDTO object value cannot be null! Error in field : " + msg);
             mt.addTekstiKaannos(convertToUri(uiDto.getKoodi(), msg), uiDto.getArvo());

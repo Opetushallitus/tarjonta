@@ -3,13 +3,7 @@ package fi.vm.sade.tarjonta.service.resources;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
@@ -141,6 +135,16 @@ public interface HakukohdeResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String createHakukohde(HakukohdeDTO hakukohdeDTO);
+
+    @PUT
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String updateHakukohde(HakukohdeDTO hakukohdeDTO);
+
+    @DELETE
+    @Path("{oid}")
+    public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
 
     /**
      * /hakukohde/OID/nimi

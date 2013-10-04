@@ -359,7 +359,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the opetuskielis
      */
-    public Set<KoodistoUri> getOpetuskielis() {
+     public Set<KoodistoUri> getOpetuskielis() {
         return Collections.unmodifiableSet(opetuskielis);
     }
 

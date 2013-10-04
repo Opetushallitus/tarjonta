@@ -16,17 +16,19 @@
 package fi.vm.sade.tarjonta.koodisto;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.UiListDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.UiMetaDTO;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -59,23 +61,23 @@ public class KoulutusKoodiToUiDTOConverter<DTO extends UiDTO> {
         dto.setArvo(koodiMetadata.getNimi());
         dto.setKoodiUri(koodiType.getKoodiUri(), koodiType.getVersio() + "", koodiType.getKoodiArvo());
 
-        if (dto instanceof UiListDTO) {
+        if (dto instanceof UiMetaDTO) {
             //add all languages to the UI object
-            UiListDTO o = (UiListDTO) dto;
-            o.setTekstis(convertMetadata(koodiType.getMetadata()));
+            UiMetaDTO meta = (UiMetaDTO) dto;
+            meta.setMeta(convertMetadata(koodiType.getMetadata()));
         }
 
         return dto;
     }
 
-    private Set<UiDTO> convertMetadata(final List<KoodiMetadataType> languageMetaData) {
-        Set<UiDTO> teksti = new HashSet<UiDTO>();
+    private Map<String, UiDTO> convertMetadata(final List<KoodiMetadataType> languageMetaData) {
+        Map<String, UiDTO> teksti = Maps.<String, UiDTO>newHashMap();
 
         for (KoodiMetadataType meta : languageMetaData) {
             final KieliType kieli = meta.getKieli();
 
             if (kieli != null && meta.getNimi() != null && !meta.getNimi().isEmpty()) {
-                teksti.add(new UiDTO(null, kieli.name(), null, kieli.value()));
+                teksti.put(kieli.value(), new UiDTO(null, kieli.name(), null, kieli.value()));
             }
         }
 
