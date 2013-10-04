@@ -106,7 +106,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
         }
     };
 
-    var username = function() {
+    var getUsername = function() {
         $log.info("username()");
         var entry = _.find(MyRolesModel.myroles, function(x) {
             return _startsWith(x, USER);
@@ -180,6 +180,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
     };
 
     return {
+        getUsername: function() {
+            return getUsername();
+        },
+        isLoggedIn: function() {
+            return isLoggedIn();
+        },
         readOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, readAccess);
         },
