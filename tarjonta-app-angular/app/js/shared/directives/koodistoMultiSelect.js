@@ -16,6 +16,29 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
     };
 
 
+    var findKoodiWithUri = function(koodis,koodiUriToSearch) {
+        var foundKoodi;
+
+        angular.forEach(koodis,function(koodi){
+            if (koodi.koodiUri === koodiUriToSearch){
+                foundKoodi = koodi;
+            }
+        });
+        return foundKoodi;
+    }
+
+    var checkForExistingKoodiInUris = function(koodis,koodiToCheck) {
+        var isFound = false;
+
+        angular.forEach(koodis,function(koodiUri){
+            if (koodiUri === koodiToCheck) {
+                isFound= true;
+            }
+        });
+
+        return isFound;
+    }
+
 
     return {
 
@@ -35,7 +58,16 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
-            $scope.koodiuris = [];
+            $scope.selectedkoodiuris = [];
+
+            //Check if koodiuris is not defined if so then expect that 'client' is just interested in callbacks
+             if ($scope.koodiuris === undefined) {
+                 $scope.koodiuris = [];
+             }
+
+
+
+
 
             if ($scope.isdependent) {
 
@@ -65,6 +97,15 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                 var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                 koodisPromise.then(function(koodisParam){
                     $scope.koodis = koodisParam;
+                   //Check if 'client' has given uris that need to be selected
+                    if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
+                        angular.forEach($scope.koodiuris,function(koodiURI){
+
+                            var foundKoodi = findKoodiWithUri($scope.koodis,koodiURI);
+
+                            $scope.selectedkoodiuris.push(foundKoodi);
+                        });
+                    }
                 });
             }
 
@@ -112,13 +153,21 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                   $log.info('Removing object : ');
                  $log.info(selectedValue);
 
-                 $scope.koodiuris = _($scope.koodiuris).select(function(koodi){
+                 $scope.selectedkoodiuris = _($scope.selectedkoodiuris).select(function(koodi){
                      if (selectedValue.$$hashKey === koodi.$$hashKey) {
                           return false;
                      }else {
                          return true;
                      }
                  });
+
+
+
+                var specifiedElementIndx =  $scope.koodiuris.indexOf(selectedValue);
+                $scope.koodiuris.splice(specifiedElementIndx,1);
+
+                console.log('Removed element : ', selectedValue.koodiUri);
+                console.log('Remaining: ', $scope.koodiuris);
             };
 
             $scope.itemSelected = function(item){
@@ -130,9 +179,23 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
 
             $scope.onKoodistoComboChange = function() {
                 if ($scope.koodiuri !== undefined) {
-                    $scope.koodiuris.push($scope.koodiuri);
-                    $scope.koodiuris = _.uniq($scope.koodiuris);
+                    if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
+                        //Check that were not going add existing uri to collection
+                        var doesExist = checkForExistingKoodiInUris($scope.koodiuris,$scope.koodiuri);
+
+                        if (!doesExist) {
+                            $scope.koodiuris.push($scope.koodiuri);
+                            $scope.selectedkoodiuris.push(findKoodiWithUri($scope.koodis,$scope.koodiuri));
+                    }
+
+                    } else {
+                        $scope.koodiuris.push($scope.koodiuri);
+                        $scope.selectedkoodiuris.push(findKoodiWithUri($scope.koodis,$scope.koodiuri));
+                    }
+
+
                 }
+
 
                 $log.info('Koodi uris');
                 $log.info($scope.koodiuris);
