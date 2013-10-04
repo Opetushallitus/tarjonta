@@ -1,9 +1,59 @@
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .ui-autocomplete {
+          /* will be fixed by options.outHeight */
+          max-height: 300px;
+          min-height: 50px;
+          max-width: 200px;
+          overflow-y: auto;
+          /* prevent horizontal scrollbar */
+          overflow-x: hidden;
+          /* add padding to account for vertical scrollbar */
+          padding-right: 0;
+          z-index: 9999;
+      }
+      .ui-helper-hidden-accessible {
+        display: none;
+      }
+      .ui-menu-add {
+        text-align: center;
+      }
+      .ui-menu-group {
+        margin-right: 10px;
+        text-align: right;
+        color: red;
+      }
+      .ui-state-hover,
+      .ui-state-focus,
+      .ui-state-active {
+          border: none;
+          background: none;
+          cursor: pointer;
+      }
+      /* Scrollbar Styles */
+      ::-webkit-scrollbar {
+          background-color: transparent;
+          width: 15px;
+      }
+      ::-webkit-scrollbar-thumb {
+          background: #aaa;
+          min-height: 20px;
+      }
+      ::-webkit-scrollbar-track {
+          background: #ddd;
+      }
+      .text-demo {
+        color: red;
+      }
+    </style>
     <div class="container-fluid" ng-controller="EditYhteyshenkiloCtrl">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.yhteyshenkilo'></div>
             <div class="span10">
                 <div>
-                    <div style="float: left;"><input type="text" data-ng-model="contactPerson.nimet" /></div>
+                    <div style="float: left;"><input type="text" ng-model="contactPerson.nimet" ui-autocomplete="myOption"></div><!-- <input type="text" data-ng-model="contactPerson.nimet" /> -->
                     <div style="float: left;"><a href="" ng-click="editYhModel.clearYh()"><span tt='kk.edit.tyhjenna'></a></div>
                 </div>
                 <div style="clear: left;">
@@ -11,6 +61,7 @@
                     <input type="text" data-ng-model="contactPerson.titteli" /><br/>
                     <input type="text" data-ng-model="contactPerson.puhelin" />
                 </div>
+                
             </div>
         </div>
     </div>

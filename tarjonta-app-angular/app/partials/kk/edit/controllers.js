@@ -187,7 +187,7 @@ var TEST = {
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource', 'ngGrid']);
+var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource', 'ngGrid', 'ui.autocomplete']);
 
 app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config',
     function FormTutkintoController($scope, tarjontaService, cfg) {
