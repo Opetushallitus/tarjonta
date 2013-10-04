@@ -1,23 +1,18 @@
 <form name="luoTutkinto">     
-    <div>
-
-
-    </div>
-
     <div class="container-fluid ">
         <div class="row-fluid">
-            <div class="span2 label-right"><input type="text" data-ng-model="searchByOid" /></div>
-            <div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div>
-            <div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div>
-            <div class="span10"><input type="button" data-ng-click="save()"  value="Tallenna"></div>
+
+            <!--div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div-->
+            <!--div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div-->
+            <div class="span10"><input type="button" data-ng-click="insert()"  value="Tallenna"></div>
         </div>
     </div>
 
     <div class="container-fluid ">
         <div class="row-fluid">
-            <div class="span2 label-right"></div>
-            <div class="span10">
-                <input type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
+            <div class="span2 label-right"><span tt='kk.edit.koulutuskoodi'></div>
+            <div class="span10">{{model.koulutuskoodi.arvo}}
+                <input disabled="true" type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
             </div>
         </div>
     </div>
@@ -26,8 +21,11 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.koulutusohjelma'></div>
             <div class="span10">
-                <div data-ng-repeat="teksti in model.koulutusohjelma.tekstis">
-                    <input type="text" data-ng-model="teksti.arvo" required />
+                <input type="text" data-ng-model="model.koulutusohjelma.arvo" required />
+
+
+                <div data-ng-repeat="meta in model.koulutusohjelma.meta">
+                    <input type="text" data-ng-model="meta.arvo" required />
                 </div>
             </div>
         </div>
@@ -175,7 +173,7 @@
             </div>
         </div>
     </div>
-    
+
     <!--div ng-include="'partials/kk/edit/editYhteyshenkilo.html'"></div-->
 
     <div class="container-fluid">

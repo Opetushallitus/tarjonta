@@ -70,6 +70,7 @@ public class KoodistoURI {
     public static String KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI;
     public static String KOODISTO_OPINTOJEN_LAAJUUSARVO_URI;
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
+    public static String KOODISTO_EQF_LUOKITUS_URI;
     /*
      * KOMOTO URIs
      */
@@ -308,5 +309,10 @@ public class KoodistoURI {
     @Value("${koodisto-uris.tarjontakoulutustyyppi}")
     public void setKoodistoTarjontaKoulutustyyppi(String uri) {
         KOODISTO_TARJONTA_KOULUTUSTYYPPI = uri;
+    }
+
+    @Value("${koodisto-uris.eqf-luokitus}")
+    public void setKoodistoEqfLuokitus(String uri) {
+        KOODISTO_EQF_LUOKITUS_URI = uri;
     }
 }
