@@ -200,6 +200,10 @@ div#searchResults table {
 	width:100%;
 }
 
+/*div#searchResults table.loading > tbody {
+	display:none;
+}*/
+
 div#searchResults table input[type=checkbox] {
 	margin-right:10px;
 	position:relative;

@@ -171,7 +171,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     // taulukon renderöinti
     
     function resultsToTable(results, props, prefix) {
-    	
+
     	var html = "";
     	for (var ti in results.tulokset) {
     		var tarjoaja = results.tulokset[ti];
@@ -273,25 +273,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		
 		return ret;
     }
-        
-    function initTable(selector, prefix, data, cols) {
-    	var em = $(selector);
-    	
-    	em.html(resultsToTable(data, cols, prefix));
-        updateSelection();
-    	
-    	// valitse-kaikki-nappi päälle/pois tulosten mukaan
-    	$("input.selectAll", em.parent())
-    		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
-    		.click(function(ev){
-    			var sel = $(ev.currentTarget).is(":checked");
-    			//console.log("select/unselect all", sel);
-    			$("input.selectRows, input.selectRow", em).prop("checked", sel);
-
-    			updateSelection();
-        		$scope.$apply();
-    		});
-    	
+    
+    function initResultsTableBindings(em) {
     	// lapsinodejen valitse-kaikki
     	$("input.selectRows", em).click(function(ev){
 			var sel = $(ev.currentTarget).is(":checked");
@@ -299,7 +282,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			$("input.selectRow", $(ev.currentTarget.parentNode.parentNode.parentNode)).prop("checked", sel);
     	});
     	
-    	$("input[type=checkbox]").click(function(ev){
+    	$("input[type=checkbox]", em).click(function(ev){
     		updateSelection();
     		$scope.$apply();
     	});
@@ -365,7 +348,69 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		ev.preventDefault();
     		$(ev.currentTarget.parentElement.parentElement.parentElement).toggleClass("folded");
     	});
+   	
+    }
     
+    var rowsPerAppend = 10; // TODO konfiguraatioon?
+    var delayPerAppend = 1; // TODO konfiguraatioon?
+    
+    function appendTableRow(row, em, prefix, data, cols) {
+    	
+    	var rdata = {
+    			tuloksia:0,
+    			tulokset:[]// data.tulokset[row] ]
+    	};
+    	  	
+    	for (var i=0; i<rowsPerAppend && data.tulokset[row]; i++) {
+    		rdata.tulokset.push(data.tulokset[row]);
+    		row++;
+    	}
+
+		rdata.tuloksia = rdata.tulokset.length;
+
+    	var html = $(resultsToTable(rdata, cols, prefix));
+    	initResultsTableBindings(html);
+    	em.append(html);
+    	
+    	if (data.tuloksia>row) {
+    		setTimeout(function(){
+    			appendTableRow(row, em, prefix, data, cols);
+    		},delayPerAppend);
+    	} else {
+        	em.toggleClass("loading", false);    	
+    	}
+    }
+    
+    function initTable(selector, prefix, data, cols) {
+    	var em = $(selector);
+    	
+    	//console.log("init table ", prefix);
+    	
+    	em.toggleClass("loading", true);
+    	em.html("");
+
+    	//console.log("populate table ", prefix);
+
+    	// valitse-kaikki-nappi päälle/pois tulosten mukaan
+    	$("input.selectAll", em.parent())
+    		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
+    		.click(function(ev){
+    			var sel = $(ev.currentTarget).is(":checked");
+    			//console.log("select/unselect all", sel);
+    			$("input.selectRows, input.selectRow", em).prop("checked", sel);
+
+    			updateSelection();
+        		$scope.$apply();
+    		});
+    	
+        updateSelection();
+
+        if (data.tuloksia==0) {
+    		// TODO näytä "ei tuloksia" tjsp..
+        	em.toggleClass("loading", false);    	
+    	} else {
+    		appendTableRow(0, em, prefix, data, cols);
+    	}
     }
     
     $scope.search = function() {
@@ -376,11 +421,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             year: $scope.spec.year == "*" ? null : $scope.spec.year,
             season: $scope.spec.season == "*" ? null : $scope.spec.season
         };
-        console.log("search", spec);
+        //console.log("search", spec);
         updateLocation();
 
         // valinnat
         $("input.selectAll").prop("checked", false);
+        
+        //console.log("delegate search");
         
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
@@ -388,6 +435,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
                 "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
             ]);
         });
+        
         TarjontaService.haeHakukohteet(spec).then(function(data){
         	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
         	initTable("#hakukohteetResults", "hakukohde", data,[
@@ -396,6 +444,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 				"koulutusLaji"
             ]);
         });
+
     }
 
     if ($scope.spec.terms=="*") {

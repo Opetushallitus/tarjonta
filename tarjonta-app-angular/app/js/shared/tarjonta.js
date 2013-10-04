@@ -6,17 +6,15 @@ app.factory('TarjontaService', function($resource, $log, $q, Config, Localisatio
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
-
         var userLocale = LocalisationService.getLocale();
-
-        if ("fi" === userLocale) {
-            return txt.fi;
-        } else if ("en" === userLocale) {
-            return txt.en;
-        } else if ("sv" === userLocale) {
-            return txt.sv;
-        } else {
-            return "(TUNTEMATON LOCALE = '"+ userLocale + "', palautetaan suomalainen sisältö) " + txt.fi;
+        if (txt[userLocale]) {
+        	return txt[userLocale];
+        } else if (txt.fi) {
+        	return txt.fi;
+        } else if (txt.sv) {
+        	return txt.sv;
+        } else if (txt.en) {
+        	return txt.en;
         }
     }
 
