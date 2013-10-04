@@ -106,7 +106,20 @@ public class LocalisationResourceImpl implements LocalisationResource {
     @Override
     public LocalisationRDTO createLocalisationByLocaleAndKey(String locale, String key, LocalisationRDTO data) {
         LOG.info("createLocalisationByLocaleAndKey({}, {})", locale, key);
-        return updateLocalisationByLocaleAndKey(locale, key, data);
+
+        Localisation l = localisationDAO.findByKeyAndLocale(key, locale);
+        if (l != null) {
+            throw new IllegalArgumentException("Already exisiting translation: key=" + key + ", locale=" + locale);
+        }
+
+        l = new Localisation();
+        l.setKey(data.getKey());
+        l.setLanguage(locale);
+        l.setValue(data.getValue());
+
+        l = localisationDAO.insert(l);
+
+        return convertToRDTO(l);
     }
 
     @Override
