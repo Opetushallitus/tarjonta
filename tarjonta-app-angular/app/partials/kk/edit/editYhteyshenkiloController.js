@@ -49,8 +49,8 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', function($scope, 
                     /*data.push({
                         label: $compile('<a class="ui-menu-add" ng-click="add()">Add Language</a>')($scope),
                         value: null
-                    });
-                    response(data);*/
+                    });*/
+                    response(data);
                 }
             }
         };

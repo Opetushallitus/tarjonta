@@ -98,8 +98,8 @@ public class KoulutusResourceImpl implements KoulutusResource {
             //simple paramter check if data is koodisto service koodi URI.
             return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
         } else {
-            SearchKoodisByKoodistoCriteriaType koodisByArvoAndKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
-            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(koodisByArvoAndKoodistoUri);
+            SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
+            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
             return koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
         }
     }
