@@ -251,16 +251,14 @@ div#searchResults table tbody.folded tr.tresult {
 /*
  * partials/kk/review/
  */
-div#koulutusReview .collapseHeader {
+.collapseHeader {
     display: inline;
-    border: 1px solid red;
 }
 
-div#koulutusReview .collapseHeader:before {
+.collapseHeader:before {
     display: inline;
-    border: 1px solid red;
     content: '► ';
 }
-div#koulutusReview .collapseHeader.isOpen:before{
+.collapseHeader.isOpen:before{
     content: '▼ ';
 }
