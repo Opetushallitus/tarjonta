@@ -90,12 +90,11 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     }
 
     private void copyKoulutusNimi(KoulutusPerustieto koulutus, SolrDocument koulutusDoc) {
-        asetaNimi(koulutus.getNimi(), koulutusDoc, "fi", KOULUTUSOHJELMA_FI);
-        asetaNimi(koulutus.getNimi(), koulutusDoc, "sv", KOULUTUSOHJELMA_SV);
-        asetaNimi(koulutus.getNimi(), koulutusDoc, "en", KOULUTUSOHJELMA_EN);
+        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSOHJELMA_FI);
+        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSOHJELMA_SV);
+        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSOHJELMA_EN);
     }
-        
-    
+
     /**
      * Asettaa yhden nimen
      * @param nimiMap
@@ -110,7 +109,5 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
                     hakukohdeDoc.getFieldValue(fieldName).toString());
         }
     }
-
-   
     
 }

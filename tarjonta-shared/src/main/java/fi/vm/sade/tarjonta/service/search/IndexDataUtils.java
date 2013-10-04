@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -176,7 +176,7 @@ public class IndexDataUtils {
     }
     
     public static TarjontaTila createTila(SolrDocument doc) {
-        String tila = "" + doc.getFieldValue(TILA_EN);
+        String tila = "" + doc.getFieldValue(TILA);
         if (tila.isEmpty()) {
             return null;
         }

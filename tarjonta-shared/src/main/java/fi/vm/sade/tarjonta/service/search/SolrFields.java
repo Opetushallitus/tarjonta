@@ -46,7 +46,7 @@ public class SolrFields {
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
         protected static final String KAUSI_KOODI = "kausikoodi_s";                                  //this is used in search
         protected static final String KAUSI ="kausi_s";
-        protected static final String TILA_EN = "tila_s";
+        protected static final String TILA = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
