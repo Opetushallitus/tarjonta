@@ -76,6 +76,8 @@ window.CONFIG = {
         "tarjontaRestUrlPrefix" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
         "tarjontaLocalisationRestUrl" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
 
+        "casUrl" : "cas_myroles_tiimi2.json",
+
         "place" : "holder"
     }
 };
