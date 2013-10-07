@@ -351,10 +351,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
    	
     }
     
-    var rowsPerAppend = 10; // TODO konfiguraatioon?
+    var rowsPerAppend = 20; // TODO konfiguraatioon?
     var delayPerAppend = 1; // TODO konfiguraatioon?
     
-    function appendTableRow(row, em, prefix, data, cols) {
+    var serial = 0;
+    
+    function appendTableRow(row, em, prefix, data, cols, sn) {
+    	    	
+    	if (serial!=sn) {
+            //console.log("abort "+prefix+" @ "+new Date());
+    		return; // uusi haku -> keskeytetään
+    	}
     	
     	var rdata = {
     			tuloksia:0,
@@ -372,25 +379,39 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	initResultsTableBindings(html);
     	em.append(html);
     	
-    	if (data.tuloksia>row) {
+    	if (data.tulokset.length>row) {
     		setTimeout(function(){
-    			appendTableRow(row, em, prefix, data, cols);
+    			appendTableRow(row, em, prefix, data, cols, sn);
     		},delayPerAppend);
     	} else {
+            //console.log("done "+prefix+" @ "+new Date());
         	em.toggleClass("loading", false);    	
     	}
     }
     
-    function initTable(selector, prefix, data, cols) {
+    function forceClear(em) {
+    	// angular koukuttaa jquery.clear():in, josta seuraava
+    	// delete-tapahtuma joka dom-nodelle, joka puolestaan
+    	// aiheuttaa vakavia suorituskykyongelmia
+    	em.each(function(i, e) {
+    		while (e.firstChild) {
+    			e.removeChild(e.firstChild);
+    		}
+    	});
+    }
+    
+    function initTable(selector, prefix, data, cols, sn) {
+    	
+    	if (sn!=serial) {
+    		return; // uusi haku -> keskeytetään
+    	}
+    	
     	var em = $(selector);
-    	
-    	//console.log("init table ", prefix);
-    	
+    	    	
     	em.toggleClass("loading", true);
-    	em.html("");
-
-    	//console.log("populate table ", prefix);
-
+    	
+    	forceClear(em);
+    	
     	// valitse-kaikki-nappi päälle/pois tulosten mukaan
     	$("input.selectAll", em.parent())
     		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
@@ -405,11 +426,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	
         updateSelection();
 
+        //console.log("start "+prefix+" @ "+new Date());
+        
         if (data.tuloksia==0) {
     		// TODO näytä "ei tuloksia" tjsp..
         	em.toggleClass("loading", false);    	
     	} else {
-    		appendTableRow(0, em, prefix, data, cols);
+    		appendTableRow(0, em, prefix, data, cols, sn);
     	}
     }
     
@@ -421,19 +444,19 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             year: $scope.spec.year == "*" ? null : $scope.spec.year,
             season: $scope.spec.season == "*" ? null : $scope.spec.season
         };
-        //console.log("search", spec);
+        console.log("search", spec);
         updateLocation();
+        
+        serial++;
 
         // valinnat
         $("input.selectAll").prop("checked", false);
-        
-        //console.log("delegate search");
         
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
         	initTable("#koulutuksetResults", "koulutus", data,[
                 "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
-            ]);
+            ], serial);
         });
         
         TarjontaService.haeHakukohteet(spec).then(function(data){
@@ -442,9 +465,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	       		"hakutapa",
 				"aloituspaikat",
 				"koulutusLaji"
-            ]);
+            ], serial);
         });
-
+        
     }
 
     if ($scope.spec.terms=="*") {
