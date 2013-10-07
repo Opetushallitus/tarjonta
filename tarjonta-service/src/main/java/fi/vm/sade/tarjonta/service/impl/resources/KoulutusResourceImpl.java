@@ -124,7 +124,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
             q.setKoulutuksenTila(hakukohdeTila == null ? null : TarjontaTila.valueOf(hakukohdeTila));
 
             KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
-
+            
             return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
         } catch (RuntimeException e) {
             e.printStackTrace(System.err);

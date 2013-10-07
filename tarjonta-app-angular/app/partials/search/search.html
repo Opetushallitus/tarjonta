@@ -113,7 +113,7 @@
 	    </tabset>
 	    
 	    <ul id="dropdown" class="dropdown-menu">
-	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}">{{o.title}}</a></li>
+	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
 	    </ul>
     
     </div>
