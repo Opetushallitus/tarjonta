@@ -1,11 +1,15 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 
 import java.util.Date;
@@ -17,12 +21,21 @@ import java.util.Map;
 */
 public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO,Hakukohde> {
 
+    @Autowired
+    private OIDService oidService;
+
     @Override
     public Hakukohde convert(HakukohdeDTO hakukohdeDTO) {
         Hakukohde hakukohde = new Hakukohde();
 
         if (hakukohdeDTO.getOid() != null) {
             hakukohde.setOid(hakukohdeDTO.getOid());
+        } else {
+            try {
+            hakukohde.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+            } catch (ExceptionMessage em) {
+
+            }
         }
 
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());

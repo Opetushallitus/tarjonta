@@ -13,37 +13,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-angular.module('Haku', [ 'ngResource', 'config' ])
-.factory('HakuService',function($resource,$q,Config){
+var app = angular.module('Hakukohde', ['ngResource','config']);
 
+app.factory('Hakukohde',function($resource, $log,$q, Config){
 
-        var hakuUri = Config.env["host.base-uri"] + Config.env["haku.uri.findall"];
+    var host = Config.env["host.base-uri"];
 
-        return {
+    var hakukohdeUri = host + Config.env["hakukohde.uri"] + "/:oid";
 
-           getAllHakus : function(locale) {
-
-               var hakuPromise = $q.defer();
-
-
-
-                $resource(hakuUri).query({},function(hakus){
-                    hakuPromise.resolve(hakus);
-                });
-
-
-
-
-               return hakuPromise.promise;
-
-           }
-
-
-
-
-
-
-
-        };
-
+    return $resource(hakukohdeUri,{oid:'@oid'},{
+        update: {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        save: {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        }
     });
+
+});

@@ -69,6 +69,7 @@ window.CONFIG = {
         "host.base-uri" : "https://itest-virkailija.oph.ware.fi",
         "haku.uri" : "/tarjonta-service/rest/haku",
         "haku.uri.findall" : "/tarjonta-service/rest/haku/findAll",
+        "hakukohde.uri" : "/tarjonta-service/rest/hakukohde",
         //käsin lisätyt:
 
         // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",

@@ -33,7 +33,7 @@ app.factory('Localisations', function($log, $resource, Config) {
 
     return $resource(uri + ":locale/:key", {
         key: '@key',
-        locale: '@locale',
+        locale: '@locale'
     }, {
         update: {
             method: 'PUT',
