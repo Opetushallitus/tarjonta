@@ -131,8 +131,7 @@
             <div data-ng-controller="LoadingCtrl"
                  data-ng-show="loading"
                  id="ajax-loader"
-                 class="{{ isModal() ? 'max' : 'min' }}"
-                 ng-click="demodalize()">
+                 class="{{ isModal() ? 'max' : 'min' }}">
                 <div>
                     <img alt="{{ t('loading') }}" src="img/ajax-loader-big.gif" />
                     <span>{{ t("loading") }}</span>

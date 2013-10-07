@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -360,12 +360,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	    	
     	if (serial!=sn) {
             //console.log("abort "+prefix+" @ "+new Date());
+        	loadingService.afterOperation();
+        	$scope.$apply();
     		return; // uusi haku -> keskeytetään
     	}
     	
     	var rdata = {
     			tuloksia:0,
-    			tulokset:[]// data.tulokset[row] ]
+    			tulokset:[]
     	};
     	  	
     	for (var i=0; i<rowsPerAppend && data.tulokset[row]; i++) {
@@ -386,13 +388,15 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	} else {
             //console.log("done "+prefix+" @ "+new Date());
         	em.toggleClass("loading", false);    	
+        	loadingService.afterOperation();
+        	$scope.$apply();
     	}
     }
     
     function forceClear(em) {
-    	// angular koukuttaa jquery.clear():in, josta seuraava
-    	// delete-tapahtuma joka dom-nodelle, joka puolestaan
-    	// aiheuttaa vakavia suorituskykyongelmia
+    	// angular koukuttaa jquery-kutsu $(...).clear():in, josta seuraa
+    	// delete-tapahtuma joka dom-nodelle, joka puolestaan aiheuttaa
+    	// vakavia suorituskykyongelmia (ui hyytyy n. minuutin ajaksi)
     	em.each(function(i, e) {
     		while (e.firstChild) {
     			e.removeChild(e.firstChild);
@@ -409,6 +413,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var em = $(selector);
     	    	
     	em.toggleClass("loading", true);
+    	loadingService.beforeOperation();
     	
     	forceClear(em);
     	
