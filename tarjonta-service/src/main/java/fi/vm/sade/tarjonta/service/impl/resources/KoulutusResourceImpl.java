@@ -41,9 +41,9 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -159,33 +159,46 @@ public class KoulutusResourceImpl implements KoulutusResource {
     public void createToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
+
         if (dto.getOid() != null) {
-            throw new TarjontaBusinessException("KOULUTUS_011", "An invalid data exception - external KOMOTO OIDs not allowed.");
+            throw new TarjontaBusinessException("TARJONTA_REST_011", "An invalid data exception - external KOMOTO OIDs not allowed.");
         }
 
         if (dto.getKomoOid() != null) {
-            throw new TarjontaBusinessException("KOULUTUS_012", "An invalid data exception - external KOMO OIDs not allowed.");
+            throw new TarjontaBusinessException("TARJONTA_REST_012", "An invalid data exception - external KOMO OIDs not allowed.");
+        }
+        
+        if (dto.getKoulutusasteTyyppi() == null) {
+            throw new TarjontaBusinessException("TARJONTA_REST_013", "An invalid data exception - KoulutusasteTyyppi enum cannot be null.");
         }
 
-        if (dto.getOrganisaatioOid() == null) {
-            throw new TarjontaBusinessException("KOULUTUS_022", "An invalid data exception - koulutustarjoaja OID is missing.");
+        if (dto.getKoulutusmoduuliTyyppi() == null) {
+            throw new TarjontaBusinessException("TARJONTA_REST_014", "An invalid data exception - KoulutusmoduuliTyyppi enum cannot be null.");
         }
-        OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatioOid());
+
+        if (dto.getTila() == null) {
+            throw new TarjontaBusinessException("TARJONTA_REST_015", "An invalid data exception - Tila enum cannot be null.");
+        }
+
+        if (dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null) {
+            throw new TarjontaBusinessException("TARJONTA_REST_022", "An invalid data exception - organisation OID was missing.");
+        }
+        final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
 
         if (org == null) {
-            throw new TarjontaBusinessException("KOULUTUS_023", "An invalid data exception - no organisation found by OID '" + dto.getOrganisaatioOid() + "'.");
+            throw new TarjontaBusinessException("TARJONTA_REST_023", "An invalid data exception - no organisation found by OID '" + dto + "'.");
         }
 
         final KoulutusmoduuliToteutus newKomo = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
 
         if (newKomo == null) {
             LOG.error(ReflectionToStringBuilder.toString(dto));
-            throw new TarjontaBusinessException("KOULUTUS_033", "An invalid data exception - KOMOTO conversion to database object failed.");
+            throw new TarjontaBusinessException("TARJONTA_REST_033", "An invalid data exception - KOMOTO conversion to database object failed.");
         }
 
         if (newKomo.getKoulutusmoduuli() == null) {
             LOG.error(ReflectionToStringBuilder.toString(newKomo.getKoulutusmoduuli()));
-            throw new TarjontaBusinessException("KOULUTUS_034", "An invalid data exception - KOMO conversion to database object failed.");
+            throw new TarjontaBusinessException("TARJONTA_REST_034", "An invalid data exception - KOMO conversion to database object failed.");
         }
 
         koulutusmoduuliDAO.insert(newKomo.getKoulutusmoduuli());

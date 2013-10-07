@@ -126,8 +126,8 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             }
         }
         
-        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
-                ? koulutus.getKoulutusohjelmaKoodi() : koulutus.getLukiolinja());
+        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value()) 
+                ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
         add(komotoDoc, KAUSI_KOODI, IndexDataUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()));

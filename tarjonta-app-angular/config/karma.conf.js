@@ -7,6 +7,7 @@ module.exports = function(config){
       'lib/underscore/underscore.js',
       'lib/angular/angular.js',
       'lib/angular/angular-resource.js',
+      'lib/angular/angular-route.js',
       'lib/angular/angular.treeview.js',
       '../test/lib/angular/angular-mocks.js',
       'js/**/*.js',

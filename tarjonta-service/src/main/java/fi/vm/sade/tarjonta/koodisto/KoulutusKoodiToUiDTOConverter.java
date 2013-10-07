@@ -21,8 +21,8 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 
 import java.util.Collection;
 import java.util.HashSet;

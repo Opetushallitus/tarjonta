@@ -13,9 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
-package fi.vm.sade.tarjonta.service.resources.dto;
-
+import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -29,16 +30,14 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-
 public abstract class ToteutusDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 1L;
     private String komoOid;
-    private String organisaatioOid;
+    private OrgDTO organisaatio;
     private TarjontaTila tila;
     private UiDTO koulutuskoodi;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-
     private UiDTO koulutusaste;
     private UiDTO koulutusala;
     private UiDTO opintoala;
@@ -46,10 +45,10 @@ public abstract class ToteutusDTO extends BaseRDTO {
     private UiDTO tutkintonimike;
     private UiDTO eqf;
     private Map<KomoTeksti, UiMetaDTO> kuvaus;
+    private KoulutusasteTyyppi koulutusasteTyyppi;
 
     public ToteutusDTO() {
     }
-    
     /*
      * Contact persons
      */
@@ -230,20 +229,39 @@ public abstract class ToteutusDTO extends BaseRDTO {
     }
 
     /**
-     * @return the organisaatioOid
+     * @return the organisaatio
      */
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
+    public OrgDTO getOrganisaatio() {
+        if (organisaatio == null) {
+            organisaatio = new OrgDTO();
+        }
+
+        return organisaatio;
     }
 
     /**
-     * @param organisaatioOid the organisaatioOid to set
+     * @param organisaatio the organisaatio to set
      */
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
+    public void setOrganisaatio(OrgDTO organisaatio) {
+        this.organisaatio = organisaatio;
     }
 
-    
+    @Override
+    public String toString() {
+        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
 
- 
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
 }

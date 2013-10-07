@@ -54,8 +54,9 @@ public class SolrDocumentToHakukohdeConverter {
         }
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
-        copyHakutapaNimi(hakukohde, hakukohdeDoc);
-        hakukohde.setHakutapaKoodi((String)hakukohdeDoc.get(HAKUTAPA_URI));
+        
+        hakukohde.setHakutapaKoodi(IndexDataUtils.createKoodistoKoodi(HAKUTAPA_URI, HAKUTAPA_FI, HAKUTAPA_SV, HAKUTAPA_EN, hakukohdeDoc));
+
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
         hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
         if(hakukohdeDoc.getFieldValue(VUOSI_KOODI)!=null) {
@@ -63,8 +64,7 @@ public class SolrDocumentToHakukohdeConverter {
         }
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
         
-        copyKoulutuslaji(hakukohde, hakukohdeDoc);
-        hakukohde.setKoulutuslajiUri((String)hakukohdeDoc.getFieldValue(KOULUTUSLAJI_URI));
+        hakukohde.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URI,  KOULUTUSLAJI_FI,  KOULUTUSLAJI_SV,  KOULUTUSLAJI_EN, hakukohdeDoc));
         
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
@@ -87,18 +87,6 @@ public class SolrDocumentToHakukohdeConverter {
             }
         }
         return null;
-    }
-
-    private void copyKoulutuslaji(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
-        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "fi", KOULUTUSLAJI_FI);
-        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "sv", KOULUTUSLAJI_SV);
-        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "en", KOULUTUSLAJI_EN);
-    }
-
-    private void copyHakutapaNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
-        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "fi", HAKUTAPA_FI);
-        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "sv", HAKUTAPA_SV);
-        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "en", HAKUTAPA_EN);
     }
 
     private void copyHakukohdeNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
