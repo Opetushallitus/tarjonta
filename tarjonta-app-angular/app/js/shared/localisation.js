@@ -116,7 +116,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * @returns {String} translation value, parameters replaced
      */
     this.getTranslation = function(key, params) {
-        $log.log("getTranslation(key, params)", key, params);
+        //$log.log("getTranslation(key, params)", key, params);
 
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[this.locale];
@@ -339,7 +339,7 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, C
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        $log.log("t(): " + key + ", " + params);
+        //$log.log("t(): " + key + ", " + params);
         return LocalisationService.t(key, params);
     };
 });
