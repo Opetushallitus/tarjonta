@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdePerustieto implements Serializable
@@ -18,17 +16,30 @@ public class HakukohdePerustieto implements Serializable
     private Map<String, String> nimi = new HashMap<String, String>();
     private String koodistoNimi;
     private TarjontaTila tila;
-    private String aloituspaikat;
+    private Integer aloituspaikat;
     private String koulutuksenAlkamiskausiUri;
-    private String koulutuksenAlkamisvuosi;
-    private KoodistoKoodiTyyppi hakutapaKoodi;
-
+    private Integer koulutuksenAlkamisvuosi;
+    private String hakutapaKoodi;
+    private Map<String, String> hakutapaNimi = new HashMap<String, String>();
     private String tarjoajaOid;
-
     private Map<String, String> tarjoajaNimi = new HashMap<String, String>();
     private Date hakuAlkamisPvm;
     private Date hakuPaattymisPvm;
-    private MonikielinenTekstiTyyppi hakukohteenKoulutuslaji;
+    private Map<String, String> koulutuslaji = new HashMap<String, String>();
+    public Map<String, String> getKoulutuslajiNimi() {
+        return koulutuslaji;
+    }
+
+    private String koulutuslajiUri;
+    
+    public String getKoulutuslajiUri() {
+        return koulutuslajiUri;
+    }
+
+    public void setKoulutuslajiUri(String koulutuslajiUri) {
+        this.koulutuslajiUri = koulutuslajiUri;
+    }
+
     private String hakutyyppiUri;
 
     
@@ -101,11 +112,11 @@ public class HakukohdePerustieto implements Serializable
         this.tila = value;
     }
 
-    public String getAloituspaikat() {
+    public Integer getAloituspaikat() {
         return aloituspaikat;
     }
 
-    public void setAloituspaikat(String value) {
+    public void setAloituspaikat(Integer value) {
         this.aloituspaikat = value;
     }
 
@@ -117,19 +128,19 @@ public class HakukohdePerustieto implements Serializable
         this.koulutuksenAlkamiskausiUri = value;
     }
 
-    public String getKoulutuksenAlkamisvuosi() {
+    public Integer getKoulutuksenAlkamisvuosi() {
         return koulutuksenAlkamisvuosi;
     }
 
-    public void setKoulutuksenAlkamisvuosi(String value) {
+    public void setKoulutuksenAlkamisvuosi(Integer value) {
         this.koulutuksenAlkamisvuosi = value;
     }
 
-    public KoodistoKoodiTyyppi getHakutapaKoodi() {
+    public String getHakutapaKoodi() {
         return hakutapaKoodi;
     }
 
-    public void setHakutapaKoodi(KoodistoKoodiTyyppi value) {
+    public void setHakutapaKoodi(String value) {
         this.hakutapaKoodi = value;
     }
 
@@ -149,14 +160,46 @@ public class HakukohdePerustieto implements Serializable
         this.hakuPaattymisPvm = value;
     }
 
-    public MonikielinenTekstiTyyppi getHakukohteenKoulutuslaji() {
-        return hakukohteenKoulutuslaji;
+    
+    /**
+     * 
+     * @param lang (fi,sv,en)
+     * @return
+     */
+    public String getKoulutuslajiNimi(String lang) {
+        return koulutuslaji.get(lang);
     }
 
-    public void setHakukohteenKoulutuslaji(MonikielinenTekstiTyyppi value) {
-        this.hakukohteenKoulutuslaji = value;
+    /**
+     * 
+     * @param lang (fi,sv,en)
+     * @param value
+     */
+    public void setKoulutuslajiNimi(String lang, String value) {
+        this.koulutuslaji.put(lang,  value);
     }
-    
+
+    /**
+     * 
+     * @param lang (fi,sv,en)
+     * @return
+     */
+    public String getHakutapaNimi(String lang) {
+        return hakutapaNimi.get(lang);
+    }
+
+    public Map<String, String> getHakutapaNimi(){
+        return hakutapaNimi;
+    }
+    /**
+     * 
+     * @param lang (fi,sv,en)
+     * @param value
+     */
+    public void setHakutapaNimi(String lang, String value) {
+        this.hakutapaNimi.put(lang,  value);
+    }
+
 
     public String getHakutyyppiUri() {
         return hakutyyppiUri;

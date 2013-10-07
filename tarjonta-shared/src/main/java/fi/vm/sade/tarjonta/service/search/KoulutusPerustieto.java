@@ -3,9 +3,7 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
@@ -14,30 +12,44 @@ public class KoulutusPerustieto implements Serializable
 {
 
     private final static long serialVersionUID = 100L;
-    protected MonikielinenTekstiTyyppi nimi;
-    protected String koulutusmoduuli;
-    protected String koulutusmoduuliToteutus;
-    protected TarjoajaTyyppi tarjoaja;
-    protected TarjontaTila tila;
-    protected KoodistoKoodiTyyppi koulutuskoodi;
-    protected KoodistoKoodiTyyppi koulutusohjelmakoodi;
-    protected KoodistoKoodiTyyppi tutkintonimike;
-    protected String ajankohta;
-    protected String komotoOid;
-    protected String pohjakoulutusVaatimus;
-    protected String koulutuslaji;
-    protected KoulutusasteTyyppi koulutustyyppi;
-    protected KoodistoKoodiTyyppi lukiolinjakoodi;
-    protected String koulutuksenAlkamiskausiUri;
-    protected Integer koulutuksenAlkamisVuosi;
+    private Nimi nimi = new Nimi();
+    private String koulutusmoduuli;
+    private String koulutusmoduuliToteutus;
+    private TarjoajaTyyppi tarjoaja;
+    private TarjontaTila tila;
+    private KoodistoKoodi koulutuskoodi;
+    private KoodistoKoodi koulutusohjelmakoodi;
+    private KoodistoKoodi tutkintonimike;
+    private String ajankohta;
+    private String komotoOid;
+    private String pohjakoulutusVaatimus;
+    private KoodistoKoodi koulutuslaji;
+    private KoulutusasteTyyppi koulutustyyppi;
+    private KoodistoKoodi lukiolinjakoodi;
+    private String koulutuksenAlkamiskausiUri;
+    private Integer koulutuksenAlkamisVuosi;
 
 
-    public MonikielinenTekstiTyyppi getNimi() {
+    public Nimi getNimi() {
         return nimi;
     }
 
-    public void setNimi(MonikielinenTekstiTyyppi value) {
-        this.nimi = value;
+    /**
+     * Aseta nimi
+     * @param locale (sv,fi,en);
+     * @param nimi
+     */
+    public void setNimi(String locale, String nimi) {
+        this.nimi.put(locale,  nimi);
+    }
+
+    /**
+     * Anna nimi
+     * @param locale (sv, fi, en);
+     * @return nimi tai null jos ei määritelty
+     */
+    public String getNimi(String locale) {
+        return nimi.get(locale);
     }
 
     public String getKoulutusmoduuli() {
@@ -72,27 +84,27 @@ public class KoulutusPerustieto implements Serializable
         this.tila = value;
     }
 
-    public KoodistoKoodiTyyppi getKoulutuskoodi() {
+    public KoodistoKoodi getKoulutuskoodi() {
         return koulutuskoodi;
     }
 
-    public void setKoulutuskoodi(KoodistoKoodiTyyppi value) {
+    public void setKoulutuskoodi(KoodistoKoodi value) {
         this.koulutuskoodi = value;
     }
 
-    public KoodistoKoodiTyyppi getKoulutusohjelmakoodi() {
+    public KoodistoKoodi getKoulutusohjelmakoodi() {
         return koulutusohjelmakoodi;
     }
 
-    public void setKoulutusohjelmakoodi(KoodistoKoodiTyyppi value) {
+    public void setKoulutusohjelmakoodi(KoodistoKoodi value) {
         this.koulutusohjelmakoodi = value;
     }
 
-    public KoodistoKoodiTyyppi getTutkintonimike() {
+    public KoodistoKoodi getTutkintonimike() {
         return tutkintonimike;
     }
 
-    public void setTutkintonimike(KoodistoKoodiTyyppi value) {
+    public void setTutkintonimike(KoodistoKoodi value) {
         this.tutkintonimike = value;
     }
 
@@ -120,11 +132,11 @@ public class KoulutusPerustieto implements Serializable
         this.pohjakoulutusVaatimus = value;
     }
 
-    public String getKoulutuslaji() {
+    public KoodistoKoodi getKoulutuslaji() {
         return koulutuslaji;
     }
 
-    public void setKoulutuslaji(String value) {
+    public void setKoulutuslaji(KoodistoKoodi value) {
         this.koulutuslaji = value;
     }
 
@@ -136,11 +148,11 @@ public class KoulutusPerustieto implements Serializable
         this.koulutustyyppi = value;
     }
 
-    public KoodistoKoodiTyyppi getLukiolinjakoodi() {
+    public KoodistoKoodi getLukiolinjakoodi() {
         return lukiolinjakoodi;
     }
 
-    public void setLukiolinjakoodi(KoodistoKoodiTyyppi value) {
+    public void setLukiolinjakoodi(KoodistoKoodi value) {
         this.lukiolinjakoodi = value;
     }
 
