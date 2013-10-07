@@ -266,6 +266,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             }
 
             hakukohdeDAO.update(hakukohde);
+
+            LOG.debug("Created hakukohde : {}",hakukohde.getOid());
             solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
                 public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
