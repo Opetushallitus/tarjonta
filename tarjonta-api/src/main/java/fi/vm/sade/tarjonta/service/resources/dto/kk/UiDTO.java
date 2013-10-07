@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
 import java.io.Serializable;
 
@@ -21,49 +21,25 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class KoodiUriDTO implements Serializable {
+public class UiDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String uri;
-    private String versio;
+    private KoodiUriDTO koodi;
     private String arvo;
-    private String kaannos;
 
-    public KoodiUriDTO() {
+    public UiDTO() {
     }
 
-    public KoodiUriDTO(String uri, String versio, String arvo) {
-        this.uri = uri;
-        this.versio = versio;
+    /**
+     *
+     * @param arvo //Data in user's language.
+     * @param koodiUri //Koodisto koodi URI like 'kieli_fi'
+     * @param koodiVersio //Koodisto koodi version number in String format '1'
+     * @param koodiArvo //ISO language code like 'EN', 'FI' etc.
+     */
+    public UiDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
         this.arvo = arvo;
-    }
-    
-    /**
-     * @return the uri
-     */
-    public String getUri() {
-        return uri;
-    }
-
-    /**
-     * @param uri the uri to set
-     */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    /**
-     * @return the versio
-     */
-    public String getVersio() {
-        return versio;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersio(String versio) {
-        this.versio = versio;
+        koodi = new KoodiUriDTO(koodiUri, koodiVersio, koodiArvo);
     }
 
     /**
@@ -81,16 +57,20 @@ public class KoodiUriDTO implements Serializable {
     }
 
     /**
-     * @return the kaannos
+     * @return the koodi
      */
-    public String getKaannos() {
-        return kaannos;
+    public KoodiUriDTO getKoodi() {
+        return koodi;
     }
 
     /**
-     * @param kaannos the kaannos to set
+     * @param koodi the koodi to set
      */
-    public void setKaannos(String kaannos) {
-        this.kaannos = kaannos;
+    public void setKoodi(KoodiUriDTO koodi) {
+        this.koodi = koodi;
+    }
+
+    public void setKoodiUri(String uri, String versio, String arvo) {
+        koodi = new KoodiUriDTO(uri, versio, arvo);
     }
 }

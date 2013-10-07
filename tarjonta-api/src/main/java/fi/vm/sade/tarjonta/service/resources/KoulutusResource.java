@@ -29,9 +29,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ToteutusDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 
 /**
  * JSON resource for Tarjonta Application.

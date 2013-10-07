@@ -84,7 +84,7 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opintojen-laajuus'></div>
             <div class="span10">
-                <select data-ng-model="model.opintojenLaajuus.arvo">
+                <select data-ng-model="model.opintojenLaajuus.koodi.uri">
                     <option value="kieli_fi#1">data missing</option>
                 </select>
             </div>
@@ -113,9 +113,7 @@
             <div class="span2 label-right"><span tt='kk.edit.suunniteltu-kesto'></div>
             <div class="span10">
                 <input type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
-                <!--select data-ng-model="model.suunniteltuKestoTyyppi.arvo">
-                </select-->
-                <koodistocombo koodiuri="uiModel.suunniteltuKesto"  koodistouri="uiModel.env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo>
+                <koodistocombo koodiuri="uiModel.suunniteltuKestoTyyppi"  koodistouri="uiModel.env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo>
             </div>
         </div>
     </div>

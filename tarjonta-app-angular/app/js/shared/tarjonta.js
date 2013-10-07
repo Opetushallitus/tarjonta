@@ -1,6 +1,6 @@
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource, $log, $q, Config, LocalisationService, Koodisto, AuthService, CacheService) {
+app.factory('TarjontaService', function($resource,Config, LocalisationService, Koodisto, AuthService, CacheService) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
