@@ -70,16 +70,18 @@ describe('Edit koulutus testeja', function() {
 			$scope: $scope,
 		});
 		
-		$scope.contactPerson = {};
-		$scope.contactPerson.nimet = 'Testi nimi';
-		$scope.contactPerson.sahkoposti = 'test@oph.fi';
-        $scope.contactPerson.titteli = 'Herra';
-        $scope.contactPerson.puhelin = '050432134534';
-        $scope.contactPerson.etunimet = 'Testi';
-        $scope.contactPerson.sukunimi = 'nimi';
+		$scope.uiModel = {};
+		
+		$scope.uiModel.contactPerson = {};
+		$scope.uiModel.contactPerson.nimet = 'Testi nimi';
+		$scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
+        $scope.uiModel.contactPerson.titteli = 'Herra';
+        $scope.uiModel.contactPerson.puhelin = '050432134534';
+        $scope.uiModel.contactPerson.etunimet = 'Testi';
+        $scope.uiModel.contactPerson.sukunimi = 'nimi';
 		
 		$scope.editYhModel.clearYh();
-		expect($scope.contactPerson.nimet).toEqual('');
+		expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
 	}));
 	
 	
