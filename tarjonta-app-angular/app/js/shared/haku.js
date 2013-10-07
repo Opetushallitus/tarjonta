@@ -17,46 +17,31 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 .factory('HakuService',function($resource,$q,Config){
 
 
-        var hakuUri = Config.env["host.base-uri"] + Config.env["haku.uri"];
+        var hakuUri = Config.env["host.base-uri"] + Config.env["haku.uri.findall"];
 
         return {
 
-            getAllHakus : function(locale) {
+           getAllHakus : function(locale) {
 
-                var promiseOfPromise = $q.defer();
-
-
-
-                var resource = $resource(hakuUri);
-               //Call
-               resource.get(function(data){
-
-                    var promisesArray = [];
-                    angular.forEach(data,function(oidItem){
+               var hakuPromise = $q.defer();
 
 
-                          var promise = $q.defer();
-                           //TBD
-                           var hakuOidUri = Config.env["host.base-uri"] + "";
 
-                           var secondResource = $resource(hakuOidUri);
-
-                            secondResource.get(function(hakuDto){
-                                promise.resolve(hakuDto);
-                            });
-
-                          promisesArray.push(promise);
-
-                    });
-                    $q.all(promisesArray).then(function(){
-                        promiseOfPromise.resolve();
-                    });
-
+                $resource(hakuUri).get({},function(hakus){
+                    hakuPromise.resolve(hakus);
                 });
 
-                return promiseOfPromise.promise;
 
-            }
+
+
+               return hakuPromise.promise;
+
+           }
+
+
+
+
+
 
 
         };

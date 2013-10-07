@@ -9,6 +9,7 @@ angular.module('app.kk',
             'app.kk.services',
             'app.kk.edit.ctrl',
             'app.kk.review.ctrl',
+            'app.kk.edit.hakukohde.ctrl',
             'app.kk.services',
             'ui.bootstrap',
             'ngRoute',
@@ -41,7 +42,7 @@ angular.module('app',
             'Tarjonta',
             'KoodistoCombo',
             'KoodistoMultiSelect',
-            'angularTreeview',
+            'angularTreeview'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -52,7 +53,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
         $routeProvider
                 .when("/etusivu", {
             action: "home.default",
-            reloadOnSearch: false,
+            reloadOnSearch: false
         })
                 .when("/etusivu/:oid", {
             action: "home.default",
@@ -74,8 +75,11 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "helpers.localisations"
         })
 
-                //Remove this when done Tuomas
-                .when('/koodistoTest', {action: 'koodistoTest'})
+            .when("/kk/edit/hakukohde", {
+              action : "kk.hakukohde.create"
+            })
+
+            .when('/koodistoTest', {action: 'koodistoTest'})
 
                 .otherwise({redirectTo: "/etusivu"});
     }]);

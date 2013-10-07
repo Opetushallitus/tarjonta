@@ -68,6 +68,7 @@ window.CONFIG = {
         "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/",
         "host.base-uri" : "https://itest-virkailija.oph.ware.fi",
         "haku.uri" : "/tarjonta-service/rest/haku",
+        "haku.uri.findall" : "/tarjonta-service/rest/haku/findAll",
         //käsin lisätyt:
 
         // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",
