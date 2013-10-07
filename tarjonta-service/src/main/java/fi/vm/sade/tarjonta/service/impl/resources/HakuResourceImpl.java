@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
@@ -327,17 +328,20 @@ public class HakuResourceImpl implements HakuResource {
 
     @Override
     @Transactional(readOnly = false)
+    @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     public String createHaku(HakuDTO dto) {
         return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
     }
 
     @Override
+    @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     @Transactional(readOnly = false)
     public void replaceHaku(HakuDTO dto) {
         tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
     }
 
     @Override
+    @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     @Transactional(readOnly = false)
     public void deleteHaku(String hakuOid) {
         HakuTyyppi tmp = new HakuTyyppi();
@@ -348,6 +352,7 @@ public class HakuResourceImpl implements HakuResource {
 
     @Override
     @Transactional(readOnly = false)
+    @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     public void updateHakuState(String hakuOid, String state) {
         TarjontaTila tt = TarjontaTila.valueOf(state);
         PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid,
