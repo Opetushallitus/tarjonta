@@ -28,7 +28,7 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 
 
                 var resource = $resource(hakuUri);
-
+               //Call
                resource.get(function(data){
 
                     var promisesArray = [];

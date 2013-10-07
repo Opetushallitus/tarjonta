@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -39,10 +41,6 @@ import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -131,6 +129,30 @@ public class HakuResourceImpl implements HakuResource {
         HakuDTO result = conversionService.convert(hakuDAO.findByOid(oid), HakuDTO.class);
         LOG.debug("  result={}", result);
         return result;
+    }
+
+
+    @Override
+    public List<HakuDTO> findAllHakus() {
+        List<HakuDTO> hakuDTOs = new ArrayList<HakuDTO>();
+
+        SearchCriteriaType search = new SearchCriteriaType();
+        search.setMeneillaan(true);
+        search.setPaattyneet(true);
+        search.setTulevat(true);
+        List<Haku> hakus = hakuDAO.findAll(search);
+        LOG.info("Found : {} hakus",hakus.size());
+
+        if (hakus != null){
+            for (Haku haku:hakus) {
+                HakuDTO hakuDTO = conversionService.convert(haku,HakuDTO.class);
+                hakuDTOs.add(hakuDTO);
+            }
+        }
+
+
+
+        return hakuDTOs;
     }
 
     // /haku/OID/hakukohde
