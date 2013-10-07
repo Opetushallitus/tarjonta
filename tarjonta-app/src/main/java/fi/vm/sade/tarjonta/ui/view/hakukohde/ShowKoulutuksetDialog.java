@@ -92,7 +92,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
                hc.addItem(curKoulutus);
                hc.setParent(curKoulutus, rootItem);
                CaptionItem ci = new CaptionItem(
-                       TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getNimi()).getValue(), 
+                       TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getNimi()), 
                        true);
                ci.getLinkButton().addListener( new Button.ClickListener() {
 

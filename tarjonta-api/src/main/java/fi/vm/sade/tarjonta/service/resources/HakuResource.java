@@ -71,6 +71,12 @@ public interface HakuResource {
             @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince);
 
+
+
+    @GET
+    @Path("/findAll")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<HakuDTO> findAllHakus();
     /**
      * /haku/OID
      *

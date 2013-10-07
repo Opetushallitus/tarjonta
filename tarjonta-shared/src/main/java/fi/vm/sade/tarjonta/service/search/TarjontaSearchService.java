@@ -319,7 +319,7 @@ public class TarjontaSearchService {
         }
 
         if (koulutuksenTila != null) {
-            q.addFilterQuery(String.format("%s:%s", Koulutus.TILA_EN, koulutuksenTila));
+            q.addFilterQuery(String.format("%s:%s", Koulutus.TILA, koulutuksenTila));
         }
 
         if (kysely.getKoulutusKoodi() != null) {

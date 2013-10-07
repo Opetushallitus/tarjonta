@@ -98,7 +98,6 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -612,11 +611,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             String nimi = "";
 
             if (tulos.getNimi() != null) {
-                Teksti name = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), tulos.getNimi());
-
-                if (name != null) {
-                    nimi = name.getValue();
-                }
+                nimi = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), tulos.getNimi());
             }
 
             nimiOid.setKoulutusNimi(nimi);
