@@ -35,7 +35,7 @@ public class Nimi extends HashMap<String, String> {
             if (value != null) {
                 return super.put(locale, value);
             } else {
-                throw new IllegalArgumentException("null arvo ei ole sallitty!");
+                throw new IllegalArgumentException("null arvo ei ole sallittu!");
             }
         } else {
             throw new IllegalArgumentException("Laiton locale:" + locale);

@@ -38,7 +38,7 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
 		ret.setHakutapa(ht.getHakutapaNimi());
 		ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
-		ret.setKoulutusLaji(ht.getKoulutuslajiNimi());
+		ret.setKoulutusLaji(ht.getKoulutuslaji().getNimi());
 		ret.setTila(TarjontaTila.valueOf(ht.getTila()));
 
 		return ret;
