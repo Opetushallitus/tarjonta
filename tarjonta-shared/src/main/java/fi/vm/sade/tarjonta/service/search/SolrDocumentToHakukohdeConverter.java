@@ -18,6 +18,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLA
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_URI;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,11 +28,7 @@ import java.util.Map.Entry;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import com.google.common.collect.Maps;
-
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 
 public class SolrDocumentToHakukohdeConverter {
     
@@ -51,15 +48,24 @@ public class SolrDocumentToHakukohdeConverter {
     private HakukohdePerustieto convertHakukohde(SolrDocument hakukohdeDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
         HakukohdePerustieto hakukohde = new HakukohdePerustieto();
-        hakukohde.setAloituspaikat("" + hakukohdeDoc.getFieldValue(ALOITUSPAIKAT));
+        
+        if(hakukohdeDoc.getFieldValue(ALOITUSPAIKAT)!=null) {
+            hakukohde.setAloituspaikat(Integer.parseInt((String)hakukohdeDoc.getFieldValue(ALOITUSPAIKAT)));
+        }
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
-        hakukohde.setHakutapaKoodi(IndexDataUtils.createKoodiTyyppi(HAKUTAPA_URI, HAKUTAPA_FI, HAKUTAPA_SV, HAKUTAPA_EN, hakukohdeDoc));
+        copyHakutapaNimi(hakukohde, hakukohdeDoc);
+        hakukohde.setHakutapaKoodi((String)hakukohdeDoc.get(HAKUTAPA_URI));
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
         hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
-        hakukohde.setKoulutuksenAlkamisvuosi("" + hakukohdeDoc.getFieldValue(VUOSI_KOODI));
+        if(hakukohdeDoc.getFieldValue(VUOSI_KOODI)!=null) {
+            hakukohde.setKoulutuksenAlkamisvuosi(Integer.parseInt((String)hakukohdeDoc.getFieldValue(VUOSI_KOODI)));
+        }
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
-        hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
+        
+        copyKoulutuslaji(hakukohde, hakukohdeDoc);
+        hakukohde.setKoulutuslajiUri((String)hakukohdeDoc.getFieldValue(KOULUTUSLAJI_URI));
+        
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
@@ -71,33 +77,6 @@ public class SolrDocumentToHakukohdeConverter {
         return hakukohde;
     }
     
-    private MonikielinenTekstiTyyppi createHakukohteenKoulutuslaji(
-            SolrDocument hakukohdeDoc) {
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_FI) != null) {
-            Teksti nimiFi = new Teksti();
-            nimiFi.setKieliKoodi("fi");
-            nimiFi.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_FI)
-                    .toString());
-            nimi.getTeksti().add(nimiFi);
-        }
-        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_SV) != null) {
-            Teksti nimiSv = new Teksti();
-            nimiSv.setKieliKoodi("sv");
-            nimiSv.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_SV)
-                    .toString());
-            nimi.getTeksti().add(nimiSv);
-        }
-        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_EN) != null) {
-            Teksti nimiEn = new Teksti();
-            nimiEn.setKieliKoodi("en");
-            nimiEn.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_EN)
-                    .toString());
-            nimi.getTeksti().add(nimiEn);
-        }
-        return nimi;
-    }
-
     private Date parseDate(SolrDocument hakukohdeDoc, String dateField) {
         String pvmStr = "" + hakukohdeDoc.getFieldValue(dateField);
         if (!pvmStr.isEmpty()) {
@@ -109,7 +88,19 @@ public class SolrDocumentToHakukohdeConverter {
         }
         return null;
     }
-    
+
+    private void copyKoulutuslaji(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
+        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "fi", KOULUTUSLAJI_FI);
+        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "sv", KOULUTUSLAJI_SV);
+        asetaNimi(hakukohde.getKoulutuslajiNimi(), hakukohdeDoc, "en", KOULUTUSLAJI_EN);
+    }
+
+    private void copyHakutapaNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
+        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "fi", HAKUTAPA_FI);
+        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "sv", HAKUTAPA_SV);
+        asetaNimi(hakukohde.getHakutapaNimi(), hakukohdeDoc, "en", HAKUTAPA_EN);
+    }
+
     private void copyHakukohdeNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
         asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "fi", HAKUKOHTEEN_NIMI_FI);
         asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "sv", HAKUKOHTEEN_NIMI_SV);

@@ -26,10 +26,10 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -131,12 +131,7 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
      * @param hakukohdeUri the koodisto uri given.
      * @return
      */
-    private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
-            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
-                return curNimi.getValue();
-            }
-        }
-        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
+    private String getKoodiNimi(KoodistoKoodi koodistoKoodi) {
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koodistoKoodi.getNimi() );
     }
 }
