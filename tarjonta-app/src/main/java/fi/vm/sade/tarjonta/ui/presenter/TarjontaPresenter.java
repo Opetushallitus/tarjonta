@@ -573,10 +573,19 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     private List<KoulutusPerustieto> getValidKoulutuksesForHakukohde(
             KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi) {
+        ListaaHakuTyyppi kysely = new ListaaHakuTyyppi();
+        kysely.setHakuOid(getModel().getHakukohde().getHakuViewModel().getHakuOid());
+        ListHakuVastausTyyppi hakuVastaus = this.tarjontaPublicService.listHaku(kysely);
+        if (hakuVastaus.getResponse().isEmpty()) {
+            return new ArrayList<KoulutusPerustieto>();
+        }
+        HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
             if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
-                    && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())) {
+                    && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())
+                    && curKoulutus.getKoulutuksenAlkamiskausiUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
+                    && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
             }
         }
