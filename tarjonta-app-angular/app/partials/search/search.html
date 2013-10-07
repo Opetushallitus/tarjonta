@@ -113,15 +113,15 @@
 	    </tabset>
 	    
 	    <ul id="dropdown" class="dropdown-menu">
-	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}">{{o.title}}</a></li>
+	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
 	    </ul>
     
     </div>
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
     <!-- type,part,org,komoto,koulutuskoodi -->
-    <a href="#/kk/edit/new/perus/1.2.246.562.5.2013091114080489552096/none/671118/">NEW</a>
-    <a href="#/kk/edit/load/perus/1.2.246.562.5.2013091114080489552096/1.2.246.562.5.2013091114080489552096/671118/">EDIT?</a>
+    <a href="#/kk/edit/new/perus/1.2.246.562.10.53945122876/none/671118/">NEW</a>
+    <a href="#/kk/edit/load/perus/1.2.246.562.10.53945122876/1.2.246.562.5.2013091114080489552096/671118/">EDIT?</a>
     
     <div ng-controller="TutkintoOhjelmaSelectOpenerCtrl">
 

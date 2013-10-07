@@ -91,7 +91,7 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * </pre>
  */
 app.service('LocalisationService', function($log, $q, Localisations, Config) {
-    $log.debug("LocalisationService()");
+    $log.log("LocalisationService()");
 
     // Singleton state, default current locale
     // TODO is there some other gobal / app location for this?
@@ -116,7 +116,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * @returns {String} translation value, parameters replaced
      */
     this.getTranslation = function(key, params) {
-        $log.debug("getTranslation(key, params)", key, params);
+        //$log.log("getTranslation(key, params)", key, params);
 
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[this.locale];
@@ -156,7 +156,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
         }
 
         // result = result + "-" + new Date();
-        // $log.debug(new Date() + ": getTranslation(" + key + ") --> " + result);
+        // $log.log(new Date() + ": getTranslation(" + key + ") --> " + result);
         return result;
     };
 
@@ -185,7 +185,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
 
         var parent = this;
         Localisations.delete(entry, function(data, status, headers, config) {
-            $log.debug("delete() - OK", data, status, headers, config);
+            $log.log("delete() - OK", data, status, headers, config);
             parent.updateLookupMap();
             deferred.resolve(entry);
         }, function(data, status, headers, config) {
@@ -203,7 +203,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * @returns {Promise} a promise
      */
     this.save = function(newEntry) {
-        $log.debug("save()", newEntry);
+        $log.log("save()", newEntry);
         var deferred = $q.defer();
 
         if (!newEntry || this.isBlank(newEntry.key) || this.isBlank(newEntry.locale)) {
@@ -219,7 +219,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
 
             // Try to save to the server
             Localisations.save(newEntry, function(data, status, headers, config) {
-                $log.debug("save() - OK", data, status, headers, config);
+                $log.log("save() - OK", data, status, headers, config);
                 parent.updateLookupMap();
                 deferred.resolve(newEntry);
             }, function(data, status, headers, config) {
@@ -251,14 +251,14 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * @returns {undefined}
      */
     this.reload = function() {
-        $log.debug("reload()");
+        $log.log("reload()");
         var parent = this;
 
         var deferred = $q.defer();
 
         // TODO ERROR HANDLING!
         Localisations.query({}, function(data) {
-            $log.debug("reload successfull! data = ", data);
+            $log.log("reload successfull! data = ", data);
             Config.env["tarjonta.localisations"] = data;
             parent.updateLookupMap();
             deferred.resolve(data);
@@ -303,7 +303,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
 
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.debug("===> result ", this.localisationMapByLocaleAndKey);
+        $log.log("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 
@@ -339,7 +339,7 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, C
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        $log.debug("t(): " + key + ", " + params);
+        //$log.log("t(): " + key + ", " + params);
         return LocalisationService.t(key, params);
     };
 });

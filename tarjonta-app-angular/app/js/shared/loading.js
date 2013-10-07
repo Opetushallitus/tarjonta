@@ -3,9 +3,18 @@ angular.module('loading', [])
 .factory('loadingService', function() {
   var service = {
     requestCount: 0,
-    modal: false,
+    operationCount: 0,
     isLoading: function() {
-      return service.requestCount > 0;
+      return service.requestCount > 0 || service.operationCount > 0;
+    },
+    isModal: function() {
+    	return service.requestCount > 0;
+    },
+    beforeOperation: function() {
+    	service.operationCount++;
+    },
+    afterOperation: function() {
+    	service.operationCount--;
     }
   };
   return service;
@@ -56,12 +65,7 @@ angular.module('loading', [])
     });
     
     $scope.isModal = function() {
-    	return loadingService.modal;
-    }
-    
-    $scope.demodalize = function() {
-    	loadingService.modal = false;
+    	return loadingService.isModal();
     }
 
-    
 });

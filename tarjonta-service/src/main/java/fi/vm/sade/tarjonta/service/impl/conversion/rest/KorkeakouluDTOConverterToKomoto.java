@@ -29,10 +29,12 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.dto.KoodiUriDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -77,29 +79,37 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         /*
          * KOMO data fields:
          */
-        komo.setOmistajaOrganisaatioOid(dto.getOrganisaatioOid());
+        komo.setOmistajaOrganisaatioOid(dto.getOrganisaatio().getOid());
         komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), "koulutusaste"));
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), "koulutusala"));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), "opintoala"));
         //komo.get(getUri(dto.getTutkinto(), "tutkinto")); TODO???
         komo.setTutkintonimike(convertToUri(dto.getTutkintonimike(), "tutkintonimike"));
         komo.setEqfLuokitus(convertToValue(dto.getEqf(), "EQF-luokitus")); //not a koodisto koodi URI
+        komo.setTila(TarjontaTila.JULKAISTU);
+
+        Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), "koulutuskoodi"));
         komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), komo.getNimi(), "koulutusohjelma"));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
+        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+        komo.setKoulutustyyppi(dto.getKoulutusasteTyyppi().value());
+
         /*
          * KOMOTO data fields
          */
-        komoto.setTarjoaja(dto.getOrganisaatioOid());
+        komoto.setTila(dto.getTila());
+        komoto.setTarjoaja(dto.getOrganisaatio().getOid());
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
         komoto.setKoulutuksenAlkamisPvm(dto.getKoulutuksenAlkamisPvm());
         komoto.setTeemas(convertToUris(dto.getTeemas(), komoto.getTeemas(), "teemas"));
         komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), "opetuskielis"));
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
-        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKestoTyyppi(), "SuunniteltuKestoTyyppi"), komoto.getSuunniteltuKestoArvo());
+
+        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKestoTyyppi"), dto.getSuunniteltuKesto().getArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);

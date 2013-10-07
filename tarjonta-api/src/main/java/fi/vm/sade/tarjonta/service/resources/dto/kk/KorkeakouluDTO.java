@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
 import java.util.Date;
 
@@ -29,8 +29,7 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /*
      * Other user selected form input data
      */
-    private UiDTO suunniteltuKesto;
-    private UiDTO suunniteltuKestoTyyppi;
+    private SuunniteltuKestoDTO suunniteltuKesto;
     private UiMetaDTO opetuskielis;
     private UiMetaDTO opetusmuodos;
     /*
@@ -130,20 +129,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
     }
 
     /**
-     * @return the suunniteltuKestoTyyppi
-     */
-    public UiDTO getSuunniteltuKestoTyyppi() {
-        return suunniteltuKestoTyyppi;
-    }
-
-    /**
-     * @param suunniteltuKestoTyyppi the suunniteltuKestoTyyppi to set
-     */
-    public void setSuunniteltuKestoTyyppi(UiDTO suunniteltuKestoTyyppi) {
-        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
-    }
-
-    /**
      * @return the tunniste
      */
     public String getTunniste() {
@@ -155,20 +140,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setTunniste(String tunniste) {
         this.tunniste = tunniste;
-    }
-
-    /**
-     * @return the suunniteltuKesto
-     */
-    public UiDTO getSuunniteltuKesto() {
-        return suunniteltuKesto;
-    }
-
-    /**
-     * @param suunniteltuKesto the suunniteltuKesto to set
-     */
-    public void setSuunniteltuKesto(UiDTO suunniteltuKesto) {
-        this.suunniteltuKesto = suunniteltuKesto;
     }
 
     /**
@@ -197,5 +168,19 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * @return the suunniteltuKesto
+     */
+    public SuunniteltuKestoDTO getSuunniteltuKesto() {
+        return suunniteltuKesto;
+    }
+
+    /**
+     * @param suunniteltuKesto the suunniteltuKesto to set
+     */
+    public void setSuunniteltuKesto(SuunniteltuKestoDTO suunniteltuKesto) {
+        this.suunniteltuKesto = suunniteltuKesto;
     }
 }

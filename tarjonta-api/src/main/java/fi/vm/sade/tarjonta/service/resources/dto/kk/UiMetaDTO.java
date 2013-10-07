@@ -13,8 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import java.util.HashMap;
 import java.util.Map;
 

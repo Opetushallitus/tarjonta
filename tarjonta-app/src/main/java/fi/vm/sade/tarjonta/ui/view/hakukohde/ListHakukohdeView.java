@@ -432,7 +432,7 @@ public class ListHakukohdeView extends VerticalLayout {
         categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getAloituspaikat());
-        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curHakukohde.getKoulutuslajiNimi()));
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curHakukohde.getKoulutuslaji().getNimi()));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
     }
 }

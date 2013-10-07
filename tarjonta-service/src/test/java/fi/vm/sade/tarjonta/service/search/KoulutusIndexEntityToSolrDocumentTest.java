@@ -105,17 +105,16 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_URI)
                         .getValue());
 
-        // TODO miksi lukiolinjakoodi menee koulutusohjelmakoodiin?
-        Assert.assertEquals(LUKIOLINJAKOODI + "-nimi-EN",
+        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-EN",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_EN)
                         .getValue());
-        Assert.assertEquals(LUKIOLINJAKOODI + "-nimi-SV",
+        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-SV",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_SV)
                         .getValue());
-        Assert.assertEquals(LUKIOLINJAKOODI + "-nimi-FI",
+        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-FI",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_FI)
                         .getValue());
-        Assert.assertEquals(LUKIOLINJAKOODI,
+        Assert.assertEquals(KOULUTUSOHJELMAKOODI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                         .getValue());
         Assert.assertEquals(TUTKINTONIMIKEKOODI,

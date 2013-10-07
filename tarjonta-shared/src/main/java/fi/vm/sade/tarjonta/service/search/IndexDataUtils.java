@@ -169,10 +169,16 @@ public class IndexDataUtils {
             value = (String) valueO;
         }
         final KoodistoKoodi koodi = new KoodistoKoodi(value);
-        koodi.getNimi().put(Nimi.FI, (String)koulutusDoc.getFieldValue(koodiFi));
-        koodi.getNimi().put(Nimi.SV, (String)koulutusDoc.getFieldValue(koodiSv));
-        koodi.getNimi().put(Nimi.EN, (String)koulutusDoc.getFieldValue(koodiEn));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.FI, (String)koulutusDoc.getFieldValue(koodiFi));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.SV, (String)koulutusDoc.getFieldValue(koodiSv));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.EN, (String)koulutusDoc.getFieldValue(koodiEn));
         return koodi;
+    }
+    
+    private static void asetaArvoJosEiNull(Nimi nimi, String lang, String value){
+        if(value!=null) {
+            nimi.put(lang, value);
+        }
     }
     
     public static TarjontaTila createTila(SolrDocument doc) {

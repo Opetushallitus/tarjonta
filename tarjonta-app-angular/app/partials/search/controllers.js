@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -240,6 +240,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var tt = TarjontaService.getTilat()[tila];
     	
     	var canRead = PermissionService[prefix].canPreview(oid);
+    	
 		// tarkastele
 		if (canRead) {
 			ret.push({url:"#/"+prefix+"/"+oid, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
@@ -250,25 +251,41 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		}
 		// näytä hakukohteet
 		if (canRead) {
-			ret.push({url:"#/"+prefix+"/"+oid+"/links", title: LocalisationService.t("tarjonta.toiminnot."+prefix+".linkit")});
+			ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot."+prefix+".linkit"),
+				action: function(ev) {
+					console.log("NÄYTÄ LINKIT "+prefix+" / "+oid, ev);
+				}
+			});
 		}
 		// tilasiirtymä
 		switch (tila) {
 		case "PERUTTU":
 		case "VALMIS":
 			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
-				ret.push({url:"#/"+prefix+"/"+oid+"/publish", title: LocalisationService.t("tarjonta.toiminnot.julkaise")});
+				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
+					action: function(){
+						console.log("JULKAISE "+prefix+" / "+oid);
+					}
+				});
 			}
 			break;
 		case "JULKAISTU":
 			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
-				ret.push({url:"#/"+prefix+"/"+oid+"/cancel", title: LocalisationService.t("tarjonta.toiminnot.peruuta")});
+				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
+					action: function(){
+						console.log("PERUUTA "+prefix+" / "+oid);
+					}
+				});
 			}
 			break;
 		}
 		// poista
 		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
-			ret.push({url: "#/"+prefix+"/"+oid+"/delete", title: LocalisationService.t("tarjonta.toiminnot.poista")});
+			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
+				action: function(){
+					console.log("POISTA "+prefix+" / "+oid);
+				}
+			});
 		}
 		
 		return ret;
@@ -299,7 +316,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		var kmOid = row.attr("koulutus-oid");
     		var tila = row.attr("tila");
     		
-    		var menuOptions = {}
+    		var menuOptions = [];
     		
     		if (hkOid) {
     			$scope.menuOptions = rowActions("hakukohde", hkOid, tila);
@@ -307,7 +324,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			$scope.menuOptions = rowActions("koulutus", kmOid, tila);
     		} else {
     			console.log("row has no oid", row);
-    			$scope.menuOptions = {}
+    			$scope.menuOptions = [];
     			return; // ei oidia? -> ei näytetä valikkoa
     		}
     		
@@ -334,10 +351,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			}, 500));
     		});
     		
-    		// sulkeutuminen linkkiä klikkaamalla yms.
     		$("a", menu).click(function(ev){
-    			// tähän voidaan tarvittaessa lisätä
-    			ev.preventDefault(); // TODO poista
+    			// jos url on #, estetään selainta seuraamasta linkkiä (oletetaan, että action on määritelty)
+    			if ($(ev.currentTarget).attr("href") == "#") {
+    				ev.preventDefault();
+    			}
+
+        		// sulkeutuminen linkkiä klikkaamalla yms.
     			menu.toggleClass("display-block",false);
     		});
 
@@ -350,6 +370,22 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	});
    	
     }
+
+    function forceClear(em) {
+    	// angular koukuttaa jquery-kutsu $(...).clear():in, josta seuraa
+    	// delete-tapahtuma joka dom-nodelle, joka puolestaan aiheuttaa
+    	// vakavia suorituskykyongelmia (ui hyytyy n. minuutin ajaksi)
+    	em.each(function(i, e) {
+    		while (e.firstChild) {
+    			e.removeChild(e.firstChild);
+    		}
+    	});
+    }
+    
+    // tyhjentää taulukot hakusivulta poistuessa, estäen angularia jumittamasta ui:ta
+    $scope.$on("$destroy", function(){
+		forceClear($("#searchResults table"));
+    });
     
     var rowsPerAppend = 20; // TODO konfiguraatioon?
     var delayPerAppend = 1; // TODO konfiguraatioon?
@@ -360,12 +396,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	    	
     	if (serial!=sn) {
             //console.log("abort "+prefix+" @ "+new Date());
+        	loadingService.afterOperation();
+        	$scope.$apply();
     		return; // uusi haku -> keskeytetään
     	}
     	
     	var rdata = {
     			tuloksia:0,
-    			tulokset:[]// data.tulokset[row] ]
+    			tulokset:[]
     	};
     	  	
     	for (var i=0; i<rowsPerAppend && data.tulokset[row]; i++) {
@@ -386,18 +424,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	} else {
             //console.log("done "+prefix+" @ "+new Date());
         	em.toggleClass("loading", false);    	
+        	loadingService.afterOperation();
+        	$scope.$apply();
     	}
-    }
-    
-    function forceClear(em) {
-    	// angular koukuttaa jquery.clear():in, josta seuraava
-    	// delete-tapahtuma joka dom-nodelle, joka puolestaan
-    	// aiheuttaa vakavia suorituskykyongelmia
-    	em.each(function(i, e) {
-    		while (e.firstChild) {
-    			e.removeChild(e.firstChild);
-    		}
-    	});
     }
     
     function initTable(selector, prefix, data, cols, sn) {
@@ -409,6 +438,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var em = $(selector);
     	    	
     	em.toggleClass("loading", true);
+    	loadingService.beforeOperation();
     	
     	forceClear(em);
     	
