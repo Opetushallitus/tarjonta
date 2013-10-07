@@ -24,7 +24,7 @@ describe('auth', function() {
             "cas.myroles" : ["USER_tiimi2"]
         }, "app": {
             "key-app-1": "mock-value-app-1"
-        },
+        }
     };
 
     //set mock data to module by using the value-method,
