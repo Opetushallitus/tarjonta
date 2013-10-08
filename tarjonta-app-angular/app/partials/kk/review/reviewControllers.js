@@ -40,7 +40,8 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
                 perusTiedot: false,
                 kuvailevatTiedot: false,
                 sisaltyvatOpintokokonaisuudet: false,
-                hakukohteet: false
+                hakukohteet: false,
+                model: true
             },
             // TODO default languages from somewhere?
             languages: [

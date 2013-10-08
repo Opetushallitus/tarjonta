@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                <div ng-bind-html="t('kk.review.murupolku', ['Autoalan perustutkinto', 'Rantalhojan ammattikoulu, autoalan toimipiste'])"></div>
+                <div data-ng-bind-html="t('kk.review.murupolku', ['Autoalan perustutkinto', 'Rantalhojan ammattikoulu, autoalan toimipiste'])"></div>
                 <a><div tt='kk.review.peruuta'></div></a>
             </div>
         </div>
@@ -11,11 +11,11 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                <div class="btn" ng-click='doStuff($event)'><div tt='kk.review.takaisin'></div></div>
-                <div class="btn"><div tt='kk.review.poista'></div></div>
-                <div class="btn"><div tt='kk.review.kopioi'></div></div>
-                <div class="btn"><div tt='kk.review.siirra.osaksi'></div></div>
-                <div class="btn"><div tt='kk.review.lisaa.rinnakkainen'></div></div>
+                <div class="btn" data-ng-click='goBack($event)'><div tt='kk.review.takaisin'></div></div>
+                <div class="btn" data-ng-click='doDelete($event)'><div tt='kk.review.poista'></div></div>
+                <div class="btn" data-ng-click='doCopy($event)'><div tt='kk.review.kopioi'></div></div>
+                <div class="btn" data-ng-click='doMoveToBeSubPart($event)'><div tt='kk.review.siirra.osaksi'></div></div>
+                <div class="btn" data-ng-click='doAddParallel($event)'><div tt='kk.review.lisaa.rinnakkainen'></div></div>
             </div>
         </div>
     </div>
@@ -28,6 +28,7 @@
         </div>
     </div>
 
+<!--
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
@@ -35,13 +36,15 @@
             </div>
         </div>
     </div>
+-->
 
     <tabset>
-        <tab ng-repeat="lang in model.languages" heading="{{lang.name}}">
-            <div ng-include="'partials/kk/review/reviewLanguage.html'"></div>
+        <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}">
+            <div data-ng-include="'partials/kk/review/reviewLanguage.html'"></div>
         </tab>
     </tabset>
 
+<!--
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
@@ -49,8 +52,16 @@
             </div>
         </div>
     </div>
+-->
 
     <hr>
-    <pre>{{model | json}}</pre>
+<div ng-click="model.collapse.model = !model.collapse.model">
+    <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
+</div>
+<pre collapse="model.collapse.model">
+{{ model | json }}
+</pre>
+
+
 
 </div>
