@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
@@ -9,6 +10,8 @@ import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 
@@ -19,23 +22,33 @@ import java.util.Map;
 /*
 * @author: Tuomas Katva 10/1/13
 */
-public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO,Hakukohde> {
+public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter<HakukohdeDTO,Hakukohde> {
 
+
+
+    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeRDTOToHakukohdeConverter.class);
     @Autowired
     private OIDService oidService;
 
     @Override
     public Hakukohde convert(HakukohdeDTO hakukohdeDTO) {
         Hakukohde hakukohde = new Hakukohde();
+        String newHakukohdeOid = null;
+        LOG.info("OIDSERVICE: {}", oidService);
+        try {
+            newHakukohdeOid = oidService.newOid(NodeClassCode.TEKN_5);
+            LOG.info("OID SERVICE NEW OID : {}",newHakukohdeOid);
+        }  catch (ExceptionMessage emm) {
+            LOG.warn("UNABLE TO GET OID : {}", emm.toString() );
+        }
+
 
         if (hakukohdeDTO.getOid() != null) {
+
             hakukohde.setOid(hakukohdeDTO.getOid());
         } else {
-            try {
-            hakukohde.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-            } catch (ExceptionMessage em) {
+            hakukohde.setOid(newHakukohdeOid);
 
-            }
         }
 
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
@@ -46,7 +59,6 @@ public class HakukohdeRDTOToHakukohdeConverter implements Converter<HakukohdeDTO
         }
 
         hakukohde.setHakukohdeKoodistoNimi(hakukohdeDTO.getHakukohdeKoodistoNimi());
-        hakukohde.setOid(hakukohdeDTO.getOid());
         hakukohde.setHakuaikaAlkuPvm(hakukohdeDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeDTO.getHakuaikaLoppuPvm());
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeDTO.getTila()));
