@@ -3,8 +3,8 @@
 /* Controllers */
 var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid']);
 
-app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService',
-    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService) {
+app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window',
+    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService, $window) {
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
         $scope.uiModel = {contactPerson: {}, ectsCoordinator: {}, env: cfg.env};
@@ -314,8 +314,13 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
         $scope.throwError = function(msg) {
             throw 'Tarjonta application error - ' + msg;
         };
+        
+        $scope.goBack = function() {
+        	$window.history.back();
+        };
 
         $scope.init(); //initialization
+        
 
 
     }]);
