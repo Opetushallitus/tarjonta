@@ -24,13 +24,9 @@
 
 var app = angular.module('app.kk.review.ctrl', []);
 
-app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', '$routeParams', 'LocalisationService',
-    function KKReviewController($scope, $location, tarjontaService, $routeParams, LocalisationService) {
-        // $scope.routeParams = $routeParams;
-
-        // org oid = koulutus.organisaatioOid
-        //
-
+app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', '$modal',
+    function KKReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, $modal) {
+        $log.info("KKReviewController()");
 
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
@@ -66,17 +62,48 @@ app.controller('KKReviewController', ['$scope', '$location', 'TarjontaService', 
         };
 
         // TODO respect my autoritai!
-        $scope.model.routeParams.id = "1.2.246.562.5.2013091015190138558153";
+        // $scope.model.routeParams.id = "1.2.246.562.5.2013091015190138558153";
 
-        $scope.search = function() {
-            console.info("search()");
+        $scope.doEdit = function(event, targetPart) {
+            $log.info("doEdit()...", event, targetPart);
+            $location.path("/kk/edit/load/" + targetPart + "/none/" + $scope.model.koulutus.oid + "/none");
+        };
 
-            tarjontaService.getKoulutus({oid: $scope.model.routeParams.id}, function(data) {
+        $scope.goBack = function(event) {
+            $log.info("goBack()...");
+        };
+
+        $scope.doDelete = function(event) {
+            $log.info("doDelete()...");
+        };
+
+        $scope.doCopy = function(event) {
+            $log.info("doCopy()...");
+        };
+
+        $scope.doMoveToBeSubPart = function(event) {
+            $log.info("doMoveToBeSubPart()...");
+        };
+
+        $scope.doAddParallel = function(event) {
+            $log.info("doAddParallel()...");
+        };
+
+
+
+
+        $scope.load = function(oid) {
+            $log.info("load()...");
+
+            if (!oid) {
+                oid = $scope.model.routeParams.id;
+            }
+
+            tarjontaService.getKoulutus({oid: oid}, function(data) {
                 $scope.model.koulutus = data;
-                $scope.model.koulutus.jatkoOpintoMahdollisuudet = {"fi": "suomeksi", "en": "english"};
-
+                $log.info("  load got: ", $scope.model.koulutus);
             });
         };
 
-        $scope.search();
+        $scope.load();
     }]);
