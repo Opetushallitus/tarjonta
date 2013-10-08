@@ -15,7 +15,23 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
         return filteredkoodis;
     };
 
+    var findKoodiWithArvo = function(koodi,koodis)  {
+
+        var foundKoodi;
+
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiArvo === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
+
+
+        return foundKoodi;
+    };
+
+
     var findKoodiWithUri = function(koodi,koodis)  {
+
 
         var foundKoodi;
 
@@ -40,7 +56,7 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
-            usearvocombo : "=",
+            isdisabled  : "=",
             parentkoodiuri : "=",
             prompt : "=",
             isalakoodi : "=",
@@ -49,15 +65,9 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
-            if ($scope.usearvocombo !== undefined) {
-                $scope.combotype = {
-                    value : "arvo"
-                };
-            } else {
-                $scope.combotype = {
-                    value : "nimi"
-                };
-            }
+
+
+
 
             if ($scope.isdependent) {
 
@@ -89,8 +99,11 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
                 var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                 koodisPromise.then(function(koodisParam){
                     $scope.koodis = koodisParam;
+
                 });
             }
+
+
 
             $scope.$watch('parentkoodiuri',function(){
                 $log.info('Parent koodi uri changed');
@@ -131,15 +144,17 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
 
             $scope.onKoodistoComboChange = function() {
                 if ($scope.onchangecallback !== undefined) {
-                    $log.info('Select koodiuri ');
+                    $log.info('Select koodiarvo ');
 
-                    $log.info($scope.koodiuri);
+                    $log.info($scope.koodiarvo);
 
-                    var koodi = findKoodiWithUri($scope.koodiuri,$scope.koodis);
+                    var koodi = findKoodiWithArvo($scope.koodiarvo,$scope.koodis);
 
                     $log.info('Found koodi : ', koodi);
 
                     $scope.onchangecallback(koodi);
+
+                    $scope.koodiuri = koodi.koodiUri;
 
                 } else {
                     $log.info('No onchangecallback defined');

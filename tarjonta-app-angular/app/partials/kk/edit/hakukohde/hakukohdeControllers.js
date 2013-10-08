@@ -19,23 +19,106 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','localisation','Hakukohde','config']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, Koodisto,Hakukohde, HakuService ,Config) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService ,Config) {
 
-    $scope.hakus = [];
+    var postinumero = undefined;
+
+    $scope.postinumeroarvo = {
+
+    };
+
+    var findKoodiWithArvo = function(koodi,koodis)  {
+
+
+        console.log('Trying to find with : ',koodi);
+        console.log('From :', koodis.length);
+        var foundKoodi;
+
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiArvo === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
+
+
+        return foundKoodi;
+    };
+
+    var findKoodiWithUri = function(koodi,koodis)  {
+
+
+        var foundKoodi;
+
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiUri === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
+
+
+        return foundKoodi;
+    };
+
 
     //Initialize model and arrays inside it
     $scope.model = new Hakukohde({
 
-        liitteidenToimitusosoite : {},
+        liitteidenToimitusosoite : {
+
+
+        },
         hakukelpoisuusvaatimusUris : [],
         hakukohdeKoulutusOids : [],
         opetuskielet : [],
         liitteet : [],
         valintakoes : []
     });
+
+    $scope.koodiuriPromise = $q.defer();
+
+    $scope.hakus = [];
+
+
+    $scope.orgOid = "1.2.246.562.10.61998115317";
+
+    //TODO: get locale from somewhere
+    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
+
+    koodistoPromise.then(function(koodisParam){
+      $scope.koodis = koodisParam;
+
+      if (postinumero !== undefined) {
+          console.log('Changing arvo : ', postinumero);
+          var koodi =  findKoodiWithUri(postinumero,$scope.koodis);
+          console.log('TO : ', koodi);
+          $scope.postinumeroarvo.arvo = koodi.koodiArvo;
+      }
+    });
+
+    $scope.onKoodistoComboChange = function() {
+       var koodi = findKoodiWithArvo($scope.postinumeroarvo.arvo,$scope.koodis);
+
+       $scope.model.liitteidenToimitusosoite.postinumero = koodi.koodiUri;
+       $scope.model.liitteidenToimitusosoite.postitoimipaikka = koodi.koodiNimi;
+
+    };
+
+    var orgPromise =  OrganisaatioService.byOid($scope.orgOid);
+    //When organisaatio is loaded set the liitteiden toimitusosoite on the model
+    orgPromise.then(function(data){
+        if (data.postiosoite !== undefined) {
+
+            console.log('GOT OSOITE:', data.postiosoite);
+            $scope.model.liitteidenToimitusosoite.osoiterivi1 = data.postiosoite.osoite;
+            $scope.model.liitteidenToimitusosoite.postinumero = data.postiosoite.postinumeroUri;
+            $scope.model.liitteidenToimitusosoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+            postinumero = data.postiosoite.postinumeroUri;
+        }
+    });
+
 
     $scope.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
@@ -44,7 +127,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     $scope.insert = function() {
-      $scope.model.$save();
+        console.log('Model : ', $scope.model);
+      //$scope.model.$save();
     };
 
     var hakuPromise = HakuService.getAllHakus();
