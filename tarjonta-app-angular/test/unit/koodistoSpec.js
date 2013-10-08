@@ -101,7 +101,7 @@ describe('Koodisto Component directive test', function() {
     }));
 
 
-    beforeEach(module('js/shared/directives/koodistoCombo.html'));
+    beforeEach(module('js/shared/directives/koodistoNimiCombo.html'));
 
     beforeEach(inject(function($compile,$rootScope){
 

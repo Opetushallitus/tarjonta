@@ -15,17 +15,32 @@ app.directive('koodistocombo',function(Koodisto,$log){
         return filteredkoodis;
     };
 
+    var findKoodiWithUri = function(koodi,koodis)  {
+
+       var foundKoodi;
+
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiUri === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
+
+
+        return foundKoodi;
+    };
+
     return {
 
         restrict:'E',
         replace:true,
-        templateUrl : "js/shared/directives/koodistoCombo.html",
+        templateUrl : "js/shared/directives/koodistoNimiCombo.html",
         scope: {
             koodistouri : "=",
             koodiuri : "=",
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
+            usearvocombo : "=",
             parentkoodiuri : "=",
             prompt : "=",
             isalakoodi : "=",
@@ -34,7 +49,19 @@ app.directive('koodistocombo',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
+            if ($scope.usearvocombo !== undefined) {
+                $scope.combotype = {
+                    value : "arvo"
+                };
+            } else {
+                $scope.combotype = {
+                    value : "nimi"
+                };
+            }
+
            if ($scope.isdependent) {
+
+
 
                if ($scope.parentkoodiuri !== undefined) {
 
@@ -108,7 +135,11 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                   $log.info($scope.koodiuri);
 
-                  $scope.onchangecallback($scope.koodiuri);
+                  var koodi = findKoodiWithUri($scope.koodiuri,$scope.koodis);
+
+                  $log.info('Found koodi : ', koodi);
+
+                  $scope.onchangecallback(koodi);
 
               } else {
                   $log.info('No onchangecallback defined');
