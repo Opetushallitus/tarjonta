@@ -96,6 +96,18 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
     	});
     }
 
+    /**
+     * Asettaa koulutuksen tai hakukohteen julkaisun tilan.
+     * @param type "koulutus" | "hakukohde"
+     * @param oid kohteen oid
+     * @param publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu 
+     * @return true, jos kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
+     */
+    dataFactory.togglePublished = function(type, oid, publish) {
+    	
+    	return true;
+    };
+
     dataFactory.insertKoulutus = function(json) {
         console.log("insertKoulutus");
         console.log(json);

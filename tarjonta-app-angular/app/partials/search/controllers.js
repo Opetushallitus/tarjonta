@@ -168,8 +168,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		canCreateKoulutus: false
     };
 
-    // taulukon renderöinti
-    
+    // taulukon renderöinti    
     function resultsToTable(results, props, prefix) {
 
     	var html = "";
@@ -203,7 +202,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			}
 
     			html = html
-    				+"<td>" + tulos.tilaNimi + "</td>"
+    				+"<td class=\"state\">" + tulos.tilaNimi + "</td>"
     				+"</tr>";
     		}
 
@@ -235,6 +234,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
     }
     
+    function updateTableRowState(prefix, oid, nstate) {
+    	var row = $("#searchResults tr["+prefix+"-oid='"+oid+"']");
+    	row.attr("tila", nstate);
+    	var em = $("td.state", row);
+    	em.text(LocalisationService.t("tarjonta.tila."+nstate));
+    }
+    
     function rowActions(prefix, oid, tila) {
     	var ret = [];
     	var tt = TarjontaService.getTilat()[tila];
@@ -264,7 +270,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
 					action: function(){
-						console.log("JULKAISE "+prefix+" / "+oid);
+						if (TarjontaService.togglePublished(prefix, oid, true)) {
+							updateTableRowState(prefix, oid, "JULKAISTU");
+						}
 					}
 				});
 			}
@@ -273,7 +281,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
 					action: function(){
-						console.log("PERUUTA "+prefix+" / "+oid);
+						if (TarjontaService.togglePublished(prefix, oid, false)) {
+							updateTableRowState(prefix, oid, "PERUTTU");
+						}
 					}
 				});
 			}
@@ -283,7 +293,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
 			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
 				action: function(){
-					console.log("POISTA "+prefix+" / "+oid);
+					console.log("TODO poista "+prefix+" / "+oid);
 				}
 			});
 		}
@@ -460,7 +470,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         
         if (data.tuloksia==0) {
     		// TODO näytä "ei tuloksia" tjsp..
-        	em.toggleClass("loading", false);    	
+        	em.toggleClass("loading", false);
+        	loadingService.afterOperation();
     	} else {
     		appendTableRow(0, em, prefix, data, cols, sn);
     	}
