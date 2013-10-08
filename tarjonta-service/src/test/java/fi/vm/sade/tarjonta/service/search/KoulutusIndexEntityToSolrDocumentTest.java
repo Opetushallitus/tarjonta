@@ -67,6 +67,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         stubKoodi(koodiService, KOULUTUSKOODI);
         stubKoodi(koodiService, POHJAKOULUTUSVAATIMUSKOODI);
         stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
+        stubKoodi(koodiService, "kausi_k");
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
         Whitebox.setInternalState(converter, "indexerDao", indexerDao);
@@ -130,7 +131,9 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
                         .getValue());
 
-        Assert.assertEquals("kausi_k#1",
+        System.out.println(doc);
+        
+        Assert.assertEquals("kausi_k#0",
                 doc.removeField(SolrFields.Koulutus.KAUSI_KOODI).getValue());
         Assert.assertEquals(KOULUTUSTYYPPIKOODI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI).getValue());
@@ -154,6 +157,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private KoodiType getKoodiType(String uri) {
         KoodiType kt = new KoodiType();
         kt.setKoodiArvo(uri);
+        kt.setKoodiUri(uri);
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.FI));
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.SV));
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.EN));

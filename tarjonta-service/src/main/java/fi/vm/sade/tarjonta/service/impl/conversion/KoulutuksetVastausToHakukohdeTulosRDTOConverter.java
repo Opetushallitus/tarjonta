@@ -34,10 +34,10 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 
 		ret.setOid(ht.getKomotoOid());
 		ret.setNimi(ht.getNimi());
-		ret.setKausiUri(ht.getKoulutuksenAlkamiskausiUri());
+		ret.setKausi(ht.getKoulutuksenAlkamiskausi().getNimi());
 		ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
 		if(ht.getKoulutuslaji()!=null) {
-		    ret.setKoulutusLaji(ht.getKoulutuslaji().getNimi());
+		    ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
 		}
 		ret.setTila(TarjontaTila.valueOf(ht.getTila()));
 

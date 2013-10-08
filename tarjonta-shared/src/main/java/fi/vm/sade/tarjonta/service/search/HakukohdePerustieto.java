@@ -16,7 +16,7 @@ public class HakukohdePerustieto implements Serializable
     private String koodistoNimi;
     private TarjontaTila tila;
     private Integer aloituspaikat;
-    private String koulutuksenAlkamiskausiUri;
+    private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisvuosi;
     private KoodistoKoodi hakutapakoodi;
     private String tarjoajaOid;
@@ -25,9 +25,16 @@ public class HakukohdePerustieto implements Serializable
     private Date hakuPaattymisPvm;
     private KoodistoKoodi koulutuslaji;
     private String hakutyyppiUri;
+    private String pohjakoulutusVaatimus; 
 
-    
-    
+    public String getPohjakoulutusVaatimus() {
+        return pohjakoulutusVaatimus;
+    }
+
+    public void setPohjakoulutusVaatimus(String pohjakoulutusVaatimus) {
+        this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
+    }
+
     public KoodistoKoodi getKoulutuslaji() {
         return koulutuslaji;
     }
@@ -113,12 +120,12 @@ public class HakukohdePerustieto implements Serializable
         this.aloituspaikat = value;
     }
 
-    public String getKoulutuksenAlkamiskausiUri() {
-        return koulutuksenAlkamiskausiUri;
+    public KoodistoKoodi getKoulutuksenAlkamiskausi() {
+        return koulutuksenAlkamiskausi;
     }
 
-    public void setKoulutuksenAlkamiskausiUri(String value) {
-        this.koulutuksenAlkamiskausiUri = value;
+    public void setKoulutuksenAlkamiskausiUri(KoodistoKoodi value) {
+        this.koulutuksenAlkamiskausi = value;
     }
 
     public Integer getKoulutuksenAlkamisvuosi() {

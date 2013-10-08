@@ -404,13 +404,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             KoulutuksetKysely kyselyTyyppi = new KoulutuksetKysely();
             kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKoulukses().get(0).getKoulutusOid());
             KoulutuksetVastaus vastausTyyppi = tarjontaSearchService.haeKoulutukset(kyselyTyyppi);
-            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausiUri(),
+            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausi().getUri(),
                     vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamisVuosi().toString());
         } else if (hakukohdeViewModel.getKomotoOids() != null && hakukohdeViewModel.getKomotoOids().size() > 0) {
             KoulutuksetKysely kyselyTyyppi = new KoulutuksetKysely();
             kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKomotoOids().get(0));
             KoulutuksetVastaus vastausTyyppi = tarjontaSearchService.haeKoulutukset(kyselyTyyppi);
-            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausiUri(),
+            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausi().getUri(),
                     vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamisVuosi().toString());
         } else {
             return new StringTuple(null, null);
@@ -529,7 +529,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         Set<String> koulutusAlkamiskaudes = new HashSet<String>();
         Set<Integer> koulutusAlkamisVuodes = new HashSet<Integer>();
         for (KoulutusPerustieto koulutusModel : koulutukses) {
-            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausiUri());
+            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
             koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
             koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
             pohjakoulutukses.add(koulutusModel.getPohjakoulutusVaatimus());
@@ -584,7 +584,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
             if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())
-                    && curKoulutus.getKoulutuksenAlkamiskausiUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
+                    && curKoulutus.getKoulutuksenAlkamiskausi().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
             }

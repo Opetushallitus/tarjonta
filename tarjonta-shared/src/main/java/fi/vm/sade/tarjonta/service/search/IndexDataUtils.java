@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
@@ -25,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,5 +228,42 @@ public class IndexDataUtils {
         Preconditions.checkArgument(nimi.getTeksti().size() > 0);
         return nimi;
     }
+   
+   public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
+       if (kausikoodi == null) {
+           System.out.println("kausikoodi is null?");
+           return;
+       }
+
+       KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
+
+       if (koodi != null) {
+           KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+           add(doc, KAUSI_FI, metadata.getNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+           add(doc, KAUSI_SV, metadata.getNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+           add(doc, KAUSI_EN, metadata.getNimi());
+           add(doc, KAUSI_KOODI,
+                   koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+       } else {
+           System.out.println("kausi koodi was null?");
+       }
+   }
+   
+   /**
+    * Add field if value is not null
+    * 
+    * @param doc
+    * @param nimifi
+    * @param string
+    */
+   private static void add(final SolrInputDocument doc, final String fieldName, final Object value) {
+       if (value != null) {
+           doc.addField(fieldName, value);
+       }
+   }
+
+
     
 }

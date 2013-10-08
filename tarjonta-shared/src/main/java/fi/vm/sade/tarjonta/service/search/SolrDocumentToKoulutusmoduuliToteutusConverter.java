@@ -23,6 +23,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIM
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.VUOSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
 
 import java.util.Map;
 
@@ -67,7 +70,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
         if (koulutusDoc.containsKey(KAUSI_KOODI)) {
-            koulutus.setKoulutuksenAlkamiskausiUri("" + koulutusDoc.getFieldValue(KAUSI_KOODI));
+            koulutus.setKoulutuksenAlkamiskausiUri(IndexDataUtils.createKoodistoKoodi(KAUSI_KOODI, KAUSI_FI, KAUSI_SV, KAUSI_EN, koulutusDoc));
         }
         if (koulutusDoc.containsKey(VUOSI_KOODI)) {
             koulutus.setKoulutuksenAlkamisVuosi(new Integer((String)koulutusDoc.getFieldValue(VUOSI_KOODI)));
