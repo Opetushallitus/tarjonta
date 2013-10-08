@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * JSON resource for Tarjonta Application.
@@ -94,6 +95,19 @@ public interface KoulutusResource {
     @Path("{oid}/kuva")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public void deleteKuva(@PathParam("oid") String oid);
+    
+    /**
+     * Päivittää koulutuksen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
+     * 
+     * @param oid Koulutuksen oid.
+     * @param tila Kohdetila.
+     * @return Tila, jossa koulutus on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
+     */
+    @POST
+    @Path("{oid}/tila")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public TarjontaTila updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
     
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.

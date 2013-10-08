@@ -1,17 +1,16 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.resources.dto.*;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import javax.annotation.Nullable;
+
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,22 +18,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.PathParam;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST API impl.
@@ -90,7 +107,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila.asDto(), count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.debug("  result={}", result);
         return result;
     }
@@ -104,27 +121,22 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     		String alkamisKausi,
     		Integer alkamisVuosi) {
 
-		try {
-			organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
-			hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
-			
-			HakukohteetKysely q = new HakukohteetKysely();
-			q.setNimi(searchTerms);
-			q.setKoulutuksenAlkamiskausi(alkamisKausi);
-			q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
-			q.getTarjoajaOids().addAll(organisationOids);
+		organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+		hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
+		
+		HakukohteetKysely q = new HakukohteetKysely();
+		q.setNimi(searchTerms);
+		q.setKoulutuksenAlkamiskausi(alkamisKausi);
+		q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+		q.getTarjoajaOids().addAll(organisationOids);
 
-			for (String s : hakukohdeTilas) {
-			    q.getTilat().add(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
-			}
-
-			HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
-			
-			return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
-		} catch (RuntimeException e) {
-			e.printStackTrace(System.err);
-			throw e;
+		for (String s : hakukohdeTilas) {
+		    q.getTilat().add(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
 		}
+
+		HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+		
+		return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
     // /hakukohde/OID
@@ -445,4 +457,16 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         cal.setTime(d);
         return cal.get(Calendar.YEAR);
     }
+
+	@Override
+	public TarjontaTila updateTila(String oid, TarjontaTila tila) {
+		Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
+    	Preconditions.checkArgument(hk!=null, "Hakukohdetta ei löytynyt: %s", oid);
+    	if (!hk.getTila().acceptsTransitionTo(tila)) {
+    		return hk.getTila();
+    	}
+    	hk.setTila(tila);
+    	hakukohdeDAO.update(hk);
+    	return tila;
+	}
 }
