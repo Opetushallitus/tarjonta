@@ -246,6 +246,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
             Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
 
+            LOG.debug("CREATEHAKUKOHDE - Converted hakukohde with oid : {}", hakukohde.getOid());
+
             Haku haku = hakuDAO.findByOid(hakuOid);
             //TODO: Add hakukohde koulutusalkamisaika validation
             Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
@@ -266,6 +268,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             }
 
             hakukohdeDAO.update(hakukohde);
+
+            LOG.debug("Created hakukohde : {}",hakukohde.getOid());
             solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
                 public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {

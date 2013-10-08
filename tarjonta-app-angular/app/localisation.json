@@ -676,4 +676,11 @@
   "locale" : "fi",
   "value" : "Takaisin",
   "api_VERSION" : 4
-} ]
+},
+{
+  "version" : 0,
+  "key" : "kk.hakukohde.haut",
+  "locale" : "fi",
+  "value" : "Haut",
+  "api_VERSION" : 4
+}]
