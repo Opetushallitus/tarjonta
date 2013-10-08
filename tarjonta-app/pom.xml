@@ -248,9 +248,9 @@
             <artifactId>vaadin-theme-oph</artifactId>
             <version>${vaadin.theme.version}</version>
             <type>jar</type>
-        </dependency>    
-        <dependency> 
-            <groupId>org.springframework</groupId> 
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
     </dependencies>
@@ -324,8 +324,8 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>../tarjonta-app-angular/app/</directory>
-                            <targetPath>kk</targetPath>
+                            <directory>../tarjonta-app-angular/app</directory>
+                            <targetPath>/</targetPath>
                         </resource>
                     </webResources>
                 </configuration>
