@@ -66,7 +66,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
 
-        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).leftJoin(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri));
+        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).leftJoin(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri, komoto.pohjakoulutusvaatimus));
     }
 
     @Override

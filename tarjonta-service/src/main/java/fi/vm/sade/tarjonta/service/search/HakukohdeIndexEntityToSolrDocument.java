@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,8 +71,13 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         Preconditions.checkNotNull(hakukohde);
         List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
         final SolrInputDocument hakukohdeDoc = new SolrInputDocument();
+        if(hakukohde.getOid()==null){
+            logger.warn("There is a hakukohde without oid???" + hakukohde.toString());
+            return Collections.EMPTY_LIST;
+        }
+        
         add(hakukohdeDoc, OID, hakukohde.getOid());
-        addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHakukausiUri());
+        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHakukausiUri(), koodiService);
         add(hakukohdeDoc, VUOSI_KOODI, hakukohde.getHakukausiVuosi());
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHakutapaUri());
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
@@ -84,6 +90,8 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
+        
+        addPohjakoulutusvaatimus(hakukohdeDoc, koulutuses);
         add(hakukohdeDoc, HAKUTYYPPI_URI, hakukohde.getHakutyyppiUri());
 
         docs.add(hakukohdeDoc);
@@ -104,6 +112,17 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
         
         return docs;
+    }
+
+    private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc,
+            List<KoulutusIndexEntity> koulutuses) {
+        if (koulutuses == null) {
+            return;
+        }
+        for (KoulutusIndexEntity komoto : koulutuses) {
+            add(hakukohdeDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
+            return;
+        }
     }
 
     private List<HakuAikaIndexEntity> getHakuajat(Long hakuId) {
@@ -173,24 +192,6 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
     }
 
-    private void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi) {
-        if (kausikoodi == null) {
-            return;
-        }
-
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
-
-        if (koodi != null) {
-            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-            add(doc, KAUSI_FI, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-            add(doc, KAUSI_SV, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-            add(doc, KAUSI_EN, metadata.getNimi());
-            add(doc, KAUSI_KOODI,
-                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
-        }
-    }
 
     private void addKoulutuslajit(SolrInputDocument doc, List<KoulutusIndexEntity> koulutuses) {
         if (koulutuses == null || koulutuses.size()==0) {

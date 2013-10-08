@@ -60,7 +60,7 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi);
-                    r.koulutusLaji = localize(r.koulutusLaji);
+                    r.koulutuslaji = localize(r.koulutuslaji);
                     r.hakutapa = localize(r.hakutapa);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
@@ -88,6 +88,7 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
+                    r.koulutuslaji = localize(r.koulutuslaji);
                 }
                 t.tulokset.sort(compareByName);
             }

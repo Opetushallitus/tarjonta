@@ -157,7 +157,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     private String getHakukohdeAjankohtaStr() {
-        return I18N.getMessage(selectedHakukohde.getKoulutuksenAlkamiskausiUri()) 
+        return I18N.getMessage(selectedHakukohde.getKoulutuksenAlkamiskausi().getUri()) 
                 +  " " + selectedHakukohde.getKoulutuksenAlkamisvuosi();
     }
 

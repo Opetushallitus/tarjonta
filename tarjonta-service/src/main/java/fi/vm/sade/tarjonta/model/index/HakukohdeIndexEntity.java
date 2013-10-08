@@ -125,4 +125,19 @@ public class HakukohdeIndexEntity {
         return hakutyyppiUri;
     }
 
+    @Override
+    public String toString() {
+        return "HakukohdeIndexEntity [id=" + id + ", oid=" + oid
+                + ", hakukausiUri=" + hakukausiUri + ", hakukausiVuosi="
+                + hakukausiVuosi + ", hakutapaUri=" + hakutapaUri
+                + ", aloituspaikatLkm=" + aloituspaikatLkm + ", tila=" + tila
+                + ", hakukohdeNimi=" + hakukohdeNimi + ", hakuId=" + hakuId
+                + ", hakuOid=" + hakuOid + ", hakutyyppiUri=" + hakutyyppiUri
+                + ", alkamisPvm=" + alkamisPvm + ", paattymisPvm="
+                + paattymisPvm + "]";
+    }
+    
+    
+    
+
 }
