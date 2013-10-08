@@ -41,6 +41,7 @@ angular.module('app',
             'TarjontaCache',
             'Tarjonta',
             'KoodistoCombo',
+            'KoodistoArvoCombo',
             'Hakukohde',
             'KoodistoMultiSelect',
             'angularTreeview'

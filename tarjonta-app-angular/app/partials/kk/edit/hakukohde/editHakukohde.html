@@ -54,6 +54,29 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 label-right"><div tt="kk.hakukohde.liitteidentoimitusosoite"></div></div>
+            <div class="span10">
+                <label class="radio">
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                      Käytetään oletuksena koulutuksen järjetävän organisaation postiosoitetta
+                </label>  <br/>
+                <label class="radio">
+                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                    Käytetään muuta osoitetta
+                </label>
+                <address>
+                    <input type="text" placeholder="Osoite" data-ng-model="model.liitteidenToimitusosoite.osoiterivi1" required />   <br/>
+
+
+                    <koodistoarvocombo onchangecallback="postinumeroCallback" prompt="'Valitse koodi'" koodistouri="'posti'" locale="'FI'" koodiuri="model.liitteidenToimitusosoite.postinumero"></koodistoarvocombo>
+                    <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.liitteidenToimitusosoite.postitoimipaikka" required />
+                </address>
+            </div>
+        </div>
+    </div>
+
 
 
 
