@@ -40,6 +40,7 @@ public class KorkeakouluDTO extends ToteutusDTO {
     private UiMetaDTO teemas;
     private UiDTO opintojenLaajuus;
     private Date koulutuksenAlkamisPvm;
+    private UiMetaDTO ammattinimikkeet;
 
     public KorkeakouluDTO() {
     }
@@ -48,6 +49,9 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the koulutusohjelma
      */
     public UiMetaDTO getKoulutusohjelma() {
+        if (koulutusohjelma == null) {
+            koulutusohjelma = new UiMetaDTO();
+        }
         return koulutusohjelma;
     }
 
@@ -76,6 +80,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the opetuskielis
      */
     public UiMetaDTO getOpetuskielis() {
+        if (opetuskielis == null) {
+            opetuskielis = new UiMetaDTO();
+        }
+
         return opetuskielis;
     }
 
@@ -90,6 +98,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the opetusmuodos
      */
     public UiMetaDTO getOpetusmuodos() {
+        if (opetusmuodos == null) {
+            opetusmuodos = new UiMetaDTO();
+        }
+
         return opetusmuodos;
     }
 
@@ -104,6 +116,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the pohjakoulutusvaatimukset
      */
     public UiMetaDTO getPohjakoulutusvaatimukset() {
+        if (pohjakoulutusvaatimukset == null) {
+            pohjakoulutusvaatimukset = new UiMetaDTO();
+        }
+
         return pohjakoulutusvaatimukset;
     }
 
@@ -118,6 +134,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the teemas
      */
     public UiMetaDTO getTeemas() {
+        if (teemas == null) {
+            teemas = new UiMetaDTO();
+        }
+
         return teemas;
     }
 
@@ -182,5 +202,19 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setSuunniteltuKesto(SuunniteltuKestoDTO suunniteltuKesto) {
         this.suunniteltuKesto = suunniteltuKesto;
+    }
+
+    /**
+     * @return the ammattinimikkeet
+     */
+    public UiMetaDTO getAmmattinimikkeet() {
+        return ammattinimikkeet;
+    }
+
+    /**
+     * @param ammattinimikkeet the ammattinimikkeet to set
+     */
+    public void setAmmattinimikkeet(UiMetaDTO ammattinimikkeet) {
+        this.ammattinimikkeet = ammattinimikkeet;
     }
 }

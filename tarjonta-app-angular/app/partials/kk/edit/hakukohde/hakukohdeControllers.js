@@ -1,6 +1,23 @@
+/*
+ * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ */
+
+
 'use strict';
 
 /* Controllers */
+
 
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','localisation','Hakukohde','config']);
 
@@ -9,120 +26,22 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.hakus = [];
 
+    //Initialize model and arrays inside it
     $scope.model = new Hakukohde({
-        "modified": 1380793148232,
-        "modifiedBy": "1.2.222.222.24.00000000001",
 
-        "version": 4,
-        "aloituspaikatLkm": 221,
-        "tila": "VALMIS",
-        "hakukohdeNimi": {
-            "kieli_sv": "Grundexamen inom datateknik och datakommunikationsteknik, gr",
-            "kieli_fi": "Tieto- ja tietoliikennetekniikan perustutkinto, pk"
-        },
-        "hakuOid": "1.2.246.562.5.2013080813081926341927",
-        "valintakoes": [
-            {
-                "modified": 1380795206387,
-                "modifiedBy": "1.2.246.562.24.00000000001",
-                "oid": "146761",
-                "version": 0,
-                "kuvaus": {
-                    "kieli_fi#1": "<p>TÄMÄ ON PIÄSYKOE</p>"
-                },
-                "tyyppiUri": "valintakokeentyyppi_1#1",
-                "lisanaytot": {},
-                "valintakoeAjankohtas": [
-                    {
-                        "oid": "146765",
-                        "version": 0,
-                        "lisatiedot": "lisää tietoa",
-                        "osoite": {
-                            "version": 0,
-                            "osoiterivi1": "Tietie 12",
-                            "postinumero": "posti_00550",
-                            "postitoimipaikka": "HELSINKI",
-                            "api_VERSION": 4
-                        },
-                        "alkaa": 1394536425447,
-                        "loppuu": 1396174425447,
-                        "api_VERSION": 4
-                    }
-                ],
-                "valintakoePisterajas": [],
-                "api_VERSION": 4
-            }
-        ],
-        "tarjoajaOid": "1.2.246.562.10.61998115317",
-        "tarjoajaNimi": {
-            "kieli_fi": "Vantaan ammattiopisto Varia, Ojahaantien toimipiste"
-        },
-        "hakukohdeKoulutusOids": [
-            "1.2.246.562.5.286558044010",
-            "1.2.246.562.5.43911551919"
-        ],
-        "valintaperustekuvausKoodiUri": "valintaperustekuvausryhma_2#1",
-        "hakukohdeKoodistoNimi": "Tieto- ja tietoliikennetekniikan perustutkinto, pk, Kevät 2014, valmis",
-        "lisatiedot": {},
-        "sahkoinenToimitusOsoite": "",
-        "kaytetaanHaunPaattymisenAikaa": false,
-        "alinHyvaksyttavaKeskiarvo": 0,
-        "hakuaikaAlkuPvm": 1406809443271,
-        "hakuaikaLoppuPvm": 1409487843271,
-        "valintojenAloituspaikatLkm": 60,
-        "alinValintaPistemaara": 0,
-        "edellisenVuodenHakijatLkm": 0,
-        "hakukohdeNimiUri": "hakukohteet_139#1",
-        "liitteidenToimitusosoite": {
-            "version": 0,
-            "osoiterivi1": "Ojahaantie 5",
-            "postinumero": "posti_01600",
-            "postitoimipaikka": "VANTAA",
-            "api_VERSION": 4
-        },
-        "ylinValintapistemaara": 0,
-        "liitteet": [
-            {
-                "modified": 1380796460515,
-                "modifiedBy": "1.2.246.562.24.00000000001",
-                "oid": "146766",
-                "version": 0,
-                "erapaiva": 1381487649880,
-                "kuvaus": {
-                    "kieli_fi#1": "<p>TAMA ON LIITE</p>"
-                },
-                "liitteenTyyppiUri": "liitetyypitamm_1#1",
-                "liitteenTyyppiKoodistonNimi": "Urheilijan lisätietolomake",
-                "toimitusosoite": {
-                    "version": 0,
-                    "osoiterivi1": "Ojahaantie 5",
-                    "postinumero": "posti_01600",
-                    "postitoimipaikka": "VANTAA",
-                    "api_VERSION": 4
-                },
-                "api_VERSION": 4
-            }
-        ],
-        "kaytetaanHakukohdekohtaistaHakuaikaa": true,
-        "hakukelpoisuusvaatimusUris": [
-            "hakukelpoisuusvaatimusta_1#1"
-        ],
-        "hakukelpoisuusvaatimus": {
-            "kieli_sv": "Om du har slutfört den grundläggande utbildningens lärokurs eller motsvarande lärokurs kan du söka till grundskolebaserade yrkesinriktade examina. Om du har avlagt din examen utomlands eller avbrutit läroplikten kan du söka till grundskolebaserad yrkesutbildning genom ansökan enligt prövning. Utbildningsanordnaren bedömer då skilt ditt utbildningsbehov och förutsättningar att klara av studierna.\nOm du har slutfört gymnasiets lärokurs eller avlagt studentexamen kan du inte söka till grundskolebaserad yrkesutbildning. Om du har avlagt en yrkesinriktad grundexamen, någon annan yrkesexamen eller en högskoleexamen kan du inte söka till yrkesutbildning i andra stadiets gemensamma ansökan.",
-            "kieli_fi": "Perusopetuksen tai vastaavan aiemman oppimäärän suorittaneet voivat hakea peruskoulupohjaiseen ammatilliseen perustutkintoon. Jos hakijalla on ulkomailla suoritettu tutkinto tai hänen oppivelvollisuutensa on keskeytynyt, hän voi hakea peruskoulupohjaiseen ammatilliseen koulutukseen harkintaan perustuvan haun kautta. Tällöin koulutuksen järjestäjä arvioi erikseen hakijan koulutustarpeen ja edellytykset suoriutua opinnoista. \nLukion tai ylioppilastutkinnon suorittaneet eivät voi hakea peruskoulupohjaiseen ammatilliseen koulutukseen. Ammatillisen perustutkinnon, muun ammatillisen tutkinnon tai korkeakoulututkinnon suorittaneet eivät voi hakea ammatilliseen koulutukseen toisen asteen yhteishaussa."
-        },
-        "valintaperustekuvaus": {
-            "kieli_fi#1": "<p>Näin pisteet lasketaan, kun haet peruskoulun jälkeen:</p><ul><li><strong>Saat 8 pistettä, jos sinulla ei ole opiskelupaikkaa ammatilliseen perustutkintoon johtavassa koulutuksessa tai lukiokoulutuksessa MUUTETTU<br /></strong></li></ul><p><strong> </strong></p><ul><li><strong>Saat 6 pistettä, jos olet suorittanut perusopetuksen oppimäärän samana vuonna kun haet</strong></li></ul><p><strong> </strong></p><ul><li><strong>Saat 6 pistettä, jos olet suorittanut jonkun seuraavista: </strong><ul><li>kymppiluokan (vähintään 1100 tunnin laajuisen lisäopetuksen)</li><li>ammattistartin (vähintään 20 opintoviikon laajuisen ammatilliseen peruskoulutukseen ohjaavan ja valmistavan koulutuksen)<strong> </strong></li><li>valmentavan ja kuntouttavan opetuksen ja ohjauksen</li><li>maahanmuuttajien ammatilliseen peruskoulutukseen valmistavan koulutuksen</li><li>kotitalousopetuksen / talouskoulun (ei ammatillisena peruskoulutuksena suoritetun)</li><li>kansanopiston vähintään lukuvuoden mittaisen linjan.</li></ul></li></ul><p><strong> </strong></p><ul><li><strong>Saat 2 pistettä ammatillisesta koulutuksesta, jonka olet hakiessasi merkinnyt 1. hakutoiveeksi.</strong></li></ul><p> </p><ul><li><strong>Saat 2 pistettä, jos hakemaasi ammatilliseen koulutukseen ensisijaisesti hakeneista alle 30 prosenttia on samaa sukupuolta kuin sinä.</strong></li></ul><p><strong>Koulumenestys</strong></p><ul><li><strong>Saat 1–16 pistettä yleisestä koulumenestyksestä keskiarvon perusteella. </strong>Keskiarvo lasketaan seuraavista oppiaineista<strong>: </strong>äidinkieli ja kirjallisuus, toinen kotimainen kieli, vieraat kielet, uskonto tai elämänkatsomustieto, historia, yhteiskuntaoppi, matematiikka, fysiikka, kemia, biologia, maantieto, liikunta, terveystieto, musiikki, kuvataide, käsityö, kotitalous.</li></ul><p> </p><table border=\"1\" cellspacing=\"0\" cellpadding=\"2\"><tbody><tr><td valign=\"top\" width=\"381\"><p>Keskiarvo</p></td><td valign=\"top\" width=\"380\"><p>pisteitä</p></td></tr><tr><td valign=\"top\" width=\"381\"><p>5,50–5,74     </p></td><td valign=\"top\" width=\"380\"><p>1</p></td></tr><tr><td valign=\"top\" width=\"381\"><p>5,75<strong>–</strong>5,99      </p></td><td valign=\"top\" width=\"380\"><p>2</p></td></tr><tr><td width=\"381\"><p>6,00<strong>–</strong>6,24                           </p></td><td width=\"380\"><p>3</p></td></tr><tr><td width=\"381\"><p>6,25<strong>–</strong>6,49                           </p></td><td width=\"380\"><p>4</p></td></tr><tr><td width=\"381\"><p>6,50<strong>–</strong>6,74                           </p></td><td width=\"380\"><p>5</p></td></tr><tr><td width=\"381\"><p>6,75<strong>–</strong>6,99                           </p></td><td width=\"380\"><p>6</p></td></tr><tr><td width=\"381\"><p>7,00<strong>–</strong>7,24                           </p></td><td width=\"380\"><p>7</p></td></tr><tr><td width=\"381\"><p>7,25<strong>–</strong>7,49                           </p></td><td width=\"380\"><p>8</p></td></tr><tr><td width=\"381\"><p>7,50<strong>–</strong>7,74                           </p></td><td width=\"380\"><p>9</p></td></tr><tr><td width=\"381\"><p>7,75<strong>–</strong>7,99                           </p></td><td width=\"380\"><p>10</p></td></tr><tr><td width=\"381\"><p>8,00<strong>–</strong>8,24                           </p></td><td width=\"380\"><p>11</p></td></tr><tr><td width=\"381\"><p>8,25<strong>–</strong>8,49                           </p></td><td width=\"380\"><p>12</p></td></tr><tr><td width=\"381\"><p>8,50<strong>–</strong>8,74                           </p></td><td width=\"380\"><p>13</p></td></tr><tr><td width=\"381\"><p>8,75<strong>–</strong>8,99                           </p></td><td width=\"380\"><p>14</p></td></tr><tr><td width=\"381\"><p>9,00<strong>–</strong>9,24                           </p></td><td width=\"380\"><p>15</p></td></tr><tr><td width=\"381\"><p>9,25<strong>–</strong>10,00                         </p></td><td width=\"380\"><p>16</p></td></tr></tbody></table><p> </p><p><strong>Pisteet lasketaan peruskoulun päättötodistuksesta</strong>. Korotetut arvosanat otetaan huomioon, jos sinulla on korotuksesta todistus. Pisteitä saat myös yhteisiin oppiaineisiin kuuluvista valinnaisaineista, jotka arvostellaan numeroin ja joiden oppimäärän laajuus on vähintään kaksi vuosiviikkotuntia. Tämän lisäksi valinnaisaine pitää olla suoritettu vuosiluokkien 7—9 aikana.  Jos sinulla on arvosana useammasta samaan yhteiseen oppiaineeseen kuuluvasta vähintään kahden vuosiviikkotunnin valinnaisaineesta, lasketaan niiden keskiarvo. Keskiarvo pyöristetään lähimpään kokonaislukuun.</p><p><strong>Esimerkki</strong>: Saat pisteitä valinnaisaineesta, jos olet 8. luokalla opiskellut kotitaloutta kaksi tuntia viikossa valinnaisena aineena.</p><ul><li><strong>Saat 1–8 pistettä painotettavien arvosanojen keskiarvosta. </strong>Kaikilla koulutusaloilla huomioidaan perusopetuksen päättötodistuksen arvosanat liikunnassa, kuvataiteessa, käsityössä, kotitaloudessa ja musiikissa. Kolmesta parhaasta aineesta lasketaan niiden keskiarvo.</li></ul><p><strong> </strong></p><table border=\"1\" cellspacing=\"0\" cellpadding=\"2\"><tbody><tr><td valign=\"top\" width=\"407\"><p>Keskiarvo</p></td><td valign=\"top\" width=\"407\"><p>pisteitä</p></td></tr><tr><td width=\"407\"><p>6,00–6,49                           </p></td><td width=\"407\"><p>1</p></td></tr><tr><td width=\"407\"><p>6,50–6,99                           </p></td><td width=\"407\"><p>2</p></td></tr><tr><td width=\"407\"><p>7,00–7,49                           </p></td><td width=\"407\"><p>3</p></td></tr><tr><td width=\"407\"><p>7,50–7,99                           </p></td><td width=\"407\"><p>4</p></td></tr><tr><td width=\"407\"><p>8,00–8,49                           </p></td><td width=\"407\"><p>5</p></td></tr><tr><td width=\"407\"><p>8,50–8,99                           </p></td><td width=\"407\"><p>6</p></td></tr><tr><td width=\"407\"><p>9,00–9,49                           </p></td><td width=\"407\"><p>7</p></td></tr><tr><td width=\"407\"><p>9,50–10,00                         </p></td><td width=\"407\"><p>8</p></td></tr></tbody></table><p> </p><p>Jos olet suorittanut perusopetuksen oppimäärän aikuiskoulutuksena, voidaan ottaa huomioon perusopetuksen erotodistuksen arvosanat seuraavissa aineissa: liikunta, kuvataide, käsityö, kotitalous ja musiikki, jollei näitä arvosanoja ole päättötodistuksessa.</p><p> </p><p><strong>Työkokemus</strong></p><ul><li><strong>Saat 1–3 pistettä työkokemuksesta tai osallistumisesta työpajatoimintaan tai työharjoitteluun / työkokeiluun</strong>.</li></ul><p><strong> </strong></p><p>Työkokemukseksi hyväksytään työsuhteessa saatu työkokemus, jonka olet hankkinut peruskoulun jälkeen tai täytettyäsi 16 vuotta. Osa-aikatyössä 150 tunnin mittainen saman työnantajan palveluksessa tehty työ vastaa yhden kuukauden työkokemusta.</p><p> </p><p>Työharjoittelu / työkokeilu tarkoittaa harjoittelua, johon työ- ja elinkeinotoimisto on sinut ohjannut.</p><p> </p><p>Oppisopimuskoulutuksesta luetaan työkokemukseksi todistuksissa mainittu työkokemuksen määrä.</p><p> </p><p>Hakemuksessa otetaan huomioon työkokemus, joka on saatu ennen hakuajan päättymistä.</p><p>Jos sinulla esimerkiksi on työsopimus ajalle 1.6.-31.12.2013 ja hakuaika on 25.9.-4.10. , niin työkokemukseksi lasketaan ajanjakso 1.6. -4.10. Saat työkokemuksesta yhden pisteen.</p><p> </p><table border=\"1\" cellspacing=\"0\" cellpadding=\"2\"><tbody><tr><td valign=\"top\" width=\"407\"><p>Työkokemuksen pituus</p></td><td valign=\"top\" width=\"407\"><p>pisteitä</p></td></tr><tr><td width=\"407\"><p>3 kk–alle 6 kk                     </p></td><td width=\"407\"><p>1</p></td></tr><tr><td width=\"407\"><p>6 kk–alle 12 kk                   </p></td><td width=\"407\"><p>2</p></td></tr><tr><td width=\"407\"><p>12 kk–                                </p></td><td width=\"407\"><p>3</p></td></tr></tbody></table><p> </p><p><strong><br />Lisäpisteet urheilullisista saavutuksista</strong></p><p> </p><ul><li><strong>Voit saada 1–3 lisäpistettä urheilullisista saavutuksista, jos haet urheilijalle tarkoitettuun ammatilliseen koulutukseen. </strong></li></ul><p><strong> </strong></p><p><strong>Pääsy- ja soveltuvuuskokeet</strong></p><p><strong> </strong></p><p>Kaikki hakijat saavat kutsun kokeisiin, jos koulutuksessa järjestetään pääsy- ja soveltuvuuskoe.  Koe voi muodostua eri osista. Oppilaitokset tiedottavat kokeen eri vaiheista.  </p><p>Jos olet hakenut useaan koulutukseen, sinut kutsutaan kokeeseen ylimpään hakutoiveeseen, jossa on koe. Koetuloksesi huomioidaan kuitenkin kaikissa samaan valintakoeryhmään kuuluvissa koulutuksissa.</p><p>Valintakoeryhmä tarkoittaa sitä, että monella oppilaitoksella on yksi valintakoe. Silloin yksi koe riittää kaikkiin saman ryhmän koulutuksiin.</p><p> </p><ul><li><strong>Voit saada 1–10 pistettä hyväksytystä pääsy- ja soveltuvuuskokeesta.</strong> Hylätyn pääsykoetuloksen saanutta hakijaa ei voida valita koulutukseen.</li></ul><p> </p><ul><li>Huomaathan, että kaikissa koulutuksissa ei ole pääsy- ja soveltuvuuskokeita. Tiedon siitä, mihin koulutuksiin on kokeita, saat koulutuskuvauksista.</li></ul><p> </p><ul><li>Pääsykoetulosta käytetään kaikissa vastaavissa koulutuksissa, joihin olet hakenut. Jos olet hakenut useille eri aloille, on mahdollista, että saat kutsun useisiin kokeisiin.</li></ul><p><strong>Tasapistetilanne</strong></p><p>Saman pistemäärän saaneet hakijat asetetaan järjestykseen seuraavien perusteiden mukaisesti:</p><ol><li>hakutoivejärjestys</li><li>mahdollinen  pääsy- tai soveltuvuuskokeesta saatava pistemäärä</li><li>yleinen koulumenestys</li><li>painotettavat arvosanat.</li></ol><p>Tämän jälkeen jos pistemäärä on edelleen sama, opiskelijat valitaan satunnaisjärjestyksessä.</p><p> </p><p> </p><p><strong>Kielikokeet</strong></p><p>Saat kutsun kielikokeisiin, jos äidinkielesi on muu kuin opetuskieli eikä kielitaitoasi ole voitu todentaa muilla tavoin. Kokeilla osoitat, että sinulla on riittävät valmiudet opetuskielen suulliseen ja kirjalliseen käyttämiseen. Kokeet ovat kaikille hakijoille samat.</p><p>Jos sinulla on jokin alla mainituista todistuksista, sinua ei kutsuta kielikokeeseen.</p><p><strong> Opetuskielen taitoasi pidetään riittävänä, jos</strong></p><ul><li>sinulla on perusopetuksen päättötodistus, joka on suoritettu vastaanottavan oppilaitoksen opetuskielellä (suomi, ruotsi tai saame).</li><li>olet suorittanut vähintään arvosanalla 7 perusopetuksessa toisen kotimaisen A-kielen oppimäärän. Kielen on oltava vastaanottavan oppilaitoksen opetuskieli.</li><li>olet suorittanut vähintään arvosanalla 7 perusopetuksen suomi tai ruotsi toisena kielenä oppimäärän. Kielen on oltava<br />vastaanottavan oppilaitoksen opetuskieli.</li><li>olet suorittanut lukion oppimäärän tai ylioppilastutkinnon vastaanottavan oppilaitoksen opetuskielellä.</li><li>olet suorittanut lukiokoulutuksen koko oppimäärän jossakin seuraavista äidinkieli ja kirjallisuus-oppiaineen oppimääristä: suomi äidinkielenä, ruotsi äidinkielenä, saame äidinkielenä, suomi toisena kielenä, ruotsi toisena kielenä, suomi saamenkielisille, suomi viittomakielisille. Kielen on oltava vastaanottavan oppilaitoksen opetuskieli.</li><li>olet suorittanut lukiokoulutuksen toisen kotimaisen kielen koko oppimäärän. Kielen on oltava vastaanottavan oppilaitoksen opetuskieli.</li><li>olet suorittanut yleisten kielitutkintojen suomen tai ruotsin kielen tutkinnon kaikki osakokeet vähintään taitotasolla 3. Tai olet suorittanut Valtionhallinnon kielitutkintojen suomen tai ruotsin kielen suullisen ja kirjallisen taidon tutkinnon vähintään taitotasolla tyydyttävä.</li></ul><p>Oppilaitos voi jättää hakijan valitsematta ammatilliseen peruskoulutukseen, jos hänellä ei ole valmiutta opetuskielen suulliseen ja kirjalliseen käyttämiseen sekä ymmärtämiseen.</p><p> </p><p><strong>Harkintaan perustuva valinta </strong></p><p>Oppilaitos voi ottaa opiskelijoita koulutuksiin harkinnan perusteella. Tällöin valinta tehdään valintapistemääristä riippumatta. Yhteen hakukohteeseen voidaan ottaa tällä tavoin enintään 30 prosenttia opiskelijoista. Harkintaan perustuvan valinnan syitä ovat:</p><ul><li>oppimisvaikeudet</li><li>sosiaaliset syyt</li><li>koulutodistusten puuttuminen tai todistusten vertailuvaikeudet.</li></ul><p> </p><p>Koulutustarpeesi ja edellytyksesi suoriutua opinnoista arvioidaan ja otetaan huomioon, kun valintapistemäärästä poiketaan.</p><p>Huomaathan, että aiempi joustava valinta -menettely ei ole enää käytössä.</p>",
-            "kieli_sv#1": "<p>Så här räknas dina poäng då du söker till utbildning efter grundskolan:</p><ul><li><strong>Du får 8 poäng om du inte har en studieplats som leder till yrkesinriktad grundexamen eller i gymnasieutbildning.</strong></li><li><strong>Du får 6 poäng om du går ut grundskolan under samma år som du söker till fortsatt studieplats.</strong></li><li><strong>Du får 6 poäng, om du har genomfört någon av de följande:</strong><ul><li>tionde klassen (påbyggnadsundervisning som består av minst 1100 timmar) &lt;strong&lt; strong=&quot;&quot;&gt;</li><li>yrkesstarten (orienterande och förberedande utbildning för grundläggande yrkesutbildning som omfattar minst 20 studieveckor) &lt;strong&lt; strong=&quot;&quot;&gt;</li><li>förberedande och rehabiliterande undervisning och handledning &lt;strong&lt; strong=&quot;&quot;&gt;</li><li>utbildning för invandrare som förbereder för grundläggande yrkesutbildning &lt;strong&lt; strong=&quot;&quot;&gt;</li><li>undervisning i huslig ekonomi/hushållsskolan (inte som grundläggande yrkesutbildning)&lt;strong&lt; strong=&quot;&quot;&gt;</li><li>minst ett år lång studielinje vid en folkhögskola. &lt;strong&lt; strong=&quot;&quot;&gt;</li><li>fungeras inte!</li></ul></li></ul><p><strong> </strong></p><ul><li><strong>Du får 2 poäng för yrkesutbildning som du angett som första önskemål i din ansökan. </strong></li></ul><p> </p><ul><li><strong>Du får 2 poäng om under 30 procent av de förstahandssökande till den yrkesutbildning du sökt till är av samma kön som du. </strong></li></ul><p><strong> </strong></p><p><strong>Skolframgång</strong></p><ul><li><strong>Du får 1-16 poäng för allmän skolframgång på basis av ditt medeltal. </strong>Medeltalet räknas på basis av följande läroämnen: modersmål och litteratur, det andra inhemska språket, främmande språk, religion eller livsåskådningskunskap, historia, samhällslära, matematik, fysik, kemi, biologi, geografi, gymnastik, hälsokunskap, musik, bildkonst, slöjd och huslig ekonomi.</li></ul><p> </p><table border=\"1\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td valign=\"top\" width=\"381\"><p>Medeltal</p></td><td valign=\"top\" width=\"380\"><p>poäng</p></td></tr><tr><td valign=\"top\" width=\"381\"><p>5,50—5,74     </p></td><td valign=\"top\" width=\"380\"><p>1</p></td></tr><tr><td valign=\"top\" width=\"381\"><p>5,75—5,99      </p></td><td valign=\"top\" width=\"380\"><p>2</p></td></tr><tr><td width=\"381\"><p>6,00—6,24                           </p></td><td width=\"380\"><p>3</p></td></tr><tr><td width=\"381\"><p>6,25—6,49                           </p></td><td width=\"380\"><p>4</p></td></tr><tr><td width=\"381\"><p>6,50—6,74                           </p></td><td width=\"380\"><p>5</p></td></tr><tr><td width=\"381\"><p>6,75—6,99                           </p></td><td width=\"380\"><p>6</p></td></tr><tr><td width=\"381\"><p>7,00—7,24                           </p></td><td width=\"380\"><p>7</p></td></tr><tr><td width=\"381\"><p>7,25—7,49                           </p></td><td width=\"380\"><p>8</p></td></tr><tr><td width=\"381\"><p>7,50—7,74                           </p></td><td width=\"380\"><p>9</p></td></tr><tr><td width=\"381\"><p>7,75—7,99                           </p></td><td width=\"380\"><p>10</p></td></tr><tr><td width=\"381\"><p>8,00—8,24                           </p></td><td width=\"380\"><p>11</p></td></tr><tr><td width=\"381\"><p>8,25—8,49                           </p></td><td width=\"380\"><p>12</p></td></tr><tr><td width=\"381\"><p>8,50—8,74                           </p></td><td width=\"380\"><p>13</p></td></tr><tr><td width=\"381\"><p>8,75—8,99                           </p></td><td width=\"380\"><p>14</p></td></tr><tr><td width=\"381\"><p>9,00—9,24                           </p></td><td width=\"380\"><p>15</p></td></tr><tr><td width=\"381\"><p>9,25—10,00                         </p></td><td width=\"380\"><p>16</p></td></tr></tbody></table><p> </p><p><strong>Du får poäng enligt grundskolans avgångsbetyg. </strong>Höjda vitsord beaktas ifall du har ett intyg över höjningen. Du får dessutom poäng för valbara ämnen som hör till något gemensamt ämne och vilka har bedömts med siffror och omfattar minst två årsveckotimmar. De valbara ämnena ska vara genomförda under årskurserna 7─9. Räkna ut ett medeltal ifall du har fått vitsord för flera valbara ämnen, vilka omfattar minst två årsveckotimmar och hör till samma gemensamma läroämne. Avrunda medeltalet till närmaste hela tal.</p><p><strong>Exempel: </strong>Om du i åttonde klassen har haft huslig ekonomi under två timmar i veckan som valbart ämne får du poäng.</p><ul><li><strong>Du får 1-8 poäng för medeltalet av betonade vitsord. </strong>Vitsorden i gymnastik, bildkonst, slöjd, huslig ekonomi och musik på avgångsbetyget för den grundläggande utbildningen beaktas inom alla utbildningsområden. För de tre bästa ämnen räknas medeltalet. &lt;strong&lt; strong=&quot;&quot;&gt;</li></ul><p><strong> </strong></p><table border=\"1\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td valign=\"top\" width=\"407\"><p>Medeltal</p></td><td valign=\"top\" width=\"407\"><p>poäng</p></td></tr><tr><td width=\"407\"><p>6,00—6,49                           </p></td><td width=\"407\"><p>1</p></td></tr><tr><td width=\"407\"><p>6,50—6,99                           </p></td><td width=\"407\"><p>2</p></td></tr><tr><td width=\"407\"><p>7,00—7,49                           </p></td><td width=\"407\"><p>3</p></td></tr><tr><td width=\"407\"><p>7,50—7,99                           </p></td><td width=\"407\"><p>4</p></td></tr><tr><td width=\"407\"><p>8,00—8,49                           </p></td><td width=\"407\"><p>5</p></td></tr><tr><td width=\"407\"><p>8,50—8,99                           </p></td><td width=\"407\"><p>6</p></td></tr><tr><td width=\"407\"><p>9,00—9,49                           </p></td><td width=\"407\"><p>7</p></td></tr><tr><td width=\"407\"><p>9,50—10,00                         </p></td><td width=\"407\"><p>8</p></td></tr></tbody></table><p> </p><p>Om du har fullgjort lärokursen för den grundläggande utbildningen som vuxenutbildning, kan vitsorden i följande ämnen på skiljebetyget för den grundläggande utbildningen beaktas, ifall de saknas på avgångsbetyget: gymnastik, bildkonst, slöjd, huslig ekonomi och musik.</p><p><strong>Arbetserfarenhet</strong></p><ul><li><strong>Du får 1-3 poäng för arbetserfarenhet eller för deltagande i ungdomsverkstad eller arbetspraktik/arbetsprövning.</strong></li></ul><p><strong> </strong></p><p>Som arbetserfarenhet godkänns arbetserfarenhet som grundar sig på ett arbetsavtal och vilken du skaffat efter grundskolan eller efter att du fyllt 16 år. Arbete på deltid omfattande 150 timmar hos samma arbetsgivare motsvarar en månads arbetserfarenhet.</p><p> </p><p>Arbetspraktik/arbetsprövning är sådan praktik som arbets- och näringsbyrån har handlett dig till.</p><p> </p><p>Om du genomfört arbetspraktik inom läroavtalsutbildning kan du ange den mängd som antecknats i intygen.</p><p> </p><p>I ansökan beaktas den arbetserfarenhet som du har fått före ansökningstiden utgår.</p><p>Om du exempelvis har ett arbetsavtal för tiden 1.6─31.12.2013 och ansökningstiden är 25.9─4.10 beaktas din arbetserfarenhet under tiden 1.6─4.10. Du får ett poäng för denna arbetserfarenhet.</p><table border=\"1\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td valign=\"top\" width=\"407\"><p>Arbetserfarenhetens längd</p></td><td valign=\"top\" width=\"407\"><p>poäng</p></td></tr><tr><td width=\"407\"><p>3 mån—under 6 mån                     </p></td><td width=\"407\"><p>1</p></td></tr><tr><td width=\"407\"><p>6 mån—under 12 mån                   </p></td><td width=\"407\"><p>2</p></td></tr><tr><td width=\"407\"><p>12 mån—                                </p></td><td width=\"407\"><p>3</p></td></tr></tbody></table><p> </p><p><strong>Tilläggspoäng för idrottsmeriter</strong></p><ul><li>Du kan få 1-3 tilläggspoäng för idrottsmeriter, om du söker till yrkesutbildning för idrottare.</li></ul><p><strong> </strong></p><p><strong>Inträdes- och lämplighetsprov</strong></p><p><strong> </strong></p><ul><li>Alla sökande får en kallelse till prov ifall det anordnas inträdes- och lämplighetsprov till utbildningen. Provet kan bestå av flera delar. Du får mera information om proven av läroanstalterna.   </li></ul><p>Om du har sökt till flera utbildningar kallas du till prov enligt ditt högsta ansökningsönskemål som anordnar prov. Ditt provresultat beaktas dock inom alla utbildningar som hör till samma provgrupp.</p><p>Med provgrupp avses att flera läroanstalter har samma inträdes- och lämplighetsprov. Då räcker det att du genomför ett prov för alla utbildningar som ingår i provgruppen.</p><p><strong>Du kan få 1-10 poäng för ett godkänt inträdes- och lämplighetsprov. Om du fått ett underkänt resultat kan du inte antas till utbildningen. </strong></p><ul><li>Märk att alla utbildningar inte anordnar inträdes- och lämplighetsprov. Du får information om utbildningar med prov i delen med beskrivningarna av utbildningarna.</li></ul><p> </p><ul><li>Inträdesprovsresultatet används för alla motsvarande utbildningar som du har sökt till. Du kan få flera kallelser till prov ifall du har sökt till flera olika branscher.</li></ul><p><strong>Sökande med samma antal poäng </strong></p><p>Sökande som fått samma antal poäng prioriteras enligt följande grunder:</p><ol><li>Enligt ansökningsönskemål</li><li>Enligt poäng för eventuellt inträdes- och lämplighetsprov</li><li>Enligt allmän skolframgång</li><li>Enligt betonade vitsord.</li></ol><p>Om det ännu efter detta finns sökande med samma antal poäng, antas de sökande i slumpmässig ordning.</p><p><strong>Språkprov</strong></p><p>Du kallas till ett språkprov om ditt modersmål är ett annat än undervisningsspråket och din språkkunskap inte kan intygas på annat sätt (se nedan). I provet visar du att du har tillräckliga färdigheter för att använda undervisningsspråket både muntligt och skriftligt. Alla sökande genomför ett likartat prov.</p><p>Om du har något av nedan nämnda betyg eller intyg kallas du inte till språkprov.</p><p><strong> Din kunskap i undervisningsspråket är tillräcklig om </strong></p><ul><li>du har ett avgångsbetyg från den grundläggande utbildningen, som slutförts på läroanstaltens undervisningsspråk (finska, svenska eller samiska)</li><li>du har avlagt lärokursen i det andra inhemska språket som A-språk med minst vitsordet 7 och detta språk är undervisningsspråket vid den mottagande läroanstalten</li><li>du har avlagt lärokursen i finska eller svenska som andra språk med minst vitsordet 7 och detta språk är undervisningsspråket vid den mottagande läroanstalten</li><li>du har slutfört gymnasiets lärokurs eller avlagt studentexamen på undervisningsspråket vid den mottagande läroanstalten</li><li>du har slutfört hela gymnasiets lärokurs i något av följande ämnen: lärokursen i modersmål och litteraturen med finska som modersmål, med svenska som modersmål, med samiska som modersmål, med finska som andra språk, med svenska som andra språk, med finska för samiskspråkiga, med finska för teckenspråkiga, och detta språk är undervisningsspråket vid den mottagande läroanstalten</li><li>du har slutfört hela gymnasiets lärokurs i det andra inhemska språket, och detta språk är undervisningsspråket vid den mottagande läroanstalten</li><li>du har avlagt samtliga delprov i den allmänna språkexamen i finska eller svenska på minst nivå 3 eller du har i fråga om språkexamina för statsförvaltningen avlagt provet i muntlig och skriftlig färdighet i finska eller svenska på minst nöjaktig nivå.</li></ul><p>Läroanstalten kan låta bli att anta en sökande till grundläggande yrkesutbildning om han eller hon inte har färdigheter att i tal och skrift använda och förstå undervisningsspråket.</p>"
-        },
-        "opetuskielet": [
-            "kieli_fi#1"
-        ],
-        "kaytetaanJarjestelmanValintaPalvelua": false,
-        "api_VERSION": 4
-
+        liitteidenToimitusosoite : {},
+        hakukelpoisuusvaatimusUris : [],
+        hakukohdeKoulutusOids : [],
+        opetuskielet : [],
+        liitteet : [],
+        valintakoes : []
     });
 
+    $scope.postinumeroCallback = function(selectedPostinumero) {
+       console.log('Postinumero callback : ', selectedPostinumero);
+
+       $scope.model.liitteidenToimitusosoite.postitoimipaikka = selectedPostinumero.koodiNimi;
+    };
 
     $scope.insert = function() {
       $scope.model.$save();
