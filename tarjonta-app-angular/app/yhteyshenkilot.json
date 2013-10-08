@@ -1,0 +1,43 @@
+{ "result" : [
+
+    {
+        "oid" : "xxxxx.125.yyy",
+        "etunimet" : "Harri",
+        "sukunimi" : "Heimoveli",
+        "sahkoposti" : "test3@oph.fi",
+        "titteli" : "Rehtori",
+        "puhelin" : "1425364756890"
+    },
+    {
+        "oid" : "xxxxx.126.yyy",
+        "etunimet" : "Eero",
+        "sukunimi" : "Isola",
+        "sahkoposti" : "test4@oph.fi",
+        "titteli" : "Lehtor",
+        "puhelin" : "098765434322"
+    },
+    {
+        "oid" : "xxxxx.127.yyy",
+        "etunimet" : "Pekko",
+        "sukunimi" : "Pekkola",
+        "sahkoposti" : "test5@oph.fi",
+        "titteli" : "Opettaja",
+        "puhelin" : "1324355467689"
+    },
+        {
+        "oid" : "xxxxx.128.yyy",
+        "etunimet" : "Veikko Otsamo",
+        "sukunimi" : "Veikkola",
+        "sahkoposti" : "test6@oph.fi",
+        "titteli" : "Kapellimestari",
+        "puhelin" : "132435543459"
+    },
+    {
+        "oid" : "xxxxx.129.yyy",
+        "etunimet" : "Matti",
+        "sukunimi" : "Virtanen",
+        "sahkoposti" : "test7@oph.fi",
+        "titteli" : "Opo",
+        "puhelin" : "132435678459"
+    }
+]}
