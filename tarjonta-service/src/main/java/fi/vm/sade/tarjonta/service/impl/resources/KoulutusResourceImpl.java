@@ -17,7 +17,9 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
@@ -41,18 +43,16 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import java.util.Locale;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  *
@@ -113,23 +113,18 @@ public class KoulutusResourceImpl implements KoulutusResource {
             String alkamisKausi,
             Integer alkamisVuosi) {
 
-        try {
-            organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+        organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
-            KoulutuksetKysely q = new KoulutuksetKysely();
-            q.setNimi(searchTerms);
-            q.setKoulutuksenAlkamiskausi(alkamisKausi);
-            q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
-            q.getTarjoajaOids().addAll(organisationOids);
-            q.setKoulutuksenTila(hakukohdeTila == null ? null : TarjontaTila.valueOf(hakukohdeTila));
+        KoulutuksetKysely q = new KoulutuksetKysely();
+        q.setNimi(searchTerms);
+        q.setKoulutuksenAlkamiskausi(alkamisKausi);
+        q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+        q.getTarjoajaOids().addAll(organisationOids);
+        q.setKoulutuksenTila(hakukohdeTila == null ? null : TarjontaTila.valueOf(hakukohdeTila).asDto());
 
-            KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
-            
-            return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
-        } catch (RuntimeException e) {
-            e.printStackTrace(System.err);
-            throw e;
-        }
+        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
+        
+        return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
     @Override
@@ -137,19 +132,9 @@ public class KoulutusResourceImpl implements KoulutusResource {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
         LOG.info("OID : {}", komotoOid);
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
-
-
         return conversionService.convert(komoto, KorkeakouluDTO.class);
     }
 
-//    private void addOtherLanguages(final KoodiUriListDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
-//        Preconditions.checkNotNull(koodiUriDto, "KoodiUriDTO object cannot be null.");
-//        for (KoodiMetadataType meta : metadata) {
-//            final String kieliUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(meta.getKieli().value());
-//            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(kieliUri);
-//            koodiUriDto.getTekstis().add(toKoodiUriDTO(null, meta.getNimi(), koodiByUri, locale));
-//        }
-//    }
     @Override
     public void updateToteutus(KorkeakouluDTO dto) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -235,5 +220,17 @@ public class KoulutusResourceImpl implements KoulutusResource {
     @Override
     public void deleteKuva(String oid) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public TarjontaTila updateTila(String oid, TarjontaTila tila) {
+    	KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+    	Preconditions.checkArgument(komoto!=null, "Koulutusta ei löytynyt: %s", oid);
+    	if (!komoto.getTila().acceptsTransitionTo(tila)) {
+    		return komoto.getTila();
+    	}
+    	komoto.setTila(tila);
+    	koulutusmoduuliToteutusDAO.update(komoto);
+    	return tila;
     }
 }

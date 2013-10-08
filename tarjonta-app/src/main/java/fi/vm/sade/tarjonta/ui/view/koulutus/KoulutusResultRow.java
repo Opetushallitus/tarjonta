@@ -288,7 +288,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (koulutus != null
-                        && koulutus != null
+                        && koulutus.getKomotoOid() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
                     tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getTarjoaja().getTarjoajaOid());

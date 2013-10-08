@@ -12,6 +12,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST service for hakukohde's.
@@ -145,6 +146,19 @@ public interface HakukohdeResource {
     @DELETE
     @Path("{oid}")
     public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
+    
+    /**
+     * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
+     * 
+     * @param oid Hakukohteen oid.
+     * @param tila Kohdetila.
+     * @return Tila, jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
+     */
+    @POST
+    @Path("{oid}/tila")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public TarjontaTila updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
      * /hakukohde/OID/nimi

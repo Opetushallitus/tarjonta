@@ -22,4 +22,11 @@ package fi.vm.sade.tarjonta.service.resources.dto.kk;
 public class SuunniteltuKestoDTO extends UiDTO {
 
     private static final long serialVersionUID = 1L;
+
+    public SuunniteltuKestoDTO() {
+    }
+    
+    public SuunniteltuKestoDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
+        super(arvo, koodiUri, koodiVersio, koodiArvo);
+    }
 }

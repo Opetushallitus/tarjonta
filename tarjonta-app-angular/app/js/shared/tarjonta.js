@@ -60,7 +60,7 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi);
-                    r.koulutusLaji = localize(r.koulutusLaji);
+                    r.koulutuslaji = localize(r.koulutuslaji);
                     r.hakutapa = localize(r.hakutapa);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                 }
@@ -88,6 +88,7 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
+                    r.koulutuslaji = localize(r.koulutuslaji);
                 }
                 t.tulokset.sort(compareByName);
             }
@@ -95,6 +96,18 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
     		return result;
     	});
     }
+
+    /**
+     * Asettaa koulutuksen tai hakukohteen julkaisun tilan.
+     * @param type "koulutus" | "hakukohde"
+     * @param oid kohteen oid
+     * @param publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu 
+     * @return true, jos kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
+     */
+    dataFactory.togglePublished = function(type, oid, publish) {
+    	
+    	return true;
+    };
 
     dataFactory.insertKoulutus = function(json) {
         console.log("insertKoulutus");

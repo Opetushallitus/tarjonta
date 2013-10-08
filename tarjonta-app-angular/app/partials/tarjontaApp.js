@@ -77,11 +77,25 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "helpers.localisations"
         })
 
-            .when("/kk/edit/hakukohde", {
-              action : "kk.hakukohde.create"
-            })
+                .when("/kk/edit/hakukohde", {
+            action: "kk.hakukohde.create"
+        })
 
-            .when('/koodistoTest', {action: 'koodistoTest'})
+                .when('/koulutus/:id', {
+            redirectTo: "/kk/review/:id"
+        })
+                .when('/koulutus/:id/edit', {
+            redirectTo: "/kk/edit/:id"
+        })
+                .when('/hakukohde/:id', {
+            action: "xxx.xxx.xxx"
+        })
+                .when('/hakukohde/:id/edit', {
+            action: "xxx.xxx.xxx"
+        })
+
+
+                .when('/koodistoTest', {action: 'koodistoTest'})
 
                 .otherwise({redirectTo: "/etusivu"});
     }]);
