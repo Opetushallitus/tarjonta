@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'ngResource', 'ngGrid', 'ui.autocomplete']);
+var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid']);
 
 app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService',
     function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService) {

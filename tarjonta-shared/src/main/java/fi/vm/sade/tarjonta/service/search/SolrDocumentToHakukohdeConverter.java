@@ -10,9 +10,13 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_F
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.POHJAKOULUTUSVAATIMUS_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_ALKAMISPVM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_PAATTYMISPVM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_SV;
@@ -58,12 +62,14 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setHakutapaKoodi(IndexDataUtils.createKoodistoKoodi(HAKUTAPA_URI, HAKUTAPA_FI, HAKUTAPA_SV, HAKUTAPA_EN, hakukohdeDoc));
 
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
-        hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
+
+        hakukohde.setKoulutuksenAlkamiskausiUri(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, hakukohdeDoc));
+
         if(hakukohdeDoc.getFieldValue(VUOSI_KOODI)!=null) {
             hakukohde.setKoulutuksenAlkamisvuosi(Integer.parseInt((String)hakukohdeDoc.getFieldValue(VUOSI_KOODI)));
         }
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
-        
+        hakukohde.setPohjakoulutusVaatimus((String)hakukohdeDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
         hakukohde.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URI,  KOULUTUSLAJI_FI,  KOULUTUSLAJI_SV,  KOULUTUSLAJI_EN, hakukohdeDoc));
         
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));

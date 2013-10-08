@@ -12,8 +12,17 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
 	
 	private Map<String, String> nimi;
 	
-	private String kausiUri;
-	private Integer vuosi;
+    private Map<String, String> kausi;
+
+    public Map<String, String> getKausi() {
+        return kausi;
+    }
+
+    public void setKausi(Map<String, String> kausi) {
+        this.kausi = kausi;
+    }
+
+    private Integer vuosi;
 	
 	private Map<String, String> koulutusLaji;
 	
@@ -35,14 +44,6 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
 		this.nimi = nimi;
 	}
 
-	public String getKausiUri() {
-		return kausiUri;
-	}
-
-	public void setKausiUri(String kausiUri) {
-		this.kausiUri = kausiUri;
-	}
-
 	public Integer getVuosi() {
 		return vuosi;
 	}
@@ -51,11 +52,11 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
 		this.vuosi = vuosi;
 	}
 	
-	public Map<String, String> getKoulutusLaji() {
+	public Map<String, String> getKoulutuslaji() {
 		return koulutusLaji;
 	}
 	
-	public void setKoulutusLaji(Map<String, String> koulutusLaji) {
+	public void setKoulutuslaji(Map<String, String> koulutusLaji) {
 		this.koulutusLaji = koulutusLaji;
 	}
 

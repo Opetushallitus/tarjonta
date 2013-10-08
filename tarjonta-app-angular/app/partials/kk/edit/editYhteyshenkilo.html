@@ -53,7 +53,7 @@
             <div class="span2 label-right"><span tt='kk.edit.yhteyshenkilo'></div>
             <div class="span10">
                 <div>
-                    <div style="float: left;"><input type="text" ui-event="{autocompletecreate:'changeClass(myOption)'}" ng-model="editYhModel.matchedUser" ui-autocomplete="myOption"></div><!-- <input type="text" data-ng-model="contactPerson.nimet" /> -->
+                    <div style="float: left;"><input type="text" ng-model="uiModel.contactPerson.nimet" typeahead-on-select="editYhModel.selectHenkilo()" typeahead="henkilo for henkilo in editYhModel.data | filter:$viewValue"></div>
                     <div style="float: left;"><a href="" ng-click="editYhModel.clearYh()"><span tt='kk.edit.tyhjenna'></a></div>
                 </div>
                 <div style="clear: left;">

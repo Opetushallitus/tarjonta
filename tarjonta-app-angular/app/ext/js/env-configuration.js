@@ -66,11 +66,9 @@ window.CONFIG = {
         "tarjonta.showUnderConstruction": "true",
         "tarjonta.solr.baseurl": "http://luokka.hard.ware.fi:8312/solr",
         "valintalaskentakoostepalvelu.tarjonta.rest.url": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/",
-        "host.base-uri" : "https://itest-virkailija.oph.ware.fi",
-        //"host.base-uri" : "http://localhost:9090",
-        "haku.uri" : "/tarjonta-service/rest/haku",
-        "haku.uri.findall" : "/tarjonta-service/rest/haku/findAll",
-        "hakukohde.uri" : "/tarjonta-service/rest/hakukohde",
+        "host.base-uri": "https://itest-virkailija.oph.ware.fi",
+        "haku.uri": "/tarjonta-service/rest/haku",
+        "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
         //käsin lisätyt:
 
         // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",
@@ -78,11 +76,9 @@ window.CONFIG = {
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/",
         // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
 
-        "tarjontaRestUrlPrefix" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
-        "tarjontaLocalisationRestUrl" : "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
-
-        "casUrl" : "cas_myroles_tiimi2.json",
-
-        "place" : "holder"
+        "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
+        "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
+        "casUrl": "cas_myroles_tiimi2.json",
+        "place": "holder"
     }
 };

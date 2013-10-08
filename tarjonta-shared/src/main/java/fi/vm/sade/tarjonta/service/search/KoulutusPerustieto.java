@@ -26,7 +26,7 @@ public class KoulutusPerustieto implements Serializable
     private KoodistoKoodi koulutuslaji;
     private KoulutusasteTyyppi koulutustyyppi;
     private KoodistoKoodi lukiolinjakoodi;
-    private String koulutuksenAlkamiskausiUri;
+    private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisVuosi;
 
 
@@ -156,12 +156,12 @@ public class KoulutusPerustieto implements Serializable
         this.lukiolinjakoodi = value;
     }
 
-    public String getKoulutuksenAlkamiskausiUri() {
-        return koulutuksenAlkamiskausiUri;
+    public KoodistoKoodi getKoulutuksenAlkamiskausi() {
+        return koulutuksenAlkamiskausi;
     }
 
-    public void setKoulutuksenAlkamiskausiUri(String value) {
-        this.koulutuksenAlkamiskausiUri = value;
+    public void setKoulutuksenAlkamiskausiUri(KoodistoKoodi value) {
+        this.koulutuksenAlkamiskausi = value;
     }
 
     public Integer getKoulutuksenAlkamisVuosi() {

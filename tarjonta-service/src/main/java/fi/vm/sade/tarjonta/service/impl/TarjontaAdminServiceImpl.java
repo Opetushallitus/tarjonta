@@ -339,7 +339,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             List<KoulutusPerustieto> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutukset();
             //Loop through hakukohtee's koulutukses and check all koulutukses and check that all have the same alkamiskausi and vuosi as the haku
             for (KoulutusPerustieto koulutusTulos : koulutusTuloses) {
-                if (!koulutusTulos.getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
+                if (!koulutusTulos.getKoulutuksenAlkamiskausi().getUri().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
                         || !koulutusTulos.getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
                     return false;
                 }

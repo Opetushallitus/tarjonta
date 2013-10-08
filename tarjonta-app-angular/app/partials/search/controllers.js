@@ -194,7 +194,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
 					+tulos.nimi
 					+"</a></td>"
-					+"<td>" + tulos.kausiUri + "&nbsp;" + tulos.vuosi + "</td>";
+					+"<td>" + (tulos.kausi.fi||tulos.kausi.sv||tulos.kausi.en) + "&nbsp;" + tulos.vuosi + "</td>"; //TODO lokalisoi!
 
     			for (var pi in props) {
     				var prop = props[pi];
@@ -496,7 +496,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
         	initTable("#koulutuksetResults", "koulutus", data,[
-                "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
+                "koulutuslaji" 
             ], serial);
         });
         
@@ -505,7 +505,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         	initTable("#hakukohteetResults", "hakukohde", data,[
 	       		"hakutapa",
 				"aloituspaikat",
-				"koulutusLaji"
+				"koulutuslaji"
             ], serial);
         });
         

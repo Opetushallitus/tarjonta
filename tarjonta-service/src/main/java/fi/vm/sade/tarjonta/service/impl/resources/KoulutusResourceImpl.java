@@ -132,19 +132,9 @@ public class KoulutusResourceImpl implements KoulutusResource {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
         LOG.info("OID : {}", komotoOid);
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
-
-
         return conversionService.convert(komoto, KorkeakouluDTO.class);
     }
 
-//    private void addOtherLanguages(final KoodiUriListDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
-//        Preconditions.checkNotNull(koodiUriDto, "KoodiUriDTO object cannot be null.");
-//        for (KoodiMetadataType meta : metadata) {
-//            final String kieliUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(meta.getKieli().value());
-//            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(kieliUri);
-//            koodiUriDto.getTekstis().add(toKoodiUriDTO(null, meta.getNimi(), koodiByUri, locale));
-//        }
-//    }
     @Override
     public void updateToteutus(KorkeakouluDTO dto) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
