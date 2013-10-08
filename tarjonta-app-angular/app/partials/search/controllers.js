@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -30,6 +30,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    	$scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
 
 	    	updateLocation();
+	    	$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
 	    }
 	}, false);
 
@@ -510,5 +511,27 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.report = function() {
         console.log("TODO raportti");
     }
+    
+    $scope.dialogModel = {};
+	
+	$scope.dialogModel.open = function() {
+		
+			var modalInstance = $modal.open({
+				scope: $scope,
+				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+				controller: 'SelectTutkintoOhjelmaController'
+			});
+		
+			modalInstance.result.then(function(selectedItem) {
+				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+				if (selectedItem.koodiUri != null) {
+					$window.location.href = '#/kk/edit/new/perus/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
+				} 
+			}, function() {
+				$scope.dialogModel.selected = null;
+				console.log('Cancel, dialog closed');
+			});
+	};
 
 });
