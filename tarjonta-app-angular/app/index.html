@@ -69,10 +69,13 @@
         <script src="partials/kk/edit/controllers.js"></script>
         <script src="partials/kk/edit/selectTutkintoControllers.js"></script>
         <script src="partials/kk/edit/editYhteyshenkiloController.js"></script>
-        <script src="partials/kk/review/reviewControllers.js"></script>
         <script src="partials/kk/edit/hakukohde/hakukohdeControllers.js"></script>
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
+
+        <script src="partials/koulutus/koulutusController.js"></script>
+        <script src="partials/koulutus/edit/editControllers.js"></script>
+        <script src="partials/koulutus/review/reviewControllers.js"></script>
 
         <script src="partials/helpers/localisationControllers.js"></script>
 
@@ -128,6 +131,21 @@
                         </div>
                     </div>
                 </div><!-- 0:/helpers -->
+
+                <div ng-switch-when="koulutus">
+                    <div ng-switch on="renderPath[1]" ng-controller="KoulutusRoutingController">
+                        <div ng-switch-when="review">
+                            <div ng-include="'partials/koulutus/review/review.html'"></div>
+                        </div>
+                        <div ng-switch-when="edit">
+                            <div ng-include="'partials/koulutus/edit/edit.html'"></div>
+                        </div>
+                        <div ng-switch-default>
+                             UNKNOWN ACTION! {{ renderPath | json }}
+                        </div>
+                    </div>
+                </div><!-- 0:/helpers -->
+
                 <div ng-switch-when="koodistoTest">
                     <div ng-include="'partials/koodistoTest.html'" ng-controller="KoodistoTestController"></div>
                 </div>

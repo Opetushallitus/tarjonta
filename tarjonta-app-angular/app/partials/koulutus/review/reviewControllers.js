@@ -1,32 +1,9 @@
 
-/*Object.prototype.getName = function() {
- var funcNameRegex = /function (.{1,})\(/;
- var results = (funcNameRegex).exec((this).constructor.toString());
- return (results && results.length > 1) ? results[1] : "";
- };*/
+var app = angular.module('app.review.ctrl', []);
 
-
-//angular.module('transclude', [])
-// .directive('ngOnce', ['$timeout', function($timeout){
-//    return {
-//      restrict: 'EA',
-//      priority: 500,
-//      transclude: true,
-//      template: '<div ng-transclude></div>',
-//        compile: function (tElement, tAttrs, transclude) {
-//            return function postLink(scope, iElement, iAttrs, controller) {
-//                $timeout(scope.$destroy.bind(scope), 0);
-//            }
-//        }
-//    };
-//}]);
-//
-
-var app = angular.module('app.kk.review.ctrl', []);
-
-app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', '$modal',
-    function KKReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, $modal) {
-        $log.info("KKReviewController()");
+app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', '$modal',
+    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, $modal) {
+        $log.info("BaseReviewController()");
 
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
         $scope.opetuskieli = 'kieli_fi';
@@ -57,7 +34,7 @@ app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaSe
                     koodi_uri: "kieli_en"
                 },
             ],
-            koulutus: {},
+            koulutus: $scope.koulutusx, // preloaded in route resolve
             foo: "bar"
         };
 
@@ -89,9 +66,6 @@ app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaSe
             $log.info("doAddParallel()...");
         };
 
-
-
-        // NOT NEEDED ANYMORE!
         $scope.load = function(oid) {
             $log.info("load()...");
 
@@ -104,6 +78,5 @@ app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaSe
                 $log.info("  load got: ", $scope.model.koulutus);
             });
         };
-
-        $scope.load();
     }]);
+

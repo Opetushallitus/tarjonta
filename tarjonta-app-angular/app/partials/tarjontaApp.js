@@ -8,9 +8,10 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.ctrl',
-            'app.kk.review.ctrl',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.services',
+            'app.edit.ctrl',
+            'app.review.ctrl',
             'ui.bootstrap',
             'ngRoute',
             'config',
@@ -29,6 +30,7 @@ angular.module('app',
             'app.controllers',
             'app.test.controllers',
             'app.kk',
+            'app.koulutus.ctrl',
             'app.helpers',
             'ngRoute',
             'ngResource',
@@ -84,10 +86,24 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
         })
 
                 .when('/koulutus/:id', {
-            redirectTo: "/kk/review/:id"
+            action: "koulutus.review",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusx: function(TarjontaService, $log, $route) {
+                    $log.info("/koulutus/ID", $route);
+                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
+                }
+            }
         })
                 .when('/koulutus/:id/edit', {
-            redirectTo: "/kk/edit/:id"
+            action: "koulutus.edit",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusx: function(TarjontaService, $log, $route) {
+                    $log.info("/koulutus/ID/edit", $route);
+                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
+                }
+            }
         })
                 .when('/hakukohde/:id', {
             action: "xxx.xxx.xxx"

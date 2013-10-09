@@ -1,0 +1,40 @@
+<div id="koulutusReview"">
+
+    <h1>AMMATILLINEN PERUSKOULUTUS</h1>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div data-ng-bind-html="t('koulutus.review.murupolku', ['Autoalan perustutkinto', 'Rantalhojan ammattikoulu, autoalan toimipiste'])"></div>
+                <a><div tt='koulutus.review.peruuta'></div></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="btn" data-ng-click='goBack($event)'><div tt='koulutus.review.takaisin'></div></div>
+                <div class="btn" data-ng-click='doDelete($event)'><div tt='koulutus.review.poista'></div></div>
+                <div class="btn" data-ng-click='doCopy($event)'><div tt='koulutus.review.kopioi'></div></div>
+                <div class="btn" data-ng-click='doMoveToBeSubPart($event)'><div tt='koulutus.review.siirra.osaksi'></div></div>
+                <div class="btn" data-ng-click='doAddParallel($event)'><div tt='koulutus.review.lisaa.rinnakkainen'></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                Sairaanhoidon ja huolenpidon koulutusohjelma, pk
+            </div>
+        </div>
+    </div>
+
+    <tabset>
+        <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}">
+            <div data-ng-include="'partials/koulutus/review/AMMATILLINEN_PERUSKOULUTUS_reviewLanguage.html'"></div>
+        </tab>
+    </tabset>
+
+</div>
