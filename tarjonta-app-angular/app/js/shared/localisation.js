@@ -231,6 +231,38 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
         return deferred.promise;
     };
 
+
+    /**
+     * Update an existing translation.
+     *
+     * @param {type} entry
+     * @returns {@exp;deferred@pro;promise}
+     */
+    this.update = function(entry) {
+        $log.log("update()", entry);
+        var deferred = $q.defer();
+
+        if (!entry || this.isBlank(entry.key) || this.isBlank(entry.locale)) {
+            deferred.reject({errors: "INVALID LOCALISATIN, null, empty key and/or localisation", value: entry});
+        } else {
+            var parent = this;
+
+            // Try to save to the server
+            Localisations.update(entry, function(data, status, headers, config) {
+                $log.log("update() - OK", data, status, headers, config);
+                deferred.resolve(entry);
+            }, function(data, status, headers, config) {
+                $log.error("update() - ERROR", data, status, headers, config, entry);
+                deferred.reject(entry);
+            });
+        }
+
+        return deferred.promise;
+    };
+
+
+
+
     /**
      * Create new translation.
      *
