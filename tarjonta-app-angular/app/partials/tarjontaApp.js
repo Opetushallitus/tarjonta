@@ -14,7 +14,8 @@ angular.module('app.kk',
             'ui.bootstrap',
             'ngRoute',
             'config',
-            'auth'
+            'auth',
+            'TarjontaConverter'
         ]);
 
 /*******************************************************
@@ -44,7 +45,8 @@ angular.module('app',
             'KoodistoArvoCombo',
             'Hakukohde',
             'KoodistoMultiSelect',
-            'angularTreeview'
+            'angularTreeview',
+            'TarjontaConverter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

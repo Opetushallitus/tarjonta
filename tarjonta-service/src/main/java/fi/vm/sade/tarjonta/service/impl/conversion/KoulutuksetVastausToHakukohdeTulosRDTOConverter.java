@@ -17,18 +17,18 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		HakutuloksetRDTO<KoulutusHakutulosRDTO> ret = new HakutuloksetRDTO<KoulutusHakutulosRDTO>();
 
 		Map<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>>();
-		
+
 		for (KoulutusPerustieto ht : source.getKoulutukset()) {
 			TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> rets = getTarjoaja(ret, tarjoajat, ht);
 			rets.getTulokset().add(convert(ht));
 		}
-		
+
 		//XXX use getHitCount when available
 		ret.setTuloksia(source.getKoulutukset().size());
-		
+
 		return ret;
 	}
-	
+
 	private KoulutusHakutulosRDTO convert(KoulutusPerustieto ht) {
 		KoulutusHakutulosRDTO ret = new KoulutusHakutulosRDTO();
 
@@ -40,10 +40,11 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		    ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
 		}
 		ret.setTila(TarjontaTila.valueOf(ht.getTila()));
+        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
 
 		return ret;
 	}
-	
+
 	private TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO> getTarjoaja(
 			HakutuloksetRDTO<KoulutusHakutulosRDTO> tulos,
 			Map<String, TarjoajaHakutulosRDTO<KoulutusHakutulosRDTO>> tarjoajat,
@@ -58,6 +59,6 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		}
 		return ret;
 	}
-	
-	
+
+
 }

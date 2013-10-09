@@ -1,18 +1,37 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusHakutulosRDTO extends BaseRDTO {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String oid;
-	
-	private Map<String, String> nimi;
-	
+    private String oid;
+    private Map<String, String> nimi;
     private Map<String, String> kausi;
+    private Integer vuosi;
+    private Map<String, String> koulutusLaji;
+    private TarjontaTila tila;
+    private KoulutusasteTyyppi koulutusasteTyyppi;
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
+
+    public Map<String, String> getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(Map<String, String> nimi) {
+        this.nimi = nimi;
+    }
 
     public Map<String, String> getKausi() {
         return kausi;
@@ -22,50 +41,35 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
         this.kausi = kausi;
     }
 
-    private Integer vuosi;
-	
-	private Map<String, String> koulutusLaji;
-	
-	private TarjontaTila tila;
+    public Integer getVuosi() {
+        return vuosi;
+    }
 
-	public String getOid() {
-		return oid;
-	}
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
+    }
 
-	public void setOid(String oid) {
-		this.oid = oid;
-	}
+    public Map<String, String> getKoulutuslaji() {
+        return koulutusLaji;
+    }
 
-	public Map<String, String> getNimi() {
-		return nimi;
-	}
+    public void setKoulutuslaji(Map<String, String> koulutusLaji) {
+        this.koulutusLaji = koulutusLaji;
+    }
 
-	public void setNimi(Map<String, String> nimi) {
-		this.nimi = nimi;
-	}
+    public TarjontaTila getTila() {
+        return tila;
+    }
 
-	public Integer getVuosi() {
-		return vuosi;
-	}
+    public void setTila(TarjontaTila tila) {
+        this.tila = tila;
+    }
 
-	public void setVuosi(Integer vuosi) {
-		this.vuosi = vuosi;
-	}
-	
-	public Map<String, String> getKoulutuslaji() {
-		return koulutusLaji;
-	}
-	
-	public void setKoulutuslaji(Map<String, String> koulutusLaji) {
-		this.koulutusLaji = koulutusLaji;
-	}
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
 
-	public TarjontaTila getTila() {
-		return tila;
-	}
-
-	public void setTila(TarjontaTila tila) {
-		this.tila = tila;
-	}
-
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
 }

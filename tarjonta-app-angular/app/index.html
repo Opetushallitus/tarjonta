@@ -55,6 +55,8 @@
         <script src="js/shared/directives/zippy.js"></script>
         <script src="js/shared/haku.js"></script>
         <script src="js/shared/hakukohde.js"></script>
+        <script src="js/shared/tarjontaConverter.js"></script>
+
         <script src="js/shared/directives/ngonce.js"></script>
         <link href="js/shared/directives/zippy.css" rel="stylesheet">
 
@@ -95,7 +97,7 @@
                 <div ng-switch-when="kk">
                     <div ng-switch on="renderPath[1]">
                         <div ng-switch-when="hakukohde">
-                             <div ng-switch on="renderPath[2]">
+                            <div ng-switch on="renderPath[2]">
                                 <div ng-switch-when="create">
 
                                     <div ng-include="'partials/kk/edit/hakukohde/editHakukohde.html'" ng-controller="HakukohdeEditController"></div>

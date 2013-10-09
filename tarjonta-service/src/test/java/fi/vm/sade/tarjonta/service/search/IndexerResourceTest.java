@@ -1,7 +1,5 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;

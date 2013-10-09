@@ -126,7 +126,7 @@ app.controller('HelpersLocalisationCtrl', ['$scope', '$q', '$log', '$modal', 'Lo
                     if (tmp.value === "_POISTA_") {
                         LocalisationService.delete(tmp);
                     } else {
-                        LocalisationService.save(tmp);
+                        LocalisationService.update(tmp);
                     }
                 }
             }

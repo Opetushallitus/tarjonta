@@ -3,19 +3,38 @@
 /* Controllers */
 var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid']);
 
-app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window',
-    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService, $window) {
+app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window', 'TarjontaConverterFactory', 'Koodisto',
+    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto) {
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
-        $scope.uiModel = {contactPerson: {}, ectsCoordinator: {}, env: cfg.env};
+        $scope.uiModel = {contactPerson: {}, ectsCoordinator: {}};
+        $scope.config = {env: cfg.env};
+        $scope.locale = "FI"
 
         $scope.init = function() {
-            console.log("foobar", $routeParams);
+            console.log("$routeParams", $routeParams);
 
+            /*
+             * INITIALISE DATA MODELS
+             */
+            converter.createAPIModel($scope.model);
+            converter.createUiModels($scope.uiModel);
+
+            /*
+             * LOAD KOODISTO DATA
+             */
+
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opintojenLaajuusarvo'], $scope.uiModel.opintojenLaajuus, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.suunniteltuKesto'], $scope.uiModel.suunniteltuKesto, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.kieli'], $scope.uiModel.opetuskielis, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opetusmuoto'], $scope.uiModel.opetusmuodos, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.pohjakoulutusvaatimus'], $scope.uiModel.pohjakoulutusvaatimukset, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.teemat'], $scope.uiModel.teemas, $scope.locale);
+
+            /*
+             * HANDLE ROUTING
+             */
             if ($routeParams.type === 'new') {
-                // model default json structure.
-                $scope.createEmptyAPIModel($scope.model);
-                //create new koulutus
                 var orgOid = $scope.getOrganisaatioOid({});
                 $scope.model.organisaatio = $scope.getOrganisationApiModel({}, "");
 
@@ -31,7 +50,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
                 //load data for edit
                 $scope.search();
             } else {
-                $scope.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
+                converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
         };
 
@@ -69,22 +88,21 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
              * Convert person object to back-end object format.
              */
 
-            apiModel.organisaatio = $scope.getOrganisationApiModel(apiModel, null);
-            apiModel.yhteyshenkilos = $scope.convertPersonsUiModelToDto([uiModel.contactPerson, uiModel.ectsCoordinator]);
+            apiModel.organisaatio = converter.getOrganisationApiModel(apiModel, null);
+            apiModel.yhteyshenkilos = converter.convertPersonsUiModelToDto([uiModel.contactPerson, uiModel.ectsCoordinator]);
 
             /*
              * Convert koodisto komponent object to back-end object format.
              */
-
             //single select data
-
-            apiModel.suunniteltuKesto = $scope.convertKoodistoComboSuunniteltuKesto(apiModel.suunniteltuKesto, uiModel.suunniteltuKestoTyyppi);
+            apiModel.suunniteltuKesto = converter.convertKoodistoCombo(apiModel.suunniteltuKesto.arvo, uiModel.suunniteltuKesto.data);
+            apiModel.opintojenLaajuus = converter.convertKoodistoCombo(null, uiModel.opintojenLaajuus.data);
 
             //multi select data
-            apiModel.teemas.meta = $scope.convertKoodistoMultiToKoodiUiDTOs(uiModel.teemas);
-            apiModel.opetuskielis.meta = $scope.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetuskielis);
-            apiModel.pohjakoulutusvaatimukset.meta = $scope.convertKoodistoMultiToKoodiUiDTOs(uiModel.pohjakoulutusvaatimukset);
-            apiModel.opetusmuodos.meta = $scope.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetusmuodos);
+            apiModel.teemas.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.teemas);
+            apiModel.opetuskielis.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetuskielis);
+            apiModel.pohjakoulutusvaatimukset.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.pohjakoulutusvaatimukset);
+            apiModel.opetusmuodos.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetusmuodos);
 
             console.log(JSON.stringify(apiModel));
             return apiModel;
@@ -97,174 +115,39 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
                 console.log("data loaded()", data);
 
                 $scope.model = angular.copy(data);
+                $scope.updateMultiSelectKoodistoData($scope.uiModel, $scope.model);
                 $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
                 angular.forEach($scope.model.yhteyshenkilos, function(value, key) {
                     if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
-                        $scope.uiModel.contactPerson = $scope.converPersonObjectForUi(value);
+                        converter.uiModel.contactPerson = $scope.converPersonObjectForUi(value);
                     } else if (value.henkiloTyyppi === 'ECTS_KOORDINAATTORI') {
-                        $scope.uiModel.ectsCoordinator = $scope.converPersonObjectForUi(value);
+                        converter.uiModel.ectsCoordinator = $scope.converPersonObjectForUi(value);
                     } else {
-                        $scope.throwError('Undefined henkilotyyppi : ' + value);
+                        converter.throwError('Undefined henkilotyyppi : ' + value);
                     }
                 })
             });
         };
-        /**
-         * Convert person data to UI format.
-         * 
-         * @param {type} person
-         * @returns {person}
-         */
-        $scope.converPersonObjectForUi = function(person) {
-            if ($scope.isNull(person)) {
-                throw 'Contact percon cannot be null';
-            }
-            person.nimet = person.etunimet + ' ' + person.sukunimi;
-            return person; //dummy
-        }
 
-        /**
-         * Convert koodisto component data model to API meta model.
-         * 
-         * @param {type} json object map
-         * @param {type} koodisto component object
-         */
-        $scope.convertKoodistoComboToMetaDTO = function(metaMap, kbObj) {
-            if ($scope.isNull(kbObj)) {
-                return {}; //return an empty object;
-            }
-            metaMap[kbObj.koodiUri] = $scope.convertKoodistoComboToKoodiDTO(kbObj);
+        $scope.updateMultiSelectKoodistoData = function(uiModel, apiModel) {
+            $scope.updateKoodiUrisToUiModel(uiModel.teemas, apiModel.teemas);
+            $scope.updateKoodiUrisToUiModel(uiModel.opetuskielis, apiModel.opetuskielis);
+            $scope.updateKoodiUrisToUiModel(uiModel.pohjakoulutusvaatimukset, apiModel.pohjakoulutusvaatimukset);
+            $scope.updateKoodiUrisToUiModel(uiModel.opetusmuodos, apiModel.opetusmuodos);
         };
 
-        /**
-         * Convert koodisto component data model to API koodi model.
-         * 
-         * @param {type} koodisto component object
-         */
-        $scope.convertKoodistoComboToKoodiDTO = function(kbObj) {
-            if ($scope.isNull(kbObj)) {
-                return {}; //return an empty object;
-            }
-            return {"koodi": $scope.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio)};
+        $scope.updateKoodiUrisToUiModel = function(uiModel, apiModel) {
+            angular.forEach(apiModel.meta, function(value, key) {
+                this.push(value.koodi.uri);
+            }, uiModel.uris);
         };
-
-        $scope.apiModelUri = function(uri, versio) {
-            return {"uri": uri, "versio": versio};
-        }
-
-        $scope.convertKoodistoComboSuunniteltuKesto = function(apiModel, kbObj) {
-            apiModel.koodi = $scope.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio);
-            return apiModel;
-        };
-
-        /**
-         * Convert multi select koodisto component data model to API (json map) meta model.
-         * 
-         * @param {type} koodisto component objects
-         */
-        $scope.convertKoodistoMultiToKoodiUiDTOs = function(kbObjects) {
-            var kcIndex = 0;
-            var metaMap = {};
-
-            for (; kcIndex < kbObjects.length; kcIndex++) {
-                console.log("index", kcIndex, kbObjects[kcIndex], kbObjects);
-                $scope.convertKoodistoComboToMetaDTO(metaMap, kbObjects[kcIndex]);
-            }
-            console.log("meta : ", metaMap, kbObjects);
-
-            return metaMap;
-        };
-
-        $scope.convertPersonsUiModelToDto = function(arrPersons) {
-            var arrOutputPersons = [];
-            var i = 0;
-            for (; i < arrPersons.length; i++) {
-                var henkilo = arrPersons[i];
-                if (Boolean(henkilo) && Boolean(henkilo.sahkoposti) && Boolean(henkilo.titteli) && Boolean(henkilo.puhelin)) {
-                    if (Boolean(henkilo.nimet)) {
-                        var lastname = henkilo.nimet.slice(henkilo.length - 1, henkilo.length);
-                        var firstnames = henkilo.nimet.slice(henkilo.nimet, fruits.indexOf(lastname) - 1);
-                        henkilo.etunimet = firstnames.join(' ');
-                        henkilo.sukunimi = lastname;
-                    }
-
-                    delete henkilo.nimet;
-                    delete henkilo.kielet;
-                    arrOutputPersons.push(henkilo)
-                }
-            }
-
-            return arrOutputPersons;
-        };
-
-        $scope.addMetaField = function(obj) {
-            if ($scope.isNull(obj)) {
-                return {"meta": {}};
-            } else {
-                obj.meta = {};
-                return obj;
-            }
-        };
-
-        $scope.deleteMetaField = function(obj) {
-            if (!$scope.isNull(obj) && !$scope.isNull(obj.meta)) {
-                delete obj.meta;
-            }
-        };
-
-        $scope.createEmptyAPIModel = function(apiModel) {
-            //Make sure that object has meta data object.
-
-            apiModel.koulutuskoodi = $scope.createBaseUiField(null, null, null);
-            apiModel.koulutusaste = $scope.createBaseUiField(null, null, null);
-            apiModel.koulutusala = $scope.createBaseUiField(null, null, null);
-            apiModel.opintoala = $scope.createBaseUiField(null, null, null);
-            apiModel.tutkinto = $scope.createBaseUiField(null, null, null);
-            apiModel.tutkintonimike = $scope.createBaseUiField(null, null, null);
-            apiModel.eqf = $scope.createBaseUiField(null, null, null);
-
-            apiModel.tunniste = '';
-            apiModel.koulutuksenAlkamisPvm = new Date();
-
-            //base koodi uri object
-            apiModel.suunniteltuKesto = $scope.createBaseUiField(null, null, null);
-            apiModel.koulutusohjelma = $scope.createBaseUiField(null, null, null);
-            apiModel.teemas = $scope.createBaseUiField(null, null, null);
-            apiModel.opetuskielis = $scope.createBaseUiField(null, null, null);
-            apiModel.pohjakoulutusvaatimukset = $scope.createBaseUiField(null, null, null);
-            apiModel.opetusmuodos = $scope.createBaseUiField(null, null, null);
-
-            //base multilang meta data object;
-            apiModel.koulutusohjelma = $scope.addMetaField(apiModel.koulutusohjelma);
-            apiModel.teemas = $scope.addMetaField(apiModel.teemas);
-            apiModel.opetuskielis = $scope.addMetaField(apiModel.opetuskielis);
-            apiModel.pohjakoulutusvaatimukset = $scope.addMetaField(apiModel.pohjakoulutusvaatimukset);
-            apiModel.opetusmuodos = $scope.addMetaField(apiModel.opetusmuodos);
-
-            if ($scope.isNull(apiModel.koulutusmoduuliTyyppi)) {
-                apiModel.opintojenMaksullisuus = false;
-            }
-
-            if ($scope.isNull(apiModel.koulutusmoduuliTyyppi)) {
-                apiModel.koulutusmoduuliTyyppi = 'TUTKINTO';
-            }
-
-            if ($scope.isNull(apiModel.koulutusasteTyyppi)) {
-                //TODO: currently only one type of objects.
-                apiModel.koulutusasteTyyppi = 'AMMATTIKORKEAKOULUTUS';
-            }
-
-            if ($scope.isNull(apiModel.tila)) {
-                apiModel.tila = 'LUONNOS';
-            }
-        }
 
         $scope.validateOutputData = function(m) {
             //Remove meta data objects
-            $scope.deleteMetaField(m.tutkintonimike);
-            $scope.deleteMetaField(m.koulutusaste);
-            $scope.deleteMetaField(m.koulutuskoodi);
-            $scope.deleteMetaField(m.tutkintonimike);
+            converter.deleteMetaField(m.tutkintonimike);
+            converter.deleteMetaField(m.koulutusaste);
+            converter.deleteMetaField(m.koulutuskoodi);
+            converter.deleteMetaField(m.tutkintonimike);
 
             //TODO: Missing koodito data relations.
             m.eqf = {arvo: "missing data", koodi: {uri: 'eqf_1', versio: '1', arvo: "eqf_1"}};
@@ -275,25 +158,17 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             var paramOid = $routeParams.org;
             var apiOid = m.organisaatioOid;
 
-            if (!$scope.isNull(paramOid)) {
+            if (!converter.isNull(paramOid)) {
                 return paramOid;
-            } else if (!$scope.isNull(apiOid)) {
+            } else if (!converter.isNull(apiOid)) {
                 return apiOid;
             } else {
-                $scope.throwError('Tarjonta application error - no organisaation OID available.');
+                converter.throwError('Tarjonta application error - no organisaation OID available.');
             }
         };
 
-        $scope.createBaseUiFieldArvo = function(arvo) {
-            return {"arvo": arvo};
-        };
-
-        $scope.createBaseUiField = function(uri, versio, arvo) {
-            return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
-        };
-
         $scope.getOrganisationApiModel = function(apiModel, nimi) {
-            if ($scope.isNull(apiModel)) {
+            if (converter.isNull(apiModel)) {
                 throw 'API model must be object, or empty object';
             }
             //organisation OID selector logic : update -> model oid, create -> param oid 
@@ -303,24 +178,35 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             return {"oid": orgOid, "nimi": nimi};
         };
 
-        $scope.isNull = function(obj) {
-            if (obj === null || typeof obj === 'undefined') {
-                return true;
-            } else {
-                return false;
+        $scope.searchKoodisByKoodistoUri = function(koodistouri, uiModel, locale) {
+            var koodisPromise = koodisto.getAllKoodisWithKoodiUri(koodistouri, locale);
+            koodisPromise.then(function(koodisParam) {
+                console.log(koodisParam);
+                uiModel.data = koodisParam;
+            });
+        };
+
+        $scope.searchKoodiByKoodiUri = function(koodiUri, uiModel) {
+            var i = 0;
+            var koodiObjects = uiModel.data;
+
+            for (; i < koodiObjects.length; i++) {
+                if (koodiObjects[i].koodiUri === koodiUri) {
+                    return koodiObjects[i];
+                }
             }
         };
 
-        $scope.throwError = function(msg) {
-            throw 'Tarjonta application error - ' + msg;
-        };
-        
-        $scope.goBack = function() {
-        	$window.history.back();
+        $scope.removeKoodiByKoodiUri = function(koodiUri, uiModel) {
+            var i = 0;
+            var koodiObjects = uiModel.uris;
+
+            for (; i < koodiObjects.length; i++) {
+                if (koodiObjects[i] === koodiUri) {
+                    koodiObjects.splice(i, 1);
+                }
+            }
         };
 
         $scope.init(); //initialization
-        
-
-
     }]);

@@ -192,7 +192,7 @@ public class KoulutusResourceImplTest {
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
 
         //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(2);
+        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(1);
         expect(conversionServiceMock.convert(isA(KorkeakouluDTO.class), eq(KoulutusmoduuliToteutus.class))).andStubDelegateTo(convertToEntityStub);
         expect(conversionServiceMock.convert(isA(KoulutusmoduuliToteutus.class), eq(KorkeakouluDTO.class))).andStubDelegateTo(convertToDTOStub);
         //the calls of the OidServices must be in correct order!
