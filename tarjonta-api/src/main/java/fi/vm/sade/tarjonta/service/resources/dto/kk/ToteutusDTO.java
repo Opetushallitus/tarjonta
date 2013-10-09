@@ -35,15 +35,18 @@ public abstract class ToteutusDTO extends BaseRDTO {
     private static final long serialVersionUID = 1L;
     private String komoOid;
     private OrgDTO organisaatio;
-    private TarjontaTila tila;
+    //KOODISTO DATA OBJECTS:
     private UiDTO koulutuskoodi;
-    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private UiDTO koulutusaste;
     private UiDTO koulutusala;
     private UiDTO opintoala;
     private UiDTO tutkinto;
     private UiDTO tutkintonimike;
     private UiDTO eqf;
+    private UiDTO opintojenLaajuus;
+    //OTHER DATA
+    private TarjontaTila tila;
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private Map<KomoTeksti, UiMetaDTO> kuvaus;
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
@@ -263,5 +266,19 @@ public abstract class ToteutusDTO extends BaseRDTO {
      */
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public UiDTO getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
     }
 }
