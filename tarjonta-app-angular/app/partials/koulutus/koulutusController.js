@@ -23,7 +23,6 @@ app.controller('KoulutusRoutingController', ['$scope', '$location', '$log', 'Tar
         $log.info("SCOPE: ", $scope);
 
         $scope.koulutusx = $route.current.locals.koulutusx;
-
         $log.info("  --> koulutusx == ", $scope.koulutusx);
 
         $scope.getKoulutusPartialName = function(actionType) {
@@ -38,7 +37,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$location', '$log', 'Tar
                 result = "partials/koulutus/" + actionType + "/UNKNOWN.html";
             }
 
-            $log.info("getKoulutusPartialName() --> ", result);
+            $log.debug("getKoulutusPartialName() --> ", result);
             return result;
         };
 
