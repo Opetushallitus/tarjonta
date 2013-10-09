@@ -5,17 +5,6 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
-    var tilaResource = {
-    		hakukohde: $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/:oid/tila", {}, {
-    			update: { method: "POST", responseType: "text" }
-    		}),
-    		koulutus: $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tila", {}, {
-    			update: { method: "POST", responseType: "text" }
-    		})
-    };
-
-    
-
     function localize(txt) {
         var userLocale = LocalisationService.getLocale();
         if (txt[userLocale]) {
@@ -117,12 +106,17 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
      */
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
-    	var res = tilaResource[type];
+    	var url = Config.env.tarjontaRestUrlPrefix + type+"/"+oid+"/tila?state="+(publish ? "JULKAISTU" : "PERUTTU");
     	
-    	console.log("publish "+oid+" -> "+publish);
-    	
-    	res.update({oid:oid, state:publish ? "JULKAISTU" : "PERUTTU"}, null, function(nstate) {
-    		ret.resolve(nstate);
+    	jQuery.ajax(url, {
+    		method: "POST",
+    		dataType: "text",
+    		success: function(nstate) {
+        		ret.resolve(nstate);
+        		
+        		// TODO päivitä cache
+        		
+    		}
     	});
 
     	return ret.promise;

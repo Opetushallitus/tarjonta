@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -203,6 +204,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public String updateTila(String oid, TarjontaTila tila) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkArgument(komoto != null, "Koulutusta ei löytynyt: %s", oid);
@@ -211,6 +213,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
         }
         komoto.setTila(tila);
         koulutusmoduuliToteutusDAO.update(komoto);
+    	solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
         return tila.toString();
     }
 
