@@ -979,8 +979,8 @@ public class TarjontaUIHelper {
     public String getKoulutusNimi(KoulutusPerustieto curKoulutus) {
 
         List<KoodiType> koodis = null;
-        if (curKoulutus.getPohjakoulutusVaatimus() != null) {
-            koodis = getKoodis(curKoulutus.getPohjakoulutusVaatimus());
+        if (curKoulutus.getPohjakoulutusvaatimus() != null) {
+            koodis = getKoodis(curKoulutus.getPohjakoulutusvaatimus().getUri());
         }
         if (koodis == null) {
             koodis = new ArrayList<KoodiType>();

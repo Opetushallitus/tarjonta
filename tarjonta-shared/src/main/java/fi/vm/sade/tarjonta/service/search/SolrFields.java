@@ -50,6 +50,9 @@ public class SolrFields {
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_EN = "pohjakoulutusvaatimussv_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_SV = "pohjakoulutusvaatimusen_s";
         protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String HAKUKOHDE_OIDS = "hakukohdeoids_ss";        //this is used in search
         protected static final String KOULUTUSLAJI_URIS = "koulutuslaji_ss";
@@ -69,7 +72,10 @@ public class SolrFields {
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
-        protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutus_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_EN = "pohjakoulutusvaatimussv_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_SV = "pohjakoulutusvaatimusen_s";
         protected static final String KAUSI_KOODI= "kausikoodi_s";
         protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";

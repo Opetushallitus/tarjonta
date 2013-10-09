@@ -22,7 +22,7 @@ public class KoulutusPerustieto implements Serializable
     private KoodistoKoodi tutkintonimike;
     private String ajankohta;
     private String komotoOid;
-    private String pohjakoulutusVaatimus;
+    private KoodistoKoodi pohjakoulutusvaatimus;
     private KoodistoKoodi koulutuslaji;
     private KoulutusasteTyyppi koulutustyyppi;
     private KoodistoKoodi lukiolinjakoodi;
@@ -124,12 +124,12 @@ public class KoulutusPerustieto implements Serializable
         this.komotoOid = value;
     }
 
-    public String getPohjakoulutusVaatimus() {
-        return pohjakoulutusVaatimus;
+    public KoodistoKoodi getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
     }
 
-    public void setPohjakoulutusVaatimus(String value) {
-        this.pohjakoulutusVaatimus = value;
+    public void setPohjakoulutusvaatimus(KoodistoKoodi pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 
     public KoodistoKoodi getKoulutuslaji() {
