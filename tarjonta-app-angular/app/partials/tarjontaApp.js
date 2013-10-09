@@ -8,11 +8,15 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.ctrl',
-            'app.kk.review.ctrl',
+            'app.kk.edit.hakukohde.ctrl',
             'app.kk.services',
+            'app.edit.ctrl',
+            'app.review.ctrl',
             'ui.bootstrap',
             'ngRoute',
-            'config'
+            'config',
+            'auth',
+            'TarjontaConverter'
         ]);
 
 /*******************************************************
@@ -26,6 +30,7 @@ angular.module('app',
             'app.controllers',
             'app.test.controllers',
             'app.kk',
+            'app.koulutus.ctrl',
             'app.helpers',
             'ngRoute',
             'ngResource',
@@ -35,65 +40,19 @@ angular.module('app',
             'localisation',
             'Koodisto',
             'Organisaatio',
+            'TarjontaPermissions',
+            'TarjontaCache',
             'Tarjonta',
             'KoodistoCombo',
+            'KoodistoArvoCombo',
+            'DateTimePicker',
+            'Hakukohde',
             'KoodistoMultiSelect',
-            'zippy',
             'angularTreeview',
-            'angularTreeview',
+            'TarjontaConverter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
-
-//angular.module('app').config(['$routeProvider', function($routeProvider)
-//    {
-//
-//        $routeProvider
-//        		// etusivu / tarjontatiedon haku
-//        		.when("/", {templateUrl: 'partials/search/search.html', controller: 'SearchController', reloadOnSearch:false})
-//
-//                .when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'})
-//
-//
-//                //Remove this when done Tuomas
-//                .when('/koodistoTest', {templateUrl: 'partials/koodistoTest.html', controller: 'KoodistoTestController'})
-//
-//
-//                //
-//                // EDIT
-//                //
-//                .when('/kk/edit/:id',
-//                {
-//                    templateUrl: 'partials/kk/edit/edit.html',
-//                    controller: 'KKEditController'
-//                })
-//                .when('/kk/edit/:id/:view',
-//                {
-//                    templateUrl: 'partials/kk/edit/edit.html',
-//                    controller: 'KKEditController'
-//                })
-//
-//                //
-//                // REVIEW
-//                //
-//                .when('/kk/review/:id',
-//                {
-//                    templateUrl: 'partials/kk/review/review.html',
-//                    controller: 'KKReviewController'
-//                })
-//                .when('/kk/review/:id/:view',
-//                {
-//                    templateUrl: 'partials/kk/review/review.html',
-//                    controller: 'KKReviewController'
-//                })
-//
-//                .when('/kk/tutkintoOhjelma', {templateUrl: 'partials/kk/edit/selectTutkintoOhjelmaOpener.html'})
-//
-//
-//                .otherwise({redirectTo: '/etusivu'});
-//
-//    }]);
-
 
 angular.module('app').config(['$routeProvider', function($routeProvider)
     {
@@ -101,19 +60,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
         $routeProvider
                 .when("/etusivu", {
             action: "home.default",
-            reloadOnSearch: false,
+            reloadOnSearch: false
         })
                 .when("/etusivu/:oid", {
             action: "home.default",
             reloadOnSearch: false
         })
-                .when("/kk/edit/:id", {
+                .when("/kk/edit/:orgOid/:komotoOid", {
             action: "kk.edit"
         })
-                .when("/kk/edit/:id/:part", {
+                .when("/kk/edit/:type/:part/:org/:komoto/:koulutuskoodi", {
             action: "kk.edit"
         })
-
                 .when('/kk/review/:id', {
             action: "kk.review"
         })
@@ -123,18 +81,53 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when('/helpers/localisations', {
             action: "helpers.localisations"
         })
+
+                .when("/kk/edit/hakukohde", {
+            action: "kk.hakukohde.create"
+        })
+
+                .when('/koulutus/:id', {
+            action: "koulutus.review",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusx: function(TarjontaService, $log, $route) {
+                    $log.info("/koulutus/ID", $route);
+                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
+                }
+            }
+        })
+                .when('/koulutus/:id/edit', {
+            action: "koulutus.edit",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusx: function(TarjontaService, $log, $route) {
+                    $log.info("/koulutus/ID/edit", $route);
+                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
+                }
+            }
+        })
+                .when('/hakukohde/:id', {
+            action: "xxx.xxx.xxx"
+        })
+                .when('/hakukohde/:id/edit', {
+            action: "xxx.xxx.xxx"
+        })
+
+
+                .when('/koodistoTest', {action: 'koodistoTest'})
+
                 .otherwise({redirectTo: "/etusivu"});
     }]);
 
 
-angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams) {
+angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams, $log) {
 
-    console.log("app.AppRoutingCtrl()");
+    $log.debug("app.AppRoutingCtrl()");
 
     $scope.count = 0;
 
     var render = function() {
-        console.log("app.AppRoutingCtrl.render()");
+        $log.debug("app.AppRoutingCtrl.render()");
 
         var renderAction = $route.current.action;
         var renderPath = renderAction ? renderAction.split(".") : [];
@@ -145,16 +138,16 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
         $scope.routeParams = $routeParams ? $routeParams : {};
         $scope.count++;
 
-        console.log("  renderAction: ", $scope.renderAction);
-        console.log("  renderPath: ", $scope.renderPath);
-        console.log("  routeParams: ", $scope.routeParams);
-        console.log("  count: ", $scope.count);
+        $log.debug("  renderAction: ", $scope.renderAction);
+        $log.debug("  renderPath: ", $scope.renderPath);
+        $log.debug("  routeParams: ", $scope.routeParams);
+        $log.debug("  count: ", $scope.count);
     };
 
     $scope.$on(
             "$routeChangeSuccess",
             function($currentRoute, $previousRoute) {
-                console.log("app.AppRoutingCtrl.$routeChangeSuccess");
+                $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
                 render();
             }
     );

@@ -13,37 +13,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto;
-
-import java.util.HashSet;
-import java.util.Set;
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
 /**
  *
  * @author Jani Wilén
  */
-public class UiListDTO extends UiDTO {
+public class KoulutusmoduuliRelationDTO extends ToteutusDTO {
 
     private static final long serialVersionUID = 1L;
-    private Set<UiDTO> tekstis;
 
-    public UiListDTO() {
-    }
-
-    /**
-     * @return the tekstis
-     */
-    public Set<UiDTO> getTekstis() {
-        if (tekstis == null) {
-            tekstis = new HashSet<UiDTO>();
-        }
-        return tekstis;
-    }
-
-    /**
-     * @param tekstis the tekstis to set
-     */
-    public void setTekstis(Set<UiDTO> tekstis) {
-        this.tekstis = tekstis;
+    public KoulutusmoduuliRelationDTO() {
     }
 }

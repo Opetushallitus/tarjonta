@@ -13,9 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
-package fi.vm.sade.tarjonta.service.resources.dto;
-
+import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -29,28 +30,28 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-
 public abstract class ToteutusDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 1L;
     private String komoOid;
-    private TarjontaTila tila;
-    private UiListDTO koulutuskoodi;
-    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-
+    private OrgDTO organisaatio;
+    //KOODISTO DATA OBJECTS:
+    private UiDTO koulutuskoodi;
     private UiDTO koulutusaste;
     private UiDTO koulutusala;
     private UiDTO opintoala;
     private UiDTO tutkinto;
     private UiDTO tutkintonimike;
     private UiDTO eqf;
-    private Map<KomoTeksti, UiListDTO> tekstis;
+    private UiDTO opintojenLaajuus;
+    //OTHER DATA
+    private TarjontaTila tila;
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    private Map<KomoTeksti, UiMetaDTO> kuvaus;
+    private KoulutusasteTyyppi koulutusasteTyyppi;
 
     public ToteutusDTO() {
     }
-    
-    
-    
     /*
      * Contact persons
      */
@@ -71,20 +72,20 @@ public abstract class ToteutusDTO extends BaseRDTO {
     }
 
     /**
-     * @return the tekstis
+     * @return the description data
      */
-    public Map<KomoTeksti, UiListDTO> getTekstis() {
-        if (tekstis == null) {
-            tekstis = new EnumMap<KomoTeksti, UiListDTO>(KomoTeksti.class);
+    public Map<KomoTeksti, UiMetaDTO> getKuvaus() {
+        if (kuvaus == null) {
+            kuvaus = new EnumMap<KomoTeksti, UiMetaDTO>(KomoTeksti.class);
         }
-        return tekstis;
+        return kuvaus;
     }
 
     /**
-     * @param tekstis the tekstis to set
+     * @param the description data to set
      */
-    public void setTekstis(Map<KomoTeksti, UiListDTO> tekstis) {
-        this.tekstis = tekstis;
+    public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
+        this.kuvaus = tekstis;
     }
 
     /**
@@ -118,14 +119,14 @@ public abstract class ToteutusDTO extends BaseRDTO {
     /**
      * @return the koulutuskoodi
      */
-    public UiListDTO getKoulutuskoodi() {
+    public UiDTO getKoulutuskoodi() {
         return koulutuskoodi;
     }
 
     /**
      * @param koulutuskoodi the koulutuskoodi to set
      */
-    public void setKoulutuskoodi(UiListDTO koulutuskoodi) {
+    public void setKoulutuskoodi(UiDTO koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
 
@@ -230,5 +231,54 @@ public abstract class ToteutusDTO extends BaseRDTO {
         this.yhteyshenkilos = yhteyshenkilos;
     }
 
- 
+    /**
+     * @return the organisaatio
+     */
+    public OrgDTO getOrganisaatio() {
+        if (organisaatio == null) {
+            organisaatio = new OrgDTO();
+        }
+
+        return organisaatio;
+    }
+
+    /**
+     * @param organisaatio the organisaatio to set
+     */
+    public void setOrganisaatio(OrgDTO organisaatio) {
+        this.organisaatio = organisaatio;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public UiDTO getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
+    }
 }

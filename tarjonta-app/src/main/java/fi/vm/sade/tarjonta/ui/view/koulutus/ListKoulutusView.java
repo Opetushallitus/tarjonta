@@ -259,7 +259,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String getKoulutusNimi(KoulutusPerustieto koulutus) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getNimi()).getValue();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koulutus.getNimi());
     }
 
     /**
@@ -297,13 +297,6 @@ public class ListKoulutusView extends VerticalLayout {
             index++;
         }
         return hc;
-    }
-
-    private String getKoulutusTutkintoNimike(KoulutusPerustieto curKoulutus) {
-        if (curKoulutus.getTarjoaja() != null) {
-            return uiHelper.getKoodiNimi(curKoulutus.getTutkintonimike());
-        }
-        return "";
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusPerustieto>> e) {
@@ -426,16 +419,6 @@ public class ListKoulutusView extends VerticalLayout {
         layout.setComponentAlignment(luoKoulutusB, Alignment.TOP_RIGHT);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
         addComponent(layout);
-    }
-
-    /**
-     * Showing the confirmation dialog for removing multiple haku objects.
-     *
-     */
-    private void showRemoveDialog() {
-        MultipleKoulutusRemovalDialog removeDialog = new MultipleKoulutusRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
-        koulutusDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
-        getWindow().addWindow(koulutusDialog);
     }
 
     private IntTuple checkForLukioKoulutus() {

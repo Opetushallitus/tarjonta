@@ -519,11 +519,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private String getHakukohdeTulosKoodistoNimi(HakukohdePerustieto hakukohde) {
         String koodistoNimi = null;
         
-        for (MonikielinenTekstiTyyppi.Teksti teksti : hakukohde.getNimi().getTeksti()) {
-            if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
-                koodistoNimi = teksti.getValue();
-            }
-        }
+        //TODO, miksi haetaan suomi???
+        koodistoNimi = hakukohde.getNimi("fi");
         if (koodistoNimi != null) {
             koodistoNimi = koodistoNimi + ", " + hakukohde.getTila().value();
         }

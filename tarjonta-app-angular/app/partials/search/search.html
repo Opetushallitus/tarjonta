@@ -81,36 +81,47 @@
 
     </div>
 
-	<div id="searchResults" ng-cloak>
-    <tabset>
-        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
-        
-        	<div>
-        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" disabled="{{!canMoveOrCopy()}}"/>
-        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" disabled="{{!canCreateHakukohde()}}"/>
-        		<input class="btn float-right" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" disabled="{{!canCreateKoulutus()}}"/>
-        	</div>
-        
-        	<input type="checkbox" class="selectAll"/>
-        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-        	
-        	<table id="koulutuksetResults"><!-- jquery --></table>
-        
-        </tab>
-        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
-        
-	        <input type="checkbox" class="selectAll"/>
-        	<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-
-        	<table id="hakukohteetResults"><!-- jquery --></table>
-
-        </tab>
-
-    </tabset>
+	<div id="searchResults">
+	    <tabset>
+	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
+	        
+	        	<div class="controls">
+	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" ng-disabled="!koulutusActions.canMoveOrCopy"/>
+	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" ng-disabled="!koulutusActions.canCreateHakukohde"/>
+	        		<input class="btn float-right" type="button"  ng-click="tutkintoDialogModel.open()" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" ng-disabled="!koulutusActions.canCreateKoulutus"/>
+	        	</div>
+	        	
+	        	<div class="controls">
+	        		<input type="checkbox" class="selectAll"/>
+			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+				</div>
+				
+	        	<table id="koulutuksetResults"><!-- jquery --></table>
+	        
+	        </tab>
+	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+	        
+	        	<div class="controls">
+	        		<input type="checkbox" class="selectAll"/>
+			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
+				</div>
+	
+	        	<table id="hakukohteetResults"><!-- jquery --></table>
+	
+	        </tab>
+	
+	    </tabset>
+	    
+	    <ul id="dropdown" class="dropdown-menu">
+	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
+	    </ul>
+    
     </div>
 
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
-    <a href="#/kk/edit/12345/xxx">EDIT?</a>
+    <!-- type,part,org,komoto,koulutuskoodi -->
+    <a href="#/kk/edit/new/perus/1.2.246.562.10.53945122876/none/671118/">NEW</a>
+    <a href="#/kk/edit/load/perus/1.2.246.562.10.53945122876/1.2.246.562.5.2013091114080489552096/671118/">EDIT?</a>
     
     <div ng-controller="TutkintoOhjelmaSelectOpenerCtrl">
 

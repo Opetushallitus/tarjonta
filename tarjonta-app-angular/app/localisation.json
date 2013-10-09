@@ -1,339 +1,686 @@
+[ {
+  "version" : 0,
+  "key" : "tarjonta.tila.VALMIS",
+  "locale" : "fi",
+  "value" : "Valmis",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.tila",
+  "locale" : "fi",
+  "value" : "Haun tila",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.siirra_tai_kopioi",
+  "locale" : "fi",
+  "value" : "Siirrä tai kopioi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.tekstihaku",
+  "locale" : "fi",
+  "value" : "Tekstihaku",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.kaikki",
+  "locale" : "fi",
+  "value" : "Kaikki",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.luo_uusi_koulutus",
+  "locale" : "fi",
+  "value" : "Luo uusi koulutus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.hakutulos.koulutukset",
+  "locale" : "fi",
+  "value" : "Koulutukset",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.tila.JULKAISTU",
+  "locale" : "fi",
+  "value" : "Julkaistu",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.tekstihaku.placeholder",
+  "locale" : "fi",
+  "value" : "Hakuehto",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.tyhjenna",
+  "locale" : "fi",
+  "value" : "Tyhjennä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.poistaOrgValinta",
+  "locale" : "fi",
+  "value" : "Poista organisaatiovalinta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.alkamisVuosi",
+  "locale" : "fi",
+  "value" : "Alkamisvuosi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.hae",
+  "locale" : "fi",
+  "value" : "Hae",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiotyyppi.koulutustoimija",
+  "locale" : "fi",
+  "value" : "Koulutustoimija",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.button.hae",
+  "locale" : "fi",
+  "value" : "Hae",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.tila.PERUTTU",
+  "locale" : "fi",
+  "value" : "Peruttu",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.alkamisKausi",
+  "locale" : "fi",
+  "value" : "Alkamiskausi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.label.nayta.myos.lakkautetut",
+  "locale" : "fi",
+  "value" : "Näytä myös lakkautetut",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.oppilaitostyypit.prompt",
+  "locale" : "fi",
+  "value" : "Oppilaistostyyppi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.luo_uusi_hakukohde",
+  "locale" : "fi",
+  "value" : "Luo uusi hakukohde",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.haku.tulosta_raportti",
+  "locale" : "fi",
+  "value" : "Tulosta raportti",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiotyyppi.oppilaitos",
+  "locale" : "fi",
+  "value" : "Oppilaitos",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.valitse_kaikki",
+  "locale" : "fi",
+  "value" : "Valitse kaikki",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.tila.KOPIOITU",
+  "locale" : "fi",
+  "value" : "Kopioitu",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiotyyppi.toimipiste",
+  "locale" : "fi",
+  "value" : "Toimipiste",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiotyyppi.oppisopimustoimipiste",
+  "locale" : "fi",
+  "value" : "Oppisopimustoimipiste",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "loading",
+  "locale" : "fi",
+  "value" : "Ladataan...",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.tila.LUONNOS",
+  "locale" : "fi",
+  "value" : "Luonnos",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.koulutuskoodi",
+  "locale" : "fi",
+  "value" : "Koulutuskoodi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.button.tyhjenna",
+  "locale" : "fi",
+  "value" : "Tyhjennä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.hakutulos.hakukohteet",
+  "locale" : "fi",
+  "value" : "Hakukohteet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.organisaatiotyypit.prompt",
+  "locale" : "fi",
+  "value" : "Organisaatiotyyppi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "organisaatiohaku.label.nayta.myos.suunnitellut",
+  "locale" : "fi",
+  "value" : "Näytä myös suunnitellut",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.julkaise",
+  "locale" : "fi",
+  "value" : "Julkaise",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.poista",
+  "locale" : "fi",
+  "value" : "Poista",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.tarkastele",
+  "locale" : "fi",
+  "value" : "Tarkastele",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.oid",
+  "locale" : "fi",
+  "value" : "OIDx",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.muokkaa",
+  "locale" : "fi",
+  "value" : "Muokkaa",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.tutkinto",
+  "locale" : "fi",
+  "value" : "Tutkinto",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.kuvaus",
+  "locale" : "fi",
+  "value" : "Kuvaus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.dialogTitle",
+  "locale" : "fi",
+  "value" : "Valitse tutkinto-ohjelma",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.peruuta",
+  "locale" : "fi",
+  "value" : "Peruuta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "back",
+  "locale" : "fi",
+  "value" : "Takaisin",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "delete",
+  "locale" : "fi",
+  "value" : "Poista",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.koulutusaste",
+  "locale" : "fi",
+  "value" : "Koulutusaste",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.koulutusohjelma",
+  "locale" : "fi",
+  "value" : "Koulutusohjelma",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "copy",
+  "locale" : "fi",
+  "value" : "Kopioi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.opintoala",
+  "locale" : "fi",
+  "value" : "Opintoala",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.koulutusala",
+  "locale" : "fi",
+  "value" : "Koulutusala",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.tutkintonimike",
+  "locale" : "fi",
+  "value" : "Tutkintonimike",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "transfer",
+  "locale" : "fi",
+  "value" : "Siirrä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.suunniteltu-kesto",
+  "locale" : "fi",
+  "value" : "Suunniteltu kesto",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.eqf-luokitus",
+  "locale" : "fi",
+  "value" : "EQF-luokitus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.maksullisuus",
+  "locale" : "fi",
+  "value" : "Maksullisuus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.koulutuksen-alkamispvm",
+  "locale" : "fi",
+  "value" : "Koulutuksen alkamispäivä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.yhteyshenkilo",
+  "locale" : "fi",
+  "value" : "Yhteyshenkilö",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.opintojen-laajuus",
+  "locale" : "fi",
+  "value" : "Opintojen laajuus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.opetusmuodot",
+  "locale" : "fi",
+  "value" : "Opetusmuodot",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.pohjakoulutusvaatimus",
+  "locale" : "fi",
+  "value" : "Pohjakoulutusvaatimukset",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.tyhjenna",
+  "locale" : "fi",
+  "value" : "Tyhjennä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.hakukohde.linkit",
+  "locale" : "fi",
+  "value" : "Näytä koulutukset",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.koulutus.linkit",
+  "locale" : "fi",
+  "value" : "Näytä hakukohteet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "tarjonta.toiminnot.peruuta",
+  "locale" : "fi",
+  "value" : "Peruuta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.hae",
+  "locale" : "fi",
+  "value" : "Hae",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.teemat",
+  "locale" : "fi",
+  "value" : "Teemat",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.ects-koordinaattori",
+  "locale" : "fi",
+  "value" : "ECTS-koordinaattori",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.koulutusala",
+  "locale" : "fi",
+  "value" : "Koulutusala",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.tutkinto-ohjelman-tunniste",
+  "locale" : "fi",
+  "value" : "Tutkinto-ohjelman tunniste",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.jatka",
+  "locale" : "fi",
+  "value" : "Jatka",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.edit.opetuskielet",
+  "locale" : "fi",
+  "value" : "Opetuskielet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.sisaltoKoulutus",
+  "locale" : "fi",
+  "value" : "Koulutuksen sisältö",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.poista",
+  "locale" : "en",
+  "value" : "Remove",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.poista",
+  "locale" : "fi",
+  "value" : "Poista",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.poista",
+  "locale" : "sv",
+  "value" : "Annulera",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.koulutusohjelmanValinta",
+  "locale" : "fi",
+  "value" : "Koulutusohjelman valinta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.kansainvalisyys",
+  "locale" : "fi",
+  "value" : "Kansainvälisuus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.rakenneKoulutus",
+  "locale" : "fi",
+  "value" : "Koulutuksen rakenne",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.sisaltyvatOpintokokonaisuudet.otsikko",
+  "locale" : "fi",
+  "value" : "Sisältyvät opintokokonaisuudet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.sijoittuminenTyoelamaan",
+  "locale" : "fi",
+  "value" : "Sijoituminen työelämään",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.ammattinimikkeet",
+  "locale" : "fi",
+  "value" : "Ammattinimikkeet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.jatkoopintoMahdollisuudet",
+  "locale" : "fi",
+  "value" : "Jatko-opintomahdollisuudet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.hakukohteet.otsikko",
+  "locale" : "fi",
+  "value" : "Hakukohteet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.tyhjenna",
+  "locale" : "fi",
+  "value" : "Tyhjennä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.organisaatio",
+  "locale" : "fi",
+  "value" : "Organisaatio",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.siirra.osaksi",
+  "locale" : "fi",
+  "value" : "Siirrä osaksi toista koulutusta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.lisaa.rinnakkainen",
+  "locale" : "fi",
+  "value" : "Lisää rinnakkainen koulutus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.edellinen",
+  "locale" : "fi",
+  "value" : "Edellinen",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.otsikko",
+  "locale" : "fi",
+  "value" : "Koulutuksen perustiedot",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.koulutus",
+  "locale" : "fi",
+  "value" : "Koulutus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.koulutusohjelma",
+  "locale" : "fi",
+  "value" : "Koulutusohjelma",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.koulutusaste",
+  "locale" : "fi",
+  "value" : "Koulutusaste",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.esikatsele",
+  "locale" : "fi",
+  "value" : "Esikatsele",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.tutkintonimike",
+  "locale" : "fi",
+  "value" : "Tutkintonimike",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.koulutusala",
+  "locale" : "fi",
+  "value" : "Koulutusala",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.opintojenLaajuus",
+  "locale" : "fi",
+  "value" : "Opintojen laajuus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.opintoala",
+  "locale" : "fi",
+  "value" : "Opintoala",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.pohjakoulutusvaatimus",
+  "locale" : "fi",
+  "value" : "Pohjakoulutusvaatimus",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.linkkiOpetussuunnitelmaan",
+  "locale" : "fi",
+  "value" : "Linkki opetussuunnitelmaan",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.suunniteltuKesto",
+  "locale" : "fi",
+  "value" : "Suunniteltu kesto",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.koulutuslaji",
+  "locale" : "fi",
+  "value" : "Koulutuslaji",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.alkamispvm",
+  "locale" : "fi",
+  "value" : "Alkamispäivämäärä",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.yhteyshenkilo",
+  "locale" : "fi",
+  "value" : "Yhteyshenkilö",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.tavoitteetKoulutus",
+  "locale" : "fi",
+  "value" : "Koulutuksen tavoitteet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.opetusmuoto",
+  "locale" : "fi",
+  "value" : "Opetusmuoto",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.perustiedot.opetuskieli",
+  "locale" : "fi",
+  "value" : "Opetuskieli",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.tavoitteetTutkinto",
+  "locale" : "fi",
+  "value" : "Tutkinnon tavoitteet",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kuvailevatTiedot.otsikko",
+  "locale" : "fi",
+  "value" : "Koulutuksen kuvailevat tiedot",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "selectTutkintoOhjelma.hakutulokset",
+  "locale" : "fi",
+  "value" : "Hakutulokset",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.peruuta",
+  "locale" : "fi",
+  "value" : "Peruuta",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.murupolku",
+  "locale" : "fi",
+  "value" : "Murupolku {0} {1} {2}",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.seuraava",
+  "locale" : "fi",
+  "value" : "Seuraava",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.kopioi",
+  "locale" : "fi",
+  "value" : "Kopioi",
+  "api_VERSION" : 4
+}, {
+  "version" : 0,
+  "key" : "kk.review.takaisin",
+  "locale" : "fi",
+  "value" : "Takaisin",
+  "api_VERSION" : 4
+},
 {
-    "review.basicInfo.organisaatio" :
-            {
-                "key": "review.basicInfo.organisaatio",
-                "locale": "fi",
-                "value": "Organisaatio"
-            },
-
-
-    "review.breadcrumb":
-            {
-                "key": "review.breadcrumb",
-                "locale": "fi",
-                "value": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>.",
-                "values": {
-                    "fi": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>.",
-                    "en": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>. EN",
-                    "sv": "Tutkintoon johtava koulutus: <b>{0}</b> on luotu organisaatioon <i>{1}</i>. SV"
-                }
-
-            },
-    "tarjonta.organisaationHaku.hae":
-            {
-                "key": "tarjonta.organisaationHaku.hae",
-                "locale": "fi",
-                "value": "Tee haku",
-                "values": {
-                    "fi": "Tee haku",
-                    "en": "Perform the search",
-                    "sv": "Sök - sök!"
-                }
-            },
-    "tarjonta.organisaationHaku.hakutulos":
-            {
-                "key": "tarjonta.organisaationHaku.hakutulos",
-                "locale": "fi",
-                "value": "Haulla {0} löytyi {1} osumaa",
-                "values": {
-                    "fi": "Haulla {0} löytyi {1} osumaa",
-                    "en": "Search of {0} found {1} hits",
-                    "sv": "Sök {0} funnit {1} resultatet"
-                }
-            },
-    "tarjonta.tallenna":
-            {
-                "key": "tarjonta.tallenna",
-                "locale": "fi",
-                "value": "Tallenna",
-                "values": {
-                    "fi": "Tallenna",
-                    "en": "Save",
-                    "sv": "Annulera"
-                }
-            },
-    "tarjonta.peruuta":
-            {
-                "key": "tarjonta.peruuuta",
-                "locale": "fi",
-                "value": "Peruuta",
-                "values": {
-                    "fi": "Peruuta",
-                    "en": "Cancel",
-                    "sv": "Diskutera"
-                }
-            },
-    "tarjonta.title":
-            {
-                "key": "tarjonta.title",
-                "locale": "fi",
-                "value": "Tarjonnan otsikko",
-                "values": {
-                    "fi": "Tarjonnan otsikko",
-                    "en": "Title for Tarjonta",
-                    "sv": "Titeln för Tarjonta"
-                }
-            },
-    "tarjonta.tila.LUONNOS":
-            {
-                "key": "tarjonta.tila.LUONNOS",
-                "locale": "fi",
-                "value": "Luonnos"
-            },
-    "tarjonta.tila.VALMIS":
-            {
-                "key": "tarjonta.tila.VALMIS",
-                "locale": "fi",
-                "value": "Valmis"
-            },
-    "tarjonta.tila.JULKAISTU":
-            {
-                "key": "tarjonta.tila.JULKAISTU",
-                "locale": "fi",
-                "value": "Julkaistu"
-            },
-    "tarjonta.tila.PERUTTU":
-            {
-                "key": "tarjonta.tila.PERUTTU",
-                "locale": "fi",
-                "value": "Peruttu"
-            },
-    "tarjonta.tila.KOPIOITU":
-            {
-                "key": "tarjonta.tila.KOPIOITU",
-                "locale": "fi",
-                "value": "Kopioitu"
-            },
-    "tarjonta.haku.kaikki":
-            {
-                "key": "tarjonta.haku.kaikki",
-                "locale": "fi",
-                "value": "Kaikki"
-            },
-    "tarjonta.haku.tyhjenna":
-            {
-                "key": "tarjonta.haku.tyhjenna",
-                "locale": "fi",
-                "value": "Tyhjennä"
-            },
-    "tarjonta.haku.hae":
-            {
-                "key": "tarjonta.haku.hae",
-                "locale": "fi",
-                "value": "Hae"
-            },
-    "tarjonta.haku.tulosta_raportti":
-            {
-                "key": "tarjonta.haku.tulosta_raportti",
-                "locale": "fi",
-                "value": "Tulosta raportti"
-            },
-    "tarjonta.haku.poistaOrgValinta":
-            {
-                "key": "tarjonta.haku.poistaOrgValinta",
-                "locale": "fi",
-                "value": "Poista valinta"
-            },
-    "tarjonta.haku.tila":
-            {
-                "key": "tarjonta.haku.hae",
-                "locale": "fi",
-                "value": "Tila"
-            },
-    "tarjonta.haku.alkamisVuosi":
-            {
-                "key": "tarjonta.haku.alkamisVuosi",
-                "locale": "fi",
-                "value": "Koulutuksen alkamisvuosi"
-            },
-    "tarjonta.haku.alkamisKausi":
-            {
-                "key": "tarjonta.haku.alkamisKausi",
-                "locale": "fi",
-                "value": "Koulutuksen alkamiskausi"
-            },
-    "tarjonta.hakutulos.koulutukset":
-            {
-                "key": "tarjonta.hakutulos.koulutukset",
-                "locale": "fi",
-                "value": "Koulutukset"
-            },
-    "tarjonta.hakutulos.hakukohteet":
-            {
-                "key": "tarjonta.hakutulos.hakukohteet",
-                "locale": "fi",
-                "value": "Hakukohteet"
-            },
-    "organisaatiohaku.button.tyhjenna":
-            {
-                "key": "organisaatiohaku.button.tyhjenna",
-                "locale": "fi",
-                "value": "Tyhjennä",
-                "values": {
-                    "fi": "Tyhjennä"
-                }
-            },
-    "organisaatiohaku.button.hae":
-            {
-                "key": "organisaatiohaku.button.hae",
-                "locale": "fi",
-                "value": "Hae",
-                "values": {
-                    "fi": "Hae"
-                }
-            },
-    "organisaatiohaku.label.nayta.myos.suunnitellut":
-            {
-                "key": "organisaatiohaku.label.nayta.myos.suunnitellut",
-                "locale": "fi",
-                "value": "Myös suunnitellut",
-                "values": {
-                    "fi": "Myös suunnitellut"
-                }
-            },
-    "organisaatiohaku.label.nayta.myos.lakkautetut":
-            {
-                "key": "organisaatiohaku.label.nayta.myos.lakkautetut",
-                "locale": "fi",
-                "value": "Myös lakkautetut",
-                "values": {
-                    "fi": "Myös lakkautetut"
-                }
-            },
-    "organisaatiohaku.organisaatiotyypit.kaikki":
-            {
-                "key": "organisaatiohaku.organisaatiotyypit.kaikki",
-                "locale": "fi",
-                "value": "Valitse organisaatiotyyppi",
-                "values": {
-                    "fi": "Valitse organisaatiotyyppi"
-                }
-            },
-    "organisaatiohaku.organisaatiotyypit.prompt":
-            {
-                "key": "organisaatiohaku.organisaatiotyypit.kaikki",
-                "locale": "fi",
-                "value": "Valitse organisaatiotyyppi",
-                "values": {
-                    "fi": "Valitse organisaatiotyyppi"
-                }
-            },
-    "organisaatiohaku.oppilaitostyypit.prompt":
-            {
-                "key": "organisaatiohaku.oppilaitostyypit.prompt",
-                "locale": "fi",
-                "value": "Valitse oppilaitostyyppi",
-                "values": {
-                    "fi": "Valitse oppilaitostyyppi"
-                }
-            },
-    "organisaatiotyyppi.koulutustoimija":
-            {
-                "key": "organisaatiotyyppi.koulutustoimija",
-                "locale": "fi",
-                "value": "Koulutustoimija",
-                "values": {
-                    "fi": "Koulutustoimija"
-                }
-            },
-    "organisaatiotyyppi.oppilaitos":
-            {
-                "key": "organisaatiotyyppi.oppilaitos",
-                "locale": "fi",
-                "value": "Oppilaitos",
-                "values": {
-                    "fi": "Oppilaitos"
-                }
-            },
-    "organisaatiotyyppi.toimipiste":
-            {
-                "key": "organisaatiotyyppi.toimipiste",
-                "locale": "fi",
-                "value": "Toimipiste",
-                "values": {
-                    "fi": "Toimipiste"
-                }
-            },
-    "organisaatiotyyppi.oppisopimustoimipiste":
-            {
-                "key": "organisaatiotyyppi.oppisopimustoimipiste",
-                "locale": "fi",
-                "value": "Oppisopimustoimipiste",
-                "values": {
-                    "fi": "Oppisopimustoimipiste"
-                }
-            },
-    "selectTutkintoOhjelma.koulutusala":
-            {
-                "key": "selectTutkintoOhjelma.koulutusala",
-                "locale": "fi",
-                "value": "Koulutusala",
-                "values": {
-                    "fi": "Koulutusala"
-                }
-            },
-    "selectTutkintoOhjelma.dialogTitle": {
-            "key": "selectTutkintoOhjelma.dialogTitle",
-             "locale": "fi",
-             "value": "Valitse tutkinto-ohjelma",
-             "values": {
-                "fi": "Valitse tutkinto-ohjelma"
-             }
-    },
-    "selectTutkintoOhjelma.tekstihaku": {
-            "key": "selectTutkintoOhjelma.tekstihaku",
-             "locale": "fi",
-             "value": "Tekstihaku",
-             "values": {
-                "fi": "Tekstihaku"
-             }
-    },
-    "selectTutkintoOhjelma.tyhjenna": {
-            "key": "selectTutkintoOhjelma.tyhjenna",
-             "locale": "fi",
-             "value": "Tyhjennä",
-             "values": {
-                "fi": "Tyhjennä"
-             }
-    },
-    "selectTutkintoOhjelma.hae": {
-            "key": "selectTutkintoOhjelma.hae",
-             "locale": "fi",
-             "value": "Hae",
-             "values": {
-                "fi": "Hae"
-             }
-    },
-    "selectTutkintoOhjelma.hakutulokset": {
-            "key": "selectTutkintoOhjelma.hakutulokset",
-             "locale": "fi",
-             "value": "Hakutulokset",
-             "values": {
-                "fi": "Hakutulokset"
-             }
-    },
-    "selectTutkintoOhjelma.peruuta": {
-            "key": "selectTutkintoOhjelma.peruuta",
-             "locale": "fi",
-             "value": "Peruuta",
-             "values": {
-                "fi": "Peruuta"
-             }
-    },
-    "selectTutkintoOhjelma.jatka": {
-            "key": "selectTutkintoOhjelma.jatka",
-             "locale": "fi",
-             "value": "Jatka",
-             "values": {
-                "fi": "Jatka"
-             }
-    },
-    "selectTutkintoOhjelma.kuvaus": {
-            "key": "selectTutkintoOhjelma.kuvaus",
-             "locale": "fi",
-             "value": "Valitse koulutusohjelma, lorem ipsum whatever",
-             "values": {
-                "fi": "Valitse koulutusohjelma, lorem ipsum whatever"
-             }
-    }
-}
+  "version" : 0,
+  "key" : "kk.hakukohde.haut",
+  "locale" : "fi",
+  "value" : "Haut",
+  "api_VERSION" : 4
+}]

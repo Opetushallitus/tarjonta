@@ -13,48 +13,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
  */
-public class UiDTO implements Serializable {
+public class KuvausDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private KoodiUriDTO koodi;
-    private String arvo;
+    private Map<KomoTeksti, MonikielinenTekstiTyyppi> tekstis;
 
-    public UiDTO() {
-    }
-    
     /**
-     * @return the arvo
+     * @return the tekstis
      */
-    public String getArvo() {
-        return arvo;
+    public Map<KomoTeksti, MonikielinenTekstiTyyppi> getTekstis() {
+        return tekstis;
     }
 
     /**
-     * @param arvo the arvo to set
+     * @param tekstis the tekstis to set
      */
-    public void setArvo(String arvo) {
-        this.arvo = arvo;
-    }
-
-    /**
-     * @return the koodi
-     */
-    public KoodiUriDTO getKoodi() {
-        return koodi;
-    }
-
-    /**
-     * @param koodi the koodi to set
-     */
-    public void setKoodi(KoodiUriDTO koodi) {
-        this.koodi = koodi;
+    public void setTekstis(Map<KomoTeksti, MonikielinenTekstiTyyppi> tekstis) {
+        this.tekstis = tekstis;
     }
 }

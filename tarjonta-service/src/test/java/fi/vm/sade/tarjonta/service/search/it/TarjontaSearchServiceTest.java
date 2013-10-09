@@ -63,6 +63,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         perus.setParentOidPath(Joiner.on("/").join(ophOid, orgOid));
         perus.setNimi("fi", "org nimi fi for oid:" + orgOid);
         perus.setNimi("sv", "org nimi sv for oid:" + orgOid);
+        perus.setNimi("en", "org nimi en for oid:" + orgOid);
         return perus;
     }
 
@@ -184,15 +185,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getHakukohteet().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoaja().getTarjoajaOid());
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoajaOid());
 
         kysely.getTarjoajaOids().add("1.2.3.4.556");
         vastaus = tarjontaSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(2, vastaus.getHakukohteet().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoaja().getTarjoajaOid());
-        assertEquals("1.2.3.4.556", vastaus.getHakukohteet().get(1).getTarjoaja().getTarjoajaOid());
-
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoajaOid());
+        assertEquals("1.2.3.4.556", vastaus.getHakukohteet().get(1).getTarjoajaOid());
     }
     
     

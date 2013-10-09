@@ -79,7 +79,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private ComboBox koulutuksenTyyppiCombo;
     private ComboBox koulutusValintaCombo;
     Label pohjakoulutusvaatimusLbl;
-    private KoodistoComponent kcPohjakoulutusvaatimus;
+    private ComboBox pohjakoulutusvaatimusCombo;
     @Autowired
     private TarjontaUIHelper helper;
 
@@ -131,8 +131,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                 logger.info("koulutusAsteCombo : {} == {}", koulutuksenTyyppiCombo.getValue(), Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri());
 
                 if (koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer
-                        && ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri())
-                        && kcPohjakoulutusvaatimus.getValue() == null) {
+                        && (((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))
+                        && pohjakoulutusvaatimusCombo.getValue() == null) {
                     errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
                     return;
                 }
@@ -151,8 +152,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                             presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                             logger.info("lukiokoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
-                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS)) {
-                            presenter.showKoulutusEditView(selectedOrgs.values(), (String) kcPohjakoulutusvaatimus.getValue());
+                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) || contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS)) {
+                            presenter.showKoulutusEditView(selectedOrgs.values(), ((KoodiContainer) pohjakoulutusvaatimusCombo.getValue()).getKoodiType().getKoodiUri());
                             logger.info("ammatillinen peruskoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
                         } else {
@@ -215,28 +216,59 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         gridLayout.addComponent(pohjakoulutusvaatimusLbl, 0, 1);
 
         //gridLayout.setComponentAlignment(pohjakoulutusvaatimusLbl, Alignment.MIDDLE_RIGHT);
-        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
-        kcPohjakoulutusvaatimus.setVisible(false);
+        pohjakoulutusvaatimusCombo = uiBuilder.comboBox(null, null, null);//buildKoodistoCombobox(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+        
+        pohjakoulutusvaatimusCombo.setVisible(false);
 
         koulutuksenTyyppiCombo.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -8476437837944397351L;
 
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                boolean isEnabled = koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer && ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri());
-                pohjakoulutusvaatimusLbl.setVisible(isEnabled);
-                kcPohjakoulutusvaatimus.setVisible(isEnabled);
+                handleKoulutuksenTyyppiChanged(event);
+                
             }
         });
 
         //gridLayout.addComponent(kcPohjakoulutusvaatimus, 1, 1);
-        kcPohjakoulutusvaatimus.setWidth("100%");
-        gridLayout.addComponent(kcPohjakoulutusvaatimus, 1, 1, 2, 1);
+        //pohjakoulutusvaatimusCombo.setWidth("100%");
+        pohjakoulutusvaatimusCombo.setWidth("200px");
+        gridLayout.addComponent(pohjakoulutusvaatimusCombo, 1, 1, 2, 1);
         gridLayout.setMargin(false, false, false, true);
 
         gridLayout.setHeight("100px");
 
         return gridLayout;
+    }
+    
+    private void handleKoulutuksenTyyppiChanged(Property.ValueChangeEvent event) {
+        
+        if (!(koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer)) {
+            pohjakoulutusvaatimusLbl.setVisible(false);
+            pohjakoulutusvaatimusCombo.setVisible(false);
+            return;
+        }
+        String koodiUri = ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri();
+        
+        boolean isEnabled = koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri());
+        
+        pohjakoulutusvaatimusLbl.setVisible(isEnabled);
+        pohjakoulutusvaatimusCombo.setVisible(isEnabled);
+        
+        this.buildPohjakoulutusvaatimusCombo(koodiUri);
+        
+    }
+    
+    private void buildPohjakoulutusvaatimusCombo(String koodiUri) {
+        Collection<KoodiType> koodit = helper.getKoodistoRelations(koodiUri, KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+        if (koodit == null) {    
+            return;
+        }
+        
+        this.pohjakoulutusvaatimusCombo.removeAllItems();
+        for(KoodiType curKoodi : koodit) {
+            this.pohjakoulutusvaatimusCombo.addItem(new KoodiContainer(curKoodi));
+        }
     }
 
     private ComboBox buildKoulutusValintaCombo() {
@@ -299,7 +331,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         }
         final OrganisaatioPerustieto organisaatio = selectedOrgs.values()
                 .iterator().next();
-        KoodiContainer currentSelection = (KoodiContainer) koulutuksenTyyppiCombo
+        KoodiContainer currentSelectionKoulutustyyppi = (KoodiContainer) koulutuksenTyyppiCombo
+                .getValue();
+        
+        KoodiContainer currentSelectionPohjakoulutus = (KoodiContainer) pohjakoulutusvaatimusCombo
                 .getValue();
 
         List<String> oppilaitostyyppiUrit = super.presenter
@@ -307,12 +342,21 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
         buildKoulutustyyppiCombo(oppilaitostyyppiUrit);
 
-        if (currentSelection != null
-                && currentSelection instanceof KoodiContainer) {
+        if (currentSelectionKoulutustyyppi != null
+                && currentSelectionKoulutustyyppi instanceof KoodiContainer) {
             for (Object itemId : koulutuksenTyyppiCombo.getItemIds()) {
                 KoodiContainer kc = (KoodiContainer) itemId;
-                if (kc.getKoodiType().getKoodiUri().equals(currentSelection.koodiType.getKoodiUri())) {
+                if (kc.getKoodiType().getKoodiUri().equals(currentSelectionKoulutustyyppi.koodiType.getKoodiUri())) {
                     koulutuksenTyyppiCombo.setValue(itemId);
+                }
+            }
+        }
+        if (currentSelectionPohjakoulutus != null
+                && currentSelectionPohjakoulutus instanceof KoodiContainer) {
+            for (Object itemId : pohjakoulutusvaatimusCombo.getItemIds()) {
+                KoodiContainer kc = (KoodiContainer) itemId;
+                if (kc.getKoodiType().getKoodiUri().equals(currentSelectionPohjakoulutus.koodiType.getKoodiUri())) {
+                    pohjakoulutusvaatimusCombo.setValue(itemId);
                 }
             }
         }

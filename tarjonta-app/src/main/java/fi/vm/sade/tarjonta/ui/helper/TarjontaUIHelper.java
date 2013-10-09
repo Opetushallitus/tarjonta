@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import net.sf.ehcache.CacheManager;
@@ -660,6 +661,27 @@ public class TarjontaUIHelper {
     }
 
     /**
+     * Avaimet mapin avaimet: fi, sv, en
+     * @param locale
+     * @param monikielinenTeksti
+     * @return mapoista parhaan vaihtoehdon
+     */
+    public static String getClosestMonikielinenNimi(Locale locale, Map<String, String> monikielinenTeksti) {
+        final String lang = locale.getLanguage().toLowerCase();
+        LinkedList<String> kielet = new LinkedList<String>(allLanguages);
+        kielet.remove(lang);
+        kielet.addFirst(lang);
+        for(String kieli:kielet) {
+            if(monikielinenTeksti.containsKey(kieli)) {
+                return monikielinenTeksti.get(kieli);
+            }
+        }
+        
+        //happens when map is empty?
+        return null;
+    }
+    
+    /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *     
 * @param locale
@@ -964,11 +986,11 @@ public class TarjontaUIHelper {
             koodis = new ArrayList<KoodiType>();
         }
         if (curKoulutus.getKoulutusohjelmakoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis);
+            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
         } else if (curKoulutus.getNimi() != null) {
-            return getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getNimi()).getValue();
+            return getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getNimi());
         } else if (curKoulutus.getKoulutuskoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
+            return getKoodiNimi(curKoulutus.getKoulutuskoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
         }
         return "";
     }
@@ -976,7 +998,7 @@ public class TarjontaUIHelper {
     public String getKoulutuslaji(KoulutusPerustieto tulos) {
         List<String> uris = new ArrayList<String>();
         if (tulos.getKoulutuslaji() != null) {
-            uris.add(tulos.getKoulutuslaji());
+            uris.add(tulos.getKoulutuslaji().getUri());
 
             return getKoodiNimi(uris, I18N.getLocale());
         }

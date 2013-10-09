@@ -26,10 +26,11 @@ public class KoulutusIndexEntity {
     private String koulutuslaji;
 
     @QueryProjection
-    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji) {
+    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
+        this.pohjakoulutusVaatimus = pohjakoulutusVaatimusUri;
     }
 
     @QueryProjection
@@ -110,10 +111,6 @@ public class KoulutusIndexEntity {
 
     public String getKoulutusmoduuliOid() {
         return koulutusmoduuliOid;
-    }
-
-    public String getKoulutustyyppi() {
-        return koulutusTyyppi;
     }
 
     public String getPohjakoulutusvaatimus() {

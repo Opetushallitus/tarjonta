@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -142,6 +143,9 @@ public class EditHakuForm extends VerticalLayout {
     private Form form;
     private transient I18NHelper _i18n;
     private boolean attached = false;
+    
+    @Value("${koodisto-uris.yhteishaku}")
+    private String yhteishakuUri;
 
     private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
         @Override
@@ -202,7 +206,7 @@ public class EditHakuForm extends VerticalLayout {
             @Override
             public void valueChange(ValueChangeEvent valueChangeEvent) {
                 String hakutapaVal = (String)valueChangeEvent.getProperty().getValue();
-                if (hakutapaVal.trim().contains(EditHakuView.YHTEISHAKU_URI)) {
+                if (hakutapaVal.trim().contains(yhteishakuUri)) {
                     _kaytetaanSijoittelua.setValue(true);
                     _kayteaanJarjestelmanHakulomaketta.setValue(true);
 

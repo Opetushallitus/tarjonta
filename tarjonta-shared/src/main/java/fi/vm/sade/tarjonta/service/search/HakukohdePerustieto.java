@@ -3,30 +3,65 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdePerustieto implements Serializable
 {
-
+    
     private final static long serialVersionUID = 100L;
     private String oid;
-    private MonikielinenTekstiTyyppi nimi;
+    private Nimi nimi = new Nimi();
     private String koodistoNimi;
     private TarjontaTila tila;
-    private String aloituspaikat;
-    private String koulutuksenAlkamiskausiUri;
-    private String koulutuksenAlkamisvuosi;
-    private KoodistoKoodiTyyppi hakutapaKoodi;
-    private TarjoajaTyyppi tarjoaja;
+    private Integer aloituspaikat;
+    private KoodistoKoodi koulutuksenAlkamiskausi;
+    private Integer koulutuksenAlkamisvuosi;
+    private KoodistoKoodi hakutapakoodi;
+    private String tarjoajaOid;
+    private Nimi tarjoajaNimi = new Nimi();
     private Date hakuAlkamisPvm;
     private Date hakuPaattymisPvm;
-    private MonikielinenTekstiTyyppi hakukohteenKoulutuslaji;
+    private KoodistoKoodi koulutuslaji;
     private String hakutyyppiUri;
+    private String pohjakoulutusVaatimus; 
 
+    public String getPohjakoulutusVaatimus() {
+        return pohjakoulutusVaatimus;
+    }
+
+    public void setPohjakoulutusVaatimus(String pohjakoulutusVaatimus) {
+        this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
+    }
+
+    public KoodistoKoodi getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    public void setKoulutuslaji(KoodistoKoodi koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+    
+    public String getTarjoajaOid() {
+        return tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this.tarjoajaOid = tarjoajaOid;
+    }
+    
+    public String getTarjoajaNimi(String locale) {
+        return tarjoajaNimi.get(locale);
+    }
+
+    public void setTarjoajaNimi(String locale, String nimi) {
+        tarjoajaNimi.put(locale, nimi);
+    }
+    
+    public Map<String, String> getTarjoajaNimi() {
+        return tarjoajaNimi;
+    }
 
     public String getOid() {
         return oid;
@@ -36,12 +71,29 @@ public class HakukohdePerustieto implements Serializable
         this.oid = value;
     }
 
-    public MonikielinenTekstiTyyppi getNimi() {
+    /**
+     * Palauta nimi
+     * @param locale kieli (fi,sv,en)
+     * @return
+     */
+    public String getNimi(String locale) {
+        return nimi.get(locale);
+    }
+    
+    /**
+     * Palauta kaiki nimet
+     */
+    public Map<String, String> getNimi() {
         return nimi;
     }
 
-    public void setNimi(MonikielinenTekstiTyyppi value) {
-        this.nimi = value;
+    /**
+     * Aseta nimi
+     * @param locale kieli (fi,sv,en)
+     * @param nimi nimi
+     */
+    public void setNimi(String locale, String nimi) {
+        this.nimi.put(locale,  nimi);
     }
 
     public String getKoodistoNimi() {
@@ -60,44 +112,36 @@ public class HakukohdePerustieto implements Serializable
         this.tila = value;
     }
 
-    public String getAloituspaikat() {
+    public Integer getAloituspaikat() {
         return aloituspaikat;
     }
 
-    public void setAloituspaikat(String value) {
+    public void setAloituspaikat(Integer value) {
         this.aloituspaikat = value;
     }
 
-    public String getKoulutuksenAlkamiskausiUri() {
-        return koulutuksenAlkamiskausiUri;
+    public KoodistoKoodi getKoulutuksenAlkamiskausi() {
+        return koulutuksenAlkamiskausi;
     }
 
-    public void setKoulutuksenAlkamiskausiUri(String value) {
-        this.koulutuksenAlkamiskausiUri = value;
+    public void setKoulutuksenAlkamiskausiUri(KoodistoKoodi value) {
+        this.koulutuksenAlkamiskausi = value;
     }
 
-    public String getKoulutuksenAlkamisvuosi() {
+    public Integer getKoulutuksenAlkamisvuosi() {
         return koulutuksenAlkamisvuosi;
     }
 
-    public void setKoulutuksenAlkamisvuosi(String value) {
+    public void setKoulutuksenAlkamisvuosi(Integer value) {
         this.koulutuksenAlkamisvuosi = value;
     }
 
-    public KoodistoKoodiTyyppi getHakutapaKoodi() {
-        return hakutapaKoodi;
+    public KoodistoKoodi getHakutapaKoodi() {
+        return hakutapakoodi;
     }
 
-    public void setHakutapaKoodi(KoodistoKoodiTyyppi value) {
-        this.hakutapaKoodi = value;
-    }
-
-    public TarjoajaTyyppi getTarjoaja() {
-        return tarjoaja;
-    }
-
-    public void setTarjoaja(TarjoajaTyyppi value) {
-        this.tarjoaja = value;
+    public void setHakutapaKoodi(KoodistoKoodi value) {
+        this.hakutapakoodi = value;
     }
 
     public Date getHakuAlkamisPvm() {
@@ -116,14 +160,9 @@ public class HakukohdePerustieto implements Serializable
         this.hakuPaattymisPvm = value;
     }
 
-    public MonikielinenTekstiTyyppi getHakukohteenKoulutuslaji() {
-        return hakukohteenKoulutuslaji;
+    public Nimi getHakutapaNimi(){
+        return hakutapakoodi.getNimi();
     }
-
-    public void setHakukohteenKoulutuslaji(MonikielinenTekstiTyyppi value) {
-        this.hakukohteenKoulutuslaji = value;
-    }
-    
 
     public String getHakutyyppiUri() {
         return hakutyyppiUri;

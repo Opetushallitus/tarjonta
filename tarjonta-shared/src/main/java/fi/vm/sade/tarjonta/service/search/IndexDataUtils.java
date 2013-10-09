@@ -15,8 +15,12 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +43,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
@@ -159,28 +162,32 @@ public class IndexDataUtils {
         return "" + cal.get(Calendar.YEAR);
     }
     
-    public static KoodistoKoodiTyyppi createKoodiTyyppi(String koodiUri,
+    
+    public static KoodistoKoodi createKoodistoKoodi(String koodiUri,
             String koodiFi, String koodiSv,
             String koodiEn, SolrDocument koulutusDoc) {
-        KoodistoKoodiTyyppi koodiTyyppi = new KoodistoKoodiTyyppi();
-        koodiTyyppi.setUri("" + koulutusDoc.getFieldValue(koodiUri));
-        Nimi nimiFi = new Nimi();
-        nimiFi.setKieli(LANG_FI);
-        nimiFi.setValue("" + koulutusDoc.getFieldValue(koodiFi));
-        koodiTyyppi.getNimi().add(nimiFi);
-        Nimi nimiSv = new Nimi();
-        nimiSv.setKieli(LANG_SV);
-        nimiSv.setValue("" + koulutusDoc.getFieldValue(koodiSv));
-        koodiTyyppi.getNimi().add(nimiSv);
-        Nimi nimiEn = new Nimi();
-        nimiEn.setKieli(LANG_EN);
-        nimiEn.setValue("" + koulutusDoc.getFieldValue(koodiEn));
-        koodiTyyppi.getNimi().add(nimiEn);
-        return koodiTyyppi;
+        final Object valueO = koulutusDoc.getFieldValue(koodiUri);
+        String value;
+        if(valueO instanceof List) {
+            value = (String)((List)valueO).get(0);
+        } else {
+            value = (String) valueO;
+        }
+        final KoodistoKoodi koodi = new KoodistoKoodi(value);
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.FI, (String)koulutusDoc.getFieldValue(koodiFi));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.SV, (String)koulutusDoc.getFieldValue(koodiSv));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.EN, (String)koulutusDoc.getFieldValue(koodiEn));
+        return koodi;
+    }
+    
+    private static void asetaArvoJosEiNull(Nimi nimi, String lang, String value){
+        if(value!=null) {
+            nimi.put(lang, value);
+        }
     }
     
     public static TarjontaTila createTila(SolrDocument doc) {
-        String tila = "" + doc.getFieldValue(TILA_EN);
+        String tila = "" + doc.getFieldValue(TILA);
         if (tila.isEmpty()) {
             return null;
         }
@@ -205,7 +212,7 @@ public class IndexDataUtils {
         return tarjoaja;
     }
 
-    private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
+   private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
             OrganisaatioPerustieto org) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
         if (org != null) {
@@ -221,5 +228,42 @@ public class IndexDataUtils {
         Preconditions.checkArgument(nimi.getTeksti().size() > 0);
         return nimi;
     }
+   
+   public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
+       if (kausikoodi == null) {
+           System.out.println("kausikoodi is null?");
+           return;
+       }
+
+       KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
+
+       if (koodi != null) {
+           KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+           add(doc, KAUSI_FI, metadata.getNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+           add(doc, KAUSI_SV, metadata.getNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+           add(doc, KAUSI_EN, metadata.getNimi());
+           add(doc, KAUSI_KOODI,
+                   koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+       } else {
+           System.out.println("kausi koodi was null?");
+       }
+   }
+   
+   /**
+    * Add field if value is not null
+    * 
+    * @param doc
+    * @param nimifi
+    * @param string
+    */
+   private static void add(final SolrInputDocument doc, final String fieldName, final Object value) {
+       if (value != null) {
+           doc.addField(fieldName, value);
+       }
+   }
+
+
     
 }

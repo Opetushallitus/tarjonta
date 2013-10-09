@@ -163,10 +163,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private CheckBox customHakuaika;
 
     @PropertyId("hakuaikaAlkuPvm")
-    @NotNull(message = "{validation.Hakukohde.hakuaika.notNull}")
+    @NotNull(message = "{validation.Hakukohde.hakuaikaAlku.notNull}")
     private DateField hakuaikaAlkuPvm;
     @PropertyId("hakuaikaLoppuPvm")
-    @NotNull(message = "{validation.Hakukohde.hakuaika.notNull}")
+    @NotNull(message = "{validation.Hakukohde.hakuaikaLoppu.notNull}")
     private DateField hakuaikaLoppuPvm;
     
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
@@ -906,11 +906,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private void setCustomHakuaika(boolean visible, boolean selected) {
     	setCustomHakuaikaEnabled(visible);
-    	setCustomHakuaikaSelected(visible && selected);
+    	setCustomHakuaikaSelected(visible && true);
     }
     
     private void setCustomHakuaikaEnabled(boolean visible) {
-    	customHakuaika.setVisible(visible);
+    	customHakuaika.setVisible(false);
     	customDatesLayout.setVisible(visible);
         /*customHakuaika.setEnabled(enabled);
     	hakuaikaAlkuPvm.setEnabled(enabled);

@@ -60,7 +60,8 @@ public class KoodistoURI {
     /*
      * KOMO URIs
      */
-    public static String KOODISTO_TUTKINTO_URI;
+    public static String KOODISTO_TUTKINTO_URI; //please rename to KOULUTUS
+    public static String KOODISTO_TUTKINTO_NIMI_URI; //please rename to TUTKINTO
     public static String KOODISTO_KOULUTUSOHJELMA_URI;
     public static String KOODISTO_KOULUTUSASTE_URI;
     public static String KOODISTO_KOULUTUSALA_URI;
@@ -69,6 +70,7 @@ public class KoodistoURI {
     public static String KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI;
     public static String KOODISTO_OPINTOJEN_LAAJUUSARVO_URI;
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
+    public static String KOODISTO_EQF_LUOKITUS_URI;
     /*
      * KOMOTO URIs
      */
@@ -108,9 +110,8 @@ public class KoodistoURI {
      * For tutkinto dialog
      */
     public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
-    
     public static String KOODI_LISAHAKU_URI;
-    
+
     @Value("${koodisto-uris.lisahaku:hakutyyppi_03#1}")
     public void setKoodiLisahakuUri(String uri) {
         KOODI_LISAHAKU_URI = uri;
@@ -200,9 +201,14 @@ public class KoodistoURI {
      * KOMO URIs
      *
      */
+    @Value("${koodisto-uris.koulutus}")
+    public void setKoodistoKoulutusUri(String uri) {
+        KOODISTO_TUTKINTO_URI = uri;
+    }
+
     @Value("${koodisto-uris.tutkinto}")
     public void setKoodistoTutkintoUri(String uri) {
-        KOODISTO_TUTKINTO_URI = uri;
+        KOODISTO_TUTKINTO_NIMI_URI = uri;
     }
 
     @Value("${koodisto-uris.koulutusohjelma}")
@@ -303,5 +309,10 @@ public class KoodistoURI {
     @Value("${koodisto-uris.tarjontakoulutustyyppi}")
     public void setKoodistoTarjontaKoulutustyyppi(String uri) {
         KOODISTO_TARJONTA_KOULUTUSTYYPPI = uri;
+    }
+
+    @Value("${koodisto-uris.eqf-luokitus}")
+    public void setKoodistoEqfLuokitus(String uri) {
+        KOODISTO_EQF_LUOKITUS_URI = uri;
     }
 }

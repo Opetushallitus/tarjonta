@@ -1,13 +1,13 @@
+
 module.exports = function(config){
     config.set({
     basePath : '../app',
 
     files : [
-      JASMINE,
-      JASMINE_ADAPTER,
       'lib/underscore/underscore.js',
       'lib/angular/angular.js',
       'lib/angular/angular-resource.js',
+      'lib/angular/angular-route.js',
       'lib/angular/angular.treeview.js',
       '../test/lib/angular/angular-mocks.js',
       'js/**/*.js',
@@ -31,7 +31,7 @@ module.exports = function(config){
     browsers : ['Chrome'],
 
     plugins : [
-            'karma-junit-reporter',
+	       'karma-junit-reporter', // npm install karma-junit-reporter
             'karma-chrome-launcher',
             'karma-phantomjs-launcher',
             'karma-firefox-launcher',

@@ -19,7 +19,7 @@
 
 .gridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 500px; 
+    width: 500px;
     height: 200px;
 }
 
@@ -31,8 +31,12 @@
 	float:right;
 }
 
+.display-block {
+	display:block;
+}
+
 label {
-	display:inline;	
+	display:inline;
 }
 
 /* latauspylpyrä (kokosivu) */
@@ -178,25 +182,44 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
+div#searchResults div.controls {
+	margin-bottom:30px;
+}
+
 div#searchResults input.selectAll {
 	margin-left:23px;
-	margin-bottom:20px;
 }
 
 div#searchResults input.selectAll + label {
 	position:relative;
-	top:-0.5em;
-	left:0.25em;
+	top:0.25em;
+	margin-left:0.25em;
 }
 
 div#searchResults table {
 	width:100%;
 }
 
+/*div#searchResults table.loading > tbody {
+	display:none;
+}*/
+
+div#searchResults table tr.header th.nimi {
+	min-width:50%;
+}
+
 div#searchResults table input[type=checkbox] {
 	margin-right:10px;
 	position:relative;
 	top:-0.25em;
+}
+
+div#searchResults table tbody td, div#searchResults table tbody th {
+	cursor:pointer;
+}
+
+div#searchResults table tbody tr:hover td, div#searchResults table tbody tr:hover th {
+	background-color:#f0f0f0;
 }
 
 div#searchResults table th {
@@ -238,4 +261,21 @@ div#searchResults table tbody.folded tr.tresult {
 
 .label-right {
     text-align: right;
+}
+
+
+/*
+ * partials/kk/review/
+ */
+.collapseHeader {
+    display: inline;
+    cursor: pointer;
+}
+
+.collapseHeader:before {
+    display: inline;
+    content: '► ';
+}
+.collapseHeader.isOpen:before{
+    content: '▼ ';
 }

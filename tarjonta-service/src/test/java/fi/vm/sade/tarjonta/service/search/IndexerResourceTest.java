@@ -1,7 +1,5 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -64,7 +62,7 @@ public class IndexerResourceTest {
 
     private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
         List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
-        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste");
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus");
         hakukohteenKoulutukset.add(koulutus);
         return hakukohteenKoulutukset;
     }

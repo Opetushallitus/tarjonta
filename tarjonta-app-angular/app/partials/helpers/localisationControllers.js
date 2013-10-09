@@ -1,114 +1,154 @@
 
 var app = angular.module('app.helpers', ['app.services', 'localisation', 'config']);
 
-app.controller('HelpersLocalisationCtrl', function($scope, Localisations, $q, LocalisationService) {
+app.controller('HelpersLocalisationCtrl', ['$scope', '$q', '$log', '$modal', 'LocalisationService',
+    function($scope, $q, $log, $modal, LocalisationService) {
 
-    console.log("HelpersLocalisationCtrl()");
+        console.log("HelpersLocalisationCtrl()");
 
-    $scope.model = {
-        supported: ["fi", "en", "sv"],
-        locale: "sv",
-        localisations2: []
-    };
-
-    $scope.save = function(entry) {
-        console.log("SAVE: ", entry);
-        Localisations.save(entry, function(data, status, headers, config) {
-            console.log("1FAILURE?", data);
-            console.log("2FAILURE?", status);
-            console.log("3FAILURE?", headers);
-            console.log("4FAILURE?", config);
-        }, function(data, status, headers, config) {
-            console.log("1success?", data);
-            console.log("2success?", status);
-            console.log("3success?", headers);
-            console.log("4success?", config);
-        });
-    };
-
-    $scope.createNew2 = function(key) {
-        console.log("createNew2()");
-
-        var v_fi = {
-            key: key,
-            locale: "fi",
-            value: "arvo"
-        };
-        var v_en = {
-            key: key,
-            locale: "en",
-            value: "value"
-        };
-        var v_sv = {
-            key: key,
+        $scope.model = {
+            supported: ["fi", "en", "sv"],
             locale: "sv",
-            value: "värdet"
+            localisations: [],
+            filterKey: "",
+            filterLocale: "fi"
         };
 
-        // TODO how to chain these and then call reload?
-        $scope.save(v_fi);
-        $scope.save(v_en);
-        $scope.save(v_sv);
+        $scope.save = function(entry) {
+            console.log("SAVE: ", entry);
+            return LocalisationService.createMissingTranslation(entry.key, entry.locale, entry.value);
+        };
 
-        $scope.reloadData();
-    };
+        /**
+         * CReate translations for all supported languages.
+         *
+         * @param {type} key
+         */
+        $scope.createNew = function(key) {
+            console.log("createNew()");
 
-    $scope.reloadData = function() {
-        console.log("reloadData()")
+            var promises = [];
 
-        LocalisationService.reload();
+            for (idx in $scope.model.supported) {
+                var locale = $scope.model.supported[idx];
+                promises.push(LocalisationService.createMissingTranslation(key, locale, "[" + key + " " + locale + "]"));
+            }
 
+            $q.all(promises).then(function(value) {
+                // SUCCESS
+                $log.info("Saved all three! ", value);
+                $scope.reloadData();
+            }, function(value) {
+                // ERROR
+                $log.error("FAILED TO SAVE! ", value);
+                $scope.reloadData();
+            }, function(value) {
+                // timeout?
+                $log.error("TIMEOUT TO SAVE! ", value);
+                $scope.reloadData();
+            });
 
-        $scope.model.selected = undefined;
-        $scope.model.locale = "fi";
+        };
 
-        Localisations.query({}, function(data) {
-            console.log("*************** LocalisationService - query: Success! ", data);
+        /**
+         * Reloads data from server.
+         */
+        $scope.reloadData = function() {
+            console.log("reloadData()")
 
-            $scope.model.localisations2 = data;
-        });
-    };
+            LocalisationService.reload().then(function(data) {
+                console.log("Reloaded translations");
+                $scope.model.selected = undefined;
+                $scope.model.locale = "fi";
 
+                $scope.model.localisations = data;
+                $scope.model.localisations_original = angular.copy(data);
 
-    // Loop tru all translations, make sure all contain FI, EN, SV translations
-    $scope.createMissingTranslations = function() {
+                if ($scope.localisationsForm) {
+                    $scope.localisationsForm.$setPristine();
+                }
+            });
+        };
 
-        // Translations with "key + _ + locale" key saved to a map for quick checking
-        var m = {};
-        var mkeys = {};
-        for (localisationIndex in $scope.model.localisations2) {
-            var tmp = $scope.model.localisations2[localisationIndex];
-            m[tmp.key + "_" + tmp.locale] = "exists";
-            mkeys[tmp.key] = "exists";
-        }
+        /**
+         * Loop tru all translations, make sure all contain FI, EN, SV translations
+         */
+        $scope.createMissingTranslations = function() {
 
-        for (var key in mkeys) {
-            console.log("  key = " + key);
-            for (localeIndex in $scope.model.supported) {
-                var locale = $scope.model.supported[localeIndex];
+            // Translations with "key + _ + locale" key saved to a map for quick checking
+            var m = {};
+            var mkeys = {};
+            for (localisationIndex in $scope.model.localisations) {
+                var tmp = $scope.model.localisations[localisationIndex];
+                m[tmp.key + "_" + tmp.locale] = "exists";
+                mkeys[tmp.key] = "exists";
+            }
 
-                if (!m[key + "_" + locale]) {
-                    console.log("CREATE: " + key + " --> with locale " + locale);
+            for (var key in mkeys) {
+                console.log("  checking key = " + key);
+                for (localeIndex in $scope.model.supported) {
+                    var locale = $scope.model.supported[localeIndex];
 
-                    var v = {
-                        key: key,
-                        locale: locale,
-                        value: "arvo / value / värdet - ADDED"
-                    };
-                    $scope.save(v);
+                    if (!m[key + "_" + locale]) {
+                        $log.info("CREATE: " + key + " --> with locale " + locale);
 
-                    m[key + "_" + locale] = "added";
+                        var v = {
+                            key: key,
+                            locale: locale,
+                            value: "arvo / value / värdet - ADDED"
+                        };
+                        $scope.save(v);
+
+                        m[key + "_" + locale] = "added";
+                    }
                 }
             }
-        }
 
-    };
+        };
 
-    $scope.addLanguage = function() {
-        console.log("addLanguage()", $scope.model.locale);
-        $scope.model.selected.values[$scope.model.locale] = "UUSI ARVO";
-    };
+        $scope.saveAllModified = function() {
+            $log.info("saveAllModified()");
 
-    // Triggers model update / load translations
-    $scope.reloadData();
-});
+            var mapOld = {};
+
+            for (var idx in $scope.model.localisations_original) {
+                var tmp = $scope.model.localisations_original[idx];
+                mapOld[tmp.key + "_" + tmp.locale] = tmp;
+            }
+
+            for (var idx in $scope.model.localisations) {
+                var tmp = $scope.model.localisations[idx];
+
+                var oldValue = mapOld[tmp.key + "_" + tmp.locale];
+
+                if (!oldValue || oldValue.value != tmp.value) {
+
+                    if (tmp.value === "_POISTA_") {
+                        LocalisationService.delete(tmp);
+                    } else {
+                        LocalisationService.update(tmp);
+                    }
+                }
+            }
+        };
+
+
+        $scope.openDialog = function() {
+
+            var modalInstance = $modal.open({
+                scope: $scope,
+                templateUrl: 'partials/helpers/localisationTransferDialog.html',
+                controller: 'HelpersLocalisationCtrl'
+            });
+
+            modalInstance.result.then(function(data) {
+                $log.info('Ok, dialog closed: ', data);
+            }, function() {
+                $log.info('Cancel, dialog closed: ');
+            });
+        };
+
+        // Triggers model update / load translations
+        $scope.reloadData();
+    }]);
+

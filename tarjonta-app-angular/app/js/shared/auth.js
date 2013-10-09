@@ -16,49 +16,53 @@
 // Apinoitu valintaperusteet / auth.js
 
 
-var app = angular.module("tarjontaApp.auth", ['ngResource']);
+/**
+ * Authentication module.
+ * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.myroles"]
+ */
 
-// datafile
 
+var app = angular.module("auth", ['ngResource', 'config']);
 
+var USER = "USER_";
 var READ = "_READ";
 var UPDATE = "_READ_UPDATE";
 var CRUD = "_CRUD";
+var OPH_ORG = "xxx";
 
-// Where is the CAS role information available
-// var CAS_URL = "/cas/myroles";
-var CAS_URL = "cas_myroles.json";
-
-// var ORGANISAATIO_URL_BASE = "xxx";
-
-app.factory('MyRolesModel', function($http, $log) {
+app.factory('MyRolesModel', function($http, $log, Config) {
 
     console.log("MyRolesModel()");
+    OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
         console.log("MyRolesModel.factory()");
 
         var instance = {};
-        instance.myroles = [];
+        // instance.myroles = [];
+        instance.myroles = Config.env["cas.myroles"] ? Config.env["cas.myroles"] : [];
 
         instance.refresh = function() {
+            // TODO some timeout for the cache?
             if (instance.myroles.length == 0) {
-                $http.get(CAS_URL)
+                $http.get(Config.env.casUrl)
                         .success(function(result) {
-                    console.log("MyRolesModel.factory() - roles loaded successfully from: " + CAS_URL);
+                    console.log("MyRolesModel.factory() - roles loaded successfully from: " + Config.env.casUrl);
                     instance.myroles = result;
                 })
                         .error(function(data, status, headers, config) {
-                    console.log("MyRolesModel.factory() - FAILED to load roles from: " + CAS_URL);
+                    console.log("MyRolesModel.factory() - FAILED to load roles from: " + Config.env.casUrl);
+                    console.log("MyRolesModel.factory() - data: " + data);
                     console.log("MyRolesModel.factory() - status: " + status);
                     console.log("MyRolesModel.factory() - headers: " + headers);
+                    console.log("MyRolesModel.factory() - config: " + config);
                 });
             }
         };
 
-        instance.debug = function () {
+        instance.debug = function() {
             console.log("MyRolesModel.debug():");
-            console.log("  roles: " + instance);
+            console.log("  roles: ", instance);
         };
 
         return instance;
@@ -67,17 +71,58 @@ app.factory('MyRolesModel', function($http, $log) {
     return factory;
 });
 
-app.factory('AuthService', function($q, $http, $timeout, MyRolesModel) {
+app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
+
+    var _startsWith = function(str, startWith) {
+        return str.splice(0, startWith.length) === startWith;
+    };
+
+    var _restOf = function(str, startWith) {
+        if (_startsWith(str, startWith)) {
+            return str.splice(startWith.length);
+        } else {
+            return str;
+        }
+    };
+
+    var _endsWith = function(str, endsWith) {
+        return str.splice(-endsWith.length) === endsWith;
+    };
+
+    var _beginningOf = function(str, endsWith) {
+        if (_endsWith(str, endsWith)) {
+            return str.splice(0, str.length - endsWith.length);
+        } else {
+            return str;
+        }
+    };
+
+
 
     var isLoggedIn = function() {
-        console.log("isLoggedIn()");
+        $log.info("isLoggedIn()");
         if (MyRolesModel.myroles.length > 0) {
             return true;
         }
     };
 
+    var getUsername = function() {
+        $log.info("username()");
+        var entry = _.find(MyRolesModel.myroles, function(x) {
+            return _startsWith(x, USER);
+        });
+
+        if (entry) {
+            return _restOf(entry, USER);
+        } else {
+            return undefined;
+        }
+    };
+
+
     // organisation check
     var readAccess = function(service, org) {
+        $log.info("readAccess()", service, org);
         if (MyRolesModel.myroles.indexOf(service + READ + "_" + org) > -1 ||
                 MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
                 MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
@@ -86,6 +131,7 @@ app.factory('AuthService', function($q, $http, $timeout, MyRolesModel) {
     };
 
     var updateAccess = function(service, org) {
+        $log.info("updateAccess()", servcice, org);
         if (MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
                 MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
             return true;
@@ -93,21 +139,25 @@ app.factory('AuthService', function($q, $http, $timeout, MyRolesModel) {
     };
 
     var crudAccess = function(service, org) {
+        $log.info("crudAccess()", servcice, org);
         if (MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
             return true;
         }
     };
 
     var accessCheck = function(service, orgOid, accessFunction) {
+        $log.info("accessCheck()", service, orgOid, accessFunction);
         var deferred = $q.defer();
         var waitTime = 10;
 
         var check = function() {
+            $log.info("accessCheck().check()", service, orgOid, accessFunction);
             MyRolesModel.refresh();
             waitTime = waitTime + 500;
-            if (MyRolesModel.myroles.length === 0) {
+            if (!isLoggedIn()) {
                 $timeout(check, waitTime);
             } else {
+                // OK, is logged in - check organisations
                 $http.get(ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids").success(function(result) {
                     var found = false;
                     result.split("/").forEach(function(org) {
@@ -129,46 +179,13 @@ app.factory('AuthService', function($q, $http, $timeout, MyRolesModel) {
         return deferred.promise;
     };
 
-    // OPH check -- voidaan ohittaa organisaatioiden haku
-    var ophRead = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + READ + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + UPDATE + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophUpdate = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + UPDATE + "_" + OPH_ORG) > -1
-                || MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophCrud = function(service) {
-        return (MyRolesModel.myroles.indexOf(service + CRUD + "_" + OPH_ORG) > -1);
-    };
-
-    var ophAccessCheck = function(service, accessFunction) {
-        var deferred = $q.defer();
-        var waitTime = 10;
-
-        var check = function() {
-            MyRolesModel.refresh();
-            waitTime = waitTime + 500;
-            if (MyRolesModel.myroles.length === 0) {
-                $timeout(check, waitTime);
-            } else {
-                if (accessFunction(service)) {
-                    deferred.resolve();
-                } else {
-                    deferred.reject();
-                }
-            }
-        }
-
-        $timeout(check, waitTime);
-
-        return deferred.promise;
-    }
-
     return {
+        getUsername: function() {
+            return getUsername();
+        },
+        isLoggedIn: function() {
+            return isLoggedIn();
+        },
         readOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, readAccess);
         },
@@ -177,15 +194,6 @@ app.factory('AuthService', function($q, $http, $timeout, MyRolesModel) {
         },
         crudOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, crudAccess);
-        },
-        readOph: function(service) {
-            return ophAccessCheck(service, ophRead);
-        },
-        updateOph: function(service) {
-            return ophAccessCheck(service, ophUpdate);
-        },
-        crudOph: function(service) {
-            return ophAccessCheck(service, ophCrud);
         },
     };
 });

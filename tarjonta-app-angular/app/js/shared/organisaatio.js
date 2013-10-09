@@ -63,7 +63,15 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 			   ret.resolve(localize(result).nimi);
 		   });
 		   return ret.promise;
-	   }
+	   },
+
+        byOid: function(oid) {
+            var ret = $q.defer();
+            orgLuku.get({oid: oid}, function(result){
+                ret.resolve(localize(result));
+            });
+            return ret.promise;
+        }
 	
 	
 	};

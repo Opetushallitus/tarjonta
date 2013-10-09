@@ -46,13 +46,16 @@ public class SolrFields {
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
         protected static final String KAUSI_KOODI = "kausikoodi_s";                                  //this is used in search
         protected static final String KAUSI ="kausi_s";
-        protected static final String TILA_EN = "tila_s";
+        protected static final String TILA = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String HAKUKOHDE_OIDS = "hakukohdeoids_ss";        //this is used in search
         protected static final String KOULUTUSLAJI_URIS = "koulutuslaji_ss";
+        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
+        protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";   
     }
     
     /**
@@ -66,10 +69,13 @@ public class SolrFields {
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
+        protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutus_s";
         protected static final String KAUSI_KOODI= "kausikoodi_s";
         protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
-        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";    
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";   
+        protected static final String KOULUTUSLAJI_URI = "koulutuslajiuri_s";   
+        protected static final String KAUSI_URI = "kausiuri_s";    
         protected static final String KAUSI_FI = "kausifi_s";    
         protected static final String KAUSI_SV = "kausisv_s";
         protected static final String KAUSI_EN = "kausien_s";    
@@ -91,15 +97,4 @@ public class SolrFields {
         protected static final String HAKUTYYPPI_URI = "hakutyyppiuri_s";        
     }
     
-    /**
-     * Field names for organisaatio docs
-     */
-    public static class Organisaatio {
-    	protected static final String OID="id";
-        protected static final String ORG_NAME_FI = "orgnamefi_s";
-        protected static final String ORG_NAME_SV = "orgnamesv_s";
-        protected static final String ORG_NAME_EN = "orgnameen_s";
-        protected static final String TYPE = "type_s";
-
-    }
 }

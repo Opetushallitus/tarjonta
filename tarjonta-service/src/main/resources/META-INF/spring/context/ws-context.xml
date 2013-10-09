@@ -28,6 +28,9 @@
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${koodisto.public.webservice.url.backend}"/>
+    <jaxws:client id="userService"
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${user.webservice.url.backend}"/>
 
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
@@ -41,6 +44,8 @@
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl" />
     <bean id="tarjontaLocalisationResource" class="fi.vm.sade.tarjonta.service.impl.resources.LocalisationResourceImpl" />
+    <bean id="tarjontaTilaResource" class="fi.vm.sade.tarjonta.service.impl.resources.TilaResourceImpl" />
+    <bean id="yhteyshenkiloResource" class="fi.vm.sade.tarjonta.service.impl.resources.YhteyshenkiloResourceImpl" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -88,10 +93,12 @@
             <ref bean="indexerResource"/>
             <ref bean="tarjontaKoulutusResource"/>
             <ref bean="tarjontaLocalisationResource"/>
+            <ref bean="tarjontaTilaResource"/>
+            <ref bean="yhteyshenkiloResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="cors-filter" />
-            <ref bean="tarjontaExceptionMapper"/>
+<!--             <ref bean="tarjontaExceptionMapper"/> -->
             <ref bean="tarjontaJacksonJsonProvider" />
         </jaxrs:providers>
     </jaxrs:server>

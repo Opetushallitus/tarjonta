@@ -1,14 +1,8 @@
 
 
-var app = angular.module('app.test.controllers', ['app.services'])
-
-app.controller('MyCtrl1', [function() {
-        console.log("MyCtrl1()");
-    }]);
+var app = angular.module('app.test.controllers', ['app.services']);
 
 app.controller('KoodistoTestController', function($scope,$route) {
-
-
 
     $scope.testKoodisto = function() {
         console.log('Following selected: ');
@@ -16,9 +10,9 @@ app.controller('KoodistoTestController', function($scope,$route) {
 
     };
 
+    //$scope.multiselectKoodiUris = [];
 
-
-   $scope.selectedKoodis = [];
+    $scope.multiselectKoodiUris = ["koulutusohjelmaamm_16452", "koulutusohjelmaamm_1550", "koulutusohjelmaamm_1600"]
 
     $scope.koodistofilter='hakukohteet';
 
@@ -37,7 +31,7 @@ app.controller('KoodistoTestController', function($scope,$route) {
     $scope.testcallback = function(selected) {
       console.log('Test onchangecallback called');
       console.log(selected);
-      $scope.parenturi = selected.koodiUri;
+      $scope.parenturi = selected;
       console.log('Parent uri:');
       console.log($scope.parenturi);
 
@@ -45,23 +39,9 @@ app.controller('KoodistoTestController', function($scope,$route) {
     };
 
     $scope.testit = function() {
-      alert ($scope.selectedKoodis);
+        console.log('Got following koodis: ', $scope.multiselectKoodiUris);
+      alert ($scope.multiselectKoodiUris);
     };
 
-
-});
-
-app.controller('MyCtrl2', function($scope, instagram) {
-    console.log("MyCtrl2()");
-//    console.log("MyCtrl2() - as = " + AuthService);
-//    console.log("MyCtrl2() - mr = " + MyRoles);
-
-    $scope.pics = [];
-    $scope.page = 0;
-    $scope.pageSize = 2;
-
-    instagram.fetchPopular(function(data) {
-        $scope.pics = data;
-    });
 
 });

@@ -98,7 +98,6 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -405,13 +404,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             KoulutuksetKysely kyselyTyyppi = new KoulutuksetKysely();
             kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKoulukses().get(0).getKoulutusOid());
             KoulutuksetVastaus vastausTyyppi = tarjontaSearchService.haeKoulutukset(kyselyTyyppi);
-            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausiUri(),
+            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausi().getUri(),
                     vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamisVuosi().toString());
         } else if (hakukohdeViewModel.getKomotoOids() != null && hakukohdeViewModel.getKomotoOids().size() > 0) {
             KoulutuksetKysely kyselyTyyppi = new KoulutuksetKysely();
             kyselyTyyppi.getKoulutusOids().add(hakukohdeViewModel.getKomotoOids().get(0));
             KoulutuksetVastaus vastausTyyppi = tarjontaSearchService.haeKoulutukset(kyselyTyyppi);
-            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausiUri(),
+            return new StringTuple(vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamiskausi().getUri(),
                     vastausTyyppi.getKoulutukset().get(0).getKoulutuksenAlkamisVuosi().toString());
         } else {
             return new StringTuple(null, null);
@@ -530,7 +529,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         Set<String> koulutusAlkamiskaudes = new HashSet<String>();
         Set<Integer> koulutusAlkamisVuodes = new HashSet<Integer>();
         for (KoulutusPerustieto koulutusModel : koulutukses) {
-            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausiUri());
+            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
             koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
             koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
             pohjakoulutukses.add(koulutusModel.getPohjakoulutusVaatimus());
@@ -574,10 +573,19 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     private List<KoulutusPerustieto> getValidKoulutuksesForHakukohde(
             KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi) {
+        ListaaHakuTyyppi kysely = new ListaaHakuTyyppi();
+        kysely.setHakuOid(getModel().getHakukohde().getHakuViewModel().getHakuOid());
+        ListHakuVastausTyyppi hakuVastaus = this.tarjontaPublicService.listHaku(kysely);
+        if (hakuVastaus.getResponse().isEmpty()) {
+            return new ArrayList<KoulutusPerustieto>();
+        }
+        HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
             if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
-                    && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())) {
+                    && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())
+                    && curKoulutus.getKoulutuksenAlkamiskausi().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
+                    && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
             }
         }
@@ -612,11 +620,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             String nimi = "";
 
             if (tulos.getNimi() != null) {
-                Teksti name = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), tulos.getNimi());
-
-                if (name != null) {
-                    nimi = name.getValue();
-                }
+                nimi = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), tulos.getNimi());
             }
 
             nimiOid.setKoulutusNimi(nimi);
@@ -1007,13 +1011,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             if (rawKoulutus.getHakukohteet() != null) {
                 koulutus.getKoulutuksenHakukohteet().clear();
                 HakukohteetVastaus hakukVastaus = this.getHakukohteetForKoulutus(koulutusOid);
-                for (HakukohdePerustieto hakukohdeKoosteTyyppi : hakukVastaus.getHakukohteet()) {//rawKoulutus.getHakukohteet()) {
+                for (HakukohdePerustieto hakukohde : hakukVastaus.getHakukohteet()) {//rawKoulutus.getHakukohteet()) {
                     SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getKoodistoNimi());// getKoodistoNimi());
-                    hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), hakukohdeKoosteTyyppi.getNimi()).getValue());// getNimi());
-                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
-                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
-                    hakukohdeViewModel.setHakuStarted(hakukohdeKoosteTyyppi.getHakuAlkamisPvm());
+                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohde.getKoodistoNimi());// getKoodistoNimi());
+                    hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), hakukohde.getNimi()));
+                    hakukohdeViewModel.setHakukohdeOid(hakukohde.getOid());
+                    hakukohdeViewModel.setHakukohdeTila(hakukohde.getTila().value());
+                    hakukohdeViewModel.setHakuStarted(hakukohde.getHakuAlkamisPvm());
                     koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
                 }
             }
@@ -1322,7 +1326,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(hakukohdetulos.size());
         for (HakukohdePerustieto curHk : hakukohdetulos) {
-            String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getTarjoaja().getNimi()).getValue();
+            String hkKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHk.getTarjoajaNimi());
             if (!map.containsKey(hkKey)) {
                 List<HakukohdePerustieto> hakukohteetM = Lists.newArrayList();
                 hakukohteetM.add(curHk);
@@ -1382,9 +1386,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         int removalLaskuri = 0;
         String errorNotes = "";
         for (HakukohdePerustieto curHakukohde : getModel().getSelectedhakukohteet()) {
-            String hakukohdeNimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue();
+            String hakukohdeNimi = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getNimi());
             try {
-                final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getTarjoaja().getTarjoajaOid());
+                final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getTarjoajaOid());
                 TarjontaTila tila = curHakukohde.getTila();
 
                 if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))

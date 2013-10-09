@@ -92,7 +92,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
                hc.addItem(curKoulutus);
                hc.setParent(curKoulutus, rootItem);
                CaptionItem ci = new CaptionItem(
-                       TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getNimi()).getValue(), 
+                       TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getNimi()), 
                        true);
                ci.getLinkButton().addListener( new Button.ClickListener() {
 
@@ -151,13 +151,13 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     private String resolveHakukohdeNimi() {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getNimi()).getValue() 
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), selectedHakukohde.getNimi()) 
                 + ", " + getHakukohdeAjankohtaStr() 
-                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getTarjoaja().getNimi()).getValue();        
+                + ", " + TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), selectedHakukohde.getTarjoajaNimi());        
     }
     
     private String getHakukohdeAjankohtaStr() {
-        return I18N.getMessage(selectedHakukohde.getKoulutuksenAlkamiskausiUri()) 
+        return I18N.getMessage(selectedHakukohde.getKoulutuksenAlkamiskausi().getUri()) 
                 +  " " + selectedHakukohde.getKoulutuksenAlkamisvuosi();
     }
 

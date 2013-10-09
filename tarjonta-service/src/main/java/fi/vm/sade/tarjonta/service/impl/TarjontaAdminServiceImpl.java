@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -337,7 +338,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             List<KoulutusPerustieto> koulutusTuloses = searchService.haeKoulutukset(koulutusKysely).getKoulutukset();
             //Loop through hakukohtee's koulutukses and check all koulutukses and check that all have the same alkamiskausi and vuosi as the haku
             for (KoulutusPerustieto koulutusTulos : koulutusTuloses) {
-                if (!koulutusTulos.getKoulutuksenAlkamiskausiUri().trim().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
+                if (!koulutusTulos.getKoulutuksenAlkamiskausi().getUri().equals(haku.getKoulutuksenAlkamiskausiUri().trim())
                         || !koulutusTulos.getKoulutuksenAlkamisVuosi().equals(haku.getKoulutuksenAlkamisVuosi())) {
                     return false;
                 }

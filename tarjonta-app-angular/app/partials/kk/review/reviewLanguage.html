@@ -4,247 +4,301 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 label-right">
-            <div class="btn"><div tt='review.esikatsele'></div></div>
+            <div class="btn"><div tt='kk.review.esikatsele'></div></div>
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span12 well">
-            <div tt='review.basicInfo.title'></div>
-            lang = {{ lang }}
+        <div class="span10" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot">
+            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.perusTiedot}" tt='kk.review.perustiedot.otsikko'></div>
+        </div>
+        <div class="span2 label-right">
+            <div class="btn" ng-click='doEdit($event, "PERUSTIEDOT")'><div tt='kk.review.muokkaa'></div></div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.organisaatio'></div>
+    <div collapse="model.collapse.perusTiedot">
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.oid'></div>
+            </div>
+            <div class="span9">
+                {{model.koulutus.oid}} / kieli: {{ lang }}
+            </div>
         </div>
-        <div class="span9">
-            Rantalohjan kunta, Rantalohjan ammattiopisto, Terveyden ja hyvinvoinnin toimipiste
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.tila'></div>
+            </div>
+            <div class="span9">
+                {{model.koulutus.tila}}
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.koulutus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.tyyppi'></div>
+            </div>
+            <div class="span9">
+                {{model.koulutus.koulutusmoduuliTyyppi}}
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.organisaatio'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.organisaatio.nimi }}
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.koulutusohjelma'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutus'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.koulutuskoodi.meta[lang.koodi_uri].arvo }}
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusohjelma'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.koulutusaste'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusaste'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.koulutusaste.meta[lang.koodi_uri].arvo }}
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutusala'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.koulutusala.meta[lang.koodi_uri].arvo }}
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.koulutusala'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opintoala'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.opintoala.meta[lang.koodi_uri].arvo }}
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.tutkintonimike'></div>
+            </div>
+            <div class="span9">
+                x {{ model.koulutus.tutkintonimike.arvo }}
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.opintoala'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opintojenLaajuus'></div>
+            </div>
+            <div class="span9">
+                x {{ model.koulutus.opintojenLaajuus.arvo }}
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.koulutuslaji'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.tutkintonimike'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.pohjakoulutusvaatimus'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.alkamispvm'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.opintojenLaajuus'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.suunniteltuKesto'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opetuskieli'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.koulutuslaji'></div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.opetusmuoto'></div>
+            </div>
+            <div class="span9">
+                XXX
+            </div>
         </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.linkkiOpetussuunnitelmaan'></div>
+            </div>
+            <div class="span9">
+                x <a hre="http://linkki">linkki</a>
+            </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.pohjakoulutusvaatimus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.alkamispvm'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.suunniteltuKesto'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.opetuskieli'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.opetusmuoto'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.linkkiOpetussuunnitelmaan'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.basicInfo.yhteyshenkilo'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12 well">
-            <div tt='review.kuvailevatTiedot.title'></div>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.tavoitteetTutkinto'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.tavoitteetKoulutus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.sisaltoKoulutus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.rakenneKoulutus'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.kansainvalisyys'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.ammattinimikkeet'></div>
-        </div>
-        <div class="span9">
-            XXX
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span3 label-right">
-            <div tt='review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
-        </div>
-        <div class="span9">
-            XXX
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.perustiedot.yhteyshenkilo'></div>
+            </div>
+            <div class="span9">
+                x {{ model.koulutus.yhteyshenkilos }}
+            </div>
         </div>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 well">
-            <div tt='review.sisaltyvatOpintokokonaisuudet.title'></div>
+        <div class="span10" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">
+            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.kuvailevatTiedot}" tt='kk.review.kuvailevatTiedot.otsikko'></div>
+        </div>
+        <div class="span2 label-right">
+            <div class="btn" ng-click='doEdit($event, "KUVAILEVATTIEDOT")'><div tt='kk.review.muokkaa'></div></div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span12">
-            TULOSSA...
+    <div collapse="model.collapse.kuvailevatTiedot">
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.tavoitteetTutkinto'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.tavoitteetKoulutus'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.sisaltoKoulutus'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.rakenneKoulutus'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.kansainvalisyys'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.ammattinimikkeet'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='kk.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
+            </div>
+            <div class="span9">
+                (VÄÄRÄ BINDI)
+                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+            </div>
         </div>
     </div>
 </div>
 
+
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12 well">
-            <div tt='review.haukohteet.title'></div>
+        <div class="span10" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">
+            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.sisaltyvatOpintokokonaisuudet}" tt='kk.review.sisaltyvatOpintokokonaisuudet.otsikko'></div>
+        </div>
+        <div class="span2 label-right">
+            <div class="btn" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")'><div tt='kk.review.muokkaa'></div></div>
         </div>
     </div>
+    <div collapse="model.collapse.sisaltyvatOpintokokonaisuudet">
+        <div class="row-fluid">
+            <div class="span12">
+                TULOSSA...
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12">
-            TULOSSA
+        <div class="span10" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">
+            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.hakukohteet}" tt='kk.review.hakukohteet.otsikko'></div>
+        </div>
+        <div class="span2 label-right">
+            <div class="btn" ng-click='doEdit($event, "HAKUKOHTEET")'><div tt='kk.review.muokkaa'></div></div>
+        </div>
+    </div>
+    <div collapse="model.collapse.hakukohteet">
+        <div class="row-fluid">
+            <div class="span12">
+                TULOSSA...
+            </div>
         </div>
     </div>
 </div>

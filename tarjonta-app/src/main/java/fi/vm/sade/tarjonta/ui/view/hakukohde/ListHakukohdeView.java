@@ -49,8 +49,6 @@ import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -262,8 +260,8 @@ public class ListHakukohdeView extends VerticalLayout {
         return hc;
     }
 
-    private Object getHakutapa(HakukohdePerustieto curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHakutapaKoodi());
+    private String getHakutapa(HakukohdePerustieto curHakukohde) {
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curHakukohde.getHakutapaNimi());
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdePerustieto>> e) {
@@ -271,7 +269,7 @@ public class ListHakukohdeView extends VerticalLayout {
     }
 
     private String getAjankohta(HakukohdePerustieto curHakukohde) {
-        return curHakukohde.getKoulutuksenAlkamiskausiUri() + " " + curHakukohde.getKoulutuksenAlkamisvuosi();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getKoulutuksenAlkamiskausi().getNimi()) + " " + curHakukohde.getKoulutuksenAlkamisvuosi();
     }
 
     private String getTilaStr(HakukohdePerustieto curHakukohde) {
@@ -279,22 +277,7 @@ public class ListHakukohdeView extends VerticalLayout {
     }
 
     private String getHakukohdeNimi(HakukohdePerustieto curHakukohde) {
-        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getNimi()).getValue();
-    }
-
-    /**
-     * Returns the name of the hakukohde based on koodisto uri given.
-     *
-     * @param koodistoKoodiTyyppi koodityyppi
-     * @return
-     */
-    private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        for (Nimi curNimi : koodistoKoodiTyyppi.getNimi()) {
-            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
-                return curNimi.getValue();
-            }
-        }
-        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getNimi());
     }
 
     /**
@@ -449,7 +432,7 @@ public class ListHakukohdeView extends VerticalLayout {
         categoryTree.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getAloituspaikat());
-        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),  curHakukohde.getHakukohteenKoulutuslaji()).getValue());
+        categoryTree.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curHakukohde.getKoulutuslaji().getNimi()));
         categoryTree.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
     }
 }

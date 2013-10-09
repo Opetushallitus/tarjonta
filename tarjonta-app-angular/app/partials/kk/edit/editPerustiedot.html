@@ -1,20 +1,19 @@
 <form name="luoTutkinto">     
-    <div>
-
-
-    </div>
-
     <div class="container-fluid ">
         <div class="row-fluid">
-            <div class="span2 label-right"><input type="text" data-ng-model="searchByOid" /></div>
-            <div class="span10"><input type="button" data-ng-click="search()"  value="Hae"></div>
+
+            <!--div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div-->
+            <!--div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div-->
+            <div class="span10"><input type="button" data-ng-click="insert()"  value="Tallenna"></div>
         </div>
     </div>
 
     <div class="container-fluid ">
         <div class="row-fluid">
-            <div class="span2 label-right"></div>
-            <div class="span10">{{model.koulutuskoodi.koodi.arvo}}</div>
+            <div class="span2 label-right"><span tt='kk.edit.koulutuskoodi'></div>
+            <div class="span10">{{model.koulutuskoodi.arvo}}
+                <input disabled="true" type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
+            </div>
         </div>
     </div>
 
@@ -22,8 +21,11 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.koulutusohjelma'></div>
             <div class="span10">
-                <div data-ng-repeat="teksti in model.koulutusohjelma.tekstis">
-                    <input type="text" data-ng-model="teksti.arvo" required />
+                <input type="text" data-ng-model="model.koulutusohjelma.arvo" required />
+
+
+                <div data-ng-repeat="meta in model.koulutusohjelma.meta">
+                    <input type="text" data-ng-model="meta.arvo" required />
                 </div>
             </div>
         </div>
@@ -53,7 +55,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkinto'></div>
-            <div class="span10 label-right">{{model.tutkinto.arvo}}</div>
+            <div class="span10">{{model.tutkinto.arvo}}</div>
         </div>
     </div>
 
@@ -74,7 +76,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkinto-ohjelman-tunniste'></div>
-            <div class="span10"><input type="text" data-ng-model="model.tunniste.arvo" required /></div>
+            <div class="span10"><input type="text" data-ng-model="model.tunniste"  required /></div>
         </div>
     </div>
 
@@ -82,7 +84,8 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opintojen-laajuus'></div>
             <div class="span10">
-                <select data-ng-model="model.laajuus.arvo">
+                <select data-ng-model="model.opintojenLaajuus.koodi.uri">
+                    <option value="kieli_fi#1">data missing</option>
                 </select>
             </div>
         </div>
@@ -110,9 +113,8 @@
             <div class="span2 label-right"><span tt='kk.edit.suunniteltu-kesto'></div>
             <div class="span10">
                 <input type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
-                <!--select data-ng-model="model.suunniteltuKestoTyyppi.arvo">
-                </select-->
-                <koodistocombo koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo>
+                <!--koodistocombo koodi="uiModel.suunniteltuKesto.data" koodiuri="uiModel.suunniteltuKesto.uri"  koodistouri="config.env['koodisto-uris.suunniteltuKesto']" locale="'FI'"></koodistocombo-->
+                <select ng-model="uiModel.suunniteltuKesto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKesto.data"></select>
             </div>
         </div>
     </div>
@@ -121,7 +123,21 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opetuskielet'></div>
             <div class="span10">
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect>
+                <!--koodistomultiselect selectedkoodiuris="uiModel.opetuskielis.data" koodiuris="uiModel.opetuskielis.uris" koodistouri="config.env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect-->
+
+                <div style="float: left;">
+                    <select multiple="multiple" 
+                            ng-model="uiModel.opetuskielis.uris" 
+                            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetuskielis.data">                    
+                    </select>
+                </div>
+                <div style="float: left;">
+                    <ul>
+                        <li ng-repeat="uri in uiModel.opetuskielis.uris">
+                            {{searchKoodiByKoodiUri(uri, uiModel.opetuskielis).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetuskielis)">X</a>]
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -130,7 +146,7 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.maksullisuus'></div>
             <div class="span10">
-                <input type="checkbox" data-ng-model="model.maksullisuus.arvo" />
+                <input type="checkbox" data-ng-model="model.opintojenMaksullisuus" />
             </div>
         </div>
     </div>
@@ -141,7 +157,20 @@
             <div class="span10">
                 <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.opetusmuodot.tekstis">
        </select-->
-                <koodistomultiselect koodiuris="xx" koodistouri="env['koodisto-uris.opetusmuoto']" locale="'FI'"></koodistomultiselect>
+                <!--koodistomultiselect selectedkoodiuris="uiModel.opetusmuodos.data" koodiuris="uiModel.opetusmuodos.uris" koodistouri="config.env['koodisto-uris.opetusmuoto']" locale="'FI'"></koodistomultiselect-->
+                <div style="float: left;">
+                    <select multiple="multiple" 
+                            ng-model="uiModel.opetusmuodos.uris" 
+                            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetusmuodos.data">                    
+                    </select>
+                </div>
+                <div style="float: left;">
+                    <ul>
+                        <li ng-repeat="uri in uiModel.opetusmuodos.uris">
+                            {{searchKoodiByKoodiUri(uri, uiModel.opetusmuodos).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetusmuodos)">X</a>]
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -151,9 +180,23 @@
             <div class="span2 label-right"><span tt='kk.edit.pohjakoulutusvaatimus'></div>
             <div class="span10">
                 <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.pohjakoulutusvaatimus.tekstis">
-         </select-->
+                    <option value="pohjakoulutusvaatimus">test data</option>>
+                </select-->
 
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.pohjakoulutusvaatimus']" locale="'FI'"></koodistomultiselect>
+                <!--koodistomultiselect selectedkoodiuris="uiModel.pohjakoulutusvaatimukset.data" koodiuris="uiModel.pohjakoulutusvaatimukset.uris" koodistouri="config.env['koodisto-uris.pohjakoulutusvaatimus']" locale="'FI'"></koodistomultiselect-->
+                <div style="float: left;">
+                    <select multiple="multiple" 
+                            ng-model="uiModel.pohjakoulutusvaatimukset.uris" 
+                            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.pohjakoulutusvaatimukset.data">                    
+                    </select>
+                </div>
+                <div style="float: left;">
+                    <ul>
+                        <li ng-repeat="uri in uiModel.pohjakoulutusvaatimukset.uris">
+                            {{searchKoodiByKoodiUri(uri, uiModel.pohjakoulutusvaatimukset).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.pohjakoulutusvaatimukset)">X</a>]
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -162,44 +205,38 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.teemat'></div>
             <div class="span10">
+                <div style="float: left;">
+                    <select multiple="multiple" 
+                            ng-model="uiModel.teemas.uris" 
+                            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.teemas.data">                    
+                    </select>
+                </div>
+                <div style="float: left;">
+                    <ul>
+                        <li ng-repeat="uri in uiModel.teemas.uris">
+                            {{searchKoodiByKoodiUri(uri, uiModel.teemas).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.teemas)">X</a>]
+                        </li>
+                    </ul>
+                </div>       
+            </div>
+        </div>
 
-                <!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.Teemat.tekstis">
-                </select-->
-                <koodistomultiselect koodiuris="selectedKoodis" koodistouri="env['koodisto-uris.teemat']" locale="'FI'"></koodistomultiselect>
-            </div>
-        </div>
-    </div>
+        <div ng-include="'partials/kk/edit/editYhteyshenkilo.html'"></div>
 
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2 label-right"><span tt='kk.edit.yhteyshenkilo'></div>
-            <div class="span10">
-                <div>
-                    <div style="float: left;"><input type="text" data-ng-model="contactPerson.nimet" /></div>
-                    <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
-                </div>
-                <div style="clear: left;">
-                    <input type="text" data-ng-model="contactPerson.sahkoposti" /><br/>
-                    <input type="text" data-ng-model="contactPerson.titteli" /><br/>
-                    <input type="text" data-ng-model="contactPerson.puhelin" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2 label-right"><span tt='kk.edit.ects-koordinaattori'></div>
-            <div class="span10">
-                <div>
-                    <div style="float: left;"><input type="text" data-ng-model="ectsCoordinator.nimet" /></div>
-                    <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
-                </div>
-                <div style="clear: left;">
-                    <input type="text" data-ng-model="ectsCoordinator.titteli" /><br/>
-                    <input type="text" data-ng-model="ectsCoordinator.puhelin" />
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2 label-right"><span tt='kk.edit.ects-koordinaattori'></div>
+                <div class="span10">
+                    <div>
+                        <div style="float: left;"><input type="text" data-ng-model="uiModel.ectsCoordinator.nimet" /></div>
+                        <div style="float: left;"><a href=""><span tt='kk.edit.tyhjenna'></a></div>
+                    </div>
+                    <div style="clear: left;">
+                        <input type="text" data-ng-model="uiModel.ectsCoordinator.titteli" /><br/>
+                        <input type="text" data-ng-model="uiModel.ectsCoordinator.puhelin" />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 </form>

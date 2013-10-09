@@ -28,14 +28,21 @@ var app = angular.module('localisation', ['ngResource', 'config']);
 
 app.factory('Localisations', function($log, $resource, Config) {
 
-    var uri = Config.env.tarjontaRestUrlPrefix + "localisation";
+    var uri = Config.env.tarjontaLocalisationRestUrl;
     $log.info("Localisations() - uri = ", uri);
 
-    return $resource(uri + "/:locale/:key", {
+    return $resource(uri + ":locale/:key", {
         key: '@key',
-        locale: '@locale',
+        locale: '@locale'
     }, {
-        update: {method: 'PUT'}
+        update: {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        save: {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        }
     });
 
 });
@@ -83,12 +90,20 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * getTranslations
  * </pre>
  */
-app.service('LocalisationService', function($log, Localisations) {
-    $log.debug("LocalisationService()");
+app.service('LocalisationService', function($log, $q, Localisations, Config) {
+    $log.log("LocalisationService()");
 
     // Singleton state, default current locale
     // TODO is there some other gobal / app location for this?
     this.locale = "fi";
+
+    this.getLocale = function() {
+        return this.locale;
+    }
+    this.setLocale = function(value) {
+        this.locale = value;
+    }
+
 
     // Localisations: MAP[locale][key] = {key, locale, value};
     this.localisationMapByLocaleAndKey = {};
@@ -101,7 +116,7 @@ app.service('LocalisationService', function($log, Localisations) {
      * @returns {String} translation value, parameters replaced
      */
     this.getTranslation = function(key, params) {
-        $log.debug("getTranslation(key, params)", key, params);
+        //$log.log("getTranslation(key, params)", key, params);
 
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[this.locale];
@@ -124,18 +139,129 @@ app.service('LocalisationService', function($log, Localisations) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            var newEntry = this.createMissingTranslation(key, this.locale, "[" + key + "]");
+            this.createMissingTranslation(key, this.locale, "[" + key + " " + this.locale + "]")
+                    .then(function(newEntry) {
+                $log.info("  created: ", newEntry);
+                Config.env["tarjonta.localisations"].push(newEntry);
+            }, function(value) {
+                $log.error("  FAILED TO CREATE ", value);
+            });
 
-            // TODO Fake "creation", really call service to create the translation placeholder for real
-            APP_LOCALISATION_DATA[key] = newEntry;
+            // Create temporary placeholder for next requests
+            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
+            this.localisationMapByLocaleAndKey[this.locale] = this.localisationMapByLocaleAndKey[this.locale] || {};
+            this.localisationMapByLocaleAndKey[this.locale][key] = {key: key, locale: this.locale, value: "[" + key + "]"};
 
-            result = APP_LOCALISATION_DATA[key].value;
+            result = "[" + key + "]";
         }
 
         // result = result + "-" + new Date();
-        // $log.debug(new Date() + ": getTranslation(" + key + ") --> " + result);
+        // $log.log(new Date() + ": getTranslation(" + key + ") --> " + result);
         return result;
     };
+
+
+    this.isEmpty = function(str) {
+        return (!str || 0 === str.length);
+    };
+
+    this.isBlank = function(str) {
+        return (!str || /^\s*$/.test(str));
+    };
+
+
+    /**
+     * Delete a translation.
+     *
+     * @param {translation} newEntry
+     * @returns {Promise}
+     */
+    this.delete = function(entry) {
+        $log.info("delete()", entry);
+
+        var deferred = $q.defer();
+
+        // TODO update in memory storage
+
+        var parent = this;
+        Localisations.delete(entry, function(data, status, headers, config) {
+            $log.log("delete() - OK", data, status, headers, config);
+            parent.updateLookupMap();
+            deferred.resolve(entry);
+        }, function(data, status, headers, config) {
+            $log.error("save() - ERROR", data, status, headers, config, entry);
+            deferred.reject(entry);
+        });
+
+        return  deferred.promise;
+    };
+
+    /**
+     * Translation storage.
+     *
+     * @param {String} newEntry
+     * @returns {Promise} a promise
+     */
+    this.save = function(newEntry) {
+        $log.log("save()", newEntry);
+        var deferred = $q.defer();
+
+        if (!newEntry || this.isBlank(newEntry.key) || this.isBlank(newEntry.locale)) {
+            deferred.reject({errors: "INVALID LOCALISATIN, null, empty key and/or localisation", value: newEntry});
+        } else {
+            var parent = this;
+
+            // Is this new translation?
+            if (!this.localisationMapByLocaleAndKey[newEntry.locale] || !this.localisationMapByLocaleAndKey[newEntry.locale][newEntry.key]) {
+                // Update in memory storage
+                Config.env["tarjonta.localisations"].push(newEntry);
+            }
+
+            // Try to save to the server
+            Localisations.save(newEntry, function(data, status, headers, config) {
+                $log.log("save() - OK", data, status, headers, config);
+                parent.updateLookupMap();
+                deferred.resolve(newEntry);
+            }, function(data, status, headers, config) {
+                $log.error("save() - ERROR", data, status, headers, config, newEntry);
+                deferred.reject(newEntry);
+            });
+        }
+
+        return deferred.promise;
+    };
+
+
+    /**
+     * Update an existing translation.
+     *
+     * @param {type} entry
+     * @returns {@exp;deferred@pro;promise}
+     */
+    this.update = function(entry) {
+        $log.log("update()", entry);
+        var deferred = $q.defer();
+
+        if (!entry || this.isBlank(entry.key) || this.isBlank(entry.locale)) {
+            deferred.reject({errors: "INVALID LOCALISATIN, null, empty key and/or localisation", value: entry});
+        } else {
+            var parent = this;
+
+            // Try to save to the server
+            Localisations.update(entry, function(data, status, headers, config) {
+                $log.log("update() - OK", data, status, headers, config);
+                deferred.resolve(entry);
+            }, function(data, status, headers, config) {
+                $log.error("update() - ERROR", data, status, headers, config, entry);
+                deferred.reject(entry);
+            });
+        }
+
+        return deferred.promise;
+    };
+
+
+
 
     /**
      * Create new translation.
@@ -143,58 +269,37 @@ app.service('LocalisationService', function($log, Localisations) {
      * @param {String} key
      * @param {String} locale
      * @param {String} value
-     * @returns Object of {key, locale, value}
+     * @returns promise whic will be filled with the create "entry" {key, locale, value} object when save was succesfull.
      */
     this.createMissingTranslation = function(key, locale, value) {
         $log.info("createMissingTranslation()", key, locale, value);
-
-        var parent = this;
-
-        // Create new translation
-        var newEntry = {
-            "key": key,
-            "locale": locale,
-            "value": value
-        };
-
-        // Update in memory storage
-        APP_LOCALISATION_DATA.push(newEntry);
-
-        // Try to save to the server
-        Localisations.save(newEntry, function(data, status, headers, config) {
-            $log.info("1 createMissingTranslation result: ", data);
-            $log.info("2 createMissingTranslation status: ", status);
-            $log.info("3 createMissingTranslation headers: ", headers);
-            $log.info("4 createMissingTranslation config: ", config);
-        }, function(data, status, headers, config) {
-            $log.info("5 created new translation to server", data, status, headers, config);
-        });
-
-        this.updateLookupMap();
-
-        return newEntry;
+        return this.save({key: key, locale: locale, value: value});
     };
 
     /**
      * Reload translations from REST.
-     * Stores fetched translations to global 'APP_LOCALISATION_DATA' array AND recreates lookup map.
-     *
-     * TODO return a promise!
+     * Stores fetched translations to global 'Config.env["tarjonta.localisations"]' array AND recreates lookup map.
      *
      * @returns {undefined}
      */
     this.reload = function() {
-        $log.info("reload()");
+        $log.log("reload()");
         var parent = this;
 
-        Localisations.query({}, function(data) {
-            $log.info("reload successfull! data = ", data);
-            APP_LOCALISATION_DATA = data;
+        var deferred = $q.defer();
 
+        // TODO ERROR HANDLING!
+        Localisations.query({}, function(data) {
+            $log.log("reload successfull! data = ", data);
+            Config.env["tarjonta.localisations"] = data;
             parent.updateLookupMap();
+            deferred.resolve(data);
+        }, function(data) {
+            $log.error("LocalisationService.reload() FAILED", data);
+            deferred.reject(data);
         });
 
-        // TODO return a promise!
+        return deferred.promise;
     }
 
     /**
@@ -203,7 +308,7 @@ app.service('LocalisationService', function($log, Localisations) {
      * @returns global APP_LOCALISATION_DATA, array of {key, locale, value} objects.
      */
     this.getTranslations = function() {
-        return APP_LOCALISATION_DATA;
+        return Config.env["tarjonta.localisations"];
     };
 
 
@@ -218,8 +323,8 @@ app.service('LocalisationService', function($log, Localisations) {
 
         var tmp = {};
 
-        for (var localisationIndex in APP_LOCALISATION_DATA) {
-            var localisation = APP_LOCALISATION_DATA[localisationIndex];
+        for (var localisationIndex in Config.env["tarjonta.localisations"]) {
+            var localisation = Config.env["tarjonta.localisations"][localisationIndex];
             var mapByLocale = tmp[localisation.locale];
             if (!mapByLocale) {
                 tmp[localisation.locale] = {};
@@ -230,7 +335,7 @@ app.service('LocalisationService', function($log, Localisations) {
 
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.info("===> result ", this.localisationMapByLocaleAndKey);
+        $log.log("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 
@@ -247,8 +352,7 @@ app.service('LocalisationService', function($log, Localisations) {
         return this.getTranslation(key, params);
     };
 
-
-    $log.info("LocalisationService - initialize()");
+    $log.info("LocalisationService - initialising...");
 
     // Bootstrap
     this.updateLookupMap();
@@ -259,12 +363,15 @@ app.service('LocalisationService', function($log, Localisations) {
  * LocalisationCtrl - a localisation controller.
  * An easy way to bind "t" function to gobal scope.
  */
-app.controller('LocalisationCtrl', function($scope, LocalisationService, $log) {
+app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, Config) {
     $log.info("LocalisationCtrl()");
+
+    $scope.CONFIG = Config;
+    $scope.showTheSheisse = false;
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        $log.debug("t(): " + key + ", " + params);
+        //$log.log("t(): " + key + ", " + params);
         return LocalisationService.t(key, params);
     };
 });

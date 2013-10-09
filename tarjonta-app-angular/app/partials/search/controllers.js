@@ -1,7 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, Config) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -31,6 +30,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    	$scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
 
 	    	updateLocation();
+	    	$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
 	    }
 	}, false);
 
@@ -83,17 +83,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     var msgKaikki = LocalisationService.t("tarjonta.haku.kaikki");
 
     // tarjonnan tilat
-    var stateMap = {"*": msgKaikki};
-    var TARJONTA_TILAT = Config.app["tarjonta.tilat"];
-    for (var i in TARJONTA_TILAT) {
-        var s = TARJONTA_TILAT[i];
-        if ((i / 1) != i) { // WTF? mistä epä-int tulee??
-            continue;
-        }
-        stateMap[s] = LocalisationService.t("tarjonta.tila." + s);
+    $scope.states = {"*": msgKaikki};
+    for (var s in CONFIG.env["tarjonta.tila"]) {
+    	$scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
     }
-
-    $scope.states = stateMap;
 
     // alkamiskaudet
     $scope.seasons = {"*": msgKaikki};
@@ -118,16 +111,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     if (!$scope.selectedOrgName) {
         $scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
-    }
-
-    function toUrl(base, params) {
-        var args = null;
-        for (var p in params) {
-            if (params[p] != null && params[p] != undefined && params[p] != "*" && params[p].trim().length > 0) {
-                args = (args == null ? "?" : args + "&") + p + "=" + escape(params[p]);
-            }
-        }
-        return args == null ? base : base + args;
     }
 
     function copyIfSet(dst, key, value, def) {
@@ -165,6 +148,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             $scope.selectedOrgName = n;
         });
         updateLocation();
+        updateSelection();
     }
 
     $scope.reset = function() {
@@ -173,11 +157,21 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.spec.year = "*";
         $scope.spec.season = "*";
     }
-
-    // taulukon renderöinti
     
+	$scope.selectedKoulutukset = [];
+	$scope.selectedHakukohteet = [];
+
+    $scope.menuOptions = [];
+    
+    $scope.koulutusActions = {
+    		canMoveOrCopy: false,
+    		canCreateHakukohde: false,
+    		canCreateKoulutus: false
+    };
+
+    // taulukon renderöinti    
     function resultsToTable(results, props, prefix) {
-    	
+
     	var html = "";
     	for (var ti in results.tulokset) {
     		var tarjoaja = results.tulokset[ti];
@@ -195,13 +189,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
-    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos[prefix+"Oid"]+"\">"
+    			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos.oid+"\" tila=\""+tulos.tila+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
-					+"<a href=\"#\"><img src=\"img/icon-treetable-button.png\"/></a>"
+					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
 					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
 					+tulos.nimi
 					+"</a></td>"
-					+"<td>" + tulos.kausiUri + "&nbsp;" + tulos.vuosi + "</td>";
+					+"<td>" + (tulos.kausi.fi||tulos.kausi.sv||tulos.kausi.en) + "&nbsp;" + tulos.vuosi + "</td>"; //TODO lokalisoi!
 
     			for (var pi in props) {
     				var prop = props[pi];
@@ -209,7 +203,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			}
 
     			html = html
-    				+"<td>" + tulos.tila + "</td>"
+    				+"<td class=\"state\">" + tulos.tilaNimi + "</td>"
     				+"</tr>";
     		}
 
@@ -218,21 +212,97 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     	return html;
     }
+    
+    function box(a,b,c) {
+    	return a<b ? b : a>c ? c : a;
+    }
+    
+    function selectedOids(root) {
+    	var oids = [];
+    	$("input.selectRow:checked", root).each(function(i, em){
+    		var tr = $(em.parentNode.parentNode);
+    		oids.push(tr.attr("hakukohde-oid") || tr.attr("koulutus-oid"));
+    	});
+    	return oids;
+    }
+    
+    function updateSelection() {
+    	$scope.selectedKoulutukset = selectedOids("table#koulutuksetResults");
+    	$scope.selectedHakukohteet = selectedOids("table#hakukohteetResults");
         
-    function initTable(selector, prefix, data, cols) {
-    	var em = $(selector);
+        $scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy($scope.selectedKoulutukset);
+        $scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate($scope.selectedKoulutukset);
+        $scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
+    }
+    
+    function updateTableRowState(prefix, oid, nstate) {
+    	var row = $("#searchResults tr["+prefix+"-oid='"+oid+"']");
+    	row.attr("tila", nstate);
+    	var em = $("td.state", row);
+    	em.text(LocalisationService.t("tarjonta.tila."+nstate));
+    }
+    
+    function rowActions(prefix, oid, tila) {
+    	var ret = [];
+    	var tt = TarjontaService.getTilat()[tila];
     	
-    	em.html(resultsToTable(data, cols, prefix));
-
-    	// valitse-kaikki-nappi päälle/pois tulosten mukaan
-    	$("input.selectAll", em.parent())
-    		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
-    		.click(function(ev){
-    			var sel = $(ev.currentTarget).is(":checked");
-    			//console.log("select/unselect all", sel);
-    			$("input.selectRows, input.selectRow", em).prop("checked", sel);
-    		});
+    	var canRead = PermissionService[prefix].canPreview(oid);
     	
+		// tarkastele
+		if (canRead) {
+			ret.push({url:"#/"+prefix+"/"+oid, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
+		}
+		// muokkaa
+		if (tt.mutable && PermissionService[prefix].canEdit(oid)) {
+			ret.push({url:"#/"+prefix+"/"+oid+"/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
+		}
+		// näytä hakukohteet
+		if (canRead) {
+			ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot."+prefix+".linkit"),
+				action: function(ev) {
+					console.log("NÄYTÄ LINKIT "+prefix+" / "+oid, ev);
+				}
+			});
+		}
+		// tilasiirtymä
+		switch (tila) {
+		case "PERUTTU":
+		case "VALMIS":
+			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
+				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
+					action: function(){
+						TarjontaService.togglePublished(prefix, oid, true).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
+					}
+				});
+			}
+			break;
+		case "JULKAISTU":
+			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
+				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
+					action: function(){
+						TarjontaService.togglePublished(prefix, oid, false).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
+					}
+				});
+			}
+			break;
+		}
+		// poista
+		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
+			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
+				action: function(){
+					console.log("TODO poista "+prefix+" / "+oid);
+				}
+			});
+		}
+		
+		return ret;
+    }
+    
+    function initResultsTableBindings(em) {
     	// lapsinodejen valitse-kaikki
     	$("input.selectRows", em).click(function(ev){
 			var sel = $(ev.currentTarget).is(":checked");
@@ -240,26 +310,199 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			$("input.selectRow", $(ev.currentTarget.parentNode.parentNode.parentNode)).prop("checked", sel);
     	});
     	
+    	$("input[type=checkbox]", em).click(function(ev){
+    		updateSelection();
+    		$scope.$apply();
+    	});
+
+    	// kirjapinovalikot
+    	// - sisältö angularilla, sijoittelu jqueyryllä
+    	$(".options", em).click(function(ev){
+    		ev.preventDefault();
+    		var menu = $("#dropdown");
+    		
+    		// popup-valikon sisältö
+    		var row = $(ev.currentTarget.parentNode.parentNode);
+    		var hkOid = row.attr("hakukohde-oid");
+    		var kmOid = row.attr("koulutus-oid");
+    		var tila = row.attr("tila");
+    		
+    		var menuOptions = [];
+    		
+    		if (hkOid) {
+    			$scope.menuOptions = rowActions("hakukohde", hkOid, tila);
+    		} else if (kmOid) {
+    			$scope.menuOptions = rowActions("koulutus", kmOid, tila);
+    		} else {
+    			console.log("row has no oid", row);
+    			$scope.menuOptions = [];
+    			return; // ei oidia? -> ei näytetä valikkoa
+    		}
+    		
+    		$scope.$apply();
+    		    		
+    		// sijoittelu
+    		menu.toggleClass("display-block",true);
+    		menu.css("left", box(ev.pageX-4, 0, $(window).width() - menu.width() - 4));
+    		menu.css("top", box(ev.pageY-4, 0, $(window).height() - menu.height() - 4));
+    		
+    		    	
+    		// automaattinen sulkeutuminen hiiren kursorin siirtyessä muualle
+    		menu.mouseenter(function(){
+    			var timer = menu.data("popupTimer");
+    			if (timer!=null) {
+    				clearTimeout(timer);
+    				menu.data("timer", null);
+    			}
+    		});
+    		
+    		menu.mouseleave(function(){
+    			menu.data("timer", setTimeout(function(){
+    				menu.toggleClass("display-block",false);
+    			}, 500));
+    		});
+    		
+    		$("a", menu).click(function(ev){
+    			// jos url on #, estetään selainta seuraamasta linkkiä (oletetaan, että action on määritelty)
+    			if ($(ev.currentTarget).attr("href") == "#") {
+    				ev.preventDefault();
+    			}
+
+        		// sulkeutuminen linkkiä klikkaamalla yms.
+    			menu.toggleClass("display-block",false);
+    		});
+
+    	});
+
+        // valinta riviä klikkaamalla
+    	$("td, th", em).click(function(ev){
+    		//console.log("select ", ev.currentTarget);
+    		$("input[type=checkbox]", ev.currentTarget.parentNode).trigger("click");
+    	});
+    	
     	// foldaus
     	$("a.fold",em).click(function(ev){
+    		//console.log("fold ", ev.currentTarget);
     		ev.preventDefault();
+    		ev.stopPropagation();
     		$(ev.currentTarget.parentElement.parentElement.parentElement).toggleClass("folded");
     	});
+   	
+    }
+
+    function forceClear(em) {
+    	// angular koukuttaa jquery-kutsu $(...).clear():in, josta seuraa
+    	// delete-tapahtuma joka dom-nodelle, joka puolestaan aiheuttaa
+    	// vakavia suorituskykyongelmia (ui hyytyy n. minuutin ajaksi)
+    	em.each(function(i, e) {
+    		while (e.firstChild) {
+    			e.removeChild(e.firstChild);
+    		}
+    	});
+    }
     
+    // tyhjentää taulukot hakusivulta poistuessa, estäen angularia jumittamasta ui:ta
+    $scope.$on("$destroy", function(){
+		forceClear($("#searchResults table"));
+    });
+    
+    var rowsPerAppend = 20; // TODO konfiguraatioon?
+    var delayPerAppend = 1; // TODO konfiguraatioon?
+    
+    var serial = 0;
+    
+    function appendTableRow(row, em, prefix, data, cols, sn) {
+    	    	
+    	if (serial!=sn) {
+            //console.log("abort "+prefix+" @ "+new Date());
+        	loadingService.afterOperation();
+        	$scope.$apply();
+    		return; // uusi haku -> keskeytetään
+    	}
+    	
+    	var rdata = {
+    			tuloksia:0,
+    			tulokset:[]
+    	};
+    	  	
+    	for (var i=0; i<rowsPerAppend && data.tulokset[row]; i++) {
+    		rdata.tulokset.push(data.tulokset[row]);
+    		row++;
+    	}
+
+		rdata.tuloksia = rdata.tulokset.length;
+
+    	var html = $(resultsToTable(rdata, cols, prefix));
+    	initResultsTableBindings(html);
+    	em.append(html);
+    	
+    	if (data.tulokset.length>row) {
+    		setTimeout(function(){
+    			appendTableRow(row, em, prefix, data, cols, sn);
+    		},delayPerAppend);
+    	} else {
+            //console.log("done "+prefix+" @ "+new Date());
+        	em.toggleClass("loading", false);    	
+        	loadingService.afterOperation();
+        	if (!$scope.$$phase) {
+            	$scope.$apply();
+        	}
+    	}
     }
     
-    $scope.canMoveOrCopy = function() {
-    	return true;
+    function createTableHeader(selector, prefix, cols) {
+    	console.log("cols", cols);
+    	var html = "<tr class=\"header\">"
+    		+"<th class=\"nimi\"></th>"
+    		+"<th class=\"kausi\">"+LocalisationService.t("tarjonta.hakutulokset.kausi")+"</th>";
+    	
+    	for (var i in cols) {
+    		var c = cols[i];
+    		html = html+"<th class=\""+c+"\">"+LocalisationService.t("tarjonta.hakutulokset."+c)+"</th>";
+    	}
+    	
+    	return html
+    		+"<th class=\"tila\">"+LocalisationService.t("tarjonta.hakutulokset.tila")+"</th>"
+    		+"</tr>";
     }
+    
+    function initTable(selector, prefix, data, cols, sn) {
+    	
+    	if (sn!=serial) {
+    		return; // uusi haku -> keskeytetään
+    	}
+    	
+    	var em = $(selector);
+    	    	
+    	em.toggleClass("loading", true);
+    	loadingService.beforeOperation();
+    	
+    	forceClear(em);
+    	em.html(createTableHeader(em, prefix, cols));
+    	
+    	// valitse-kaikki-nappi päälle/pois tulosten mukaan
+    	$("input.selectAll", em.parent())
+    		.prop("disabled", data.tuloksia==0) // TODO ei toimi, miksi
+    		.click(function(ev){
+    			var sel = $(ev.currentTarget).is(":checked");
+    			//console.log("select/unselect all", sel);
+    			$("input.selectRows, input.selectRow", em).prop("checked", sel);
 
-    $scope.canCreateHakukohde = function() {
-    	return true;
+    			updateSelection();
+        		$scope.$apply();
+    		});
+    	
+        updateSelection();
+
+        if (data.tuloksia==0) {
+    		// TODO näytä "ei tuloksia" tjsp..
+        	em.toggleClass("loading", false);
+        	loadingService.afterOperation();
+    	} else {
+    		appendTableRow(0, em, prefix, data, cols, sn);
+    	}
     }
-
-    $scope.canCreateKoulutus = function() {
-    	return true;
-    }
-
+    
     $scope.search = function() {
     	var spec = {
             oid: $scope.selectedOrgOid,
@@ -270,20 +513,28 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         };
         console.log("search", spec);
         updateLocation();
+        
+        serial++;
+
+        // valinnat
+        $("input.selectAll").prop("checked", false);
+        
         TarjontaService.haeKoulutukset(spec).then(function(data){
         	$scope.koulutusResultCount = " ("+data.tuloksia+")";
         	initTable("#koulutuksetResults", "koulutus", data,[
-                "koulutuslaji" // TODO koulutuslaji puuttuu hakutuloksista
-            ]);
+                "koulutuslaji" 
+            ], serial);
         });
+        
         TarjontaService.haeHakukohteet(spec).then(function(data){
         	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
         	initTable("#hakukohteetResults", "hakukohde", data,[
 	       		"hakutapa",
 				"aloituspaikat",
-				"koulutusLaji"
-            ]);
+				"koulutuslaji"
+            ], serial);
         });
+        
     }
 
     if ($scope.spec.terms=="*") {
@@ -296,5 +547,27 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.report = function() {
         console.log("TODO raportti");
     }
+    
+    $scope.tutkintoDialogModel = {};
+	
+	$scope.tutkintoDialogModel.open = function() {
+		
+			var modalInstance = $modal.open({
+				scope: $scope,
+				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+				controller: 'SelectTutkintoOhjelmaController'
+			});
+		
+			modalInstance.result.then(function(selectedItem) {
+				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+				if (selectedItem.koodiUri != null) {
+					$window.location.href = '#/kk/edit/new/perus/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
+				} 
+			}, function() {
+				$scope.tutkintoDialogModel.selected = null;
+				console.log('Cancel, dialog closed');
+			});
+	};
 
 });
