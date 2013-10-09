@@ -98,7 +98,7 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
                 kkDto.setKoulutusohjelma(convertToUiMetaDTO(komo.getLukiolinja(), DEMO_LOCALE, koulutusasteTyyppi + "->lukiolinja"));
                 break;
         }
-
+        kkDto.setOpintojenLaajuus(komoData(komo.getLaajuusArvo(), DEMO_LOCALE, "OpintojenLaajuus (arvo uri)"));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
         kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
         kkDto.setOrganisaatio(searchOrganisaationNimi(komoto.getTarjoaja()));
@@ -231,7 +231,7 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 
-        Preconditions.checkNotNull(koodiType, "No koodisto service koodi URI found by '" + fromKoodiUri + "'");
+        Preconditions.checkNotNull(koodiType, "No koodisto service koodi URI found by '" + fromKoodiUri + "'.");
 
         KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodiType, new Locale(langCode.toLowerCase()));
         if (convertKoodiLang) {

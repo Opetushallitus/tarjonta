@@ -146,9 +146,9 @@ public class KoulutusResourceImpl implements KoulutusResource {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         validateRestObjectKorkeakouluDTO(dto);
 
-        Preconditions.checkArgument(dto.getOid() == null, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(dto.getOid(), "KOMOTO OID cannot be null.");
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
-        Preconditions.checkArgument(komoto == null, "KOMOTO not found by OID : %s.", dto.getOid());
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID : %s.", dto.getOid());
 
         final KoulutusmoduuliToteutus updatedFullKomoto = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
         return new ResultDTO(updatedFullKomoto.getOid(), updatedFullKomoto.getVersion());
@@ -157,13 +157,14 @@ public class KoulutusResourceImpl implements KoulutusResource {
     @Override
     public ResultDTO createToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
-        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
+        validateRestObjectKorkeakouluDTO(dto);
+
         Preconditions.checkNotNull(dto.getOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
         final KoulutusmoduuliToteutus newKomo = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
-        Preconditions.checkNotNull(newKomo == null, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
-        Preconditions.checkNotNull(newKomo.getKoulutusmoduuli() == null, "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
+        Preconditions.checkNotNull(newKomo, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
+        Preconditions.checkNotNull(newKomo.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
         koulutusmoduuliDAO.insert(newKomo.getKoulutusmoduuli());
         final KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(newKomo);
@@ -217,13 +218,13 @@ public class KoulutusResourceImpl implements KoulutusResource {
         return tila.toString();
     }
 
-    private void validateRestObjectKorkeakouluDTO(KorkeakouluDTO dto) {
+    private void validateRestObjectKorkeakouluDTO(final KorkeakouluDTO dto) {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
-        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi() != null, "KoulutusasteTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi() == null, "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getTila() == null, "Tila enum cannot be null.");
+        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
         Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
-        Preconditions.checkNotNull(org == null, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
-    }
+        Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
+      }
 }

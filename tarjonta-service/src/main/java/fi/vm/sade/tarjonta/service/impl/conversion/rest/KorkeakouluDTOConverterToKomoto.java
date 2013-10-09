@@ -79,7 +79,9 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         /*
          * KOMO data fields:
          */
-        komo.setOmistajaOrganisaatioOid(dto.getOrganisaatio().getOid());
+        final String organisationOId = dto.getOrganisaatio().getOid();
+        komo.setLaajuus(null, convertToUri(dto.getOpintojenLaajuus(), "laajuus")); //TODO : missing type
+        komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?
         komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), "koulutusaste"));
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), "koulutusala"));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), "opintoala"));
@@ -102,8 +104,8 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
          */
         komoto.setTila(dto.getTila());
 
-        Preconditions.checkNotNull(dto.getOrganisaatio().getOid(), "Organisation OID cannot be null.");
-        komoto.setTarjoaja(dto.getOrganisaatio().getOid());
+        Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
+        komoto.setTarjoaja(organisationOId);
         Preconditions.checkNotNull(dto.getOpintojenMaksullisuus(), "OpintojenMaksullisuus boolean cannot be null.");
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
         komoto.setKoulutuksenAlkamisPvm(dto.getKoulutuksenAlkamisPvm());
@@ -112,7 +114,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
 
-        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKestoTyyppi"), dto.getSuunniteltuKesto().getArvo());
+        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKesto"), dto.getSuunniteltuKesto().getArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);

@@ -48,10 +48,12 @@ window.CONFIG = {
         "koodisto-uris.suunniteltuKesto": "suunniteltukesto",
         "koodisto-uris.tarjontakoulutustyyppi": "koulutustyyppi",
         "koodisto-uris.teemat": "teemat",
-        "koodisto-uris.tutkinto": "koulutus",
+        "koodisto-uris.tutkinto": "tutkinto",
+        "koodisto-uris.koulutus": "koulutus",
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",
         "koodisto-uris.valintakokeentyyppi": "valintakokeentyyppi",
         "koodisto-uris.valintaperustekuvausryhma": "valintaperustekuvausryhma",
+        "koodisto-uris.eqf-luokitus": "eqf",
         "koodisto-uris.yhteishaku": "hakutapa_01#1",
         "koodisto.lang.en.uri": "kieli_en",
         "koodisto.lang.fi.uri": "kieli_fi",
@@ -82,7 +84,7 @@ window.CONFIG = {
 
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
         "casUrl": "cas_myroles_tiimi2.json",
-        "place": "holder"
-        
+        "place": "holder",
+    
     }
 };

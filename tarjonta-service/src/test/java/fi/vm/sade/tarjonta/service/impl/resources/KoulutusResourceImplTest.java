@@ -87,6 +87,7 @@ import org.springframework.core.convert.TypeDescriptor;
 @Transactional()
 public class KoulutusResourceImplTest {
 
+    private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
     private static final String LOCALE_FI = "FI";
@@ -190,9 +191,10 @@ public class KoulutusResourceImplTest {
         dto.getPohjakoulutusvaatimukset().getMeta().put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
         dto.setSuunniteltuKesto(new SuunniteltuKestoDTO(SUUNNITELTU_KESTO_VALUE, SUUNNITELTU_KESTO + "_uri", "1", null));
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
+        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUS_ARVO));
 
         //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(1);
+        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(2);
         expect(conversionServiceMock.convert(isA(KorkeakouluDTO.class), eq(KoulutusmoduuliToteutus.class))).andStubDelegateTo(convertToEntityStub);
         expect(conversionServiceMock.convert(isA(KoulutusmoduuliToteutus.class), eq(KorkeakouluDTO.class))).andStubDelegateTo(convertToDTOStub);
         //the calls of the OidServices must be in correct order!
@@ -208,6 +210,7 @@ public class KoulutusResourceImplTest {
         //  expectKoodistoUri(TUTKINTO);
         expectKOMOKoodistoUri(TUTKINTONIMIKE);
         expectKOMOKoodistoUri(EQF);
+        expectKOMOKoodistoUri(LAAJUUS_ARVO);
 
         expectMetaUri(TEEMA);
         expectMetaUri(OPETUSKIELI);
@@ -259,6 +262,7 @@ public class KoulutusResourceImplTest {
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(EQF, result.getEqf());
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
+        assertEqualDtoKoodi(LAAJUUS_ARVO, result.getOpintojenLaajuus());
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO, result.getKoulutusmoduuliTyyppi());
@@ -283,6 +287,7 @@ public class KoulutusResourceImplTest {
         assertEquals(PERSON[4], next.getSahkoposti());
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
+
     }
 
     private static UiDTO toKoodiUri(final String type) {

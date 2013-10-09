@@ -4,7 +4,7 @@
 
             <!--div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div-->
             <!--div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div-->
-            <div class="span10"><input type="button" data-ng-click="insert()"  value="Tallenna"></div>
+            <div class="span10"><input type="button" data-ng-click="save()"  value="Tallenna"></div>
         </div>
     </div>
 
@@ -33,6 +33,13 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
+            <div class="span2 label-right"><span tt='kk.edit.tutkinto-ohjelman-tunniste'></div>
+            <div class="span10"><input type="text" data-ng-model="model.tunniste"  required /></div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.koulutusaste'></div>
             <div class="span10">{{model.koulutusaste.arvo}}</div>
         </div>
@@ -55,38 +62,45 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkinto'></div>
-            <div class="span10">{{model.tutkinto.arvo}}</div>
+            <!--div class="span10">{{model.tutkinto.arvo}}</div-->
+            <div class="span10">
+                <select ng-model="uiModel.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto.data"></select>
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.tutkintonimike'></div>
-            <div class="span10">{{model.tutkintonimike.arvo}}</div>
+            <!--div class="span10">{{model.tutkintonimike.arvo}}</div-->
+            <div class="span10">
+                <select ng-model="uiModel.tutkintonimike.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkintonimike.data"></select>
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.eqf-luokitus'></div>
-            <div class="span10">{{model.eqf.arvo}}</div>
+            <!--div class="span10">{{model.eqf.arvo}}</div-->
+            <div class="span10">
+                <select ng-model="uiModel.eqf.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.eqf.data"></select>
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2 label-right"><span tt='kk.edit.tutkinto-ohjelman-tunniste'></div>
-            <div class="span10"><input type="text" data-ng-model="model.tunniste"  required /></div>
+        <div class="row-fluid" style="margin-top: 15px; margin-bottom: 20px; border-top: 2px solid #dddddd">
         </div>
     </div>
+
+
 
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.opintojen-laajuus'></div>
             <div class="span10">
-                <select data-ng-model="model.opintojenLaajuus.koodi.uri">
-                    <option value="kieli_fi#1">data missing</option>
-                </select>
+                <select ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data"></select>
             </div>
         </div>
     </div>

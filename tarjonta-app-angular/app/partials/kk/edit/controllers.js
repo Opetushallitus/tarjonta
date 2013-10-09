@@ -23,13 +23,14 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             /*
              * LOAD KOODISTO DATA
              */
+            //missing koodisto data:
+            angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                $scope.searchKoodisByKoodistoUri(cfg.env[value.koodisto], $scope.uiModel[key], $scope.locale);
+            });
 
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opintojenLaajuusarvo'], $scope.uiModel.opintojenLaajuus, $scope.locale);
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.suunniteltuKesto'], $scope.uiModel.suunniteltuKesto, $scope.locale);
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.kieli'], $scope.uiModel.opetuskielis, $scope.locale);
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opetusmuoto'], $scope.uiModel.opetusmuodos, $scope.locale);
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.pohjakoulutusvaatimus'], $scope.uiModel.pohjakoulutusvaatimukset, $scope.locale);
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.teemat'], $scope.uiModel.teemas, $scope.locale);
+            angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                $scope.searchKoodisByKoodistoUri(cfg.env[value.koodisto], $scope.uiModel[key], $scope.locale);
+            });
 
             /*
              * HANDLE ROUTING
@@ -44,7 +45,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
                     $scope.model.organisaatio.nimi = vastaus;
                 });
 
-                $scope.loadKoodistoData();
+                $scope.loadRelationKoodistoData();
 
             } else if ($routeParams.type === 'load') {
                 //load data for edit
@@ -54,28 +55,43 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             }
         };
 
-        $scope.loadKoodistoData = function() {
+        $scope.loadRelationKoodistoData = function() {
             tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
                 var koodistoData = angular.copy(data);
-                console.log("loadKoodistoData()", koodistoData);
 
-                $scope.model.koulutuskoodi = koodistoData.koulutuskoodi;
-                $scope.model.koulutusaste = koodistoData.koulutusaste;
-                $scope.model.koulutusala = koodistoData.koulutusala;
-                $scope.model.opintoala = koodistoData.opintoala;
-                $scope.model.tutkinto = koodistoData.tutkinto;
-                $scope.model.tutkintonimike = koodistoData.tutkintonimike;
-                $scope.model.eqf = koodistoData.eqf;
+                angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
+                    $scope.model[key] = koodistoData[key];
+                });
             });
         };
 
         /**
-         * Insert koulutus data to tarjonta-service database. 
+         * Save koulutus data to tarjonta-service database. 
+         * TODO: strict data validation, exception handling and optimistic locking
          */
+        $scope.save = function() {
+            if (converter.isNull($scope.uiModel.oid) || $routeParams.type === 'new') {
+                $scope.insert();
+            } else {
+                $scope.update();
+            }
+        };
+
         $scope.insert = function() {
-            console.log("insert", $scope.uiModel);
-            tarjontaService.insertKoulutus($scope.saveModelConverter());
-            //tarjontaService.insertKoulutus(TEST);
+            console.log("trying to insert...");
+            tarjontaService.insertKoulutus($scope.saveModelConverter(), function(resp) {
+                //Callback
+                console.log("Insert data response from POST: %j", resp);
+                $scope.model.oid = resp.oid;
+            });
+        };
+
+        $scope.update = function() {
+            console.log("trying to update...");
+            arjontaService.updateKoulutus($scope.saveModelConverter(), function(resp) {
+                //Callback
+                console.log("Update data response from PUT: %j", resp);
+            });
         };
 
         $scope.saveModelConverter = function() {
@@ -88,21 +104,26 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
              * Convert person object to back-end object format.
              */
 
-            apiModel.organisaatio = converter.getOrganisationApiModel(apiModel, null);
             apiModel.yhteyshenkilos = converter.convertPersonsUiModelToDto([uiModel.contactPerson, uiModel.ectsCoordinator]);
 
             /*
              * Convert koodisto komponent object to back-end object format.
              */
-            //single select data
-            apiModel.suunniteltuKesto = converter.convertKoodistoCombo(apiModel.suunniteltuKesto.arvo, uiModel.suunniteltuKesto.data);
-            apiModel.opintojenLaajuus = converter.convertKoodistoCombo(null, uiModel.opintojenLaajuus.data);
+            //single select nodels
+            angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                console.log(apiModel[key], key);
+                if (converter.isNull(apiModel[key] && converter.isNull(apiModel[key]['arvo']))) {
+                    apiModel[key] = converter.convertKoodistoComboToKoodiUiDTO(null, uiModel[key]);
+                } else {
+                    apiModel[key] = converter.convertKoodistoComboToKoodiUiDTO(apiModel[key].arvo, uiModel[key]);
+                }
 
-            //multi select data
-            apiModel.teemas.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.teemas);
-            apiModel.opetuskielis.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetuskielis);
-            apiModel.pohjakoulutusvaatimukset.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.pohjakoulutusvaatimukset);
-            apiModel.opetusmuodos.meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel.opetusmuodos);
+            });
+
+            //multi select models
+            angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                apiModel[key].meta = converter.convertKoodistoMultiToKoodiUiDTOs(uiModel[key]);
+            });
 
             console.log(JSON.stringify(apiModel));
             return apiModel;
@@ -129,11 +150,22 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             });
         };
 
+        /**
+         * Handle data load for koodisto data combo boxes.
+         * 
+         * @param {type} uiModel
+         * @param {type} apiModel
+         */
         $scope.updateMultiSelectKoodistoData = function(uiModel, apiModel) {
-            $scope.updateKoodiUrisToUiModel(uiModel.teemas, apiModel.teemas);
-            $scope.updateKoodiUrisToUiModel(uiModel.opetuskielis, apiModel.opetuskielis);
-            $scope.updateKoodiUrisToUiModel(uiModel.pohjakoulutusvaatimukset, apiModel.pohjakoulutusvaatimukset);
-            $scope.updateKoodiUrisToUiModel(uiModel.opetusmuodos, apiModel.opetusmuodos);
+            angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                console.log(key, value);
+                $scope.updateKoodiUriToUiModel(uiModel[key], apiModel[key]);
+            });
+
+            //multi select models
+            angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                $scope.updateKoodiUrisToUiModel(uiModel[key], apiModel[key]);
+            });
         };
 
         $scope.updateKoodiUrisToUiModel = function(uiModel, apiModel) {
@@ -142,16 +174,27 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             }, uiModel.uris);
         };
 
-        $scope.validateOutputData = function(m) {
-            //Remove meta data objects
-            converter.deleteMetaField(m.tutkintonimike);
-            converter.deleteMetaField(m.koulutusaste);
-            converter.deleteMetaField(m.koulutuskoodi);
-            converter.deleteMetaField(m.tutkintonimike);
+        $scope.updateKoodiUriToUiModel = function(uiModel, apiModel) {
+            console.log(apiModel);
 
-            //TODO: Missing koodito data relations.
-            m.eqf = {arvo: "missing data", koodi: {uri: 'eqf_1', versio: '1', arvo: "eqf_1"}};
-            m.tutkintonimike = {arvo: "missing data", koodi: {uri: 'tutkintonimikkeet_10005', versio: '1', arvo: "tutkintonimikkeet_10005"}};
+            if (converter.isNull(apiModel) || converter.isNull(apiModel.koodi)) {
+                console.warn("<api-model>.koodi.uri is missing.", apiModel);
+            } else {
+                uiModel.uri = apiModel.koodi.uri;
+            }
+        };
+
+        $scope.validateOutputData = function(m) {
+            if (converter.isNull(m.organisaatio) || converter.isNull(m.organisaatio.oid)) {
+                converter.throwError("Organisation OID is missing.");
+            }
+
+            //remove all meta data fields, if any
+            angular.forEach(converter.STRUCTURE, function(value, key) {
+                angular.forEach(value, function(value, key) {
+                    converter.deleteMetaField(m[key]);
+                });
+            });
         };
 
         $scope.getOrganisaatioOid = function(m) {
@@ -181,32 +224,14 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
         $scope.searchKoodisByKoodistoUri = function(koodistouri, uiModel, locale) {
             var koodisPromise = koodisto.getAllKoodisWithKoodiUri(koodistouri, locale);
             koodisPromise.then(function(koodisParam) {
-                console.log(koodisParam);
                 uiModel.data = koodisParam;
             });
         };
 
-        $scope.searchKoodiByKoodiUri = function(koodiUri, uiModel) {
-            var i = 0;
-            var koodiObjects = uiModel.data;
+        //add factory functions to ui template 
+        $scope.searchKoodiByKoodiUri = converter.searchKoodiByKoodiUri;
+        $scope.removeKoodiByKoodiUri = converter.removeKoodiByKoodiUri;
 
-            for (; i < koodiObjects.length; i++) {
-                if (koodiObjects[i].koodiUri === koodiUri) {
-                    return koodiObjects[i];
-                }
-            }
-        };
-
-        $scope.removeKoodiByKoodiUri = function(koodiUri, uiModel) {
-            var i = 0;
-            var koodiObjects = uiModel.uris;
-
-            for (; i < koodiObjects.length; i++) {
-                if (koodiObjects[i] === koodiUri) {
-                    koodiObjects.splice(i, 1);
-                }
-            }
-        };
-
-        $scope.init(); //initialization
+        //initialization
+        $scope.init();
     }]);
