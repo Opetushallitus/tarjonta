@@ -31,7 +31,7 @@ describe('Edit koulutus testeja', function() {
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
-
+    beforeEach(module('TarjontaConverter'));
     beforeEach(module('app.kk.edit.ctrl'));
     beforeEach(module('config'));
     var $scope, $modalInstance;
@@ -88,22 +88,22 @@ describe('Edit koulutus testeja', function() {
         });
 
         $scope.editYhModel.searchPersonMap = {};
-        
-        $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'}; 
-        $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'}; 
-        
+
+        $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'};
+        $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'};
+
         $scope.uiModel = {};
-        
+
         $scope.uiModel.contactPerson = {};
-        
+
         $scope.uiModel.contactPerson.nimet = 'Pekka Pekkola';
-        
+
         expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
-        
+
         $scope.editYhModel.selectHenkilo();
-        
+
         expect($scope.uiModel.contactPerson.etunimet).toEqual('Pekka');
-        
+
     }));
 
 });
@@ -127,8 +127,9 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('localisation'));
     beforeEach(module('config'));
-    beforeEach(module('TarjontaCache')); 
-    beforeEach(module('Tarjonta')); 
+    beforeEach(module('TarjontaCache'));
+    beforeEach(module('Tarjonta'));
+    beforeEach(module('TarjontaConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.kk.edit.ctrl'));
 

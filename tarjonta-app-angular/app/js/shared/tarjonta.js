@@ -1,6 +1,6 @@
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource,Config, LocalisationService, Koodisto, AuthService, CacheService) {
+app.factory('TarjontaService', function($resource,Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
@@ -102,11 +102,24 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
      * @param type "koulutus" | "hakukohde"
      * @param oid kohteen oid
      * @param publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu 
-     * @return true, jos kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
+     * @return promise, jonka arvo on kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
      */
     dataFactory.togglePublished = function(type, oid, publish) {
+        var ret = $q.defer();
+    	var url = Config.env.tarjontaRestUrlPrefix + type+"/"+oid+"/tila?state="+(publish ? "JULKAISTU" : "PERUTTU");
     	
-    	return true;
+    	jQuery.ajax(url, {
+    		method: "POST",
+    		dataType: "text",
+    		success: function(nstate) {
+        		ret.resolve(nstate);
+        		
+        		// TODO päivitä cache
+        		
+    		}
+    	});
+
+    	return ret.promise;
     };
 
     dataFactory.insertKoulutus = function(json) {

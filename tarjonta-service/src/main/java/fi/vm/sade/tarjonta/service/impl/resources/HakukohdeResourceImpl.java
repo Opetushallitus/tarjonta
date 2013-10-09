@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -459,14 +460,16 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
 	@Override
-	public TarjontaTila updateTila(String oid, TarjontaTila tila) {
+    @Transactional(readOnly = false)
+	public String updateTila(String oid, TarjontaTila tila) {
 		Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
     	Preconditions.checkArgument(hk!=null, "Hakukohdetta ei löytynyt: %s", oid);
     	if (!hk.getTila().acceptsTransitionTo(tila)) {
-    		return hk.getTila();
+    		return hk.getTila().toString();
     	}
     	hk.setTila(tila);
     	hakukohdeDAO.update(hk);
-    	return tila;
+    	solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
+    	return tila.toString();
 	}
 }

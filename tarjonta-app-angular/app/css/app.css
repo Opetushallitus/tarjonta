@@ -210,6 +210,14 @@ div#searchResults table input[type=checkbox] {
 	top:-0.25em;
 }
 
+div#searchResults table td, div#searchResults table th {
+	cursor:pointer;
+}
+
+div#searchResults table tr:hover td, div#searchResults table tr:hover th {
+	background-color:#f0f0f0;
+}
+
 div#searchResults table th {
 	font-weight:normal;
 	text-align:left;
@@ -257,6 +265,7 @@ div#searchResults table tbody.folded tr.tresult {
  */
 .collapseHeader {
     display: inline;
+    cursor: pointer;
 }
 
 .collapseHeader:before {

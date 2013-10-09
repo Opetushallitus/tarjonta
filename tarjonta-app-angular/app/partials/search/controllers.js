@@ -271,9 +271,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
 					action: function(){
-						if (TarjontaService.togglePublished(prefix, oid, true)) {
-							updateTableRowState(prefix, oid, "JULKAISTU");
-						}
+						TarjontaService.togglePublished(prefix, oid, true).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
 					}
 				});
 			}
@@ -282,9 +282,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
 					action: function(){
-						if (TarjontaService.togglePublished(prefix, oid, false)) {
-							updateTableRowState(prefix, oid, "PERUTTU");
-						}
+						TarjontaService.togglePublished(prefix, oid, false).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
 					}
 				});
 			}
@@ -373,10 +373,18 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		});
 
     	});
+
+        // valinta riviä klikkaamalla
+    	$("td, th", em).click(function(ev){
+    		//console.log("select ", ev.currentTarget);
+    		$("input[type=checkbox]", ev.currentTarget.parentNode).trigger("click");
+    	});
     	
     	// foldaus
     	$("a.fold",em).click(function(ev){
+    		//console.log("fold ", ev.currentTarget);
     		ev.preventDefault();
+    		ev.stopPropagation();
     		$(ev.currentTarget.parentElement.parentElement.parentElement).toggleClass("folded");
     	});
    	
@@ -436,7 +444,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             //console.log("done "+prefix+" @ "+new Date());
         	em.toggleClass("loading", false);    	
         	loadingService.afterOperation();
-        	$scope.$apply();
+        	if (!$scope.$$phase) {
+            	$scope.$apply();
+        	}
     	}
     }
     
@@ -467,8 +477,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	
         updateSelection();
 
-        //console.log("start "+prefix+" @ "+new Date());
-        
         if (data.tuloksia==0) {
     		// TODO näytä "ei tuloksia" tjsp..
         	em.toggleClass("loading", false);

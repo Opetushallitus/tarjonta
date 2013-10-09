@@ -4,7 +4,7 @@
 
 var app = angular.module('app.kk.edit.ctrl');
 
-app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', function($scope, $compile, YhteyshenkiloService) {	
+app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'TarjontaConverterFactory', function($scope, $compile, YhteyshenkiloService, converter) {	
 	
 	$scope.editYhModel = {data: [],
 						 henkilotFetched: false};
@@ -21,7 +21,7 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloSer
 	 * Fetches users for the current organisation if those have not been fetced yet.
 	 */
 	$scope.$watch('uiModel.contactPerson.nimet', function() {
-		if (!$scope.editYhModel.henkilotFetched) {
+		if (!$scope.editYhModel.henkilotFetched && !converter.isNull($scope.model.organisaatio)) {
 			$scope.editYhModel.henkilotFetched = true;
 			console.log('Going to fetch yhteyshenkilot for organisaatio: ' + $scope.model.organisaatio.oid);
 			var hakuehdot = {organisaatio: $scope.model.organisaatio.oid};

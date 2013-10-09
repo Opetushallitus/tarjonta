@@ -261,15 +261,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     
     private void buildPohjakoulutusvaatimusCombo(String koodiUri) {
         Collection<KoodiType> koodit = helper.getKoodistoRelations(koodiUri, KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
-        if (koodit == null) {
-            System.out.println("Ei lainkaan koodeja");
+        if (koodit == null) {    
             return;
         }
         
-        System.out.println("Koodeja on: " + koodit.size());
         this.pohjakoulutusvaatimusCombo.removeAllItems();
         for(KoodiType curKoodi : koodit) {
-            System.out.println("Current koodi: " + curKoodi.getKoodiUri());
             this.pohjakoulutusvaatimusCombo.addItem(new KoodiContainer(curKoodi));
         }
     }
