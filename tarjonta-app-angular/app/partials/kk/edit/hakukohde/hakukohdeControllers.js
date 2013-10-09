@@ -73,6 +73,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         hakukelpoisuusvaatimusUris : [],
         hakukohdeKoulutusOids : [],
         opetuskielet : [],
+        liitteidenToimitusPvm :1405391100000,
         liitteet : [],
         valintakoes : []
     });

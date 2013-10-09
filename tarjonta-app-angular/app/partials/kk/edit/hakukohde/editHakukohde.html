@@ -79,7 +79,24 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
+            <div class="span10">
+                <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
+                <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" ng-model="model.sahkoinenToimitusOsoite">
+            </div>
+        </div>
+    </div>
 
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 label-right"><div tt="kk.hakukohde.paattymisaika"></div></div>
+            <div class="span10">
+                <date-time-picker selecteddatetime="model.liitteidenToimitusPvm"></date-time-picker>
+            </div>
+        </div>
+    </div>
 
 
 </form>
