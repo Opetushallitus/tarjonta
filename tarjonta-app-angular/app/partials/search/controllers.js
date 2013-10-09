@@ -523,9 +523,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         console.log("TODO raportti");
     }
     
-    $scope.dialogModel = {};
+    $scope.tutkintoDialogModel = {};
 	
-	$scope.dialogModel.open = function() {
+	$scope.tutkintoDialogModel.open = function() {
 		
 			var modalInstance = $modal.open({
 				scope: $scope,
@@ -540,7 +540,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					$window.location.href = '#/kk/edit/new/perus/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
 				} 
 			}, function() {
-				$scope.dialogModel.selected = null;
+				$scope.tutkintoDialogModel.selected = null;
 				console.log('Cancel, dialog closed');
 			});
 	};

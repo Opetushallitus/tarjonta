@@ -50,7 +50,7 @@ describe('Edit koulutus testeja', function() {
 
         });
         expect($scope.stoModel.hakutulokset).toEqual([]);
-        expect($scope.stoModel.koulutusala).toEqual({});
+        expect($scope.stoModel.koulutusala).toEqual('');
         expect($scope.stoModel.active).toEqual({});
 
     }));

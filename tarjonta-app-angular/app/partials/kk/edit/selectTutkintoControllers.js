@@ -13,7 +13,8 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						hakutulokset: [],
 						active: {},
 						hakulause: '',
-						koulutusala: {}};
+						koulutusala: ''}
+	;
 	
 	//ng-grid malli
 	$scope.gridOptions = { data: 'stoModel.hakutulokset',			
@@ -57,14 +58,15 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	
 	//Haun suorittaminen
 	$scope.searchTutkinnot = function() {
+		console.log("Selected koulutusala: " + $scope.stoModel.koulutusala);
 		var tempTutkinnot = [];
 		//Jos kk-tutkintoja ei haettu ne haetaan ensin
 		if (!$scope.stoModel.tutkinnotFetched) {
 			$scope.getKkTutkinnot();
 		//Jos koulutusalavalittu filtteroidaan koulutusala -> koulutusrelaation avulla minka jalkeen string-haku
-		} else if ($scope.stoModel.koulutusala.koodiUri != undefined && $scope.stoModel.koulutusala.koodiUri.length > 0){
-			console.log("Koulutusalauri: " + $scope.stoModel.koulutusala.koodiUri);
-    		var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala.koodiUri,'FI');
+		} else if ($scope.stoModel.koulutusala.length > 0){
+			console.log("Koulutusalauri: " + $scope.stoModel.koulutusala);
+    		var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala,'FI');
     		hakutulosPromise.then(function(koodisParam) {
     			tempTutkinnot = koodisParam.filter(function (koodi) {
     									return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined;
@@ -92,7 +94,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	//Hakukriteerien tyhjennys
 	$scope.clearCriteria = function() {
 		$scope.stoModel.hakulause = '';
-		$scope.stoModel.koulutusala = {};
+		$scope.stoModel.koulutusala = '';
 	};
 	
 	//dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
