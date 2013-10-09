@@ -152,13 +152,13 @@ public interface HakukohdeResource {
      * 
      * @param oid Hakukohteen oid.
      * @param tila Kohdetila.
-     * @return Tila, jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
+     * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
      */
     @POST
     @PUT
     @Path("{oid}/tila")
     @Produces(MediaType.TEXT_PLAIN)
-    public TarjontaTila updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
      * /hakukohde/OID/nimi

@@ -1,9 +1,20 @@
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource,Config, LocalisationService, Koodisto, AuthService, CacheService) {
+app.factory('TarjontaService', function($resource,Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
+
+    var tilaResource = {
+    		hakukohde: $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/:oid/tila", {}, {
+    			update: { method: "POST", responseType: "text" }
+    		}),
+    		koulutus: $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tila", {}, {
+    			update: { method: "POST", responseType: "text" }
+    		})
+    };
+
+    
 
     function localize(txt) {
         var userLocale = LocalisationService.getLocale();
@@ -102,11 +113,19 @@ app.factory('TarjontaService', function($resource,Config, LocalisationService, K
      * @param type "koulutus" | "hakukohde"
      * @param oid kohteen oid
      * @param publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu 
-     * @return true, jos kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
+     * @return promise, jonka arvo on kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu 
      */
     dataFactory.togglePublished = function(type, oid, publish) {
+        var ret = $q.defer();
+    	var res = tilaResource[type];
     	
-    	return true;
+    	console.log("publish "+oid+" -> "+publish);
+    	
+    	res.update({oid:oid, state:publish ? "JULKAISTU" : "PERUTTU"}, null, function(nstate) {
+    		ret.resolve(nstate);
+    	});
+
+    	return ret.promise;
     };
 
     dataFactory.insertKoulutus = function(json) {

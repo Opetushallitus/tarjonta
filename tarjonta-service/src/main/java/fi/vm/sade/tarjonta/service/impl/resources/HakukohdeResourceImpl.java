@@ -459,14 +459,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
 	@Override
-	public TarjontaTila updateTila(String oid, TarjontaTila tila) {
+	public String updateTila(String oid, TarjontaTila tila) {
 		Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
     	Preconditions.checkArgument(hk!=null, "Hakukohdetta ei löytynyt: %s", oid);
     	if (!hk.getTila().acceptsTransitionTo(tila)) {
-    		return hk.getTila();
+    		return hk.getTila().toString();
     	}
     	hk.setTila(tila);
     	hakukohdeDAO.update(hk);
-    	return tila;
+    	return tila.toString();
 	}
 }

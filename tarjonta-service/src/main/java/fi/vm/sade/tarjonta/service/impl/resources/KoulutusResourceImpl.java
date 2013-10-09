@@ -203,15 +203,15 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public TarjontaTila updateTila(String oid, TarjontaTila tila) {
+    public String updateTila(String oid, TarjontaTila tila) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkArgument(komoto != null, "Koulutusta ei löytynyt: %s", oid);
         if (!komoto.getTila().acceptsTransitionTo(tila)) {
-            return komoto.getTila();
+            return komoto.getTila().toString();
         }
         komoto.setTila(tila);
         koulutusmoduuliToteutusDAO.update(komoto);
-        return tila;
+        return tila.toString();
     }
 
     private void validateRestObjectKorkeakouluDTO(KorkeakouluDTO dto) {
