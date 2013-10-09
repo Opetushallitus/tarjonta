@@ -271,9 +271,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
 					action: function(){
-						if (TarjontaService.togglePublished(prefix, oid, true)) {
-							updateTableRowState(prefix, oid, "JULKAISTU");
-						}
+						TarjontaService.togglePublished(prefix, oid, true).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
 					}
 				});
 			}
@@ -282,9 +282,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
 				ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
 					action: function(){
-						if (TarjontaService.togglePublished(prefix, oid, false)) {
-							updateTableRowState(prefix, oid, "PERUTTU");
-						}
+						TarjontaService.togglePublished(prefix, oid, false).then(function(ns){
+							updateTableRowState(prefix, oid, ns);
+						});
 					}
 				});
 			}
