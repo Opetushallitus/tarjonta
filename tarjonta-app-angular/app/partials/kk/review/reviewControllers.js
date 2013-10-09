@@ -91,7 +91,7 @@ app.controller('KKReviewController', ['$scope', '$location', '$log', 'TarjontaSe
 
 
 
-
+        // NOT NEEDED ANYMORE!
         $scope.load = function(oid) {
             $log.info("load()...");
 

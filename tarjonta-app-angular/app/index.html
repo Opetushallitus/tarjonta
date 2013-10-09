@@ -74,6 +74,8 @@
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
 
+        <script src="partials/koulutus/koulutusController.js"></script>
+
         <script src="partials/helpers/localisationControllers.js"></script>
 
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
@@ -117,6 +119,23 @@
                         </div>
                     </div>
                 </div><!-- 0:/helpers -->
+
+                <div ng-switch-when="koulutus">
+                    <div ng-switch on="renderPath[1]" ng-controller="KoulutusRoutingController">
+                        <div ng-switch-when="review">
+                            {{ getKoulutusPartialName("review") }}
+                            <div ng-include="getKoulutusPartialName('review')"></div>
+                        </div>
+                        <div ng-switch-when="edit">
+                            {{ getKoulutusPartialName("edit") }}
+                            <div ng-include="getKoulutusPartialName('edit')"></div>
+                        </div>
+                        <div ng-switch-default>
+                             UNKNOWN ACTION! {{ renderPath | json }}
+                        </div>
+                    </div>
+                </div><!-- 0:/helpers -->
+
                 <div ng-switch-when="koodistoTest">
                     <div ng-include="'partials/koodistoTest.html'" ng-controller="KoodistoTestController"></div>
                 </div>
