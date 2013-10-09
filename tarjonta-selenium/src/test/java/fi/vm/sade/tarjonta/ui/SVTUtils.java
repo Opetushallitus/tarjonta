@@ -1990,6 +1990,19 @@ public class SVTUtils {
                 , this.textElement(driver, "Hakukohteet ("));
     	tauko(1);
     }
+
+    public void haeHakukohteita(WebDriver driver, String tila, String teksti, String kausi, String vuosi)
+    {
+    	this.textClick(driver, "Hakukohteet");
+    	if (tila   != null && tila.length()   > 0) { filterTila       (driver, tila);   }
+    	if (teksti != null && teksti.length() > 0) { filterVapaaTeksti(driver, teksti); }
+    	if (kausi  != null && kausi.length()  > 0) { filterKausi      (driver, kausi);  }
+    	if (vuosi  != null && kausi.length()  > 0) { filterVuosi      (driver, vuosi);  }
+    	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae hakukohteita ei toimi."
+                , this.textElement(driver, "Hakukohteet ("));
+    	tauko(1);
+    }
     
     public void tarkasteleKoulutusta(WebDriver driver, String vapaaTeksti, String tila)
     {
@@ -2003,6 +2016,20 @@ public class SVTUtils {
         haeKoulutuksia(driver, tila, vapaaTeksti);
         this.clickFirstTriangle(driver);
         this.menuOperaatioFirstMenu(driver, operaatio);
+    }
+
+    public void filterKausi(WebDriver driver, String kausi)
+    {
+    	this.sendInput(driver, "Koulutuksen alkamiskausi", kausi);
+    	this.popupItemClick(driver, kausi);
+    	tauko(1);
+    }
+
+    public void filterVuosi(WebDriver driver, String vuosi)
+    {
+    	this.sendInput(driver, "Koulutuksen alkamisvuosi", vuosi);
+    	this.popupItemClick(driver, vuosi);
+    	tauko(1);
     }
 
     public void filterTila(WebDriver driver, String tila)
