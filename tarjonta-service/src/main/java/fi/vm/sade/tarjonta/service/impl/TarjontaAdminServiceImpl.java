@@ -84,7 +84,6 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
  */
 @Transactional(rollbackFor = Throwable.class, readOnly = false)
 @Service("tarjontaAdminService")
-@Secured("ROLE_APP_TARJONTA_READ_UPDATE") //to trigger redirecto to login page
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
