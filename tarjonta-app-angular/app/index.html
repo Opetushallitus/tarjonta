@@ -35,7 +35,6 @@
         <script src="lib/angular/angular-sanitize.js"></script>
 
         <script src="lib/ngGrid/ng-grid-2.0.7.debug.js"></script>
-        <link href="lib/ngGrid/ng-grid.min.css" rel="stylesheet">
 
         <script src="lib/underscore/underscore.js"></script>
 
@@ -58,7 +57,6 @@
         <script src="js/shared/tarjontaConverter.js"></script>
 
         <script src="js/shared/directives/ngonce.js"></script>
-        <link href="js/shared/directives/zippy.css" rel="stylesheet">
 
         <script src="partials/controllers.js"></script>
         <script src="partials/directives.js"></script>
@@ -79,13 +77,24 @@
         <script src="partials/helpers/localisationControllers.js"></script>
 
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
-        <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
 
 
         <script src="partials/tarjontaApp.js"></script>
+        
+        <!-- TYYLIT - huomaa järjestys kun lisäilet -->
+		<!-- 1. bootstrap pohjalle -->
+        <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
+        
+        <!-- 2. erillisten komponenttien omat tyylit -->
+        <link href="js/shared/directives/zippy.css" rel="stylesheet">
+        <link href="lib/ngGrid/ng-grid.min.css" rel="stylesheet">
+        <link href="css/tree.css" rel="stylesheet"/>
 
-        <link rel="stylesheet" href="css/app.css"/>
-        <link rel="stylesheet" href="css/tree.css"/>
+		<!-- 3. virkailija-teema -->
+        <link href="css/virkailija.css" rel="stylesheet"/>
+
+		<!-- 4. omat määritykset ja toiminnaliset tyylit -->
+        <link href="css/app.css" rel="stylesheet"/>
     </head>
 
     <body ng-controller="AppRoutingCtrl">
