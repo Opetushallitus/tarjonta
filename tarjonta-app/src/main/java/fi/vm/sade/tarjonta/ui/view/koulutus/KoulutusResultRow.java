@@ -303,8 +303,6 @@ public class KoulutusResultRow extends HorizontalLayout {
             }
         });
 
-        //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
-
 
         addComponent(isSelected);
         if (withMenuBar) {
