@@ -204,17 +204,21 @@ div#searchResults table {
 	display:none;
 }*/
 
+div#searchResults table tr.header th.nimi {
+	min-width:50%;
+}
+
 div#searchResults table input[type=checkbox] {
 	margin-right:10px;
 	position:relative;
 	top:-0.25em;
 }
 
-div#searchResults table td, div#searchResults table th {
+div#searchResults table tbody td, div#searchResults table tbody th {
 	cursor:pointer;
 }
 
-div#searchResults table tr:hover td, div#searchResults table tr:hover th {
+div#searchResults table tbody tr:hover td, div#searchResults table tbody tr:hover th {
 	background-color:#f0f0f0;
 }
 

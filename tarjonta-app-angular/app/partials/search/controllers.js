@@ -450,6 +450,22 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	}
     }
     
+    function createTableHeader(selector, prefix, cols) {
+    	console.log("cols", cols);
+    	var html = "<tr class=\"header\">"
+    		+"<th class=\"nimi\"></th>"
+    		+"<th class=\"kausi\">"+LocalisationService.t("tarjonta.hakutulokset.kausi")+"</th>";
+    	
+    	for (var i in cols) {
+    		var c = cols[i];
+    		html = html+"<th class=\""+c+"\">"+LocalisationService.t("tarjonta.hakutulokset."+c)+"</th>";
+    	}
+    	
+    	return html
+    		+"<th class=\"tila\">"+LocalisationService.t("tarjonta.hakutulokset.tila")+"</th>"
+    		+"</tr>";
+    }
+    
     function initTable(selector, prefix, data, cols, sn) {
     	
     	if (sn!=serial) {
@@ -462,6 +478,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	loadingService.beforeOperation();
     	
     	forceClear(em);
+    	em.html(createTableHeader(em, prefix, cols));
     	
     	// valitse-kaikki-nappi päälle/pois tulosten mukaan
     	$("input.selectAll", em.parent())
