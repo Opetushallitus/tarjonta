@@ -82,7 +82,29 @@ describe('Edit koulutus testeja', function() {
         $scope.editYhModel.clearYh();
         expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
     }));
+    it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller) {
+        $controller('EditYhteyshenkiloCtrl', {
+            $scope: $scope,
+        });
 
+        $scope.editYhModel.searchPersonMap = {};
+        
+        $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'}; 
+        $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'}; 
+        
+        $scope.uiModel = {};
+        
+        $scope.uiModel.contactPerson = {};
+        
+        $scope.uiModel.contactPerson.nimet = 'Pekka Pekkola';
+        
+        expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
+        
+        $scope.editYhModel.selectHenkilo();
+        
+        expect($scope.uiModel.contactPerson.etunimet).toEqual('Pekka');
+        
+    }));
 
 });
 
