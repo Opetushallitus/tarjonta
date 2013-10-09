@@ -24,7 +24,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
              * LOAD KOODISTO DATA
              */
 
-            $scope.searchKoodisByKoodistoUri(cfg.env['koodistoUriOpintojenLaajuus'], $scope.uiModel.opintojenLaajuus, $scope.locale);
+            $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opintojenLaajuusarvo'], $scope.uiModel.opintojenLaajuus, $scope.locale);
             $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.suunniteltuKesto'], $scope.uiModel.suunniteltuKesto, $scope.locale);
             $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.kieli'], $scope.uiModel.opetuskielis, $scope.locale);
             $scope.searchKoodisByKoodistoUri(cfg.env['koodisto-uris.opetusmuoto'], $scope.uiModel.opetusmuodos, $scope.locale);

@@ -76,12 +76,13 @@ window.CONFIG = {
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/",
         // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
 
-         "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
-         "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
+        "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
+        "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
 
 
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
         "casUrl": "cas_myroles_tiimi2.json",
         "place": "holder"
+        
     }
 };
