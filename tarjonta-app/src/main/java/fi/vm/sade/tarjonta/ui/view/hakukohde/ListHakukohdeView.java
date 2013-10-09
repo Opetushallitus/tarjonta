@@ -269,7 +269,7 @@ public class ListHakukohdeView extends VerticalLayout {
     }
 
     private String getAjankohta(HakukohdePerustieto curHakukohde) {
-        return curHakukohde.getKoulutuksenAlkamiskausi().getUri() + " " + curHakukohde.getKoulutuksenAlkamisvuosi();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHakukohde.getKoulutuksenAlkamiskausi().getNimi()) + " " + curHakukohde.getKoulutuksenAlkamisvuosi();
     }
 
     private String getTilaStr(HakukohdePerustieto curHakukohde) {
