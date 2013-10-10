@@ -11,6 +11,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_S
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTYYPPI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.POHJAKOULUTUSVAATIMUS_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.POHJAKOULUTUSVAATIMUS_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.POHJAKOULUTUSVAATIMUS_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.POHJAKOULUTUSVAATIMUS_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_ALKAMISPVM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_PAATTYMISPVM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
@@ -69,7 +72,7 @@ public class SolrDocumentToHakukohdeConverter {
             hakukohde.setKoulutuksenAlkamisvuosi(Integer.parseInt((String)hakukohdeDoc.getFieldValue(VUOSI_KOODI)));
         }
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
-        hakukohde.setPohjakoulutusVaatimus((String)hakukohdeDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
+        hakukohde.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, hakukohdeDoc));
         hakukohde.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URI,  KOULUTUSLAJI_FI,  KOULUTUSLAJI_SV,  KOULUTUSLAJI_EN, hakukohdeDoc));
         
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));

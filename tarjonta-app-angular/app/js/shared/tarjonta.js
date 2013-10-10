@@ -25,12 +25,16 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     }
 
     function searchCacheKey(prefix, args) {
-        return prefix + "/?" +
+        return {
+        	key: prefix + "/?" +
                 "oid=" + args.oid + "&" +
                 "terms=" + escape(args.terms) + "&" +
                 "state=" + escape(args.state) + "&" +
                 "season=" + escape(args.season) + "&" +
-                "year=" + escape(args.year);
+                "year=" + escape(args.year),
+            expires: 60000,
+            pattern: prefix+"/.*"
+            };
     }
 
     var dataFactory = {};
@@ -86,7 +90,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    r.nimi = localize(r.nimi);
+                    r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus!==undefined?", " + localize(r.pohjakoulutusvaatimus):"");
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
                 }
@@ -95,6 +99,11 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
             result.tulokset.sort(compareByName);
             return result;
         });
+    }
+    
+    dataFactory.evictHakutulokset = function() {
+    	CacheService.evict({pattern: "hakutulos/.*"});
+    	CacheService.evict({pattern: "koulutus/.*"});
     }
 
     /**

@@ -231,7 +231,6 @@ public class IndexDataUtils {
    
    public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
        if (kausikoodi == null) {
-           System.out.println("kausikoodi is null?");
            return;
        }
 
@@ -246,11 +245,28 @@ public class IndexDataUtils {
            add(doc, KAUSI_EN, metadata.getNimi());
            add(doc, KAUSI_KOODI,
                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
-       } else {
-           System.out.println("kausi koodi was null?");
+       } 
+   }
+
+   public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc, String koodiUri, KoodiService koodiService, String uriField, String fiField, String svField, String enField) {
+       if (koodiUri == null) {
+           return;
+       }
+
+       final KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koodiUri, koodiService);
+
+       if (koodi != null) {
+           KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+           add(doc, fiField, metadata.getLyhytNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+           add(doc, svField, metadata.getLyhytNimi());
+           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+           add(doc, enField, metadata.getLyhytNimi());
+           add(doc, uriField,
+                   koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
        }
    }
-   
+
    /**
     * Add field if value is not null
     * 

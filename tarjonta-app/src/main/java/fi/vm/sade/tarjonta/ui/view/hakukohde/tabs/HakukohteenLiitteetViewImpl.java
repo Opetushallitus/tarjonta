@@ -56,6 +56,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -139,6 +140,29 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent implements Prop
     @Override
     public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
         modelEdited = true;
+    }
+    
+    @Override
+    public void attach() {
+        super.attach();
+        filterKooditBasedOnPohjakoulutus();
+    }
+
+    
+    private void filterKooditBasedOnPohjakoulutus() {
+        String pkVaatimus = null;
+        
+        if (presenter.getModel().getSelectedKoulutukset() != null 
+                && presenter.getModel().getSelectedKoulutukset().get(0) != null 
+                && presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null) {
+            pkVaatimus =  presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        }
+       
+        boolean isYksilollistettyPerusopetus = pkVaatimus != null 
+                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
+        if (!isYksilollistettyPerusopetus) {
+            liitteenTyyppi.getField().removeItem(KoodistoURI.KOODI_TODISTUKSET_URI);
+        }
     }
 
     private String T(String key) {

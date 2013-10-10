@@ -98,6 +98,8 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
                 kkDto.setKoulutusohjelma(convertToUiMetaDTO(komo.getLukiolinja(), DEMO_LOCALE, koulutusasteTyyppi + "->lukiolinja"));
                 break;
         }
+
+        kkDto.setTutkinto(komoData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, "tutkinto")); //correct data mapping?
         kkDto.setOpintojenLaajuus(komoData(komo.getLaajuusArvo(), DEMO_LOCALE, "OpintojenLaajuus (arvo uri)"));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
         kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);

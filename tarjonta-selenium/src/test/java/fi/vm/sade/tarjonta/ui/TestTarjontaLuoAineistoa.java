@@ -55,14 +55,14 @@ public class TestTarjontaLuoAineistoa {
         doit.popupItemClick(driver, "Varsinainen haku");
         doit.sendInput(driver, "Hakukausi ja -vuosi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013", 200);
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013", 200);
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013", 200);
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013\t", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2013", 200);
         doit.sendInput(driver, "Koulutuksen alkamiskausi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013", 300);
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013", 300);
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013", 300);
+        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013\t", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2013", 300);
         doit.sendInput(driver, "Haun kohdejoukko", "Aikuiskoulutus");
         doit.popupItemClick(driver, "Aikuiskoulutus");
         doit.sendInput(driver, "Hakutapa", "Yhteishaku");
@@ -140,13 +140,36 @@ public class TestTarjontaLuoAineistoa {
 			doit.textClick(driver, organisaatio);
 		}
         doit.tauko(1);
-        
-        // poistetaan aikaisemmin mahdollisesti luotu hevoskoulutus
-        if (doit.PoistaKoulutus(driver, "Hevo"))
-        {
-        	doit.textClick(driver, organisaatio);
-        	doit.tauko(1);
-        }
+
+		Assert.assertNotNull("Running LuoKoulutusAMK Organisaation valinta ei toimi."
+		        , doit.textElement(driver, "Koulutukset ("));
+        try {
+			Assert.assertNotNull("Running LuoKoulutusAMK Organisaation valinta ei toimi."
+			        , doit.textElement(driver, "Koulutukset (0)"));
+		} catch (Exception e) {
+	        // jos loytyy aikaisemmin luotu julkaistu hevoskoulutus, niin tama on valmis
+	        doit.haeKoulutuksia(driver, "Julkaistu", "Hevo");
+	        try {
+	        	doit.tauko(10);
+	        	doit.triangleClickFirstTriangle(driver);
+				Assert.assertNotNull("Running LuoKoulutusAMK Luo uusi koulutus ei toimi."
+				        , doit.textElement(driver, "Hevostalouden"));
+				Assert.assertNotNull("Running LuoKoulutusAMK Luo uusi koulutus ei toimi."
+				        , doit.textElement(driver, "julkaistu"));
+		    	doit.echo("Running test_T_INT_TAR_LUO002_LuoKoulutusAMK OK");
+				doit.tauko(1);
+				return;
+			} catch (Exception e1) {
+		        // poistetaan aikaisemmin mahdollisesti luotu hevoskoulutus
+				doit.filterVapaaTeksti(driver, null);
+		        if (doit.PoistaKoulutus(driver, "Hevo"))
+		        {
+		        	doit.textClick(driver, organisaatio);
+		        	doit.tauko(1);
+		        }
+			}
+		}
+
         //
         doit.textClick(driver, "Luo uusi koulutus");
         Assert.assertNotNull("Running LuoKoulutusAMK Luo uusi koulutus ei toimi."
@@ -321,7 +344,7 @@ public class TestTarjontaLuoAineistoa {
         
         doit.sendInput(driver, "Hakuaika", kuvaus);
         String ilmoitettavat = (System.currentTimeMillis() + "").substring(7);
-        while (ilmoitettavat.substring(0,1) == "0") { ilmoitettavat = ilmoitettavat.substring(1); }
+        while (ilmoitettavat.substring(0,1).equals("0")) { ilmoitettavat = ilmoitettavat.substring(1); }
         doit.sendInput(driver, "Hakijoille ilmoitettavat aloituspaikat", ilmoitettavat);
         doit.sendInput(driver, "Valinnoissa käytettävät aloituspaikat", "10");
         doit.sendInputTiny(driver, "voidaan kuvata muuta hakemiseen olennaisesti", reppu + "hakukohde" + yyyymmdd);

@@ -17,19 +17,23 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             /*
              * INITIALISE DATA MODELS
              */
-            converter.createAPIModel($scope.model);
+            converter.createAPIModel($scope.model, cfg.app.userLanguages);
             converter.createUiModels($scope.uiModel);
+
+            angular.forEach($scope.model.koulutusohjelma.meta, function(val, key) {
+                $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.locale);
+            });
 
             /*
              * LOAD KOODISTO DATA
              */
             //missing koodisto data:
             angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
-                $scope.searchKoodisByKoodistoUri(cfg.env[value.koodisto], $scope.uiModel[key], $scope.locale);
+                $scope.searchKoodisByKoodistoUri($scope.uiModel[key], cfg.env[value.koodisto], $scope.locale);
             });
 
             angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                $scope.searchKoodisByKoodistoUri(cfg.env[value.koodisto], $scope.uiModel[key], $scope.locale);
+                $scope.searchKoodisByKoodistoUri($scope.uiModel[key], cfg.env[value.koodisto], $scope.locale);
             });
 
             /*
@@ -38,7 +42,6 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             if ($routeParams.type === 'new') {
                 var orgOid = $scope.getOrganisaatioOid({});
                 $scope.model.organisaatio = $scope.getOrganisationApiModel({}, "");
-
                 var promiseOrg = organisaatioService.nimi(orgOid);
                 promiseOrg.then(function(vastaus) {
                     console.log("result returned, hits:", vastaus);
@@ -132,10 +135,17 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
         $scope.search = function() {
             console.log("search()", tarjontaService);
 
+
             tarjontaService.getKoulutus({oid: $routeParams.komoto}, function(data) {
                 console.log("data loaded()", data);
-
                 $scope.model = angular.copy(data);
+                converter.createMetaLanguages($scope.model.koulutusohjelma, cfg.app.userLanguages);
+
+                if (converter.isNull($scope.model.koulutusohjelma)) {
+                    angular.forEach(data.meta, function(value, key) {
+                    });
+                }
+
                 $scope.updateMultiSelectKoodistoData($scope.uiModel, $scope.model);
                 $scope.model.koulutuksenAlkamisPvm = Date.parse(data.koulutuksenAlkamisPvm);
                 angular.forEach($scope.model.yhteyshenkilos, function(value, key) {
@@ -221,12 +231,21 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             return {"oid": orgOid, "nimi": nimi};
         };
 
-        $scope.searchKoodisByKoodistoUri = function(koodistouri, uiModel, locale) {
+        $scope.searchKoodi = function(apiModel, koodistouri, uri, locale) {
+            var promise = koodisto.getKoodi(koodistouri, uri, locale);
+            promise.then(function(data) {
+                console.log("KOODI", data);
+                apiModel.koodi.kaannos = data.koodiNimi;
+            });
+        };
+
+        $scope.searchKoodisByKoodistoUri = function(uiModel, koodistouri, locale) {
             var koodisPromise = koodisto.getAllKoodisWithKoodiUri(koodistouri, locale);
             koodisPromise.then(function(koodisParam) {
                 uiModel.data = koodisParam;
             });
         };
+
 
         //add factory functions to ui template 
         $scope.searchKoodiByKoodiUri = converter.searchKoodiByKoodiUri;
