@@ -16,7 +16,17 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	}
 
 	setDefaultHakuehdot();
+	$scope.oppilaitostyypit={};
 
+    Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
+        console.log("oppilaitostyypit", koodit);
+        angular.forEach(koodit, function(koodi){
+        	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
+        });
+        $scope.oppilaitostyypit=koodit;
+    });
+
+	
     $scope.organisaatio = {};
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
