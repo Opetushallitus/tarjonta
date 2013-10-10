@@ -37,7 +37,12 @@ app.directive('tinyMceRichText',function($compile){
 
             //Initialize tinymce and hook callbacks on it to update the bound variable
             tinymce.init({
-
+                menu : {},
+                toolbar : 'formatselect,bold,italic,underline,strikethrough,numlist,bullist,|,undo,redo,|,link,table,|,pastetext,pasteword,selectall,|,removeformat',
+                entity_encoding : 'raw',
+                statusbar : false,
+                apply_source_formatting : false,
+                remove_linebreaks : true,
                 selector: selectorVal,
                 setup : function(ed) {
                     ed.on('change', function(e) {
