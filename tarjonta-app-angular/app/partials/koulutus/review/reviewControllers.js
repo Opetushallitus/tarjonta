@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', '$modal',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService',
+    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService) {
         $log.info("BaseReviewController()");
 
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
@@ -38,16 +38,21 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             foo: "bar"
         };
 
-        // TODO respect my autoritai!
-        // $scope.model.routeParams.id = "1.2.246.562.5.2013091015190138558153";
-
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
-            $location.path("/kk/edit/load/" + targetPart + "/none/" + $scope.model.koulutus.oid + "/none");
+            $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
         };
 
         $scope.goBack = function(event) {
+
             $log.info("goBack()...");
+
+            dialogService.showDialog({scope:{title: "Really?", description: "Really go back?"}}).result.then(function(data) {
+                $log.info("GOT: ", data);
+                if ("ACTION" === data) {
+                    window.history.back();
+                }
+            });
         };
 
         $scope.doDelete = function(event) {
