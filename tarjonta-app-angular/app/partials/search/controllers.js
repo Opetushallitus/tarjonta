@@ -273,6 +273,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					action: function(){
 						TarjontaService.togglePublished(prefix, oid, true).then(function(ns){
 							updateTableRowState(prefix, oid, ns);
+							TarjontaService.evictHakutulokset();
 						});
 					}
 				});
@@ -284,6 +285,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					action: function(){
 						TarjontaService.togglePublished(prefix, oid, false).then(function(ns){
 							updateTableRowState(prefix, oid, ns);
+							TarjontaService.evictHakutulokset();
 						});
 					}
 				});
