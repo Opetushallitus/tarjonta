@@ -185,7 +185,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var html = "";
     	for (var ti in results.tulokset) {
     		var tarjoaja = results.tulokset[ti];
-    		html = html+"<tbody class=\"folded\" tarjoaja-oid=\""
+    		html = html+"<tbody class=\"folded tresult\" tarjoaja-oid=\""
     			+tarjoaja.oid
     			+"\">"
     			+"<tr class=\"tgroup\"><th colspan=\""+(3 + props.length)+"\">"
@@ -283,6 +283,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					action: function(){
 						TarjontaService.togglePublished(prefix, oid, true).then(function(ns){
 							updateTableRowState(prefix, oid, ns);
+							TarjontaService.evictHakutulokset();
 						});
 					}
 				});
@@ -294,6 +295,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 					action: function(){
 						TarjontaService.togglePublished(prefix, oid, false).then(function(ns){
 							updateTableRowState(prefix, oid, ns);
+							TarjontaService.evictHakutulokset();
 						});
 					}
 				});
@@ -329,6 +331,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	// - sisältö angularilla, sijoittelu jqueyryllä
     	$(".options", em).click(function(ev){
     		ev.preventDefault();
+    		ev.stopPropagation();
+
     		var menu = $("#dropdown");
     		
     		// popup-valikon sisältö
@@ -375,7 +379,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		$("a", menu).click(function(ev){
     			// jos url on #, estetään selainta seuraamasta linkkiä (oletetaan, että action on määritelty)
     			if ($(ev.currentTarget).attr("href") == "#") {
-    				ev.preventDefault();
+    				//ev.stopPropagation();
+    				//ev.preventDefault();
     			}
 
         		// sulkeutuminen linkkiä klikkaamalla yms.
@@ -461,7 +466,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
     
     function createTableHeader(selector, prefix, cols) {
-    	console.log("cols", cols);
+    	//console.log("cols", cols);
     	var html = "<tr class=\"header\">"
     		+"<th class=\"nimi\"></th>"
     		+"<th class=\"kausi\">"+LocalisationService.t("tarjonta.hakutulokset.kausi")+"</th>";
@@ -547,11 +552,12 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         
     }
 
-    if ($scope.spec.terms=="*") {
-    	$scope.spec.terms="";
-    	$scope.search();
-    } else if ($scope.spec.terms!="") {
-    	$scope.search();
+    if ($scope.spec.terms!="") {
+    	if ($scope.spec.terms=="*") {
+        	$scope.spec.terms="";
+        }
+    	// estää angularia tuhoamasta "liian nopeasti" haettua hakutuloslistausta
+    	setTimeout($scope.search, 100);
     }
 
     $scope.report = function() {

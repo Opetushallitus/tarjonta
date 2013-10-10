@@ -1,28 +1,127 @@
+/**
+ * Cache-palvelu ui-tarpeisiin.
+ * 
+ * Cache-avain on joko string tai map.
+ *  - String muotoinen avain k muunnetaan automaattisesti muotoon {key: k}
+ * 
+ * Map-muotoisen avaimen rakenne:
+ *  - key: tekstimuotoinen pääavain (pakollinen, paitsi evictoidessa)
+ *  - pattern: regex, johon täsmäävät avaimet poistetaan cachesta tallennettaessa (valinnainen)
+ *  - expires: aika jolloin arvo poistuu cachesta; voi olla joko absoluuttinen (Date) tai relatiivinen (int)
+ * 
+ */
+
 angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService', function($resource, $log, $q, Config) {
 	
 	var cacheData = {};
 	
-	var cacheService = {}
+	var cacheService = {};
+
+	/**
+	 * Täydentää cache-avaimen.
+	 * 
+	 *  - Muuttaa patternin RegExp-olioksi, jos määritelty
+	 *  - Muuttaa ajan Dateksi, jos määritelty
+	 *  - Jos parametri on RegExp tai String, muuttaa mapiksi.
+	 */
+	function prepare(key) {
+		if (key instanceof RegExp) {
+			return {pattern: key};
+		} else if (!(key instanceof Object)) {
+			return {key: ""+key};
+		}
+		if (key.pattern != undefined && !(key.pattern instanceof RegExp)) {
+			key.pattern = new RegExp(key.pattern);
+		}
+		if (key.expires != undefined && !(key.expires instanceof Date)) {
+			var d = new Date();
+			d.setTime(d.getTime() + key.expires);
+			key.expires = d;
+		}
+		return key;
+	}
+
+	/**
+	 * Lisää tavaraa cacheen.
+	 */
+	cacheService.insert = function(key, value) {
+		key = prepare(key);
+		
+		for (var rk in cacheData) {
+			if (key.pattern!=undefined && key.pattern.test(rk)) {
+				console.log("Evicted from cache during insert", rk);
+				cacheData[rk] = undefined;
+			}
+		}
+		
+		cacheData[key.key] = {
+				value: value,
+				expires: key.expires
+		}
+
+		console.log("Cache insert",key.key);
+	}
+	
+	/**
+	 * Hakee tavaraa cachesta.
+	 */
+	cacheService.find = function(key) {
+		key = prepare(key);
+		var rv = cacheData[key.key];
+		if (rv==undefined) {
+			console.log("Cache miss",key);
+			return null;
+		}
+		
+		if (rv.expires!=undefined && rv.expires.getTime()<new Date().getTime()) {
+			// expired
+			console.log("Expired hit", key);
+			cacheData[key.key] = null;
+			return null;
+		}
+
+		console.log("Cache hit", key);
+
+		return rv.value;
+	}
+	
+	
+	/**
+	 * Poistaa tavaraa cachesta.
+	 * @param key Cache-avain.
+	 */
+	cacheService.evict = function(key) {
+		key = prepare(key);
+		var now = new Date().getTime();
+		
+		for (var rk in cacheData) {
+			if (key.key==rk
+					|| (key.pattern!=undefined && key.pattern.test(rk))
+					|| (key.expires!=null && key.expires.getTime()<now)) {
+				console.log("Evicted from cache", rk);
+				cacheData[rk] = undefined;
+			}
+		}
+	}
 	
 	/**
 	 * Hakee tavaraa cachesta avaimen mukaan tai delegoi getterille.
 	 * 
-	 * @param key Avain (mikä tahansa string).
+	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
 	 * @param getter Funktio, jolle hakeminen delegoidaan jos arvoa ei löytynyt. Parametriksi annetaan promise jonka funktio resolvaa.
 	 * @returns promise
 	 */
 	cacheService.lookup = function(key, getter) {
         var ret = $q.defer();
 		
-		if (cacheData[key]!=undefined) {
-			console.log("Cache hit ",key);
-			ret.resolve(cacheData[key]);
+        var res = cacheService.find(key);
+        
+		if (res!=undefined) {
+			ret.resolve(res);
 		} else {
-			console.log("Cache miss", key);
 			var query = $q.defer();
 			query.promise.then(function(res){
-				console.log("Cache insert ",key);
-				cacheData[key] = res;
+				cacheService.insert(key, res);
 				ret.resolve(res);
 			});
 			getter(query);
@@ -33,7 +132,7 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 	/**
 	 * Rest-apumetodi cachesta hakemiseen.
 	 * 
-	 * @param key Avain (mikä tahansa string).
+	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
 	 * @param resource Rest-resurssi;  $resource(...)
 	 * @param args Rest-kutsun parametrit.
 	 * @param filter Valinnainen funktio jolla lopputulos käsitellään ennen palauttamista ja tallentamista cacheen..
