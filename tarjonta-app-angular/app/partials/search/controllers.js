@@ -1,5 +1,5 @@
 
-angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
+angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
         .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
@@ -19,7 +19,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	$scope.oppilaitostyypit={};
 
     Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
-        console.log("oppilaitostyypit", koodit);
+        //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
         });
