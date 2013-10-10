@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -37,9 +36,6 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
@@ -102,29 +98,11 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
 
     private void formatKoulutusName() {
-        if (this.koulutusNimi != null && koulutus != null && koulutus.getPohjakoulutusVaatimus() != null && this.koulutusNimi.length() > 0) {
-            List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getPohjakoulutusVaatimus());
-            if (koodis != null && koodis.size() > 0) {
-                this.koulutusNimi = this.koulutusNimi + ", " + tryGetKoodistoLyhytNimi(koodis.get(0));
-            }
+        if (this.koulutusNimi != null && koulutus != null && koulutus.getPohjakoulutusvaatimus() != null && this.koulutusNimi.length() > 0) {
+            this.koulutusNimi = this.koulutusNimi + ", " + TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koulutus.getPohjakoulutusvaatimus().getNimi());
         }
     }
 
-    private String tryGetKoodistoLyhytNimi(KoodiType koodi) {
-        String retval = koodi.getKoodiArvo();
-
-        List<KoodiMetadataType> metas = koodi.getMetadata();
-        Locale locale = I18N.getLocale();
-        for (KoodiMetadataType meta : metas) {
-            if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
-                return meta.getLyhytNimi();
-            } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
-                return meta.getLyhytNimi();
-            }
-        }
-
-        return retval;
-    }
     /**
      * Command object for the row menubar. Starts operations based on user's
      * selection in the menu.
@@ -350,19 +328,6 @@ public class KoulutusResultRow extends HorizontalLayout {
         return this;
     }
     
-    private void removeKoulutusSelection() {
-        KoulutusPerustieto selectionToRemove = null;
-        for (KoulutusPerustieto curKoul : tarjontaPresenter.getModel().getSelectedKoulutukset()) {
-            if (curKoul.getKomotoOid().equals(koulutus.getKomotoOid())) {
-                selectionToRemove = curKoul;
-                break;
-            }
-        }
-        if (selectionToRemove != null) {
-            tarjontaPresenter.getSelectedKoulutukset().remove(selectionToRemove);
-        }
-    }
-
     /**
      * Gets the isSelected checkbox component.
      *

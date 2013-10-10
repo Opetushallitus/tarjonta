@@ -444,7 +444,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             hakuView = getModel().getHakukohde().getHakuViewModel();
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
-        String pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
+        
+        String pkVaatimus = null;
+        if (getModel().getSelectedKoulutukset() != null 
+                && getModel().getSelectedKoulutukset().get(0) != null 
+                && getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null) {
+            pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        }
+        
         
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                                                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
@@ -546,7 +553,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
             koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
             koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
-            pohjakoulutukses.add(koulutusModel.getPohjakoulutusVaatimus());
+            pohjakoulutukses.add(koulutusModel.getPohjakoulutusvaatimus().getUri());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi"));
@@ -597,7 +604,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
             if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
-                    && curKoulutus.getPohjakoulutusVaatimus().contains(pohjakoulutuskoodi.getUri())
+                    && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
@@ -2055,9 +2062,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     private boolean pohjakoulutusMatches(String pohjakoulutusvaatimus, KoulutusPerustieto KoulutusPerustieto) {
         return (pohjakoulutusvaatimus == null
-                && KoulutusPerustieto.getPohjakoulutusVaatimus() == null)
+                && KoulutusPerustieto.getPohjakoulutusvaatimus() == null)
                 || (pohjakoulutusvaatimus != null
-                && pohjakoulutusvaatimus.equals(KoulutusPerustieto.getPohjakoulutusVaatimus()));
+                && pohjakoulutusvaatimus.equals(KoulutusPerustieto.getPohjakoulutusvaatimus().getUri()));
     }
 
     public KoulutusPerustieto findKomotoByKoulutuskoodiPohjakoulutus(String koulutuskoodi, String pohjakoulutusvaatimus) {

@@ -1,6 +1,6 @@
 
-angular.module('app.controllers', ['app.services','localisation','Organisaatio','angularTreeview', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
+angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
+        .controller('SearchController', function($rootScope, $scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -16,8 +16,18 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	}
 
 	setDefaultHakuehdot();
+	$scope.oppilaitostyypit={};
 
-    $scope.organisaatio = {};
+    Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
+        //console.log("oppilaitostyypit", koodit);
+        angular.forEach(koodit, function(koodi){
+        	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
+        });
+        $scope.oppilaitostyypit=koodit;
+    });
+
+	
+    $rootScope.organisaatio = {};
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
@@ -55,7 +65,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$scope.tulos = vastaus.organisaatiot;
+			$scope.$root.tulos = vastaus.organisaatiot;
 		});
     };
 
