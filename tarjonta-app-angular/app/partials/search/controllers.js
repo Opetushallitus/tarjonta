@@ -537,11 +537,12 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         
     }
 
-    if ($scope.spec.terms=="*") {
-    	$scope.spec.terms="";
-    	$scope.search();
-    } else if ($scope.spec.terms!="") {
-    	$scope.search();
+    if ($scope.spec.terms!="") {
+    	if ($scope.spec.terms=="*") {
+        	$scope.spec.terms="";
+        }
+    	// estää angularia tuhoamasta "liian nopeasti" haettua hakutuloslistausta
+    	setTimeout($scope.search, 100);
     }
 
     $scope.report = function() {

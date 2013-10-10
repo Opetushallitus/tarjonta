@@ -207,6 +207,22 @@ div#searchResults table {
 div#searchResults table tr.header th.nimi {
 	min-width:50%;
 }
+div#searchResults table tr.header th.tila {
+	min-width:75px;
+}
+div#searchResults table tr.header th.hakukausi {
+	min-width:90px;
+}
+div#searchResults table tr.header th.koulutuslaji {
+	min-width:120px;
+}
+div#searchResults table tr.header th.hakutapa {
+	min-width:120px;
+}
+div#searchResults table tr.header th.aloituspaikat {
+	min-width:90px;
+}
+
 
 div#searchResults table input[type=checkbox] {
 	margin-right:10px;
