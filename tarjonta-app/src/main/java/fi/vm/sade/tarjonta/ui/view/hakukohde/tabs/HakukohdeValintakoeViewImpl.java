@@ -21,8 +21,6 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
-import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
-import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Window.Notification;
 
@@ -107,6 +105,14 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
     @Override
     public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
         modelEdited = true;
+    }
+    
+    @Override
+    public void attach() {
+        super.attach();
+        if (presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            filterKooditBasedOnPohjakoulutus();
+        }
     }
 
     private void initForm() {
@@ -380,8 +386,20 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
 
     private KoodistoComponent buildValintakokeenTyyppi() {
         valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_VALINTAKOE_TYYPPI_URI);
-
+        
         return valintakoeTyyppi;
+    }
+
+    /*
+     * Filters out haastattelu if pohjakoulutusvaatimus is not yksilollistetty perusopetus
+     */
+    private void filterKooditBasedOnPohjakoulutus() {
+        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
+        boolean isYksilollistettyPerusopetus = pkVaatimus != null 
+                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
+        if (!isYksilollistettyPerusopetus) {
+            valintakoeTyyppi.getField().removeItem(KoodistoURI.KOODI_HAASTATTELU_URI);
+        }
     }
 
     private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
