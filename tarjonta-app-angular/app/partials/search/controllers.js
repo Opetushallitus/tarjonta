@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
+        .controller('SearchController', function($rootScope, $scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -27,7 +27,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     });
 
 	
-    $scope.organisaatio = {};
+    $rootScope.organisaatio = {};
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
@@ -65,7 +65,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$scope.tulos = vastaus.organisaatiot;
+			$scope.$root.tulos = vastaus.organisaatiot;
 		});
     };
 
