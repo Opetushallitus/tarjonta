@@ -444,7 +444,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             hakuView = getModel().getHakukohde().getHakuViewModel();
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
-        String pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        
+        String pkVaatimus = null;
+        if (getModel().getSelectedKoulutukset() != null 
+                && getModel().getSelectedKoulutukset().get(0) != null 
+                && getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null) {
+            pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        }
+        
         
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                                                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
