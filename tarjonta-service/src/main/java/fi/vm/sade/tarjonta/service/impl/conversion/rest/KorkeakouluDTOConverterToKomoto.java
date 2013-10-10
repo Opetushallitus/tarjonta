@@ -46,20 +46,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Jani Wilén
  */
 public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<KorkeakouluDTO, KoulutusmoduuliToteutus> {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(KorkeakouluDTOConverterToKomoto.class);
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private OIDService oidService;
-
+    
     @Override
     public KoulutusmoduuliToteutus convert(KorkeakouluDTO dto) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
         }
-
+        
         Koulutusmoduuli komo = new Koulutusmoduuli();
         if (dto.getOid() != null) {
             //update komo & komoto
@@ -80,6 +80,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
          * KOMO data fields:
          */
         final String organisationOId = dto.getOrganisaatio().getOid();
+        komo.setTutkintoOhjelmanNimi(convertToUri(dto.getTutkinto(), "tutkinto")); //correct data mapping?
         komo.setLaajuus(null, convertToUri(dto.getOpintojenLaajuus(), "laajuus")); //TODO : missing type
         komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?
         komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), "koulutusaste"));
@@ -95,7 +96,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), "koulutuskoodi"));
         komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), komo.getNimi(), "koulutusohjelma"));
         komo.setUlkoinenTunniste(dto.getTunniste());
-
+        
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         komo.setKoulutustyyppi(dto.getKoulutusasteTyyppi().value());
 
@@ -103,7 +104,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
          * KOMOTO data fields
          */
         komoto.setTila(dto.getTila());
-
+        
         Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
         komoto.setTarjoaja(organisationOId);
         Preconditions.checkNotNull(dto.getOpintojenMaksullisuus(), "OpintojenMaksullisuus boolean cannot be null.");
@@ -113,82 +114,82 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), "opetuskielis"));
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
-
+        
         komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKesto"), dto.getSuunniteltuKesto().getArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
         return komoto;
     }
-
+    
     private static String convertToUri(final KoodiUriDTO dto, final String msg) {
         return convertToUri(dto, msg, false);
     }
-
+    
     private static String convertToUri(final KoodiUriDTO dto, final String msg, final boolean skipPreconditions) {
         Preconditions.checkNotNull(dto, "KoodiUriDTO object cannot be null! Error in field : " + msg);
         if (!skipPreconditions) {
             Preconditions.checkNotNull(dto.getUri(), "KoodiUriDTO's koodisto koodi URI cannot be null! Error in field : " + msg);
             Preconditions.checkNotNull(dto.getVersio(), "KoodiUriDTO's koodisto koodi version cannot be null! Error in field : " + msg);
         }
-
+        
         if (dto.getUri() == null) {
             //quick hack
             return "";
         }
-
+        
         return new StringBuilder(dto.getUri())
                 .append('#')
                 .append(dto.getVersio()).toString();
     }
-
+    
     private static String convertToUri(final UiDTO dto, final String msg) {
         return convertToUri(dto, msg, false);
     }
-
+    
     private static String convertToUri(final UiDTO dto, final String msg, final boolean skipPreconditions) {
         Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error field : " + msg);
         Preconditions.checkNotNull(dto.getKoodi(), "UiDTO's KoodiUriDTO object cannot be null! Error in field : " + msg);
         return convertToUri(dto.getKoodi(), msg, skipPreconditions);
     }
-
+    
     private static Set<KoodistoUri> convertToUris(final UiMetaDTO dto, Set<KoodistoUri> koodistoUris, final String msg) {
         Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error field : " + msg);
-
+        
         Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
         if (koodistoUris == null) {
             modifiedUris = Sets.<KoodistoUri>newHashSet();
         }
-
+        
         for (UiDTO uiDto : dto.getMeta().values()) {
             Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
             modifiedUris.add(new KoodistoUri(convertToUri(uiDto.getKoodi(), msg)));
         }
-
+        
         return modifiedUris;
     }
-
+    
     private static MonikielinenTeksti convertToTexts(final UiMetaDTO dto, MonikielinenTeksti mt, final String msg) {
         Preconditions.checkNotNull(dto, "UiListDTO object cannot be null! Error field : " + msg);
         Preconditions.checkNotNull(dto.getMeta(), "UiListDTO's map of UiDTO objects cannot be null! Error in field : " + msg);
-
+        
         if (mt == null) {
             mt = new MonikielinenTeksti();
         }
-
+        
         for (UiDTO uiDto : dto.getMeta().values()) {
             Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
             Preconditions.checkNotNull(uiDto.getKoodi().getArvo(), "UI text's KoodiUriDTO object value cannot be null! Error in field : " + msg);
             mt.addTekstiKaannos(convertToUri(uiDto.getKoodi(), msg), uiDto.getKoodi().getArvo());
         }
-
+        
         return mt;
     }
-
+    
     private static String convertToValue(final UiDTO dto, final String msg) {
         Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error in field : " + msg);
         Preconditions.checkNotNull(dto.getArvo(), "UiDTO's value cannot be null! Error in field : " + msg);
-
+        
         return dto.getArvo();
     }
 }
