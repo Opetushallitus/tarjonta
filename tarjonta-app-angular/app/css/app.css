@@ -223,6 +223,10 @@ div#searchResults table tr.header th.aloituspaikat {
 	min-width:90px;
 }
 
+div#searchResults table tr.header th {
+	padding-left:0.5em;
+	cursor:default;
+}
 
 div#searchResults table input[type=checkbox] {
 	margin-right:10px;
@@ -234,8 +238,13 @@ div#searchResults table tbody td, div#searchResults table tbody th {
 	cursor:pointer;
 }
 
-div#searchResults table tbody tr:hover td, div#searchResults table tbody tr:hover th {
+div#searchResults table tbody.tresult tr:hover td, div#searchResults table tbody.tresult tr:hover th {
 	background-color:#f0f0f0;
+}
+
+div#searchResults table tbody.tresult td + td {
+	border-left: 1px solid #d0d0d0;
+	padding-left:0.5em;
 }
 
 div#searchResults table th {
