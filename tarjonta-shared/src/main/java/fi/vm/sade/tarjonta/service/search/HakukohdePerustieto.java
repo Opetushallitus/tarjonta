@@ -25,14 +25,14 @@ public class HakukohdePerustieto implements Serializable
     private Date hakuPaattymisPvm;
     private KoodistoKoodi koulutuslaji;
     private String hakutyyppiUri;
-    private String pohjakoulutusVaatimus; 
+    private KoodistoKoodi pohjakoulutusvaatimus; 
 
-    public String getPohjakoulutusVaatimus() {
-        return pohjakoulutusVaatimus;
+    public KoodistoKoodi getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
     }
 
-    public void setPohjakoulutusVaatimus(String pohjakoulutusVaatimus) {
-        this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
+    public void setPohjakoulutusvaatimus(KoodistoKoodi pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 
     public KoodistoKoodi getKoulutuslaji() {

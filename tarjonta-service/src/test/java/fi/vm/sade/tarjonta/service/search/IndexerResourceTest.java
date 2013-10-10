@@ -87,7 +87,7 @@ public class IndexerResourceTest {
         indexer.indexHakukohde(hakukohteet);
         verify(hakukohteetServer, times(2)).commit(true, true, false);
         verify(hakukohteetServer, times(1)).add(any(Collection.class));
-        verify(koodiService, times(4)).searchKoodis(any(SearchKoodisCriteriaType.class));
+        verify(koodiService, times(5)).searchKoodis(any(SearchKoodisCriteriaType.class));
         verify(organisaatioSearchService, times(1)).findByOidSet(anySet());
     }
 

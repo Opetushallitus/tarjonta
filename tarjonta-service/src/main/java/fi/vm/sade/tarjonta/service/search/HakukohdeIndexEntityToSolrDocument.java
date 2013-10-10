@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -91,7 +90,9 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
         
+
         addPohjakoulutusvaatimus(hakukohdeDoc, koulutuses);
+        
         add(hakukohdeDoc, HAKUTYYPPI_URI, hakukohde.getHakutyyppiUri());
 
         docs.add(hakukohdeDoc);
@@ -120,7 +121,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             return;
         }
         for (KoulutusIndexEntity komoto : koulutuses) {
-            add(hakukohdeDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
+            IndexDataUtils.addKoodiLyhytnimiTiedot(hakukohdeDoc, komoto.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);
             return;
         }
     }

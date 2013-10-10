@@ -394,7 +394,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
      * Filters out haastattelu if pohjakoulutusvaatimus is not yksilollistetty perusopetus
      */
     private void filterKooditBasedOnPohjakoulutus() {
-        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
+        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
         if (!isYksilollistettyPerusopetus) {
