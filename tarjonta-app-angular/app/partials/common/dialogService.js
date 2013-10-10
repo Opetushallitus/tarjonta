@@ -1,5 +1,5 @@
 
-var app = angular.module('app.dialog', ['ui.bootstrap', 'ngAnimate', 'ngSanitize']);
+var app = angular.module('app.dialog', ['ui.bootstrap', 'ngAnimate', 'ngSanitize', 'localisation']);
 
 /**
  * Very simplistinc dialog service. Simple yes now question at the moment.
@@ -36,11 +36,13 @@ var app = angular.module('app.dialog', ['ui.bootstrap', 'ngAnimate', 'ngSanitize
  *
  * <pre>
  *
- * @param {type} param1
- * @param {type} param2
+ * @param {type} $modal
+ * @param {type} $log
+ * @param {type} $rootScope
+ * @param {type} LocalisationService
  */
-app.service('dialogService', ['$modal', '$log', '$rootScope',
-    function($modal, $log, $rootScope) {
+app.service('dialogService', ['$modal', '$log', '$rootScope', 'LocalisationService',
+    function($modal, $log, $rootScope, LocalisationService) {
 
         var dialogDefaults = {
             templateUrl: 'partials/common/dialog.html',
@@ -96,6 +98,18 @@ app.service('dialogService', ['$modal', '$log', '$rootScope',
             $log.info("showDialog(): ", tempDialogTextDefaults, tempDialogDefaults);
 
             return $modal.open(tempDialogDefaults);
+        };
+
+
+        this.showNotImplementedDialog = function() {
+            var texts = {
+                title: LocalisationService.t("notImplemented.title"),
+                description: LocalisationService.t("notImplemented.description"),
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel")
+            };
+
+            return this.showDialog(texts);
         };
 
 

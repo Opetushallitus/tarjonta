@@ -34,7 +34,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                     koodi_uri: "kieli_en"
                 },
             ],
-            koulutus: $scope.koulutusx, // preloaded in route resolve
+            koulutus: $scope.koulutusx, // preloaded in route resolve, see
             foo: "bar"
         };
 
@@ -44,31 +44,44 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
         };
 
         $scope.goBack = function(event) {
-
             $log.info("goBack()...");
-
-            dialogService.showDialog({scope:{title: "Really?", description: "Really go back?"}}).result.then(function(data) {
-                $log.info("GOT: ", data);
-                if ("ACTION" === data) {
-                    window.history.back();
-                }
-            });
+            window.history.back();
         };
 
         $scope.doDelete = function(event) {
             $log.info("doDelete()...");
+
+            var texts = {
+                title: LocalisationService.t("koulutus.review.poista.confirm.title"),
+                description: LocalisationService.t("koulutus.review.poista.confirm.description", [$scope.model.koulutus.koulutuskoodi.arvo]),
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel")
+            };
+
+            var d = dialogService.showDialog(texts);
+            d.result.then(function(data) {
+                $log.info("GOT: ", data);
+                if ("ACTION" === data) {
+                    // TODO actual delete!
+                    $log.info("ACTUALLY DELETE IT NOW!");
+                }
+            });
+
         };
 
         $scope.doCopy = function(event) {
             $log.info("doCopy()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.doMoveToBeSubPart = function(event) {
             $log.info("doMoveToBeSubPart()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.doAddParallel = function(event) {
             $log.info("doAddParallel()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.load = function(oid) {
