@@ -90,7 +90,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    r.nimi = localize(r.nimi);
+                    r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus!==undefined?", " + localize(r.pohjakoulutusvaatimus):"");
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
                 }

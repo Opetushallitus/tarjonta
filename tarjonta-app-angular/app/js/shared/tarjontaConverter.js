@@ -3,17 +3,23 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     var factory = {};
 
     factory.STRUCTURE = {
+        MLANG: {
+            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true}
+        },
         RELATION: {
             koulutuskoodi: {'validate': true, 'required': true, nullable: false},
             koulutusaste: {'validate': true, 'required': true, nullable: false},
             koulutusala: {'validate': true, 'required': true, nullable: false},
             opintoala: {'validate': true, 'required': true, nullable: false}
         }, COMBO: {
+            //in correct place
+            suunniteltuKesto: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
+            opintojenLaajuus: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
+            //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
             tutkinto: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkinto'},
             tutkintonimike: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkintonimike'},
-            eqf: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.eqf-luokitus'},
-            suunniteltuKesto: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'}
+            eqf: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.eqf-luokitus'}
+
         }, MCOMBO: {
             pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus'},
             opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuoto'},
@@ -22,7 +28,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }, STR: {
             koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},
             koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'AMMATTIKORKEAKOULUTUS'},
-            tila: {'validate': true, 'required': true, nullable: false}, default: 'LUONNOS',
+            tila: {'validate': true, 'required': true, 'nullable': false, 'default': 'LUONNOS'},
             tunniste: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''}
         }, DATE: {
             koulutuksenAlkamisPvm: {'type': 'DATE', 'validate': true, 'required': true, nullable: false, default: new Date()}
@@ -38,8 +44,14 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
      * @param {type} apiModel
      * @returns {undefined}
      */
-    factory.createAPIModel = function(apiModel) {
-//Make sure that object has meta data object.
+    factory.createAPIModel = function(apiModel, languages) {
+        angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
+            apiModel[key] = factory.addMetaField(factory.createBaseUiField(null, null, null));
+
+            console.log('INIT LANGS', languages,  apiModel[key]);
+            factory.createMetaLanguages(apiModel[key], languages);
+        });
+
         angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
             apiModel[ key] = factory.createBaseUiField(null, null, null);
         });
@@ -63,6 +75,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.BOOL, function(value, key) {
             apiModel[ key] = value.default;
         });
+
+        console.log("createAPIModel", apiModel);
     };
     factory.createBaseUiFieldArvo = function(arvo) {
         return {"arvo": arvo};
@@ -228,5 +242,25 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             }
         }
     };
+
+    factory.createLanguage = function(apiModel, langKoodiUri) {
+        apiModel[langKoodiUri] = {'koodi': {'arvo': '', 'uri': langKoodiUri, 'versio': -1}};
+    };
+
+    factory.createMetaLanguages = function(apiModel, languageUris) {
+        console.log('LANGS', languageUris);
+        angular.forEach(languageUris, function(langUri) {
+            factory.addMetaLanguage(apiModel, langUri);
+        });
+    };
+
+    factory.addMetaLanguage = function(apiModel, languageUri) {
+        var metas = apiModel.meta;
+        console.log('LANG', languageUri, metas, apiModel);
+        if (factory.isNull(metas[languageUri])) {
+            factory.createLanguage(metas, languageUri);
+        }
+    };
+
     return factory;
 });

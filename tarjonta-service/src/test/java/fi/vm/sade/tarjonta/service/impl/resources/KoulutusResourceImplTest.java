@@ -207,7 +207,7 @@ public class KoulutusResourceImplTest {
         expectKOMOKoodistoUri(KOULUTUSASTE);
         expectKOMOKoodistoUri(KOULUTUSALA);
         expectKOMOKoodistoUri(OPINTOALA);
-        //  expectKoodistoUri(TUTKINTO);
+        expectKOMOKoodistoUri(TUTKINTO);
         expectKOMOKoodistoUri(TUTKINTONIMIKE);
         expectKOMOKoodistoUri(EQF);
         expectKOMOKoodistoUri(LAAJUUS_ARVO);
@@ -258,11 +258,11 @@ public class KoulutusResourceImplTest {
         assertEqualDtoKoodi(KOULUTUSASTE, result.getKoulutusaste());
         assertEqualDtoKoodi(KOULUTUSALA, result.getKoulutusala());
         assertEqualDtoKoodi(OPINTOALA, result.getOpintoala());
-        // assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(EQF, result.getEqf());
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
         assertEqualDtoKoodi(LAAJUUS_ARVO, result.getOpintojenLaajuus());
+        assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO, result.getKoulutusmoduuliTyyppi());

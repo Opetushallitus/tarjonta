@@ -36,6 +36,9 @@ public class KoulutuksetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 		ret.setNimi(ht.getNimi());
 		ret.setKausi(ht.getKoulutuksenAlkamiskausi().getNimi());
 		ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
+		if(ht.getPohjakoulutusvaatimus()!=null) {
+		    ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus().getNimi());
+		}
 		if(ht.getKoulutuslaji()!=null) {
 		    ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
 		}
