@@ -75,7 +75,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         opetuskielet : [],
         liitteidenToimitusPvm :1405391100000,
         liitteet : [],
-        valintakoes : []
+        valintakoes : [],
+        rikasteksti : "<strong>PITÄISI NÄKYÄ</strong>"
     });
 
     $scope.koodiuriPromise = $q.defer();
