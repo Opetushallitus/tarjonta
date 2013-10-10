@@ -30,17 +30,12 @@ public class KoulutusPerustieto implements Serializable
     private Integer koulutuksenAlkamisVuosi;
 
 
+    /**
+     * oikeasti tämä on koulutusohjelman nimi
+     * @return
+     */
     public Nimi getNimi() {
         return nimi;
-    }
-
-    /**
-     * Aseta nimi
-     * @param locale (sv,fi,en);
-     * @param nimi
-     */
-    public void setNimi(String locale, String nimi) {
-        this.nimi.put(locale,  nimi);
     }
 
     /**

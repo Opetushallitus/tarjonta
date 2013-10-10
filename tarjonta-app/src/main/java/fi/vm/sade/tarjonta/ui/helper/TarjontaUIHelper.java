@@ -61,8 +61,6 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -978,31 +976,22 @@ public class TarjontaUIHelper {
 
     public String getKoulutusNimi(KoulutusPerustieto curKoulutus) {
 
-        List<KoodiType> koodis = null;
-        if (curKoulutus.getPohjakoulutusvaatimus() != null) {
-            koodis = getKoodis(curKoulutus.getPohjakoulutusvaatimus().getUri());
-        }
-        if (koodis == null) {
-            koodis = new ArrayList<KoodiType>();
-        }
+        //olemassaolevaa tulkiten - koulutuksen nimi on 
+        // 1. koulutusohjelmakoodi + pohjakoulutuskoodi
+        // 2. koulutuskoodi + pohjakoulutuskoodi
+        final Locale locale = I18N.getLocale();
+        final String pkVaatimus = curKoulutus.getPohjakoulutusvaatimus()!=null?", " + TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getPohjakoulutusvaatimus().getNimi()):"";
+        
         if (curKoulutus.getKoulutusohjelmakoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
-        } else if (curKoulutus.getNimi() != null) {
-            return getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getNimi());
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutusohjelmakoodi().getNimi()) + pkVaatimus;
         } else if (curKoulutus.getKoulutuskoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutuskoodi().getUri()) + tryGetKoodistoLyhytNimi(koodis);
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutuskoodi().getNimi()) + pkVaatimus;
         }
         return "";
     }
 
     public String getKoulutuslaji(KoulutusPerustieto tulos) {
-        List<String> uris = new ArrayList<String>();
-        if (tulos.getKoulutuslaji() != null) {
-            uris.add(tulos.getKoulutuslaji().getUri());
-
-            return getKoodiNimi(uris, I18N.getLocale());
-        }
-        return "";
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  tulos.getKoulutuslaji().getNimi());
     }
 
     public String getAjankohtaStr(KoulutusPerustieto curKoulutus) {
@@ -1014,46 +1003,6 @@ public class TarjontaUIHelper {
         return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
     }
 
-    private String tryGetKoodistoLyhytNimi(Collection<KoodiType> koodis) {
-        if (koodis == null || koodis.size() < 1) {
-            return "";
-        }
-        List<KoodiType> koodisList = new ArrayList<KoodiType>(koodis);
-        KoodiType koodi = koodisList.get(0);
-
-        if (koodi != null) {
-            String retval = koodi.getKoodiArvo();
-
-            List<KoodiMetadataType> metas = koodi.getMetadata();
-            Locale locale = I18N.getLocale();
-            for (KoodiMetadataType meta : metas) {
-                if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
-                    return ", " + meta.getLyhytNimi();
-                } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
-                    return ", " + meta.getLyhytNimi();
-                }
-            }
-
-            return retval;
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * Returns the name of the given koodi.
-     *     
-* @param koodistoKoodiTyyppi the koodisto koodi given
-     * @return
-     */
-    public String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        for (Nimi curNimi : koodistoKoodiTyyppi.getNimi()) {
-            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
-                return curNimi.getValue();
-            }
-        }
-        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
-    }
 
     /**
      * Return koodi with uri and version.
