@@ -3,8 +3,8 @@
 /* Controllers */
 var app = angular.module('app.kk.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid']);
 
-app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window', 'TarjontaConverterFactory', 'Koodisto',
-    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto) {
+app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
+    function FormTutkintoController($scope, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto, $modal) {
         $scope.opetuskieli = 'kieli_fi';
         $scope.model = {};
         $scope.uiModel = {contactPerson: {}, ectsCoordinator: {}};
@@ -231,6 +231,29 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
         //add factory functions to ui template 
         $scope.searchKoodiByKoodiUri = converter.searchKoodiByKoodiUri;
         $scope.removeKoodiByKoodiUri = converter.removeKoodiByKoodiUri;
+        
+        
+        $scope.tutkintoDialogModel = {};
+    	
+    	$scope.tutkintoDialogModel.open = function() {
+    		
+    			var modalInstance = $modal.open({
+    				scope: $scope,
+    				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+    				controller: 'SelectTutkintoOhjelmaController'
+    			});
+    		
+    			modalInstance.result.then(function(selectedItem) {
+    				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+    				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+    				if (selectedItem.koodiUri != null) {
+    					//$scope.model.koulutuskoodi = selectedItem;
+    					$scope.model.koulutuskoodi.koodi = selectedItem;
+    				} 
+    			}, function() {
+    				console.log('Cancel, dialog closed');
+    			});
+    	};
 
         //initialization
         $scope.init();

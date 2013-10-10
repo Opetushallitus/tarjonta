@@ -13,6 +13,7 @@
             <div class="span2 label-right"><span tt='kk.edit.koulutuskoodi'></div>
             <div class="span10">{{model.koulutuskoodi.arvo}}
                 <input disabled="true" type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
+                <input class="btn" type="button"  ng-click="tutkintoDialogModel.open()" value="{{t('kk.edit.muokkaaTutkinto')}}"/>
             </div>
         </div>
     </div>

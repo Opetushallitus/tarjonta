@@ -43,7 +43,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 			//laitetaan korkeakoulututkinnot koodiuri: koodi -mappiin
 			angular.forEach(koodisParam, function(koodis, key) {
 				angular.forEach(koodis, function(koodi, key) {
-					if (koodi.koodiKoodisto === config.env["koodisto-uris.tutkinto"]) {
+					if (koodi.koodiKoodisto === config.env["koodisto-uris.koulutus"]) {
 						$scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] = koodi;	
 					}
 				});
