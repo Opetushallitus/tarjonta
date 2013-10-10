@@ -344,7 +344,7 @@ public class TestTarjontaLuoAineistoa {
         
         doit.sendInput(driver, "Hakuaika", kuvaus);
         String ilmoitettavat = (System.currentTimeMillis() + "").substring(7);
-        while (ilmoitettavat.substring(0,1) == "0") { ilmoitettavat = ilmoitettavat.substring(1); }
+        while (ilmoitettavat.substring(0,1).equals("0")) { ilmoitettavat = ilmoitettavat.substring(1); }
         doit.sendInput(driver, "Hakijoille ilmoitettavat aloituspaikat", ilmoitettavat);
         doit.sendInput(driver, "Valinnoissa käytettävät aloituspaikat", "10");
         doit.sendInputTiny(driver, "voidaan kuvata muuta hakemiseen olennaisesti", reppu + "hakukohde" + yyyymmdd);
