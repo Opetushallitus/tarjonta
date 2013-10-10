@@ -115,6 +115,13 @@ public class KoodistoURI {
     public static String KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI;
     public static String KOODI_YHTEISHAKU_URI;
     public static String KOODI_ERILLISHAKU_URI;//koodisto-uris.erillishaku=hakutyyppi_02#1
+    public static String KOODI_HAASTATTELU_URI;//koodisto-uris.valintakoeHaastattelu=valintakokeentyyppi_6#1
+    
+    @Value("${koodisto-uris.valintakoeHaastattelu:valintakokeentyyppi_6#1}")
+    public void setKoodiHaastatteluUri(String uri) {
+        KOODI_HAASTATTELU_URI = uri;
+    }
+    
     
     @Value("${koodisto-uris.erillishaku:hakutapa_02#1}")
     public void setKoodiErillishakuUri(String uri) {
