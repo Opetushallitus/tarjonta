@@ -17,10 +17,16 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloSer
 	};
 	
 	/*
-	 * Method that watches the search field of the contact person.
-	 * Fetches users for the current organisation if those have not been fetced yet.
+	 * Clearing of the ects coordinator data.
 	 */
-	$scope.$watch('uiModel.contactPerson.nimet', function() {
+	$scope.editYhModel.clearEctsYh = function() {
+		$scope.uiModel.ectsCoordinator = {};
+	};
+	
+	/*
+	 * Fetches henkilos belonging to the tarjoaja organisation
+	 */
+	$scope.editYhModel.fetchHenkilot = function() {
 		if (!$scope.editYhModel.henkilotFetched && !converter.isNull($scope.model.organisaatio)) {
 			$scope.editYhModel.henkilotFetched = true;
 			console.log('Going to fetch yhteyshenkilot for organisaatio: ' + $scope.model.organisaatio.oid);
@@ -43,6 +49,22 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloSer
 				});
 			});
 		}
+	}
+	
+	/*
+	 * Method that watches the search field of the contact person.
+	 * Fetches users for the current organisation if those have not been fetced yet.
+	 */
+	$scope.$watch('uiModel.contactPerson.nimet', function() {
+		$scope.editYhModel.fetchHenkilot();
+	});
+	
+	/*
+	 * Method that watches the search field of the ects coordinator.
+	 * Fetches users for the current organisation if those have not been fetced yet.
+	 */
+	$scope.$watch('uiModel.ectsCoordinator.nimet', function() {
+		$scope.editYhModel.fetchHenkilot();
 	});
 	
 	/*
@@ -61,6 +83,24 @@ app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloSer
        
 		} else {
 			$scope.uiModel.contactPerson = {};
+		}
+	};
+	
+	/*
+	 * Sets the ects coordinator to be the one that the user selected from the autocomplete field.
+	 */
+	$scope.editYhModel.selectEctsHenkilo = function() {
+		
+		if ($scope.editYhModel.searchPersonMap != undefined 
+			&& $scope.editYhModel.searchPersonMap[$scope.uiModel.ectsCoordinator.nimet] != undefined) {
+			var selectedUser = $scope.editYhModel.searchPersonMap[$scope.uiModel.ectsCoordinator.nimet];
+			$scope.uiModel.ectsCoordinator.titteli = selectedUser.titteli;
+			$scope.uiModel.ectsCoordinator.puhelin = selectedUser.puhelin;
+			$scope.uiModel.ectsCoordinator.etunimet = selectedUser.etunimet;
+			$scope.uiModel.ectsCoordinator.sukunimi = selectedUser.sukunimi;
+       
+		} else {
+			$scope.uiModel.ectsCoordinator = {};
 		}
 	};
 	
