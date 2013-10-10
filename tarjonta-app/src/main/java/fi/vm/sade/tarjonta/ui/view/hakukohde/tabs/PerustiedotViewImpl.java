@@ -1068,7 +1068,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             //the same pohjakoulutus
             if (presenter.getModel().getSelectedKoulutukset() != null
                     && !presenter.getModel().getSelectedKoulutukset().isEmpty()
-                    && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+                    && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
                 String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
                 Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus, KoodistoURI.KOODISTO_HAKUKOHDE_URI, false, SuhteenTyyppiType.SISALTYY);
                 hakukohdeKoodis.retainAll(pkHakukohdeKoodis);

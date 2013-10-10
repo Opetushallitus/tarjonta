@@ -111,6 +111,25 @@ public class KoodistoURI {
      */
     public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
     public static String KOODI_LISAHAKU_URI;
+    
+    public static String KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI;
+    public static String KOODI_YHTEISHAKU_URI;
+    public static String KOODI_ERILLISHAKU_URI;//koodisto-uris.erillishaku=hakutyyppi_02#1
+    
+    @Value("${koodisto-uris.erillishaku:hakutapa_02#1}")
+    public void setKoodiErillishakuUri(String uri) {
+        KOODI_ERILLISHAKU_URI = uri;
+    }
+    
+    @Value("${koodisto-uris.yhteishaku:hakutapa_01#1}")
+    public void setKoodiYhteishakuUri(String uri) {
+        KOODI_YHTEISHAKU_URI = uri;
+    }
+    
+    @Value("${kodisto-uris.yksilollistettyPerusopetus:pohjakoulutusvaatimustoinenaste_er}")
+    public void setKoodiYksilollistettyPerusopetusUri(String uri) {
+        KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI = uri;
+    }
 
     @Value("${koodisto-uris.lisahaku:hakutyyppi_03#1}")
     public void setKoodiLisahakuUri(String uri) {

@@ -444,8 +444,22 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             hakuView = getModel().getHakukohde().getHakuViewModel();
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
+        String pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
+        
+        boolean isYksilollistettyPerusopetus = pkVaatimus != null 
+                                                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
+        
         for (HakuTyyppi foundHaku : haut.getResponse()) {
-            foundHaut.add(new HakuViewModel(foundHaku));
+            if (isYksilollistettyPerusopetus
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)) {
+                foundHaut.add(new HakuViewModel(foundHaku));
+            } else if (!isYksilollistettyPerusopetus
+                    && getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)) {
+                foundHaut.add(new HakuViewModel(foundHaku));
+            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                foundHaut.add(new HakuViewModel(foundHaku));
+            }
         }
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
