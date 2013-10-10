@@ -16,6 +16,11 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
     private Map<String, String> koulutusLaji;
     private TarjontaTila tila;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    private Map<String, String> pohjakoulutusvaatimus;
+
+    public Map<String, String> getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
 
     public String getOid() {
         return oid;
@@ -71,5 +76,10 @@ public class KoulutusHakutulosRDTO extends BaseRDTO {
 
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    public void setPohjakoulutusvaatimus(
+            Map<String, String> pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 }
