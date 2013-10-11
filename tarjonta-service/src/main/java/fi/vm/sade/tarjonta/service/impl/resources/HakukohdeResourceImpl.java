@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
@@ -44,6 +46,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -472,4 +475,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     	solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
     	return tila.toString();
 	}
+	
+	@Override
+	public List<NimiJaOidRDTO> getKoulutukset(@PathParam("oid") String oid) {
+    	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+    	for (KoulutusmoduuliToteutus hk : hakukohdeDAO.findHakukohdeByOid(oid).getKoulutusmoduuliToteutuses()) {
+    		ret.add(new NimiJaOidRDTO(BaseRDTOConverter.convertToMap(hk.getKoulutusmoduuli().getNimi(), tarjontaKoodistoHelper), hk.getOid()));
+    	}
+    	return ret;
+	}
+	
 }

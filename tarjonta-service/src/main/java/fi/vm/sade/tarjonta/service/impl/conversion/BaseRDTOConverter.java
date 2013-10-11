@@ -70,6 +70,10 @@ public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO>
     }
 
     public Map<String, String> convertMonikielinenTekstiToMap(MonikielinenTeksti s) {
+        return convertToMap(s, tarjontaKoodistoHelper);
+    }
+
+	public static Map<String,String> convertToMap(MonikielinenTeksti s, TarjontaKoodistoHelper tarjontaKoodistoHelper) {
         if (s == null) {
             return null;
         }
@@ -86,8 +90,8 @@ public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO>
         }
 
         return t;
-    }
-
+	}
+	
     public List<String> convertKoodistoUrisToList(Set<KoodistoUri> koodistoUris) {
         if (koodistoUris == null) {
             return null;

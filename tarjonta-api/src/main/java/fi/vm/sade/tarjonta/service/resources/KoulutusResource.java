@@ -29,6 +29,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
@@ -127,5 +128,16 @@ public interface KoulutusResource {
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
             );
+
+    /**
+     * /koulutus/OID/hakukohteet
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/koulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<NimiJaOidRDTO> getHakukohteet(@PathParam("oid") String oid);
 
 }

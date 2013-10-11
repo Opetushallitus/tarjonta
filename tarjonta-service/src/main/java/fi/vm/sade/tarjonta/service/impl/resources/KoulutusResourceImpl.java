@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import javax.ws.rs.PathParam;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -41,12 +44,14 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
@@ -244,4 +249,13 @@ public class KoulutusResourceImpl implements KoulutusResource {
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
         Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
       }
+    
+    @Override
+    public List<NimiJaOidRDTO> getHakukohteet(@PathParam("oid") String oid) {
+    	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+    	for (Hakukohde hk : koulutusmoduuliToteutusDAO.findByOid(oid).getHakukohdes()) {
+    		ret.add(new NimiJaOidRDTO(Collections.singletonMap(I18N.getLocale().getLanguage(), tarjontaKoodistoHelper.getKoodiNimi(hk.getHakukohdeNimi(), I18N.getLocale())), hk.getOid()));
+    	}
+    	return ret;
+    }
 }

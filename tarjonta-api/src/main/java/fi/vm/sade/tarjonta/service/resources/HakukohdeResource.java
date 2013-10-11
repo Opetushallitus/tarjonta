@@ -11,6 +11,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -172,5 +173,16 @@ public interface HakukohdeResource {
     @Path("{oid}/nimi")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeNimiRDTO getHakukohdeNimi(@PathParam("oid") String oid);
+
+    /**
+     * /hakukohde/OID/koulutukset
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/koulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<NimiJaOidRDTO> getKoulutukset(@PathParam("oid") String oid);
 
 }
