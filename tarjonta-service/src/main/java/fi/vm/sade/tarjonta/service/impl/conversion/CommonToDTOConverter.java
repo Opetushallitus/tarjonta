@@ -19,11 +19,15 @@ import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by: Tuomas Katva
@@ -48,6 +52,45 @@ public class CommonToDTOConverter {
         osoiteTyyppi.setPostitoimipaikka(osoite.getPostitoimipaikka());
 
         return osoiteTyyppi;
+    }
+
+    public static OsoiteRDTO convertOsoiteToOsoiteDTO(Osoite osoite) {
+        if (osoite != null) {
+            OsoiteRDTO osoiteRDTO = new OsoiteRDTO();
+
+            osoiteRDTO.setOsoiterivi1(osoite.getOsoiterivi1());
+            osoiteRDTO.setOsoiterivi2(osoite.getOsoiterivi2());
+            osoiteRDTO.setPostinumero(osoite.getPostinumero());
+            osoiteRDTO.setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+            return osoiteRDTO;
+        } else {
+            return null;
+        }
+    }
+
+    public static List<TekstiRDTO> convertMonikielinenTekstiToTekstiRDOT(MonikielinenTeksti monikielinenTeksti) {
+        if (monikielinenTeksti != null) {
+            List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
+
+            for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getTekstis()) {
+
+                TekstiRDTO tekstiRDTO = new TekstiRDTO();
+                if (tekstiKaannos.getKieliKoodi().contains("#")) {
+                    StringTokenizer st = new StringTokenizer(tekstiKaannos.getKieliKoodi(),"#");
+                    tekstiRDTO.setUri(st.nextToken());
+                } else {
+                    tekstiRDTO.setUri(tekstiKaannos.getKieliKoodi());
+                }
+                tekstiRDTO.setTeksti(tekstiKaannos.getArvo());
+
+                tekstiRDTOs.add(tekstiRDTO);
+            }
+
+            return tekstiRDTOs;
+        } else {
+            return null;
+        }
     }
 
 

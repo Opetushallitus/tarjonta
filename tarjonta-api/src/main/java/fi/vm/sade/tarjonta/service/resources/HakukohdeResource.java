@@ -6,13 +6,7 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -77,6 +71,11 @@ public interface HakukohdeResource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
             );
 
+
+    @GET
+    @Path("/ui/{oid}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakukohdeRDTO findByOid(@PathParam("oid") String oid);
     /**
      * /hakukohde/{oid}
      *
