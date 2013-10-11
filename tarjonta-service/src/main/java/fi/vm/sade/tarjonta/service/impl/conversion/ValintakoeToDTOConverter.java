@@ -41,10 +41,10 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
 
         valintakoeTyyppi.setValintakokeenTunniste(valintakoe.getId().toString());
         valintakoeTyyppi.setValintakokeenTyyppi(valintakoe.getTyyppiUri());
-        valintakoeTyyppi.setKuvaukset(CommonToDTOConverterHelper.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getKuvaus()));
+        valintakoeTyyppi.setKuvaukset(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getKuvaus()));
         valintakoeTyyppi.getAjankohdat().addAll(convertAjankohta(valintakoe.getAjankohtas()));
         if (valintakoe.getLisanaytot()  != null) {
-            valintakoeTyyppi.setLisaNaytot(CommonToDTOConverterHelper.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getLisanaytot()));
+            valintakoeTyyppi.setLisaNaytot(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getLisanaytot()));
         }
         if (valintakoe.getPisterajat() != null) {
             valintakoeTyyppi.getPisterajat().addAll(convertPisterajat(valintakoe.getPisterajat()));
@@ -85,7 +85,7 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
             ajankohtaTyyppi.setAlkamisAika(valintakoeAjankohta.getAlkamisaika());
             ajankohtaTyyppi.setPaattymisAika(valintakoeAjankohta.getPaattymisaika());
             ajankohtaTyyppi.setKuvaus(valintakoeAjankohta.getLisatietoja());
-            ajankohtaTyyppi.setValintakoeAjankohtaOsoite(CommonToDTOConverterHelper.convertOsoiteToOsoiteTyyppi(valintakoeAjankohta.getAjankohdanOsoite()));
+            ajankohtaTyyppi.setValintakoeAjankohtaOsoite(CommonToDTOConverter.convertOsoiteToOsoiteTyyppi(valintakoeAjankohta.getAjankohdanOsoite()));
 
             ajankohtaTyyppis.add(ajankohtaTyyppi);
         }
