@@ -191,7 +191,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
     private AbstractLayout createComboLayout() {
         final GridLayout gridLayout = new GridLayout(3, 2);
-        gridLayout.setColumnExpandRatio(0, 0.15f);
+        gridLayout.setColumnExpandRatio(0, 0.25f);
         gridLayout.setColumnExpandRatio(1, 0.10f);
         gridLayout.setColumnExpandRatio(2, 0.5f);
         //gridLayout.setColumnExpandRatio(3, 0.25f);

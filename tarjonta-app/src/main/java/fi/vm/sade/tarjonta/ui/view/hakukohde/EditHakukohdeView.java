@@ -328,6 +328,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());
+        hakukohde.getValintaPerusteidenKuvaus().getKaannokset().clear();
+        hakukohde.getValintaPerusteidenKuvaus().getKaannokset().addAll(perustiedot.getValintaperusteet());
         hakukohde.setHakuaika(perustiedot.getSelectedHakuaika());
         if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
           validateHakukohdeHakuaika(hakukohde);  
@@ -479,6 +481,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(perustiedot.getLisatiedot());
+        hakukohde.getValintaPerusteidenKuvaus().getKaannokset().clear();
+        hakukohde.getValintaPerusteidenKuvaus().getKaannokset().addAll(perustiedot.getValintaperusteet());
         if (!this.canTabBeChanged()) {
             tabs.setSelectedTab(wrapperVl);
             presenter.showNotification(UserNotification.UNSAVED);

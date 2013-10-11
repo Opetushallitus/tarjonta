@@ -170,6 +170,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private DateField hakuaikaLoppuPvm;
     
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
+    private HakukohteenKuvausTabSheet valintaperusteTabs;
     private HakukohdeLisatiedotTabSheet lisatiedotTabs;
     //private Label osoiteSelectLabel;
     //private Label serverMessage = new Label("");
@@ -200,6 +201,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     
     @Value("${koodisto-uris.lisahaku}")
     private String hakutyyppiLisahakuUrl;
+    
+    private String pkVaatimus;
+    
     /*
      *
      * Init view with new model
@@ -261,12 +265,23 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      */
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
+        
+        if (presenter.getModel().getSelectedKoulutukset() != null
+                && !presenter.getModel().getSelectedKoulutukset().isEmpty()
+                && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
+            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        }
+        
 
         //Build main item container
         mainLayout.addComponent(buildGrid());
 
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
+
+        if (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)) {
+            mainLayout.addComponent(buildBottomAreaValintaperusteTab());
+        }
 
         addComponent(mainLayout);
     }
@@ -1069,7 +1084,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             if (presenter.getModel().getSelectedKoulutukset() != null
                     && !presenter.getModel().getSelectedKoulutukset().isEmpty()
                     && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
-                String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+                //String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
                 Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus, KoodistoURI.KOODISTO_HAKUKOHDE_URI, false, SuhteenTyyppiType.SISALTYY);
                 hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
             }
@@ -1108,12 +1123,27 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     public List<KielikaannosViewModel> getLisatiedot() {
         return this.lisatiedotTabs.getKieliKaannokset();
     }
+    
+    @Override
+    public List<KielikaannosViewModel> getValintaperusteet() {
+        if (this.valintaperusteTabs != null) {
+            return this.valintaperusteTabs.getKieliKaannokset();
+        } 
+        return new ArrayList<KielikaannosViewModel>();
+    }
 
     @Override
     public void reloadLisatiedot(final List<KielikaannosViewModel> lisatiedot) {
         Preconditions.checkNotNull(lisatiedot, "List of KielikaannosViewModel objects cannot be null");
         getLisatiedot().clear();
         getLisatiedot().addAll(lisatiedot);
+    }
+    
+    @Override
+    public void reloadValintaperusteet(final List<KielikaannosViewModel> valintaperusteet) {
+        Preconditions.checkNotNull(valintaperusteet, "List of KielikaannosViewModel objects cannot be null");
+        getValintaperusteet().clear();
+        getValintaperusteet().addAll(valintaperusteet);
     }
 
     private VerticalLayout buildBottomAreaLanguageTab() {
@@ -1128,9 +1158,26 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         vl.addComponent(lisatiedotTabs);
         return vl;
     }
+    
+    private VerticalLayout buildBottomAreaValintaperusteTab() {
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label label = UiUtil.label(hl, T("PerustiedotView.valintaperusteet"), LabelStyleEnum.H2);
+        hl.setExpandRatio(label, 1l);
+        hl.setComponentAlignment(label, Alignment.TOP_LEFT);
+        vl.addComponent(hl);
+        UiUtil.label(vl, T("PerustiedotView.valintaperusteet.help"), LabelStyleEnum.TEXT);
+        valintaperusteTabs = buildValintaperusteTab();
+        vl.addComponent(valintaperusteTabs);
+        return vl;
+    }
 
     private HakukohdeLisatiedotTabSheet buildLanguageTab() {
         return new HakukohdeLisatiedotTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
+    }
+    
+    private HakukohteenKuvausTabSheet buildValintaperusteTab() {//String width, String height, LisaaKuvausDialog.Mode mode
+        return new HakukohteenKuvausTabSheet(this.presenter, "500px", "250px", LisaaKuvausDialog.Mode.VAPE);
     }
 
     private String T(String key) {
