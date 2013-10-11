@@ -66,7 +66,7 @@ public interface KoulutusResource {
     public ResultDTO createToteutus(KorkeakouluDTO dto);
 
     @DELETE
-    @Path("{oid}/tekstis")
+    @Path("{oid}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public void deleteToteutus(@PathParam("oid") String oid);
 
