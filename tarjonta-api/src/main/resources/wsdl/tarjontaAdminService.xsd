@@ -342,7 +342,7 @@
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="avain" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="kategoria" type="xs:string"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="kieli" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="uri" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="arvo" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
