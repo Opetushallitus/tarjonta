@@ -38,7 +38,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    
+
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
         // LOG.debug("convert({}) --> Komo", s);
@@ -73,7 +73,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
 
         convertTekstit(t.getTekstit(), s.getTekstit());
-        
+
         t.setTila(s.getTila());
         t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
         t.setTutkintonimikeUri(s.getTutkintonimike());

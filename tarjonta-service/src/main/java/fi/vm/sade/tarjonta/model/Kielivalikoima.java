@@ -13,8 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
-import fi.vm.sade.generic.model.BaseEntity;
-
 @Entity
 @Table(name = Kielivalikoima.TABLE_NAME)
 public class Kielivalikoima extends TarjontaBaseEntity {
