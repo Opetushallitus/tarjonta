@@ -130,7 +130,19 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
 
         return ret.promise;
     };
-
+    
+    dataFactory.getKoulutuksenHakukohteet = function() {
+        var ret = $q.defer();
+        ret.resolve([]); // TODO
+        return ret.promise;
+    }
+    
+    dataFactory.getHakukohteenKoulutukset = function() {
+        var ret = $q.defer();
+        ret.resolve([]); // TODO
+        return ret.promise;
+    }
+    
     /**
      * POST: Insert new KOMOTO + KOMO. API object must be valid.
      * 

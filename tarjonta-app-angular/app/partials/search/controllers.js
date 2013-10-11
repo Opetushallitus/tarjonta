@@ -290,7 +290,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		if (canRead) {
 			ret.push({url:"#", title: LocalisationService.t("tarjonta.toiminnot."+prefix+".linkit"),
 				action: function(ev) {
-					console.log("NÄYTÄ LINKIT "+prefix+" / "+oid, ev);
+					$scope.openLinksDialog();
 				}
 			});
 		}
@@ -325,8 +325,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		// poista
 		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
 			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
-				action: function(ev) {					
-					$scope.deleteDialogModel.open();
+				action: function(ev) {
+					$scope.openDeleteDialog();
 				}
 			});
 		}
@@ -591,9 +591,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.report = function() {
         console.log("TODO raportti");
     }
-    
-    $scope.deleteDialogModel = {};
-    
+
     var DeleteDialogCtrl = function($scope, $modalInstance) {
     	
     	$scope.otsikko = "tarjonta.poistovahvistus.otsikko."+$scope.selectedRow.prefix;
@@ -609,7 +607,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	
     }
     
-    $scope.deleteDialogModel.open = function() {
+    $scope.openDeleteDialog = function() {
     	
     	var modalInstance = $modal.open({
 			controller: DeleteDialogCtrl,
@@ -622,6 +620,49 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		});
     	
     	modalInstance.result.then(deleteSelectedRow);
+    	
+    };
+
+    var LinksDialogCtrl = function($scope, $modalInstance) {
+    	
+    	$scope.otsikko = "tarjonta.linkit.otsikko."+$scope.selectedRow.prefix;
+    	$scope.eohje = "tarjonta.linkit.eohje."+$scope.selectedRow.prefix;
+
+    	$scope.items = [];
+    	
+    	$scope.ok = function() {
+    		$modalInstance.close();
+    	}
+    	
+    	var base = $scope.selectedRow.prefix=="koulutus" ? "hakukohde" : "koulutus";
+    	
+    	var ret = $scope.selectedRow.prefix=="koulutus"
+    		? TarjontaService.getKoulutuksenHakukohteet()
+			: TarjontaService.getHakukohteenKoulutukset();
+    	
+    	ret.then(function(ret){
+    		for (var i in ret) {
+    			var s = ret[i];
+        		$scope.items.push({
+        			url:"#/"+base+"/"+s.oid,
+        			nimi:s.nimi
+        		});
+    		}
+    	});
+    	
+    }
+    
+    $scope.openLinksDialog = function() {
+    	
+    	var modalInstance = $modal.open({
+			controller: LinksDialogCtrl,
+			templateUrl: "partials/search/links-dialog.html",
+			scope: $scope,
+			resolve: {
+				prefix: function() { return "prefix"; },
+				oid: "oid"
+			}
+		});
     	
     };
     
