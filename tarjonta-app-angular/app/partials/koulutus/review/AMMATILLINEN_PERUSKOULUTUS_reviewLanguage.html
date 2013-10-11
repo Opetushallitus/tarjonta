@@ -8,11 +8,11 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span10" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot">
-            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.perusTiedot}" tt='koulutus.review.perustiedot.otsikko'></div>
+        <div class="span10" data-ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot">
+            <div class="collapseHeader" data-ng-class="{isOpen : !model.collapse.perusTiedot}" tt='koulutus.review.perustiedot.otsikko'></div>
         </div>
         <div class="span2 label-right">
-            <div class="btn" ng-click='doEdit($event, "PERUSTIEDOT")'><div tt='koulutus.review.muokkaa'></div></div>
+            <div class="btn" data-ng-click='doEdit($event, "PERUSTIEDOT")'><div tt='koulutus.review.muokkaa'></div></div>
         </div>
     </div>
     <div collapse="model.collapse.perusTiedot">
@@ -29,7 +29,7 @@
                 <div tt='koulutus.review.perustiedot.tila'></div>
             </div>
             <div class="span9">
-                {{model.koulutus.tila}}
+                {{ t("koulutus.tila." + model.koulutus.tila) }}
             </div>
         </div>
         <div class="row-fluid">
@@ -37,7 +37,7 @@
                 <div tt='koulutus.review.perustiedot.tyyppi'></div>
             </div>
             <div class="span9">
-                {{model.koulutus.koulutusmoduuliTyyppi}}
+                {{ t("koulutus.tyyppi." + model.koulutus.koulutusmoduuliTyyppi) }}
             </div>
         </div>
         <div class="row-fluid">
@@ -61,7 +61,7 @@
                 <div tt='koulutus.review.perustiedot.koulutusohjelma'></div>
             </div>
             <div class="span9">
-                XXX
+                (TODO : mistä tämä?)
             </div>
         </div>
         <div class="row-fluid">
@@ -69,7 +69,7 @@
                 <div tt='koulutus.review.perustiedot.koulutusaste'></div>
             </div>
             <div class="span9">
-                {{ model.koulutus.koulutusaste.meta[lang.koodi_uri].arvo }}
+                {{ t("koulutus.koulutusaste." + model.koulutus.koulutusasteTyyppi) }} / {{ model.koulutus.koulutusaste | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -77,7 +77,7 @@
                 <div tt='koulutus.review.perustiedot.koulutusala'></div>
             </div>
             <div class="span9">
-                {{ model.koulutus.koulutusala.meta[lang.koodi_uri].arvo }}
+                {{ model.koulutus.koulutusala | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -85,7 +85,7 @@
                 <div tt='koulutus.review.perustiedot.opintoala'></div>
             </div>
             <div class="span9">
-                {{ model.koulutus.opintoala.meta[lang.koodi_uri].arvo }}
+                {{ model.koulutus.opintoala | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -93,7 +93,7 @@
                 <div tt='koulutus.review.perustiedot.tutkintonimike'></div>
             </div>
             <div class="span9">
-                x {{ model.koulutus.tutkintonimike.arvo }}
+                {{ model.koulutus.tutkintonimike.meta[lang.koodi_uri].arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -101,7 +101,7 @@
                 <div tt='koulutus.review.perustiedot.opintojenLaajuus'></div>
             </div>
             <div class="span9">
-                x {{ model.koulutus.opintojenLaajuus.arvo }}
+                {{ model.koulutus.opintojenLaajuus | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -109,7 +109,7 @@
                 <div tt='koulutus.review.perustiedot.koulutuslaji'></div>
             </div>
             <div class="span9">
-                XXX
+                (TODO: missä ja mikä data?)
             </div>
         </div>
         <div class="row-fluid">
@@ -117,7 +117,7 @@
                 <div tt='koulutus.review.perustiedot.pohjakoulutusvaatimus'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.pohjakoulutusvaatimukset | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -125,7 +125,7 @@
                 <div tt='koulutus.review.perustiedot.alkamispvm'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.koulutuksenAlkamisPvm || '-' }}  (TODO: formatointi, date?)
             </div>
         </div>
         <div class="row-fluid">
@@ -133,7 +133,9 @@
                 <div tt='koulutus.review.perustiedot.suunniteltuKesto'></div>
             </div>
             <div class="span9">
-                XXX
+                {{ model.koulutus.suunniteltuKesto.arvo }}
+                {{ model.koulutus.suunniteltuKesto.koodi.kaannos }} --
+                {{ model.koulutus.suunniteltuKesto | json }}
             </div>
         </div>
         <div class="row-fluid">
@@ -141,7 +143,7 @@
                 <div tt='koulutus.review.perustiedot.opetuskieli'></div>
             </div>
             <div class="span9">
-                XXX
+                <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.arvo }}{{ $last ? '' : ', ' }}</span>
             </div>
         </div>
         <div class="row-fluid">
@@ -149,7 +151,7 @@
                 <div tt='koulutus.review.perustiedot.opetusmuoto'></div>
             </div>
             <div class="span9">
-                XXX
+                <span data-ng-repeat='opetusmuoto in model.koulutus.opetusmuodos.meta'>{{ opetusmuoto.arvo }}</span>
             </div>
         </div>
         <div class="row-fluid">
@@ -157,7 +159,7 @@
                 <div tt='koulutus.review.perustiedot.linkkiOpetussuunnitelmaan'></div>
             </div>
             <div class="span9">
-                x <a hre="http://linkki">linkki</a>
+                (TODO: missä tämä data?) <a hre="http://linkki">linkki</a>
             </div>
         </div>
         <div class="row-fluid">
@@ -165,7 +167,17 @@
                 <div tt='koulutus.review.perustiedot.yhteyshenkilo'></div>
             </div>
             <div class="span9">
-                x {{ model.koulutus.yhteyshenkilos }}
+                <div data-ng-repeat="yhteyshenkilo in model.koulutus.yhteyshenkilos">
+                    {{ $index }} : {{ yhteyshenkilo | json }}
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">
+                <div tt='koulutus.review.perustiedot.maksullisuus'></div>
+            </div>
+            <div class="span9">
+                {{ model.koulutus.opintojenMaksullisuus }}
             </div>
         </div>
     </div>
@@ -173,20 +185,21 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span10" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">
-            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.kuvailevatTiedot}" tt='koulutus.review.kuvailevatTiedot.otsikko'></div>
+        <div class="span10" data-ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">
+            <div class="collapseHeader" data-ng-class="{isOpen : !model.collapse.kuvailevatTiedot}" tt='koulutus.review.kuvailevatTiedot.otsikko'></div>
         </div>
         <div class="span2 label-right">
-            <div class="btn" ng-click='doEdit($event, "KUVAILEVATTIEDOT")'><div tt='koulutus.review.muokkaa'></div></div>
+            <div class="btn" data-ng-click='doEdit($event, "KUVAILEVATTIEDOT")'><div tt='koulutus.review.muokkaa'></div></div>
         </div>
     </div>
+
     <div collapse="model.collapse.kuvailevatTiedot">
         <div class="row-fluid">
             <div class="span3 label-right">
                 <div tt='koulutus.review.kuvailevatTiedot.tavoitteetTutkinto'></div>
             </div>
             <div class="span9">
-                <div ng-bind-html="model.koulutus.kuvaus.TAVOITTEET.meta[lang.koodi_uri].arvo"></div>
+                <div data-ng-bind-html="model.koulutus.kuvaus.TAVOITTEET.meta[lang.koodi_uri].arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -194,8 +207,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.tavoitteetKoulutus'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -203,8 +215,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.koulutusohjelmanValinta'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -212,8 +223,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.sisaltoKoulutus'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -221,8 +231,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.rakenneKoulutus'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                <div data-ng-bind-html="model.koulutus.kuvaus.KOULUTUKSEN_RAKENNE.meta[lang.koodi_uri].arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -230,8 +239,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.kansainvalisyys'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -239,8 +247,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.sijoittuminenTyoelamaan'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -248,8 +255,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.ammattinimikkeet'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                XXX
             </div>
         </div>
         <div class="row-fluid">
@@ -257,8 +263,14 @@
                 <div tt='koulutus.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
             </div>
             <div class="span9">
-                (VÄÄRÄ BINDI)
-                <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                <div data-ng-bind-html="model.koulutus.kuvaus.JATKOOPINTO_MAHDOLLISUUDET.meta[lang.koodi_uri].arvo"></div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 label-right">XXX</div>
+            <div class="span9">
+                btw. Saatavana olisivat tällaiset avaimet:
+                <span data-ng-repeat="(key, value) in model.koulutus.kuvaus">{{ key }}{{ $last ? '' : ', ' }}</span><br>
             </div>
         </div>
     </div>
@@ -267,11 +279,11 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span10" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">
-            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.sisaltyvatOpintokokonaisuudet}" tt='koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko'></div>
+        <div class="span10" data-ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">
+            <div class="collapseHeader" data-ng-class="{isOpen : !model.collapse.sisaltyvatOpintokokonaisuudet}" tt='koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko'></div>
         </div>
         <div class="span2 label-right">
-            <div class="btn" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")'><div tt='koulutus.review.muokkaa'></div></div>
+            <div class="btn" data-ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")'><div tt='koulutus.review.muokkaa'></div></div>
         </div>
     </div>
     <div collapse="model.collapse.sisaltyvatOpintokokonaisuudet">
@@ -286,11 +298,11 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span10" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">
-            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.hakukohteet}" tt='koulutus.review.hakukohteet.otsikko'></div>
+        <div class="span10" data-ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">
+            <div class="collapseHeader" data-ng-class="{isOpen : !model.collapse.hakukohteet}" tt='koulutus.review.hakukohteet.otsikko'></div>
         </div>
         <div class="span2 label-right">
-            <div class="btn" ng-click='doEdit($event, "HAKUKOHTEET")'><div tt='koulutus.review.muokkaa'></div></div>
+            <div class="btn" data-ng-click='doEdit($event, "HAKUKOHTEET")'><div tt='koulutus.review.muokkaa'></div></div>
         </div>
     </div>
     <div collapse="model.collapse.hakukohteet">

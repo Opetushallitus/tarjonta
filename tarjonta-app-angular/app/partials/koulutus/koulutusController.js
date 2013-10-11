@@ -16,8 +16,8 @@
 
 var app = angular.module('app.koulutus.ctrl', []);
 
-app.controller('KoulutusRoutingController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', '$route',
-    function KKReviewController($scope, $location, $log, TarjontaService, $routeParams, $route) {
+app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route',
+    function KoulutusRoutingController($scope, $log, $routeParams, $route) {
         $log.info("KoulutusRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);

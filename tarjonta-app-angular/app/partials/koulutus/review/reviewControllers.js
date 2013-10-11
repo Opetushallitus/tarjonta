@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', '$modal',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService',
+    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService) {
         $log.info("BaseReviewController()");
 
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
@@ -34,36 +34,54 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                     koodi_uri: "kieli_en"
                 },
             ],
-            koulutus: $scope.koulutusx, // preloaded in route resolve
+            koulutus: $scope.koulutusx, // preloaded in route resolve, see
             foo: "bar"
         };
 
-        // TODO respect my autoritai!
-        // $scope.model.routeParams.id = "1.2.246.562.5.2013091015190138558153";
-
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
-            $location.path("/kk/edit/load/" + targetPart + "/none/" + $scope.model.koulutus.oid + "/none");
+            $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
         };
 
         $scope.goBack = function(event) {
             $log.info("goBack()...");
+            window.history.back();
         };
 
         $scope.doDelete = function(event) {
             $log.info("doDelete()...");
+
+            var texts = {
+                title: LocalisationService.t("koulutus.review.poista.confirm.title"),
+                description: LocalisationService.t("koulutus.review.poista.confirm.description", [$scope.model.koulutus.koulutuskoodi.arvo]),
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel")
+            };
+
+            var d = dialogService.showDialog(texts);
+            d.result.then(function(data) {
+                $log.info("GOT: ", data);
+                if ("ACTION" === data) {
+                    // TODO actual delete!
+                    $log.info("ACTUALLY DELETE IT NOW!");
+                }
+            });
+
         };
 
         $scope.doCopy = function(event) {
             $log.info("doCopy()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.doMoveToBeSubPart = function(event) {
             $log.info("doMoveToBeSubPart()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.doAddParallel = function(event) {
             $log.info("doAddParallel()...");
+            dialogService.showNotImplementedDialog();
         };
 
         $scope.load = function(oid) {
