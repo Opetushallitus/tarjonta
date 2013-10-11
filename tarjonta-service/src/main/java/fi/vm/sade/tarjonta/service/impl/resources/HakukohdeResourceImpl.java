@@ -108,11 +108,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila.asDto(), count, startIndex, lastModifiedBefore, lastModifiedSince));
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.debug("  result={}", result);
         return result;
     }
-    
+
     @SuppressWarnings("unchecked")
 	@Override
     public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(
@@ -124,7 +124,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 		organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 		hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
-		
+
 		HakukohteetKysely q = new HakukohteetKysely();
 		q.setNimi(searchTerms);
 		q.setKoulutuksenAlkamiskausi(alkamisKausi);
@@ -136,7 +136,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 		}
 
 		HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
-		
+
 		return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
