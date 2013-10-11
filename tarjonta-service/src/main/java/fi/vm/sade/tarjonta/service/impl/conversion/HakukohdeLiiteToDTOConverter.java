@@ -17,15 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.Osoite;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by: Tuomas Katva
@@ -40,12 +32,12 @@ public class HakukohdeLiiteToDTOConverter extends AbstractFromDomainConverter<Ha
 
         hakukohdeLiiteTyyppi.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteTyyppi.setLiitteenId(hakukohdeLiite.getId().toString());
-        hakukohdeLiiteTyyppi.setLiitteenKuvaus(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(hakukohdeLiite.getKuvaus()));
+        hakukohdeLiiteTyyppi.setLiitteenKuvaus(CommonToDTOConverterHelper.convertMonikielinenTekstiToTekstiTyyppi(hakukohdeLiite.getKuvaus()));
         hakukohdeLiiteTyyppi.setLiitteenTyyppiKoodistoNimi(hakukohdeLiite.getLiitteenTyyppiKoodistoNimi());
 
         hakukohdeLiiteTyyppi.setLiitteenTyyppi(hakukohdeLiite.getLiitetyyppi());
         hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
-        hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
+        hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(CommonToDTOConverterHelper.convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
 
         if (hakukohdeLiite.getLastUpdatedByOid() != null) {
             hakukohdeLiiteTyyppi.setViimeisinPaivittajaOid(hakukohdeLiite.getLastUpdatedByOid());

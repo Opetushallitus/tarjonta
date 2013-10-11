@@ -1083,7 +1083,7 @@
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Joukko opetettavia kielia oppiaineen tunnuksella varustettuna. 
-                Koostuu oppiaineen tunnisteesta (esim. B1-kieli) ja listasta kielia joita voi kyseisena aineena opiskella.  
+                Koostuu oppiaineen tunnisteesta (esim. B1-uri) ja listasta kielia joita voi kyseisena aineena opiskella.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -1265,7 +1265,7 @@
     <xs:complexType name="LanguageCodeCollectionType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
-                Joukko kieli koodeja.
+                Joukko uri koodeja.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -2076,7 +2076,7 @@
             <xs:enumeration value="ISO-639-1">
                 <xs:annotation>
                     <xs:documentation>
-                        ISO 639-1 kieli koodisto.
+                        ISO 639-1 uri koodisto.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>

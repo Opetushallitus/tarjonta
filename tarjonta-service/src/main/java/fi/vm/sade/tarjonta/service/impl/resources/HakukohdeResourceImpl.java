@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +40,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -149,6 +143,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         HakukohdeDTO result = conversionService.convert(hakukohde, HakukohdeDTO.class);
         LOG.debug("  result={}", result);
         return result;
+    }
+
+    @Override
+    public HakukohdeRDTO findByOid(@PathParam("oid") String oid) {
+
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+
+
+        HakukohdeRDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeRDTO.class);
+
+        return hakukohdeRDTO;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     // /hakukohde/OID/haku
