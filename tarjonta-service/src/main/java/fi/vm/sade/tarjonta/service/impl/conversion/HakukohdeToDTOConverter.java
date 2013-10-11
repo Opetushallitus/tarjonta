@@ -69,9 +69,9 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
 
         if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {
             // jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
-            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHaku().getHakuaikas().iterator().next()));
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverterHelper.convertHakuaikaToSisaisetHakuAjat(s.getHaku().getHakuaikas().iterator().next()));
         } else {
-            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverterHelper.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
         }
         
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
@@ -90,10 +90,10 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         // sora- ja vape-kuvaus: varmistetaan, että joko url, teksti tai molemmat ovat null
         hakukohde.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
         hakukohde.setSoraKuvausTeksti(s.getSoraKuvausKoodiUri()!=null ? null :
-        	CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(s.getSoraKuvaus()) );
+        	CommonToDTOConverterHelper.convertMonikielinenTekstiToTekstiTyyppi(s.getSoraKuvaus()) );
         hakukohde.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
         hakukohde.setValintaperustekuvausTeksti(s.getValintaperustekuvausKoodiUri()!=null ? null :
-        	CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(s.getValintaperusteKuvaus()) );
+        	CommonToDTOConverterHelper.convertMonikielinenTekstiToTekstiTyyppi(s.getValintaperusteKuvaus()) );
 
         if (s.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(osoiteTyyppiFromOsoite(s.getLiitteidenToimitusOsoite()));

@@ -197,7 +197,7 @@
 
     <LearningOpportunitySpecification id="O0002ST">
         <Identifier>O0002ST</Identifier>
-        <Name>Suomen kieli ja viestintä</Name>
+        <Name>Suomen uri ja viestintä</Name>
         <Credits>
             <Code scheme="ECTS">ects</Code>
             <Value>3</Value>
@@ -218,12 +218,12 @@
 
     <LearningOpportunitySpecification id="O0031ST">
         <Identifier>O0031ST</Identifier>
-        <Name>Ruotsin kieli ja viestintä</Name>
+        <Name>Ruotsin uri ja viestintä</Name>
     </LearningOpportunitySpecification>
 
     <LearningOpportunitySpecification id="O0032ST">
         <Identifier>O0032ST</Identifier>
-        <Name> 	Englannin kieli ja viestintä</Name>
+        <Name> 	Englannin uri ja viestintä</Name>
     </LearningOpportunitySpecification>
 
 

@@ -172,8 +172,8 @@
 
         <LanguagesOfInstruction scheme="Koodisto">
             <Codes>
-                <Code version="1" uri="uri:kieli/en"/>
-                <Code version="1" uri="uri:kieli/fi" />
+                <Code version="1" uri="uri:uri/en"/>
+                <Code version="1" uri="uri:uri/fi" />
             </Codes>
         </LanguagesOfInstruction>
 

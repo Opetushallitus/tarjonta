@@ -282,6 +282,10 @@ div#searchResults table tbody.folded tr.tresult {
 	display:none;
 }
 
+div#deleteDialog .subject {
+	font-weight:bold;
+}
+
 /* Tarjonnan tarkastelunäkymät / yleiset */
 
 .label-right {

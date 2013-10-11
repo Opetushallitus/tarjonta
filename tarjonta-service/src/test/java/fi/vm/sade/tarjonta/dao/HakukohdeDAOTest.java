@@ -177,7 +177,7 @@ public class HakukohdeDAOTest {
 //         */
 //        MonikielinenMetadata metaIncluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
 //        metaIncluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-//        metaIncluded.setKieli("URI:FI");
+//        metaIncluded.setUri("URI:FI");
 //        metaIncluded.setArvo("Value");
 //        assertNotNull("koodi uri was null?", h.getHakukohdeNimi());
 //        metaIncluded.setAvain(KOODI_URI_METADATA_RELATION);
@@ -188,7 +188,7 @@ public class HakukohdeDAOTest {
 //         */
 //        MonikielinenMetadata metaExcluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
 //        metaExcluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-//        metaExcluded.setKieli("URI:FI");
+//        metaExcluded.setUri("URI:FI");
 //        metaExcluded.setArvo("Value");
 //        metaExcluded.setAvain("uri:excluded_test_object");
 //

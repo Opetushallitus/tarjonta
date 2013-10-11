@@ -65,7 +65,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
     private void convertHaunAjat(HakuTyyppi h, Haku s) {
         if (s.getHakuaikas() != null) {
             for (Hakuaika ha: s.getHakuaikas()) {
-                h.getSisaisetHakuajat().add(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(ha));
+                h.getSisaisetHakuajat().add(CommonToDTOConverterHelper.convertHakuaikaToSisaisetHakuAjat(ha));
             }
         }
     }
