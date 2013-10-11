@@ -477,10 +477,13 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 	}
 	
 	@Override
-	public List<NimiJaOidRDTO> getKoulutukset(@PathParam("oid") String oid) {
+	public List<NimiJaOidRDTO> getKoulutukset(String oid) {
     	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-    	for (KoulutusmoduuliToteutus hk : hakukohdeDAO.findHakukohdeByOid(oid).getKoulutusmoduuliToteutuses()) {
-    		ret.add(new NimiJaOidRDTO(BaseRDTOConverter.convertToMap(hk.getKoulutusmoduuli().getNimi(), tarjontaKoodistoHelper), hk.getOid()));
+    	Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
+    	if (hk!=null) {
+        	for (KoulutusmoduuliToteutus kmt : hk.getKoulutusmoduuliToteutuses()) {
+        		ret.add(new NimiJaOidRDTO(BaseRDTOConverter.convertToMap(kmt.getKoulutusmoduuli().getNimi(), tarjontaKoodistoHelper), kmt.getOid()));
+        	}
     	}
     	return ret;
 	}

@@ -251,10 +251,13 @@ public class KoulutusResourceImpl implements KoulutusResource {
       }
     
     @Override
-    public List<NimiJaOidRDTO> getHakukohteet(@PathParam("oid") String oid) {
+    public List<NimiJaOidRDTO> getHakukohteet(String oid) {
     	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-    	for (Hakukohde hk : koulutusmoduuliToteutusDAO.findByOid(oid).getHakukohdes()) {
-    		ret.add(new NimiJaOidRDTO(Collections.singletonMap(I18N.getLocale().getLanguage(), tarjontaKoodistoHelper.getKoodiNimi(hk.getHakukohdeNimi(), I18N.getLocale())), hk.getOid()));
+    	KoulutusmoduuliToteutus kmt = koulutusmoduuliToteutusDAO.findByOid(oid);
+    	if (kmt!=null) {
+        	for (Hakukohde hk : kmt.getHakukohdes()) {
+        		ret.add(new NimiJaOidRDTO(Collections.singletonMap(I18N.getLocale().getLanguage(), tarjontaKoodistoHelper.getKoodiNimi(hk.getHakukohdeNimi(), I18N.getLocale())), hk.getOid()));
+        	}
     	}
     	return ret;
     }
