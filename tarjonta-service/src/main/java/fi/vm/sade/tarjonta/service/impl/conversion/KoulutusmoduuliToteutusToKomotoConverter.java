@@ -22,11 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Kielivalikoima;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Conversion services for REST service.
@@ -126,6 +130,32 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         // OVT-5745 Added yhteyshenkilo inormation
         for (Yhteyshenkilo yhteyshenkilo : s.getYhteyshenkilos()) {
             t.getYhteyshenkilos().add(convert(yhteyshenkilo));
+        }
+
+
+        //
+        // Lukio spesific data
+        // - Kielivalikoima returned as {"A1" : ["kieli_fi#1", "kieli_sv#2], "A2" : ["kieli_bz#313"]}
+        //
+        Map<String, Kielivalikoima> tarjotutKielet = s.getTarjotutKielet();
+        if (tarjotutKielet != null && !tarjotutKielet.isEmpty()) {
+            Map<String, List<String>> result = t.getTarjotutKielet();
+
+            for (String key : tarjotutKielet.keySet()) {
+                Kielivalikoima v = tarjotutKielet.get(key);
+
+                if (v != null) {
+                    List<String> tmp = result.get(key);
+                    if (tmp == null) {
+                        tmp = new ArrayList<String>();
+                        result.put(key, tmp);
+                    }
+
+                    // Convert to list of uri#version
+                    List<String> koodistoKieliList = convertKoodistoUrisToList(v.getKielet());
+                    tmp.addAll(koodistoKieliList);
+                }
+            }
         }
 
         return t;

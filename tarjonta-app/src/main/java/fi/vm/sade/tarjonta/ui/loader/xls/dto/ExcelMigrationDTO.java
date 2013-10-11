@@ -212,7 +212,7 @@ public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
     }
 
     public String getEqfUri() {
-        return getEqf() + VERSION;
+        return getEqf();
     }
 
     @Override

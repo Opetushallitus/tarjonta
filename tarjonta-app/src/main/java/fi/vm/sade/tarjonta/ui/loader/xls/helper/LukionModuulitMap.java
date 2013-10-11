@@ -49,9 +49,13 @@ public class LukionModuulitMap extends KoulutuskoodiMap< KuvausDTO> {
             final String koulutuksellisetTekstiSv = row.getKoulutuksellisetTekstiSv();
             final String koulutuksenRakenneTekstiSv = row.getKoulutuksenRakenneTekstiSv();
 
-            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(jatkoOpintomahdollisuudetTekstiFi), jatkoOpintomahdollisuudetTekstiSv, null));
-            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksenRakenneTekstiFi), koulutuksenRakenneTekstiSv, null));
-            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksellisetTekstiFi), koulutuksellisetTekstiSv, null));
+            final String jatkoOpintomahdollisuudetTekstiEn = row.getJatkoOpintomahdollisuudetTekstiEn();
+            final String koulutuksellisetTekstiEn = row.getKoulutuksellisetTekstiEn();
+            final String koulutuksenRakenneTekstiEn = row.getKoulutuksenRakenneTekstiEn();
+
+            kuvausDTO.setJatkoOpintomahdollisuudetTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(jatkoOpintomahdollisuudetTekstiFi), jatkoOpintomahdollisuudetTekstiSv, jatkoOpintomahdollisuudetTekstiEn));
+            kuvausDTO.setKoulutuksenRakenneTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksenRakenneTekstiFi), koulutuksenRakenneTekstiSv, koulutuksenRakenneTekstiEn));
+            kuvausDTO.setTavoiteTeksti(TarjontaKomoData.createTeksti(nullToEmptyStr(koulutuksellisetTekstiFi), koulutuksellisetTekstiSv, koulutuksellisetTekstiEn));
 
             this.put(koodiarvo, kuvausDTO);
             rowIndex++;

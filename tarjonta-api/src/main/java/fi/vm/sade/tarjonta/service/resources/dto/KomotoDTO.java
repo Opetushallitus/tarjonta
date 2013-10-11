@@ -22,6 +22,7 @@ import java.util.Map;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * REST DTO for LOI / Komoto / Koulutusmoduulin toteutus
@@ -54,6 +55,9 @@ public class KomotoDTO extends BaseRDTO {
     private Map<KomotoTeksti, Map<String,String>> _tekstit;
 
     private List<YhteyshenkiloRDTO> _yhteyshenkilos;
+
+    // Lukio
+    private Map<String, List<String>> _tarjotutKielet;
 
     public Map<KomotoTeksti, Map<String, String>> getTekstit() {
     	if (_tekstit==null) {
@@ -332,6 +336,17 @@ public class KomotoDTO extends BaseRDTO {
 
     public void setYhteyshenkilos(List<YhteyshenkiloRDTO> yhteyshenkilos) {
         this._yhteyshenkilos = yhteyshenkilos;
+    }
+
+    public Map<String, List<String>> getTarjotutKielet() {
+        if (_tarjotutKielet == null) {
+            _tarjotutKielet = new HashMap<String, List<String>>();
+        }
+        return _tarjotutKielet;
+    }
+
+    public void setTarjotutKielet(Map<String, List<String>> _tarjotutKielet) {
+        this._tarjotutKielet = _tarjotutKielet;
     }
 
 }

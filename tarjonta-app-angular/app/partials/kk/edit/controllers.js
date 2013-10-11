@@ -201,9 +201,14 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
 
             //remove all meta data fields, if any
             angular.forEach(converter.STRUCTURE, function(value, key) {
-                angular.forEach(value, function(value, key) {
-                    converter.deleteMetaField(m[key]);
-                });
+                if ('MLANG' !== key) {
+                     console.log(converter.STRUCTURE.MLANG, "!==", key)
+                    //MLANG objects needs the meta fields
+                    angular.forEach(value, function(value, key) {
+                       
+                        converter.deleteMetaField(m[key]);
+                    });
+                }
             });
         };
 
@@ -236,6 +241,7 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
             promise.then(function(data) {
                 console.log("KOODI", data);
                 apiModel.koodi.kaannos = data.koodiNimi;
+                apiModel.koodi.versio = data.koodiVersion;
             });
         };
 
@@ -250,29 +256,29 @@ app.controller('KKEditController', ['$scope', 'TarjontaService', 'Config', '$rou
         //add factory functions to ui template 
         $scope.searchKoodiByKoodiUri = converter.searchKoodiByKoodiUri;
         $scope.removeKoodiByKoodiUri = converter.removeKoodiByKoodiUri;
-        
-        
+
+
         $scope.tutkintoDialogModel = {};
-    	
-    	$scope.tutkintoDialogModel.open = function() {
-    		
-    			var modalInstance = $modal.open({
-    				scope: $scope,
-    				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
-    				controller: 'SelectTutkintoOhjelmaController'
-    			});
-    		
-    			modalInstance.result.then(function(selectedItem) {
-    				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-    				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
-    				if (selectedItem.koodiUri != null) {
-    					//$scope.model.koulutuskoodi = selectedItem;
-    					$scope.model.koulutuskoodi.koodi = selectedItem;
-    				} 
-    			}, function() {
-    				console.log('Cancel, dialog closed');
-    			});
-    	};
+
+        $scope.tutkintoDialogModel.open = function() {
+
+            var modalInstance = $modal.open({
+                scope: $scope,
+                templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+                controller: 'SelectTutkintoOhjelmaController'
+            });
+
+            modalInstance.result.then(function(selectedItem) {
+                console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+                console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+                if (selectedItem.koodiUri != null) {
+                    //$scope.model.koulutuskoodi = selectedItem;
+                    $scope.model.koulutuskoodi.koodi = selectedItem;
+                }
+            }, function() {
+                console.log('Cancel, dialog closed');
+            });
+        };
 
         //initialization
         $scope.init();
