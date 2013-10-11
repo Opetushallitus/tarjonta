@@ -86,6 +86,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         formView.reloadLisatiedot(hakukohde.getLisatiedot());
+        formView.reloadValintaperusteet(hakukohde.getValintaPerusteidenKuvaus().getKaannokset());
         hakukohde.setHakuaika(formView.getSelectedHakuaika());
         if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
           validateHakukohdeHakuaika(hakukohde);  

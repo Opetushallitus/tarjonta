@@ -178,6 +178,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		canCreateHakukohde: false,
     		canCreateKoulutus: false
     };
+    
+    $scope.selectedRow = {
+    		oid:null,
+    		prefix:null,
+    		nimi:null,
+    		element:null
+    }
 
     // taulukon renderöinti    
     function resultsToTable(results, props, prefix) {
@@ -202,7 +209,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos.oid+"\" tila=\""+tulos.tila+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
 					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
-					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\">"	// linkki
+					+"<a href=\"#/"+prefix+"/"+tulos.oid+"\" class=\"nimi\">"	// linkki
 					+tulos.nimi
 					+"</a></td>"
 					+"<td>" + (tulos.kausi.fi||tulos.kausi.sv||tulos.kausi.en) + "&nbsp;" + tulos.vuosi + "</td>"; //TODO lokalisoi!
@@ -250,6 +257,19 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	row.attr("tila", nstate);
     	var em = $("td.state", row);
     	em.text(LocalisationService.t("tarjonta.tila."+nstate));
+    }
+    
+    function deleteSelectedRow() {
+    	
+    	var sel = $scope.selectedRow;
+    	var promise = sel.prefix=="hakukohde"
+    		? TarjontaService.deleteHakukohde(sel.oid)
+			: TarjontaService.deleteKoulutus(sel.oid);
+    		
+    	promise.then(function(){
+        	sel.element.detach();
+        	TarjontaService.evictHakutulokset();
+    	});
     }
     
     function rowActions(prefix, oid, tila) {
@@ -305,8 +325,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		// poista
 		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
 			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
-				action: function(){
-					console.log("TODO poista "+prefix+" / "+oid);
+				action: function(ev) {					
+					$scope.deleteDialogModel.open();
 				}
 			});
 		}
@@ -340,13 +360,20 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		var hkOid = row.attr("hakukohde-oid");
     		var kmOid = row.attr("koulutus-oid");
     		var tila = row.attr("tila");
-    		
+
     		var menuOptions = [];
-    		
+
+			$scope.selectedRow.nimi = $(".nimi", row).text();
+			$scope.selectedRow.element = row;
+			
     		if (hkOid) {
     			$scope.menuOptions = rowActions("hakukohde", hkOid, tila);
+    			$scope.selectedRow.prefix = "hakukohde";
+    			$scope.selectedRow.oid = hkOid;
     		} else if (kmOid) {
     			$scope.menuOptions = rowActions("koulutus", kmOid, tila);
+    			$scope.selectedRow.prefix = "koulutus";
+    			$scope.selectedRow.oid = kmOid;
     		} else {
     			console.log("row has no oid", row);
     			$scope.menuOptions = [];
@@ -380,7 +407,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     			// jos url on #, estetään selainta seuraamasta linkkiä (oletetaan, että action on määritelty)
     			if ($(ev.currentTarget).attr("href") == "#") {
     				//ev.stopPropagation();
-    				//ev.preventDefault();
+    				ev.preventDefault();
     			}
 
         		// sulkeutuminen linkkiä klikkaamalla yms.
@@ -557,12 +584,46 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         	$scope.spec.terms="";
         }
     	// estää angularia tuhoamasta "liian nopeasti" haettua hakutuloslistausta
-    	setTimeout($scope.search, 100);
+    	// TODO ei toimi luotettavasti -> korjaa
+   		setTimeout($scope.search, 100);
     }
 
     $scope.report = function() {
         console.log("TODO raportti");
     }
+    
+    $scope.deleteDialogModel = {};
+    
+    var DeleteDialogCtrl = function($scope, $modalInstance) {
+    	
+    	$scope.otsikko = "tarjonta.poistovahvistus.otsikko."+$scope.selectedRow.prefix;
+    	$scope.ohje = "tarjonta.poistovahvistus.ohje."+$scope.selectedRow.prefix;
+
+    	$scope.ok = function() {
+    		$modalInstance.close();
+    	}
+    	
+    	$scope.cancel = function() {
+    		$modalInstance.dismiss();
+    	}
+    	
+    }
+    
+    $scope.deleteDialogModel.open = function() {
+    	
+    	var modalInstance = $modal.open({
+			controller: DeleteDialogCtrl,
+			templateUrl: "partials/search/delete-dialog.html",
+			scope: $scope,
+			resolve: {
+				prefix: function() { return "prefix"; },
+				oid: "oid"
+			}
+		});
+    	
+    	modalInstance.result.then(deleteSelectedRow);
+    	
+    };
     
     $scope.tutkintoDialogModel = {};
 	

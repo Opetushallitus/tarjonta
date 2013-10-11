@@ -159,7 +159,19 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.deleteKoulutus = function(id) {
-        return $http.delete(urlBase + '/' + id);
+    	var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res){
+        	ret.resolve(res);
+        });
+        return ret.promise;
+    };
+
+    dataFactory.deleteHakukohde = function(id) {
+    	var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res){
+        	ret.resolve(res);
+        });
+        return ret.promise;
     };
 
     dataFactory.getKoulutus = function(arg, func) {
