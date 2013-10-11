@@ -51,7 +51,6 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeRDTOToHakukohdeConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.ValintakoeRDTOToValintakoeConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeLiiteRDTOToLiiteConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeToRDTOConverter"/>
             </list>
         </property>
 

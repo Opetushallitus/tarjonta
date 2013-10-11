@@ -6,7 +6,12 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -30,18 +35,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  */
 @Path("/hakukohde")
 public interface HakukohdeResource {
-
-    /*
-    *
-    * Hakukohteen kysely oid:n mukaan joka tuottaa Javascript ystävällistä JSON:ia
-    *
-    */
-    @GET
-    @Path("/version2/{oid}")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakukohdeRDTO findByOid(@PathParam("oid") String oid);
-
-
 
     /**
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX

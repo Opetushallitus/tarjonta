@@ -876,7 +876,7 @@
     <xs:complexType name="WebLinkkiTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
-                Web linkki jolle annetaan tyyppi seka optionaalinen uri. Linkin uri ja tyyppi yhdessa yksiloivat
+                Web linkki jolle annetaan tyyppi seka optionaalinen kieli. Linkin kieli ja tyyppi yhdessa yksiloivat
                 linkin.
             </xs:documentation>
         </xs:annotation>
@@ -947,10 +947,10 @@
                 <xs:complexType>
                     <xs:simpleContent>
                         <xs:extension base="xs:string">
-                            <xs:attribute name="uri" type="tns:KieliKoodiTyyppi" use="required">
+                            <xs:attribute name="kieli" type="tns:KieliKoodiTyyppi" use="required">
                                 <xs:annotation>
                                     <xs:documentation>
-                                        Nimen uri koodi.
+                                        Nimen kieli koodi.
                                     </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
@@ -1083,13 +1083,13 @@
         <xs:annotation>
             <xs:documentation>
                 Monikielinen metadata. Yksi elementti kuvaa vain yhden tyypin.
-                Avain, kategoria ja uri muodostavat yksiloivan avaimen.
+                Avain, kategoria ja kieli muodostavat yksiloivan avaimen.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="avain" type="tns:LongString"/>
             <xs:element minOccurs="1" maxOccurs="1" name="kategoria" type="tns:LongString"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="uri" type="tns:LongString"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="kieli" type="tns:LongString"/>
             <xs:element minOccurs="1" maxOccurs="1" name="arvo" type="tns:LongString"/>
         </xs:sequence>
     </xs:complexType>
@@ -1104,7 +1104,7 @@
     <xs:complexType name="HakusanaTyyppi">
         <xs:sequence>
             <xs:element name="hakusana" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
-            <xs:element name="uri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="kieliUri" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
     
