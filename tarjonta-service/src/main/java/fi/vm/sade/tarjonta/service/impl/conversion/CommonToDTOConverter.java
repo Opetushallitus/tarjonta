@@ -15,19 +15,15 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by: Tuomas Katva
@@ -36,7 +32,7 @@ import java.util.List;
  * This class is converter for common Domain to DTO objects, like MonikielinenTeksti and Osoite
  *
  */
-public class CommonToDTOConverterHelper {
+public class CommonToDTOConverter {
 
 
     public static OsoiteTyyppi convertOsoiteToOsoiteTyyppi(Osoite osoite) {
@@ -54,37 +50,6 @@ public class CommonToDTOConverterHelper {
         return osoiteTyyppi;
     }
 
-    public static OsoiteRDTO convertOsoiteToOsoiteDTO(Osoite osoite) {
-        if (osoite == null) {
-            return null;
-        }
-        OsoiteRDTO osoiteDTO = new OsoiteRDTO();
-
-        osoite.setOsoiterivi1(osoite.getOsoiterivi1());
-        osoiteDTO.setPostinumero(osoite.getPostinumero());
-        osoiteDTO.setPostitoimipaikka(osoite.getPostitoimipaikka());
-
-        return osoiteDTO;
-
-    }
-
-    public static List<TekstiRDTO> convertMonikielinenTekstiToTekstiRDOT(MonikielinenTeksti monikielinenTeksti) {
-
-        if (monikielinenTeksti != null) {
-        List<TekstiRDTO> tekstis = new ArrayList<TekstiRDTO>();
-
-        for (TekstiKaannos kaannos:monikielinenTeksti.getTekstis()) {
-            TekstiRDTO tekstiRDTO = new TekstiRDTO();
-            tekstiRDTO.setUri(kaannos.getKieliKoodi());
-            tekstiRDTO.setTeksti(kaannos.getArvo());
-
-        }
-
-        return tekstis;
-        } else {
-            return null;
-        }
-    }
 
     public static MonikielinenTekstiTyyppi convertMonikielinenTekstiToTekstiTyyppi(MonikielinenTeksti monikielinenTeksti) {
     	if (monikielinenTeksti==null) {

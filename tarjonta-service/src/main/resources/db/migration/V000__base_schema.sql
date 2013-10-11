@@ -178,10 +178,10 @@
 
     create table koulutusmoduuli_toteutus_linkki (
         koulutusmoduuli_toteutus_id int8 not null,
-        uri varchar(255) not null,
+        kieli varchar(255) not null,
         linkki_tyyppi varchar(255) not null,
         url varchar(255) not null,
-        primary key (koulutusmoduuli_toteutus_id, uri, linkki_tyyppi, url)
+        primary key (koulutusmoduuli_toteutus_id, kieli, linkki_tyyppi, url)
     );
 
     create table koulutusmoduuli_toteutus_opetuskieli (
