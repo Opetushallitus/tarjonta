@@ -73,18 +73,32 @@ window.CONFIG = {
         "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
         //käsin lisätyt:
 
+        //
+        // REMEMBER!
+        //
+        // If you add something here it is ONLY for development - to really setup deployment time
+        // properties put them in to "tarjonta-app.properties" and/or
+        // module-install-parent/config/common/tarjonta/oph-configuration/tarjonta-app.properties
+        // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
+        //
+
         // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",
-
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/",
-        // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
-
         "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
+
+        // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
         "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
 
 
+        // NOTE: seems to be koodisto-uris.opintojenLaajuusarvo ???
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
+
+        // Only for development, since production reads "/cas/myroles"
         "casUrl": "cas_myroles_tiimi2.json",
+
+
+
         "place": "holder",
-    
+
     }
 };

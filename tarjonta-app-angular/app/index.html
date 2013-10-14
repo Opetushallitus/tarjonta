@@ -216,6 +216,8 @@
             //
             // Get current users authorisation info (/cas/myroles)
             //
+            // window.CONFIG.env.casUrl = window.CONFIG.env.casUrl ? window.CONFIG.env.casUrl : "/cas/myroles";
+
             console.log("** Loading authentication info; from: " + window.CONFIG.env.casUrl);
             init_counter++;
             jQuery.ajax(window.CONFIG.env.casUrl, {
