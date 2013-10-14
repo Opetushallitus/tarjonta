@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.ws.rs.PathParam;
-
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -34,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -44,7 +41,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
@@ -55,6 +51,9 @@ import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -248,16 +247,17 @@ public class KoulutusResourceImpl implements KoulutusResource {
         Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
         Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
-      }
+    }
     
     @Override
     public List<NimiJaOidRDTO> getHakukohteet(String oid) {
+    	HakukohteetKysely ks = new HakukohteetKysely();
+    	ks.getKoulutusOids().add(oid);
+    	
+    	HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
     	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-    	KoulutusmoduuliToteutus kmt = koulutusmoduuliToteutusDAO.findByOid(oid);
-    	if (kmt!=null) {
-        	for (Hakukohde hk : kmt.getHakukohdes()) {
-        		ret.add(new NimiJaOidRDTO(Collections.singletonMap(I18N.getLocale().getLanguage(), tarjontaKoodistoHelper.getKoodiNimi(hk.getHakukohdeNimi(), I18N.getLocale())), hk.getOid()));
-        	}
+    	for (HakukohdePerustieto hk : vs.getHakukohteet()) {
+    		ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
     	}
     	return ret;
     }
