@@ -11,7 +11,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			"organisaatiotyyppi" : "",
 			"oppilaitostyyppi" : "",
 			"lakkautetut" : false,
-			"suunnitellut" : false
+			"suunnitellut" : false,
+			"skipparents" : true
 		};
 	}
 
