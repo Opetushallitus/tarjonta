@@ -135,6 +135,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 		return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
+
     // /hakukohde/OID
     @Override
     public HakukohdeDTO getByOID(String oid) {
@@ -257,55 +258,39 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
     }
 
+
     @Override
-    public String createHakukohde(HakukohdeDTO hakukohdeDTO) {
-        try {
+    public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO) {
 
-            final String hakuOid = hakukohdeDTO.getHakuOid();
-            Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
-            Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
+        String hakuOid = hakukohdeRDTO.getHakuOid();
+        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+        hakukohdeRDTO.setOid(null);
+        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
 
-            LOG.debug("CREATEHAKUKOHDE - Converted hakukohde with oid : {}", hakukohde.getOid());
+        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
-            Haku haku = hakuDAO.findByOid(hakuOid);
-            //TODO: Add hakukohde koulutusalkamisaika validation
-            Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
-            hakukohde.setHaku(haku);
-            //TODO: Add haun sisaiset hakuajat
-            hakukohde = hakukohdeDAO.insert(hakukohde);
-            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(),hakukohde));
-            List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
-            if (valintakoes != null) {
+        Haku haku = hakuDAO.findByOid(hakuOid);
+        hakukohde.setHaku(haku);
 
-                hakukohde.getValintakoes().addAll(valintakoes);
+        hakukohde = hakukohdeDAO.insert(hakukohde);
 
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+
+        //TODO, add valintakokees and liittees etc.
+
+        hakukohdeDAO.update(hakukohde);
+
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                return arg0.getId();
             }
-            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet(),hakukohde);
+        })));
+        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
-            if (hakukohdeLiites != null ) {
-                hakukohde.getLiites().addAll(hakukohdeLiites);
-            }
-
-            hakukohdeDAO.update(hakukohde);
-
-            LOG.debug("Created hakukohde : {}",hakukohde.getOid());
-            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-            solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-                public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                    return arg0.getId();
-                }
-            })));
-            publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
-            return hakukohde.getOid();
-
-        } catch (Exception exp) {
-           exp.printStackTrace();
-            LOG.warn("Exception creating hakukohde in Rest-service :  {}", exp.toString());
-            return null;
-
-        }
-
+        return hakukohde.getOid();  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 
     private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs, Hakukohde hakukohde) {
         if (hakukohdeLiiteDTOs != null) {

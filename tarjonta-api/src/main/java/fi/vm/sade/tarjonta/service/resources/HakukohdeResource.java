@@ -72,6 +72,12 @@ public interface HakukohdeResource {
             );
 
 
+    @POST
+    @Path("/ui")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
+
     @GET
     @Path("/ui/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -131,11 +137,6 @@ public interface HakukohdeResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
-    @POST
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String createHakukohde(HakukohdeDTO hakukohdeDTO);
 
     @PUT
     @Path("/")
@@ -155,7 +156,6 @@ public interface HakukohdeResource {
      * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
      */
     @POST
-    @PUT
     @Path("{oid}/tila")
     @Produces(MediaType.TEXT_PLAIN)
     public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
