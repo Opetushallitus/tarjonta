@@ -45,6 +45,8 @@ public class Valintakoe extends TarjontaBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
 
+    @Column(name="kieli")
+    private String kieli;
 
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
@@ -200,5 +202,13 @@ public class Valintakoe extends TarjontaBaseEntity {
 
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
+    }
+
+    public String getKieli() {
+        return kieli;
+    }
+
+    public void setKieli(String kieli) {
+        this.kieli = kieli;
     }
 }

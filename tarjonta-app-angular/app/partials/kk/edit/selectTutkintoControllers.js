@@ -13,7 +13,8 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						hakutulokset: [],
 						active: {},
 						hakulause: '',
-						koulutusala: ''}
+						koulutusala: '',
+						itemSelected: false}
 	;
 	
 	//ng-grid malli
@@ -25,6 +26,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 								
 								$scope.gridOptions.selectedItems = [];
 								$scope.stoModel.active = rowItem.entity;
+								$scope.stoModel.itemSelected = true;
 								return true;
 							}};
 	
@@ -59,6 +61,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	//Haun suorittaminen
 	$scope.searchTutkinnot = function() {
 		console.log("Selected koulutusala: " + $scope.stoModel.koulutusala);
+		$scope.stoModel.itemSelected = false;
 		var tempTutkinnot = [];
 		//Jos kk-tutkintoja ei haettu ne haetaan ensin
 		if (!$scope.stoModel.tutkinnotFetched) {

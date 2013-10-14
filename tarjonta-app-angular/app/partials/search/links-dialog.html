@@ -1,0 +1,21 @@
+<div id="linksDialog">
+
+    <div class="modal-header">
+        <h3>{{t(otsikko)}}</h3>
+    </div>
+    
+    <div class="modal-body">
+
+		<p ng-if="items.length==0">{{t(eohje)}}</p>
+		
+		<ul ng-if="items.length>0">
+			<li ng-repeat="i in items"><a href="{{i.url}}">{{i.title}}</a></li>
+		</ul>
+
+    </div>
+    
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">{{t('tarjonta.toiminnot.sulje')}}</button>
+    </div>
+
+</div>

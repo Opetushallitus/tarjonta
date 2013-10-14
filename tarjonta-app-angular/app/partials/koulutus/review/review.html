@@ -6,9 +6,11 @@
         <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
     </div>
 
-    <pre collapse="model.collapse.model">
-{{ model | json }}
-    </pre>
+    <div collapse="model.collapse.model">
+        <pre>
+            {{ model | json }}
+        </pre>
+    </div>
 
 </div>
 

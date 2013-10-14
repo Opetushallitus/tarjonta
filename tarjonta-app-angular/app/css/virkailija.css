@@ -6,6 +6,7 @@
 
 /* normaalikokoinen perusnappula */
 .btn {
+	color:#333333;
 border-radius: 3px;
 border-color: rgb(146, 204, 224);
 font-size: 13px;
@@ -29,6 +30,7 @@ background-image: none;
   border-color: rgb( 89, 174, 202 );
   border-radius: 3px;
   background-color: rgb(159, 219, 240);
+  color:#333333;
 }   
 
 /* alaspainettu nappula, varjostusmaski */

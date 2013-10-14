@@ -22,11 +22,8 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='kk.edit.koulutusohjelma'></div>
             <div class="span10">
-                <input type="text" data-ng-model="model.koulutusohjelma.arvo" required />
-
-
-                <div data-ng-repeat="meta in model.koulutusohjelma.meta">
-                    <input type="text" data-ng-model="meta.arvo" required />
+                <div data-ng-repeat="lang in model.koulutusohjelma.meta">
+                    {{lang.koodi.kaannos}} <input type="text" data-ng-model="lang.koodi.arvo" required />
                 </div>
             </div>
         </div>

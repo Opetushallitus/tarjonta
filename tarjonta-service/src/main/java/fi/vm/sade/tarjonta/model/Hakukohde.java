@@ -99,6 +99,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hakukohde_monikielinen_nimi_id")
+    private MonikielinenTeksti hakukohdeMonikielinenNimi;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
@@ -526,5 +529,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setKaytetaanJarjestelmanValintapalvelua(boolean kaytetaanJarjestelmanValintapalvelua) {
         this.kaytetaanJarjestelmanValintapalvelua = kaytetaanJarjestelmanValintapalvelua;
+    }
+
+    public MonikielinenTeksti getHakukohdeMonikielinenNimi() {
+        return hakukohdeMonikielinenNimi;
+    }
+
+    public void setHakukohdeMonikielinenNimi(MonikielinenTeksti hakukohdeMonikielinenNimi) {
+        this.hakukohdeMonikielinenNimi = hakukohdeMonikielinenNimi;
     }
 }

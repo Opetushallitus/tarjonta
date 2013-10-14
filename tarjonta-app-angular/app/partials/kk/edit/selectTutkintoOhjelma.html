@@ -26,7 +26,7 @@
     </div>   
     <div class="modal-footer">
         <button class="btn btn-warning" ng-click="cancel()">{{t('selectTutkintoOhjelma.peruuta')}}</button>
-        <button class="btn btn-primary" ng-click="ok()">{{t('selectTutkintoOhjelma.jatka')}}</button>
+        <button class="btn btn-primary" ng-click="ok()" ng-disabled="!stoModel.itemSelected">{{t('selectTutkintoOhjelma.jatka')}}</button>
     </div>
 
 </div>

@@ -79,6 +79,7 @@ public class TarjontaKomoData {
     private TarjontaPublicService tarjontaPublicService;
     private Set<ExcelMigrationDTO> loadedData;
     private static String SEPARATOR = "#";
+    private static String SEPARATOR_UNDERLINE = "_";
     private List<String> newKomoOids; //updated, inserted
     //a tempate for lukio or ammatillinen koulutus
     private DataReader dataReader;
@@ -97,7 +98,8 @@ public class TarjontaKomoData {
             KoodistoURI.KOODISTO_OPINTOALA_URI,
             KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
             KoodistoURI.KOODISTO_LUKIOLINJA_URI,
-            KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI
+            KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI,
+            KoodistoURI.KOODISTO_EQF_LUOKITUS_URI
         };
 
         for (String koodisto : koodistot) {
@@ -114,6 +116,7 @@ public class TarjontaKomoData {
                 } else {
                     //make unique key by koodisto and koodi
                     //log.debug("Add koodi : '" + type.getKoodiArvo() + "', uri:'" + type.getKoodiUri() + "', koodisto : '" + koodisto + "'");
+                    log.info("Loading koodisto key : {}", createKey);
                     mapKoodistos.put(createKey, type);
                 }
             }
@@ -156,7 +159,6 @@ public class TarjontaKomoData {
 
     private KoodiType getKoodiType(final String koodiArvo, final String koodisto, final String fallbackKey) {
         final String searchKey = createUniqueKey(koodiArvo, koodisto);
-
         if (mapKoodistos.containsKey(searchKey)) {
             return mapKoodistos.get(searchKey);
         } else if (fallbackKey != null) {
@@ -168,7 +170,15 @@ public class TarjontaKomoData {
             return koodiType;
         } else {
             log.error("Koodi not found by : '" + koodiArvo + "'," + koodisto);
-            throw new RuntimeException("Koodi not found by : '" + koodiArvo + "'," + koodisto);
+            throw new RuntimeException("Koodi not found by : '" + koodiArvo + "'," + koodisto + ", " + searchKey);
+        }
+    }
+
+    private String getUriWithVersion(final String koodiArvo, final String koodisto, final boolean skipEmpty) {
+        if (skipEmpty && (koodiArvo == null || koodiArvo.isEmpty())) {
+            return "";
+        } else {
+            return getUriWithVersion(koodiArvo, koodisto);
         }
     }
 
@@ -214,7 +224,7 @@ public class TarjontaKomoData {
 
     public static String createUniqueKey(final String value, final String koodisto) {
         Preconditions.checkNotNull(koodisto, "Koodisto uri cannot be null! Koodi value was " + value + ".");
-        return (new StringBuffer(koodisto)).append(SEPARATOR).append(value).toString();
+        return (new StringBuffer(koodisto)).append(SEPARATOR_UNDERLINE).append(value).toString();
     }
 
     public static MonikielinenTekstiTyyppi createTeksti(String fiTeksti, String svTeksti, String enTeksti) {
@@ -289,7 +299,7 @@ public class TarjontaKomoData {
         Preconditions.checkNotNull(dto.getTutkintonimikkeenKoodiarvo(), "Tutkintonimike koodi uri cannot be null. Obj : " + dto);
         koChildKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
         koChildKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
-        koChildKomo.setEqfLuokitus(dto.getEqfUri());
+        koChildKomo.setEqfLuokitus(getUriWithVersion(dto.getEqfUri(), KoodistoURI.KOODISTO_EQF_LUOKITUS_URI, true));
 
         //update child to parent relation
         updateRelations(koChildKomo, koChildKomo.getOid(), tutkintoParentKomo.getOid(), koulutuskoodiUri);
@@ -420,7 +430,7 @@ public class TarjontaKomoData {
                                     }
                                     break;
                                 case LUKIOKOULUTUS:
-                                    log.debug("LUKIOKOULUTUS {}", lukiolinjaUri);
+                                    //log.debug("LUKIOKOULUTUS {}", lukiolinjaUri);
 
                                     if (dbParentOid != null && dbChildKomos.containsKey(lukiolinjaUri)) {
                                         //overwrite and add target to parent
@@ -538,4 +548,5 @@ public class TarjontaKomoData {
 
         log.info("Total count of the imported KOMOs : {}", count);
     }
+
 }

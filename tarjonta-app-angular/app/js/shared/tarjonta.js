@@ -25,12 +25,16 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     }
 
     function searchCacheKey(prefix, args) {
-        return prefix + "/?" +
+        return {
+        	key: prefix + "/?" +
                 "oid=" + args.oid + "&" +
                 "terms=" + escape(args.terms) + "&" +
                 "state=" + escape(args.state) + "&" +
                 "season=" + escape(args.season) + "&" +
-                "year=" + escape(args.year);
+                "year=" + escape(args.year),
+            expires: 60000,
+            pattern: prefix+"/.*"
+            };
     }
 
     var dataFactory = {};
@@ -87,7 +91,6 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus!==undefined?", " + localize(r.pohjakoulutusvaatimus):"");
-                    console.log("pohjakoulutusvaatimus:", r.pohjakoulutusvaatimus);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
                 }
@@ -96,6 +99,11 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
             result.tulokset.sort(compareByName);
             return result;
         });
+    }
+    
+    dataFactory.evictHakutulokset = function() {
+    	CacheService.evict({pattern: "hakutulos/.*"});
+    	CacheService.evict({pattern: "koulutus/.*"});
     }
 
     /**
@@ -122,7 +130,19 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
 
         return ret.promise;
     };
-
+    
+    dataFactory.getKoulutuksenHakukohteet = function() {
+        var ret = $q.defer();
+        ret.resolve([]); // TODO
+        return ret.promise;
+    }
+    
+    dataFactory.getHakukohteenKoulutukset = function() {
+        var ret = $q.defer();
+        ret.resolve([]); // TODO
+        return ret.promise;
+    }
+    
     /**
      * POST: Insert new KOMOTO + KOMO. API object must be valid.
      * 
@@ -151,7 +171,19 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.deleteKoulutus = function(id) {
-        return $http.delete(urlBase + '/' + id);
+    	var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res){
+        	ret.resolve(res);
+        });
+        return ret.promise;
+    };
+
+    dataFactory.deleteHakukohde = function(id) {
+    	var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res){
+        	ret.resolve(res);
+        });
+        return ret.promise;
     };
 
     dataFactory.getKoulutus = function(arg, func) {

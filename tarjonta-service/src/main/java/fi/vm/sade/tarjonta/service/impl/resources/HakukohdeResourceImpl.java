@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +39,8 @@ import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -108,11 +103,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila.asDto(), count, startIndex, lastModifiedBefore, lastModifiedSince));
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.debug("  result={}", result);
         return result;
     }
-    
+
     @SuppressWarnings("unchecked")
 	@Override
     public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(
@@ -124,7 +119,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 		organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 		hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
-		
+
 		HakukohteetKysely q = new HakukohteetKysely();
 		q.setNimi(searchTerms);
 		q.setKoulutuksenAlkamiskausi(alkamisKausi);
@@ -136,7 +131,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 		}
 
 		HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
-		
+
 		return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
@@ -160,6 +155,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         HakuDTO result = conversionService.convert(hakukohde.getHaku(), HakuDTO.class);
         LOG.debug("  result={}", result);
         return result;
+    }
+
+    @Override
+    public HakukohdeRDTO findByOid(String oid) {
+
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+
+        HakukohdeRDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeRDTO.class);
+
+        return hakukohdeRDTO;
+
     }
 
     // /hakukohde/OID/komoto
@@ -472,4 +478,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     	solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
     	return tila.toString();
 	}
+	
+	@Override
+	public List<NimiJaOidRDTO> getKoulutukset(String oid) {
+    	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+    	Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
+    	if (hk!=null) {
+        	for (KoulutusmoduuliToteutus kmt : hk.getKoulutusmoduuliToteutuses()) {
+        		ret.add(new NimiJaOidRDTO(BaseRDTOConverter.convertToMap(kmt.getKoulutusmoduuli().getNimi(), tarjontaKoodistoHelper), kmt.getOid()));
+        	}
+    	}
+    	return ret;
+	}
+	
 }

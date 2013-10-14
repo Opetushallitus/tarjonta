@@ -48,4 +48,8 @@ public interface PerustiedotView {
     public void refreshOppiaineet();
     
     public List<KielikaannosViewModel> getLisatiedot();
+
+    public List<KielikaannosViewModel> getValintaperusteet();
+
+    public void reloadValintaperusteet(List<KielikaannosViewModel> valintaperusteet);
 }

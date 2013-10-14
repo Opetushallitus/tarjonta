@@ -148,8 +148,16 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent implements Prop
         filterKooditBasedOnPohjakoulutus();
     }
 
+    
     private void filterKooditBasedOnPohjakoulutus() {
-        String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusVaatimus();
+        String pkVaatimus = null;
+        
+        if (presenter.getModel().getSelectedKoulutukset() != null 
+                && presenter.getModel().getSelectedKoulutukset().get(0) != null 
+                && presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null) {
+            pkVaatimus =  presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+        }
+       
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
         if (!isYksilollistettyPerusopetus) {
