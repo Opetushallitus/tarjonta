@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
  */
 public class KoulutusRelaatioRow extends AbstractKoulutuskoodiField {
 
-    public static final String FILENAME = "KOULUTUS_RELAATIOT";
+    public static final String KOULUTUS_RELAATIOT = "KOULUTUS_RELAATIOT";
     public static final Column[] COLUMNS = {
         new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
         new Column("koulutusluokituksenTasoKoodiarvo", "KOULUTUSLUOKITUKSEN TASO", InputColumnType.INTEGER),
