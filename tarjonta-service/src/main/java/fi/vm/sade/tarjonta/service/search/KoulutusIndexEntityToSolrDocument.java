@@ -231,22 +231,24 @@ public class KoulutusIndexEntityToSolrDocument implements
 
     private void addKoulutusohjelmaTiedot(SolrInputDocument doc, String koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi == null) {
-            return;
-        }
-
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService);
-
-        if (koodi != null) {
-            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-            add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-            add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-            add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
-            add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
-        } else {
             add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
             add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
+        } else {
+
+            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService);
+
+            if (koodi != null) {
+                KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+                add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+                add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+                add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
+                add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
+            } else {
+                add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
+                add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
+            }
         }
     }
 
