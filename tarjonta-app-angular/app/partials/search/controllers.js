@@ -25,10 +25,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.oppilaitostyypit=koodit;
     });
 
-	$scope.orgSelected=function(item){
-		console.log("selected!",item);
-	};
-	
 	//valittu organisaatio populoidaan tänne
     $scope.organisaatio = {};
 
