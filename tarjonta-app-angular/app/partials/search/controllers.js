@@ -16,9 +16,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	}
 
 	setDefaultHakuehdot();
-//	$scope.oppilaitostyypit={};
 
-	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
+	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], "FI").then(function(koodit) {
         //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
