@@ -113,6 +113,9 @@
     </head>
 
     <body ng-controller="AppRoutingCtrl">
+    
+    <!-- kaikki tarjonta-roina tämän sisään!! -->
+    <div class="tarjonta-body">
         <div data-ng-controller="LocalisationCtrl">
             <div ng-switch on="renderPath[0]">
                 <div ng-switch-when="home">
@@ -268,5 +271,6 @@
             });
         </script>
 
+	</div>
     </body>
 </html>
