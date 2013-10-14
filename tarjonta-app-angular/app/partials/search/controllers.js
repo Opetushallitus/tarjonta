@@ -16,9 +16,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	}
 
 	setDefaultHakuehdot();
-	$scope.oppilaitostyypit={};
+//	$scope.oppilaitostyypit={};
 
-    Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
+	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
         //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
@@ -26,6 +26,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.oppilaitostyypit=koodit;
     });
 
+	$scope.orgSelected=function(item){
+		console.log("selected!",item);
+	};
 	
     $rootScope.organisaatio = {};
 
@@ -65,7 +68,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$scope.$root.tulos = vastaus.organisaatiot;
+			$rootScope.tulos = vastaus.organisaatiot;
 		});
     };
 
