@@ -32,14 +32,14 @@ describe('Edit koulutus testeja', function() {
 
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('TarjontaConverter'));
-    beforeEach(module('app.kk.edit.ctrl'));
+    beforeEach(module('app.edit.ctrl'));
     beforeEach(module('config'));
     var $scope, $modalInstance;
     beforeEach(inject(function($rootScope) {
         $scope = $rootScope.$new();
         $modalInstance = {
             $scope: $scope,
-            templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+            templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
             controller: 'SelectTutkintoOhjelmaController'
         };
     }));
@@ -131,7 +131,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('Tarjonta'));
     beforeEach(module('TarjontaConverter'));
     beforeEach(module('Organisaatio'));
-    beforeEach(module('app.kk.edit.ctrl'));
+    beforeEach(module('app.edit.ctrl'));
 
     var scope, localisationService, routeParams, tarjontaService, cfg, organisaatioService;
 
@@ -140,7 +140,7 @@ describe('Edit koulutus insert/edit/load', function() {
         tarjontaService = TarjontaService;
         localisationService = LocalisationService;
         routeParams = $routeParams;
-        routeParams.type = 'new';
+        routeParams.id = null;
         routeParams.org = 'org-oid-1';
         cfg = Config;
         organisaatioService = OrganisaatioService;
@@ -149,9 +149,10 @@ describe('Edit koulutus insert/edit/load', function() {
 
     var EMPTY_UI_MODEL = {arvo: null, koodi: {uri: null, versio: null}};
     var EMPTY_META_UI_MODEL = {arvo: null, koodi: {uri: null, versio: null}, meta: {}};
+    var EMPTY_META_UI_MODEL_KOULUTUOHJELMA = {arvo: null, koodi: {uri: null, versio: '-1'}, meta: {}};
 
-    it('Testing the FormTutkintoController.init', inject(function($controller) {
-        $controller('KKEditController', {
+    it('Testing the BaseEditController.init', inject(function($controller) {
+        $controller('BaseEditController', {
             "$scope": scope,
             "tarjontaService": tarjontaService,
             "cfg": cfg,
@@ -170,7 +171,7 @@ describe('Edit koulutus insert/edit/load', function() {
         expect(scope.model.suunniteltuKesto).toEqual(EMPTY_UI_MODEL); //arvo = 'kymmenen', koodi.uri = kesto_uri
         expect(scope.model.tunniste).toEqual('');
 
-        expect(scope.model.koulutusohjelma).toEqual(EMPTY_META_UI_MODEL);
+        expect(scope.model.koulutusohjelma).toEqual(EMPTY_META_UI_MODEL_KOULUTUOHJELMA);
         expect(scope.model.teemas).toEqual(EMPTY_META_UI_MODEL);
         expect(scope.model.opetuskielis).toEqual(EMPTY_META_UI_MODEL);
         expect(scope.model.pohjakoulutusvaatimukset).toEqual(EMPTY_META_UI_MODEL);
