@@ -136,7 +136,7 @@ public interface KoulutusResource {
      * @return
      */
     @GET
-    @Path("{oid}/koulutukset")
+    @Path("{oid}/hakukohteet")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<NimiJaOidRDTO> getHakukohteet(@PathParam("oid") String oid);
 
