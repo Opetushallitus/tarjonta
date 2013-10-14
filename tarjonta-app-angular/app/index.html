@@ -216,7 +216,7 @@
             //
             // Get current users authorisation info (/cas/myroles)
             //
-            console.log("** Loading authentication info; from: " + window.CONFIG.env.casUrl);
+            console.log("** Loading authentication info; from: ", window.CONFIG.env.casUrl);
             init_counter++;
             jQuery.ajax(window.CONFIG.env.casUrl, {
                 dataType: "json",
@@ -250,8 +250,10 @@
             //
             // Preloadt application localisation
             //
+            var localisationUrl = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
+            console.log("** Loading localisation info; from: ", localisationUrl);
             init_counter++;
-            jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "localisation", {
+            jQuery.ajax(localisationUrl, {
                 dataType: "json",
                 complete: function(xhr, status) {
                     window.CONFIG.env["tarjonta.localisations"] = xhr.responseJSON;

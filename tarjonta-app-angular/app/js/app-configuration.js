@@ -13,12 +13,6 @@
  * result value : "koulutuslaji_n"
  */
 
-/**
- * Contains application localisations as a list, added here just becase of tests!
- *
- * @type Array
- */
-var APP_LOCALISATION_DATA = APP_LOCALISATION_DATA || [];
 
 /*
  * Defined for unit tests.

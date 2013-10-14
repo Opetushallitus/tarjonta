@@ -35,35 +35,18 @@
 				 * "piirtää" organisaation dom puussa
 				 */
 				var redraw = function(org){
-					var orgOpen = org.open===true;
-
-					// 
+					// dom elementin id... 
 					var eid = angular.copy(org.oid).replace(/\./g,'-');
-				
-
+					
 					var template = drawChildren([org]);
 					var dom = $compile(template);
-
-					// console.log("scope:", scope);
-					if(orgOpen) {
-						//poista c-<oid>, päivitä o-<oid>
-						//console.log("opening org, template:" , drawChildren([org]));
-						//organisaatio auki
-						$("#c-" + eid).detach();
-						$("#o-" + eid).replaceWith( dom ($rootScope.scope));
-					} else {
-						//poista c-<oid>, päivitä o-<oid>
-						//console.log("closing org", org);
-						//organisaatio kiinni
-						$("#c-" + eid).detach();
-						$("#o-" + eid).replaceWith( dom ($rootScope.scope));
-					};
+					//poista c-<oid>, päivitä o-<oid>
+					//console.log("opening org, template:" , drawChildren([org]));
+					//organisaatio auki
+					$("#c-" + eid).detach();
+					$("#o-" + eid).replaceWith( dom ($rootScope.puut[treeId].scope));
 				};
 				
-				//Tämä on häkki, TODO korjaa, ainakin oma namespace
-				$rootScope.data = [];
-				$rootScope.selected=undefined;
-				$rootScope.scope = scope;
 
 				function getOrg(id, list) {
 //					console.log("data has:", list.length ," entries");
@@ -91,12 +74,12 @@
 //					console.log("toggle valittu!");
 
 //					console.log("id param:", id);
-					var org = getOrg(id, $rootScope.data);
+					var org = getOrg(id, $rootScope.puut[treeId].data);
 					//console.log("selected org:", org);
 					if(org.open===undefined){
 						org.open=true;
 					} else {
-						org.open=!org.open
+						org.open=!org.open;
 					};
 					
 					redraw(org);
@@ -107,12 +90,12 @@
 				 */
 				scope.selectOrg=function(oid){
 //					console.log("organisaatio valittu!", oid);
-					var current = $rootScope.selected;
+					var current = $rootScope.puut[treeId].selected;
 					
 //					console.log("vanha valinta", current);
 					if(current!==undefined) {
 //						console.log("etsitään vanhaa", current);
-						var org = getOrg(current, $rootScope.data);
+						var org = getOrg(current, $rootScope.puut[treeId].data);
 //						console.log("vanha:", org);
 						if(org!==undefined){
 							org.selected=false;
@@ -121,12 +104,14 @@
 						}
 					}
 //					console.log("etsitään uutta");
-					var org = getOrg(oid, $rootScope.data);
+					var org = getOrg(oid, $rootScope.puut[treeId].data);
 //					console.log("uusi:", org);
 
 					org.selected="true";
-					$rootScope.selected=oid;
+					$rootScope.puut[treeId].selected=oid;
 					redraw(org);
+					
+					//aseta valittu organisaatio scopeen jotta voidaan watchilla seurata kun organisaatio valitaan puusta
 					scope.organisaatio.currentNode=org;
 				};
 				
@@ -134,7 +119,8 @@
 				var bind = attrs.ng-bind;
 				
 				//tree id
-//				var treeId = attrs.treeId;
+				var treeId = attrs.treeId;
+				console.log("treeid:", treeId);
 			
 				//tree model
 				var treeModel = attrs.treeModel;
@@ -148,8 +134,6 @@
 				//children
 				var nodeChildren = attrs.nodeChildren || 'children';
 
-
-				
 				var drawChildren=function(children){
 
 					var orgToString = function(eid, oid, label, cssclass, selected){
@@ -162,12 +146,13 @@
 						var org = children[i];
 						var hasChildren = org[nodeChildren]!==undefined && org[nodeChildren].length>0;
 						var open = org.open===true;
-						var eid=angular.copy(org.oid).replace(/\./g,'-'); //element id millä node löydetään
+						var eid=angular.copy(org.oid).replace(/\./g,'-'); //element id millä oikea dom node löydetään
 						if(hasChildren) {
 							if(open) {
 								//auki
 								template = template + orgToString(eid, org.oid,org[nodeLabel], "expanded", org.selected);
-								template = template + "<div id=\"c-" + eid + "\" class='treeview'><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
+								//lapset
+								template = template + "<div id=\"c-" + eid + "\" class=\"treeview\"><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
 							} else {
 								//kiinni
 								template = template + orgToString(eid, org.oid,org[nodeLabel], "collapsed", org.selected);
@@ -176,19 +161,26 @@
 							//lehti
 							template = template + orgToString(eid, org.oid,org[nodeLabel], "normal", org.selected);
 						}
-						
 					};
 					}				
 					//console.log("template:", template);
 					return template;
 				};
 				
+				
+				//alusta tietorakenne
+				$rootScope.puut=$rootScope.puut||{};
+				$rootScope.puut[treeId]=$rootScope.puut[treeId]||{};
+				$rootScope.puut[treeId].data = [];
+				$rootScope.puut[treeId].selected=undefined;
+				$rootScope.puut[treeId].scope = scope;
+
 				/**
 				 * Watchi puun datalle
 				 */
 				scope.$watch(treeModel, function (newList, oldList) {
 //					console.log("hakutulos päivittyi!", newList);
-					$rootScope.data = newList;
+					$rootScope.puut[treeId].data = newList;
 //					var start = new Date().getTime();
 					element.html('');
 //					console.log(new Date().getTime()-start + " to clear old result");
@@ -203,55 +195,7 @@
 //					console.log(element);
 //					console.log(new Date().getTime()-start + " to append dom, from my pow the tree is now done");
 					});
-				//console.log("scope:" , scope);
-				
-				//tree template
-//				var template = "<li>foo</li>"; 
-//					'<ul>' + 
-//						'<li data-ng-repeat="node in ' + treeModel + '">' + 
-//							'<i class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' + 
-//							'<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' + 
-//							'<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i> ' + 
-//							'<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span>' + 
-//							'<div data-ng-hide="node.collapsed" data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id=' + nodeId + ' data-node-label=' + nodeLabel + ' data-node-children=' + nodeChildren + '></div>' + 
-//						'</li>' + 
-//					'</ul>'; 
 
-				//check tree id, tree model
-//				if( treeId && treeModel ) {
-//
-//					//root node
-//					if( attrs.angularTreeview ) {
-//					
-//						//create tree object if not exists
-//						scope[treeId] = scope[treeId] || {};
-//
-//						//if node head clicks,
-//						scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function( selectedNode ){
-//
-//							//Collapse or Expand
-//							selectedNode.collapsed = !selectedNode.collapsed;
-//						};
-//
-//						//if node label clicks,
-//						scope[treeId].selectNodeLabel = scope[treeId].selectNodeLabel || function( selectedNode ){
-//
-//							//remove highlight from previous node
-//							if( scope[treeId].currentNode && scope[treeId].currentNode.selected ) {
-//								scope[treeId].currentNode.selected = undefined;
-//							}
-//
-//							//set highlight to selected node
-//							selectedNode.selected = 'selected';
-//
-//							//set currentNode
-//							scope[treeId].currentNode = selectedNode;
-//						};
-//					}
-//
-//					//Rendering template.
-//					//element.html('').append( $compile( template )( scope ) );
-//				}
 			}
 		};
 	}]);
