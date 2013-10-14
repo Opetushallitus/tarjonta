@@ -53,7 +53,7 @@ public class HakukohdeRDTO extends BaseRDTO {
 
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
-    private List<HakukohdeLiiteDTO> hakukohteenLiitteet;
+    private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
 
     private List<ValintakoeRDTO> hakukohteenValintakokeet;
 
@@ -61,7 +61,6 @@ public class HakukohdeRDTO extends BaseRDTO {
 
     private List<ValintakoeRDTO> valintakokeet;
 
-    private List<HakukohdeLiiteDTO> liitteet;
 
 
     public String getHakukohteenNimi() {
@@ -239,14 +238,14 @@ public class HakukohdeRDTO extends BaseRDTO {
         this.kaytetaanHakukohdekohtaistaHakuaikaa = kaytetaanHakukohdekohtaistaHakuaikaa;
     }
 
-    public List<HakukohdeLiiteDTO> getHakukohteenLiitteet() {
+    public List<HakukohdeLiiteRDTO> getHakukohteenLiitteet() {
         if (hakukohteenLiitteet == null) {
-            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteDTO>();
+            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteRDTO>();
         }
         return hakukohteenLiitteet;
     }
 
-    public void setHakukohteenLiitteet(List<HakukohdeLiiteDTO> hakukohteenLiitteet) {
+    public void setHakukohteenLiitteet(List<HakukohdeLiiteRDTO> hakukohteenLiitteet) {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 
@@ -302,13 +301,6 @@ public class HakukohdeRDTO extends BaseRDTO {
         this.valintakokeet = valintakokeet;
     }
 
-    public List<HakukohdeLiiteDTO> getLiitteet() {
-        return liitteet;
-    }
-
-    public void setLiitteet(List<HakukohdeLiiteDTO> liitteet) {
-        this.liitteet = liitteet;
-    }
 
     public String getHakukohteenNimiUri() {
         return hakukohteenNimiUri;

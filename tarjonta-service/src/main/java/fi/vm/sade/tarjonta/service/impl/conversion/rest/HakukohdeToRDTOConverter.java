@@ -4,10 +4,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +63,8 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
 
         if (hakukohde.getLiites() != null) {
-            hakukohdeRDTO.setLiitteet(convertLiitteet(hakukohde.getLiites()));
+            hakukohdeRDTO.setHakukohteenLiitteet(convertLiitteet(hakukohde.getLiites()));
+
         }
 
         if (hakukohde.getValintakoes() != null) {
@@ -129,11 +128,24 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
     }
 
 
-    private List<HakukohdeLiiteDTO> convertLiitteet(Set<HakukohdeLiite> s) {
-        List<HakukohdeLiiteDTO> result = new ArrayList<HakukohdeLiiteDTO>();
+
+    private List<HakukohdeLiiteRDTO> convertLiitteet(Set<HakukohdeLiite> s) {
+        List<HakukohdeLiiteRDTO> result = new ArrayList<HakukohdeLiiteRDTO>();
 
         for (HakukohdeLiite hakukohdeLiite : s) {
-            result.add(getConversionService().convert(hakukohdeLiite, HakukohdeLiiteDTO.class));
+            HakukohdeLiiteRDTO hakukohdeLiiteRDTO = new HakukohdeLiiteRDTO();
+
+            hakukohdeLiiteRDTO.setErapaiva(hakukohdeLiite.getErapaiva());
+            hakukohdeLiiteRDTO.setLiitteenTyyppiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohdeLiite.getLiitetyyppi()));
+            hakukohdeLiiteRDTO.setLiitteenTyyppiKoodistoNimi(hakukohdeLiite.getLiitteenTyyppiKoodistoNimi());
+            hakukohdeLiiteRDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
+            if (hakukohdeLiite.getToimitusosoite() != null) {
+                hakukohdeLiiteRDTO.setToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohdeLiite.getToimitusosoite()));
+            }
+            hakukohdeLiiteRDTO.setKuvaus(convertMonikielinenTekstiToTekstiDTOs(hakukohdeLiite.getKuvaus()));
+
+
+            result.add(hakukohdeLiiteRDTO);
         }
 
         return result.isEmpty() ? null : result;
