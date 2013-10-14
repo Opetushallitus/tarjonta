@@ -218,8 +218,25 @@ public class TestTarjontaLuoAineistoa {
         doit.popupItemClick(driver, "Oppisopimuskoulutus");
         doit.sendInputPlusX(driver, "Suunniteltu kesto", "Kuukausi", 150); // Valitse aikayksikko
         doit.popupItemClick(driver, "Kuukausi");
+
         doit.sendInput(driver, "Opetuskieli", "suomi");
-        doit.popupItemClick(driver, "suomi");
+        doit.sendInput(driver, "Opetuskieli", "suomi");
+        doit.sendInput(driver, "Opetuskieli", "ztkieli" + yyyymmdd.substring(0,7));
+        try {
+			Assert.assertNotNull("Running LuoKoulutusAMK Tallenna ei toimi."
+					, doit.textElement(driver, "ztkieli" + yyyymmdd));
+	        doit.popupItemClick(driver, "ztkieli" + yyyymmdd);
+		} catch (Exception e) {
+	        doit.sendInput(driver, "Opetuskieli", "ztkieli");
+			try {
+				Assert.assertNotNull("Running LuoKoulutusAMK Tallenna ei toimi."
+						, doit.textElement(driver, "ztkieli201"));
+				doit.popupItemClick(driver, "ztkieli201");
+			} catch (Exception e1) {
+		        doit.sendInput(driver, "Opetuskieli", "suomi");
+		        doit.popupItemClick(driver, "suomi");
+			}
+		}
         
         doit.textClickLast(driver, "Tallenna valmiina");
         Assert.assertNotNull("Running LuoKoulutusAMK Tallenna ei toimi."
