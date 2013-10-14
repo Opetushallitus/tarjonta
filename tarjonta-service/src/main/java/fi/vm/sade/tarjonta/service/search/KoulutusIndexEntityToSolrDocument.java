@@ -20,7 +20,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
@@ -187,7 +187,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_SV));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_EN));
-        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KAUSI_KOODI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KAUSI_URI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(VUOSI_KOODI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_SV));

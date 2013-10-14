@@ -251,7 +251,7 @@ public class TarjontaSearchService {
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
         }
-        addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
+        addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_URI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
         queryParts.clear();
     }
