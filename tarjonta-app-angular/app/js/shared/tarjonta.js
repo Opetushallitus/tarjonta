@@ -6,6 +6,9 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
+    	if (txt==undefined || txt==null) {
+    		return txt;
+    	}
         var userLocale = LocalisationService.getLocale();
         if (txt[userLocale]) {
             return txt[userLocale];
@@ -131,10 +134,23 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return ret.promise;
     };
     
+    function cleanAndLocalizeArray(arr) {
+    	var ret = [];
+    	for (var i in arr) {
+    		if (arr[i].oid) {
+    			ret[i] = {
+					oid: arr[i].oid,
+					nimi: localize(arr[i].nimi)
+    			};
+    		}
+    	}
+    	return ret;
+    }
+    
     dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/"+oid+"/hakukohteet").query({}, function(res){
-        	ret.resolve(res);
+        	ret.resolve(cleanAndLocalizeArray(res));
         });
         return ret.promise;
     }
@@ -142,7 +158,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/"+oid+"/koulutukset").query({}, function(res){
-        	ret.resolve(res);
+        	ret.resolve(cleanAndLocalizeArray(res));
         });
         return ret.promise;
     }
