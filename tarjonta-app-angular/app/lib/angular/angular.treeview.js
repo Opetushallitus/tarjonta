@@ -167,6 +167,7 @@
 							if(open) {
 								//auki
 								template = template + orgToString(eid, org.oid,org[nodeLabel], "expanded", org.selected);
+								//lapset
 								template = template + "<div id=\"c-" + eid + "\" class='treeview'><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
 							} else {
 								//kiinni
