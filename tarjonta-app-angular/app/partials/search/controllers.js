@@ -637,8 +637,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var base = $scope.selectedRow.prefix=="koulutus" ? "hakukohde" : "koulutus";
     	
     	var ret = $scope.selectedRow.prefix=="koulutus"
-    		? TarjontaService.getKoulutuksenHakukohteet()
-			: TarjontaService.getHakukohteenKoulutukset();
+    		? TarjontaService.getKoulutuksenHakukohteet($scope.selectedRow.oid)
+			: TarjontaService.getHakukohteenKoulutukset($scope.selectedRow.oid);
     	
     	ret.then(function(ret){
     		for (var i in ret) {

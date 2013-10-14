@@ -131,15 +131,19 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return ret.promise;
     };
     
-    dataFactory.getKoulutuksenHakukohteet = function() {
+    dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
-        ret.resolve([]); // TODO
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/"+oid+"/hakukohteet").query({}, function(res){
+        	ret.resolve(res);
+        });
         return ret.promise;
     }
     
-    dataFactory.getHakukohteenKoulutukset = function() {
+    dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
-        ret.resolve([]); // TODO
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/"+oid+"/koulutukset").query({}, function(res){
+        	ret.resolve(res);
+        });
         return ret.promise;
     }
     

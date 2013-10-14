@@ -11,9 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.PathParam;
 
-import fi.vm.sade.tarjonta.service.resources.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +37,23 @@ import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -481,13 +491,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 	
 	@Override
 	public List<NimiJaOidRDTO> getKoulutukset(String oid) {
+		KoulutuksetKysely ks = new KoulutuksetKysely();
+		ks.getHakukohdeOids().add(oid);
+
+		KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
     	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-    	Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
-    	if (hk!=null) {
-        	for (KoulutusmoduuliToteutus kmt : hk.getKoulutusmoduuliToteutuses()) {
-        		ret.add(new NimiJaOidRDTO(BaseRDTOConverter.convertToMap(kmt.getKoulutusmoduuli().getNimi(), tarjontaKoodistoHelper), kmt.getOid()));
-        	}
-    	}
+		for (KoulutusPerustieto kp : kv.getKoulutukset()) {
+			ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
+		}
     	return ret;
 	}
 	
