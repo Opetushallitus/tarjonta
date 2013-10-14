@@ -54,6 +54,9 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @Embedded
     private Osoite toimitusosoite;
 
+    @Column(name="kieli")
+    private String kieli;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date erapaiva;
 
@@ -137,6 +140,14 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
+    }
+
+    public String getKieli() {
+        return kieli;
+    }
+
+    public void setKieli(String kieli) {
+        this.kieli = kieli;
     }
 }
 
