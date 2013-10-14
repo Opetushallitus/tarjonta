@@ -978,12 +978,15 @@ public class TarjontaUIHelper {
 
         //olemassaolevaa tulkiten - koulutuksen nimi on 
         // 1. koulutusohjelmakoodi + pohjakoulutuskoodi
-        // 2. koulutuskoodi + pohjakoulutuskoodi
+        // 2. "nimi"
+        // 3. koulutuskoodi + pohjakoulutuskoodi
         final Locale locale = I18N.getLocale();
         final String pkVaatimus = curKoulutus.getPohjakoulutusvaatimus()!=null?", " + TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getPohjakoulutusvaatimus().getNimi()):"";
         
         if (curKoulutus.getKoulutusohjelmakoodi() != null) {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutusohjelmakoodi().getNimi()) + pkVaatimus;
+        } else if(curKoulutus.getNimi()!=null) {
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getNimi());
         } else if (curKoulutus.getKoulutuskoodi() != null) {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutuskoodi().getNimi()) + pkVaatimus;
         }
