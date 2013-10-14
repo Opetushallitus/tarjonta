@@ -124,7 +124,7 @@ public class HakukohdePerustieto implements Serializable
         return koulutuksenAlkamiskausi;
     }
 
-    public void setKoulutuksenAlkamiskausiUri(KoodistoKoodi value) {
+    public void setKoulutuksenAlkamiskausi(KoodistoKoodi value) {
         this.koulutuksenAlkamiskausi = value;
     }
 

@@ -44,7 +44,7 @@ public class SolrFields {
         protected static final String TUTKINTONIMIKE_EN = "tutkintonimikeen_t";                   //this is used in search
         protected static final String TUTKINTONIMIKE_URI = "tutkintonimikeuri_s";             //this is used in search
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
-        protected static final String KAUSI_KOODI = "kausikoodi_s";                                  //this is used in search
+        protected static final String KAUSI_URI = "kausiuri_s";                                  //this is used in search
         protected static final String KAUSI ="kausi_s";
         protected static final String TILA = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
@@ -76,7 +76,6 @@ public class SolrFields {
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_EN = "pohjakoulutusvaatimussv_s";
         protected static final String POHJAKOULUTUSVAATIMUS_SV = "pohjakoulutusvaatimusen_s";
-        protected static final String KAUSI_KOODI= "kausikoodi_s";
         protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
         protected static final String KOULUTUSLAJI_EN = "koulutuslajen_s";   

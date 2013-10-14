@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
@@ -243,7 +243,7 @@ public class IndexDataUtils {
            add(doc, KAUSI_SV, metadata.getNimi());
            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
            add(doc, KAUSI_EN, metadata.getNimi());
-           add(doc, KAUSI_KOODI,
+           add(doc, KAUSI_URI,
                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
        } 
    }
