@@ -63,6 +63,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
@@ -135,6 +136,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
     @PropertyId("suunniteltuKesto")
     private TextField tfSuunniteltuKesto;
+
     /*
      * Planned duration of the education, or something like that...
      * A type of time duration .
@@ -142,6 +144,22 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @NotNull(message = "{validation.Koulutus.suunniteltuKestoTyyppi.notNull}")
     @PropertyId("suunniteltuKestoTyyppi")
     private KoodistoComponent kcSuunniteltuKestoTyyppi;
+    
+    /*
+     * This field is visible to valmentava ja kuntouttava opetus only
+     */
+    @NotNull(message = "{validation.Koulutus.opintojenLaajuus.notNull}")
+    @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
+    @PropertyId("opintojenLaajuus")
+    private TextField tfOpintojenLaajuus;
+    
+    /* 
+     * This field is visible to valmentava ja kuntouttava opetus only
+     */
+    @NotNull(message = "{validation.Koulutus.opintojenLaajuusyksikko.notNull}")
+    @PropertyId("opintojenLaajuusyksikko")
+    private KoodistoComponent kcOpintojenLaajuusyksikko;
+    
     /*
      * Ammatillinen:
      * A list of key words like Lähiopetus, Etäopiskelu, Verkko-opiskelu etc.
@@ -195,6 +213,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusohjelmanTavoitteet;
     private TarjontaDialogWindow noKoulutusDialog;
     private transient UiBuilder uiBuilder;
+    private boolean isValmentavaOpetus = false;
 
     public EditKoulutusPerustiedotFormView() {
     }
@@ -206,6 +225,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
+        isValmentavaOpetus = koulutusModel.getKoulutuksenTyyppi() != null 
+                && koulutusModel.getKoulutuksenTyyppi().getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
         initializeDataContainers();
@@ -267,6 +288,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     reload();
                 }
             });
+            
         }
 
         presenter.loadKoulutuskoodit();
@@ -293,6 +315,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         opintoala = buildLabel(this, "opintoala");
         tutkintonimike = buildLabel(this, "tutkintonimike");
         opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
+        opintojenLaajuus.setVisible(!isValmentavaOpetus);
         buildEmptyGridRow(this);
         tavoitteet = buildLabel(this, "tavoitteet");
         koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
@@ -300,6 +323,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
 
+        if (isValmentavaOpetus) {
+            buildGridOpintojenLaajuusRow(this, "opintojenLaajuus");
+        }
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
         buildGridKestoRow(this, "SuunniteltuKesto");
         buildGridOpetuskieliRow(this, "Opetuskieli");
@@ -317,8 +343,25 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         //activate all property annotation validations
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
 
-        //disable or enable reguired validations
-        //showOnlySelectedFormComponents();
+    }
+
+    private void buildGridOpintojenLaajuusRow(GridLayout grid, String propertyKey) {
+        gridLabelMidAlign(grid, propertyKey);
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        tfOpintojenLaajuus = UiUtil.textField(hl, null, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        tfOpintojenLaajuus.setRequired(true);
+        tfOpintojenLaajuus.setImmediate(true);
+        tfOpintojenLaajuus.setValidationVisible(true);
+
+        ComboBox comboBox = new ComboBox();
+        comboBox.setNullSelectionAllowed(false);
+        kcOpintojenLaajuusyksikko = uiBuilder.koodistoComboBox(hl, KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
+        kcOpintojenLaajuusyksikko.setImmediate(true);
+        kcOpintojenLaajuusyksikko.setCaptionFormatter(koodiNimiFormatter);
+        grid.addComponent(hl);
+        grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
     /**
@@ -782,9 +825,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 closeNoKoulutusDialog();
             }
         });
-        noKoulutusDialog.setWidth("120px");
-        noKoulutusDialog.setHeight("60px");
+        
+        noKoulutusView.setWidth("120px");
+        noKoulutusView.setHeight("60px");
+        
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
+       
         getWindow().addWindow(noKoulutusDialog);
     }
 

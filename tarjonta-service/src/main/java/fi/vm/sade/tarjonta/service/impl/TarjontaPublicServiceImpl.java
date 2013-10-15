@@ -684,6 +684,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     
     @Override
     public HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely) {
+        System.out.println("Koulutustyyppi set: " + kysely.getKoulutustyyppi());
         HaeKaikkiKoulutusmoduulitVastausTyyppi vastaus = new HaeKaikkiKoulutusmoduulitVastausTyyppi();
         
         SearchCriteria criteria = new SearchCriteria();
@@ -694,10 +695,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setOppilaitostyyppis(kysely.getOppilaitostyyppiUris());
         
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
+            System.out.println("Getting alamoduuleja");
             if (!curKomo.getAlamoduuliList().isEmpty()) {
                 addChildModulesToVastaus(curKomo, vastaus.getKoulutusmoduuliTulos());
             }
         }
+        System.out.println("Vastaus size: " + vastaus.getKoulutusmoduuliTulos().size());
         return vastaus;
     }
     

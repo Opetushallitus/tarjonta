@@ -132,7 +132,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
                 if (koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer
                         && (((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri())
-                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri()))
                         && pohjakoulutusvaatimusCombo.getValue() == null) {
                     errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
                     return;
@@ -152,8 +153,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                             presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                             logger.info("lukiokoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
-                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) || contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS)) {
-                            presenter.showKoulutusEditView(selectedOrgs.values(), ((KoodiContainer) pohjakoulutusvaatimusCombo.getValue()).getKoodiType().getKoodiUri());
+                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) 
+                                || contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS) 
+                                || contains(type, Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS)) {
+                            presenter.showKoulutusEditView(selectedOrgs.values(), ((KoodiContainer) pohjakoulutusvaatimusCombo.getValue()).getKoodiType().getKoodiUri(), type);
                             logger.info("ammatillinen peruskoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
                         } else {
@@ -250,7 +253,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         }
         String koodiUri = ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri();
         
-        boolean isEnabled = koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri());
+        boolean isEnabled = koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
+                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()) 
+                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
         
         pohjakoulutusvaatimusLbl.setVisible(isEnabled);
         pohjakoulutusvaatimusCombo.setVisible(isEnabled);

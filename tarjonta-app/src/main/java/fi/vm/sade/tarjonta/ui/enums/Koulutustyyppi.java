@@ -25,7 +25,8 @@ public enum Koulutustyyppi {
     TOINEN_ASTE_LUKIO("koulutustyyppi_2"),
     TOINEN_ASTE_AMMATILLINEN_KOULUTUS("koulutustyyppi_1"),
     KORKEAKOULU("koulutustyyppi_3"),
-    TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS("koulutustyyppi_4");
+    TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS("koulutustyyppi_4"),
+    TOINEN_ASTE_VALMENTAVA_KOULUTUS("koulutustyyppi_5");
     private String koulutustyyppiUri;
 
     Koulutustyyppi(String koulutustyyppiUri) {

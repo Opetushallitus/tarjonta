@@ -111,6 +111,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -132,6 +133,7 @@ import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
@@ -798,12 +800,15 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         getTarjoaja().addSelectedOrganisations(orgs);
     }
 
-    public void showKoulutusEditView(Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusvaatimusUri) {
+    public void showKoulutusEditView(Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusvaatimusUri, KoodiType type) {
         getTarjoaja().setSelectedResultRowOrganisationOid(null); //clear tarjoaja model
         getTarjoaja().addSelectedOrganisations(orgs); //add orgs to rajoaja model
 
         getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         this.getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusvaatimusUri);
+        KoodiModel koulutuksenTyyppi = new KoodiModel();
+        koulutuksenTyyppi.setKoodi(type.getKoodiUri());
+        this.getModel().getKoulutusPerustiedotModel().setKoulutuksenTyyppi(koulutuksenTyyppi);
         getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
         readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
@@ -1874,7 +1879,20 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     @SuppressWarnings("unchecked")
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
-        kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        KoodiModel koulutuksenTyyppi = getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi() ;
+        /*System.out.println("Koulutuksen tyyppi: " + koulutuksenTyyppi.getKoodi());
+        System.out.println("Koulutuksen tyyppi gold standard: " + Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
+        System.out.println("Comparison result: " + (koulutuksenTyyppi != null*/ 
+                && koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())));
+        if (koulutuksenTyyppi == null 
+                || (koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
+                        || koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))) {
+            kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        } else if (koulutuksenTyyppi != null 
+                && koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())) {
+            kysely.setKoulutustyyppi(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        }
+        
         //TODO: fix this
         //kysely.getOppilaitostyyppiUris().addAll(getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
@@ -1895,8 +1913,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
 
         //koodisto service search result remapped to UI model objects.
-        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
-        Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
+        List<KoulutuskoodiModel> listaaKoulutuskoodit = new ArrayList<KoulutuskoodiModel>();
+        if (!uris.isEmpty()) {
+            listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
+            Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
+        }
 
         model.getKoulutuskoodit().clear();
         model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);

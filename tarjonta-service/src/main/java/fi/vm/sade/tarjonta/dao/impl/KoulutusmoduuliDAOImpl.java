@@ -143,10 +143,12 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (whereExpr == null) {
+            System.out.println("Empty search");
             return from(moduuli).
                     leftJoin(moduuli.nimi, nimi).fetch().
                     list(moduuli);
         } else {
+            System.out.println("Non-empty search");
             return from(moduuli).
                     where(whereExpr).
                     leftJoin(moduuli.nimi, nimi).fetch().
