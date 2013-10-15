@@ -1,11 +1,18 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid']);
 
-app.controller('BaseEditController', ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-    function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto, $modal) {
+app.controller('BaseEditController',
+    ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService',
+     '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
+     function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto, $modal) {
         $log.info("BaseEditController()");
 
-        $scope.model = {
+        // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
+         $scope.model = {
+
+         };
+
+        $scope.xmodel = {
             routeParams: $routeParams,
             collapse: {
                 model: true
@@ -76,7 +83,7 @@ app.controller('BaseEditController', ['$scope', '$location', '$log', 'TarjontaSe
         };
 
         /**
-         * Save koulutus data to tarjonta-service database. 
+         * Save koulutus data to tarjonta-service database.
          * TODO: strict data validation, exception handling and optimistic locking
          */
         $scope.save = function() {
@@ -168,7 +175,7 @@ app.controller('BaseEditController', ['$scope', '$location', '$log', 'TarjontaSe
 
         /**
          * Handle data load for koodisto data combo boxes.
-         * 
+         *
          * @param {type} uiModel
          * @param {type} apiModel
          */
@@ -235,7 +242,7 @@ app.controller('BaseEditController', ['$scope', '$location', '$log', 'TarjontaSe
             if (converter.isNull(apiModel)) {
                 throw 'API model must be object, or empty object';
             }
-            //organisation OID selector logic : update -> model oid, create -> param oid 
+            //organisation OID selector logic : update -> model oid, create -> param oid
             var orgOid = $scope.getOrganisaatioOid(apiModel);
 
             //fetch org name and OID from Organisation service
@@ -259,7 +266,7 @@ app.controller('BaseEditController', ['$scope', '$location', '$log', 'TarjontaSe
         };
 
 
-        //add factory functions to ui template 
+        //add factory functions to ui template
         $scope.searchKoodiByKoodiUri = converter.searchKoodiByKoodiUri;
         $scope.removeKoodiByKoodiUri = converter.removeKoodiByKoodiUri;
 

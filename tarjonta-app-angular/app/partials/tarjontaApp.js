@@ -11,6 +11,7 @@ angular.module('app.kk',
             'app.kk.services',
             'app.edit.ctrl',
             'app.review.ctrl',
+            'app.hakukohde.ctrl',
             'ui.bootstrap',
             'ngRoute',
             'config',
@@ -108,7 +109,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 }
             }
         })
-        
+
                 .when('/koulutus/edit/:org/:koulutuskoodi', {
             action: "koulutus.edit",
             controller: 'KoulutusRoutingController',
@@ -119,12 +120,31 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 }
             }
         })
-        
+
                 .when('/hakukohde/:id', {
-            action: "xxx.xxx.xxx"
+            action: "hakukohde.review",
+            controller: 'HakukohdeRoutingController',
+            resolve: {
+                hakukohdex: function(TarjontaService, $log, $route) {
+                    $log.info("/hakukohde/ID", $route);
+                    return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                }
+            }
         })
                 .when('/hakukohde/:id/edit', {
-            action: "xxx.xxx.xxx"
+            action: "hakukohde.edit",
+            controller: 'HakukohdeRoutingController',
+            resolve: {
+                hakukohdex: function(TarjontaService, $log, $route) {
+                    $log.info("/hakukohde/ID", $route);
+                    if ("new" === $route.current.params.id) {
+                        // TODO how to handle the  creation phase?
+                        return {this_is_new: new Date()};
+                    } else {
+                      return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                    }
+                }
+            }
         })
 
 
