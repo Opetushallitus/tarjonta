@@ -139,7 +139,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     $log.info("/hakukohde/ID", $route);
                     if ("new" === $route.current.params.id) {
                         // TODO how to handle the  creation phase?
-                        return {};
+                        return {this_is_new: new Date()};
                     } else {
                       return TarjontaService.getHakukohde({oid: $route.current.params.id});
                     }
