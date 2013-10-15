@@ -78,7 +78,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class PublicationDataServiceImpl implements PublicationDataService {
 
     private static final Logger log = LoggerFactory.getLogger(PublicationDataServiceImpl.class);
-    
     @Autowired(required = true)
     private EventSender eventSender;
     @Autowired
@@ -121,7 +120,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 //leftJoin(komo.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
                 leftJoin(komo.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
                 leftJoin(komo.sisaltyvyysList, sl).fetch().leftJoin(sl.alamoduuliList).fetch().
-                
                 where(criteria).
                 distinct().list(komoto);
     }
@@ -348,8 +346,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 if (TarjontaTila.JULKAISTU.equals(toStatus)) {
                     updateAllStatusesRelatedToHaku(oids, toStatus, TarjontaTila.VALMIS);
                 } /*else if (TarjontaTila.PERUTTU.equals(toStatus)) {
-                    updateAllStatusesRelatedToHakuCancel(oids, TarjontaTila.cancellableValues());
-                }*/
+                 updateAllStatusesRelatedToHakuCancel(oids, TarjontaTila.cancellableValues());
+                 }*/
 
                 break;
             case HAKUKOHDE:
@@ -398,9 +396,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @return
      */
     @Override
-     public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
+    public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        final BooleanExpression criteria = hakukohde.haku.oid.in(hakuOids);
+        final BooleanExpression criteria = hakukohde.haku.oid.in(hakuOids).and(hakukohde.tila.in(requiredStatus));
 
         return from(hakukohde).where(criteria).distinct().list(hakukohde);
     }
@@ -454,15 +452,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @param requiredStatus
      */
     private void updateAllStatusesRelatedToHaku(final Collection<String> hakuOids, final TarjontaTila toStatus, final TarjontaTila... requiredStatus) {
+        log.error("updateAllStatusesRelatedToHaku");
         List<Hakukohde> result = searchHakukohteetByHakuOid(hakuOids, requiredStatus);
 
         for (Hakukohde hakukohde : result) {
             hakukohde.setTila(toStatus);
 
             for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+                log.error("updateAllStatusesRelatedToHaku {}", komoto.getOid());
                 komoto.setTila(toStatus);
                 updateParentKomotoStatus(komoto, toStatus);
-
             }
         }
     }

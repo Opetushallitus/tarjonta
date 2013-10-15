@@ -318,8 +318,8 @@ public class PublicationDataServiceImplTest {
         assertEquals(1, hakukohteet.size());
         assertEquals(komoto1.getOid(), hakukohteet.get(0).getKoulutusmoduuliToteutuses().iterator().next().getOid());
 
-//        hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
-//        assertEquals(0, hakukohteet.size());
+        hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
+        assertEquals(0, hakukohteet.size());
     }
 
     @Test
@@ -340,6 +340,8 @@ public class PublicationDataServiceImplTest {
         //partial publish - only the haku is published
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS,TarjontaTila.VALMIS,TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
+       
+        //koulutusohjelma not checked
         //check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
     }
 
