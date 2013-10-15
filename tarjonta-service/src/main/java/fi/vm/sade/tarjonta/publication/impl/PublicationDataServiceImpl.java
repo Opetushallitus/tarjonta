@@ -397,19 +397,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @param requiredStatus
      * @return
      */
-    public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
+    @Override
+     public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final BooleanExpression criteria = hakukohde.haku.oid.in(hakuOids);
 
-        final BooleanExpression criteria =
-                hakukohde.tila.in(requiredStatus).
-                and(hakukohde.haku.oid.in(hakuOids)).
-                and(hakukohde.koulutusmoduuliToteutuses.isNotEmpty().
-                and(hakukohde.koulutusmoduuliToteutuses.any().tila.in(requiredStatus)));
-
-        return from(hakukohde).
-                leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
-                where(criteria).
-                distinct().list(hakukohde);
+        return from(hakukohde).where(criteria).distinct().list(hakukohde);
     }
 
     /**
@@ -420,6 +413,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @param hakukohdeRequiredStatus
      * @return
      */
+    @Override
     public List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus) {
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
