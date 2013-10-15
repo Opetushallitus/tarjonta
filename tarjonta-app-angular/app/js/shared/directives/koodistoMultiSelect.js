@@ -51,7 +51,9 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
+            allkoodis : "=",
             parentkoodiuri : "=",
+            removearvocallback : "=",
             isalakoodi : "=",
             onchangecallback : "="
 
@@ -88,6 +90,9 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                         var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                         koodisPromise.then(function(koodisParam){
                             $scope.koodis = koodisParam;
+                            angular.forEach(koodisParam,function(koodi){
+                                $scope.allKoodis.push(koodi);
+                            });
                         });
                     }
                 }
@@ -97,10 +102,16 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                 var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                 koodisPromise.then(function(koodisParam){
                     $scope.koodis = koodisParam;
+                    angular.forEach(koodisParam,function(koodi){
+                        if ($scope.allkoodis !== undefined) {
+                            $scope.allkoodis.push(koodi);
+
+                        }
+                    });
                    //Check if 'client' has given uris that need to be selected
                     if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
                         angular.forEach($scope.koodiuris,function(koodiURI){
-
+                            console.log('Trying to find koodi with uri: ', koodiURI);
                             var foundKoodi = findKoodiWithUri($scope.koodis,koodiURI);
 
                             $scope.selectedkoodiuris.push(foundKoodi);
@@ -166,6 +177,10 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                 var specifiedElementIndx =  $scope.koodiuris.indexOf(selectedValue);
                 $scope.koodiuris.splice(specifiedElementIndx,1);
 
+                if ($scope.removearvocallback !== undefined) {
+                    $scope.removearvocallback(selectedValue.koodiUri);
+                }
+
                 console.log('Removed element : ', selectedValue.koodiUri);
                 console.log('Remaining: ', $scope.koodiuris);
             };
@@ -200,9 +215,8 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                 $log.info('Koodi uris');
                 $log.info($scope.koodiuris);
                 if ($scope.onchangecallback !== undefined) {
-                    $log.info('Calling onchangecallback');
 
-                    $scope.onchangecallback($scope.koodiuris);
+                    $scope.onchangecallback($scope.koodiuri);
 
                 } else {
                     $log.info('No onchangecallback defined');

@@ -33,6 +33,10 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
 
         }
 
+        if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
+           hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToTekstiDTOs(hakukohde.getHakukohdeMonikielinenNimi()));
+        }
+
         for (String hakukelpoisuusVaatimus:hakukohde.getHakukelpoisuusVaatimukset()) {
             hakukohdeRDTO.getHakukelpoisuusvaatimusUris().add(checkAndRemoveForEmbeddedVersionInUri(hakukelpoisuusVaatimus));
         }
@@ -51,6 +55,15 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         if (hakukohde.getYlinValintaPistemaara() != null) {
             hakukohdeRDTO.setYlinValintapistemaara(hakukohde.getYlinValintaPistemaara());
         }
+
+        if (hakukohde.getHakuaikaAlkuPvm() != null) {
+            hakukohdeRDTO.setHakuaikaAlkuPvm(hakukohde.getHakuaikaAlkuPvm());
+        }
+
+        if (hakukohde.getHakuaikaLoppuPvm() != null) {
+            hakukohdeRDTO.setHakuaikaLoppuPvm(hakukohde.getHakuaikaLoppuPvm());
+        }
+
         hakukohdeRDTO.setSahkoinenToimitusOsoite(hakukohde.getSahkoinenToimitusOsoite());
         hakukohdeRDTO.setSoraKuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getSoraKuvausKoodiUri()));
         hakukohdeRDTO.setTila(hakukohde.getTila().name());
