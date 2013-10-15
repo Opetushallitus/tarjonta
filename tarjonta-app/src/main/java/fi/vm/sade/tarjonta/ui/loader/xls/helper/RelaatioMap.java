@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.helper;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -30,9 +31,10 @@ public class RelaatioMap extends AbstractKeyMap<GenericRow> {
     private static final Logger log = LoggerFactory.getLogger(RelaatioMap.class);
     private int index = 1;
 
-    public RelaatioMap(Collection<GenericRow> dtos) {
+    public RelaatioMap(Collection<GenericRow> dtos, boolean useRelations) {
         super();
 
+        Preconditions.checkNotNull(dtos, "Collection of GenericRow objects cannot be null.");
         log.info("Row item count : {}", dtos.size());
 
         for (GenericRow row : dtos) {
@@ -41,18 +43,21 @@ public class RelaatioMap extends AbstractKeyMap<GenericRow> {
             }
             final String relation = row.getRelaatioKoodiarvo();
 
-            if (relation == null || relation.isEmpty()) {
-                throw new RuntimeException("Koulutusohjelma / lukiolinja cannot be null! Row number : " + index + ", object : " + row);
-            }
+            if (useRelations) {
+                if (relation == null || relation.isEmpty()) {
+                    throw new RuntimeException("Koulutusohjelma / lukiolinja cannot be null! Row number : " + index + ", object : " + row);
+                }
 
-            if (this.containsKey(relation)) {
-                throw new RuntimeException("Key already exists, key '" + relation + "'");
-            }
+                if (this.containsKey(relation)) {
+                    throw new RuntimeException("Key already exists, key '" + relation + "'");
+                }
 
-            if (relation.contains(".")) {
-                throw new RuntimeException("An invalid character was found in relation key : '" + relation + "'");
+                if (relation.contains(".")) {
+                    throw new RuntimeException("An invalid character was found in relation key : '" + relation + "'");
+                }
+            } else {
+                Preconditions.checkNotNull(relation != null, "No data relation allowed.");
             }
-
             this.put(relation, row);
             index++;
         }

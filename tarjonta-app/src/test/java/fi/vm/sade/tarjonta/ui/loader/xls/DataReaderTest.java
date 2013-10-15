@@ -28,16 +28,36 @@ import static org.junit.Assert.*;
  */
 public class DataReaderTest {
 
-    private Set<ExcelMigrationDTO> dtos;
+    private Set<ExcelMigrationDTO> parnetkomosWithChildsDtos;
+    private Set<ExcelMigrationDTO> onlyParentKomoDtos;
 
     public DataReaderTest() throws IOException {
         final DataReader instance = new DataReader();
-        dtos = instance.getData();
+        parnetkomosWithChildsDtos = instance.getData();
+        onlyParentKomoDtos = instance.getValmentavaData();
     }
 
     @Test
     public void testImportCount() throws IOException {
-        assertEquals(232, dtos.size()); //total count of KOMOs
+        assertEquals(232, parnetkomosWithChildsDtos.size()); //total count of KOMOs
+        assertEquals(1, onlyParentKomoDtos.size()); //total count of KOMOs
+    }
+
+    @Test
+    public void testVamentavaJaOpastavaKoulutusKOMO() throws IOException {
+        ExcelMigrationDTO result = onlyParentKomoDtos.iterator().next();
+        assertNotNull("Object not found", result);
+
+        assertEquals("xxxxxx", result.getKoulutuskoodiKoodiarvo());
+        assertEquals("32", result.getKoulutusasteenKoodiarvo());
+
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
+        assertEquals(0, result.getKoulutusohjelmanKuvaukset().getTavoiteTeksti().getTeksti().size());
+
+        assertEquals(3, result.getTutkinnonKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
+        assertEquals(3, result.getTutkinnonKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
+        assertEquals(3, result.getTutkinnonKuvaukset().getTavoiteTeksti().getTeksti().size());
     }
 
     @Test
@@ -46,6 +66,7 @@ public class DataReaderTest {
         ExcelMigrationDTO result = searchByKoulutuskoodi("301101", null, "0001");
         assertNotNull("Object not found", result);
 
+        assertEquals("31", result.getKoulutusasteenKoodiarvo());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getTavoiteTeksti().getTeksti().size());
@@ -79,7 +100,7 @@ public class DataReaderTest {
         //AMMATILLINEN	
         ExcelMigrationDTO result = searchByKoulutuskoodi("321101", "1624", null);
         assertNotNull("Object not found", result);
-
+        assertEquals("32", result.getKoulutusasteenKoodiarvo());
         assertEquals(2, result.getKoulutusohjelmanKuvaukset().getTavoiteTeksti().getTeksti().size());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getKoulutuksenRakenneTeksti().getTeksti().size());
         assertEquals(0, result.getKoulutusohjelmanKuvaukset().getJatkoOpintomahdollisuudetTeksti().getTeksti().size());
@@ -90,7 +111,7 @@ public class DataReaderTest {
     }
 
     private ExcelMigrationDTO searchByKoulutuskoodi(String koulutuskoodi, String koulutusohjelmakoodi, String lukiolinja) {
-        for (ExcelMigrationDTO dto : dtos) {
+        for (ExcelMigrationDTO dto : parnetkomosWithChildsDtos) {
             if (koulutusohjelmakoodi != null && koulutuskoodi.equals(dto.getKoulutuskoodiKoodiarvo()) && koulutusohjelmakoodi.equals(dto.getKoulutusohjelmanKoodiarvo())) {
                 return dto;
             } else if (lukiolinja != null && koulutuskoodi.equals(dto.getKoulutuskoodiKoodiarvo()) && lukiolinja.equals(dto.getLukiolinjaKoodiarvo())) {

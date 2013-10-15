@@ -2,9 +2,16 @@ var app = angular.module('TarjontaConverter', ['ngResource', 'config', 'auth']);
 app.factory('TarjontaConverterFactory', function(Koodisto) {
     var factory = {};
 
+    factory.createBaseUiFieldArvo = function(arvo) {
+        return {"arvo": arvo};
+    };
+    factory.createBaseUiField = function(uri, versio, arvo) {
+        return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
+    };
+    
     factory.STRUCTURE = {
         MLANG: {
-            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true}
+            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: factory.createBaseUiField(null, '-1', null)}
         },
         RELATION: {
             koulutuskoodi: {'validate': true, 'required': true, nullable: false},
@@ -46,9 +53,9 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
      */
     factory.createAPIModel = function(apiModel, languages) {
         angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
-            apiModel[key] = factory.addMetaField(factory.createBaseUiField(null, null, null));
+            apiModel[key] = factory.addMetaField(value.default);
 
-            console.log('INIT LANGS', languages,  apiModel[key]);
+            console.log('INIT LANGS', languages, apiModel[key]);
             factory.createMetaLanguages(apiModel[key], languages);
         });
 
@@ -78,12 +85,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
 
         console.log("createAPIModel", apiModel);
     };
-    factory.createBaseUiFieldArvo = function(arvo) {
-        return {"arvo": arvo};
-    };
-    factory.createBaseUiField = function(uri, versio, arvo) {
-        return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
-    };
+
     factory.addMetaField = function(obj) {
         if (factory.isNull(obj)) {
             return {"meta": {}};

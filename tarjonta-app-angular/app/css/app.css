@@ -106,12 +106,16 @@ div#ajax-loader.min span {
 
 /* sivupalkki */
 
+.tarjonta-body {
+	position:relative;
+	margin-top:20px;
+}
+
 .wsidebar-left {
 	position:absolute;
 	min-height:100%;
 	width:220px;
 	left:20px;
-	top:20px;
 }
 
 .wsidebar-main {

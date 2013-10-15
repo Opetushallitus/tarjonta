@@ -34,11 +34,11 @@ public class HakukohteetVastausToHakukohdeTulosRDTOConverter extends BaseRDTOCon
 
 		ret.setOid(ht.getOid());
 		ret.setNimi(ht.getNimi());
-		ret.setKausi(ht.getKoulutuksenAlkamiskausi().getNimi());
+		ret.setKausi(ht.getKoulutuksenAlkamiskausi()==null ? null : ht.getKoulutuksenAlkamiskausi().getNimi());
 		ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
 		ret.setHakutapa(ht.getHakutapaNimi());
 		ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
-		ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
+		ret.setKoulutuslaji(ht.getKoulutuslaji()==null ? null : ht.getKoulutuslaji().getNimi());
 		ret.setTila(TarjontaTila.valueOf(ht.getTila()));
 
 		return ret;

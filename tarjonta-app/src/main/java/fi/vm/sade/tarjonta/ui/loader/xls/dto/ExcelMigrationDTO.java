@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
 
-    private static final String KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO = "32";
-    private static final String KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO = "31";
-    private String tyyppi;
+    private KoulutusasteTyyppi koulutusateTyyppi;
     /*
      * 2-aste + common data
      */
@@ -141,6 +140,7 @@ public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
      * @param koulutusasteenKoodiarvo the koulutusasteenKoodiarvo to set
      */
     public void setKoulutusasteenKoodiarvo(String koulutusasteenKoodiarvo) {
+        Preconditions.checkNotNull(koulutusasteenKoodiarvo, "koulutusasteenKoodiarvo object cannot be null.");
         this.koulutusasteenKoodiarvo = koulutusasteenKoodiarvo;
     }
 
@@ -239,7 +239,6 @@ public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
                 .append(lukiolinjaKoodiarvo).toHashCode();
     }
 
-
     /**
      * @return the lukiolinjaNimi
      */
@@ -279,32 +278,6 @@ public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
      */
     public void setLukiolinjaKoodiarvo(String lukiolinjaKoodiarvo) {
         this.lukiolinjaKoodiarvo = lukiolinjaKoodiarvo;
-    }
-
-    public KoulutusasteTyyppi getKoulutusTyyppi() {
-        if (koulutusasteenKoodiarvo != null && koulutusasteenKoodiarvo.contains(KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO)) {
-            return KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-        } else if (koulutusasteenKoodiarvo != null && koulutusasteenKoodiarvo.contains(KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO)) {
-            return KoulutusasteTyyppi.LUKIOKOULUTUS;
-        } else if (!koulutusasteenKoodiarvo.isEmpty()) {
-            throw new RuntimeException("No valid KoulutusasteTyyppi enum found by koodi value '" + koulutusaste + "'");
-        }
-
-        return null;
-    }
-
-    /**
-     * @return the tyyppi
-     */
-    public String getTyyppi() {
-        return tyyppi;
-    }
-
-    /**
-     * @param tyyppi the tyyppi to set
-     */
-    public void setTyyppi(String tyyppi) {
-        this.tyyppi = tyyppi;
     }
 
     @Override
@@ -364,5 +337,19 @@ public class ExcelMigrationDTO extends KoulutusluokitusRowDTO {
         }
 
         return koulutusohjelmanKuvaukset;
+    }
+
+    /**
+     * @return the koulutusateTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusateTyyppi() {
+        return koulutusateTyyppi;
+    }
+
+    /**
+     * @param koulutusateTyyppi the koulutusateTyyppi to set
+     */
+    public void setKoulutusateTyyppi(KoulutusasteTyyppi koulutusateTyyppi) {
+        this.koulutusateTyyppi = koulutusateTyyppi;
     }
 }

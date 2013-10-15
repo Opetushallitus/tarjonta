@@ -7,7 +7,6 @@ angular.module('app.kk',
             'app.kk.directives',
             'app.kk.filters',
             'app.kk.services',
-            'app.kk.edit.ctrl',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
@@ -109,6 +108,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 }
             }
         })
+        
+                .when('/koulutus/edit/:org/:koulutuskoodi', {
+            action: "koulutus.edit",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusx: function(TarjontaService, $log, $route) {
+                    $log.info("/koulutus/ID/edit", $route);
+                    return {koulutusasteTyyppi: "AMMATTIKORKEAKOULUTUS"}
+                }
+            }
+        })
+        
                 .when('/hakukohde/:id', {
             action: "xxx.xxx.xxx"
         })

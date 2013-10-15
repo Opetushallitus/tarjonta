@@ -42,12 +42,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<KoulutusmoduuliToteutus, Long> implements KoulutusmoduuliToteutusDAO {
-
+    
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOImpl.class);
-
+    
     @Override
     public KoulutusmoduuliToteutus findByOid(String oid) {
-
+        
         List<KoulutusmoduuliToteutus> list = findBy(KoulutusmoduuliToteutus.OID_COLUMN_NAME, oid);
         if (list.isEmpty()) {
             return null;
@@ -67,8 +67,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0) {
             String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND "
                     + "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
-
-
+            
+            
             return getEntityManager()
                     .createQuery(query)
                     .setParameter("pkv", pohjakoulutus.trim())
@@ -78,43 +78,47 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     .setParameter("opetuskielis", opetuskielis)
                     .setParameter("koulutuslajis", koulutuslajis)
                     .getResultList();
-
-
-
+            
+            
+            
         } else {
             log.info("Koulutuslajis and opetuskielis was null!!!");
             return null;
         }
-
+        
     }
-
+    
     @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QHakukohde qHakukohde = QHakukohde.hakukohde;
-
+        
         return from(qHakukohde, qKomoto)
                 .join(qKomoto.hakukohdes, qHakukohde)
                 .where(qKomoto.oid.in(komotoOids))
                 .list(qKomoto);
     }
-
+    
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
-
+        
         KoulutusmoduuliToteutus komoto = from(qKomoto, qKomo)
                 .leftJoin(qKomoto.koulutusmoduuli, qKomo)
                 .where(qKomoto.oid.eq(oid.trim()))
                 .singleResult(qKomoto);
-
-        komoto.getHakukohdes();
-
+        
+        if (komoto != null) {
+            log.warn("No KoulutusmoduuliToteutus found by OID: {}.", oid);
+            komoto.getHakukohdes();
+            
+        }
+        
         return komoto;
-
+        
     }
-
+    
     @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids) {
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
@@ -125,9 +129,9 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .join(komoto.koulutusmoduuli, komo)
                 .orderBy(komo.koulutusKoodi.asc())
                 .list(komoto);
-
+        
     }
-
+    
     @Override
     public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
         Query query = getEntityManager().createQuery(""
@@ -137,42 +141,42 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         query.setParameter("oid", oid);
         return (KoulutusmoduuliToteutus) query.getSingleResult();
     }
-
+    
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
-
+    
     @Override
     public List<KoulutusmoduuliToteutus> findByCriteria(List<String> tarjoajaOids, String matchNimi, int koulutusAlkuVuosi, List<Integer> koulutusAlkuKuukaudet) {
-
+        
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         BooleanExpression criteria = null;
-
+        
         if (matchNimi != null) {
-
+            
             QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
             QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
-
-
+            
+            
             JPASubQuery subQuery = new JPASubQuery().from(komo).
                     join(komo.nimi.tekstis, nimiTeksti).
                     where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
-
+            
             criteria = komoto.koulutusmoduuli.in(subQuery.list(komo));
         }
-
+        
         if (!tarjoajaOids.isEmpty()) {
             criteria = and(criteria, komoto.tarjoaja.in(tarjoajaOids));
         }
-
+        
         if (koulutusAlkuVuosi > 0) {
             criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
         }
-
+        
         if (!koulutusAlkuKuukaudet.isEmpty()) {
             criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
         }
-
+        
         List<KoulutusmoduuliToteutus> komotos;
         if (criteria == null) {
             komotos = from(komoto).
@@ -182,18 +186,18 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     where(criteria).
                     list(komoto);
         }
-
+        
         return filterTutkintos(komotos);
     }
-
+    
     @Override
     public List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
             Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri) {
-
+        
         if (parentKomo == null) {
             return null;
         }
-
+        
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         List<KoulutusmoduuliToteutus> komotoRes = null;
         try {
@@ -204,7 +208,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             if (pohjakoulutusvaatimusUri != null) {
                 criteria = criteria.and(komoto.pohjakoulutusvaatimus.eq(pohjakoulutusvaatimusUri));
             }
-
+            
             komotoRes = from(komoto).
                     join(komoto.koulutusmoduuli).fetch().
                     where(criteria).list(komoto);
@@ -213,7 +217,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
         return komotoRes;
     }
-
+    
     private List<KoulutusmoduuliToteutus> filterTutkintos(List<KoulutusmoduuliToteutus> komotos) {
         List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
         for (KoulutusmoduuliToteutus curKomoto : komotos) {
@@ -223,15 +227,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
         return result;
     }
-
-
+    
     @Override
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter) {
-
+        
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-
+        
         BooleanExpression whereExpr = null;
-
+        
         if (tila != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komoto.tila.eq(tila));
         }
@@ -241,23 +244,23 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komoto.updated.after(lastModifiedAfter));
         }
-
+        
         JPAQuery q = from(komoto);
         if (whereExpr != null) {
             q = q.where(whereExpr);
         }
-
+        
         if (count > 0) {
             q = q.limit(count);
         }
-
+        
         if (startIndex > 0) {
             q.offset(startIndex);
         }
-
+        
         return q.list(komoto.oid);
     }
-
+    
     @Override
     public List<String> findOidsByHakukohdeId(long hakukohdeId) {
         //TODO use constants
@@ -265,33 +268,30 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         List<String> results = (List<String>) q.getResultList();
         return results;
     }
-
+    
     @Override
     public List<String> findOidsByKomoOid(String oid, int count, int startIndex) {
-
+        
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         BooleanExpression whereExpr = komoto.koulutusmoduuli.oid.eq(oid);
-
+        
         JPAQuery q = from(komoto);
         q = q.where(whereExpr);
-
+        
         if (count > 0) {
             q = q.limit(count);
         }
         if (startIndex > 0) {
             q.offset(startIndex);
         }
-
+        
         return q.list(komoto.oid);
     }
-
+    
     @Override
     public void update(KoulutusmoduuliToteutus entity) {
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(KoulutusmoduuliToteutus.class, entity.getId()));
         super.update(entity);
     }
-
 }
-
-

@@ -77,6 +77,8 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 
 /**
  * @author Tuomas Katva
@@ -618,7 +620,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     /**
-     * Tarkista että organisaatio löytyy. Heittää RuntimeExceptionin jos ei löydy.
+     * Tarkista että organisaatio löytyy. Heittää RuntimeExceptionin jos ei
+     * löydy.
+     *
      * @param tarjoaja
      */
     private void checkOrganisationExists(String tarjoaja) {
@@ -701,6 +705,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 //fetch children or parent
                 komo = koulutusmoduuliDAO.findLukiolinja(koulutuskoodiUri, komoKoosteTyyppi.getLukiolinjakoodiUri());
                 break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                //fetch children or parent
+                komo = koulutusmoduuliDAO.findKoulutus(koulutuskoodiUri);
+                break;
             default:
                 throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());
         }
@@ -712,9 +720,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi));
         }
 
+        switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS:
+            case LUKIOKOULUTUS:
         if (komoKoosteTyyppi.getParentOid() != null) {
             //added KOMO was a child, not parent.
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
+        }
+                break;
         }
 
         Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
@@ -747,6 +760,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                     break;
                 case LUKIOKOULUTUS:
                     Preconditions.checkNotNull(komoKoosteTyyppi.getLukiolinjakoodiUri(), "Lukiolinja URI cannot be null.");
+                    break;
+                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusohjelmakoodiUri() != null, "An invalid data, koulutusohjelma URI was populated.");
+                    Preconditions.checkNotNull(komoKoosteTyyppi.getLukiolinjakoodiUri() != null, "An invalid data, Lukiolinja URI was populated.");
                     break;
                 default:
                     throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());

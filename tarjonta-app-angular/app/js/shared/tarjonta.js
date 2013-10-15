@@ -6,6 +6,9 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
+    	if (txt==undefined || txt==null) {
+    		return txt;
+    	}
         var userLocale = LocalisationService.getLocale();
         if (txt[userLocale]) {
             return txt[userLocale];
@@ -21,20 +24,23 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     function compareByName(a, b) {
         var an = a.nimi;
         var bn = b.nimi;
+        /*
+         * if a.nimi is null/undefined : 'Cannot call method 'localeCompare' of undefined'
+         */
         return an.localeCompare(bn);
     }
 
     function searchCacheKey(prefix, args) {
         return {
-        	key: prefix + "/?" +
-                "oid=" + args.oid + "&" +
-                "terms=" + escape(args.terms) + "&" +
-                "state=" + escape(args.state) + "&" +
-                "season=" + escape(args.season) + "&" +
-                "year=" + escape(args.year),
+            key: prefix + "/?" +
+                    "oid=" + args.oid + "&" +
+                    "terms=" + escape(args.terms) + "&" +
+                    "state=" + escape(args.state) + "&" +
+                    "season=" + escape(args.season) + "&" +
+                    "year=" + escape(args.year),
             expires: 60000,
-            pattern: prefix+"/.*"
-            };
+            pattern: prefix + "/.*"
+        };
     }
 
     var dataFactory = {};
@@ -63,7 +69,13 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    r.nimi = localize(r.nimi);
+                    
+                    if (t.nimi === null || typeof t.nimi === 'undefined') {
+                        r.nimi = t.oid;
+                    } else {
+                       r.nimi = localize(r.nimi);
+                    }
+
                     r.koulutuslaji = localize(r.koulutuslaji);
                     r.hakutapa = localize(r.hakutapa);
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
@@ -87,10 +99,21 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
-                t.nimi = localize(t.nimi);
+
+                if (t.nimi === null || typeof t.nimi === 'undefined') {
+                    t.nimi = t.oid;
+                } else {
+                    t.nimi = localize(t.nimi);
+                }
+
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus!==undefined?", " + localize(r.pohjakoulutusvaatimus):"");
+                    if (t.nimi === null || typeof t.nimi === 'undefined') {
+                        r.nimi = r.oid;
+                    } else {
+                        r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
+                    }
+
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
                 }
@@ -100,10 +123,10 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
             return result;
         });
     }
-    
+
     dataFactory.evictHakutulokset = function() {
-    	CacheService.evict({pattern: "hakutulos/.*"});
-    	CacheService.evict({pattern: "koulutus/.*"});
+        CacheService.evict({pattern: "hakutulos/.*"});
+        CacheService.evict({pattern: "koulutus/.*"});
     }
 
     /**
@@ -131,15 +154,32 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return ret.promise;
     };
     
-    dataFactory.getKoulutuksenHakukohteet = function() {
+    function cleanAndLocalizeArray(arr) {
+    	var ret = [];
+    	for (var i in arr) {
+    		if (arr[i].oid) {
+    			ret[i] = {
+					oid: arr[i].oid,
+					nimi: localize(arr[i].nimi)
+    			};
+    		}
+    	}
+    	return ret;
+    }
+    
+    dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
-        ret.resolve([]); // TODO
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/"+oid+"/hakukohteet").query({}, function(res){
+        	ret.resolve(cleanAndLocalizeArray(res));
+        });
         return ret.promise;
     }
     
-    dataFactory.getHakukohteenKoulutukset = function() {
+    dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
-        ret.resolve([]); // TODO
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/"+oid+"/koulutukset").query({}, function(res){
+        	ret.resolve(cleanAndLocalizeArray(res));
+        });
         return ret.promise;
     }
     
@@ -171,17 +211,17 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.deleteKoulutus = function(id) {
-    	var ret = $q.defer();
-        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res){
-        	ret.resolve(res);
+        var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res) {
+            ret.resolve(res);
         });
         return ret.promise;
     };
 
     dataFactory.deleteHakukohde = function(id) {
-    	var ret = $q.defer();
-        $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res){
-        	ret.resolve(res);
+        var ret = $q.defer();
+        $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res) {
+            ret.resolve(res);
         });
         return ret.promise;
     };

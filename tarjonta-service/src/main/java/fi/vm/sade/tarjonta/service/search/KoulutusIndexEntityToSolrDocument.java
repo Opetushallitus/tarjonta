@@ -20,7 +20,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
@@ -78,58 +78,52 @@ import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
- * Convert "Koulutus" to {@link SolrInputDocument} so that it can be
- * indexed.
+ * Convert "Koulutus" to {@link SolrInputDocument} so that it can be indexed.
  */
 @Configurable
 @Component
 public class KoulutusIndexEntityToSolrDocument implements
-Function<KoulutusIndexEntity, List<SolrInputDocument>> {
+        Function<KoulutusIndexEntity, List<SolrInputDocument>> {
 
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
-
     @Autowired
     private KoodistoService koodistoPublicService;
-
     @Autowired
     private KoodiService koodiService;
-    
     @Autowired
     private IndexerDAO indexerDao;
-
     Logger logger = LoggerFactory.getLogger(getClass());
-   
 
     @Override
     public List<SolrInputDocument> apply(final KoulutusIndexEntity koulutus) {
         Preconditions.checkNotNull(koulutus);
         List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
-       
+
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, koulutus.getOid());
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
-        
+
         if (orgs.size() == 0) {
             logger.warn("No org found for komoto: " + koulutus.getOid());
             return Lists.newArrayList();
-        }    
-    
+        }
+
         final OrganisaatioPerustieto org = orgs.get(0);
         addOrganisaatioTiedot(komotoDoc, org, docs);
-        
+
         if (org.getParentOidPath() != null) {
             ArrayList<String> oidPath = Lists.newArrayList();
-            
+
             Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
             Collections.reverse(oidPath);
-            
+
             for (String path : oidPath) {
                 add(komotoDoc, ORG_PATH, path);
             }
         }
-        
-        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value()) 
+
+        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
@@ -140,26 +134,26 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
         add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutusTyyppi());
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc, koulutus.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);
-        
+
         //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus
         addKoulutusLajis(komotoDoc, indexerDao.findKoulutusLajisForKoulutus(koulutus.getKoulutusId()));
-        
+
         addHakukohdeOids(komotoDoc, indexerDao.findhakukohteetByKoulutusmoduuliToteutusId(koulutus.getKoulutusId()));
-        
+
         addTekstihaku(komotoDoc);
         docs.add(komotoDoc);
         return docs;
     }
 
-    private void addKoulutusLajis(SolrInputDocument doc,List<String> koodistoUris) {
-          if (koodistoUris == null) {
-              return;
-          }
+    private void addKoulutusLajis(SolrInputDocument doc, List<String> koodistoUris) {
+        if (koodistoUris == null) {
+            return;
+        }
 
-        for (String uri: koodistoUris) {
-            add(doc,KOULUTUSLAJI_URIS,uri);
+        for (String uri : koodistoUris) {
+            add(doc, KOULUTUSLAJI_URIS, uri);
             //käännökset, vain yksi käännös tallennetaan
-            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(uri,  koodiService);
+            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(uri, koodiService);
 
             if (koodi != null) {
                 KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -171,13 +165,13 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             }
         }
     }
-    
+
     private void addHakukohdeOids(SolrInputDocument komotoDoc,
             List<HakukohdeIndexEntity> hakukohdes) {
         if (hakukohdes == null) {
             return;
         }
-        
+
         for (HakukohdeIndexEntity curHakukohde : hakukohdes) {
             add(komotoDoc, HAKUKOHDE_OIDS, curHakukohde.getOid());
         }
@@ -187,7 +181,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_SV));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSKOODI_EN));
-        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KAUSI_KOODI));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KAUSI_URI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(VUOSI_KOODI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(KOULUTUSOHJELMA_SV));
@@ -195,7 +189,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_SV));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_EN));
-     }
+    }
 
     private void addTutkintonimikeTiedot(SolrInputDocument doc,
             String tutkintonimike) {
@@ -203,7 +197,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             return;
         }
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(tutkintonimike, koodiService); 
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(tutkintonimike, koodiService);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -216,15 +210,13 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         }
     }
 
-
-
     private void addKoulutuskoodiTiedot(SolrInputDocument doc,
             String koulutusKoodi) {
         if (koulutusKoodi == null) {
             return;
         }
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusKoodi, koodiService); 
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusKoodi, koodiService);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -237,23 +229,26 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
         }
     }
 
-
-
     private void addKoulutusohjelmaTiedot(SolrInputDocument doc, String koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi == null) {
-            return;
-        }
+            add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
+            add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
+        } else {
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService); 
+            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService);
 
-        if (koodi != null) {
-            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-            add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-            add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-            add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
-            add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
+            if (koodi != null) {
+                KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+                add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+                add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+                add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
+                add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
+            } else {
+                add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
+                add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
+            }
         }
     }
 
@@ -266,7 +261,7 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
 
     /**
      * Add field if value is not null
-     * 
+     *
      * @param doc
      * @param nimifi
      * @param string
@@ -276,7 +271,4 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
             doc.addField(fieldName, value);
         }
     }
-
-    
-    
 }

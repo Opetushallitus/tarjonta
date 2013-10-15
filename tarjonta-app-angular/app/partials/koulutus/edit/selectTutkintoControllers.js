@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl');
+var app = angular.module('app.edit.ctrl');
 
 app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'Koodisto', '$q',  'Config', function($scope, $modalInstance, Koodisto, $q, config) {
 	
@@ -119,7 +119,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 		
 			var modalInstance = $modal.open({
 				scope: $scope,
-				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
 				controller: 'SelectTutkintoOhjelmaController'
 			});
 		

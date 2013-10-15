@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
-        .controller('SearchController', function($rootScope, $scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -11,14 +11,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			"organisaatiotyyppi" : "",
 			"oppilaitostyyppi" : "",
 			"lakkautetut" : false,
-			"suunnitellut" : false
+			"suunnitellut" : false,
+			"skipparents" : true
 		};
 	}
 
 	setDefaultHakuehdot();
-//	$scope.oppilaitostyypit={};
 
-	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri("oppilaitostyyppi", "FI").then(function(koodit) {
+	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], "FI").then(function(koodit) {
         //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
@@ -26,16 +26,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.oppilaitostyypit=koodit;
     });
 
-	$scope.orgSelected=function(item){
-		console.log("selected!",item);
-	};
-	
-    $rootScope.organisaatio = {};
+	//valittu organisaatio populoidaan tänne
+    $scope.organisaatio = {};
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
 
-        console.log("$scope.$watch( 'organisaatio.currentNode')");
+        //console.log("$scope.$watch( 'organisaatio.currentNode')");
 
 	    if( $scope.organisaatio && angular.isObject($scope.organisaatio.currentNode) ) {
 
@@ -68,7 +65,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$rootScope.tulos = vastaus.organisaatiot;
+			$scope.tulos = vastaus.organisaatiot;
 		});
     };
 
@@ -640,8 +637,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var base = $scope.selectedRow.prefix=="koulutus" ? "hakukohde" : "koulutus";
     	
     	var ret = $scope.selectedRow.prefix=="koulutus"
-    		? TarjontaService.getKoulutuksenHakukohteet()
-			: TarjontaService.getHakukohteenKoulutukset();
+    		? TarjontaService.getKoulutuksenHakukohteet($scope.selectedRow.oid)
+			: TarjontaService.getHakukohteenKoulutukset($scope.selectedRow.oid);
     	
     	ret.then(function(ret){
     		for (var i in ret) {
@@ -675,7 +672,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		
 			var modalInstance = $modal.open({
 				scope: $scope,
-				templateUrl: 'partials/kk/edit/selectTutkintoOhjelma.html',
+				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
 				controller: 'SelectTutkintoOhjelmaController'
 			});
 		
@@ -683,7 +680,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
 				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
 				if (selectedItem.koodiUri != null) {
-					$window.location.href = '#/kk/edit/new/perus/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
+					$window.location.href = '#/koulutus/edit/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
 				} 
 			}, function() {
 				$scope.tutkintoDialogModel.selected = null;

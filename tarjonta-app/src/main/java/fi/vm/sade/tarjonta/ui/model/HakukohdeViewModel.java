@@ -189,7 +189,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         .append(postinumero)
         .append(postitoimipaikka)
         .append(valintaPerusteidenKuvaus)
-        .append(lisatiedot)
+        //.append(lisatiedot)
         .append(komotoOids)
         .append(koulukses)
         .append(liites)
@@ -202,12 +202,12 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         .append(soraKuvaus)
         .append(valintaPerusteidenKuvaus);
         
-        if (lisatiedot != null) {
+        /*if (lisatiedot != null) {
             for (KielikaannosViewModel curKaannos : lisatiedot) {
                 builder = builder.append(curKaannos.getKielikoodi())
                                   .append(curKaannos.getNimi());
             }
-        }
+        }*/
         
         return builder.toHashCode();
     }

@@ -31,4 +31,10 @@ public class KoodistoKoodi implements Serializable {
         return nimi;
     }
 
+    @Override
+    public String toString() {
+        return "KoodistoKoodi [uri=" + uri + ", nimi=" + nimi + "]";
+    }
+
+    
 }

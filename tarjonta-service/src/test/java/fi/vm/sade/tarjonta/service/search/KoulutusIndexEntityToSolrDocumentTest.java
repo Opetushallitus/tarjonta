@@ -134,7 +134,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         System.out.println(doc);
         
         Assert.assertEquals("kausi_k#0",
-                doc.removeField(SolrFields.Koulutus.KAUSI_KOODI).getValue());
+                doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
         Assert.assertEquals(KOULUTUSTYYPPIKOODI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI).getValue());
         Assert.assertEquals(POHJAKOULUTUSVAATIMUSKOODI + "#0",

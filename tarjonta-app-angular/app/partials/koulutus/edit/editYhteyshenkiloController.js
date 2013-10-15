@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.kk.edit.ctrl');
+var app = angular.module('app.edit.ctrl');
 
 app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'TarjontaConverterFactory', function($scope, $compile, YhteyshenkiloService, converter) {	
 	

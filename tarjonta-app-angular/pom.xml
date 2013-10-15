@@ -14,27 +14,29 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-<profiles><profile>
-<id>karma</id>
-<build>
-<plugins><plugin>
-    <groupId>com.kelveden</groupId>
-    <artifactId>maven-karma-plugin</artifactId>
-    <version>1.1</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>start</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <browsers>PhantomJS</browsers>
-        <configFile>config/karma.conf.js</configFile>
-    </configuration>
-</plugin>
-</plugins>
-</build>
-</profile>
-</profiles>
+    <profiles>
+        <profile>
+            <id>karma</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>PhantomJS</browsers>
+                            <configFile>config/karma.conf.js</configFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

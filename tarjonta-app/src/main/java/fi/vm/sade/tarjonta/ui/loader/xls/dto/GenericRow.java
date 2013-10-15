@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.Column;
 import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
+import static fi.vm.sade.tarjonta.ui.loader.xls.dto.AbstractKoulutuskoodiField.KOULUTUSKOODI_PROPERTY;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
@@ -24,7 +25,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author Jani Wilén
  */
 public class GenericRow extends AbstractKoulutuskoodiField {
-
+    public static final String VALMENTAVA_JA_KUNTOUTTAVA = "valmentava_ja_kuntouttava";
     public static final String FILENAME_AMMATILLINEN = "KOULUTUS_KOULUTUSOHJELMA_RELAATIO";
     public static final String FILENAME_LUKIO = "KOULUTUS_LUKIOLINJAT_relaatio";
     public static final Column[] COLUMNS_AMMATILLINEN = {
@@ -43,6 +44,14 @@ public class GenericRow extends AbstractKoulutuskoodiField {
         new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
         new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
     };
+    public static final Column[] COLUMNS_VALMENTAVA = {
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
+        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
+        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
+    };
+    
     private String relaatioKoodiarvo;
     private String koulutusasteKoodiarvo;
     private String laajuusKoodiarvo;

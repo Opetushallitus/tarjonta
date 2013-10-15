@@ -1920,7 +1920,7 @@ public class SVTUtils {
     	String millis = System.currentTimeMillis() + "";
     	File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
     	comment = comment.replace(" ", "_").replace("-", "_").replace(":", "_");
-    	String fileName = System.getProperty("user.home") + "/screenshot_" + comment + "_" + millis + ".png";
+    	String fileName = System.getProperty("user.home") + "/screenshot/screenshot_" + comment + "_" + millis + ".png";
     	String ArtifactFileName = "target/screenshot_" + comment + "_" + millis + ".png";
     	try {
 			FileUtils.copyFile(scrFile, new File(fileName));

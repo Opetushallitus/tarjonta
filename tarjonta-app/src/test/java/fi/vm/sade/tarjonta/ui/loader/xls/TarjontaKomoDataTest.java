@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -138,6 +139,13 @@ public class TarjontaKomoDataTest {
     }
     private int oid = 1;
 
+//    @Test
+//    public void readValmentava() throws IOException {
+//        final KomoExcelReader<GenericRow> readerForValmentava = new KomoExcelReader<GenericRow>(GenericRow.class, GenericRow.COLUMNS_VALMENTAVA, 10);
+//        RelaatioMap relaatioMap = new RelaatioMap(readerForValmentava.read(url.getPath(), true), false);
+//        assertEquals(1, relaatioMap.size());
+//    }
+
     @Test
     public void testReadExcelAmm() throws Exception {
         final URL resource = filenameToURL("KOULUTUS_KOULUTUSOHJELMA_RELAATIO");
@@ -162,7 +170,7 @@ public class TarjontaKomoDataTest {
         boolean verbose = true;
         KomoExcelReader instance = new KomoExcelReader(GenericRow.class, GenericRow.COLUMNS_LUKIO, 100);
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
-        RelaatioMap excelDataMap = new RelaatioMap(result);
+        RelaatioMap excelDataMap = new RelaatioMap(result, true);
 
         assertEquals(86, result.size());
         GenericRow next = excelDataMap.get("0000");
@@ -436,7 +444,6 @@ public class TarjontaKomoDataTest {
             return getSearchObject().equals(t);
         }
     };
-
     private KoulutusmoduuliKoosteTyyppi expectKoulutusmoduuliKoosteTyyppi() {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
         tyyppi.setOid("komo_" + getOid());

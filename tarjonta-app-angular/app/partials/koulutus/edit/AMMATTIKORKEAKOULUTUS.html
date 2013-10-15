@@ -1,5 +1,29 @@
 <div>
+    <div class="container-fluid">
 
-    <h1>EDIT AMM KK</h1>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="span10">{{model.organisaatio.nimi}}</div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="btn" data-ng-click='goBack($event)'><div tt='koulutus.review.takaisin'></div></div>
+                <div class="btn" ng-click='goBack()'><div tt='back'></div></div>
+                <div class="btn"><div tt='delete'></div></div>
+                <div class="btn"><div tt='copy'></div></div>
+                <div class="btn"><div tt='transfer'>Siirrä osaksi toista koulutusta</div></div>
+                <div class="btn"><div tt='transfer'>Lisää rinnakkainen koulutus</div></div>
+            </div>
+        </div>
+    </div>
 
+    <tabset>
+        <tab heading="perustiedot">
+            <div ng-include="'partials/koulutus/edit/editPerustiedot.html'"></div>
+        </tab>
+        <tab heading="lisatiedot">
+
+        </tab>
+    </tabset>
 </div>
