@@ -68,6 +68,11 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeRDTO,Ha
             hakukohde.setLisatiedot(convertTekstiRDTOToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
         }
 
+        if (hakukohdeRDTO.getHakukelpoisuusvaatimusUris() != null) {
+            for (String hakukelpoisuusVaatimus : hakukohdeRDTO.getHakukelpoisuusvaatimusUris()) {
+                hakukohde.getHakukelpoisuusVaatimukset().add(hakukelpoisuusVaatimus);
+            }
+        }
 
         hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
 

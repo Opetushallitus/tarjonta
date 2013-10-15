@@ -73,10 +73,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         hakukelpoisuusvaatimusUris : [],
         hakukohdeKoulutusOids : [],
         opetuskielet : [],
-        liitteidenToimitusPvm :1405391100000,
+
         liitteet : [],
         valintakoes : [],
-        rikasteksti : "<strong>PITÄISI NÄKYÄ</strong>"
+        lisatiedot : [
+            {
+                "uri": "kieli_fi",
+                "nimi": "FI",
+                "teksti": "<p>Lisätietoa hakemisesta</p>"
+            }
+        ]
     });
 
     $scope.koodiuriPromise = $q.defer();

@@ -91,22 +91,23 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span2 label-right"><div tt="kk.hakukohde.paattymisaika"></div></div>
+            <div class="span2 label-right"><div tt="kk.hakukohde.liitteidenToimitusPvm"></div></div>
             <div class="span10">
                 <date-time-picker selecteddatetime="model.liitteidenToimitusPvm"></date-time-picker>
             </div>
         </div>
     </div>
-
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span2 label-right"><div tt="kk.hakukohde.paattymisaika"></div></div>
-            <div class="span10">
-                <tiny-mce-rich-text text="model.rikasteksti"></tiny-mce-rich-text>
+    <tabset>
+        <tab heading="SUAMI">
+            <tiny-mce-rich-text text="teksti"></tiny-mce-rich-text>
+        </tab>
+    </tabset>
+     </div>
+  </div>
 
-            </div>
-        </div>
-    </div>
+
 
 
 
