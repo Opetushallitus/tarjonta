@@ -1,4 +1,32 @@
-
 <div ng-controller="BaseEditController">
     <div ng-include="getKoulutusPartialName('edit')"></div>
+
+    <hr>
+    <div ng-click="xmodel.collapse.model = !xmodel.collapse.model">
+        <div class="collapseHeader" ng-class="{isOpen : !xmodel.collapse.model}">Sivun data / malli:</div>
+    </div>
+
+    <div collapse="xmodel.collapse.model">
+        TODO fiksaa mallit jotensakin mielekkääksi?
+        yksi "model" jonka alla kaikki on? "model.koulutus", "model.uimodel", "model.locale", "model.opetuskieli", etc.
+
+        <pre>
+           XMODEL: {{ xmodel | json }}
+        </pre>
+        <pre>
+           MODEL: {{ model | json }}
+        </pre>
+        <pre>
+           UIMODEL: {{ uiModel | json }}
+        </pre>
+        <pre>
+            OPETUSKIELI: {{ opetuskieli | json }}
+        </pre>
+        <pre>
+            CONFIG: {{ config | json }}
+        </pre>
+        <pre>
+            LOCALE: {{ locale | json }}
+        </pre>
+    </div>
 </div>
