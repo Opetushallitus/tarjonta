@@ -10,6 +10,8 @@ target/
 *.iml
 tarjonta-app-angular/node_modules
 /tarjonta-app-angular/app/dev
+.idea
+**/.idea
 
 .DS_Store
 npm-debug.log
