@@ -24,12 +24,58 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Or
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService ,Config) {
 
+    //Initialize model and arrays inside it
+    $scope.model = new Hakukohde({
+
+        liitteidenToimitusosoite : {
+
+
+        },
+        hakukelpoisuusvaatimusUris : [],
+        hakukohdeKoulutusOids : [],
+        opetuskielet : [],
+
+        liitteet : [],
+        valintakoes : [],
+        lisatiedot : [
+
+        ]
+    });
+    //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
+    //All kieles is received from koodistomultiselect
+    $scope.allkieles = [];
+    $scope.selectedKieliUris = [];
+
+    if ($scope.model.lisatiedot !== undefined) {
+        angular.forEach($scope.model.lisatiedot,function(lisatieto){
+
+            $scope.selectedKieliUris.push(lisatieto.uri);
+        });
+    }
 
     $scope.postinumeroarvo = {
 
     };
 
+
+    var removeLisatieto = function(koodi){
+
+        var foundLisatieto;
+         angular.forEach($scope.model.lisatiedot,function(lisatieto) {
+               if (lisatieto.uri === koodi) {
+                   foundLisatieto = lisatieto;
+               }
+         });
+
+        if (foundLisatieto !== undefined) {
+            var index = $scope.model.lisatiedot.indexOf(foundLisatieto);
+            $scope.model.lisatiedot.splice(index,1);
+        }
+
+    }
+
+    //Koodisto helper methods
     var findKoodiWithArvo = function(koodi,koodis)  {
 
 
@@ -63,29 +109,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
-    //Initialize model and arrays inside it
-    $scope.model = new Hakukohde({
-
-        liitteidenToimitusosoite : {
 
 
-        },
-        hakukelpoisuusvaatimusUris : [],
-        hakukohdeKoulutusOids : [],
-        opetuskielet : [],
-
-        liitteet : [],
-        valintakoes : [],
-        lisatiedot : [
-            {
-                "uri": "kieli_fi",
-                "nimi": "FI",
-                "teksti": "<p>Lisätietoa hakemisesta</p>"
-            }
-        ]
-    });
-
-    $scope.koodiuriPromise = $q.defer();
+    //$scope.koodiuriPromise = $q.defer();
 
     $scope.hakus = [];
 
@@ -128,6 +154,33 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     });
 
 
+    $scope.kieliCallback = function(kieliUri) {
+        if ($scope.allkieles !== undefined) {
+            var lisatietoFound = false;
+            //Check that selected kieli does not exist in list
+            angular.forEach($scope.model.lisatiedot,function(lisatieto) {
+                 if (lisatieto.uri === kieliUri) {
+                     lisatietoFound = true;
+                 }
+            });
+            if (!lisatietoFound) {
+                var foundKoodi = findKoodiWithUri(kieliUri,$scope.allkieles);
+                var newLisatieto = {
+                    "uri" : foundKoodi.koodiUri,
+                    "nimi" : foundKoodi.koodiNimi,
+                    "teksti": ""
+                };
+
+                $scope.model.lisatiedot.push(newLisatieto);
+            }
+
+        }
+    };
+
+    $scope.kieliRemoveCallback = function(kieliUri) {
+      removeLisatieto(kieliUri);
+    };
+
     $scope.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
 
@@ -135,7 +188,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     $scope.insert = function() {
-        console.log('Model : ', $scope.model);
+      console.log('MODEL: ', $scope.model);
       //$scope.model.$save();
     };
 

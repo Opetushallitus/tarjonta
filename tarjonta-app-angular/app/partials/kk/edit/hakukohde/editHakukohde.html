@@ -99,11 +99,23 @@
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
-    <tabset>
-        <tab heading="SUAMI">
-            <tiny-mce-rich-text text="teksti"></tiny-mce-rich-text>
-        </tab>
-    </tabset>
+            <div class="span2">
+
+            </div>
+            <div class="span4">
+                <koodistomultiselect removearvocallback="kieliRemoveCallback" onchangecallback="kieliCallback" koodiuris="selectedKieliUris" allkoodis="allkieles" koodistouri="'kieli'" locale="'FI'"></koodistomultiselect>
+            </div>
+            <div class="span5">
+                <accordion close-others="oneAtATime">
+                    <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.lisatiedot">
+                        <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text>
+                    </accordion-group>
+
+
+
+                </accordion>
+            </div>
+
      </div>
   </div>
 
