@@ -32,12 +32,12 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusmoduuliKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
@@ -84,8 +84,8 @@ public class TarjontaKomoData {
     //a tempate for lukio or ammatillinen koulutus
     private DataReader dataReader;
     private Map<String, KoodiType> mapKoodistos = new HashMap<String, KoodiType>();
-    private Map<String, KoulutusmoduuliKoosteTyyppi> parentKomosReadyForUpdate;
-    private Map<String, List<KoulutusmoduuliKoosteTyyppi>> childKomosReadyForUpdate;
+    private Map<String, KoulutusmoduuliKoosteTyyppi> parentKomosReadyForInsertAndUpdate;
+    private Map<String, List<KoulutusmoduuliKoosteTyyppi>> childKomosReadyForInsertAndUpdate;
     private Map<String, String> dbParentKomos;//<koulutuskoodi, parent>
     private Map<String, KoulutusmoduuliKoosteTyyppi> dbChildKomos;//<lukiolinja/koulutuohjelma, child>
 
@@ -131,25 +131,23 @@ public class TarjontaKomoData {
             dataReader = new DataReader();
         }
 
-        specialExcelKomos();
+        newKomoOids = Lists.<String>newArrayList(); //updated, inserted
+        parentKomosReadyForInsertAndUpdate = new HashMap<String, KoulutusmoduuliKoosteTyyppi>();
+        childKomosReadyForInsertAndUpdate = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
+        dbParentKomos = new HashMap<String, String>();//<koulutuskoodi, parent>
+        dbChildKomos = new HashMap<String, KoulutusmoduuliKoosteTyyppi>();//<lukiolinja/koulutuohjelma, child>
 
-//        newKomoOids = Lists.<String>newArrayList(); //updated, inserted
-//        parentKomosReadyForUpdate = new HashMap<String, KoulutusmoduuliKoosteTyyppi>();
-//        childKomosReadyForUpdate = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
-//        dbParentKomos = new HashMap<String, String>();//<koulutuskoodi, parent>
-//        dbChildKomos = new HashMap<String, KoulutusmoduuliKoosteTyyppi>();//<lukiolinja/koulutuohjelma, child>
-//
-//        //separate imported flat data to child and parent objects
+        //separate imported flat data to child and parent objects
 
-//        separateExcelKomos();
-//        separateDbKomos();
-//
-//        //insert or update imported data
-//        updateParentKomos(); //must be run before child data block
-//        updateChildKomos();
-//        publishKomos(); //update status for new objects, if any
-//        log.info("Process ended.");
-//        log.info("-------------------------------------------------");
+        separateExcelKomos();
+        separateDbKomos();
+
+        //insert or update imported data
+        createAndUpdateParentKomos(); //must be run before child data block
+        createAndUpdateChildKomos();
+        publishKomos(); //update status for new objects, if any
+        log.info("Process ended.");
+        log.info("-------------------------------------------------");
     }
 
     private void updateRelations(KoulutusmoduuliKoosteTyyppi child, final String oid, final String parentOid, final String exceptionInfo) {
@@ -264,6 +262,7 @@ public class TarjontaKomoData {
 
         KoulutusmoduuliKoosteTyyppi koChildKomo = new KoulutusmoduuliKoosteTyyppi();
         switch (dto.getKoulutusateTyyppi()) {
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, has thesame data structure as amm
             case AMMATILLINEN_PERUSKOULUTUS:
                 final String koulutusohjelmanKoodiarvo = dto.getKoulutusohjelmanKoodiarvo();
                 Preconditions.checkNotNull(koulutusohjelmanKoodiarvo, "Koulutusohjelma koodi uri cannot be null.");
@@ -294,9 +293,15 @@ public class TarjontaKomoData {
         koChildKomo.setKoulutuskoodiUri(koulutuskoodiUri);
         koChildKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
         koChildKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-
-        Preconditions.checkNotNull(dto.getTutkintonimikkeenKoodiarvo(), "Tutkintonimike koodi uri cannot be null. Obj : " + dto);
-        koChildKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
+        //other:
+        switch (dto.getKoulutusateTyyppi()) {
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                break;
+            default:
+                Preconditions.checkNotNull(dto.getTutkintonimikkeenKoodiarvo(), "Tutkintonimike koodi uri cannot be null. Obj : " + dto);
+                koChildKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
+                break;
+        }
         koChildKomo.setKoulutustyyppi(dto.getKoulutusateTyyppi());
         koChildKomo.setEqfLuokitus(getUriWithVersion(dto.getEqfUri(), KoodistoURI.KOODISTO_EQF_LUOKITUS_URI, true));
 
@@ -306,7 +311,7 @@ public class TarjontaKomoData {
         return koChildKomo;
     }
 
-    private KoulutusmoduuliKoosteTyyppi createTutkinto(final ExcelMigrationDTO dto, KoulutusmoduuliKoosteTyyppi tutkinto, final String koulutuskoodiUri) throws ExceptionMessage {
+    private KoulutusmoduuliKoosteTyyppi updateTutkintoFields(final ExcelMigrationDTO dto, KoulutusmoduuliKoosteTyyppi tutkinto, final String koulutuskoodiUri) throws ExceptionMessage {
         tutkinto.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
         tutkinto.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
@@ -315,8 +320,17 @@ public class TarjontaKomoData {
         tutkinto.setOpintoalaUri(getUriWithVersion(dto.getOpintoalaKoodi(), KoodistoURI.KOODISTO_OPINTOALA_URI));  //Automaalari
         tutkinto.setKoulutusalaUri(getUriWithVersion(dto.getKoulutusalaKoodi(), KoodistoURI.KOODISTO_KOULUTUSALA_URI));
         tutkinto.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURI.KOODISTO_KOULUTUSASTE_URI));
-        tutkinto.setLaajuusyksikkoUri(getUriWithVersion(dto.getLaajuusyksikko(), KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)); //OV,OP           
-        tutkinto.setLaajuusarvoUri(dto.getLaajuusUri()); //120, not a koodisto value
+
+        switch (dto.getKoulutusateTyyppi()) {
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                break;
+            default:
+                tutkinto.setLaajuusyksikkoUri(getUriWithVersion(dto.getLaajuusyksikko(), KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)); //OV,OP           
+                tutkinto.setLaajuusarvoUri(dto.getLaajuusUri()); //120, not a koodisto value
+                break;
+        }
+
+
         tutkinto.setKoulutustyyppi(dto.getKoulutusateTyyppi());
         /*
          * Description data for tutkinto (nothing to do with the Koodisto service)
@@ -349,20 +363,20 @@ public class TarjontaKomoData {
     private KoulutusmoduuliKoosteTyyppi createParentKomo(final ExcelMigrationDTO dto, final String koulutuskoodiUri) throws ExceptionMessage {
         Preconditions.checkNotNull(koulutuskoodiUri, "Import data error - koulutuskoodi value cannot be null!");
         KoulutusmoduuliKoosteTyyppi tutkintoParentKomo = new KoulutusmoduuliKoosteTyyppi();
-        if (parentKomosReadyForUpdate.containsKey(koulutuskoodiUri)) {
-            tutkintoParentKomo = parentKomosReadyForUpdate.get(koulutuskoodiUri);
+        if (parentKomosReadyForInsertAndUpdate.containsKey(koulutuskoodiUri)) {
+            tutkintoParentKomo = parentKomosReadyForInsertAndUpdate.get(koulutuskoodiUri);
         } else {
-            parentKomosReadyForUpdate.put(koulutuskoodiUri, tutkintoParentKomo);
+            parentKomosReadyForInsertAndUpdate.put(koulutuskoodiUri, tutkintoParentKomo);
         }
 
-        return createTutkinto(dto, tutkintoParentKomo, koulutuskoodiUri);
+        return updateTutkintoFields(dto, tutkintoParentKomo, koulutuskoodiUri);
     }
 
-    private void updateParentKomos() {
+    private void createAndUpdateParentKomos() {
         log.info("Update parent KOMO data to database.");
         int count = 1;
-        if (parentKomosReadyForUpdate != null && !parentKomosReadyForUpdate.isEmpty()) {
-            Set<Entry<String, KoulutusmoduuliKoosteTyyppi>> excelParents = parentKomosReadyForUpdate.entrySet();
+        if (parentKomosReadyForInsertAndUpdate != null && !parentKomosReadyForInsertAndUpdate.isEmpty()) {
+            Set<Entry<String, KoulutusmoduuliKoosteTyyppi>> excelParents = parentKomosReadyForInsertAndUpdate.entrySet();
 
             for (Entry<String, KoulutusmoduuliKoosteTyyppi> excelParentEntry : excelParents) {
                 if (count % 10 == 1) {
@@ -371,7 +385,7 @@ public class TarjontaKomoData {
 
                 KoulutusmoduuliKoosteTyyppi excelParentKomo = excelParentEntry.getValue();
                 final String koulutuskoodiUri = excelParentKomo.getKoulutuskoodiUri();
-                List<KoulutusmoduuliKoosteTyyppi> excelKomoChilds = childKomosReadyForUpdate.get(koulutuskoodiUri);
+                List<KoulutusmoduuliKoosteTyyppi> excelKomoChilds = childKomosReadyForInsertAndUpdate.get(koulutuskoodiUri);
                 String dbParentKomoOid = dbParentKomos.get(koulutuskoodiUri);
 
                 //the parent komo must have at least one children
@@ -385,24 +399,24 @@ public class TarjontaKomoData {
                     newKomoOids.add(excelParentKomo.getOid());
                     tarjontaAdminService.lisaaKoulutusmoduuli(excelParentKomo);
                 } else {
-                    log.warn("Skipped KOMO parent, URI : {}, OID : {}", excelParentKomo.getKoulutuskoodiUri(), excelParentKomo.getOid());
+                    log.error("Skipped KOMO parent, URI : {}, OID : {}", excelParentKomo.getKoulutuskoodiUri(), excelParentKomo.getOid());
                 }
                 count++;
             }
         }
     }
 
-    private void updateChildKomos() {
+    private void createAndUpdateChildKomos() {
         log.info("Update child KOMO data to database.");
         int count = 1;
-        if (parentKomosReadyForUpdate != null && !parentKomosReadyForUpdate.isEmpty()) {
-            for (Entry<String, KoulutusmoduuliKoosteTyyppi> parentKomoEntry : parentKomosReadyForUpdate.entrySet()) {
+        if (parentKomosReadyForInsertAndUpdate != null && !parentKomosReadyForInsertAndUpdate.isEmpty()) {
+            for (Entry<String, KoulutusmoduuliKoosteTyyppi> parentKomoEntry : parentKomosReadyForInsertAndUpdate.entrySet()) {
                 final String koulutuskoodiUri = parentKomoEntry.getKey();
 
                 if (count % 10 == 1) {
                     log.info("Processing KOMO child... {}, {}", parentKomoEntry.getKey(), count);
                 }
-                List<KoulutusmoduuliKoosteTyyppi> excelChildKomos = childKomosReadyForUpdate.get(koulutuskoodiUri);
+                List<KoulutusmoduuliKoosteTyyppi> excelChildKomos = childKomosReadyForInsertAndUpdate.get(koulutuskoodiUri);
                 log.info("Update child KOMO data to database. {}", excelChildKomos);
                 for (KoulutusmoduuliKoosteTyyppi excelChildKomo : excelChildKomos) {
                     if (excelChildKomo == null) {
@@ -415,13 +429,15 @@ public class TarjontaKomoData {
                             final String lukiolinjaUri = excelChildKomo.getLukiolinjakoodiUri();
                             String dbParentOid = dbParentKomos.get(koulutuskoodiUri);
                             if (dbParentOid == null) {
-                                dbParentOid = parentKomosReadyForUpdate.get(koulutuskoodiUri).getOid();
+                                dbParentOid = parentKomosReadyForInsertAndUpdate.get(koulutuskoodiUri).getOid();
                             }
                             Preconditions.checkNotNull(dbParentOid, "Parent OID cannot be null.");
                             //update childrend
                             switch (excelChildKomo.getKoulutustyyppi()) {
+                                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, same data structure as the amm.
                                 case AMMATILLINEN_PERUSKOULUTUS:
                                     if (dbParentOid != null && dbChildKomos.containsKey(koulutusohjelmakoodiUri)) {
+                                        
                                         //overwrite and add target to parent
                                         updateRelations(excelChildKomo, dbChildKomos.get(koulutusohjelmakoodiUri).getOid(), dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri);
                                         tarjontaAdminService.paivitaKoulutusmoduuli(excelChildKomo);
@@ -512,6 +528,7 @@ public class TarjontaKomoData {
                         break;
                     case TUTKINTO_OHJELMA:
                         switch (kkt.getKoulutustyyppi()) {
+                            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break
                             case AMMATILLINEN_PERUSKOULUTUS:
                                 final String koulutusOhjelmaUri = kkt.getKoulutusohjelmakoodiUri();
                                 dbChildKomos.put(koulutusOhjelmaUri, kkt);
@@ -529,41 +546,41 @@ public class TarjontaKomoData {
         }
     }
 
-    private void specialExcelKomos() throws ExceptionMessage {
-        /*
-         * TUTKINTO DATA, NO CHILD RELATIONS
-         */
-        Set<ExcelMigrationDTO> loadedData = dataReader.getValmentavaData();
-        log.info("Excel files merged, now try to create all KOMOs.");
-        int count = 1;
-        for (ExcelMigrationDTO dto : loadedData) {
-            if (count % 10 == 1) {
-                log.info("Processing special case komos... {}", count);
-                final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTO_URI);
-                //base values
-
-                log.error("Processing special case komos... {}", koulutuskoodiUri);
-                final KoulutusmoduuliKoosteTyyppi kooste = createTutkinto(dto, new KoulutusmoduuliKoosteTyyppi(), koulutuskoodiUri);
-
-                HaeKoulutusmoduulitKyselyTyyppi hae = new HaeKoulutusmoduulitKyselyTyyppi();
-                hae.setKoulutustyyppi(dto.getKoulutusateTyyppi());
-                hae.setKoulutuskoodiUri(dto.getKoulutuskoodiKoodiarvo());
-                HaeKoulutusmoduulitVastausTyyppi resultKomos = tarjontaPublicService.haeKoulutusmoduulit(hae);
-
-                if (resultKomos == null || resultKomos.getKoulutusmoduuliTulos().isEmpty()) {
-                    KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli = tarjontaAdminService.lisaaKoulutusmoduuli(kooste);
-                    publishKomo(lisaaKoulutusmoduuli.getOid());
-                } else {
-                    String oid = resultKomos.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid();
-                    kooste.setOid(oid);
-                    tarjontaAdminService.paivitaKoulutusmoduuli(kooste);
-                    log.error("kooste : {}", kooste);
-                }
-            }
-        }
-        log.info("Total count of the imported KOMOs : {}", count);
-    }
-
+// FOR FUTURE USE...
+//    private void specialExcelKomos() throws ExceptionMessage {
+//        /*
+//         * TUTKINTO DATA, NO CHILD RELATIONS
+//         */
+//        Set<ExcelMigrationDTO> loadedData = dataReader.getValmentavaData();
+//        log.info("Excel files merged, now try to create all KOMOs.");
+//        int count = 1;
+//        for (ExcelMigrationDTO dto : loadedData) {
+//            if (count % 10 == 1) {
+//                log.info("Processing special case komos... {}", count);
+//                final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTO_URI);
+//                //base values
+//
+//                log.error("Processing special case komos... {}", koulutuskoodiUri);
+//                final KoulutusmoduuliKoosteTyyppi kooste = createTutkinto(dto, new KoulutusmoduuliKoosteTyyppi(), koulutuskoodiUri);
+//
+//                HaeKoulutusmoduulitKyselyTyyppi hae = new HaeKoulutusmoduulitKyselyTyyppi();
+//                hae.setKoulutustyyppi(dto.getKoulutusateTyyppi());
+//                hae.setKoulutuskoodiUri(dto.getKoulutuskoodiKoodiarvo());
+//                HaeKoulutusmoduulitVastausTyyppi resultKomos = tarjontaPublicService.haeKoulutusmoduulit(hae);
+//
+//                if (resultKomos == null || resultKomos.getKoulutusmoduuliTulos().isEmpty()) {
+//                    KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli = tarjontaAdminService.lisaaKoulutusmoduuli(kooste);
+//                    publishKomo(lisaaKoulutusmoduuli.getOid());
+//                } else {
+//                    String oid = resultKomos.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid();
+//                    kooste.setOid(oid);
+//                    tarjontaAdminService.paivitaKoulutusmoduuli(kooste);
+//                    log.error("kooste : {}", kooste);
+//                }
+//            }
+//        }
+//        log.info("Total count of the imported KOMOs : {}", count);
+//    }
     private void separateExcelKomos() throws ExceptionMessage {
         /*
          * DATA WITH PARENT CHILD RELATION
@@ -581,12 +598,12 @@ public class TarjontaKomoData {
              */
             KoulutusmoduuliKoosteTyyppi komoChild = createChildKomo(dto);
             final String koulutuskoodiUri = komoChild.getKoulutuskoodiUri();
-            if (childKomosReadyForUpdate.containsKey(koulutuskoodiUri)) {
-                childKomosReadyForUpdate.get(koulutuskoodiUri).add(komoChild);
+            if (childKomosReadyForInsertAndUpdate.containsKey(koulutuskoodiUri)) {
+                childKomosReadyForInsertAndUpdate.get(koulutuskoodiUri).add(komoChild);
             } else {
                 List<KoulutusmoduuliKoosteTyyppi> childKomos = Lists.<KoulutusmoduuliKoosteTyyppi>newArrayList();
                 childKomos.add(komoChild);
-                childKomosReadyForUpdate.put(koulutuskoodiUri, childKomos);
+                childKomosReadyForInsertAndUpdate.put(koulutuskoodiUri, childKomos);
             }
             count++;
         }
