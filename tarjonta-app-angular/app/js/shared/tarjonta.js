@@ -1,6 +1,6 @@
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
+app.factory('TarjontaService', function($resource, $log, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
@@ -69,7 +69,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    
+
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = t.oid;
                     } else {
@@ -153,7 +153,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
 
         return ret.promise;
     };
-    
+
     function cleanAndLocalizeArray(arr) {
     	var ret = [];
     	for (var i in arr) {
@@ -166,7 +166,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     	}
     	return ret;
     }
-    
+
     dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/"+oid+"/hakukohteet").query({}, function(res){
@@ -174,7 +174,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         });
         return ret.promise;
     }
-    
+
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/"+oid+"/koulutukset").query({}, function(res){
@@ -182,28 +182,29 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         });
         return ret.promise;
     }
-    
+
     /**
      * POST: Insert new KOMOTO + KOMO. API object must be valid.
-     * 
+     *
      * @param json data in JSON format.
      * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
      * @returns {undefined}
      */
     dataFactory.insertKoulutus = function(json, func) {
-        console.log("insertKoulutus", json);
+        $log.debug("insertKoulutus()", json);
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/");
         koulutus.save(json, func);
     };
 
     /**
      * PUT: Update KOMOTO + KOMO data objects. API object must be valid.
-     * 
+     *
      * @param json data in JSON format.
      * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
      * @returns {undefined}
      */
     dataFactory.updateKoulutus = function(json, func) {
+        $log.debug("updateKoulutus(): ", json);
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
             update: {method: 'PUT'}
         });
@@ -211,6 +212,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.deleteKoulutus = function(id) {
+        $log.debug("deleteKoulutus(): ", id);
         var ret = $q.defer();
         $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res) {
             ret.resolve(res);
@@ -218,7 +220,18 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return ret.promise;
     };
 
+
+    dataFactory.getHakukohde = function(id) {
+        $log.warn("getHakukohde(): id = ", id);
+
+        // TODO fixme - implement for real the loading from the server
+        return {
+            oid : id
+        };
+    };
+
     dataFactory.deleteHakukohde = function(id) {
+        $log.debug("deleteHakukohde(): ", id);
         var ret = $q.defer();
         $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res) {
             ret.resolve(res);
@@ -227,13 +240,13 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.getKoulutus = function(arg, func) {
-        console.log("getKoulutus()");
+        $log.debug("getKoulutus()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
-        console.log("getKoulutuskoodiRelations()");
+        $log.debug("getKoulutuskoodiRelations()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri", {koulutuskoodiUri: '@koulutuskoodiUri'});
         return koulutus.get(arg, func);
     };
