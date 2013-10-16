@@ -27,7 +27,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize model and arrays inside it
     $scope.model = new Hakukohde({
 
-        liitteidenToimitusosoite : {
+        liitteidenToimitusOsoite : {
 
         },
         hakukohteenNimet : [
@@ -39,11 +39,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             }
         ],
         hakukelpoisuusvaatimusUris : [],
-        hakukohdeKoulutusOids : [],
-        opetuskielet : [],
-
-        liitteet : [],
-        valintakoes : [],
+        hakukohdeKoulutusOids : ["1.2.246.562.5.64152743346"],
+        hakukohteenLiitteet : [],
+        valintakokeet : [],
+        tila : "VALMIS",
         lisatiedot : [
 
         ]
@@ -146,8 +145,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.onKoodistoComboChange = function() {
        var koodi = findKoodiWithArvo($scope.postinumeroarvo.arvo,$scope.koodis);
 
-       $scope.model.liitteidenToimitusosoite.postinumero = koodi.koodiUri;
-       $scope.model.liitteidenToimitusosoite.postitoimipaikka = koodi.koodiNimi;
+       $scope.model.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
+       $scope.model.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
 
     };
 
@@ -157,9 +156,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if (data.postiosoite !== undefined) {
 
             console.log('GOT OSOITE:', data.postiosoite);
-            $scope.model.liitteidenToimitusosoite.osoiterivi1 = data.postiosoite.osoite;
-            $scope.model.liitteidenToimitusosoite.postinumero = data.postiosoite.postinumeroUri;
-            $scope.model.liitteidenToimitusosoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+            $scope.model.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+            $scope.model.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+            $scope.model.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
             postinumero = data.postiosoite.postinumeroUri;
         }
     });
@@ -195,12 +194,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
 
-       $scope.model.liitteidenToimitusosoite.postitoimipaikka = selectedPostinumero.koodiNimi;
+       $scope.model.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
     $scope.insert = function() {
       console.log('MODEL: ', $scope.model);
-      //$scope.model.$save();
+      $scope.model.$save();
     };
 
     var hakuPromise = HakuService.getAllHakus();
@@ -245,7 +244,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.removeNimi = function(hakukohdeNimi){
         if ($scope.model.hakukohteenNimet.length > 1) {
-           var index = $scope.model.hakukohteenNimet.indexOf(hakukohdeNimi);
+
+            var nimiToRemove ;
+
+
+
+            angular.forEach($scope.model.hakukohteenNimet,function(hakukohteenNimi){
+                if (hakukohteenNimi.nimi === hakukohdeNimi.nimi && hakukohteenNimi.uri === hakukohdeNimi.uri) {
+                    nimiToRemove = hakukohteenNimi;
+                }
+            });
+
+           var index = $scope.model.hakukohteenNimet.indexOf(nimiToRemove);
             $scope.model.hakukohteenNimet.splice(index,1);
         }
     };
