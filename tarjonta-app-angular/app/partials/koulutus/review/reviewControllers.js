@@ -84,6 +84,11 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             dialogService.showNotImplementedDialog();
         };
 
+        $scope.doPreview = function(event) {
+            $log.info("doPreview()...");
+            dialogService.showNotImplementedDialog();
+        };
+
         $scope.load = function(oid) {
             $log.info("load()...");
 
