@@ -27,6 +27,7 @@
                  <div data-ng-repeat="hakukohdenimi in model.hakukohteenNimet" >
                     <label>{{hakukohdenimi.nimi}}</label>
                     <input type="text" data-ng-model="hakukohdenimi.teksti" required />
+                     <a href="" data-ng-click="removeNimi()">X</a>
                 </div>
 
             </div>

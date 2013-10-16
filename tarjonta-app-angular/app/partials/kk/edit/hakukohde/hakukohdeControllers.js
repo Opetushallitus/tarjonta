@@ -35,7 +35,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 "uri": "kieli_fi",
                 "nimi": "suomi",
 
-                "teksti": "Varia nonnoo"
+                "teksti": ""
             }
         ],
         hakukelpoisuusvaatimusUris : [],
@@ -214,6 +214,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     });
 
+
+    //Hakukohde nimi chooser dialog controller
     var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
 
         $scope.hakukohdenimi = {};
@@ -239,6 +241,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
+    };
+
+    $scope.removeNimi = function(hakukohdeNimi){
+        if ($scope.model.hakukohteenNimet.length > 1) {
+           var index = $scope.model.hakukohteenNimet.indexOf(hakukohdeNimi);
+            $scope.model.hakukohteenNimet.splice(index,1);
+        }
     };
 
     $scope.openNimiDialog = function() {
