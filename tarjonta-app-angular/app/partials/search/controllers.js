@@ -343,6 +343,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	});
     	
     	$("input[type=checkbox]", em).click(function(ev){
+    		ev.stopPropagation();
     		updateSelection();
     		$scope.$apply();
     	});
@@ -420,7 +421,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
         // valinta riviä klikkaamalla
     	$("td, th", em).click(function(ev){
-    		//console.log("select ", ev.currentTarget);
     		$("input[type=checkbox]", ev.currentTarget.parentNode).trigger("click");
     	});
     	
