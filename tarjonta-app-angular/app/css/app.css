@@ -329,3 +329,25 @@ div#deleteDialog .subject {
 .collapseHeader.isOpen:before{
     content: '▼ ';
 }
+
+/* select-tutkinto-ohjelma */
+div.tarjonta-dialog .modal-body {
+	max-height: 80%;
+}
+
+div#select-tutkinto-ohjelma .gridStyle, div#select-tutkinto-ohjelma select {
+	width:100%;
+}
+
+div#select-tutkinto-ohjelma .modal-body input[type=text] {
+	position:relative;
+	top: 5px;
+}
+
+div#select-tutkinto-ohjelma .gridStyle {
+	height:180px;
+}
+
+div#select-tutkinto-ohjelma .noResults {
+	height:182px;
+}
