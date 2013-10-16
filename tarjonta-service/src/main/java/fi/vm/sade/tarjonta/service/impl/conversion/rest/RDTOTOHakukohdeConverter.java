@@ -40,7 +40,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeRDTO,Ha
         if (hakukohdeRDTO.getOid() != null && hakukohdeRDTO.getOid().trim().length() > 0) {
             hakukohde.setOid(hakukohdeRDTO.getOid());
         } else {
-            LOG.debug("NO OID FOUND ADDING NEW ONE : ", newHakukohdeOid);
+            LOG.debug("NO OID FOUND ADDING NEW ONE : {}", newHakukohdeOid);
             hakukohde.setOid(newHakukohdeOid);
         }
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
