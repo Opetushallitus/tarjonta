@@ -14,12 +14,15 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 						active: {},
 						hakulause: '',
 						koulutusala: '',
-						itemSelected: false}
+						itemSelected: false,
+						searched: false }
 	;
 	
 	//ng-grid malli
 	$scope.gridOptions = { data: 'stoModel.hakutulokset',			
-							columnDefs: [{field: 'koodiArvo', displayName: 'Koodi'}, {field:'koodiNimi', displayName: 'Nimi'}],
+							columnDefs: [
+							             {field: 'koodiArvo', displayName: 'Koodi', width:"20%"},
+							             {field:'koodiNimi', displayName: 'Nimi', width:"80%"}],
 							multiSelect: false,
 							beforeSelectionChange: function(rowItem, event) {
 								console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
@@ -90,6 +93,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	$scope.performStringSearch = function(tutkinnot) {
 		 console.log("Performing string search");
 	     $scope.stoModel.hakutulokset = tutkinnot.filter(function (element) {
+	 		$scope.stoModel.searched = true;
 	return (element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1) || (element.koodiArvo.indexOf($scope.stoModel.hakulause) > -1);
 	});
 	     };

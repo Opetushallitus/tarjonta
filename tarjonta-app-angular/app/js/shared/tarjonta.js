@@ -220,14 +220,21 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return ret.promise;
     };
 
+    dataFactory.insertHakukohde = function(hakukohde,func) {
+       $log.info('Inserting hakukohde : ', hakukohde);
+
+    };
 
     dataFactory.getHakukohde = function(id) {
         $log.warn("getHakukohde(): id = ", id);
 
-        // TODO fixme - implement for real the loading from the server
-        return {
-            oid : id
-        };
+        var ret = $q.defer();
+
+        $resource(Config.env.tarjontaRestUrlPrefix+"hakukohde/ui/"+id,function(result) {
+            ret.resolve(result);
+        });
+
+        return ret.promise;
     };
 
     dataFactory.deleteHakukohde = function(id) {

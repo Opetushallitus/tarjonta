@@ -45,6 +45,7 @@
             </div>
             <div class="span9">
                 {{ model.koulutus.koulutuskoodi.meta[lang.koodi_uri].arvo }}
+                <i>{{ model.koulutus.koulutuskoodi.koodi.arvo }}</i>
             </div>
         </div>
         <div class="row-fluid">
@@ -52,7 +53,8 @@
                 <div tt='koulutus.review.perustiedot.tutkintoOhjelmaJaTunniste'></div>
             </div>
             <div class="span9">
-                [TUTKINTO-OHJELMA] [TUNNISTE]
+                {{ model.koulutus.koulutusohjelma.meta[lang.koodi_uri].koodi.arvo }}
+                <i>({{ model.koulutus.tunniste }})</i>
             </div>
         </div>
 
@@ -85,7 +87,7 @@
                 <div tt='koulutus.review.perustiedot.teematJaAiheet'></div>
             </div>
             <div class="span9">
-                [TEEMAT JA AIHEET]
+                <span data-ng-repeat='teema in model.koulutus.teemas.meta'>{{ teema.arvo }}{{ $last ? '' : ', ' }}</span>
             </div>
         </div>
         <div class="row-fluid">
@@ -93,7 +95,7 @@
                 <div tt='koulutus.review.perustiedot.tutkinto'></div>
             </div>
             <div class="span9">
-                [TUTKINTO]
+                {{ model.koulutus.tutkinto.meta[lang.koodi_uri].arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -101,7 +103,7 @@
                 <div tt='koulutus.review.perustiedot.tutkintonimike'></div>
             </div>
             <div class="span9">
-                [TUTKINTONIMIKE]
+                {{ model.koulutus.tutkintonimike.meta[lang.koodi_uri].arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -109,7 +111,7 @@
                 <div tt='koulutus.review.perustiedot.vaativuustaso'></div>
             </div>
             <div class="span9">
-                [VAATIVUUSTASO - EQF LUOKITUS]
+                {{ model.koulutus.eqf.meta[lang.koodi_uri].arvo }}
             </div>
         </div>
         <div class="row-fluid">
@@ -117,7 +119,7 @@
                 <div tt='koulutus.review.perustiedot.opintojenLaajuus'></div>
             </div>
             <div class="span9">
-                [OPINTOJEN LAAJUUS]
+                {{ model.koulutus.opintojenLaajuus.arvo }} [op]
             </div>
         </div>
         <div class="row-fluid">
@@ -133,7 +135,7 @@
                 <div tt='koulutus.review.perustiedot.pohjakoulutusvaatimus'></div>
             </div>
             <div class="span9">
-                XXX
+                <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.arvo }}{{ $last ? '' : ', ' }}</span>
             </div>
         </div>
 
@@ -143,7 +145,7 @@
                 <div tt='koulutus.review.perustiedot.alkamispvm'></div>
             </div>
             <div class="span9">
-                [ALKAMISPÄIVÄMÄÄRÄ]
+                {{ model.koulutus.koulutuksenAlkamisPvm }}
             </div>
         </div>
         <div class="row-fluid">
@@ -151,7 +153,7 @@
                 <div tt='koulutus.review.perustiedot.suunniteltuKesto'></div>
             </div>
             <div class="span9">
-                [SUUNNITELTU KESTO]
+                {{ model.koulutus.suunniteltuKesto.arvo }} {{ model.koulutus.suunniteltuKesto.koodi.kaannos }}
             </div>
         </div>
         <div class="row-fluid">
@@ -159,7 +161,7 @@
                 <div tt='koulutus.review.perustiedot.opetuskielet'></div>
             </div>
             <div class="span9">
-                [OPETUSKIELET]
+                <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.arvo }}{{ $last ? '' : ', ' }}</span>
             </div>
         </div>
         <div class="row-fluid">
@@ -167,7 +169,7 @@
                 <div tt='koulutus.review.perustiedot.opetusmuodot'></div>
             </div>
             <div class="span9">
-                [OPETUSMUODOT]
+                <span data-ng-repeat='opetusmuoto in model.koulutus.opetusmuodos.meta'>{{ opetusmuoto.arvo }}{{ $last ? '' : ', ' }}</span>
             </div>
         </div>
 
@@ -177,7 +179,7 @@
                 <div tt='koulutus.review.perustiedot.maksullisuus'></div>
             </div>
             <div class="span9">
-                [MAKSULLISUUS]
+                {{ model.koulutus.opintojenMaksullisuus ? t("yes") : t("no") }}
             </div>
         </div>
 
@@ -268,6 +270,7 @@
             </div>
             <div class="span9">
                 [rakenneKoulutus]
+                <img src="http://www.koulutusnetti.fi/images/opintojen_rakenne.gif" width="200" height="200"/>
             </div>
         </div>
         <div class="row-fluid">
