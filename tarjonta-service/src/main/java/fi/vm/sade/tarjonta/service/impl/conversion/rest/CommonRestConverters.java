@@ -2,8 +2,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -23,6 +27,8 @@ public class CommonRestConverters {
 
         return osoite;
     }
+
+
 
 
     public static MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String,String> map) {

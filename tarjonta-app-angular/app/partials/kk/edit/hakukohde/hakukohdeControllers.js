@@ -22,14 +22,71 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService ,Config) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config) {
 
+    //Initialize model and arrays inside it
+    $scope.model = new Hakukohde({
+
+        liitteidenToimitusosoite : {
+
+        },
+        hakukohteenNimet : [
+            {
+                "uri": "kieli_fi",
+                "nimi": "suomi",
+
+                "teksti": ""
+            }
+        ],
+        hakukelpoisuusvaatimusUris : [],
+        hakukohdeKoulutusOids : [],
+        opetuskielet : [],
+
+        liitteet : [],
+        valintakoes : [],
+        lisatiedot : [
+
+        ]
+    });
+
+
+
+
+    //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
+    //All kieles is received from koodistomultiselect
+    $scope.allkieles = [];
+    $scope.selectedKieliUris = [];
+
+    if ($scope.model.lisatiedot !== undefined) {
+        angular.forEach($scope.model.lisatiedot,function(lisatieto){
+
+            $scope.selectedKieliUris.push(lisatieto.uri);
+        });
+    }
 
     $scope.postinumeroarvo = {
 
     };
 
+
+    var removeLisatieto = function(koodi){
+
+        var foundLisatieto;
+         angular.forEach($scope.model.lisatiedot,function(lisatieto) {
+               if (lisatieto.uri === koodi) {
+                   foundLisatieto = lisatieto;
+               }
+         });
+
+        if (foundLisatieto !== undefined) {
+            var index = $scope.model.lisatiedot.indexOf(foundLisatieto);
+            $scope.model.lisatiedot.splice(index,1);
+        }
+
+    }
+
+    //Koodisto helper methods
     var findKoodiWithArvo = function(koodi,koodis)  {
 
 
@@ -63,23 +120,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
-    //Initialize model and arrays inside it
-    $scope.model = new Hakukohde({
-
-        liitteidenToimitusosoite : {
 
 
-        },
-        hakukelpoisuusvaatimusUris : [],
-        hakukohdeKoulutusOids : [],
-        opetuskielet : [],
-        liitteidenToimitusPvm :1405391100000,
-        liitteet : [],
-        valintakoes : [],
-        rikasteksti : "<strong>PITÄISI NÄKYÄ</strong>"
-    });
-
-    $scope.koodiuriPromise = $q.defer();
+    //$scope.koodiuriPromise = $q.defer();
 
     $scope.hakus = [];
 
@@ -122,6 +165,33 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     });
 
 
+    $scope.kieliCallback = function(kieliUri) {
+        if ($scope.allkieles !== undefined) {
+            var lisatietoFound = false;
+            //Check that selected kieli does not exist in list
+            angular.forEach($scope.model.lisatiedot,function(lisatieto) {
+                 if (lisatieto.uri === kieliUri) {
+                     lisatietoFound = true;
+                 }
+            });
+            if (!lisatietoFound) {
+                var foundKoodi = findKoodiWithUri(kieliUri,$scope.allkieles);
+                var newLisatieto = {
+                    "uri" : foundKoodi.koodiUri,
+                    "nimi" : foundKoodi.koodiNimi,
+                    "teksti": ""
+                };
+
+                $scope.model.lisatiedot.push(newLisatieto);
+            }
+
+        }
+    };
+
+    $scope.kieliRemoveCallback = function(kieliUri) {
+      removeLisatieto(kieliUri);
+    };
+
     $scope.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
 
@@ -129,7 +199,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     $scope.insert = function() {
-        console.log('Model : ', $scope.model);
+      console.log('MODEL: ', $scope.model);
       //$scope.model.$save();
     };
 
@@ -143,5 +213,75 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     });
+
+
+    //Hakukohde nimi chooser dialog controller
+    var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
+
+        $scope.hakukohdenimi = {};
+
+        $scope.selectedKieliKoodi;
+
+        $scope.kieliComboCallback = function(koodi) {
+
+            $scope.selectedKieliKoodi = koodi;
+
+        };
+
+
+        $scope.ok = function () {
+
+
+
+            $scope.hakukohdenimi.nimi  = $scope.selectedKieliKoodi.koodiNimi;
+
+            $modalInstance.close($scope.hakukohdenimi);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
+    $scope.removeNimi = function(hakukohdeNimi){
+        if ($scope.model.hakukohteenNimet.length > 1) {
+           var index = $scope.model.hakukohteenNimet.indexOf(hakukohdeNimi);
+            $scope.model.hakukohteenNimet.splice(index,1);
+        }
+    };
+
+    $scope.openNimiDialog = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/hakukohde/edit/hakukohdeNimiChooserDialog.html',
+            controller: NimiModalInstanceCtrl,
+            scope: $scope
+
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+
+
+            var selectedItemExists = false;
+
+            angular.forEach($scope.model.hakukohteenNimet,function(hakukohdenimi){
+                 if (hakukohdenimi.uri === selectedItem.uri) {
+                     selectedItemExists = true;
+                 }
+            });
+
+            if (!selectedItemExists) {
+                $scope.model.hakukohteenNimet.push(selectedItem);
+            }
+
+
+
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+
+    };
+
+
 
 });

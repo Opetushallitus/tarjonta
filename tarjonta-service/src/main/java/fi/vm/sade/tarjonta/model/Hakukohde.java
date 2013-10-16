@@ -47,8 +47,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     /**
      * The koodisto uri of the name of this hakukohde object.
      */
-    @NotNull
-    @Column(name = "hakukohde_nimi", nullable = false)
+
+    @Column(name = "hakukohde_nimi")
     private String hakukohdeNimi;
     /**
      * The string containing the human readable name of this hakukohde object.

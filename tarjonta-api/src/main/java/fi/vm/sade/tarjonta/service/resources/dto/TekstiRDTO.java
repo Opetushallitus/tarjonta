@@ -1,5 +1,8 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
 * @author: Tuomas Katva 10/11/13
 */
@@ -8,6 +11,12 @@ public class TekstiRDTO {
     private String uri;
 
     private String nimi;
+
+    private List<KieliNimiRDTO> monikielisetNimet;
+
+    private String arvo;
+
+    private int versio;
 
     private String teksti;
 
@@ -58,4 +67,67 @@ public class TekstiRDTO {
         return result;
     }
 
+    public String getArvo() {
+        return arvo;
+    }
+
+    public void setArvo(String arvo) {
+        this.arvo = arvo;
+    }
+
+    public void addKieliAndNimi(String kieli,String nimi) {
+        getMonikielisetNimet().add(new KieliNimiRDTO(kieli,nimi));
+    }
+
+    public List<KieliNimiRDTO> getMonikielisetNimet() {
+        if (monikielisetNimet == null) {
+            monikielisetNimet = new ArrayList<KieliNimiRDTO>();
+        }
+        return monikielisetNimet;
+    }
+
+    public void setMonikielisetNimet(List<KieliNimiRDTO> monikielisetNimet) {
+        this.monikielisetNimet = monikielisetNimet;
+    }
+
+    public int getVersio() {
+        return versio;
+    }
+
+    public void setVersio(int versio) {
+        this.versio = versio;
+    }
+
+
+    static class KieliNimiRDTO {
+
+        private String kieli;
+
+        private String nimi;
+
+        public KieliNimiRDTO(String kieli,String nimi) {
+           this.kieli = kieli;
+           this.nimi = nimi;
+        }
+
+        public KieliNimiRDTO() {
+
+        }
+
+        public String getKieli() {
+            return kieli;
+        }
+
+        public void setKieli(String kieli) {
+            this.kieli = kieli;
+        }
+
+        public String getNimi() {
+            return nimi;
+        }
+
+        public void setNimi(String nimi) {
+            this.nimi = nimi;
+        }
+    }
 }
