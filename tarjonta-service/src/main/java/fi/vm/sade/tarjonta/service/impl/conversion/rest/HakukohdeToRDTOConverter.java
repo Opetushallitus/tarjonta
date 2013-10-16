@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
@@ -100,7 +102,18 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
                 try {
                     KoodiType koodiType = getTarjontaKoodistoHelper().getKoodiByUri(tekstiKaannos.getKieliKoodi());
                     //TODO: should it return nimi instead ? But with what language ?
-                    tekstiRDTO.setNimi(koodiType.getKoodiArvo());
+                    tekstiRDTO.setArvo(koodiType.getKoodiArvo());
+                    tekstiRDTO.setVersio(koodiType.getVersio());
+                    if (koodiType.getMetadata() != null) {
+                        for (KoodiMetadataType meta:koodiType.getMetadata()) {
+                            //By default set default name finnish
+                            if (meta.getKieli().equals(KieliType.FI)) {
+                                tekstiRDTO.setNimi(meta.getNimi());
+                            }
+                            tekstiRDTO.addKieliAndNimi(meta.getKieli().value(),meta.getNimi());
+                        }
+                    }
+
 
                 } catch (Exception exp) {
 
