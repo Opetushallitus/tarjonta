@@ -201,6 +201,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             KoulutuksenKestoTyyppi laajuus = new KoulutuksenKestoTyyppi();
             laajuus.setArvo(model.getOpintojenLaajuusTot());
             laajuus.setYksikko(model.getOpintojenLaajuusyksikkoTot());
+            tyyppi.setLaajuus(laajuus);
         }
         
 

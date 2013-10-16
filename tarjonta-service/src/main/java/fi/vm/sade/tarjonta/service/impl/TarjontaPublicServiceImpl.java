@@ -573,6 +573,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             KoulutuksenKestoTyyppi laajuusT = new KoulutuksenKestoTyyppi();
             laajuusT.setArvo(fromKoulutus.getOpintojenLaajuusArvo());
             laajuusT.setYksikko(fromKoulutus.getOpintojenLaajuusYksikko());
+            toKoulutus.setLaajuus(laajuusT);
         }
         
         if (fromKoulutus.getKoulutusaste() != null) {
