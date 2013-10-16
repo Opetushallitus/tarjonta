@@ -45,6 +45,7 @@ div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
+	z-index:10000;
 }
 
 div#ajax-loader.max {
