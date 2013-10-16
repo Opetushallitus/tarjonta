@@ -17,9 +17,10 @@ var app = angular.module('Hakukohde', ['ngResource','config']);
 
 app.factory('Hakukohde',function($resource, $log,$q, Config){
 
-    var host = Config.env["host.base-uri"];
 
-    var hakukohdeUri = host + Config.env["hakukohde.uri"] + "/:oid";
+
+    //var hakukohdeUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/ui/:oid";
+    var hakukohdeUri = "http://localhost:9090/tarjonta-service/rest/hakukohde/ui/:oid";
 
     return $resource(hakukohdeUri,{oid:'@oid'},{
         update: {
@@ -28,6 +29,10 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
         },
         save: {
             method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        get : {
+            method: 'GET',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });

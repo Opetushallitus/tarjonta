@@ -1,26 +1,29 @@
-<div>
+<div class="tarjonta-dialog" id="select-tutkinto-ohjelma">
     <div class="modal-header">
         <h3>{{t('selectTutkintoOhjelma.dialogTitle')}}</h3>
     </div>
-    
-    <div>{{t('selectTutkintoOhjelma.kuvaus')}}</div>
-    
-    <div class="modal-body">
+
+       <div class="modal-body">
+   
+       	<p>{{t('selectTutkintoOhjelma.kuvaus')}}</p>
     
         <h4>{{t('selectTutkintoOhjelma.koulutusala')}}</h4>
         
-        <koodistocombo  koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
+        <koodistocombo koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
     
         <h4>{{t('selectTutkintoOhjelma.tekstihaku')}}</h4>
         <div>
-            <input type="text" data-ng-model="stoModel.hakulause" />
+	        <input type="text" data-ng-model="stoModel.hakulause" />
             <button class="btn btn-warning" ng-click="clearCriteria()">{{t('selectTutkintoOhjelma.tyhjenna')}}</button>
             <button class="btn btn-primary" ng-click="searchTutkinnot()">{{t('selectTutkintoOhjelma.hae')}}</button>
         </div>
         
-        <h4>{{t('selectTutkintoOhjelma.hakutulokset')}}</h4>
+        <h4>{{t('selectTutkintoOhjelma.hakutulokset')}} {{stoModel.hakutulokset.length==0 ? '' : '('+stoModel.hakutulokset.length+')'}}</h4>
         
-        <div class="gridStyle" ng-grid="gridOptions"></div>
+        <div ng-switch="stoModel.hakutulokset.length==0 && stoModel.searched">
+	        <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
+        	<div ng-switch-default class="noResults">{{t('selectTutkintoOhjelma.eihakutuloksia')}}</div>
+        </div>
      
      
     </div>   

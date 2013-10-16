@@ -12,27 +12,18 @@
 
     <div class="container-fluid ">
         <div class="row-fluid">
-            <div class="span2 label-right"><div tt="kk.hakukohde.koulutuksen.nimi"></div></div>
-            <div class="span10">
-               <label>Koulutuksen nimi</label>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid ">
-        <div class="row-fluid">
             <div class="span2 label-right"><div tt="kk.hakukohde.hakukohdenimi"></div></div>
             <div class="span3">
 
                  <div data-ng-repeat="hakukohdenimi in model.hakukohteenNimet" >
                     <label>{{hakukohdenimi.nimi}}</label>
                     <input type="text" data-ng-model="hakukohdenimi.teksti" required />
-                     <a href="" data-ng-click="removeNimi()">X</a>
+                     <a href="" data-ng-click="removeNimi(hakukohdenimi)">X</a>
                 </div>
 
             </div>
             <div class="span2">
-                <a href="" data-ng-click="openNimiDialog()">lisää nimi</a>
+                <a href="" data-ng-click="openNimiDialog()">{{t('tarjonta.hakukohde.toiminnot.lisaa.nimi')}}</a>
             </div>
         </div>
     </div>
@@ -81,20 +72,21 @@
             <div class="span10">
                 <label class="radio">
                     <input type="radio" ng-model="osoiteType" >
-                      Käytetään oletuksena koulutuksen järjetävän organisaation postiosoitetta
+                    {{t('tarjonta.hakukohde.label.oletus.postisoite')}}
+
                 </label>  <br/>
                 <label class="radio">
                     <input type="radio" ng-model="osoiteType"  value="false">
-                    Käytetään muuta osoitetta
+                    {{t('tarjonta.hakukohde.label.muu.osoite')}}
                 </label>
                 <address>
 
-                    <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.liitteidenToimitusosoite.osoiterivi1" required />   <br/>
+                    <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
 
 
 
                     <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="postinumeroarvo.arvo" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi.koodiArvo for koodi in koodis | filter:$viewValue | limitTo:8 |  orderBy:koodi.koodiArvo">
-                    <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.liitteidenToimitusosoite.postitoimipaikka" required />
+                    <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.liitteidenToimitusOsoite.postitoimipaikka" required />
                 </address>
             </div>
         </div>
