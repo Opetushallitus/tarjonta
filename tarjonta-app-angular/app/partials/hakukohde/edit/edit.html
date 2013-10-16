@@ -1,7 +1,164 @@
 
-<div class="container-fluid">
+<div class="container-fluid" data-ng-controller="HakukohdeEditController">
 
-    HAKUKOHDE EDIT
+    <tabset>
+        <tab heading="{{t('kk.hakukohde.perustiedot')}}">
+            <form name="luoHakukohde">
+                <div class="container-fluid ">
+                    <div class="row-fluid">
+
+                        <!--div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div-->
+                        <!--div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div-->
+                        <div class="span10"><input type="button" data-ng-click="insert()"  value="Tallenna"></div>
+                    </div>
+                </div>
+
+                <div class="container-fluid ">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.hakukohdenimi"></div></div>
+                        <div class="span3">
+
+                            <div data-ng-repeat="hakukohdenimi in model.hakukohteenNimet" >
+                                <label>{{hakukohdenimi.nimi}}</label>
+                                <input type="text" data-ng-model="hakukohdenimi.teksti" required />
+                                <a href="" data-ng-click="removeNimi(hakukohdenimi)">X</a>
+                            </div>
+
+                        </div>
+                        <div class="span2">
+                            <a href="" data-ng-click="openNimiDialog()">{{t('tarjonta.hakukohde.toiminnot.lisaa.nimi')}}</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.haut"></div></div>
+                        <div class="span10">
+                            <select ng-model="model.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in hakus"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.hakukelpoisuusvaatimukset"></div></div>
+                        <div class="span10">
+                            <koodistomultiselect koodiuris="model.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
+                        <div class="span10">
+                            <input type="text" data-ng-model="model.aloituspaikatLkm" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
+                        <div class="span10">
+                            <input type="checkbox" data-ng-model="model.kaytetaanJarjestelmanValintaPalvelua" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.liitteidentoimitusosoite"></div></div>
+                        <div class="span10">
+                            <label class="radio">
+                                <input type="radio" ng-model="osoiteType" >
+                                {{t('tarjonta.hakukohde.label.oletus.postisoite')}}
+
+                            </label>  <br/>
+                            <label class="radio">
+                                <input type="radio" ng-model="osoiteType"  value="false">
+                                {{t('tarjonta.hakukohde.label.muu.osoite')}}
+                            </label>
+                            <address>
+
+                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
+
+
+
+                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="postinumeroarvo.arvo" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi.koodiArvo for koodi in koodis | filter:$viewValue | limitTo:8 |  orderBy:koodi.koodiArvo">
+                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.liitteidenToimitusOsoite.postitoimipaikka" required />
+                            </address>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
+                        <div class="span10">
+                            <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
+                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" ng-model="model.sahkoinenToimitusOsoite">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2 label-right"><div tt="kk.hakukohde.liitteidenToimitusPvm"></div></div>
+                        <div class="span10">
+                            <date-time-picker selecteddatetime="model.liitteidenToimitusPvm"></date-time-picker>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span2">
+
+                        </div>
+                        <div class="span4">
+                            <koodistomultiselect removearvocallback="kieliRemoveCallback" onchangecallback="kieliCallback" koodiuris="selectedKieliUris" allkoodis="allkieles" koodistouri="'kieli'" locale="'FI'"></koodistomultiselect>
+                        </div>
+                        <div class="span5">
+                            <accordion close-others="oneAtATime">
+                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.lisatiedot">
+                                    <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text>
+                                </accordion-group>
+
+
+
+                            </accordion>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+
+
+            </form>
+        </tab>
+
+        <tab heading="{{t('kk.hakukohde.valintakokeet')}}">
+
+
+        </tab>
+
+        <tab heading="{{t('kk.hakukohde.liitteet')}}">
+
+
+        </tab>
+
+        <tab heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
+
+
+        </tab>
+
+    </tabset>
 
     <hr>
     <div ng-click="model.collapse.model = !model.collapse.model">
