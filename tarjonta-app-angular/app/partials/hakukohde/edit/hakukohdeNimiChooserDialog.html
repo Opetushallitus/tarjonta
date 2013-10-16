@@ -1,0 +1,19 @@
+<div id="hakukohdeNimiChooseDialog">
+    <div class="modal-header">
+        <h3>Lisää kieli</h3>
+    </div>
+    <div class="modal-body">
+
+        <p>Ohje</p>
+
+        <input type="text" data-ng-model="hakukohdenimi.teksti">
+        <koodistocombo locale="'FI'" onchangecallback="kieliComboCallback" koodistouri="'kieli'" koodiuri="hakukohdenimi.uri"/>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()">{{t('tarjonta.toiminnot.peruuta')}}</button>
+        <button class="btn btn-primary" ng-click="ok()">{{t('tarjonta.toiminnot.ok')}}</button>
+    </div>
+
+</div>

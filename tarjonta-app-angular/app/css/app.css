@@ -45,6 +45,7 @@ div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
+	z-index:10000;
 }
 
 div#ajax-loader.max {
@@ -106,22 +107,38 @@ div#ajax-loader.min span {
 
 /* sivupalkki */
 
-.tarjonta-body {
+footer {
+	clear:both;
+}
+
+#tarjonta-body {
 	position:relative;
 	margin-top:20px;
 }
 
 .wsidebar-left {
-	position:absolute;
 	min-height:100%;
+	top:0;
 	width:220px;
 	left:20px;
+	position:relative;
+	float:left;
 }
 
 .wsidebar-main {
-	margin-left:290px;
-	margin-top:20px;
+	margin-left:300px;
 	padding-right:20px;
+}
+
+/* tabset korjaus */
+.wsidebar-main .nav {
+    min-height:38px;
+    display:block;
+}
+
+.wsidebar-main .nav-tabs:after, .wsidebar-main .nav-pills:after {
+    clear: right;
+    display:block;
 }
 
 /* organisaatiohaku */

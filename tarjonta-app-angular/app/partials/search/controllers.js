@@ -343,6 +343,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	});
     	
     	$("input[type=checkbox]", em).click(function(ev){
+    		ev.stopPropagation();
     		updateSelection();
     		$scope.$apply();
     	});
@@ -383,9 +384,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     		$scope.$apply();
     		    		
     		// sijoittelu
+    		
+    		var by = $("#tarjonta-body").offset().top;
     		menu.toggleClass("display-block",true);
     		menu.css("left", box(ev.pageX-4, 0, $(document).width() - menu.width() - 4));
-    		menu.css("top", box(ev.pageY-4, 0, $(document).height() - menu.height() - 4));
+    		menu.css("top", box(ev.pageY-4-by, 0, $(document).height() - menu.height() - 4));
     		
     		    	
     		// automaattinen sulkeutuminen hiiren kursorin siirtyessä muualle
@@ -418,7 +421,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
         // valinta riviä klikkaamalla
     	$("td, th", em).click(function(ev){
-    		//console.log("select ", ev.currentTarget);
     		$("input[type=checkbox]", ev.currentTarget.parentNode).trigger("click");
     	});
     	
