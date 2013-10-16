@@ -22,15 +22,22 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService ,Config) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config) {
 
     //Initialize model and arrays inside it
     $scope.model = new Hakukohde({
 
         liitteidenToimitusosoite : {
 
-
         },
+        hakukohteenNimet : [
+            {
+                "uri": "kieli_fi",
+                "nimi": "suomi",
+
+                "teksti": "Varia nonnoo"
+            }
+        ],
         hakukelpoisuusvaatimusUris : [],
         hakukohdeKoulutusOids : [],
         opetuskielet : [],
@@ -41,6 +48,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         ]
     });
+
+
+
+
     //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
     //All kieles is received from koodistomultiselect
@@ -202,5 +213,66 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     });
+
+    var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
+
+        $scope.hakukohdenimi = {};
+
+        $scope.selectedKieliKoodi;
+
+        $scope.kieliComboCallback = function(koodi) {
+
+            $scope.selectedKieliKoodi = koodi;
+
+        };
+
+
+        $scope.ok = function () {
+
+
+
+            $scope.hakukohdenimi.nimi  = $scope.selectedKieliKoodi.koodiNimi;
+
+            $modalInstance.close($scope.hakukohdenimi);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
+    $scope.openNimiDialog = function() {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/hakukohde/edit/hakukohdeNimiChooserDialog.html',
+            controller: NimiModalInstanceCtrl,
+            scope: $scope
+
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+
+
+            var selectedItemExists = false;
+
+            angular.forEach($scope.model.hakukohteenNimet,function(hakukohdenimi){
+                 if (hakukohdenimi.uri === selectedItem.uri) {
+                     selectedItemExists = true;
+                 }
+            });
+
+            if (!selectedItemExists) {
+                $scope.model.hakukohteenNimet.push(selectedItem);
+            }
+
+
+
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+
+    };
+
+
 
 });
