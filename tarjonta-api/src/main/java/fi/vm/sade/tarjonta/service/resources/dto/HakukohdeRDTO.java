@@ -21,6 +21,10 @@ public class HakukohdeRDTO extends BaseRDTO {
 
     private List<String> hakukohdeKoulutusOids;
 
+    private Date hakuaikaAlkuPvm;
+
+    private Date hakuaikaLoppuPvm;
+
     private double alinHyvaksyttavaKeskiarvo;
 
     private int alinValintaPistemaara;
@@ -54,8 +58,6 @@ public class HakukohdeRDTO extends BaseRDTO {
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
     private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
-
-    private List<ValintakoeRDTO> hakukohteenValintakokeet;
 
     private OsoiteRDTO liitteidenToimitusOsoite;
 
@@ -249,17 +251,6 @@ public class HakukohdeRDTO extends BaseRDTO {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 
-    public List<ValintakoeRDTO> getHakukohteenValintakokeet() {
-        if (hakukohteenValintakokeet == null) {
-            hakukohteenValintakokeet = new ArrayList<ValintakoeRDTO>();
-        }
-        return hakukohteenValintakokeet;
-    }
-
-    public void setHakukohteenValintakokeet(List<ValintakoeRDTO> hakukohteenValintakokeet) {
-        this.hakukohteenValintakokeet = hakukohteenValintakokeet;
-    }
-
     public OsoiteRDTO getLiitteidenToimitusOsoite() {
         return liitteidenToimitusOsoite;
     }
@@ -308,5 +299,21 @@ public class HakukohdeRDTO extends BaseRDTO {
 
     public void setHakukohteenNimiUri(String hakukohteenNimiUri) {
         this.hakukohteenNimiUri = hakukohteenNimiUri;
+    }
+
+    public Date getHakuaikaAlkuPvm() {
+        return hakuaikaAlkuPvm;
+    }
+
+    public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
+        this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+    }
+
+    public Date getHakuaikaLoppuPvm() {
+        return hakuaikaLoppuPvm;
+    }
+
+    public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
+        this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
     }
 }

@@ -79,6 +79,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
 
 /**
  * @author Tuomas Katva
@@ -122,7 +123,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
 
-
     @Override
     @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
@@ -130,7 +130,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
 //        System.out.println("dto version:" + hakuDto.getVersion());
         final Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
-        
+
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
             hakuBusinessService.update(foundHaku);
@@ -138,16 +138,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
             ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
             listaaHakuTyyppi.setHakuOid(foundHaku.getOid());
-            HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
-            
+            HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+
             return hakuTyyppi;
 
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
     }
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -392,10 +390,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
-
-
-
-
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
         Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
 
@@ -463,7 +457,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
     }
-    
+
     private List<Long> getKomotoIds(Set<KoulutusmoduuliToteutus> komotos) {
         List<Long> komotoIds = new ArrayList<Long>();
         for (KoulutusmoduuliToteutus curKomoto : komotos) {
@@ -537,12 +531,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
         listaaHakuTyyppi.setHakuOid(haku.getOid());
 
-        HakuTyyppi hakuTyyppi =  publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
-        
+        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+
         return hakuTyyppi;
     }
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -585,15 +577,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
-        
-        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();      
+
+        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         vastaus.setVersion(toteutus.getVersion()); //optimistic locking
         vastaus.setKomoOid(toteutus.getKoulutusmoduuli().getOid());
-    
+
         return vastaus;
     }
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -601,7 +591,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-        
+
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
@@ -627,12 +617,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     private void checkOrganisationExists(String tarjoaja) {
         List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
-        if(orgs.size()!=1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))){
+        if (orgs.size() != 1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))) {
             throw new RuntimeException("nonexisting.organisation.error");
         }
     }
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -697,6 +685,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
          * Check type and fetch an existing KOMO, if any.
          */
         switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break.
             case AMMATILLINEN_PERUSKOULUTUS:
                 //fetch children or parent
                 komo = koulutusmoduuliDAO.findTutkintoOhjelma(koulutuskoodiUri, komoKoosteTyyppi.getKoulutusohjelmakoodiUri());
@@ -704,10 +693,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             case LUKIOKOULUTUS:
                 //fetch children or parent
                 komo = koulutusmoduuliDAO.findLukiolinja(koulutuskoodiUri, komoKoosteTyyppi.getLukiolinjakoodiUri());
-                break;
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                //fetch children or parent
-                komo = koulutusmoduuliDAO.findKoulutus(koulutuskoodiUri);
                 break;
             default:
                 throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());
@@ -720,14 +705,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi));
         }
 
-        switch (komoKoosteTyyppi.getKoulutustyyppi()) {
-            case AMMATILLINEN_PERUSKOULUTUS:
-            case LUKIOKOULUTUS:
+
         if (komoKoosteTyyppi.getParentOid() != null) {
             //added KOMO was a child, not parent.
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
-        }
-                break;
         }
 
         Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
@@ -754,6 +735,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
          */
         if (komoKoosteTyyppi.getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
             switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break.
                 case AMMATILLINEN_PERUSKOULUTUS:
                     //fetch children or parent
                     Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusohjelmakoodiUri(), "Koulutusohjelma URI cannot be null.");
@@ -761,10 +743,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 case LUKIOKOULUTUS:
                     Preconditions.checkNotNull(komoKoosteTyyppi.getLukiolinjakoodiUri(), "Lukiolinja URI cannot be null.");
                     break;
-                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                    Preconditions.checkNotNull(komoKoosteTyyppi.getKoulutusohjelmakoodiUri() != null, "An invalid data, koulutusohjelma URI was populated.");
-                    Preconditions.checkNotNull(komoKoosteTyyppi.getLukiolinjakoodiUri() != null, "An invalid data, Lukiolinja URI was populated.");
-                    break;
+
                 default:
                     throw new GenericFault("Not supported KoulutusasteTyyppi object. Type : " + komoKoosteTyyppi.getKoulutustyyppi());
             }
@@ -789,7 +768,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @return
      */
     private Koulutusmoduuli handleParentKomo(Koulutusmoduuli komo, String parentOid) {
+        Preconditions.checkNotNull(parentOid, "Parent KOMO OID cannot be null.");
         Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentOid);
+        Preconditions.checkNotNull(parent, "No parent KOMO found by OID '%s'.", parentOid);
+
         if (parent.getSisaltyvyysList().isEmpty()) {
             KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys();
             sisaltyvyys.setYlamoduuli(parent);
@@ -959,13 +941,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Hakukohde> hakukohteet = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
         for (Hakukohde curhakukohde : hakukohteet) {
             hakukohdeIds.add(curhakukohde.getId());
-            for (KoulutusmoduuliToteutus komoto : curhakukohde.getKoulutusmoduuliToteutuses()) { 
+            for (KoulutusmoduuliToteutus komoto : curhakukohde.getKoulutusmoduuliToteutuses()) {
                 komotoIds.add(komoto.getId());
             }
         }
     }
-
-
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
@@ -996,10 +976,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return result;
     }
-
-
-
-
 
     @Override
     public List<MonikielinenMetadataTyyppi> haeMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria) {

@@ -84,11 +84,14 @@
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
         <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
-
         <script src="partials/koulutus/review/reviewControllers.js"></script>
+
+        <script src="partials/hakukohde/hakukohdeController.js"></script>
+
         <script src="partials/helpers/localisationControllers.js"></script>
 
-        <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
+       <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
+
         <script src="partials/common/dialogService.js"></script>
 
         <script src="partials/tarjontaApp.js"></script>
@@ -112,57 +115,71 @@
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     </head>
 
-    <body ng-controller="AppRoutingCtrl">
+    <body data-ng-controller="AppRoutingCtrl">
 
         <!-- kaikki tarjonta-roina tämän sisään!! -->
         <div id="tarjonta-body">
             <div data-ng-controller="LocalisationCtrl">
-                <div ng-switch on="renderPath[0]">
-                    <div ng-switch-when="home">
-                        <div ng-include="'partials/search/search.html'" ng-controller="SearchController"></div>
+                <div data-ng-switch on="renderPath[0]">
+                    <div data-ng-switch-when="home">
+                        <div data-ng-include="'partials/search/search.html'" data-ng-controller="SearchController"></div>
                     </div>
-                    <div ng-switch-when="kk">
-                        <div ng-switch on="renderPath[1]">
-                            <div ng-switch-when="hakukohde">
-                                <div ng-switch on="renderPath[2]">
-                                    <div ng-switch-when="create">
+                    <div data-ng-switch-when="kk">
+                        <div data-ng-switch on="renderPath[1]">
+                            <div data-ng-switch-when="hakukohde">
+                                <div data-ng-switch on="renderPath[2]">
+                                    <div data-ng-switch-when="create">
 
-                                        <div ng-include="'partials/kk/edit/hakukohde/editHakukohde.html'" ng-controller="HakukohdeEditController"></div>
+                                        <div data-ng-include="'partials/kk/edit/hakukohde/editHakukohde.html'" data-ng-controller="HakukohdeEditController"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div ng-switch-when="edit">
-                                <div ng-include="'partials/kk/edit/edit.html'" ng-controller="KKEditController"></div>
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
                             </div>
-                            <div ng-switch-when="review">
-                                <div ng-include="'partials/kk/review/review.html'" ng-controller="KKReviewController"></div>
+                            <div data-ng-switch-when="review">
+                                <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
                             </div>
                         </div><!-- /renderPath[1] -->
                     </div><!-- 0:/kk -->
-                    <div ng-switch-when="helpers">
-                        <div ng-switch on="renderPath[1]">
-                            <div ng-switch-when="localisations">
-                                <div ng-include="'partials/helpers/localisation.html'" ng-controller="HelpersLocalisationCtrl"></div>
+                    <div data-ng-switch-when="helpers">
+                        <div data-ng-switch on="renderPath[1]">
+                            <div data-ng-switch-when="localisations">
+                                <div data-ng-include="'partials/helpers/localisation.html'" data-ng-controller="HelpersLocalisationCtrl"></div>
                             </div>
                         </div>
                     </div><!-- 0:/helpers -->
 
-                    <div ng-switch-when="koulutus">
-                        <div ng-switch on="renderPath[1]" ng-controller="KoulutusRoutingController">
-                            <div ng-switch-when="review">
-                                <div ng-include="'partials/koulutus/review/review.html'"></div>
+                    <div data-ng-switch-when="koulutus">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="KoulutusRoutingController">
+                            <div data-ng-switch-when="review">
+                                <div data-ng-include="'partials/koulutus/review/review.html'"></div>
                             </div>
-                            <div ng-switch-when="edit">
-                                <div ng-include="'partials/koulutus/edit/edit.html'"></div>
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
                             </div>
-                            <div ng-switch-default>
+                            <div data-ng-switch-default>
                                 UNKNOWN ACTION! {{ renderPath | json }}
                             </div>
                         </div>
-                    </div><!-- 0:/helpers -->
+                    </div><!-- 0:/koulutus -->
 
-                    <div ng-switch-when="koodistoTest">
-                        <div ng-include="'partials/koodistoTest.html'" ng-controller="KoodistoTestController"></div>
+                    <div data-ng-switch-when="hakukohde">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakukohdeRoutingController">
+                            <div data-ng-switch-when="review">
+                                <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-default>
+                                UNKNOWN ACTION! {{ renderPath | json }}
+                            </div>
+                        </div>
+                    </div><!-- 0:/hakukohde -->
+
+                    <div data-ng-switch-when="koodistoTest">
+                        <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
                     </div>
                 </div><!-- /renderPath[0] -->
 
@@ -173,9 +190,9 @@
                     <a href="#/helpers/localisations">Käännökset</a>
 
                     <div>
-                        <span ng-click="showTheSheisse = !showTheSheisse"
+                        <span data-ng-click="showTheSheisse = !showTheSheisse"
                               class="collapseHeader"
-                              ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
+                              data-ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
                         <div collapse="!showTheSheisse">
                             <pre>
                         {{ CONFIG | json }}

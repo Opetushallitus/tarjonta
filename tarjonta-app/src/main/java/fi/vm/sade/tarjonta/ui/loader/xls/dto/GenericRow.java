@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
+import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.loader.xls.Column;
 import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
 import static fi.vm.sade.tarjonta.ui.loader.xls.dto.AbstractKoulutuskoodiField.KOULUTUSKOODI_PROPERTY;
@@ -25,38 +27,34 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author Jani Wilén
  */
 public class GenericRow extends AbstractKoulutuskoodiField {
+
     public static final String VALMENTAVA_JA_KUNTOUTTAVA = "valmentava_ja_kuntouttava";
     public static final String FILENAME_AMMATILLINEN = "KOULUTUS_KOULUTUSOHJELMA_RELAATIO";
     public static final String FILENAME_LUKIO = "KOULUTUS_LUKIOLINJAT_relaatio";
     public static final Column[] COLUMNS_AMMATILLINEN = {
-        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.STRING),
         new Column("relaatioKoodiarvo", "KOULUTUOSOHJELMA", InputColumnType.INTEGER),
         new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
         new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
         new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER),
+        new Column("koulutusasteTyyppi", "KoulutusasteTyyppi", InputColumnType.STRING)
     };
     public static final Column[] COLUMNS_LUKIO = {
-        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.STRING),
         new Column("relaatioKoodiarvo", "LUKIOLINJA", InputColumnType.STRING),
         new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
         new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
         new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER),
+        new Column("koulutusasteTyyppi", "KoulutusasteTyyppi", InputColumnType.STRING)
     };
-    public static final Column[] COLUMNS_VALMENTAVA = {
-        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
-        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
-        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
-        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
-    };
-    
     private String relaatioKoodiarvo;
     private String koulutusasteKoodiarvo;
     private String laajuusKoodiarvo;
     private String laajuusyksikkoKoodiarvo;
     private String eqfKoodiarvo;
+    private String koulutusasteTyyppi; //the string value in the field will be convert to enum
 
     /**
      * @return the relaatioKoodiarvo
@@ -131,5 +129,27 @@ public class GenericRow extends AbstractKoulutuskoodiField {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppiEnum() {
+        Preconditions.checkNotNull(koulutusasteTyyppi, "KoulutusasteTyyppi string cannot be null.");
+        return KoulutusasteTyyppi.valueOf(koulutusasteTyyppi);
+    }
+    
+     /**
+     * @return the koulutusasteTyyppi
+     */
+    public String getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(String koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
     }
 }

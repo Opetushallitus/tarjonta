@@ -81,10 +81,6 @@ public class DataReader {
          * AMMATILLINEN : data conversion to BASE DTO
          */
         convertAmmatillinenData();
-        /*
-         * 
-         */
-        convertValamentavaJaKuntouttava();
 
         /*
          * LUKIO & AMMATILLINEN
@@ -95,14 +91,14 @@ public class DataReader {
         convertMiscData();
     }
 
-    private void addKoulutusohjelmaRelatedData(KoulutusasteTyyppi type, Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes, KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset) {
+    private void addKoulutusohjelmaRelatedData(Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes, KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset) {
         for (Map.Entry<String, GenericRow> e : mapBasicData.entrySet()) {
             final GenericRow basic = e.getValue();
 
             ExcelMigrationDTO row = new ExcelMigrationDTO();
             row.setEqf(basic.getEqfKoodiarvo());
 
-            row.setKoulutusateTyyppi(type);
+            row.setKoulutusateTyyppi(basic.getKoulutusasteTyyppiEnum());
             final String koulutusohjelmaKoodi = basic.getRelaatioKoodiarvo();
 
             //values
@@ -112,11 +108,11 @@ public class DataReader {
             row.setLaajuus(basic.getLaajuusKoodiarvo());
             row.setLaajuusyksikko(basic.getLaajuusyksikkoKoodiarvo());
 
-            switch (type) {
+            switch (basic.getKoulutusasteTyyppiEnum()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     row.setKoulutusohjelmanKuvaukset(koulutusohjelmanKuvaukset.get(koulutusohjelmaKoodi));
                     row.setKoulutusohjelmanKoodiarvo(koulutusohjelmaKoodi);
-                    mergedData.add(row);
+                    checkTutkintonimike(row, mapTutkintonimikes, koulutusohjelmaKoodi);
                     break;
                 case LUKIOKOULUTUS:
                     /*
@@ -124,26 +120,25 @@ public class DataReader {
                      * DO NOT TRY TO CHANGE THIS!
                      */
                     row.setLukiolinjaKoodiarvo(koulutusohjelmaKoodi);
-                    mergedData.add(row);
+                    checkTutkintonimike(row, mapTutkintonimikes, koulutusohjelmaKoodi);
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                    valmentavaData.add(row);
+                    row.setKoulutusohjelmanKoodiarvo(koulutusohjelmaKoodi);
                     break;
                 default:
-                    throw new RuntimeException("An unsupported type " + type);
+                    throw new RuntimeException("An unsupported type " + basic.getKoulutusasteTyyppiEnum());
             }
+            mergedData.add(row);
+        }
+    }
 
-            if (mapTutkintonimikes == null) {
-                //do nothing, skip data conversion
-            } else if (mapTutkintonimikes.containsKey(koulutusohjelmaKoodi)) {
-                TutkintonimikeRow tutkintonimikeRow = mapTutkintonimikes.get(koulutusohjelmaKoodi);
-                row.setTutkintonimikkeenKoodiarvo(tutkintonimikeRow.getTutkintonimikeKoodiarvo());
-            } else {
-                log.error("Require tutkintonimike koodi for value {}. Obj : {}", koulutusohjelmaKoodi, row);
-                throw new RuntimeException("A required relation to tutkintonimike not found.");
-            }
-
-
+    private void checkTutkintonimike(ExcelMigrationDTO row, TutkintonimikeMap mapTutkintonimikes, String koulutusohjelmaKoodi) {
+        if (mapTutkintonimikes.containsKey(koulutusohjelmaKoodi)) {
+            TutkintonimikeRow tutkintonimikeRow = mapTutkintonimikes.get(koulutusohjelmaKoodi);
+            row.setTutkintonimikkeenKoodiarvo(tutkintonimikeRow.getTutkintonimikeKoodiarvo());
+        } else {
+            log.error("Require tutkintonimike koodi for value {}. Obj : {}", koulutusohjelmaKoodi, row);
+            throw new RuntimeException("A required relation to tutkintonimike not found.");
         }
     }
 
@@ -181,7 +176,7 @@ public class DataReader {
         final KomoExcelReader<TutkintonimikeRow> readerForLukioNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, TutkintonimikeRow.COLUMNS_LUKIO, DEFAULT_READ_LIMIT_ROWS_MIN);
         TutkintonimikeMap mapLukioNimikkeet = new TutkintonimikeMap(readerForLukioNimike.read(getFilePath(TutkintonimikeRow.FILENAME_LUKIO), true));
 
-        addKoulutusohjelmaRelatedData(KoulutusasteTyyppi.LUKIOKOULUTUS, mapLukio, mapLukioNimikkeet, null);
+        addKoulutusohjelmaRelatedData(mapLukio, mapLukioNimikkeet, null);
     }
 
     private void convertAmmatillinenData() throws IOException {
@@ -192,15 +187,15 @@ public class DataReader {
 
 
         KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset = createAmmKoulutusohjelmanKuvauksetMap();
-        addKoulutusohjelmaRelatedData(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, mapAmm, mapAmmTukintonimike, koulutusohjelmanKuvaukset);
+        addKoulutusohjelmaRelatedData(mapAmm, mapAmmTukintonimike, koulutusohjelmanKuvaukset);
     }
 
-    private void convertValamentavaJaKuntouttava() throws IOException {
-        final KomoExcelReader<GenericRow> readerForValmentava = new KomoExcelReader<GenericRow>(GenericRow.class, GenericRow.COLUMNS_VALMENTAVA, DEFAULT_READ_LIMIT_ROWS_MIN);
-        RelaatioMap mapVal = new RelaatioMap(readerForValmentava.read(getFilePath(GenericRow.VALMENTAVA_JA_KUNTOUTTAVA), true), false);
-        addKoulutusohjelmaRelatedData(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS, mapVal, null, null);
-    }
-
+//for future use... 
+//    private void convertValamentavaJaKuntouttava() throws IOException {
+//        final KomoExcelReader<GenericRow> readerForValmentava = new KomoExcelReader<GenericRow>(GenericRow.class, GenericRow.COLUMNS_VALMENTAVA, DEFAULT_READ_LIMIT_ROWS_MIN);
+//        RelaatioMap mapVal = new RelaatioMap(readerForValmentava.read(getFilePath(GenericRow.VALMENTAVA_JA_KUNTOUTTAVA), true), false);
+//        addKoulutusohjelmaRelatedData(mapVal, null, null);
+//    }
     private void convertMiscData() throws IOException {
         /*
          * Oppilaitostyyppi <-> koulutusaste relations (not needed?)

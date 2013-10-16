@@ -145,7 +145,6 @@ public class TarjontaKomoDataTest {
 //        RelaatioMap relaatioMap = new RelaatioMap(readerForValmentava.read(url.getPath(), true), false);
 //        assertEquals(1, relaatioMap.size());
 //    }
-
     @Test
     public void testReadExcelAmm() throws Exception {
         final URL resource = filenameToURL("KOULUTUS_KOULUTUSOHJELMA_RELAATIO");
@@ -156,11 +155,30 @@ public class TarjontaKomoDataTest {
         assertEquals(1, result.size());
         GenericRow next = result.iterator().next();
 
+        assertEquals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, next.getKoulutusasteTyyppiEnum());
         assertEquals("1603", next.getRelaatioKoodiarvo());
         assertEquals("321101", next.getKoulutuskoodiKoodiarvo());
         assertEquals("32", next.getKoulutusasteKoodiarvo());
         assertEquals("120", next.getLaajuusKoodiarvo());
         assertEquals("4", next.getEqfKoodiarvo());
+        assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
+
+
+        instance = new KomoExcelReader(GenericRow.class, GenericRow.COLUMNS_AMMATILLINEN, 300);
+        result = instance.read(resource.getPath(), verbose);
+        boolean founded = false;
+        for (GenericRow g : result) {
+            if (g.getKoulutuskoodiKoodiarvo().equals("039999")) { //special case
+                assertEquals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0003", g.getRelaatioKoodiarvo());
+                assertEquals("32", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals("4", g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded = true;
+            }
+        }
+        assertEquals(true, founded);
         assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
     }
 
@@ -175,6 +193,7 @@ public class TarjontaKomoDataTest {
         assertEquals(86, result.size());
         GenericRow next = excelDataMap.get("0000");
 
+        assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, next.getKoulutusasteTyyppiEnum());
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
         assertEquals("31", next.getKoulutusasteKoodiarvo());
         assertEquals("75", next.getLaajuusKoodiarvo());
@@ -444,6 +463,7 @@ public class TarjontaKomoDataTest {
             return getSearchObject().equals(t);
         }
     };
+
     private KoulutusmoduuliKoosteTyyppi expectKoulutusmoduuliKoosteTyyppi() {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
         tyyppi.setOid("komo_" + getOid());
