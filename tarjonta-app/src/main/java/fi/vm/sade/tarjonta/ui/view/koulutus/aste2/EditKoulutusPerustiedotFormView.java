@@ -150,14 +150,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      */
     @NotNull(message = "{validation.Koulutus.opintojenLaajuus.notNull}")
     @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
-    @PropertyId("opintojenLaajuus")
+    @PropertyId("opintojenLaajuusTot")
     private TextField tfOpintojenLaajuus;
     
     /* 
      * This field is visible to valmentava ja kuntouttava opetus only
      */
     @NotNull(message = "{validation.Koulutus.opintojenLaajuusyksikko.notNull}")
-    @PropertyId("opintojenLaajuusyksikko")
+    @PropertyId("opintojenLaajuusyksikkoTot")
     private KoodistoComponent kcOpintojenLaajuusyksikko;
     
     /*
@@ -225,8 +225,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
+
         isValmentavaOpetus = koulutusModel.getKoulutuksenTyyppi() != null 
                 && koulutusModel.getKoulutuksenTyyppi().getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
+        
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
         initializeDataContainers();
@@ -357,7 +359,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
         kcOpintojenLaajuusyksikko = uiBuilder.koodistoComboBox(hl, KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
-        kcOpintojenLaajuusyksikko.setImmediate(true);
+        //kcOpintojenLaajuusyksikko.setImmediate(true);
         kcOpintojenLaajuusyksikko.setCaptionFormatter(koodiNimiFormatter);
         grid.addComponent(hl);
         grid.newLine();

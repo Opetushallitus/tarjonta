@@ -76,6 +76,7 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
@@ -470,6 +471,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //Asetetaan koulutusmoduuli
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+        result.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
+        //result.setKoulutustyyppi(komo.getKoulutustyyppi());
         
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
 
@@ -565,6 +568,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setArvo(fromKoulutus.getSuunniteltuKestoArvo());
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
+        
+        if (fromKoulutus.getOpintojenLaajuusArvo() != null) {
+            KoulutuksenKestoTyyppi laajuusT = new KoulutuksenKestoTyyppi();
+            laajuusT.setArvo(fromKoulutus.getOpintojenLaajuusArvo());
+            laajuusT.setYksikko(fromKoulutus.getOpintojenLaajuusYksikko());
+        }
         
         if (fromKoulutus.getKoulutusaste() != null) {
             KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
@@ -684,7 +693,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     
     @Override
     public HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely) {
-        System.out.println("Koulutustyyppi set: " + kysely.getKoulutustyyppi());
+       
         HaeKaikkiKoulutusmoduulitVastausTyyppi vastaus = new HaeKaikkiKoulutusmoduulitVastausTyyppi();
         
         SearchCriteria criteria = new SearchCriteria();
@@ -695,12 +704,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setOppilaitostyyppis(kysely.getOppilaitostyyppiUris());
         
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
-            System.out.println("Getting alamoduuleja");
+            
             if (!curKomo.getAlamoduuliList().isEmpty()) {
                 addChildModulesToVastaus(curKomo, vastaus.getKoulutusmoduuliTulos());
             }
         }
-        System.out.println("Vastaus size: " + vastaus.getKoulutusmoduuliTulos().size());
+        
         return vastaus;
     }
     

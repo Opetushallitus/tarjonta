@@ -174,6 +174,9 @@ public class KoulutusResultRow extends HorizontalLayout {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
+                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
                 case LUKIOKOULUTUS:
                     tarjontaPresenter.getLukioPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
@@ -346,6 +349,9 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         switch (koulutus.getKoulutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;
             case LUKIOKOULUTUS:

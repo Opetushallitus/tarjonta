@@ -1026,7 +1026,18 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
+            
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());
+            
+            KoodiModel tyyppiModel = new KoodiModel();
+            if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)) {
+                tyyppiModel.setKoodi(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
+            } else if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+                tyyppiModel.setKoodi(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri());
+            } else if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                tyyppiModel.setKoodi(Koulutustyyppi.TOINEN_ASTE_LUKIO.getKoulutustyyppiUri());
+            }
+            koulutus.setKoulutuksenTyyppi(tyyppiModel);
 
             getModel().setKoulutusPerustiedotModel(koulutus);
             getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(rawKoulutus));
@@ -1527,6 +1538,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
+        
         String oid = null;
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
@@ -1558,6 +1570,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
         //persist new KOMO and KOMOTO
+        final KoodiModel koulutuksenTyyppi = koulutusModel.getKoulutuksenTyyppi();
+       
         LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), pair);
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
@@ -1566,6 +1580,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
+            
+            koulutusModel.setKoulutuksenTyyppi(koulutuksenTyyppi);
+            getModel().getKoulutusPerustiedotModel().setKoulutuksenTyyppi(koulutuksenTyyppi);
             return lisaa.getOid();
         } else {
 
@@ -1880,10 +1897,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         KoodiModel koulutuksenTyyppi = getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi() ;
-        /*System.out.println("Koulutuksen tyyppi: " + koulutuksenTyyppi.getKoodi());
-        System.out.println("Koulutuksen tyyppi gold standard: " + Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
-        System.out.println("Comparison result: " + (koulutuksenTyyppi != null*/ 
-                && koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())));
+        
         if (koulutuksenTyyppi == null 
                 || (koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
                         || koulutuksenTyyppi.getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))) {

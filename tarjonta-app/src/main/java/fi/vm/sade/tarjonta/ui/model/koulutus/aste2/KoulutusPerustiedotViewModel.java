@@ -65,6 +65,11 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected KoodiModel opintojenLaajuusyksikko;
     protected String opintojenLaajuus;
     protected KoodiModel opintoala;
+    
+    protected String opintojenLaajuusTot;
+
+    protected String opintojenLaajuusyksikkoTot;
+    
     /*
      * KOMO text data (static labels):
      * TODO:change to KielikaannosViewModel
@@ -483,4 +488,21 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
         this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
     }
+    
+    public String getOpintojenLaajuusTot() {
+        return opintojenLaajuusTot;
+    }
+
+    public void setOpintojenLaajuusTot(String opintojenLaajuusTot) {
+        this.opintojenLaajuusTot = opintojenLaajuusTot;
+    }
+
+    public String getOpintojenLaajuusyksikkoTot() {
+        return opintojenLaajuusyksikkoTot;
+    }
+
+    public void setOpintojenLaajuusyksikkoTot(String opintojenLaajuusyksikkoTot) {
+        this.opintojenLaajuusyksikkoTot = opintojenLaajuusyksikkoTot;
+    }
+
 }

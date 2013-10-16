@@ -111,6 +111,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case AMMATILLINEN_PERUSKOULUTUS:
                 moduuli = handleToisenAsteenModuuli(koulutus);
                 break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                moduuli = handleToisenAsteenModuuli(koulutus);
+                break;
             case LUKIOKOULUTUS:
                 moduuli = handleLukiomoduuli(koulutus);
                 break;
@@ -118,7 +121,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case YLIOPISTOKOULUTUS:
                 moduuli = handleKorkeakoulumoduuli(koulutus);
                 break;
-
+             
             default:
                 throw new RuntimeException("Unsupported koulutustyyppi.");
         }

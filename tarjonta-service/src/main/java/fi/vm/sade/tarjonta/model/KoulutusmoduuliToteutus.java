@@ -165,9 +165,32 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name="teksti", nullable=false)
     private Map<KomotoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomotoTeksti, MonikielinenTeksti>();
+    
+    @Column(name = "opintojen_laajuus_arvo")
+    private String opintojenLaajuusArvo;
+
+    @Column(name = "opintojen_laajuus_yksikko")
+    private String opintojenLaajuusYksikko;
 
     @Column(name="hinta")
     private BigDecimal hinta;
+    
+    
+    public String getOpintojenLaajuusArvo() {
+        return opintojenLaajuusArvo;
+    }
+
+    public void setOpintojenLaajuusArvo(String opintojenLaajuusArvo) {
+        this.opintojenLaajuusArvo = opintojenLaajuusArvo;
+    }
+
+    public String getOpintojenLaajuusYksikko() {
+        return opintojenLaajuusYksikko;
+    }
+
+    public void setOpintojenLaajuusYksikko(String opintojenLaajuusYksikko) {
+        this.opintojenLaajuusYksikko = opintojenLaajuusYksikko;
+    }
     
     public Map<KomotoTeksti, MonikielinenTeksti> getTekstit() {
 		return tekstit;

@@ -795,7 +795,9 @@
             <xs:element name="YhteyshenkiloTyyppi" type="tns:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Tarjoaja" type="xs:string"/>
-            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>          
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
+            <!-- Valmentava ja kuntouttava opetus -koulutustyypilla -->
+            <xs:element name="Laajuus" type="tns:KoulutuksenKestoTyyppi"/>          
             <!-- 
             <xs:element name="KoulutusohjelmanValinta" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>

@@ -575,6 +575,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
+        
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
 

@@ -338,10 +338,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
         }
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));
-        layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
+        if (tutkintonimike != null) {
+            layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
+        }
         layout.addSpace();
 
-        String str = uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
+        String str = (opintojenLaajuusyksikko != null) ? uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale) : "";
 
         if (opintojenLaajuusArvo != null) {
             layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " + str));

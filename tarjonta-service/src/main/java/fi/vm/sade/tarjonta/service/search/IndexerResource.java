@@ -232,7 +232,6 @@ public class IndexerResource {
 
                 Long hakukohdeId = hakukohdeIdt.get(j);
                 logger.info(j + ". Fetching hakukohde:" + hakukohdeId);
-                System.out.println(j + ". Fetching hakukohde:" + hakukohdeId);
                 HakukohdeIndexEntity hakukohde = indexerDao.findHakukohdeById(hakukohdeId);
                 if (hakukohde != null) {
                     docs.addAll(hakukohdeConverter.apply(hakukohde));
@@ -242,7 +241,6 @@ public class IndexerResource {
             }
             index += batch_size;
             logger.info("indexing:" + docs.size() + " docs");
-            System.out.println("indexing:" + docs.size() + " docs");
             index(hakukohdeSolr, docs);
             docs.clear();
         } while (index < hakukohdeIdt.size());

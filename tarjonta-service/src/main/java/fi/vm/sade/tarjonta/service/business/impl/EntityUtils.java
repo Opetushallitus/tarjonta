@@ -150,6 +150,10 @@ public final class EntityUtils {
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
+        if (from.getLaajuus() != null) {
+            to.setOpintojenLaajuusArvo(from.getLaajuus().getArvo());
+            to.setOpintojenLaajuusYksikko(from.getLaajuus().getYksikko());
+        }
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         copyFields(to.getTekstit(), from.getTekstit(), KomotoTeksti.PAINOTUS);
@@ -196,6 +200,10 @@ public final class EntityUtils {
         toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
         if (fromKoulutus.getKesto() != null) {
             toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getArvo());
+        }
+        if (fromKoulutus.getLaajuus() != null) {
+            toKoulutus.setOpintojenLaajuusArvo(fromKoulutus.getLaajuus().getArvo());
+            toKoulutus.setOpintojenLaajuusYksikko(fromKoulutus.getLaajuus().getYksikko());
         }
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));

@@ -196,6 +196,13 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         } else {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
+        
+        if (model.getOpintojenLaajuusTot() != null && !model.getOpintojenLaajuusTot().isEmpty()) {
+            KoulutuksenKestoTyyppi laajuus = new KoulutuksenKestoTyyppi();
+            laajuus.setArvo(model.getOpintojenLaajuusTot());
+            laajuus.setYksikko(model.getOpintojenLaajuusyksikkoTot());
+        }
+        
 
         return tyyppi;
     }
@@ -227,6 +234,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         if (koulutus.getKesto() != null) {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
+        }
+        
+        if (koulutus.getLaajuus() != null) {
+            model2Aste.setOpintojenLaajuusTot(koulutus.getLaajuus().getArvo());
+            model2Aste.setOpintojenLaajuusyksikkoTot(koulutus.getLaajuus().getYksikko());
         }
 
         model2Aste.setKoulutusaste(convert(koulutus.getKoulutusaste()));
