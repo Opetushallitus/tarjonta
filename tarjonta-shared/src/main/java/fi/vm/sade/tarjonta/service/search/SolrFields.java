@@ -24,11 +24,9 @@ public class SolrFields {
      * Field names for koulutus docs
      */
     public static class Koulutus {
+        protected static final String NIMET = "nimi_ss";
+        protected static final String NIMIEN_KIELET = "nimikieli_ss";
         protected static final String OID = "id";
-        protected static final String ORG_NAME_FI = "nimifi_t"; 
-        protected static final String ORG_NAME_SV = "nimisv_t"; 
-        protected static final String ORG_NAME_EN = "nimien_t";
-        
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String KOULUTUSOHJELMA_FI = "koulutusohjelmafi_t";               //this is used in search
@@ -65,10 +63,9 @@ public class SolrFields {
      * Field names for hakukohde docs
      */
     public static class Hakukohde {
+        protected static final String NIMET = "nimi_ss";
+        protected static final String NIMIEN_KIELET = "nimikieli_ss";
         protected static final String OID="id";
-        protected static final String ORG_NAME_FI = "orgnamefi_s";
-        protected static final String ORG_NAME_SV = "orgnamesv_s";
-        protected static final String ORG_NAME_EN = "orgnameen_s";
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search

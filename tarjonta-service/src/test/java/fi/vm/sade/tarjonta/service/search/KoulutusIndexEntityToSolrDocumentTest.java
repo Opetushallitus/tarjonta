@@ -25,6 +25,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusIndexEntityToSolrDocumentTest {
@@ -32,7 +33,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String KOMO_OID = "komo-oid";
     private static final String OID = "oid";
     private static final String TUTKINTONIMIKEKOODI = "tutkintonimikekoodi";
-    private static final String KOULUTUSTYYPPIKOODI = "koulutustyyppikoodi";
+    private static final String KOULUTUSTYYPPIKOODI = KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value();
     private static final String LUKIOLINJAKOODI = "lukiolinjakoodi";
     private static final String KOULUTUSOHJELMAKOODI = "koulutusohjelmakoodi";
     private static final String KOULUTUSKOODI = "koulutuskoodi";
@@ -60,6 +61,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 
         KoodiService koodiService = Mockito.mock(KoodiService.class);
         Whitebox.setInternalState(converter, "koodiService", koodiService);
+        Mockito.reset(koodiService);
         stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
         stubKoodi(koodiService, KOULUTUSTUYYPPIKOODI);
         stubKoodi(koodiService, LUKIOLINJAKOODI);

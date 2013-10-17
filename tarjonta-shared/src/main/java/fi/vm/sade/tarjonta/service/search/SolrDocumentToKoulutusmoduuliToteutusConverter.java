@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMET;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMIEN_KIELET;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
@@ -30,6 +32,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUT
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_SV;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.solr.common.SolrDocument;
@@ -72,6 +75,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         copyKoulutusNimi(koulutus, koulutusDoc);
         koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
+        
         koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
         if (koulutusDoc.containsKey(KAUSI_URI)) {
             koulutus.setKoulutuksenAlkamiskausiUri(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, koulutusDoc));
@@ -97,9 +101,17 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     }
 
     private void copyKoulutusNimi(KoulutusPerustieto koulutus, SolrDocument koulutusDoc) {
-        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSOHJELMA_FI);
-        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSOHJELMA_SV);
-        asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSOHJELMA_EN);
+        if(koulutusDoc.getFieldValues(NIMET)!=null) {
+            ArrayList<Object> nimet = new ArrayList<Object>(koulutusDoc.getFieldValues(NIMET));
+            ArrayList<Object> nimienKielet = new ArrayList<Object>(koulutusDoc.getFieldValues(NIMIEN_KIELET));
+            for(int i=0;i<nimet.size();i++) {
+                asetaNimiArvosta(koulutus.getNimi(), koulutusDoc, (String)nimienKielet.get(i), (String)nimet.get(i));
+            }
+        } else {
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSOHJELMA_FI);
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSOHJELMA_SV);
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSOHJELMA_EN);
+        }
     }
 
     /**
@@ -116,5 +128,19 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
                     hakukohdeDoc.getFieldValue(fieldName).toString());
         }
     }
-    
+
+    /**
+     * Asettaa yhden nimen
+     * @param nimiMap
+     * @param hakukohdeDoc
+     * @param targetLanguage (fi,sv,en)
+     * @param fieldName solr dokumentin kentän nimi josta data otetaan.
+     */
+    private void asetaNimiArvosta(Map<String, String> nimiMap,
+            SolrDocument hakukohdeDoc, String targetLanguage, String value) {
+        if (value != null) {
+            nimiMap.put(targetLanguage, value);
+        }
+    }
+
 }

@@ -46,6 +46,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIM
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.VUOSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMET;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMIEN_KIELET;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +75,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -105,7 +109,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
 
         if (orgs.size() == 0) {
-            logger.warn("No org found for komoto: " + koulutus.getOid());
+            logger.warn("No org found for komoto: " + koulutus.getOid() + " skipping indexing!");
             return Lists.newArrayList();
         }
 
@@ -123,6 +127,34 @@ public class KoulutusIndexEntityToSolrDocument implements
             }
         }
 
+        if(koulutus.getKoulutusTyyppi()!=null) {
+            final KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.fromValue(koulutus.getKoulutusTyyppi());
+            switch(tyyppi) {
+            case LUKIOKOULUTUS: 
+                //koulutusohjelma ilman pohjakoulutusta
+                
+                break;
+            case AMMATTIKORKEAKOULUTUS:
+            case YLIOPISTOKOULUTUS:
+                //vapaavalintainen nimi
+                MonikielinenTeksti nimi = indexerDao.getNimiForKoulutus(koulutus.getKoulutusId());
+                for(TekstiKaannos tekstikaannos: nimi.getTekstis()) {
+                    Preconditions.checkNotNull(koodiService);
+                    KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+
+                    if(type!=null) {
+                        add(komotoDoc, NIMET, tekstikaannos.getArvo());
+                        add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
+                    }
+                }
+                break;
+            default:
+                //muut: koulutusohjelma, pohjakoulutus
+                break;
+            }
+            
+        }
+        
         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
@@ -189,6 +221,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_FI));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_SV));
         add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValue(TUTKINTONIMIKE_EN));
+        add(komotoDoc, TEKSTIHAKU, komotoDoc.getFieldValues(NIMET));
     }
 
     private void addTutkintonimikeTiedot(SolrInputDocument doc,
@@ -230,10 +263,7 @@ public class KoulutusIndexEntityToSolrDocument implements
     }
 
     private void addKoulutusohjelmaTiedot(SolrInputDocument doc, String koulutusohjelmaKoodi) {
-        if (koulutusohjelmaKoodi == null) {
-            add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
-            add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
-        } else {
+        if (koulutusohjelmaKoodi != null) {
 
             KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService);
 
@@ -246,8 +276,8 @@ public class KoulutusIndexEntityToSolrDocument implements
                 add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
                 add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
             } else {
-                add(doc, KOULUTUSOHJELMA_FI, "Puutteellinen tieto");
-                add(doc, KOULUTUSOHJELMA_URI, "empty_uri");
+                add(doc, KOULUTUSOHJELMA_FI, koulutusohjelmaKoodi);
+                add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
             }
         }
     }
