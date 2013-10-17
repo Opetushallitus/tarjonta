@@ -248,6 +248,14 @@ public class ValintakoeViewImpl extends VerticalLayout {
                 }
                 reloadAmmatillinenValintakoeKoeTable(valintaKokees);
                 break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
             case LUKIOKOULUTUS:
                 if (!valintaKokees.isEmpty()) {
                     //only one exam, just take the first item

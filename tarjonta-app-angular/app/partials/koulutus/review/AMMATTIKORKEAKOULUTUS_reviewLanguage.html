@@ -201,8 +201,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.koulutuksellisetJaAmmatillisetTavoitteet'></div>
             </div>
             <div class="span9">
-                [KOULUTUKSELLISET JA AMMATILLISET TAVOITTEET]
-                XXX <div ng-bind-html="model.koulutus.kuvaus.PATEVYYS.meta[lang.koodi_uri].arvo"></div>
+                <div data-ng-bind-html="model.koulutus.kuvaus.TAVOITTEET.meta[lang.koodi_uri].arvo"></div>
             </div>
         </div>
         <div class="row-fluid">
@@ -250,7 +249,7 @@
                 <div tt='koulutus.review.kuvailevatTiedot.jatkoopintoMahdollisuudet'></div>
             </div>
             <div class="span9">
-                [jatkoopintoMahdollisuudet]
+                <div data-ng-bind-html="model.koulutus.kuvaus.JATKOOPINTO_MAHDOLLISUUDET.meta[lang.koodi_uri].arvo"></div>
             </div>
         </div>
 
@@ -269,7 +268,9 @@
                 <div tt='koulutus.review.kuvailevatTiedot.rakenneKoulutus'></div>
             </div>
             <div class="span9">
-                [rakenneKoulutus]
+                <div data-ng-bind-html="model.koulutus.kuvaus.KOULUTUKSEN_RAKENNE.meta[lang.koodi_uri].arvo"></div>
+                <hr>
+                [TESTI]
                 <img src="http://www.koulutusnetti.fi/images/opintojen_rakenne.gif" width="200" height="200"/>
             </div>
         </div>

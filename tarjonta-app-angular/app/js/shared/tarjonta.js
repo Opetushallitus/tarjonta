@@ -221,12 +221,12 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     dataFactory.insertHakukohde = function(hakukohde,func) {
-       $log.info('Inserting hakukohde : ', hakukohde);
+       console.log('Inserting hakukohde : ', hakukohde);
 
     };
 
     dataFactory.getHakukohde = function(id) {
-        $log.warn("getHakukohde(): id = ", id);
+        console.log("getHakukohde(): id = ", id);
 
         var ret = $q.defer();
 

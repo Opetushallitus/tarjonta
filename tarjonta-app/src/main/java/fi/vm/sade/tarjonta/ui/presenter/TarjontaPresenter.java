@@ -455,18 +455,29 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         
         
-        boolean isYksilollistettyPerusopetus = pkVaatimus != null 
-                                                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
+        boolean isKoulutusErityisopetus = (pkVaatimus != null) 
+                                                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI) 
+                                                && getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        boolean isKoulutusValmentavaOpetus = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
         
         for (HakuTyyppi foundHaku : haut.getResponse()) {
-            if (isYksilollistettyPerusopetus
-                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)) {
+            if (isKoulutusErityisopetus
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI) 
+                    && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
-            } else if (!isYksilollistettyPerusopetus
+            } else if (!isKoulutusErityisopetus
                     && getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
-                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)) {
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
+                    && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
-            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            } else if (isKoulutusValmentavaOpetus
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI) 
+                    && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_VALMENTAVA_URI)) {
+                foundHaut.add(new HakuViewModel(foundHaku));
+            }
+            else if (getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
+                    && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }

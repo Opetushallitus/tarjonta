@@ -253,10 +253,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         if (presenter != null && presenter.getModel() != null && model != null) {
             selectHakuAika(model.getHakuaika(), model.getHakuViewModel());
-            setCustomHakuaika(hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null), (model.getHakuaikaAlkuPvm() != null) && (model.getHakuaikaLoppuPvm() != null));
+            setCustomHakuaika(this.doesHakukohdeNeedCustomhakuaika(), (model.getHakuaikaAlkuPvm() != null) && (model.getHakuaikaLoppuPvm() != null));//hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null)
             hakuAikaCombo.setEnabled(model.getHakuaika()!=null);
         }
         hakuAikaCombo.setVisible(false);
+    }
+    
+    private boolean doesHakukohdeNeedCustomhakuaika() {
+        boolean isErityisopetus = (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)) 
+                || presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);        
+        boolean isLisahaku = hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null);; 
+        return isLisahaku || isErityisopetus;
     }
 
     /*
@@ -892,7 +899,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakuAikaCombo.setContainerDataSource(container);
         
         selectHakuAika(model.getHakuaika(), hk);
-    	setCustomHakuaika(this.hakutyyppiLisahakuUrl.equals(model.getHakuViewModel().getHakutyyppi()), (model.getHakuaika()==null));
+    	setCustomHakuaika(doesHakukohdeNeedCustomhakuaika(), (model.getHakuaika()==null));//this.hakutyyppiLisahakuUrl.equals(model.getHakuViewModel().getHakutyyppi())
     	//hakuAikaCombo.setEnabled(true);
     }
 
@@ -1078,6 +1085,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(model.getKomotoOids());
+        
         if (presenter.getModel().getSelectedKoulutukset() != null) {
             //We can get the first koulutukses pohjakouluvaatimus, because all selected koulutukses should have
             //the same pohjakoulutus
@@ -1092,6 +1100,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             for (KoodiType koodiType : hakukohdeKoodis) {
                 hakukohdes.add(HakukohdeViewModelToDTOConverter.hakukohdeNameUriModelFromKoodi(koodiType));
             }
+            
             BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);
             hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
             hakukohteenNimiCombo.setImmediate(true);
