@@ -6,9 +6,9 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
-    	if (txt==undefined || txt==null) {
-    		return txt;
-    	}
+        if (txt == undefined || txt == null) {
+            return txt;
+        }
         var userLocale = LocalisationService.getLocale();
         if (txt[userLocale]) {
             return txt[userLocale];
@@ -73,7 +73,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = t.oid;
                     } else {
-                       r.nimi = localize(r.nimi);
+                        r.nimi = localize(r.nimi);
                     }
 
                     r.koulutuslaji = localize(r.koulutuslaji);
@@ -155,30 +155,30 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     };
 
     function cleanAndLocalizeArray(arr) {
-    	var ret = [];
-    	for (var i in arr) {
-    		if (arr[i].oid) {
-    			ret[i] = {
-					oid: arr[i].oid,
-					nimi: localize(arr[i].nimi)
-    			};
-    		}
-    	}
-    	return ret;
+        var ret = [];
+        for (var i in arr) {
+            if (arr[i].oid) {
+                ret[i] = {
+                    oid: arr[i].oid,
+                    nimi: localize(arr[i].nimi)
+                };
+            }
+        }
+        return ret;
     }
 
     dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/"+oid+"/hakukohteet").query({}, function(res){
-        	ret.resolve(cleanAndLocalizeArray(res));
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "/hakukohteet").query({}, function(res) {
+            ret.resolve(cleanAndLocalizeArray(res));
         });
         return ret.promise;
     }
 
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/"+oid+"/koulutukset").query({}, function(res){
-        	ret.resolve(cleanAndLocalizeArray(res));
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + oid + "/koulutukset").query({}, function(res) {
+            ret.resolve(cleanAndLocalizeArray(res));
         });
         return ret.promise;
     }
@@ -219,10 +219,32 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         });
         return ret.promise;
     };
+    dataFactory.loadKuvausTekstis = function(oid) {
+        console.log("save KomoTekstis(): ", oid);
+        var ret = $q.defer();
+        var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis", {'oid': '@oid'});
+        var Tekstis = KomoTekstis.get({'oid': oid}, function(res) {
+            ret.resolve(res);
+        });
 
-    dataFactory.insertHakukohde = function(hakukohde,func) {
-       console.log('Inserting hakukohde : ', hakukohde);
+        return ret.$promise;
+    };
+    dataFactory.insertHakukohde = function(hakukohde, func) {
+        console.log('Inserting hakukohde : ', hakukohde);
 
+        return ret.promise;
+    }
+
+    dataFactory.saveKomoTekstis = function(oid) {
+        var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': '@oid'});
+        var Tekstis = KomoTekstis.get({'oid': oid}, function() {
+        });
+
+        return Tekstis;
+    };
+
+    dataFactory.insertHakukohde = function(hakukohde, func) {
+        $log.info('Inserting hakukohde : ', hakukohde);
     };
 
     dataFactory.getHakukohde = function(id) {
@@ -230,7 +252,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
 
         var ret = $q.defer();
 
-        $resource(Config.env.tarjontaRestUrlPrefix+"hakukohde/ui/"+id,function(result) {
+        $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ui/" + id, function(result) {
             ret.resolve(result);
         });
 
@@ -256,6 +278,23 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         console.log("getKoulutuskoodiRelations()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri", {koulutuskoodiUri: '@koulutuskoodiUri'});
         return koulutus.get(arg, func);
+    };
+
+    dataFactory.resourceKomoKuvaus = function(komotoOid) {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': komotoOid}, {
+            update: {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            get: {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
     };
 
     return dataFactory;

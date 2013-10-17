@@ -25,6 +25,8 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -251,7 +253,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
 
     @Override
     public String toString() {
-        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+         return ReflectionToStringBuilder.reflectionToString(this);
     }
 
     /**

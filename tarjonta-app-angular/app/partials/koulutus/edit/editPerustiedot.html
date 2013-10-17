@@ -2,8 +2,8 @@
     <div class="container-fluid ">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='koulutus.edit.koulutuskoodi'></div>
-            <div class="span10">{{model.koulutuskoodi.arvo}}
-                <input style="width:70px" disabled="true" type="text" data-ng-model="model.koulutuskoodi.koodi.arvo" required />
+            <div class="span10">{{model.koulutuskoodi.arvo}} {{model.koulutuskoodi.koodi.arvo}}
+
                 <input class="btn" type="button"  ng-click="tutkintoDialogModel.open()" value="{{t('koulutus.edit.muokkaaTutkinto')}}"/>
             </div>
         </div>
@@ -22,8 +22,8 @@
                                     <td style="padding-left: 10px;"><input type="text" data-ng-model="model.koulutusohjelma.meta[lang].koodi.arvo" required /></td>
                                 </tr>
                             </table>
-                         </td>
-                        <td style="vertical-align: bottom; padding-bottom:13px;"><a href="#"><span tt='koulutus.edit.lisaa-kieli'></td>
+                        </td>   
+                        <td style="vertical-align: bottom; padding-bottom:13px;"><a href="#"><span tt='koulutus.edit.lisaa-kieli'></a></td>
                     </tr>
                 </table>
             </div>
@@ -238,5 +238,5 @@
 
         <div ng-include="'partials/koulutus/edit/editEctsHenkilo.html'"></div>
 
-
+    </div>
 </form>

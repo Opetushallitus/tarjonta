@@ -61,11 +61,14 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KomotoConverterToKorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -127,6 +130,8 @@ public class KoulutusResourceImplTest {
     @Autowired
     private IndexerResource solrIndexer;
     private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
+    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
 
     @Before
     public void setUp() {
@@ -136,6 +141,8 @@ public class KoulutusResourceImplTest {
         organisaatioDTO.setNimi(new MonikielinenTekstiTyyppi());
         organisaatioDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti(ORGANISAATIO_NIMI, LOCALE_FI));
 
+        komotoKoulutusConverters = new CommonRestKoulutusConverters<KomotoTeksti>();
+        komoKoulutusConverters = new CommonRestKoulutusConverters<KomoTeksti>();
         //CREATE MOCKS
         conversionServiceMock = createMock(ConversionService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
@@ -158,6 +165,8 @@ public class KoulutusResourceImplTest {
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "solrIndexer", solrIndexer);
+        Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
+       //Whitebox.setInternalState(convertToKomoto, "komotoKoulutusConverters", komotoKoulutusConverters);
     }
 
     @After
@@ -200,7 +209,6 @@ public class KoulutusResourceImplTest {
         //the calls of the OidServices must be in correct order!
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
-
 
         //KOODISTO DATA VALIDATION
         expectKOMOKoodistoUri(KOULUTUSKOODI);

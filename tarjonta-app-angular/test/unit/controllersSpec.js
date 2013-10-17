@@ -32,6 +32,7 @@ describe('Edit koulutus testeja', function() {
 
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('TarjontaConverter'));
+    beforeEach(module('imageupload'));
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('config'));
     var $scope, $modalInstance;
@@ -123,6 +124,7 @@ describe('Edit koulutus insert/edit/load', function() {
     //set mock data to module by using the value-method,
     var mockModule = angular.module('test.module', []);
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+    beforeEach(module('imageupload'));
     beforeEach(module('ui.bootstrap'));
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('localisation'));

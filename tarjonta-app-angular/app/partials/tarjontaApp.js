@@ -16,7 +16,9 @@ angular.module('app.kk',
             'ngRoute',
             'config',
             'auth',
-            'TarjontaConverter'
+            'TarjontaConverter',
+            'TinyMceRichText',
+            'imageupload'
         ]);
 
 /*******************************************************
@@ -53,7 +55,8 @@ angular.module('app',
             'Hakukohde',
             'KoodistoMultiSelect',
             'angularTreeview',
-            'TarjontaConverter'
+            'TarjontaConverter',
+            'imageupload'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

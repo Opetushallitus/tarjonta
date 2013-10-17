@@ -8,7 +8,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     factory.createBaseUiField = function(uri, versio, arvo) {
         return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
     };
-    
+
     factory.STRUCTURE = {
         MLANG: {
             koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: factory.createBaseUiField(null, '-1', null)}
@@ -183,17 +183,28 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         var i = 0;
         for (; i < arrPersons.length; i++) {
             var henkilo = arrPersons[i];
-            if (Boolean(henkilo) && Boolean(henkilo.sahkoposti) && Boolean(henkilo.titteli) && Boolean(henkilo.puhelin)) {
+
+            if (angular.isUndefined(henkilo.henkiloTyyppi)) {
+                throw "Unknown henkilo tyyppi";
+            }
+
+            if (!angular.isUndefined(henkilo) && !angular.isUndefined(henkilo.nimet) && henkilo.nimet.length > 0) {
+                henkilo.sukunimi = '';
+                henkilo.etunimet = '';
+
                 if (Boolean(henkilo.nimet)) {
-                    var lastname = henkilo.nimet.slice(henkilo.length - 1, henkilo.length);
-                    var firstnames = henkilo.nimet.slice(henkilo.nimet, fruits.indexOf(lastname) - 1);
-                    henkilo.etunimet = firstnames.join(' ');
-                    henkilo.sukunimi = lastname;
+                    var arrSeparatedNames = henkilo.nimet.split(" ");
+                    for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
+                        henkilo.etunimet += arrSeparatedNames[p] + " ";
+                    }
+                    if (arrSeparatedNames.length > 1) {
+                        henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
+                    }
                 }
 
                 delete henkilo.nimet;
                 delete henkilo.kielet;
-                arrOutputPersons.push(henkilo)
+                arrOutputPersons.push(henkilo);
             }
         }
 
@@ -206,6 +217,13 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     };
     factory.createUiModels = function(uiModel) {
         //single select nodels
+        uiModel['contactPerson'] = {henkiloTyyppi: 'YHTEYSHENKILO'};
+        uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
+        uiModel['tekstis'] = {
+            TAVOITTEET: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
+            KOULUTUKSEN_RAKENNE: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
+            JATKOOPINTO_MAHDOLLISUUDET: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}}};
+
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoSingleModel();
         });
@@ -213,8 +231,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
-
     };
+
     factory.createUiKoodistoSingleModel = function() {
         return {'arvo': '', 'data': {}, 'uri': null};
     };

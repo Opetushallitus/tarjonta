@@ -41,15 +41,18 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -60,13 +63,17 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.io.InputStream;
+import javax.ws.rs.core.Response;
 
 /**
  *
  * @author Jani Wilén
  */
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KoulutusResourceImpl implements KoulutusResource {
 
@@ -89,6 +96,10 @@ public class KoulutusResourceImpl implements KoulutusResource {
     private KoodiService koodiService;
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
 
     @Override
     public String help() {
@@ -181,8 +192,8 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public void deleteToteutus(String koulutusOid) {
-    	//permissionChecker.checkRemoveKoulutus(koulutusOid);
+    public Response deleteToteutus(String koulutusOid) {
+        //permissionChecker.checkRemoveKoulutus(koulutusOid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
 
         if (komoto.getHakukohdes().isEmpty()) {
@@ -197,32 +208,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
         } else {
             throw new KoulutusUsedException();
         }
-
-    }
-
-    @Override
-    public String loadMonikielinenTekstis(String oid, String langUri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveMonikielinenTeksti(String oid, String langUri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteMonikielinenTeksti(String oid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saveKuva(String oid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteKuva(String oid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Response.ok().build();
     }
 
     @Override
@@ -235,7 +221,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
         }
         komoto.setTila(tila);
         koulutusmoduuliToteutusDAO.update(komoto);
-    	solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
+        solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
         return tila.toString();
     }
 
@@ -248,17 +234,86 @@ public class KoulutusResourceImpl implements KoulutusResource {
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
         Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
     }
-    
+
     @Override
     public List<NimiJaOidRDTO> getHakukohteet(String oid) {
-    	HakukohteetKysely ks = new HakukohteetKysely();
-    	ks.getKoulutusOids().add(oid);
-    	
-    	HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
-    	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-    	for (HakukohdePerustieto hk : vs.getHakukohteet()) {
-    		ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
-    	}
-    	return ret;
+        HakukohteetKysely ks = new HakukohteetKysely();
+        ks.getKoulutusOids().add(oid);
+
+        HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
+        List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+        for (HakukohdePerustieto hk : vs.getHakukohteet()) {
+            ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
+        }
+        return ret;
     }
+
+    @Override
+    public Response saveKuva(String oid, InputStream in, String fileType, long fileSize, String kieliUri) throws IOException {
+        LOG.info("SAVE IMAGE {}", oid);
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response deleteTeksti(String oid, String key, String uri) {
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response deleteKuva(String oid, String kieliUri) {
+        return Response.ok().build();
+    }
+
+    @Override
+    public TekstiDTO loadTekstis(String oid) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+
+        TekstiDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
+        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+        TekstiDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
+        komotoTekstiDto.getTekstis().putAll(komoTekstiDto.getTekstis());
+
+        //combine komo&komoto text data to the dto;
+        return komotoTekstiDto;
+    }
+
+    @Override
+    public TekstiDTO loadKomotoTekstis(String oid) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+        return komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
+    }
+
+    @Override
+    public Response saveKomotoTekstis(String oid, TekstiDTO<KomotoTeksti> dto) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+        komotoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto, komoto.getTekstit());
+        return Response.ok().build();
+    }
+
+    @Override
+    public TekstiDTO loadKomoTekstis(String oid) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+        return komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getKoulutusmoduuli().getTekstit());
+    }
+
+    @Override
+    public Response saveKomoTekstis(String oid, TekstiDTO<KomoTeksti> dto) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+        komoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto, komo.getTekstit());    
+        koulutusmoduuliDAO.update(komo);
+
+        return Response.ok().build();
+    }
+
 }

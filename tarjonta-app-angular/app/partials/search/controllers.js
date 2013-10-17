@@ -206,6 +206,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     		for (var ri in tarjoaja.tulokset) {
     			var tulos = tarjoaja.tulokset[ri];
+                        
+                        if(angular.isUndefined(tulos.kausi)){
+                            tulos.kausi = {}; //a quick fix for missing data.
+                        }
+                        
     			html = html+"<tr class=\"tresult\" "+prefix+"-oid=\""+tulos.oid+"\" tila=\""+tulos.tila+"\">"
 					+"<td><input type=\"checkbox\" class=\"selectRow\"/>"
 					+"<a href=\"#\" class=\"options\"><img src=\"img/icon-treetable-button.png\"/></a>"
