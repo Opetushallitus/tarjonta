@@ -128,7 +128,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
 
     };
-
+    console.log('HAKUKOHDE MODEL', $scope.model.hakukohde);
     var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
     //When organisaatio is loaded set the liitteiden toimitusosoite on the model
     orgPromise.then(function(data){
@@ -176,8 +176,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
-    $scope.insert = function() {
-       //TODO: are we inserting or updating figure it from OID
+    //TODO: Should tila come from constants ?
+
+    $scope.saveValmis = function() {
         if ($scope.model.hakukohde.oid === undefined) {
             $scope.model.hakukohde.tila = "VALMIS";
 
@@ -185,7 +186,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('MODEL: ', $scope.model.hakukohde);
             $scope.model.hakukohde.$save();
         }
+    };
 
+
+    $scope.saveLuonnos = function() {
+        //TODO: are we inserting or updating figure it from OID
+        if ($scope.model.hakukohde.oid === undefined) {
+            $scope.model.hakukohde.tila = "LUONNOS";
+
+
+            console.log('MODEL: ', $scope.model.hakukohde);
+            $scope.model.hakukohde.$save();
+        }
     };
 
     var hakuPromise = HakuService.getAllHakus();

@@ -1,17 +1,17 @@
 
 <div class="container-fluid" data-ng-controller="HakukohdeEditController">
-
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="btn" data-ng-click="goBack($event)"><div tt='koulutus.edit.takaisin'></div></div>
+            <div class="btn" ng-click="saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
+            <div class="btn" ng-click="saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
+        </div>
+    </div>
+    <br/>
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="luoHakukohde">
-                <div class="container-fluid ">
-                    <div class="row-fluid">
 
-                        <!--div class="span10"><input type="button" data-ng-click="loadKoodistoData()" value="Hae koulutuskoodi relaatiot"></div-->
-                        <!--div class="span10"><input type="button" data-ng-click="search()"  value="Hae data"></div-->
-                        <div class="span10"><input type="button" data-ng-click="insert()"  value="Tallenna"></div>
-                    </div>
-                </div>
 
                 <div class="container-fluid ">
                     <div class="row-fluid">

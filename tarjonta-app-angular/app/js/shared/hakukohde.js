@@ -15,6 +15,7 @@
 
 var app = angular.module('Hakukohde', ['ngResource','config']);
 
+
 app.factory('Hakukohde',function($resource, $log,$q, Config){
 
 
