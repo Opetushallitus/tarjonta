@@ -196,7 +196,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
             console.log('MODEL: ', $scope.model.hakukohde);
-            $scope.model.hakukohde.$save();
+            //$scope.model.hakukohde.$save();
         }
     };
 
