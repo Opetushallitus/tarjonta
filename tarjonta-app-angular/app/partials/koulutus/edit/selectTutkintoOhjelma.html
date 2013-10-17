@@ -1,35 +1,35 @@
 <div class="tarjonta-dialog" id="select-tutkinto-ohjelma">
     <div class="modal-header">
-        <h3>{{t('selectTutkintoOhjelma.dialogTitle')}}</h3>
+        <h3><div tt="selectTutkintoOhjelma.dialogTitle"></div></h3>
     </div>
 
-       <div class="modal-body">
-   
-       	<p>{{t('selectTutkintoOhjelma.kuvaus')}}</p>
-    
-        <h4>{{t('selectTutkintoOhjelma.koulutusala')}}</h4>
-        
+    <div class="modal-body">
+
+        <p><div tt="selectTutkintoOhjelma.kuvaus"></div></p>
+
+        <h4><div tt="selectTutkintoOhjelma.koulutusala"></div></h4>
+
         <koodistocombo koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
-    
-        <h4>{{t('selectTutkintoOhjelma.tekstihaku')}}</h4>
+
+        <h4><div tt="selectTutkintoOhjelma.tekstihaku"></div></h4>
         <div>
-	        <input type="text" data-ng-model="stoModel.hakulause" />
-            <button class="btn btn-warning" ng-click="clearCriteria()">{{t('selectTutkintoOhjelma.tyhjenna')}}</button>
-            <button class="btn btn-primary" ng-click="searchTutkinnot()">{{t('selectTutkintoOhjelma.hae')}}</button>
+            <input type="text" data-ng-model="stoModel.hakulause" />
+            <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="selectTutkintoOhjelma.tyhjenna"></div></button>
+            <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="selectTutkintoOhjelma.hae"></div></button>
         </div>
-        
-        <h4>{{t('selectTutkintoOhjelma.hakutulokset')}} {{stoModel.hakutulokset.length==0 ? '' : '('+stoModel.hakutulokset.length+')'}}</h4>
-        
+
+        <h4>{{ t("selectTutkintoOhjelma.hakutulokset", [stoModel.hakutulokset ? stoModel.hakutulokset.length : 0]) }}</h4>
+
         <div ng-switch="stoModel.hakutulokset.length==0 && stoModel.searched">
-	        <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
-        	<div ng-switch-default class="noResults">{{t('selectTutkintoOhjelma.eihakutuloksia')}}</div>
+            <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
+            <div ng-switch-default class="noResults"><div tt="selectTutkintoOhjelma.eihakutuloksia"></div></div>
         </div>
-     
-     
-    </div>   
+
+
+    </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="cancel()">{{t('selectTutkintoOhjelma.peruuta')}}</button>
-        <button class="btn btn-primary" ng-click="ok()" ng-disabled="!stoModel.itemSelected">{{t('selectTutkintoOhjelma.jatka')}}</button>
+        <button class="btn btn-warning" ng-click="cancel()"><div tt="selectTutkintoOhjelma.peruuta"></div></button>
+        <button class="btn btn-primary" ng-click="ok()" ng-disabled="!stoModel.itemSelected"><div tt="selectTutkintoOhjelma.jatka"></div></button>
     </div>
 
 </div>
