@@ -22,7 +22,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location) {
 
 
 
@@ -198,6 +198,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('MODEL: ', $scope.model.hakukohde);
             $scope.model.hakukohde.$save();
         }
+    };
+
+    $scope.takaisin = function() {
+        $location.path('/etusivu');
     };
 
     var hakuPromise = HakuService.getAllHakus();

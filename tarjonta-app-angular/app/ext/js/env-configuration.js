@@ -89,6 +89,7 @@ window.CONFIG = {
         // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
         "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",
 
+        "tarjontaKoodistoRestUrlPrefix" : "https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/",
 
         // NOTE: seems to be koodisto-uris.opintojenLaajuusarvo ???
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
@@ -98,7 +99,7 @@ window.CONFIG = {
 
 
 
-        "place": "holder",
+        "place": "holder"
 
     }
 };
