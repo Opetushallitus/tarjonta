@@ -185,7 +185,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     } else {
 
 
-                      return Hakukohde.get({oid: $route.current.params.id});
+                      var deferredHakukohde =  Hakukohde.get({oid: $route.current.params.id});
+                       return deferredHakukohde.$promise;
+
                     }
                 }
             }

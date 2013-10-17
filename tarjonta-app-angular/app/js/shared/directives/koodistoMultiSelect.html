@@ -1,6 +1,6 @@
 <div id="KoodistoMultiSelect" class="row">
 <div class="span5">
-<select class="span5" id="KoodiSelect" ng-model="koodiuri" size="10" ng-click="onKoodistoComboChange()" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in koodis">
+<select class="span5" id="KoodiSelect" ng-model="koodiuri" size="10" ng-click="onKoodistoComboChange()" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in koodis | orderBy:'koodiNimi'">
 
 
 </select>
