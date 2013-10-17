@@ -47,6 +47,7 @@ angular.module('app',
             'Tarjonta',
             'KoodistoCombo',
             'KoodistoArvoCombo',
+            'SharedStateService',
             'DateTimePicker',
             'TinyMceRichText',
             'Hakukohde',
@@ -135,13 +136,41 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "hakukohde.edit",
             controller: 'HakukohdeRoutingController',
             resolve: {
-                hakukohdex: function(TarjontaService, $log, $route) {
+                hakukohdex: function(Hakukohde, $log, $route,SharedStateService) {
                     $log.info("/hakukohde/ID", $route);
                     if ("new" === $route.current.params.id) {
-                        // TODO how to handle the  creation phase?
-                        return {this_is_new: new Date()};
+                        console.log('KOULUTUKSES FROM SHARED SERVICE : ' , SharedStateService.getFromState('SelectedKoulutukses'))
+                        //Initialize model and arrays inside it
+                        //TODO: retrieve koulutukses
+                        return new Hakukohde({
+
+                            liitteidenToimitusOsoite : {
+
+                            },
+                            hakukohteenNimet : [
+                                {
+                                    "uri": "kieli_fi",
+                                    "nimi": "suomi",
+
+                                    "teksti": ""
+                                }
+                            ],
+                            hakukelpoisuusvaatimusUris : [],
+                            hakukohdeKoulutusOids : [SharedStateService.getFromState('SelectedKoulutukses')],
+                            hakukohteenLiitteet : [],
+                            valintakokeet : [],
+
+                            lisatiedot : [
+
+                            ]
+                        });
+
+                      //  SharedStateService.removeState('SelectedKoulutukses');
+
                     } else {
-                      return TarjontaService.getHakukohde({oid: $route.current.params.id});
+
+
+                      return Hakukohde.get({oid: $route.current.params.id});
                     }
                 }
             }
