@@ -18,7 +18,7 @@
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakukohdenimi"></div></div>
                         <div class="span3">
 
-                            <div data-ng-repeat="hakukohdenimi in model.hakukohteenNimet" >
+                            <div data-ng-repeat="hakukohdenimi in model.hakukohde.hakukohteenNimet" >
                                 <label>{{hakukohdenimi.nimi}}</label>
                                 <input type="text" data-ng-model="hakukohdenimi.teksti" required />
                                 <a href="" data-ng-click="removeNimi(hakukohdenimi)">X</a>
@@ -37,7 +37,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.haut"></div></div>
                         <div class="span10">
-                            <select ng-model="model.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in hakus"/>
+                            <select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in hakus"/>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakukelpoisuusvaatimukset"></div></div>
                         <div class="span10">
-                            <koodistomultiselect koodiuris="model.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
+                            <koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
                         <div class="span10">
-                            <input type="text" data-ng-model="model.aloituspaikatLkm" required />
+                            <input type="text" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
                         <div class="span10">
-                            <input type="checkbox" data-ng-model="model.kaytetaanJarjestelmanValintaPalvelua" required />
+                            <input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" required />
                         </div>
                     </div>
                 </div>
@@ -84,12 +84,12 @@
                             </label>
                             <address>
 
-                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
+                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
 
 
 
                                 <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="postinumeroarvo.arvo" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi.koodiArvo for koodi in koodis | filter:$viewValue | limitTo:8 |  orderBy:koodi.koodiArvo">
-                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.liitteidenToimitusOsoite.postitoimipaikka" required />
+                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
                             </address>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
                         <div class="span10">
                             <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
-                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" ng-model="model.sahkoinenToimitusOsoite">
+                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
                         </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.liitteidenToimitusPvm"></div></div>
                         <div class="span10">
-                            <date-time-picker selecteddatetime="model.liitteidenToimitusPvm"></date-time-picker>
+                            <date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                         </div>
                         <div class="span5">
                             <accordion close-others="oneAtATime">
-                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.lisatiedot">
+                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
                                     <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text>
                                 </accordion-group>
 
@@ -161,11 +161,11 @@
     </tabset>
 
     <hr>
-    <div ng-click="model.collapse.model = !model.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
+    <div ng-click="model.hakukohde.collapse.model = !model.hakukohde.collapse.model">
+        <div class="collapseHeader" ng-class="{isOpen : !model.hakukohde.collapse.model}">Sivun data / malli:</div>
     </div>
 
-    <div collapse="model.collapse.model">
+    <div collapse="model.hakukohde.collapse.model">
         <pre>
             {{ model | json }}
         </pre>

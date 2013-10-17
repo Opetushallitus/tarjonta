@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -666,6 +666,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			}
 		});
     	
+    };
+
+
+    $scope.luoUusiHakukohde = function() {
+
+        SharedStateService.addToState('SelectedKoulutukses',$scope.selectedKoulutukset);
+        $location.path('/hakukohde/new/edit');
     };
     
     $scope.tutkintoDialogModel = {};

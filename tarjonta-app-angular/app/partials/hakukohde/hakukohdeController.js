@@ -22,6 +22,7 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
 
+
         $scope.model = {
             collapse: {
                 model : true

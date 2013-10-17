@@ -64,6 +64,7 @@
         <script src="js/shared/tarjontaConverter.js"></script>
         <script src="js/shared/directives/datetimepicker.js"></script>
         <script src="js/shared/directives/tinyMceRichText.js"></script>
+        <script src="js/shared/sharedStateService.js"></script>
 
         <script src="js/shared/directives/ngonce.js"></script>
 
@@ -126,14 +127,6 @@
                     </div>
                     <div data-ng-switch-when="kk">
                         <div data-ng-switch on="renderPath[1]">
-                            <div data-ng-switch-when="hakukohde">
-                                <div data-ng-switch on="renderPath[2]">
-                                    <div data-ng-switch-when="create">
-
-                                        <div data-ng-include="'partials/kk/edit/hakukohde/editHakukohde.html'" data-ng-controller="HakukohdeEditController"></div>
-                                    </div>
-                                </div>
-                            </div>
                             <div data-ng-switch-when="edit">
                                 <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
                             </div>
