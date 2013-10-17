@@ -183,7 +183,7 @@ describe('Edit koulutus insert/edit/load', function() {
         expect(scope.model.koulutusasteTyyppi).toEqual('AMMATTIKORKEAKOULUTUS');
         expect(scope.model.tila).toEqual('LUONNOS');
 
-        expect(scope.uiModel.contactPerson).toEqual({});
-        expect(scope.uiModel.ectsCoordinator).toEqual({});
+        expect(scope.uiModel.contactPerson).toEqual({henkiloTyyppi: 'YHTEYSHENKILO'});
+        expect(scope.uiModel.ectsCoordinator).toEqual({henkiloTyyppi: 'ECTS_KOORDINAATTORI'});
     }));
 });
