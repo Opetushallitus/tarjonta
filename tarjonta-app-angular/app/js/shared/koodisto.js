@@ -18,7 +18,7 @@ var app = angular.module('Koodisto', ['ngResource', 'config']);
 
 app.factory('Koodisto', function($resource, $log, $q, Config) {
 
-    var host = Config.env["host.base-uri"];
+    var host = Config.env["tarjontaKoodistoRestUrlPrefix"];
 
     var nimiWithLocale = function(locale, metadata) {
         var metas = _.select(metadata, function(koodiMetaData) {
@@ -97,7 +97,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             var returnKoodis = [];
 
-            var ylapuoliKoodiUri = host + '/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/:koodiUri';
+            var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-ylakoodit/:koodiUri';
 
             $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
@@ -119,7 +119,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             var returnKoodis = [];
 
-            var ylapuoliKoodiUri = host + '/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/:koodiUri';
+            var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-alakoodit/:koodiUri';
 
             $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
@@ -148,7 +148,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             var returnKoodis = [];
 
-            var koodiUri = host + '/koodisto-service/rest/json/:koodistoUri/koodi';
+            var koodiUri = host + ':koodistoUri/koodi';
 
 
             $resource(koodiUri, {koodistoUri: '@koodistoUri'}).query({koodistoUri: koodistoUriParam}, function(koodis) {
@@ -177,7 +177,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
             var returnKoodi = $q.defer();
 
 
-            var koodiUri = host + "/koodisto-service/rest/json/:koodistoUri";
+            var koodiUri = host + ":koodistoUri";
 
             console.log('Calling getKoodistoWithKoodiUri with : ' + koodiUriParam + ' ' + locale);
 
@@ -200,10 +200,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
          */
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
             var returnKoodi = $q.defer();
-            var koodiUri = host + "/koodisto-service/rest/json/:koodistoUri/koodi/:koodiUri";
+            var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
             console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
 
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri', }).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
+            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' }).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
                 returnKoodi.resolve(getKoodiViewModelFromKoodi(koodi, locale));
             });
             console.log('Returning promise from getKoodistoWithKoodiUri');
