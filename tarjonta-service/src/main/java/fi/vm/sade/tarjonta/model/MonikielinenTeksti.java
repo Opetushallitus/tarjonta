@@ -135,5 +135,10 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     	}
     }
 
+    @Override
+    public String toString() {
+        return "MonikielinenTeksti [tekstis=" + tekstis + "]";
+    }
+
 }
 
