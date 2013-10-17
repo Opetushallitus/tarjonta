@@ -169,6 +169,9 @@ public class TarjontaUIHelper {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
                     break;
+                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
                 case LUKIOKOULUTUS:
                     sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
                     break;

@@ -117,6 +117,26 @@ public class KoodistoURI {
     public static String KOODI_ERILLISHAKU_URI;//koodisto-uris.erillishaku=hakutyyppi_02#1
     public static String KOODI_HAASTATTELU_URI;//koodisto-uris.valintakoeHaastattelu=valintakokeentyyppi_6#1
     public static String KOODI_TODISTUKSET_URI;
+    
+    public static String KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI;
+    public static String KOODI_KOHDEJOUKKO_VALMENTAVA_URI;
+    public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI;
+    
+
+    @Value("${koodisto-uris.ammatillinenLukio:haunkohdejoukko_11#1}")
+    public void setKoodiKohdejoukkoAmmatillinenLukioUri(String uri) {
+        KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI = uri;
+    }
+    
+    @Value("${koodisto-uris.kohdejoukkoErityisopetus:haunkohdejoukko_15#1}")
+    public void setKoodiKohdejoukkoErityisopets(String uri) {
+        KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI = uri;
+    }
+    
+    @Value("${koodisto-uris.valmentavaKuntouttava:haunkohdejoukko_16#1}")
+    public void setKoodiKohdejoukkoValmentavaUri(String uri) {
+        KOODI_KOHDEJOUKKO_VALMENTAVA_URI = uri;
+    }
 
     @Value("${koodisto-uris.liiteTodistukset:liitetyypitamm_3#1}")
     public void setKoodiTodistuksetUri(String uri) {
