@@ -98,6 +98,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
     this.locale = "fi";
 
     this.getLocale = function() {
+        // $log.info("getLocale() --> " + this.locale);
         return this.locale;
     }
     this.setLocale = function(value) {
@@ -112,14 +113,20 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * Get translation, fill in possible parameters.
      *
      * @param {String} key
+     * @param {String} locale, if undefined get it vie getLocale()
      * @param {Array} params
      * @returns {String} translation value, parameters replaced
      */
-    this.getTranslation = function(key, params) {
-        //$log.log("getTranslation(key, params)", key, params);
+    this.getTranslation = function(key, locale, params) {
+        // $log.info("getTranslation(key, locale, params), key=" + key + ", l=" +  locale + ",params=" + params);
+
+        // Use default locale if not specified
+        if (locale === undefined) {
+            locale = this.getLocale();
+        }
 
         // Get translations by locale
-        var v0 = this.localisationMapByLocaleAndKey[this.locale];
+        var v0 = this.localisationMapByLocaleAndKey[locale];
 
         // Get translations by key
         var v = v0 ? v0[key] : undefined;
@@ -139,7 +146,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
 
-            this.createMissingTranslation(key, this.locale, "[" + key + " " + this.locale + "]")
+            this.createMissingTranslation(key, locale, "[" + key + " " + locale + "]")
                     .then(function(newEntry) {
                 $log.info("  created: ", newEntry);
                 Config.env["tarjonta.localisations"].push(newEntry);
@@ -149,8 +156,8 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
 
             // Create temporary placeholder for next requests
             this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
-            this.localisationMapByLocaleAndKey[this.locale] = this.localisationMapByLocaleAndKey[this.locale] || {};
-            this.localisationMapByLocaleAndKey[this.locale][key] = {key: key, locale: this.locale, value: "[" + key + "]"};
+            this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
+            this.localisationMapByLocaleAndKey[locale][key] = {key: key, locale: locale, value: "[" + key + "]"};
 
             result = "[" + key + "]";
         }
@@ -340,7 +347,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
     };
 
     /**
-     * Get translation value.
+     * Get translation value. Assumes use of current UI locale (LocalisationService.getLocale())
      *
      * If translation with current locale and key is not found then new translation entry will be created.
      *
@@ -349,8 +356,22 @@ app.service('LocalisationService', function($log, $q, Localisations, Config) {
      * @returns {String} value for translation
      */
     this.t = function(key, params) {
-        return this.getTranslation(key, params);
+        return this.getTranslation(key, this.getLocale(), params);
     };
+
+    /**
+     * Get translation in given locale.
+     *
+     * @param {type} key
+     * @param {type} locale
+     * @param {type} params
+     *
+     * @returns Resolved translation
+     */
+    this.tl = function(key, locale, params) {
+        return this.getTranslation(key, locale, params);
+    };
+
 
     $log.info("LocalisationService - initialising...");
 
@@ -367,11 +388,15 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, C
     $log.info("LocalisationCtrl()");
 
     $scope.CONFIG = Config;
-    $scope.showTheSheisse = false;
 
     // Returns translation if it exists
     $scope.t = function(key, params) {
-        //$log.log("t(): " + key + ", " + params);
         return LocalisationService.t(key, params);
     };
+
+    // Get translation in given locale
+    $scope.tl = function(key, locale, params) {
+        return LocalisationService.tl(key, locale, params);
+    };
+
 });
