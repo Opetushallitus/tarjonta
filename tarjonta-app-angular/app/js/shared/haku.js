@@ -17,7 +17,7 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 .factory('HakuService',function($resource,$q,Config){
 
 
-        var hakuUri = Config.env["host.base-uri"] + Config.env["haku.uri.findall"];
+        var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
         return {
 

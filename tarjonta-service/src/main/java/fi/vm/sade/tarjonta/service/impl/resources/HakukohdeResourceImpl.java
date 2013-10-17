@@ -270,6 +270,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 
     @Override
+    public String updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO) {
 
         String hakuOid = hakukohdeRDTO.getHakuOid();

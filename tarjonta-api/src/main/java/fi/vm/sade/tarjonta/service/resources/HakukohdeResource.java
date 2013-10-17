@@ -78,6 +78,12 @@ public interface HakukohdeResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
 
+    @PUT
+    @Path("/ui")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO);
+
     @GET
     @Path("/ui/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
