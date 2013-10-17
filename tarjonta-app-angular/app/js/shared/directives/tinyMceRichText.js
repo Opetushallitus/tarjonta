@@ -33,6 +33,7 @@ app.directive('tinyMceRichText',function($compile){
 
             //Create and compile text are for tinymce
             var markup = "<textarea class="+randomId+">{{text}}</textarea>";
+
             angular.element(element).html($compile(markup)(scope));
 
             //Initialize tinymce and hook callbacks on it to update the bound variable
