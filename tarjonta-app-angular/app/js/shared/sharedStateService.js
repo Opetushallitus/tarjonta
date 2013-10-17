@@ -13,6 +13,7 @@ app.service('SharedStateService',function($resource, $log,$q, Config){
       return sharedService[name];
     };
 
+
     this.removeState = function(name) {
         sharedService[name] = undefined;
     };

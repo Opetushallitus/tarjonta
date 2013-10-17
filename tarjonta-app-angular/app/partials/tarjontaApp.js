@@ -139,7 +139,21 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 hakukohdex: function(Hakukohde, $log, $route,SharedStateService) {
                     $log.info("/hakukohde/ID", $route);
                     if ("new" === $route.current.params.id) {
-                        console.log('KOULUTUKSES FROM SHARED SERVICE : ' , SharedStateService.getFromState('SelectedKoulutukses'))
+
+                        var selectedTarjoajaOids;
+                        var selectedKoulutusOids;
+
+                        if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
+                            selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
+                        } else {
+                            selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                        }
+
+                        if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
+                            selectedKoulutusOids =  SharedStateService.getFromState('SelectedKoulutukses');
+                        } else {
+                            selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
+                        }
                         //Initialize model and arrays inside it
                         //TODO: retrieve koulutukses
                         return new Hakukohde({
@@ -147,6 +161,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                             liitteidenToimitusOsoite : {
 
                             },
+                            tarjoajaOids : selectedTarjoajaOids,
                             hakukohteenNimet : [
                                 {
                                     "uri": "kieli_fi",
@@ -156,7 +171,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                 }
                             ],
                             hakukelpoisuusvaatimusUris : [],
-                            hakukohdeKoulutusOids : [SharedStateService.getFromState('SelectedKoulutukses')],
+                            hakukohdeKoulutusOids : selectedKoulutusOids,
                             hakukohteenLiitteet : [],
                             valintakokeet : [],
 

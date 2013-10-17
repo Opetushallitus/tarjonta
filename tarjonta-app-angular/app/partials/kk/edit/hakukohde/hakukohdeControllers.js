@@ -105,7 +105,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.hakus = [];
 
 
-    $scope.orgOid = "1.2.246.562.10.61998115317";
+
 
     //TODO: get locale from somewhere
     var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
@@ -129,7 +129,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
-    var orgPromise =  OrganisaatioService.byOid($scope.orgOid);
+    var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
     //When organisaatio is loaded set the liitteiden toimitusosoite on the model
     orgPromise.then(function(data){
         if (data.postiosoite !== undefined) {
@@ -178,12 +178,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.insert = function() {
        //TODO: are we inserting or updating figure it from OID
+        if ($scope.model.hakukohde.oid === undefined) {
+            $scope.model.hakukohde.tila = "VALMIS";
 
-        $scope.model.hakukohde.tila = "VALMIS";
 
+            console.log('MODEL: ', $scope.model.hakukohde);
+            $scope.model.hakukohde.$save();
+        }
 
-      console.log('MODEL: ', $scope.model.hakukohde);
-      //$scope.model.hakukohde.$save();
     };
 
     var hakuPromise = HakuService.getAllHakus();

@@ -672,6 +672,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.luoUusiHakukohde = function() {
 
         SharedStateService.addToState('SelectedKoulutukses',$scope.selectedKoulutukset);
+        SharedStateService.addToState('SelectedOrgOid',$scope.organisaatio.currentNode.oid);
         $location.path('/hakukohde/new/edit');
     };
     
