@@ -88,26 +88,6 @@ public class IndexerResource {
     }
 
     @GET
-    @Path("/koulutukset/start")
-    @Produces("text/plain")
-    public Response rebuildKoulutuIndex(@QueryParam("clean") final boolean clean) {
-        List<KoulutusmoduuliToteutus> koulutukset = koulutusDao.findAll();
-        try {
-            if (clean) {
-                koulutusSolr.deleteByQuery("*:*");
-            }
-        } catch (SolrServerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        indexKoulutus(koulutukset);
-        return Response.ok(Integer.toString(koulutukset.size())).build();
-    }
-
-    @GET
     @Path("/hakukohteet")
     @Produces("text/plain")
     public String rebuildHakukohdeIndex(@QueryParam("clear") final boolean clear) throws SolrServerException, IOException {

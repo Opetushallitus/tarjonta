@@ -14,6 +14,34 @@ app.controller('HelpersLocalisationCtrl', ['$scope', '$q', '$log', '$modal', 'Lo
             filterLocale: "fi"
         };
 
+
+        $scope.filterLocaleWithLocale = function(item) {
+            return ($scope.model.filterLocale === undefined) || (item.locale.indexOf($scope.model.filterLocale) != -1);
+        };
+
+        $scope.filterKeyWithKey = function(item) {
+            return ($scope.model.filterKey === undefined) || (item.key.indexOf($scope.model.filterKey) != -1);
+        };
+
+        $scope.filterValueWithKey = function(item) {
+            // Should copy the old value to somwhere and match that, otherwise immediately filtered away when edited :)
+            return false;
+            // return ($scope.model.filterKey === undefined) || (item.value.indexOf($scope.model.filterKey) != -1);
+        };
+
+        $scope.filterWithKeyAndLocale = function(item) {
+            if (false && item.key.indexOf("poista") != -1) {
+              $log.info("KEY = " + item.key);
+              $log.info("filterLocaleWithLocale = " + $scope.filterLocaleWithLocale(item));
+              $log.info("filterKeyWithKey = " + $scope.filterKeyWithKey(item));
+              $log.info("filterValueWithKey = " + $scope.filterValueWithKey(item));
+            }
+
+            var result = $scope.filterLocaleWithLocale(item) && ($scope.filterKeyWithKey(item) || $scope.filterValueWithKey(item));
+            return result;
+        };
+
+
         $scope.save = function(entry) {
             console.log("SAVE: ", entry);
             return LocalisationService.createMissingTranslation(entry.key, entry.locale, entry.value);

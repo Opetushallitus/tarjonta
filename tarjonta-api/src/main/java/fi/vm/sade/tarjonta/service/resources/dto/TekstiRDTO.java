@@ -8,16 +8,22 @@ import java.util.List;
 */
 public class TekstiRDTO {
 
+    //kielen uri
     private String uri;
 
+    //kielen nimi
     private String nimi;
 
+    //kielen nimet
     private List<KieliNimiRDTO> monikielisetNimet;
 
+    //kielikoodi
     private String arvo;
 
+    //kielikoodin versio
     private int versio;
 
+    //varsinainen data
     private String teksti;
 
 

@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import java.util.List;
 
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
@@ -89,4 +90,19 @@ public interface IndexerDAO {
      * @return
      */
     List<String> findKoulutusLajisForKoulutus(Long koulutusmoduuliToteutusId);
+
+    /**
+     * Find komo.nimi (koulutuksen nimi) for komoto, used in kk koulutukset
+     * @param id komoto id
+     * @return
+     */
+    MonikielinenTeksti getNimiForKoulutus(Long id);
+
+    /**
+     * Find nimi for hakukohde, used in kk hakukohdes
+     * @param hakukohdeId hakukohteen id
+     * @return
+     */
+    MonikielinenTeksti getNimiForHakukohde(Long hakukohdeId);
+    
 }

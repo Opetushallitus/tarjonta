@@ -15,7 +15,7 @@
         <div class="btn btn-primary" ng-click="openDialog()">Kopiointi</div>
 
         <div class="container-fluid">
-            <div class="row-fluid" ng-repeat="l in model.localisations | filter: {key: model.filterKey, locale: model.filterLocale} | orderBy: l.key">
+            <div class="row-fluid" ng-repeat="l in model.localisations | filter: filterWithKeyAndLocale | orderBy: l.key">
                 <div class="span3">
                     {{ l.key }}
                 </div>

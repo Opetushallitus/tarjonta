@@ -28,6 +28,8 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakuaika;
 import fi.vm.sade.tarjonta.model.QHakukohde;
@@ -141,7 +143,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<Long> findAllKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull()).getValue();
+        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull().or(komo.nimi.isNotNull())).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
     }
 
@@ -159,5 +161,21 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         
         return q(komoto).join(komoto.koulutuslajis, QKoodistoUri.koodistoUri).where(komoto.id.eq(koulutusmoduuliToteutusId)).list(QKoodistoUri.koodistoUri.koodiUri);
+    }
+    
+    
+    @Override
+    public MonikielinenTeksti getNimiForKoulutus(Long koulutusId) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        return q(komoto)
+                .join(komoto.koulutusmoduuli, koulutusmoduuli).join(koulutusmoduuli.nimi).where(komoto.id.eq(koulutusId)).singleResult(koulutusmoduuli.nimi);
+    }
+    
+    @Override
+    public MonikielinenTeksti getNimiForHakukohde(Long hakukohdeId) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return q(hakukohde).join(hakukohde.hakukohdeMonikielinenNimi).where(hakukohde.id.eq(hakukohdeId)).singleResult(hakukohde.hakukohdeMonikielinenNimi);
+
     }
 }
