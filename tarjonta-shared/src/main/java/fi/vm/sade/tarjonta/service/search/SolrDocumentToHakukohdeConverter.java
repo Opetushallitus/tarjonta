@@ -26,8 +26,11 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLA
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOODI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMET;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMIEN_KIELET;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -99,9 +102,17 @@ public class SolrDocumentToHakukohdeConverter {
     }
 
     private void copyHakukohdeNimi(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
-        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "fi", HAKUKOHTEEN_NIMI_FI);
-        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "sv", HAKUKOHTEEN_NIMI_SV);
-        asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "en", HAKUKOHTEEN_NIMI_EN);
+        if(hakukohdeDoc.getFieldValues(NIMET)!=null) {
+            ArrayList<Object> nimet = new ArrayList<Object>(hakukohdeDoc.getFieldValues(NIMET));
+            ArrayList<Object> nimienKielet = new ArrayList<Object>(hakukohdeDoc.getFieldValues(NIMIEN_KIELET));
+            for(int i=0;i<nimet.size();i++) {
+                asetaNimiArvosta(hakukohde.getNimi(), hakukohdeDoc, (String)nimienKielet.get(i), (String)nimet.get(i));
+            }
+        } else {
+            asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "fi", HAKUKOHTEEN_NIMI_FI);
+            asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "sv", HAKUKOHTEEN_NIMI_SV);
+            asetaNimi(hakukohde.getNimi(), hakukohdeDoc, "en", HAKUKOHTEEN_NIMI_EN);
+        }
     }
 
     private void copyTarjoajaNimi(HakukohdePerustieto hakukohde,
@@ -122,10 +133,26 @@ public class SolrDocumentToHakukohdeConverter {
      */
     private void asetaNimi(Map<String, String> nimiMap,
             SolrDocument hakukohdeDoc, String targetLanguage, String fieldName) {
+        
         if (hakukohdeDoc.getFieldValue(fieldName) != null) {
             nimiMap.put(targetLanguage,
                     hakukohdeDoc.getFieldValue(fieldName).toString());
         }
     }
+    
+    /**
+     * Asettaa yhden nimen
+     * @param nimiMap
+     * @param hakukohdeDoc
+     * @param targetLanguage (fi,sv,en)
+     * @param fieldName solr dokumentin kentän nimi josta data otetaan.
+     */
+    private void asetaNimiArvosta(Map<String, String> nimiMap,
+            SolrDocument hakukohdeDoc, String targetLanguage, String value) {
+        if (value != null) {
+            nimiMap.put(targetLanguage, value);
+        }
+    }
+
 
 }

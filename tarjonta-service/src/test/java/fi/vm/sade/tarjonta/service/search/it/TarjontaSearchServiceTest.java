@@ -12,6 +12,8 @@ import java.util.Locale;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -60,6 +62,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -77,10 +80,9 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
-})
+        DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
@@ -125,7 +127,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     @Before
     @Override
-    public void before(){
+    public void before() {
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());
             clearIndex(solrServerFactory.getSolrServer("hakukohteet"));
@@ -136,15 +138,35 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.555"))).toReturn(Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
-        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.556"))).toReturn(Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
-        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.557"))).toReturn(Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
-        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.555","1.2.3.4.556","1.2.3.4.557"))).toReturn(Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),getOrganisaatio("1.2.3.4.556"),getOrganisaatio("1.2.3.4.557")));
-        Mockito.stub(organisaatioSearchService.findByOidSet(Sets.newHashSet("1.2.3.4.555","1.2.3.4.556"))).toReturn(Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),getOrganisaatio("1.2.3.4.556")));
-        Mockito.stub(organisaatioService.findByOid("1.2.3.4.555")).toReturn(getOrgDTO("1.2.3.4.555"));
-        
-        stubKoodi(koodiService, "kieli_fi","FI");
+
+        Mockito.stub(
+                organisaatioSearchService.findByOidSet(Sets
+                        .newHashSet("1.2.3.4.555"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
+        Mockito.stub(
+                organisaatioSearchService.findByOidSet(Sets
+                        .newHashSet("1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(
+                organisaatioSearchService.findByOidSet(Sets
+                        .newHashSet("1.2.3.4.557"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
+                organisaatioSearchService.findByOidSet(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
+                .toReturn(
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                                getOrganisaatio("1.2.3.4.556"),
+                                getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
+                organisaatioSearchService.findByOidSet(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                        getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(organisaatioService.findByOid("1.2.3.4.555")).toReturn(
+                getOrgDTO("1.2.3.4.555"));
+
+        stubKoodi(koodiService, "kieli_fi", "FI");
 
         super.before();
     }
@@ -156,41 +178,52 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return organisaatioDTO;
     }
 
-    private void clearIndex(SolrServer solrServer) throws SolrServerException, IOException {
+    private void clearIndex(SolrServer solrServer) throws SolrServerException,
+            IOException {
         solrServer.deleteByQuery("*:*");
         solrServer.commit();
     }
 
-    void createDataInTransaction(){
-        
-        executeInTransaction(new Runnable(){
+    void createTestDataInTransaction() {
+
+        executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                hakukohde = tarjontaFixtures.createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
-                LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde.getOid()));
+                hakukohde = tarjontaFixtures
+                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
+                LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
+                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                                .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
-                hakukohde = tarjontaFixtures.createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
-                hakukohdeVastaus = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde.getOid()));
+                hakukohde = tarjontaFixtures
+                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
+                hakukohdeVastaus = publicService
+                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                                .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
-                hakukohde = tarjontaFixtures.createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
-                hakukohdeVastaus = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde.getOid()));
+                hakukohde = tarjontaFixtures
+                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
+                hakukohdeVastaus = publicService
+                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                                .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
             }
-            
+
         });
     }
-    
+
     @Autowired
     PlatformTransactionManager tm;
 
     @Test
     public void testEtsiKoulutukset() throws SolrServerException {
-        createDataInTransaction();
-        
+        createTestDataInTransaction();
+
         KoulutuksetKysely kysely = new KoulutuksetKysely();
-        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = tarjontaSearchService
+                .haeKoulutukset(kysely);
 
         assertNotNull(vastaus);
 
@@ -204,13 +237,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertEquals(0, vastaus.getKoulutukset().size());
 
     }
-    
+
     @Test
     public void testEtsiHakukohteet() throws SolrServerException {
-        createDataInTransaction();
-        
+        createTestDataInTransaction();
+
         HakukohteetKysely kysely = new HakukohteetKysely();
-        HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = tarjontaSearchService
+                .haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
@@ -227,11 +261,12 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     @Test
     public void testEtsiHakukohteetByHakuOid() throws SolrServerException {
-        createDataInTransaction();
-        
+        createTestDataInTransaction();
+
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.setHakuOid(hakukohde.getHaku().getOid());
-        HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = tarjontaSearchService
+                .haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
@@ -240,81 +275,110 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     @Test
     public void testEtsiHakukohteetByTarjoajaOid() throws SolrServerException {
-        createDataInTransaction();
-       
+        createTestDataInTransaction();
+
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.getTarjoajaOids().add("1.2.3.4.555");
-        HakukohteetVastaus vastaus = tarjontaSearchService.haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = tarjontaSearchService
+                .haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getHakukohteet().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoajaOid());
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0)
+                .getTarjoajaOid());
 
         kysely.getTarjoajaOids().add("1.2.3.4.556");
         vastaus = tarjontaSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(2, vastaus.getHakukohteet().size());
-        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0).getTarjoajaOid());
-        assertEquals("1.2.3.4.556", vastaus.getHakukohteet().get(1).getTarjoajaOid());
+        assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0)
+                .getTarjoajaOid());
+        assertEquals("1.2.3.4.556", vastaus.getHakukohteet().get(1)
+                .getTarjoajaOid());
     }
-    
-    
+
     @Test
-    public void testEtsiHakukohteitaGrouped(){
-        createDataInTransaction();
-        
+    public void testEtsiHakukohteitaGrouped() {
+        createTestDataInTransaction();
+
         HakukohteetKysely kysely = new HakukohteetKysely();
-        List<OrganisaatioHakukohdeGroup> vastaus = tarjontaSearchService.haeHakukohteetGroupedByOrganisaatio(new Locale("fi"), kysely);
+        List<OrganisaatioHakukohdeGroup> vastaus = tarjontaSearchService
+                .haeHakukohteetGroupedByOrganisaatio(new Locale("fi"), kysely);
         assertEquals(3, vastaus.size());
-        for(OrganisaatioHakukohdeGroup group: vastaus) {
+        for (OrganisaatioHakukohdeGroup group : vastaus) {
             Assert.assertTrue(group.getOrganisaatioNimi().contains("fi"));
         }
 
-        vastaus = tarjontaSearchService.haeHakukohteetGroupedByOrganisaatio(new Locale("sv"), kysely);
+        vastaus = tarjontaSearchService.haeHakukohteetGroupedByOrganisaatio(
+                new Locale("sv"), kysely);
         assertEquals(3, vastaus.size());
-        for(OrganisaatioHakukohdeGroup group: vastaus) {
+        for (OrganisaatioHakukohdeGroup group : vastaus) {
             Assert.assertTrue(group.getOrganisaatioNimi().contains("sv"));
         }
     }
-    
+
     @Test
-    public void testKKHakukohde() throws SolrServerException{
-        
-//        createDataInTransaction();
-        
-        
-        //tee kk koulutus
-        executeInTransaction(new Runnable(){
+    public void testKKKoulutus() throws SolrServerException {
+
+        // tee kk koulutus
+        executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                
+
                 KorkeakouluDTO kk = getKKKoulutus();
                 koulutusResource.createToteutus(kk);
 
-                
-
-//                HakukohdeRDTO hakukohde = getHakukohde();
-//                hakukohdeResource.insertHakukohde(hakukohde);
+                // HakukohdeRDTO hakukohde = getHakukohde();
+                // hakukohdeResource.insertHakukohde(hakukohde);
             }
 
-        });        
+        });
 
-        System.out.println(solrServerFactory.getSolrServer("hakukohteet").query(new SolrQuery("*:*")));
-        
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.setNimi("otsikko");
-        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = tarjontaSearchService
+                .haeKoulutukset(kysely);
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getKoulutukset().size());
     }
 
-    private KorkeakouluDTO getKKKoulutus(){
+    @Test
+    public void testKKHakukohde() throws SolrServerException {
+        createTestDataInTransaction();
+        
+        // tee kk koulutus ja hakukohde
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+
+                KorkeakouluDTO kk = getKKKoulutus();
+                ResultDTO result = koulutusResource.createToteutus(kk);
+
+                HakukohdeRDTO hakukohde = getHakukohde(result.getOid());
+                hakukohdeResource.insertHakukohde(hakukohde);
+            }
+
+        });
+        
+        HakukohteetKysely kysely = new HakukohteetKysely();
+        kysely.setNimi("kkhakukohdenimi");
+        HakukohteetVastaus vastaus = tarjontaSearchService
+                .haeHakukohteet(kysely);
+        assertNotNull(vastaus);
+        assertEquals(1, vastaus.getHakukohteet().size());
+    }
+
+    private KorkeakouluDTO getKKKoulutus() {
+        
         KorkeakouluDTO kk = new KorkeakouluDTO();
-        kk.getKoulutusohjelma().getMeta().put("kieli_fi", new UiDTO(null, "kieli_fi", "1","Otsikko suomeksi"));
+        kk.getKoulutusohjelma()
+                .getMeta()
+                .put("kieli_fi",
+                        new UiDTO(null, "kieli_fi", "1", "Otsikko suomeksi"));
 
         kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.YLIOPISTOKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
-        kk.setOrganisaatio(new OrgDTO("1.2.3.4.555",null));
+        kk.setOrganisaatio(new OrgDTO("1.2.3.4.555", null));
         kk.setTutkinto(new UiDTO(null, "tutkinto-uri", "1", null));
         kk.setOpintojenLaajuus(new UiDTO(null, "laajuus-uri", "1", null));
         kk.setKoulutusaste(new UiDTO(null, "koulutusaste-uri", "1", null));
@@ -324,25 +388,28 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setEqf(new UiDTO(null, "EQF-uri", "1", null));
         kk.setKoulutuskoodi(new UiDTO(null, "koulutus-uri", "1", null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
-        kk.setSuunniteltuKesto(new SuunniteltuKestoDTO(null, "suunniteltu-kesto-uri", "1",null));
+        kk.setSuunniteltuKesto(new SuunniteltuKestoDTO(null,
+                "suunniteltu-kesto-uri", "1", null));
         return kk;
     }
-    
-    private HakukohdeRDTO getHakukohde() {
+
+    private HakukohdeRDTO getHakukohde(String koulutusOid) {
         HakukohdeRDTO hakukohde = new HakukohdeRDTO();
-        hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde
-                .getHaku().getOid());
+        hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
+                .getOid());
         TekstiRDTO nimi = new TekstiRDTO();
         nimi.setUri("kieli_fi");
         nimi.setTeksti("kkhakukohdenimi");
         ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
         nimet.add(nimi);
-        
+
         hakukohde.setHakukohteenNimet(nimet);
         hakukohde.setTila(TarjontaTila.JULKAISTU.toString());
-        
-        //oidit
-        hakukohde.setHakukohdeKoulutusOids(new ArrayList());
+
+        ArrayList<String> koulutusOidit = new ArrayList();
+        koulutusOidit.add(koulutusOid);
+        // oidit
+        hakukohde.setHakukohdeKoulutusOids(koulutusOidit);
         OsoiteRDTO osoite = new OsoiteRDTO();
         osoite.setCreated(new Date());
         osoite.setModified(new Date());
@@ -351,7 +418,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     /**
-     * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on hookattu nyt transaktion onnistumiseen.
+     * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on
+     * hookattu nyt transaktion onnistumiseen.
+     * 
      * @param runnable
      */
     private void executeInTransaction(final Runnable runnable) {
@@ -367,17 +436,16 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         });
 
     }
-    
-    
+
     private void stubKoodi(KoodiService koodiService, String uri, String arvo) {
-        List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri,arvo));
+        List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri, arvo));
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
                 vastaus);
     }
 
-    private KoodiType getKoodiType(String uri,String arvo) {
+    private KoodiType getKoodiType(String uri, String arvo) {
         KoodiType kt = new KoodiType();
         kt.setKoodiArvo(arvo);
         kt.setKoodiUri(uri);
@@ -393,30 +461,29 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         type.setNimi(arvo + "-nimi-" + kieli.toString());
         return type;
     }
-    
+
     private static class KoodistoCriteriaMatcher implements
-    Matcher<SearchKoodisCriteriaType> {
+            Matcher<SearchKoodisCriteriaType> {
 
-private String uri;
+        private String uri;
 
-public KoodistoCriteriaMatcher(String uri) {
-    this.uri = uri;
-}
+        public KoodistoCriteriaMatcher(String uri) {
+            this.uri = uri;
+        }
 
-@Override
-public boolean matches(Object arg0) {
-    SearchKoodisCriteriaType type = (SearchKoodisCriteriaType) arg0;
-    return type != null && type.getKoodiUris().contains(uri);
-}
+        @Override
+        public boolean matches(Object arg0) {
+            SearchKoodisCriteriaType type = (SearchKoodisCriteriaType) arg0;
+            return type != null && type.getKoodiUris().contains(uri);
+        }
 
-@Override
-public void describeTo(Description arg0) {
-}
+        @Override
+        public void describeTo(Description arg0) {
+        }
 
-@Override
-public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-}
-};
-
+        @Override
+        public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
+        }
+    };
 
 }

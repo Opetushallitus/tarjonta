@@ -44,6 +44,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
@@ -81,7 +83,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHakutapaUri());
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(hakukohdeDoc, TILA, hakukohde.getTila());
-        addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi());
+        addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi(), hakukohde.getId());
         addHakuTiedot(hakukohdeDoc, getHakuajat(hakukohde.getHakuId()));
         addTekstihaku(hakukohdeDoc);
         add(hakukohdeDoc, HAUN_OID, hakukohde.getHakuOid());
@@ -104,14 +106,13 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             
             if (!orgFound) {
                 logger.warn("Skipping hakukohde:" + hakukohde.getOid()
-                        + " no orgnisation found with oid " + tarjoaja);
+                        + " no organisation found with oid " + tarjoaja);
                 return Lists.newArrayList();
             }
         } else {
             logger.warn("No koulutuses found, this should not be possible!");
         }
 
-        
         return docs;
     }
 
@@ -157,8 +158,22 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         add(hakukohdeDoc, HAUN_PAATTYMISPVM, getEndDateStr(hakuajat));
     }
 
-    private void addNimitiedot(SolrInputDocument doc, String hakukohdeNimi) {
+    private void addNimitiedot(SolrInputDocument doc, String hakukohdeNimi, long id) {
         if (hakukohdeNimi == null) {
+            // kk? nimi monikielisenä tekstinä
+            MonikielinenTeksti nimi = indexerDao.getNimiForHakukohde(id);
+            for(TekstiKaannos tekstikaannos: nimi.getTekstis()) {
+                Preconditions.checkNotNull(koodiService);
+                KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+
+
+                if(type!=null) {
+                    add(doc, NIMET, tekstikaannos.getArvo());
+                    add(doc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
+                    add(doc, TEKSTIHAKU, tekstikaannos.getArvo());
+                }
+            }
+            
             return;
         }
         KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
