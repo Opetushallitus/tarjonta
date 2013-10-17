@@ -64,6 +64,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 if ("ACTION" === data) {
                     // TODO actual delete!
                     $log.info("ACTUALLY DELETE IT NOW!");
+                    dialogService.showNotImplementedDialog();
                 }
             });
 
