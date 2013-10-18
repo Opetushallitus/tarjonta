@@ -12,9 +12,8 @@
             <tiny-mce-rich-text text="uiModel.tekstis.KOULUTUKSEN_RAKENNE.meta.kieli_fi.koodi.arvo"></tiny-mce-rich-text>
             <tiny-mce-rich-text text="uiModel.tekstis.JATKOOPINTO_MAHDOLLISUUDET.meta.kieli_fi.koodi.arvo"></tiny-mce-rich-text>
 
-            <h2>Single image with resizing</h2>
             <div>
-                <label for="inputImage2">Image 2</label>
+                <label for="inputImage2"></label>
                 <input id="inputImage2" 
                        url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
                        type="file" 
@@ -22,12 +21,11 @@
                        image="image2" 
                        resize-max-height="300"
                        resize-max-width="250"
-                       resize-quality="0.9" />>
-                <p>Original</p>
-                <img ng-show="image2" ng-src="{{image2.url}}" type="{{image2.file.type}}"/>
-                <p>Resized</p>
+                       resize-quality="0.9" />
+                <!--img ng-show="image2" ng-src="{{image2.url}}" type="{{image2.file.type}}"/>
+                <p>Resized</p-->
                 <img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
-                <button type="submit" ng-click="single(image2.resized)" disabled>Add</button>
+                <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
             </div>
             <hr />
 

@@ -3,8 +3,7 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='koulutus.edit.koulutuskoodi'></div>
             <div class="span10">{{model.koulutuskoodi.arvo}} {{model.koulutuskoodi.koodi.arvo}}
-
-                <input class="btn" type="button"  ng-click="tutkintoDialogModel.open()" value="{{t('koulutus.edit.muokkaaTutkinto')}}"/>
+                <a href ng-click="tutkintoDialogModel.open()">{{t('koulutus.edit.muokkaaTutkinto')}}</a>
             </div>
         </div>
     </div>
@@ -26,6 +25,7 @@
                         <td style="vertical-align: bottom; padding-bottom:13px;"><a href="#"><span tt='koulutus.edit.lisaa-kieli'></a></td>
                     </tr>
                 </table>
+                <i>{{t('koulutus.edit.lisaa-kieli.help')}}</i><br/><br/>
             </div>
         </div>
     </div>
@@ -33,7 +33,10 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='koulutus.edit.tutkinto-ohjelman-tunniste'></div>
-            <div class="span10"><input type="text" data-ng-model="model.tunniste"  required /></div>
+            <div class="span10">
+                <div><input type="text" data-ng-model="model.tunniste"  required /></div>
+                <div><i>{{t('koulutus.edit.tutkinto-ohjelman-tunniste.help')}}</i><br/><br/></div>
+            </div>
         </div>
     </div>
 
@@ -99,8 +102,10 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='koulutus.edit.opintojen-laajuus'></div>
             <div class="span10">
-                <select ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data"></select>
+                <div><select ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data"></select></div>
+                <div><i>{{t('koulutus.edit.opintojen-laajuus.help')}}</i></div><br/><br/>
             </div>
+
         </div>
     </div>
 
@@ -137,20 +142,30 @@
             <div class="span2 label-right"><span tt='koulutus.edit.opetuskielet'></div>
             <div class="span10">
                 <!--koodistomultiselect selectedkoodiuris="uiModel.opetuskielis.data" koodiuris="uiModel.opetuskielis.uris" koodistouri="config.env['koodisto-uris.kieli']" locale="'FI'"></koodistomultiselect-->
+                <div>
+                    <div style="float: left;">
+                        <select multiple="multiple"
+                                ng-model="uiModel.opetuskielis.uris"
+                                ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetuskielis.data">
+                        </select>
+                    </div>
+                    <div style="float: left;">
+                        <ul>
+                            <li ng-repeat="uri in uiModel.opetuskielis.uris">
+                                {{searchKoodiByKoodiUri(uri, uiModel.opetuskielis).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetuskielis)">X</a>]
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-                <div style="float: left;">
-                    <select multiple="multiple"
-                            ng-model="uiModel.opetuskielis.uris"
-                            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetuskielis.data">
-                    </select>
-                </div>
-                <div style="float: left;">
-                    <ul>
-                        <li ng-repeat="uri in uiModel.opetuskielis.uris">
-                            {{searchKoodiByKoodiUri(uri, uiModel.opetuskielis).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetuskielis)">X</a>]
-                        </li>
-                    </ul>
-                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 label-right"></div>
+            <div class="span10">
+                <i>{{t('koulutus.edit.opetuskielet.help')}}</i><br/><br/>
             </div>
         </div>
     </div>
@@ -159,7 +174,11 @@
         <div class="row-fluid">
             <div class="span2 label-right"><span tt='koulutus.edit.maksullisuus'></div>
             <div class="span10">
-                <input type="checkbox" data-ng-model="model.opintojenMaksullisuus" />
+                <div>
+                    <input type="checkbox" data-ng-model="model.opintojenMaksullisuus" />
+                </div><div>
+                    <i>{{t('koulutus.edit.opintojenMaksullisuus.help')}}</i><br/><br/>
+                </div>
             </div>
         </div>
     </div>
