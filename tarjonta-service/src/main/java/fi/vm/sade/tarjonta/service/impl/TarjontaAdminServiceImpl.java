@@ -374,6 +374,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk.setHakuaika(findHakuaika(haku, hakukohde.getSisaisetHakuajat()));
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
+        hakuk.setViimIndeksointiPvm(hakuk.getLastUpdateDate());
         hakukohdeDAO.update(hakuk);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
         solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
@@ -508,6 +509,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
         hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
         hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+        hakukohde.setViimIndeksointiPvm(hakukohde.getLastUpdateDate());
         hakukohdeDAO.update(hakukohde);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);

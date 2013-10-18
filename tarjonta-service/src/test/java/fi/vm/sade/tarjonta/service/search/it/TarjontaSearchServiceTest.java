@@ -9,11 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Assert;
