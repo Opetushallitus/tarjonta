@@ -88,6 +88,7 @@ public interface HakukohdeResource {
     @Path("/ui/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeRDTO findByOid(@PathParam("oid") String oid);
+
     /**
      * /hakukohde/{oid}
      *
@@ -97,7 +98,7 @@ public interface HakukohdeResource {
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakukohdeDTO getByOID(@PathParam("oid") String oid);
+    public ResultRDTO<HakukohdeDTO> getByOID(@PathParam("oid") String oid);
 
     /**
      * /hakukohde/{oid}/haku
@@ -148,15 +149,15 @@ public interface HakukohdeResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String updateHakukohde(HakukohdeDTO hakukohdeDTO);
+    public ResultRDTO<String> updateHakukohde(ResultRDTO<HakukohdeDTO> hakukohdeDTO);
 
     @DELETE
     @Path("{oid}")
     public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
-    
+
     /**
      * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
-     * 
+     *
      * @param oid Hakukohteen oid.
      * @param tila Kohdetila.
      * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
@@ -164,7 +165,7 @@ public interface HakukohdeResource {
     @POST
     @Path("{oid}/tila")
     @Produces(MediaType.TEXT_PLAIN)
-    public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    public ResultRDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
      * /hakukohde/OID/nimi
@@ -188,6 +189,6 @@ public interface HakukohdeResource {
     @GET
     @Path("{oid}/koulutukset")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<NimiJaOidRDTO> getKoulutukset(@PathParam("oid") String oid);
+	public ResultRDTO<List<NimiJaOidRDTO>> getKoulutukset(@PathParam("oid") String oid);
 
 }
