@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,11 +25,11 @@ import org.springframework.stereotype.Repository;
 
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakuaika;
@@ -178,4 +179,39 @@ public class IndexerDaoImpl implements IndexerDAO {
         return q(hakukohde).join(hakukohde.hakukohdeMonikielinenNimi).where(hakukohde.id.eq(hakukohdeId)).singleResult(hakukohde.hakukohdeMonikielinenNimi);
 
     }
+
+    /**
+     * @see #findAllHakukohdeIds(), tämä metodi lisää timestamp tarkistuksen
+     */
+    @Override
+    public List<Long> findUnindexedHakukohdeIds() {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).limit(100).list(hakukohde.id);
+
+    }
+
+    /**
+     * @see #findAllKoulutusIds(), tämä metodi lisää timestamp tarkistuksen
+     */
+    @Override
+    public List<Long> findUnindexedKoulutusIds() {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return q(komoto).where(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated))).limit(100).list(komoto.id);
+    }
+
+    @Override
+    public void updateHakukohdeIndexed(Long id, Date time) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+        u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.eq(id)).execute();
+    }
+
+    @Override
+    public void updateKoulutusIndexed(Long id, Date time) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm,time).execute();
+    }
+
+
 }

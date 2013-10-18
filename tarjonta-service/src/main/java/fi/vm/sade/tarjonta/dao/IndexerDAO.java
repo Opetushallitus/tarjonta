@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
@@ -104,5 +105,31 @@ public interface IndexerDAO {
      * @return
      */
     MonikielinenTeksti getNimiForHakukohde(Long hakukohdeId);
+
+    /**
+     * Etsi hakukohteet joita ei ole indeksoitu.
+     * @return
+     */
+    List<Long> findUnindexedHakukohdeIds();
+
+    /**
+     * Etsi koulutukset joita ei ole indeksoitu.
+     * @return
+     */
+    List<Long> findUnindexedKoulutusIds();
     
+    /**
+     * Päivitä viimIndeksointi pvm
+     * @param id
+     * @param time
+     */
+    void updateHakukohdeIndexed(Long id, Date time);
+
+    /**
+     * Päivitä viimIndeksointi pvm
+     * @param id
+     * @param time
+     */
+    void updateKoulutusIndexed(Long id, Date time);
+
 }
