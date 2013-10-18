@@ -33,7 +33,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -67,11 +67,11 @@ public interface KoulutusResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultDTO updateToteutus(KorkeakouluDTO dto);
+    public OidResultDTO updateToteutus(KorkeakouluDTO dto);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultDTO createToteutus(KorkeakouluDTO dto);
+    public OidResultDTO createToteutus(KorkeakouluDTO dto);
 
     @DELETE
     @Path("{oid}")

@@ -30,7 +30,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 
 /**
- * Simple localisation support - could have used MonikielinenMetadata.
+ * Simple localisation support - could have used MonikielinenMetadata but wanted
+ * to make this "extractable" from the Tarjonta.
  *
  * @author mlyly
  */

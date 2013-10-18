@@ -62,7 +62,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -351,7 +351,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             public void run() {
 
                 KorkeakouluDTO kk = getKKKoulutus();
-                ResultDTO result = koulutusResource.createToteutus(kk);
+                OidResultDTO result = koulutusResource.createToteutus(kk);
 
                 HakukohdeRDTO hakukohde = getHakukohde(result.getOid());
                 hakukohdeResource.insertHakukohde(hakukohde);

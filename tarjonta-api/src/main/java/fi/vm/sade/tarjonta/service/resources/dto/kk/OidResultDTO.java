@@ -21,16 +21,16 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class ResultDTO implements Serializable {
+public class OidResultDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String oid;
     private Long version;
 
-    public ResultDTO() {
+    public OidResultDTO() {
     }
 
-    public ResultDTO(String oid, Long version) {
+    public OidResultDTO(String oid, Long version) {
         this.oid = oid;
         this.version = version;
     }
