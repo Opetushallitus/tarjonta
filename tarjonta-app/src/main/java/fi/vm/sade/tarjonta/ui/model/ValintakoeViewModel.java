@@ -154,7 +154,7 @@ public class ValintakoeViewModel {
         HashCodeBuilder builder = new HashCodeBuilder()
         .append(valintakoeTunniste)
         .append(valintakoeTyyppi)
-        .append(sanallisetKuvaukset)
+        //.append(sanallisetKuvaukset)
         .append(valintakoeAjat)
         .append(pkAlinPM != null ? addDouble(pkAlinPM): pkAlinPM)
         .append(pkYlinPM != null ? addDouble(pkYlinPM) : pkYlinPM)
@@ -164,11 +164,11 @@ public class ValintakoeViewModel {
         .append(lpAlinHyvaksyttyPM != null ? addDouble(lpAlinHyvaksyttyPM) : lpAlinHyvaksyttyPM)
         .append(kpAlinHyvaksyttyPM  != null ? addDouble(kpAlinHyvaksyttyPM) : kpAlinHyvaksyttyPM)
         .append(viimeisinPaivittaja)
-        .append(viimeisinPaivitysPvm)
-        .append(lisanayttoKuvaukset);
+        .append(viimeisinPaivitysPvm);
+        //.append(lisanayttoKuvaukset);
 
-        builder = appendMonikielinenData(builder, sanallisetKuvaukset);
-        builder = appendMonikielinenData(builder, lisanayttoKuvaukset);
+        //builder = appendMonikielinenData(builder, sanallisetKuvaukset);
+        //builder = appendMonikielinenData(builder, lisanayttoKuvaukset);
         
         return builder.toHashCode();
     }
