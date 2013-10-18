@@ -91,6 +91,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeRDTO,Ha
 
         for (TekstiRDTO tekstiRDTO:tekstis){
             monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(),tekstiRDTO.getTeksti());
+            LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
         }
 
         return monikielinenTeksti;

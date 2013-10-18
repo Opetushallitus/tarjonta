@@ -270,12 +270,12 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 
     @Override
-    public String updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO) {
+    public HakukohdeRDTO updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO) {
+    public HakukohdeRDTO insertHakukohde(HakukohdeRDTO hakukohdeRDTO) {
 
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
@@ -303,7 +303,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         })));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
-        return hakukohde.getOid();  //To change body of implemented methods use File | Settings | File Templates.
+        hakukohdeRDTO.setOid(hakukohde.getOid());
+        return hakukohdeRDTO;
     }
 
 
