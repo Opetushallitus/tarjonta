@@ -51,7 +51,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
@@ -159,7 +159,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public ResultDTO updateToteutus(KorkeakouluDTO dto) {
+    public OidResultDTO updateToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         validateRestObjectKorkeakouluDTO(dto);
 
@@ -168,11 +168,11 @@ public class KoulutusResourceImpl implements KoulutusResource {
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID : %s.", dto.getOid());
 
         final KoulutusmoduuliToteutus updatedFullKomoto = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
-        return new ResultDTO(updatedFullKomoto.getOid(), updatedFullKomoto.getVersion());
+        return new OidResultDTO(updatedFullKomoto.getOid(), updatedFullKomoto.getVersion());
     }
 
     @Override
-    public ResultDTO createToteutus(KorkeakouluDTO dto) {
+    public OidResultDTO createToteutus(KorkeakouluDTO dto) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         validateRestObjectKorkeakouluDTO(dto);
 
@@ -188,7 +188,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
         solrIndexer.indexKoulutukset(Lists.newArrayList(response.getId()));
         // publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
 
-        return new ResultDTO(response.getOid(), response.getVersion());
+        return new OidResultDTO(response.getOid(), response.getVersion());
     }
 
     @Override
