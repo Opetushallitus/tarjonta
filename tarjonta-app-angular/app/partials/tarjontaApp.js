@@ -158,7 +158,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                             selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
                         }
                         //Initialize model and arrays inside it
-                        //TODO: retrieve koulutukses
+
                         return new Hakukohde({
 
                             liitteidenToimitusOsoite : {
@@ -187,9 +187,17 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                     } else {
 
+                        var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
 
-                      var deferredHakukohde =  Hakukohde.get({oid: $route.current.params.id});
-                       return deferredHakukohde.$promise;
+                        return deferredHakukohde.$promise;
+
+                      /*var deferredHakukohde = $q.defer();
+                          Hakukohde.get({oid: $route.current.params.id},function(result){
+
+                              deferredHakukohde.resolve(result);
+                      });
+                       //return deferredHakukohde.$promise;
+                        return deferredHakukohde.promise;  */
 
                     }
                 }

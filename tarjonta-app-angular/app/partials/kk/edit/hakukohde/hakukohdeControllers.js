@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config','ui.tinymce']);
 
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location) {
@@ -196,7 +196,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
             console.log('MODEL: ', $scope.model.hakukohde);
-            //$scope.model.hakukohde.$save();
+            $scope.model.hakukohde.$save();
         }
     };
 
