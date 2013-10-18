@@ -83,6 +83,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // Selected org from route path
     $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
+    
+    $scope.searchedOrgOid = OPH_ORG_OID;
+    
     $scope.spec = {
     		terms: fromParams("terms",""),
     	    state: fromParams("state","*"),
@@ -560,6 +563,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             year: $scope.spec.year == "*" ? null : $scope.spec.year,
             season: $scope.spec.season == "*" ? null : $scope.spec.season
         };
+    	
+    	$scope.searchedOrgOid = $scope.selectedOrgOid;
+    	
         console.log("search", spec);
         updateLocation();
         
@@ -677,7 +683,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.luoUusiHakukohde = function() {
 
         SharedStateService.addToState('SelectedKoulutukses',$scope.selectedKoulutukset);
-        SharedStateService.addToState('SelectedOrgOid',$scope.organisaatio.currentNode.oid);
+        SharedStateService.addToState('SelectedOrgOid',$scope.searchedOrgOid);
         $location.path('/hakukohde/new/edit');
     };
     
