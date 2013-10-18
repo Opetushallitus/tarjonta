@@ -43,10 +43,7 @@ app.factory('TarjontaConfig', function($resource) {
     });
 });
 
-app.factory('KoodiService', function($resource, $log, $q) {
-
-
-
+app.factory('KoodiService', function($resource, $log, $q ) {
 
 
     return {

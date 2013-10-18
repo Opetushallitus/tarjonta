@@ -226,6 +226,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         this.presenter = presenter;
         this.koulutusModel = model;
 
+        if (model.getOid() == null || model.getOid().equals("-1")) {
+            model.setOpintojenLaajuusTot("");
+            model.setOpintojenLaajuusyksikkoTot("");
+        }
         isValmentavaOpetus = koulutusModel.getKoulutuksenTyyppi() != null 
                 && koulutusModel.getKoulutuksenTyyppi().getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
         
@@ -316,8 +320,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutusala = buildLabel(this, "koulutusala");
         opintoala = buildLabel(this, "opintoala");
         tutkintonimike = buildLabel(this, "tutkintonimike");
-        opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
-        opintojenLaajuus.setVisible(!isValmentavaOpetus);
+        if (!isValmentavaOpetus) {
+            opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
+        } else {
+            opintojenLaajuus = new Label();
+            opintojenLaajuus.setVisible(false);
+        }
         buildEmptyGridRow(this);
         tavoitteet = buildLabel(this, "tavoitteet");
         koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");

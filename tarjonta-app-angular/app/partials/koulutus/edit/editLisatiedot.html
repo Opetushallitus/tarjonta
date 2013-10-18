@@ -1,10 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<div>
+    <ul>
+        <li style="display:block;float:left;padding:0 10px;"><a href ng:click="selected = 'kieli_fi'">suomi</a></li>
+        <li style="display:block;float:left;padding:0 10px;"><a href ng:click="selected = 'kieli_sv'">ruotsi</a></li>
+        <li style="display:block;float: none;padding:0 10px;"><a href ng:click="selected = 'kieli_en'">englanti</a></li>
+    </ul>
+</div>
+<div ng:show="selected == 'kieli_fi'">
+    <div class="container-fluid">
+        <div class="row-fluid">{{uiModel.tekstis.TAVOITTEET.meta[selected].koodi.arvo}}
+            <tiny-mce-rich-text text="uiModel.tekstis.TAVOITTEET.meta.kieli_fi.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.KOULUTUKSEN_RAKENNE.meta.kieli_fi.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.JATKOOPINTO_MAHDOLLISUUDET.meta.kieli_fi.koodi.arvo"></tiny-mce-rich-text>
+
+            <div>
+                <label for="inputImage2"></label>
+                <input id="inputImage2" 
+                       url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
+                       type="file" 
+                       accept="image/*" 
+                       image="image2" 
+                       resize-max-height="300"
+                       resize-max-width="250"
+                       resize-quality="0.9" />
+                <!--img ng-show="image2" ng-src="{{image2.url}}" type="{{image2.file.type}}"/>
+                <p>Resized</p-->
+                <img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
+                <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
+            </div>
+            <hr />
+
+        </div>
+    </div>
+</div>
+<div ng:show="selected == 'kieli_sv'">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <tiny-mce-rich-text text="uiModel.tekstis.TAVOITTEET.meta.kieli_sv.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.KOULUTUKSEN_RAKENNE.meta.kieli_sv.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.JATKOOPINTO_MAHDOLLISUUDET.meta.kieli_sv.koodi.arvo"></tiny-mce-rich-text>
+        </div>
+    </div>
+</div>
+<div ng:show="selected == 'kieli_en'">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <tiny-mce-rich-text text="uiModel.tekstis.TAVOITTEET.meta.kieli_en.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.KOULUTUKSEN_RAKENNE.meta.kieli_en.koodi.arvo"></tiny-mce-rich-text>
+            <tiny-mce-rich-text text="uiModel.tekstis.JATKOOPINTO_MAHDOLLISUUDET.meta.kieli_en.koodi.arvo"></tiny-mce-rich-text>
+        </div>
+    </div>
+</div>

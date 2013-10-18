@@ -32,9 +32,16 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.Response;
 
 /**
  * JSON resource for Tarjonta Application.
@@ -52,12 +59,12 @@ public interface KoulutusResource {
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ToteutusDTO getToteutus(@PathParam("oid") String oid);
-    
+
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ToteutusDTO getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
-    
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultDTO updateToteutus(KorkeakouluDTO dto);
@@ -69,54 +76,73 @@ public interface KoulutusResource {
     @DELETE
     @Path("{oid}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void deleteToteutus(@PathParam("oid") String oid);
+    public Response deleteToteutus(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public String loadMonikielinenTekstis(@PathParam("oid") String oid, @QueryParam("lang") String langUri);
+    public TekstiDTO loadTekstis(@PathParam("oid") String oid);
+
+    @GET
+    @Path("{oid}/komoto/tekstis")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public TekstiDTO loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/tekstis")
+    @Path("{oid}/komoto/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void saveMonikielinenTeksti(@PathParam("oid") String oid, @QueryParam("lang") String langUri);
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiDTO<KomotoTeksti> dto);
 
-    @DELETE
-    @Path("{oid}/tekstis")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void deleteMonikielinenTeksti(@PathParam("oid") String oid);
+    @GET
+    @Path("{oid}/komo/tekstis")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public TekstiDTO loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/kuva")
+    @Path("{oid}/komo/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void saveKuva(@PathParam("oid") String oid);
+    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiDTO<KomoTeksti> dto);
+
+    @DELETE
+    @Path("{oid}/teksti")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public Response deleteTeksti(@PathParam("oid") String oid, @PathParam("key") String key, @PathParam("uri") String uri);
+
+    @POST
+    @Path("{oid}/kuva")
+    @Consumes({"image/jpeg", "image/png"})
+    public Response saveKuva(@PathParam("oid") String oid, InputStream in, @HeaderParam("Content-Type") String fileType, @HeaderParam("Content-Length") long fileSize, @PathParam("uri") String kieliUri) throws IOException;
 
     @DELETE
     @Path("{oid}/kuva")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public void deleteKuva(@PathParam("oid") String oid);
-    
+    public Response deleteKuva(@PathParam("oid") String oid, @PathParam("uri") String kieliUri);
+
     /**
-     * Päivittää koulutuksen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
-     * 
+     * Päivittää koulutuksen tilan (olettaen että kyseinen tilasiirtymä on
+     * sallittu).
+     *
      * @param oid Koulutuksen oid.
      * @param tila Kohdetila.
-     * @return Tila ( {@link TarjontaTila#toString()} ), jossa koulutus on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
+     * @return Tila ( {@link TarjontaTila#toString()} ), jossa koulutus on tämän
+     * kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut
+     * sallittu).
      */
     @POST
     @PUT
     @Path("{oid}/tila")
     @Produces(MediaType.TEXT_PLAIN)
     public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
-    
+
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
      *
      * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given organisations
-     * @param hakukohdeTilas  filter result to be only in states given
+     * @param organisationOids filter result to be in or "under" given
+     * organisations
+     * @param hakukohdeTilas filter result to be only in states given
      * @return
      */
     @GET
@@ -127,7 +153,7 @@ public interface KoulutusResource {
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
-            );
+    );
 
     /**
      * /koulutus/OID/hakukohteet

@@ -56,6 +56,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KorkeakouluDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomotoConverterToKorkeakouluDTO.class);
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private static final String DEMO_LOCALE = "fi";
@@ -64,6 +66,7 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
 
     @Override
     public KorkeakouluDTO convert(KoulutusmoduuliToteutus komoto) {
+        LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
         KorkeakouluDTO kkDto = new KorkeakouluDTO();
         if (komoto == null) {
             return kkDto;
@@ -110,28 +113,14 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setTeemas(convertToUiMetaDTO(komoto.getTeemas(), DEMO_LOCALE, "teemas"));
         kkDto.setOpetuskielis(convertToUiMetaDTO(komoto.getOpetuskielis(), DEMO_LOCALE, "Opetuskielis"));
         final String maksullisuus = komoto.getMaksullisuus();
-        kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus) ? true : false);
+        kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
         kkDto.setOpetusmuodos(convertToUiMetaDTO(komoto.getOpetusmuotos(), DEMO_LOCALE, "opetusmuodos"));
         kkDto.setPohjakoulutusvaatimukset(convertToUiMetaDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
         kkDto.setSuunniteltuKesto(suunniteltuKestoDTO(komoto.getSuunniteltuKestoArvo(), komoto.getSuunniteltuKestoYksikko()));
         kkDto.setAmmattinimikkeet(convertToUiMetaDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
-
-        Map<KomoTeksti, UiMetaDTO> tekstis = kkDto.getKuvaus();
-        for (Map.Entry<KomoTeksti, MonikielinenTeksti> e : komo.getTekstit().entrySet()) {
-            UiMetaDTO dto = new UiMetaDTO();
-
-            Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstis();
-            for (TekstiKaannos kaannos : tekstis1) {
-                UiDTO uri = new UiDTO();
-                uri.setKoodi(convertKoodiUri(kaannos.getKieliKoodi(), kaannos.getArvo()));
-                uri.setArvo(kaannos.getArvo());
-                dto.getMeta().put(uri.getKoodi().getUri(), uri);
-            }
-            tekstis.put(e.getKey(), dto);
-        }
-
+        kkDto.setKuvaus(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
-
+        LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
         return kkDto;
     }
 
@@ -273,7 +262,6 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         }
 
         uiDto.setKoodi(convertKoodiUri(fromKoodiUri, koodiByUri.getKoodiArvo()));
-
 
         KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodiByUri, locale);
         if (metadata != null) {

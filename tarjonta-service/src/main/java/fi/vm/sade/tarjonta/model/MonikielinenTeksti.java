@@ -39,8 +39,8 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti",fetch = FetchType.LAZY, orphanRemoval = true)
-    @MapKey(name="kieliKoodi")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
+    @MapKey(name = "kieliKoodi")
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
     public Collection<TekstiKaannos> getTekstis() {
@@ -51,14 +51,18 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
         tekstis.put(kieliKoodi, new TekstiKaannos(this, kieliKoodi, teksti));
     }
 
+    public void addTekstiKaannos(TekstiKaannos tekstiKaannos) {
+        tekstis.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos);
+    }
+
     public void setTekstiKaannos(String kieliKoodi, String teksti) {
-    	TekstiKaannos kaannos = tekstis.get(kieliKoodi);
-    	if (kaannos==null) {
-    		addTekstiKaannos(kieliKoodi, teksti);
-    	} else {
-    		kaannos.setArvo(teksti);
-    		//kaannos.setVersion(null);
-    	}
+        TekstiKaannos kaannos = tekstis.get(kieliKoodi);
+        if (kaannos == null) {
+            addTekstiKaannos(kieliKoodi, teksti);
+        } else {
+            kaannos.setArvo(teksti);
+            //kaannos.setVersion(null);
+        }
     }
 
     /**
@@ -73,27 +77,26 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     /**
-     * Clears all existing translations and inserts new values from given object.
+     * Clears all existing translations and inserts new values from given
+     * object.
      *
-     * @param otherTeksti
-     * /
-    public void updateFrom(MonikielinenTeksti otherTeksti) {
-
-        tekstis.clear();
-
-        for (TekstiKaannos t : otherTeksti.getTekstis()) {
-        	addTekstiKaannos(t.getKieliKoodi(), t.getArvo());
-        }
-
-    }*/
-
+     * @param otherTeksti / public void updateFrom(MonikielinenTeksti
+     * otherTeksti) {
+     *
+     * tekstis.clear();
+     *
+     * for (TekstiKaannos t : otherTeksti.getTekstis()) {
+     * addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
+     *
+     * }
+     */
     private TekstiKaannos findKaannos(String kieliKoodi) {
         final String koodi = TekstiKaannos.formatKieliKoodi(kieliKoodi);
         return tekstis.get(koodi);
     }
 
     public boolean removeKaannos(String kieliKoodi) {
-        return tekstis.remove(kieliKoodi)!=null;
+        return tekstis.remove(kieliKoodi) != null;
     }
 
     /**
@@ -106,33 +109,33 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
      * </pre>
      */
     public static MonikielinenTeksti merge(MonikielinenTeksti old, MonikielinenTeksti uus) {
-    	if (old==null) {
-    		return uus;
-    	}
-    	if (uus==null) {
-    		return null;
-    	}
+        if (old == null) {
+            return uus;
+        }
+        if (uus == null) {
+            return null;
+        }
 
-    	// retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
-    	for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
-			if (!uus.tekstis.containsKey(ki.next())) {
-				ki.remove();
-			}
-		}
+        // retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
+        for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
+            if (!uus.tekstis.containsKey(ki.next())) {
+                ki.remove();
+            }
+        }
 
-    	for (TekstiKaannos tk : uus.tekstis.values()) {
-    		old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
-    	}
+        for (TekstiKaannos tk : uus.tekstis.values()) {
+            old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
+        }
 
-    	return old;
+        return old;
     }
 
     public static <T> void merge(Map<T, MonikielinenTeksti> dst, T key, MonikielinenTeksti uus) {
-    	if (uus==null) {
-    		dst.remove(key);
-    	} else {
-    		dst.put(key, merge(dst.get(key), uus));
-    	}
+        if (uus == null) {
+            dst.remove(key);
+        } else {
+            dst.put(key, merge(dst.get(key), uus));
+        }
     }
 
     @Override
@@ -146,4 +149,3 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
 }
-
