@@ -33,17 +33,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
     //All kieles is received from koodistomultiselect
-    $scope.allkieles = [];
-    $scope.selectedKieliUris = [];
+    $scope.model.allkieles = [];
+    $scope.model.selectedKieliUris = [];
 
     if ($scope.model.hakukohde.lisatiedot !== undefined) {
         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
 
-            $scope.selectedKieliUris.push(lisatieto.uri);
+            $scope.model.selectedKieliUris.push(lisatieto.uri);
         });
     }
 
-    $scope.postinumeroarvo = {
+    $scope.model.postinumeroarvo = {
 
     };
 
@@ -100,9 +100,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
-    //$scope.koodiuriPromise = $q.defer();
+    //$scope.model.koodiuriPromise = $q.defer();
 
-    $scope.hakus = [];
+    $scope.model.hakus = [];
 
 
 
@@ -111,18 +111,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
 
     koodistoPromise.then(function(koodisParam){
-      $scope.koodis = koodisParam;
+      $scope.model.koodis = koodisParam;
 
       if (postinumero !== undefined) {
           console.log('Changing arvo : ', postinumero);
-          var koodi =  findKoodiWithUri(postinumero,$scope.koodis);
+          var koodi =  findKoodiWithUri(postinumero,$scope.model.koodis);
           console.log('TO : ', koodi);
-          $scope.postinumeroarvo.arvo = koodi.koodiArvo;
+          $scope.model.postinumeroarvo.arvo = koodi.koodiArvo;
       }
     });
 
-    $scope.onKoodistoComboChange = function() {
-       var koodi = findKoodiWithArvo($scope.postinumeroarvo.arvo,$scope.koodis);
+    $scope.model.onKieliTypeAheadChange = function() {
+       var koodi = findKoodiWithArvo($scope.model.postinumeroarvo.arvo,$scope.model.koodis);
 
        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
@@ -143,8 +143,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     });
 
 
-    $scope.kieliCallback = function(kieliUri) {
-        if ($scope.allkieles !== undefined) {
+    $scope.model.kieliCallback = function(kieliUri) {
+        if ($scope.model.allkieles !== undefined) {
             var lisatietoFound = false;
             //Check that selected kieli does not exist in list
             angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto) {
@@ -153,7 +153,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                  }
             });
             if (!lisatietoFound) {
-                var foundKoodi = findKoodiWithUri(kieliUri,$scope.allkieles);
+                var foundKoodi = findKoodiWithUri(kieliUri,$scope.model.allkieles);
                 var newLisatieto = {
                     "uri" : foundKoodi.koodiUri,
                     "nimi" : foundKoodi.koodiNimi,
@@ -166,11 +166,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
     };
 
-    $scope.kieliRemoveCallback = function(kieliUri) {
+    $scope.model.kieliRemoveCallback = function(kieliUri) {
       removeLisatieto(kieliUri);
     };
 
-    $scope.postinumeroCallback = function(selectedPostinumero) {
+    $scope.model.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
 
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
@@ -178,7 +178,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //TODO: Should tila come from constants ?
 
-    $scope.saveValmis = function() {
+    $scope.model.saveValmis = function() {
         if ($scope.model.hakukohde.oid === undefined) {
             $scope.model.hakukohde.tila = "VALMIS";
 
@@ -189,7 +189,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
-    $scope.saveLuonnos = function() {
+    $scope.model.saveLuonnos = function() {
         //TODO: are we inserting or updating figure it from OID
         if ($scope.model.hakukohde.oid === undefined) {
             $scope.model.hakukohde.tila = "LUONNOS";
@@ -200,7 +200,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
     };
 
-    $scope.takaisin = function() {
+    $scope.model.takaisin = function() {
         $location.path('/etusivu');
     };
 
@@ -210,7 +210,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     hakuPromise.then(function(hakuDatas) {
 
         angular.forEach(hakuDatas,function(haku){
-            $scope.hakus.push(haku);
+            $scope.model.hakus.push(haku);
         });
 
     });
@@ -219,32 +219,32 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Hakukohde nimi chooser dialog controller
     var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
 
-        $scope.hakukohdenimi = {};
+        $scope.model.hakukohdenimi = {};
 
-        $scope.selectedKieliKoodi;
+        $scope.model.selectedKieliKoodi;
 
-        $scope.kieliComboCallback = function(koodi) {
+        $scope.model.kieliComboCallback = function(koodi) {
 
-            $scope.selectedKieliKoodi = koodi;
+            $scope.model.selectedKieliKoodi = koodi;
 
         };
 
 
-        $scope.ok = function () {
+        $scope.model.ok = function () {
 
 
 
-            $scope.hakukohdenimi.nimi  = $scope.selectedKieliKoodi.koodiNimi;
+            $scope.model.hakukohdenimi.nimi  = $scope.model.selectedKieliKoodi.koodiNimi;
 
-            $modalInstance.close($scope.hakukohdenimi);
+            $modalInstance.close($scope.model.hakukohdenimi);
         };
 
-        $scope.cancel = function () {
+        $scope.model.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
     };
 
-    $scope.removeNimi = function(hakukohdeNimi){
+    $scope.model.removeNimi = function(hakukohdeNimi){
         if ($scope.model.hakukohde.hakukohteenNimet.length > 1) {
 
             var nimiToRemove ;
@@ -262,7 +262,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
     };
 
-    $scope.openNimiDialog = function() {
+    $scope.model.openNimiDialog = function() {
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/hakukohde/edit/hakukohdeNimiChooserDialog.html',

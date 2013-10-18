@@ -37,7 +37,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.haut"></div></div>
                         <div class="span10">
-                            <select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in hakus"/>
+                            <select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in model.hakus"/>
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
 
 
 
-                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="postinumeroarvo.arvo" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi.koodiArvo for koodi in koodis | filter:$viewValue | limitTo:8 |  orderBy:koodi.koodiArvo">
+                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:$viewValue | limitTo:8 |  orderBy:'koodiArvo'">
                                 <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
                             </address>
                         </div>
@@ -119,7 +119,7 @@
 
                         </div>
                         <div class="span4">
-                            <koodistomultiselect removearvocallback="kieliRemoveCallback" onchangecallback="kieliCallback" koodiuris="selectedKieliUris" allkoodis="allkieles" koodistouri="'kieli'" locale="'FI'"></koodistomultiselect>
+                            <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="'FI'"></koodistotypeahead>
                         </div>
                         <div class="span5">
                             <accordion close-others="oneAtATime">

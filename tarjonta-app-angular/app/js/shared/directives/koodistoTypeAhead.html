@@ -1,0 +1,15 @@
+<div id="KoodistoTypeAhead" >
+    <div class="span5">
+
+            <input type="text"  typeahead-editable="false" ng-model="koodi" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi as koodi.koodiNimi for koodi in koodis | filter:$viewValue | limitTo:8  | orderBy:'koodiNimi'">
+
+        </select>
+    </div>
+
+    <div class="span4" id="KoodistoMultiSelectedValues" ng-repeat="koodi in selectedkoodiuris">
+        <span id="SelectedKoodiValue"> {{koodi.koodiNimi}} </span>
+
+        <a ng-click="removeSelection(koodi)" class="btn btn-link"><i class="icon-remove-sign"></i></a>
+    </div>
+
+</div>

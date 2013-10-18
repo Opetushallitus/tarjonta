@@ -54,6 +54,7 @@ angular.module('app',
             'TinyMceRichText',
             'Hakukohde',
             'KoodistoMultiSelect',
+            'KoodistoTypeAhead',
             'angularTreeview',
             'TarjontaConverter',
             'imageupload'
