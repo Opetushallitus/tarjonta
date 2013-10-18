@@ -29,6 +29,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
@@ -320,7 +321,10 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel koulutusala = koodiModel.getKoulutusala();
         final KoodiModel tutkintonimike = model.getKoulutusohjelmaModel().getTutkintonimike();
         final KoodiModel opintoala = koodiModel.getOpintoala();
-        final String opintojenLaajuusArvo = koodiModel.getOpintojenLaajuus();
+        String opintojenLaajuusTot = presenter.getModel().getKoulutusPerustiedotModel().getOpintojenLaajuusTot();
+        final String opintojenLaajuusArvo = (opintojenLaajuusTot != null && !opintojenLaajuusTot.isEmpty()) ? opintojenLaajuusTot : koodiModel.getOpintojenLaajuus();
+        String opintojenLaajYksTot = presenter.getModel().getKoulutusPerustiedotModel().getOpintojenLaajuusyksikkoTot();        
+        final String laajuusyksikkoStr = (opintojenLaajYksTot != null && !opintojenLaajYksTot.isEmpty()) ?  uiHelper.getKoodiLyhytNimi(opintojenLaajYksTot, locale) : null;
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
         final KoodiModel koulutusaste =  koodiModel.getKoulutusaste();
         
@@ -343,7 +347,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
         }
         layout.addSpace();
 
-        String str = (opintojenLaajuusyksikko != null) ? uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale) : "";
+        String str = "";
+        if (laajuusyksikkoStr != null && !laajuusyksikkoStr.isEmpty()) {
+            str = laajuusyksikkoStr;
+        } else {
+            str = (opintojenLaajuusyksikko != null) ? uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale) : "";
+        }
 
         if (opintojenLaajuusArvo != null) {
             layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " + str));
