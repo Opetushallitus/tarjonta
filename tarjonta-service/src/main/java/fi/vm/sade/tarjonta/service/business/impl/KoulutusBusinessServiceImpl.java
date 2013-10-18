@@ -132,6 +132,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
         EntityUtils.copyFields(koulutus, komotoModel);
+        komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
@@ -250,6 +251,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         handleParentKomoto(koulutus, moduuli);
 
         EntityUtils.copyFields(koulutus, model);
+        model.setViimIndeksointiPvm(model.getUpdated());
         koulutusmoduuliToteutusDAO.update(model);
         model = koulutusmoduuliToteutusDAO.read(model.getId());
 

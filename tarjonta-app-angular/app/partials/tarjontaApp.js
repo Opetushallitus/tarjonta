@@ -69,6 +69,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "home.default",
             reloadOnSearch: false
         })
+                .when("/index", {
+            action: "index",
+            reloadOnSearch: false
+        })
                 .when("/etusivu/:oid", {
             action: "home.default",
             reloadOnSearch: false
