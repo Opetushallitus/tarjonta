@@ -6,15 +6,15 @@
 
         <p>Ohje</p>
 
-        <koodistocombo locale="'FI'" onchangecallback="kieliComboCallback" koodistouri="'kieli'" koodiuri="hakukohdenimi.uri"/>
-        <input type="text" data-ng-model="hakukohdenimi.teksti">
+        <koodistocombo locale="'FI'" onchangecallback="model.kieliComboCallback" koodistouri="'kieli'" koodiuri="model.hakukohdenimi.uri"/>
+        <input type="text" data-ng-model="model.hakukohdenimi.teksti">
 
 
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="cancel()">{{t('tarjonta.toiminnot.peruuta')}}</button>
-        <button class="btn btn-primary" ng-click="ok()">{{t('tarjonta.toiminnot.ok')}}</button>
+        <button class="btn btn-warning" ng-click="model.cancel()">{{t('tarjonta.toiminnot.peruuta')}}</button>
+        <button class="btn btn-primary" ng-click="model.ok()">{{t('tarjonta.toiminnot.ok')}}</button>
     </div>
 
 </div>

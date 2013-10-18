@@ -233,7 +233,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.ok = function () {
 
 
-
+            console.log('OK :', $scope.model.selectedKieliKoodi);
             $scope.model.hakukohdenimi.nimi  = $scope.model.selectedKieliKoodi.koodiNimi;
 
             $modalInstance.close($scope.model.hakukohdenimi);
@@ -273,6 +273,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         modalInstance.result.then(function (selectedItem) {
 
+            console.log('SELECTED ITEM:',selectedItem);
 
             var selectedItemExists = false;
 

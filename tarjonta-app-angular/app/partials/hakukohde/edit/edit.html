@@ -2,9 +2,9 @@
 <div class="container-fluid" data-ng-controller="HakukohdeEditController">
     <div class="row-fluid">
         <div class="span12">
-            <div class="btn" data-ng-click="takaisin()"><div tt='koulutus.edit.takaisin'></div></div>
-            <div class="btn" ng-click="saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
-            <div class="btn" ng-click="saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
+            <div class="btn" data-ng-click="model.takaisin()"><div tt='koulutus.edit.takaisin'></div></div>
+            <div class="btn" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
+            <div class="btn" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
         </div>
     </div>
     <br/>
@@ -21,12 +21,12 @@
                             <div data-ng-repeat="hakukohdenimi in model.hakukohde.hakukohteenNimet" >
                                 <label>{{hakukohdenimi.nimi}}</label>
                                 <input type="text" data-ng-model="hakukohdenimi.teksti" required />
-                                <a href="" data-ng-click="removeNimi(hakukohdenimi)">X</a>
+                                <a href="" data-ng-click="model.removeNimi(hakukohdenimi)">X</a>
                             </div>
 
                         </div>
                         <div class="span2">
-                            <a href="" data-ng-click="openNimiDialog()">{{t('tarjonta.hakukohde.toiminnot.lisaa.nimi')}}</a>
+                            <a href="" data-ng-click="model.openNimiDialog()">{{t('tarjonta.hakukohde.toiminnot.lisaa.nimi')}}</a>
                         </div>
                     </div>
                 </div>
