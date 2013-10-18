@@ -120,9 +120,15 @@ public class KoodistoURI {
     
     public static String KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI;
     public static String KOODI_KOHDEJOUKKO_VALMENTAVA_URI;
-    public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI;
+    public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI; //
+    public static String KOODI_POHJAKOULUTUS_PERUSKOULU_URI;
     
 
+    @Value("${koodisto-uris.pohjakoulutusPeruskoulu:pohjakoulutusvaatimustoinenaste_pk#1}")
+    public void setKoodiPohjakoulutusperuskouluUri(String uri) {
+        KOODI_POHJAKOULUTUS_PERUSKOULU_URI = uri;
+    }
+    
     @Value("${koodisto-uris.ammatillinenLukio:haunkohdejoukko_11#1}")
     public void setKoodiKohdejoukkoAmmatillinenLukioUri(String uri) {
         KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI = uri;

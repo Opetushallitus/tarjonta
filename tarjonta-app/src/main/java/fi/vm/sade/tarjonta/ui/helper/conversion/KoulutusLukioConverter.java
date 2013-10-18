@@ -51,6 +51,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -87,7 +88,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
         convertToLukioKoulutusTyyppi(lisaa, perustiedotModel, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
         convertToLukioKoulutusLisatiedotTyyppi(lisaa, kuvailevatTiedotModel);
-
+        KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
+        pohjakoulutusvaatimus.setUri(KoodistoURI.KOODI_POHJAKOULUTUS_PERUSKOULU_URI);
+        lisaa.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return lisaa;
     }
 
@@ -108,7 +111,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         convertToLukioKoulutusTyyppi(paivita, perustiedotModel, komotoOid, dto);
         convertToLukioKoulutusLisatiedotTyyppi(paivita, tarjontaModel.getKoulutusLukioKuvailevatTiedot());
         paivita.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
-
+        KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
+        pohjakoulutusvaatimus.setUri(KoodistoURI.KOODI_POHJAKOULUTUS_PERUSKOULU_URI);
+        paivita.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return paivita;
     }
 
