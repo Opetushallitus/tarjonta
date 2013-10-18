@@ -75,14 +75,14 @@ public interface HakukohdeResource {
     @POST
     @Path("/ui")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
+    @Produces(MediaType.APPLICATION_JSON)
+    public HakukohdeRDTO insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
 
     @PUT
     @Path("/ui")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO);
+    @Produces(MediaType.APPLICATION_JSON)
+    public HakukohdeRDTO updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO);
 
     @GET
     @Path("/ui/{oid}")

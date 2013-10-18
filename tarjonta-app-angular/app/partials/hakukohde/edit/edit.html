@@ -124,7 +124,8 @@
                         <div class="span5">
                             <accordion close-others="oneAtATime">
                                 <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
-                                    <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text>
+                                   <!-- <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text> -->
+                                    <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
                                 </accordion-group>
 
 
