@@ -7,6 +7,8 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +86,7 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
 
         if (hakukohde.getValintakoes() != null) {
             hakukohdeRDTO.setValintakokeet(convertValintakokeet(hakukohde.getValintakoes()));
+
         }
 
 
@@ -143,16 +146,49 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         }
     }
 
-    private List<ValintakoeRDTO> convertValintakokeet(Set<Valintakoe> valintakoes) {
-        List<ValintakoeRDTO> result = new ArrayList<ValintakoeRDTO>();
+    private List<ValintakoeV1RDTO> convertValintakokeet(Set<Valintakoe> valintakoes) {
+        List<ValintakoeV1RDTO> result = new ArrayList<ValintakoeV1RDTO>();
 
         for (Valintakoe valintakoe : valintakoes) {
-            result.add(getConversionService().convert(valintakoe, ValintakoeRDTO.class));
+            result.add(convertValintakoeToValintakoeV1RDTO(valintakoe));
         }
 
         return result.isEmpty() ? null : result;
     }
 
+    private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {
+        ValintakoeV1RDTO valintakoeV1RDTO = new ValintakoeV1RDTO();
+
+        valintakoeV1RDTO.setKieliUri(valintakoe.getKieli());
+        valintakoeV1RDTO.setValintakoeNimi(valintakoe.getValintakoeNimi());
+        List<TekstiRDTO> lisatiedot = convertMonikielinenTekstiToTekstiDTOs(valintakoe.getKuvaus());
+        if (lisatiedot != null && lisatiedot.size() > 0) {
+            valintakoeV1RDTO.setValintakokeenKuvaus(lisatiedot.get(0));
+        }
+
+        if (valintakoe.getAjankohtas() != null) {
+            for (ValintakoeAjankohta valintakoeAjankohta : valintakoe.getAjankohtas()) {
+                valintakoeV1RDTO.getValintakoeAjankohtas().add(convertValintakoeAjankohtaToValintakoeAjankohtaRDTO(valintakoeAjankohta));
+            }
+        }
+
+        return valintakoeV1RDTO;
+    }
+
+
+    private ValintakoeAjankohtaRDTO convertValintakoeAjankohtaToValintakoeAjankohtaRDTO(ValintakoeAjankohta valintakoeAjankohta) {
+
+        ValintakoeAjankohtaRDTO valintakoeAjankohtaRDTO = new ValintakoeAjankohtaRDTO();
+
+        valintakoeAjankohtaRDTO.setOid(valintakoeAjankohta.getId().toString());
+        valintakoeAjankohtaRDTO.setAlkaa(valintakoeAjankohta.getAlkamisaika());
+        valintakoeAjankohtaRDTO.setLoppuu(valintakoeAjankohta.getPaattymisaika());
+        valintakoeAjankohtaRDTO.setLisatiedot(valintakoeAjankohta.getLisatietoja());
+        valintakoeAjankohtaRDTO.setOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(valintakoeAjankohta.getAjankohdanOsoite()));
+
+        return valintakoeAjankohtaRDTO;
+
+    };
 
 
     private List<HakukohdeLiiteRDTO> convertLiitteet(Set<HakukohdeLiite> s) {
