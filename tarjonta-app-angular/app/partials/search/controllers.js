@@ -16,6 +16,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		};
 	}
 
+//	$scope.$root.tulos=$scope.$root.tulos||{};
+
 	setDefaultHakuehdot();
 
 	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], "FI").then(function(koodit) {
@@ -28,6 +30,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
 	//valittu organisaatio populoidaan tänne
     $scope.organisaatio = {};
+    
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
@@ -65,7 +68,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$scope.tulos = vastaus.organisaatiot;
+			$scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
 		});
     };
 

@@ -25,7 +25,7 @@
 (function ( angular ) {
 	'use strict';
 
-	angular.module( 'angularTreeview', [] ).directive( 'treeModel', ['$compile','$rootScope', function( $compile, $rootScope ) {
+	angular.module( 'angularTreeview', [] ).directive( 'treeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
 		return {
 			restrict: 'A',
 			link: function ( scope, element, attrs ) {
@@ -44,7 +44,7 @@
 					//console.log("opening org, template:" , drawChildren([org]));
 					//organisaatio auki
 					$("#c-" + eid).detach();
-					$("#o-" + eid).replaceWith( dom ($rootScope.puut[treeId].scope));
+					$("#o-" + eid).replaceWith( dom (SharedStateService.state.puut[treeId].scope));
 				};
 				
 
@@ -74,7 +74,7 @@
 //					console.log("toggle valittu!");
 
 //					console.log("id param:", id);
-					var org = getOrg(id, $rootScope.puut[treeId].data);
+					var org = getOrg(id, SharedStateService.state.puut[treeId].data);
 					//console.log("selected org:", org);
 					if(org.open===undefined){
 						org.open=true;
@@ -90,12 +90,12 @@
 				 */
 				scope.selectOrg=function(oid){
 //					console.log("organisaatio valittu!", oid);
-					var current = $rootScope.puut[treeId].selected;
+					var current = SharedStateService.state.puut[treeId].selected;
 					
 //					console.log("vanha valinta", current);
 					if(current!==undefined) {
 //						console.log("etsitään vanhaa", current);
-						var org = getOrg(current, $rootScope.puut[treeId].data);
+						var org = getOrg(current, SharedStateService.state.puut[treeId].data);
 //						console.log("vanha:", org);
 						if(org!==undefined){
 							org.selected=false;
@@ -104,11 +104,11 @@
 						}
 					}
 //					console.log("etsitään uutta");
-					var org = getOrg(oid, $rootScope.puut[treeId].data);
+					var org = getOrg(oid, SharedStateService.state.puut[treeId].data);
 //					console.log("uusi:", org);
 
 					org.selected="true";
-					$rootScope.puut[treeId].selected=oid;
+					SharedStateService.state.puut[treeId].selected=oid;
 					redraw(org);
 					
 					//aseta valittu organisaatio scopeen jotta voidaan watchilla seurata kun organisaatio valitaan puusta
@@ -169,31 +169,22 @@
 				
 				
 				//alusta tietorakenne
-				$rootScope.puut=$rootScope.puut||{};
-				$rootScope.puut[treeId]=$rootScope.puut[treeId]||{};
-				$rootScope.puut[treeId].data = [];
-				$rootScope.puut[treeId].selected=undefined;
-				$rootScope.puut[treeId].scope = scope;
+				SharedStateService.state.puut = SharedStateService.state.puut || {};
+				SharedStateService.state.puut[treeId] = SharedStateService.state.puut[treeId] || {};
+				SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
+				SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
+				SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;
 
 				/**
 				 * Watchi puun datalle
 				 */
 				scope.$watch(treeModel, function (newList, oldList) {
-//					console.log("hakutulos päivittyi!", newList);
-					$rootScope.puut[treeId].data = newList;
-//					var start = new Date().getTime();
+					console.log("tila muuttunut!");
+					SharedStateService.state.puut[treeId].data = newList;
 					element.html('');
-//					console.log(new Date().getTime()-start + " to clear old result");
-//					start = new Date().getTime();
 					var template = "<ul>" + drawChildren(newList) + "</ul>";
-//					console.log(new Date().getTime()-start + " to create template");
-//					start = new Date().getTime();
 					var dom = $compile( template );
-//					console.log(new Date().getTime()-start + " to compile template");
-//					start = new Date().getTime();
 					element.html('').append( dom (scope) );
-//					console.log(element);
-//					console.log(new Date().getTime()-start + " to append dom, from my pow the tree is now done");
 					});
 
 			}
