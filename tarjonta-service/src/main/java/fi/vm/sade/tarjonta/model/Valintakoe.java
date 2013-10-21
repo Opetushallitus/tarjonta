@@ -30,9 +30,12 @@ import javax.validation.constraints.NotNull;
 @Table(name = "valintakoe")
 public class Valintakoe extends TarjontaBaseEntity {
 
+
     private static final long serialVersionUID = 7092585555234995829L;
     @Column(name = "hakukohde_id", insertable = false, updatable = false)
     private long hakukohdeId;
+    @Column(name = "valintakoe_nimi")
+    private String valintakoeNimi;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
@@ -210,5 +213,13 @@ public class Valintakoe extends TarjontaBaseEntity {
 
     public void setKieli(String kieli) {
         this.kieli = kieli;
+    }
+
+    public String getValintakoeNimi() {
+        return valintakoeNimi;
+    }
+
+    public void setValintakoeNimi(String valintakoeNimi) {
+        this.valintakoeNimi = valintakoeNimi;
     }
 }
