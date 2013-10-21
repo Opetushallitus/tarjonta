@@ -79,10 +79,10 @@ public interface HakukohdeResource {
     public HakukohdeRDTO insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
 
     @PUT
-    @Path("/ui")
+    @Path("/ui/{oid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeRDTO updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO);
+    public HakukohdeRDTO updateUiHakukohde(@PathParam("oid") String oid,HakukohdeRDTO hakukohdeRDTO);
 
     @GET
     @Path("/ui/{oid}")
