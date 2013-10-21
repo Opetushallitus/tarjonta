@@ -14,13 +14,17 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -29,6 +33,21 @@ import org.slf4j.LoggerFactory;
 public class HakuResourceImplV1 implements HakukohdeResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
+
+    @Autowired
+    private HakuDAO _hakuDao;
+    @Autowired
+    private HakukohdeDAO _hakuHakuDAODao;
+
+    private V1Converter _converter;
+
+    @PostConstruct
+    private void init() {
+        LOG.info("init()");
+        _converter = new V1Converter();
+        _converter.setHakuDao(_hakuDao);
+        _converter.setHakukohdeDao(_hakuHakuDAODao);
+    }
 
     @Override
     public String hello() {

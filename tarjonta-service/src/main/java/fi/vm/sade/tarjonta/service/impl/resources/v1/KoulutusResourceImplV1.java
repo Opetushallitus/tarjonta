@@ -14,13 +14,19 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -29,6 +35,21 @@ import org.slf4j.LoggerFactory;
 public class KoulutusResourceImplV1 implements KoulutusResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
+
+    @Autowired
+    private KoulutusmoduuliDAO _komoDao;
+    @Autowired
+    private KoulutusmoduuliToteutusDAO _komotoDao;
+
+    private V1Converter _converter;
+
+    @PostConstruct
+    private void init() {
+        LOG.info("init()");
+        _converter = new V1Converter();
+        _converter.setKomoDao(_komoDao);
+        _converter.setKomotoDao(_komotoDao);
+    }
 
     @Override
     public ResultRDTO<KoulutusRDTO> findByOid(String oid) {
