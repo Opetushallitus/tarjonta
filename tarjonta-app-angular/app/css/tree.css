@@ -12,17 +12,31 @@ div[data-angular-treeview] {
   text-decoration: none;
 }
 
-div.treeview ul {
+div.treeview>ul ul {
   margin: 0;
   padding: 0;
   list-style: none; 
   border: none;
   overflow: hidden;
+  padding: 0 0 0 10px;
 }
+
+/**
+ 1st level
+*/
+div.treeview>ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; 
+  border: none;
+  overflow: hidden;
+  padding: 0 0 0 0px;
+}
+
 
 div.treeview li {
   position: relative;
-  padding: 0 0 0 20px;
+  padding: 0 0 0 0;
   line-height: 20px;
 }
 
