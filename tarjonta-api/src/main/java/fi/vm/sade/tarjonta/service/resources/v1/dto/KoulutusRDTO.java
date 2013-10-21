@@ -18,7 +18,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
  *
  * @author mlyly
  */
-public class KoulutusRDTO extends BaseRDTO {
+public abstract class KoulutusRDTO extends BaseRDTO {
 
     private String _komoOid;
     private String _komotoOid;
