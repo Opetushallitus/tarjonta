@@ -19,7 +19,12 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +103,8 @@ public class V1Converter {
         LOG.info("  -> result = {}", t);
         return t;
     }
+
+
     // ----------------------------------------------------------------------
     // KOULUTUS
     // ----------------------------------------------------------------------
@@ -125,6 +132,38 @@ public class V1Converter {
 
     public void setKomotoDao(KoulutusmoduuliToteutusDAO _komotoDao) {
         this._komotoDao = _komotoDao;
+    }
+
+    public KoulutusRDTO fromKomotoToKoulutusRDTO(KoulutusmoduuliToteutus komoto) {
+        LOG.warn("fromKomotoToKoulutusRDTO({}) -- ONLY PARTIALLY IMPLEMENTED!", komoto);
+
+        // TODO implement me!
+
+        KoulutusRDTO t = null;
+
+        if (komoto != null) {
+            // TODO TYYPPI!?
+            KoulutusAmmattikorkeakouluRDTO k = new KoulutusAmmattikorkeakouluRDTO();
+
+            k.setCreated(komoto.getUpdated());
+            k.setCreatedBy(komoto.getLastUpdatedByOid());
+            k.setModified(komoto.getUpdated());
+            k.setModifiedBy(komoto.getLastUpdatedByOid());
+
+            Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+
+            k.setKomotoOid(komoto.getOid());
+            k.setKomoOid(komo.getOid());
+
+
+            t = k;
+        }
+
+        return t;
+    }
+
+    public KoulutusRDTO fromKomotoToKoulutusRDTO(String oid) {
+        return fromKomotoToKoulutusRDTO(getKomotoDao().findByOid(oid));
     }
 
 }

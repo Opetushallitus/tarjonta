@@ -18,20 +18,34 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusResource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusYliopistoRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.Response;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author mlyly
  */
+@Transactional(readOnly = false)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public class KoulutusResourceImplV1 implements KoulutusResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
@@ -53,44 +67,72 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
 
     @Override
     public ResultRDTO<KoulutusRDTO> findByOid(String oid) {
-        LOG.error("findByOid({})", oid);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOG.info("findByOid({})", oid);
+
+        ResultRDTO<KoulutusRDTO> result = new ResultRDTO<KoulutusRDTO>();
+
+        try {
+            KoulutusRDTO k = _converter.fromKomotoToKoulutusRDTO(oid);
+            result.setResult(k);
+            if (k == null) {
+                result.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+            }
+        } catch (Throwable ex) {
+            result.setStatus(ResultRDTO.ResultStatus.ERROR);
+            result.addError(ErrorRDTO.createSystemError(ex, "system.error", oid));
+        }
+
+        return result;
     }
 
     @Override
     public ResultRDTO<KoulutusLukioRDTO> postLukiokoulutus(ResultRDTO<KoulutusLukioRDTO> koulutus) {
-        LOG.error("");
+        LOG.info("postLukiokoulutus({})", koulutus);
+
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusLukioRDTO> postAmmatillinenPeruskoulutus(ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> koulutus) {
-        LOG.error("postLukiokoulutus({})", koulutus);
+    public ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> postAmmatillinenPeruskoulutus(ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> koulutus) {
+        LOG.info("postAmmatillinenPeruskoulutus({})", koulutus);
+
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusRDTO> postAmmattikorkeakoulutus(ResultRDTO<KoulutusRDTO> koulutus) {
-        LOG.error("postAmmattikorkeakoulutus({})", koulutus);
+    public ResultRDTO<KoulutusAmmattikorkeakouluRDTO> postAmmattikorkeakoulutus(ResultRDTO<KoulutusAmmattikorkeakouluRDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusRDTO> postYliopistokoulutus(ResultRDTO<KoulutusRDTO> koulutus) {
-        LOG.error("postYliopistokoulutus({})", koulutus);
+    public ResultRDTO<KoulutusYliopistoRDTO> postYliopistokoulutus(ResultRDTO<KoulutusYliopistoRDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusRDTO> postPerusopetuksenLisaopetusKoulutus(ResultRDTO<KoulutusRDTO> koulutus) {
-        LOG.error("postPerusopetuksenLisaopetusKoulutus({})", koulutus);
+    public ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> postPerusopetuksenLisaopetusKoulutus(ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusRDTO> postValmentavaJaKuntouttavaKoulutus(ResultRDTO<KoulutusRDTO> koulutus) {
-        LOG.error("postValmentavaJaKuntouttavaKoulutus({})", koulutus);
+    public ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> postValmentavaJaKuntouttavaKoulutus(ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Response deleteByOid(String oid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response saveKuva(String oid, InputStream in, String fileType, long fileSize, String kieliUri) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Response deleteKuva(String oid, String kieliUri) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 }
