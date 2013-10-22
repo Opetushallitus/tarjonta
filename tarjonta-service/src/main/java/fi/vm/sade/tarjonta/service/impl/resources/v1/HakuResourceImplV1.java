@@ -106,4 +106,19 @@ public class HakuResourceImplV1 implements HakuResource {
         LOG.info("deleteHaku({})", oid);
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public ResultRDTO<List<OidRDTO>> getHakukohdesForHaku(String oid, GenericSearchParamsRDTO params) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResultRDTO<String> getHakuState(String oid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResultRDTO<String> setHakuState(String oid, String state) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
