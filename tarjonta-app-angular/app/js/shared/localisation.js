@@ -90,12 +90,12 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
  * getTranslations
  * </pre>
  */
-app.service('LocalisationService', function($log, $q, Localisations, Config) {
+app.service('LocalisationService', function($log, $q, Localisations, Config, AuthService) {
     $log.log("LocalisationService()");
 
     // Singleton state, default current locale
     // TODO is there some other gobal / app location for this?
-    this.locale = "fi";
+    this.locale = AuthService.getLanguage();
 
     this.getLocale = function() {
         // $log.info("getLocale() --> " + this.locale);
