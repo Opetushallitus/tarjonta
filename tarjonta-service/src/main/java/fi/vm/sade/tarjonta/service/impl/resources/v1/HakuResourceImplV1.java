@@ -17,23 +17,26 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ws.rs.PathParam;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author mlyly
  */
+@Transactional(readOnly = false)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImplV1 implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
@@ -54,32 +57,53 @@ public class HakuResourceImplV1 implements HakuResource {
     }
 
     @Override
-    public String hello() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public ResultRDTO<List<OidRDTO>> search(GenericSearchParamsRDTO params) {
+        LOG.info("search({})", params);
 
-    @Override
-    public ResultRDTO<List<OidRDTO>> search() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ResultRDTO<List<OidRDTO>>  result = new ResultRDTO<List<OidRDTO>>();
+        result.setStatus(ResultRDTO.ResultStatus.OK);
+
+        // TODO implement the search!
+
+        return result;
     }
 
     @Override
     public ResultRDTO<HakuRDTO> findByOid(String oid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        LOG.info("findByOid({})", oid);
+
+        ResultRDTO<HakuRDTO> result = new ResultRDTO<HakuRDTO>();
+
+        try {
+            result.setResult(_converter.fromHakuToHakuRDTO(oid));
+            if (result.getResult() == null) {
+                result.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+            } else {
+                result.setStatus(ResultRDTO.ResultStatus.OK);
+            }
+        } catch (Exception ex) {
+            result.setStatus(ResultRDTO.ResultStatus.ERROR);
+            result.addError(ErrorRDTO.createSystemError(ex, "system.error", oid));
+        }
+
+        return result;
     }
 
     @Override
     public ResultRDTO<HakuRDTO> createHaku(HakuRDTO haku) {
+        LOG.info("createHaku({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ResultRDTO<HakuRDTO> updateHaku(HakuRDTO haku) {
+        LOG.info("updateHaku({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ResultRDTO<Boolean> deleteHaku(String oid) {
+        LOG.info("deleteHaku({})", oid);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
