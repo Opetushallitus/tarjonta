@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
@@ -62,7 +63,43 @@ public class V1Converter {
         return _hakuDao;
     }
 
+    public HakuRDTO fromHakuToHakuRDTO(String oid) {
+        return fromHakuToHakuRDTO(getHakuDao().findByOid(oid));
+    }
 
+    private HakuRDTO fromHakuToHakuRDTO(Haku haku) {
+        if (haku == null) {
+            return null;
+        }
+
+        HakuRDTO t = new HakuRDTO();
+
+        t.setOid(haku.getOid());
+        t.setModified(haku.getLastUpdateDate());
+        t.setModifiedBy(haku.getLastUpdatedByOid());
+        t.setCreated(null);
+        t.setCreatedBy(null);
+
+        // TODO implement
+
+//        t.set(haku.getHakuaikas());
+//        t.set(haku.getHakukausiUri());
+//        t.set(haku.getHakukausiVuosi());
+//        t.set(haku.getHakukohdes());
+//        t.set(haku.getHakulomakeUrl());
+//        t.set(haku.getHakutapaUri());
+//        t.set(haku.getHakutyyppiUri());
+//        t.set(haku.getHaunTunniste());
+//        t.set(haku.getKohdejoukkoUri());
+//        t.set(haku.getKoulutuksenAlkamisVuosi());
+//        t.set(haku.getKoulutuksenAlkamiskausiUri());
+//        t.set(haku.getLastUpdateDate());
+//        t.set(haku.getLastUpdatedByOid());
+//        t.set(haku.getNimi());
+//        t.set(haku.getTila());
+
+        return t;
+    }
 
 
     // ----------------------------------------------------------------------
@@ -356,6 +393,7 @@ public class V1Converter {
     public KoulutusRDTO fromKomotoToKoulutusRDTO(String oid) {
         return fromKomotoToKoulutusRDTO(getKomotoDao().findByOid(oid));
     }
+
 
 
 }
