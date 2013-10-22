@@ -192,7 +192,16 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
      */
     dataFactory.insertKoulutus = function(json, func) {
         console.log("insertKoulutus()", json);
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/");
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
+            update: {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
         koulutus.save(json, func);
     };
 
@@ -206,9 +215,16 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
     dataFactory.updateKoulutus = function(json, func) {
         console.log("updateKoulutus(): ", json);
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
-            update: {method: 'PUT'}
+            update: {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
         });
-        koulutus.save(json, func);
+        koulutus.update(json, func);
     };
 
     dataFactory.deleteKoulutus = function(id) {
