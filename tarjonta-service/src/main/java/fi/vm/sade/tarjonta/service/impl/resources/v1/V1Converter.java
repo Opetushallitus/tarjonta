@@ -145,9 +145,34 @@ public class V1Converter {
         }
 
         hakukohdeLiite.setKieli(hakukohdeLiiteV1RDTO.getKieliUri());
-
+        hakukohdeLiite.setHakukohdeLiiteNimi(hakukohdeLiiteV1RDTO.getLiitteenNimi());
+        hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteV1RDTO.getSahkoinenToimitusOsoite());
+        hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
+        hakukohdeLiite.setToimitusosoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
+        List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
+        tekstiRDTOs.add(hakukohdeLiiteV1RDTO.getLiitteenKuvaus());
+        hakukohdeLiite.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
 
         return hakukohdeLiite;
+    }
+
+    public HakukohdeLiiteV1RDTO fromHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
+        HakukohdeLiiteV1RDTO hakukohdeLiiteV1RDTO = new HakukohdeLiiteV1RDTO();
+
+        hakukohdeLiiteV1RDTO.setOid(hakukohdeLiite.getId().toString());
+        hakukohdeLiiteV1RDTO.setKieliUri(hakukohdeLiite.getKieli());
+        hakukohdeLiiteV1RDTO.setLiitteenNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
+        hakukohdeLiiteV1RDTO.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
+        hakukohdeLiiteV1RDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
+        hakukohdeLiiteV1RDTO.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohdeLiite.getToimitusosoite()));
+        List<TekstiRDTO> tekstiRDTOs = convertMonikielinenTekstiToTekstiDTOs(hakukohdeLiite.getKuvaus());
+        if (tekstiRDTOs != null && tekstiRDTOs.size() > 0) {
+            hakukohdeLiiteV1RDTO.setLiitteenKuvaus(tekstiRDTOs.get(0));
+        }
+
+
+
+        return hakukohdeLiiteV1RDTO;
     }
 
     //------------------------------------

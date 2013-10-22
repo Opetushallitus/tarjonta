@@ -41,7 +41,7 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     /**
      * Koodisto URI.
      */
-    @Column(name = "liitetyyppi", nullable = false)
+    @Column(name = "liitetyyppi")
     private String liitetyyppi;
 
     /**

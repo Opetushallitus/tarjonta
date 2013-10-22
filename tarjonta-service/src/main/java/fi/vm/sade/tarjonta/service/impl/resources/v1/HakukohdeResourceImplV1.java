@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
@@ -29,7 +30,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ws.rs.PathParam;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.slf4j.Logger;
@@ -245,13 +245,23 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
-    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(@PathParam("oid") String hakukohdeOid) {
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(String hakukohdeOid) {
         try {
 
             ResultRDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultRDTO<List<HakukohdeLiiteV1RDTO>>();
 
+            List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
+            List<HakukohdeLiiteV1RDTO> liiteV1RDTOs = new ArrayList<HakukohdeLiiteV1RDTO>();
+            if (liites != null) {
+             LOG.debug("LIITES SIZE : {} ",liites.size());
+             for (HakukohdeLiite liite : liites) {
+                 liiteV1RDTOs.add(converter.fromHakukohdeLiite(liite));
+             }
+            }
 
-
+            listResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+            listResultRDTO.setResult(liiteV1RDTOs);
             return listResultRDTO;
 
         } catch (Exception exp) {
@@ -267,17 +277,43 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
-    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+
+         try {
+
+             ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+             HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+             List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
+             liites.add(hakukohdeLiite);
+             hakukohdeDao.updateLiittees(liites,hakukohdeOid);
+
+             resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
+             resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+             return resultRDTO;
+
+         } catch (Exception exp) {
+             ResultRDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+             errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+             ErrorRDTO errorRDTO = new ErrorRDTO();
+             errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+             exp.printStackTrace();
+             errorRDTO.setErrorTechnicalInformation(exp.toString());
+             errorResult.addError(errorRDTO);
+             return errorResult;
+
+         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
