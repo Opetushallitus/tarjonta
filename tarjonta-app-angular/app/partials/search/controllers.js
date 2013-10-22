@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -15,12 +15,12 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			"skipparents" : true
 		};
 	}
-
-//	$scope.$root.tulos=$scope.$root.tulos||{};
-
+	
+	
+	
 	setDefaultHakuehdot();
 
-	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], "FI").then(function(koodit) {
+	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
         //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
@@ -106,8 +106,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // alkamiskaudet
     $scope.seasons = {"*": msgKaikki};
-    // TODO koodi-locale jostain
-    Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit) {
+    Koodisto.getAllKoodisWithKoodiUri("kausi", AuthService.getLanguage()).then(function(koodit) {
         console.log("koodit", koodit);
         $scope.seasons = {"*": msgKaikki};
 

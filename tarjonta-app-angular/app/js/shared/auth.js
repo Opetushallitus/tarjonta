@@ -39,16 +39,45 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         console.log("MyRolesModel.factory()");
 
         var instance = {};
-        // instance.myroles = [];
-        instance.myroles = Config.env["cas.myroles"] ? Config.env["cas.myroles"] : [];
+        instance.organisaatiot=[];
+        instance.myroles = Config.env["cas.myroles"] || [];
+        
+        /**
+         * prosessoi roolilistan läpi ja poimii tietoja, esim kieli, organisaatiot
+         */
+        var processRoleList=function(roolit) {
+        	if(roolit!==undefined) {
+        		for(var i=0;i<roolit.length;i++) {
+        			var oidList = roolit[i].match(/_[0-9\.]+$/g);
+        			if(oidList && oidList.length>0) {
+        				//poimi tarjonta roolit
+        				if(roolit[i].indexOf("APP_TARJONTA")==0) {
+        					var org = oidList[0].substring(1);
+                			console.log("adding org:", org);
+        					instance.organisaatiot.push(org);
+        				}
+        			}
+        			
+        			if(roolit[i].indexOf('LANG_')==0) {
+        				instance.lang = roolit[i].substring(5);
+        				console.log("setting lang:", instance.lang);
+        			}
+        		}
+        	}
+        
+        };
+        
+      	processRoleList(instance.myroles);
 
         instance.refresh = function() {
             // TODO some timeout for the cache?
             if (instance.myroles.length == 0) {
                 $http.get(Config.env.casUrl)
-                        .success(function(result) {
+                        .success(function(roolit) {
                     console.log("MyRolesModel.factory() - roles loaded successfully from: " + Config.env.casUrl);
-                    instance.myroles = result;
+                    instance.myroles = roolit;
+                  	processRoleList(instance.myroles);
+
                 })
                         .error(function(data, status, headers, config) {
                     console.log("MyRolesModel.factory() - FAILED to load roles from: " + Config.env.casUrl);
@@ -74,24 +103,24 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
 
     var _startsWith = function(str, startWith) {
-        return str.splice(0, startWith.length) === startWith;
+        return str.slice(0, startWith.length) === startWith;
     };
 
     var _restOf = function(str, startWith) {
         if (_startsWith(str, startWith)) {
-            return str.splice(startWith.length);
+            return str.slice(startWith.length);
         } else {
             return str;
         }
     };
 
     var _endsWith = function(str, endsWith) {
-        return str.splice(-endsWith.length) === endsWith;
+        return str.slice(-endsWith.length) === endsWith;
     };
 
     var _beginningOf = function(str, endsWith) {
         if (_endsWith(str, endsWith)) {
-            return str.splice(0, str.length - endsWith.length);
+            return str.slice(0, str.length - endsWith.length);
         } else {
             return str;
         }
@@ -195,6 +224,23 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
         crudOrg: function(service, orgOid) {
             return accessCheck(service, orgOid, crudAccess);
         },
+        /**
+         * Palauttaa käyttäjän kielen
+         */
+        getLanguage: function(){
+        	//TODO palauta kopio?
+        	return MyRolesModel.lang;
+        },
+
+        /**
+         * Palauttaa käyttäjän organisaatiot (tarjonta-app)
+         */
+        getOrganisations: function(){
+        	//TODO palauta kopio?
+        	return MyRolesModel.organisaatiot;
+        	
+        }
+
     };
 });
 

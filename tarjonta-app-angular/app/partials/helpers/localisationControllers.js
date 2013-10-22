@@ -31,10 +31,10 @@ app.controller('HelpersLocalisationCtrl', ['$scope', '$q', '$log', '$modal', 'Lo
 
         $scope.filterWithKeyAndLocale = function(item) {
             if (false && item.key.indexOf("poista") != -1) {
-              $log.info("KEY = " + item.key);
-              $log.info("filterLocaleWithLocale = " + $scope.filterLocaleWithLocale(item));
-              $log.info("filterKeyWithKey = " + $scope.filterKeyWithKey(item));
-              $log.info("filterValueWithKey = " + $scope.filterValueWithKey(item));
+                $log.info("KEY = " + item.key);
+                $log.info("filterLocaleWithLocale = " + $scope.filterLocaleWithLocale(item));
+                $log.info("filterKeyWithKey = " + $scope.filterKeyWithKey(item));
+                $log.info("filterValueWithKey = " + $scope.filterValueWithKey(item));
             }
 
             var result = $scope.filterLocaleWithLocale(item) && ($scope.filterKeyWithKey(item) || $scope.filterValueWithKey(item));
@@ -161,22 +161,83 @@ app.controller('HelpersLocalisationCtrl', ['$scope', '$q', '$log', '$modal', 'Lo
         };
 
 
+
+
         $scope.openDialog = function() {
 
             var modalInstance = $modal.open({
                 scope: $scope,
                 templateUrl: 'partials/helpers/localisationTransferDialog.html',
-                controller: 'HelpersLocalisationCtrl'
+                controller: 'LocalisationHelper:TransferController'
             });
 
-            modalInstance.result.then(function(data) {
-                $log.info('Ok, dialog closed: ', data);
-            }, function() {
-                $log.info('Cancel, dialog closed: ');
-            });
         };
+
 
         // Triggers model update / load translations
         $scope.reloadData();
+    }]);
+
+
+/**
+ * Transferring localisations from one environment to another.
+ */
+app.controller('LocalisationHelper:TransferController', ['$scope', '$log', '$resource', 'LocalisationService', '$modalInstance',
+    function($scope, $log, $resource, LocalisationService, $modalInstance) {
+
+        $scope.model = {
+            copyFrom: "https://test-virkailija.oph.ware.fi/tarjonta-service/rest/localisation",
+            result: ""
+        };
+
+        $scope.transferDialogCancel = function() {
+            $log.info("transferDialogCancel()" + $modalInstance);
+            $modalInstance.close();
+        };
+
+        $scope.transferDialogOk = function() {
+            $log.info("transferDialogOk()" + $modalInstance);
+
+            // Get data
+            $resource($scope.model.copyFrom).query({},
+
+                    // OK, translations loaded
+                    function(data) {
+                        console.log("SUCCESS : " + data);
+
+                        // Loop over and access all translations so that undefined will be created
+                        for (var i = 0; i < data.length; i++) {
+                            var l = data[i];
+                            LocalisationService.tl(l.key, l.locale);
+                        }
+
+                        $scope.model.result = "Käännökset luettu, odota hetki...";
+
+                        var updateCount = 0;
+
+                        // Update values, reserve 10s for this
+                        setTimeout(function() {
+                            // Loop over and update values
+                            for (var i = 0; i < data.length; i++) {
+                                var l = data[i];
+
+                                LocalisationService.update(l).then(function () {
+                                    updateCount++;
+                                    $scope.model.result = "Päivitän... " + updateCount + " / " + data.length;
+                                });
+                            }
+
+                            // Update values
+                            setTimeout(function() {
+                                $modalInstance.close();
+                            }, 10000);
+                        }, 5000);
+                    },
+                    function() {
+                        console.log("ERROR");
+                        $scope.model.result = "FAILED!";
+                    });
+        };
+
     }]);
 
