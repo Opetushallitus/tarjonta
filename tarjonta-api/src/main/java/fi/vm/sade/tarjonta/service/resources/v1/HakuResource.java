@@ -31,6 +31,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * Supported operations.
+ *
+ * <pre>
+ * GET    /             ?count=100 & startIndex=0    -- list of oids
+ * GET    oid                                        -- json of haku
+ * GET    oid/hakukohde ?count=100 & startIndex=0    -- list of oids
+ * GET    oid/state                                  -- state
+ * PUT    oid/state                                  -- update state
+ * POST   /                                          -- create haku
+ * PUT    /                                          -- update hakue
+ * DELETE oid                                        -- remove haku
+ * </pre>
  *
  * @author mlyly
  */
@@ -60,4 +72,20 @@ public interface HakuResource {
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultRDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
+
+    @GET
+    @Path("{oid}/hakukohde")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<List<OidRDTO>> getHakukohdesForHaku(@PathParam("oid") String oid, @QueryParam("") GenericSearchParamsRDTO params);
+
+    // TODO: @POST OID/hakukohde - add hakukohde?
+    @GET
+    @Path("{oid}/state")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<String> getHakuState(@PathParam("oid") String oid);
+
+    @PUT
+    @Path("{oid}/state")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<String> setHakuState(@PathParam("oid") String oid, String state);
 }
