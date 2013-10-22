@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeResource;
@@ -136,16 +137,101 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     public ResultRDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+
+            Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
+            if (hakukohdeOid != null && valintakoe != null) {
+                List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+                valintakoes.add(valintakoe);
+                hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
+                ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
+                ValintakoeV1RDTO result = converter.fromValintakoe(valintakoe);
+                rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+                rdtoResultRDTO.setResult(result);
+                return rdtoResultRDTO;
+            }else {
+                ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
+                rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+                ErrorRDTO errorRDTO = new ErrorRDTO();
+                errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+                errorRDTO.setErrorTechnicalInformation("Hakukohde cannot be null when inserting valintakoe");
+                rdtoResultRDTO.addError(errorRDTO);
+                return rdtoResultRDTO;
+
+            }
+
+        } catch (Exception exp) {
+           ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
+           rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
+           ErrorRDTO errorRDTO = new ErrorRDTO();
+           exp.printStackTrace();
+           errorRDTO.setErrorTechnicalInformation(exp.toString());
+           errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+           rdtoResultRDTO.addError(errorRDTO);
+
+           return rdtoResultRDTO;
+        }
+
     }
 
     @Override
     public ResultRDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+
+            Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
+            valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
+
+            List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+            valintakoes.add(valintakoe);
+
+            hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
+
+            ResultRDTO<ValintakoeV1RDTO> valintakoeResult = new ResultRDTO<ValintakoeV1RDTO>();
+            valintakoeResult.setStatus(ResultRDTO.ResultStatus.OK);
+            valintakoeResult.setResult(converter.fromValintakoe(valintakoe));
+            return valintakoeResult;
+
+        } catch (Exception exp) {
+           ResultRDTO<ValintakoeV1RDTO> errorResult = new ResultRDTO<ValintakoeV1RDTO>();
+
+            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            ErrorRDTO errorRDTO = new ErrorRDTO();
+            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            exp.printStackTrace();
+            errorRDTO.setErrorTechnicalInformation(exp.toString());
+            errorResult.addError(errorRDTO);
+
+           return errorResult;
+        }
     }
 
     @Override
     public ResultRDTO<Boolean> removeValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+
+            Valintakoe valintakoe = new Valintakoe();
+            valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
+            hakukohdeDao.removeValintakoe(valintakoe);
+
+            ResultRDTO<Boolean> resultRDTO = new ResultRDTO<Boolean>();
+            resultRDTO.setResult(true);
+            resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+            return resultRDTO;
+
+
+        } catch (Exception exp) {
+            ResultRDTO<Boolean> resultRDTO = new ResultRDTO<Boolean>();
+            resultRDTO.setResult(false);
+            resultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
+
+            ErrorRDTO errorRDTO = new ErrorRDTO();
+            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            exp.printStackTrace();
+            errorRDTO.setErrorTechnicalInformation(exp.toString());
+
+            resultRDTO.addError(errorRDTO);
+            return resultRDTO;
+
+        }
     }
 }
