@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,7 +79,8 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setKomoOid(komo.getOid());
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
-        kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm());
+        // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
+        kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
         kkDto.setOpintojenLaajuus(simpleUiDTO("unavailable"));
         kkDto.setKoulutuskoodi(convertToUiMetaDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
         //KOMO
