@@ -18,6 +18,7 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorRDTO;
@@ -28,6 +29,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ws.rs.PathParam;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.slf4j.Logger;
@@ -240,5 +242,42 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             return resultRDTO;
 
         }
+    }
+
+    @Override
+    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(@PathParam("oid") String hakukohdeOid) {
+        try {
+
+            ResultRDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultRDTO<List<HakukohdeLiiteV1RDTO>>();
+
+
+
+            return listResultRDTO;
+
+        } catch (Exception exp) {
+            ResultRDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultRDTO<List<HakukohdeLiiteV1RDTO>>();
+            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            exp.printStackTrace();
+            ErrorRDTO errorRDTO = new ErrorRDTO();
+            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            errorRDTO.setErrorTechnicalInformation(exp.toString());
+            errorResult.addError(errorRDTO);
+            return errorResult;
+        }
+    }
+
+    @Override
+    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

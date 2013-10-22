@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
@@ -137,6 +138,18 @@ public class V1Converter {
 
     }
 
+    public HakukohdeLiite toHakukohdeLiite(HakukohdeLiiteV1RDTO hakukohdeLiiteV1RDTO) {
+        HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
+        if (hakukohdeLiiteV1RDTO.getOid() != null) {
+            hakukohdeLiite.setId(new Long(hakukohdeLiiteV1RDTO.getOid()));
+        }
+
+        hakukohdeLiite.setKieli(hakukohdeLiiteV1RDTO.getKieliUri());
+
+
+        return hakukohdeLiite;
+    }
+
     //------------------------------------
     //Hakukohde helper converters
     //------------------------------------
@@ -151,8 +164,7 @@ public class V1Converter {
             }
 
         }
-            LOG.debug("VALINTAKOENIMI : {}",valintakoeV1RDTO.getValintakoeNimi());
-            LOG.debug("VALINTAKOE KIELI : {}", valintakoeV1RDTO.getKieliUri());
+
             valintakoe.setValintakoeNimi(valintakoeV1RDTO.getValintakoeNimi());
             valintakoe.setKieli(valintakoeV1RDTO.getKieliUri());
             List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
@@ -199,7 +211,7 @@ public class V1Converter {
 
     private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {
         ValintakoeV1RDTO valintakoeV1RDTO = new ValintakoeV1RDTO();
-
+        valintakoeV1RDTO.setOid(valintakoe.getId().toString());
         valintakoeV1RDTO.setKieliUri(valintakoe.getKieli());
         valintakoeV1RDTO.setValintakoeNimi(valintakoe.getValintakoeNimi());
         List<TekstiRDTO> lisatiedot = convertMonikielinenTekstiToTekstiDTOs(valintakoe.getKuvaus());

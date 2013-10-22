@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
@@ -88,4 +89,28 @@ public interface HakukohdeResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultRDTO<Boolean> removeValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
+
+    @GET
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(@PathParam("oid") String hakukohdeOid);
+
+    @POST
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
+
+    @PUT
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
+
+
+    @DELETE
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
 }
