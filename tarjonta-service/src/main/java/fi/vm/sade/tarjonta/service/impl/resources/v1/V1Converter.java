@@ -149,6 +149,10 @@ public class V1Converter {
             } catch (Exception exp) {
 
             }
+
+        }
+            LOG.debug("VALINTAKOENIMI : {}",valintakoeV1RDTO.getValintakoeNimi());
+            LOG.debug("VALINTAKOE KIELI : {}", valintakoeV1RDTO.getKieliUri());
             valintakoe.setValintakoeNimi(valintakoeV1RDTO.getValintakoeNimi());
             valintakoe.setKieli(valintakoeV1RDTO.getKieliUri());
             List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
@@ -158,7 +162,7 @@ public class V1Converter {
                 valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoeV1RDTO.getValintakoeAjankohtas()));
             }
 
-        }
+
 
         return valintakoe;
     }

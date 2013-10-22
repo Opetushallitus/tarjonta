@@ -25,7 +25,18 @@ describe('localisation', function() {
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2",
             "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: THE_OFFICIAL_TEST_VALUE_FI, locale: "fi"}],
-            "casUrl" : "cas_myroles_tiimi2"
+            "casUrl" : "cas_myroles_tiimi2",
+            "cas.myroles" : 
+            	["USER_tiimi2", "APP_ANOMUSTENHALLINTA", "APP_ANOMUSTENHALLINTA_CRUD", "APP_ORGANISAATIOHALLINTA",
+            	    "APP_ORGANISAATIOHALLINTA_CRUD", "APP_HENKILONHALLINTA", "APP_HENKILONHALLINTA_CRUD", "APP_KOODISTO",
+            	    "APP_KOODISTO_CRUD", "APP_KOOSTEROOLIENHALLINTA", "APP_KOOSTEROOLIENHALLINTA_CRUD", "APP_OID",
+            	    "APP_OID_CRUD", "APP_OMATTIEDOT", "APP_OMATTIEDOT_CRUD", "APP_TARJONTA", "APP_TARJONTA_CRUD",
+            	    "VIRKAILIJA", "APP_KOOSTEROOLIENHALLINTA_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_ORGANISAATIOHALLINTA_CRUD_1.2.246.562.10.44562157436", "APP_OID_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_ANOMUSTENHALLINTA_CRUD_1.2.246.562.10.44562157436", "APP_KOODISTO_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_OMATTIEDOT_CRUD_1.2.246.562.10.44562157436", "APP_TARJONTA_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_HENKILONHALLINTA_CRUD_1.2.246.562.10.44562157436", "LANG_fi"]
+
         }, "app": {
             "key-app-1": "mock-value-app-1"
         },
@@ -37,6 +48,7 @@ describe('localisation', function() {
 
     beforeEach(module('localisation'));
     beforeEach(module('test.module'));
+    beforeEach(module('auth'));
 
     describe('LocalisationCtrl', function() {
         var scope, controller;

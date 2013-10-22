@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -113,6 +114,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             return resultRDTO;
         }  else {
         try {
+
         List<ValintakoeV1RDTO> valintakoeV1RDTOs = new ArrayList<ValintakoeV1RDTO>();
         List<Valintakoe> valintakokees = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
         for (Valintakoe valintakoe:valintakokees) {
@@ -121,6 +123,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
         }
         resultRDTO.setResult(valintakoeV1RDTOs);
         resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+
         } catch (Exception exp) {
             resultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
             ErrorRDTO errorRDTO = new ErrorRDTO();
@@ -136,11 +139,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
             if (hakukohdeOid != null && valintakoe != null) {
+                LOG.debug("INSERTING VALINTAKOE : {} with kieli : {}" , valintakoe.getValintakoeNimi(), valintakoe.getKieli() );
                 List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
                 valintakoes.add(valintakoe);
                 hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
@@ -175,6 +180,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
 
@@ -206,6 +212,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<Boolean> removeValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
 

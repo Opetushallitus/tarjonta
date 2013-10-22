@@ -12,6 +12,8 @@ import java.util.List;
 */
 public class ValintakoeV1RDTO extends BaseRDTO {
 
+    private String hakukohdeOid;
+
     private String kieliUri;
 
     private String valintakoeNimi;
@@ -55,5 +57,13 @@ public class ValintakoeV1RDTO extends BaseRDTO {
 
     public void setValintakoeAjankohtas(List<ValintakoeAjankohtaRDTO> valintakoeAjankohtas) {
         this.valintakoeAjankohtas = valintakoeAjankohtas;
+    }
+
+    public String getHakukohdeOid() {
+        return hakukohdeOid;
+    }
+
+    public void setHakukohdeOid(String hakukohdeOid) {
+        this.hakukohdeOid = hakukohdeOid;
     }
 }
