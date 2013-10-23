@@ -74,7 +74,9 @@ public interface PublicationDataService {
 
     public void sendEvent(final fi.vm.sade.tarjonta.shared.types.TarjontaTila tila, final String oid, final String dataType, final String action);
 
-    public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus);
+    public List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus);
+
+    public List<Long> searchKomotoIdsByHakukohdesOid(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
     public List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus);
 

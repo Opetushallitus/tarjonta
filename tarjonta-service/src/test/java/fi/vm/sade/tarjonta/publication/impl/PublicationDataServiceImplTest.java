@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.impl;
 
+import com.google.common.collect.Lists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -45,6 +46,12 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -60,7 +67,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 @Transactional
 public class PublicationDataServiceImplTest {
 
-    private PublicationDataService publicationDataService;
+    private PublicationDataServiceImpl publicationDataService;
     private Koulutusmoduuli komo1, komo2, komo3;
     private KoulutusmoduuliToteutus komoto1;
     private Haku haku1;
@@ -75,6 +82,8 @@ public class PublicationDataServiceImplTest {
     @Before
     public void setUp() {
         em.clear();
+
+        setCurrentUser("ophadmin", getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
         //We could autowire the class, but then a 
         //test debug mode (at least in Netbean) fails.
@@ -314,12 +323,12 @@ public class PublicationDataServiceImplTest {
         ArrayList<String> hakuOids = new ArrayList<String>();
         hakuOids.add(haku1.getOid());
 
-        List<Hakukohde> hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.JULKAISTU);
-        assertEquals(1, hakukohteet.size());
-        assertEquals(komoto1.getOid(), hakukohteet.get(0).getKoulutusmoduuliToteutuses().iterator().next().getOid());
+        List<Long> hakukohteetIds = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.JULKAISTU);
+        assertEquals(1, hakukohteetIds.size());
+        //assertEquals(komoto1.getOid(), hakukohteetIds.get(0).getKoulutusmoduuliToteutuses().iterator().next().getOid());
 
-        hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
-        assertEquals(0, hakukohteet.size());
+        hakukohteetIds = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
+        assertEquals(0, hakukohteetIds.size());
     }
 
     @Test
@@ -335,17 +344,15 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        
-        
-        //partial publish - only the haku is published
-        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS,TarjontaTila.VALMIS,TarjontaTila.VALMIS);
+
+        //partial publish - only the haku and hakukohde is published
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
-       
-        //koulutusohjelma not checked
-        //check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
+
+        //koulutusohjelma not published as it's still luonnos
+        check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU);
     }
 
-    
     @Test
     public void testiHakuCancel() {
         GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
@@ -389,7 +396,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        
+
         /*
          * The partial path - only toteutus is published
          */
@@ -432,9 +439,9 @@ public class PublicationDataServiceImplTest {
             em.persist(haku1);
             em.persist(hakukohde1);
         } else {
-        	komo1 = em.merge(komo1);
-        	komo2 = em.merge(komo2);
-        	komo3 = em.merge(komo3);
+            komo1 = em.merge(komo1);
+            komo2 = em.merge(komo2);
+            komo3 = em.merge(komo3);
             komoto1 = em.merge(komoto1);
             haku1 = em.merge(haku1);
             hakukohde1 = em.merge(hakukohde1);
@@ -467,5 +474,20 @@ public class PublicationDataServiceImplTest {
         assertEquals("haku", statusHaku, h1.getTila());
         assertEquals("toteutus", statusToteutus, k1.getTila());
         assertEquals("hakukohde", statusHakukohde, hk1.getTila());
+    }
+
+    protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {
+        GrantedAuthority orgAuthority = new SimpleGrantedAuthority(String.format("%s", appPermission));
+        GrantedAuthority roleAuthority = new SimpleGrantedAuthority(String.format("%s_%s", appPermission, oid));
+        return Lists.newArrayList(orgAuthority, roleAuthority);
+    }
+
+    protected final void setCurrentUser(final String oid, final List<GrantedAuthority> grantedAuthorities) {
+        Authentication auth = new TestingAuthenticationToken(oid, null, grantedAuthorities);
+        setAuthentication(auth);
+    }
+
+    protected final void setAuthentication(Authentication auth) {
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
