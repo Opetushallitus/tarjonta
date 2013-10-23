@@ -57,6 +57,7 @@ angular.module('app',
             'KoodistoTypeAhead',
             'angularTreeview',
             'TarjontaConverter',
+            'ResultsTable',
             'imageupload'
         ]);
 
