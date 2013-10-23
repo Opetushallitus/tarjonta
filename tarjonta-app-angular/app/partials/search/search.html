@@ -94,31 +94,52 @@
 	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" data-ng-click="luoUusiHakukohde()" ng-disabled="!koulutusActions.canCreateHakukohde"/>
 	        		<input class="btn float-right" type="button"  ng-click="tutkintoDialogModel.open()" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" ng-disabled="!koulutusActions.canCreateKoulutus"/>
 	        	</div>
-	        	
+
+	        	<results-table
+	        		id="nkoulutuksetResults"
+	        		prefix="koulutus"
+	        		content="koulutusResults"
+	        		columns="koulutusColumns"
+	        		options="koulutusOptions"
+	        		selection="selection.koulutukset"/>
+	        		
+	        	<!-- 
 	        	<div class="controls">
 	        		<input type="checkbox" class="selectAll"/>
 			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
 				</div>
 				
-	        	<table id="koulutuksetResults"><!-- jquery --></table>
-	        
+	        	<table id="koulutuksetResults"></table>
+		         -->
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
-	        
+	
+	        	<results-table
+	        		id="nhakukohteetResults"
+	        		prefix="hakukohde"
+	        		content="hakukohdeResults"
+	        		columns="hakukohdeColumns"
+	        		options="hakukohdeOptions"
+	        		selection="selection.hakukohteet"/>
+
+				<!--         
 	        	<div class="controls">
 	        		<input type="checkbox" class="selectAll"/>
 			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
 				</div>
 	
-	        	<table id="hakukohteetResults"><!-- jquery --></table>
-	
+	        	<table id="hakukohteetResults"></table>
+				 -->
+				 
 	        </tab>
 	
 	    </tabset>
 	    
+	    <!-- 
 	    <ul id="dropdown" class="dropdown-menu">
 	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
 	    </ul>
+	     -->
     
     </div>
 
