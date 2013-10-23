@@ -36,6 +36,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
 
+    List<HakukohdeLiite> findHakukohdeLiitesByHakukohdeOid(String oid);
+
     Valintakoe findValintaKoeById(String id);
 
     List<Valintakoe> findValintakoeByHakukohdeOid(String oid);

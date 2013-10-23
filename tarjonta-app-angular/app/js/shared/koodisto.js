@@ -23,7 +23,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
     var nimiWithLocale = function(locale, metadata) {
         var metas = _.select(metadata, function(koodiMetaData) {
 
-            if (koodiMetaData.kieli === locale) {
+            if (koodiMetaData.kieli.toLowerCase() === locale.toLowerCase()) {
 
                 return koodiMetaData.nimi;
             }
@@ -64,7 +64,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
             koodiOrganisaatioOid: koodi.koodisto.organisaatioOid,
             koodiNimi: nimiWithLocale(locale, koodi.metadata)
         };
-        return tarjontaKoodi
+        return tarjontaKoodi;
     };
 
     return {

@@ -1,7 +1,7 @@
 <div id="KoodistoTypeAhead" >
     <div class="span5">
 
-            <input type="text"  typeahead-editable="false" ng-model="koodi" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi as koodi.koodiNimi for koodi in koodis | filter:$viewValue | limitTo:8  | orderBy:'koodiNimi'">
+            <input type="text"  typeahead-editable="false" ng-model="koodi" typeahead-on-select="onKoodistoComboChange()" typeahead="koodi as koodi.koodiNimi for koodi in koodis | filter:{koodiNimi:$viewValue} | limitTo:8  | orderBy:'koodiNimi'">
 
         </select>
     </div>

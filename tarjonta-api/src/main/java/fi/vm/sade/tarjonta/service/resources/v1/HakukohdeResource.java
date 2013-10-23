@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
@@ -63,4 +65,52 @@ public interface HakukohdeResource {
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultRDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
+
+
+    @GET
+    @Path("/{oid}/valintakoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(@PathParam("oid") String hakukohdeOid);
+
+    @POST
+    @Path("/{oid}/valintakoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<ValintakoeV1RDTO> insertValintakoe(@PathParam("oid") String hakukohdeOid,ValintakoeV1RDTO valintakoeV1RDTO);
+
+    @PUT
+    @Path("/{oid}/valintakoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<ValintakoeV1RDTO> updateValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
+
+    @DELETE
+    @Path("/{oid}/valintakoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<Boolean> removeValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
+
+    @GET
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(@PathParam("oid") String hakukohdeOid);
+
+    @POST
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
+
+    @PUT
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
+
+
+    @DELETE
+    @Path("/{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
 }

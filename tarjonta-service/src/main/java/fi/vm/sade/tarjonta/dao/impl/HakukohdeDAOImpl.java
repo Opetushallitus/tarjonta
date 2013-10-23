@@ -111,6 +111,16 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public List<HakukohdeLiite> findHakukohdeLiitesByHakukohdeOid(String oid) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QHakukohdeLiite qHakukohdeLiite = QHakukohdeLiite.hakukohdeLiite;
+
+        return from(qHakukohde,qHakukohdeLiite)
+                .where(qHakukohde.oid.eq(oid).and(qHakukohdeLiite.hakukohde.eq(qHakukohde)))
+                .list(qHakukohdeLiite);
+    }
+
+    @Override
     public HakukohdeLiite findHakuKohdeLiiteById(String id) {
         QHakukohdeLiite liite = QHakukohdeLiite.hakukohdeLiite;
         Long idLong = new Long(id);

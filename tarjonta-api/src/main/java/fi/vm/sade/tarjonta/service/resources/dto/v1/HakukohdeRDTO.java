@@ -1,4 +1,6 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.dto.v1;
+
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 
 import java.util.*;
 
@@ -61,7 +63,7 @@ public class HakukohdeRDTO extends BaseRDTO {
 
     private OsoiteRDTO liitteidenToimitusOsoite;
 
-    private List<ValintakoeRDTO> valintakokeet;
+    private List<ValintakoeV1RDTO> valintakokeet;
 
 
 
@@ -281,14 +283,14 @@ public class HakukohdeRDTO extends BaseRDTO {
         this.tarjoajaOids = tarjoajaOids;
     }
 
-    public List<ValintakoeRDTO> getValintakokeet() {
+    public List<ValintakoeV1RDTO> getValintakokeet() {
         if (valintakokeet == null) {
-            valintakokeet = new ArrayList<ValintakoeRDTO>();
+            valintakokeet = new ArrayList<ValintakoeV1RDTO>();
         }
         return valintakokeet;
     }
 
-    public void setValintakokeet(List<ValintakoeRDTO> valintakokeet) {
+    public void setValintakokeet(List<ValintakoeV1RDTO> valintakokeet) {
         this.valintakokeet = valintakokeet;
     }
 

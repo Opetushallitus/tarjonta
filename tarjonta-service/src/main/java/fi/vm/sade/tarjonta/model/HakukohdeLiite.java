@@ -32,13 +32,16 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 6186622208433509334L;
 
+    @Column(name="hakukohde_liite_nimi")
+    private String hakukohdeLiiteNimi;
+
     @ManyToOne (fetch = FetchType.EAGER)
     private Hakukohde hakukohde;
 
     /**
      * Koodisto URI.
      */
-    @Column(name = "liitetyyppi", nullable = false)
+    @Column(name = "liitetyyppi")
     private String liitetyyppi;
 
     /**
@@ -148,6 +151,14 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     public void setKieli(String kieli) {
         this.kieli = kieli;
+    }
+
+    public String getHakukohdeLiiteNimi() {
+        return hakukohdeLiiteNimi;
+    }
+
+    public void setHakukohdeLiiteNimi(String hakukohdeLiiteNimi) {
+        this.hakukohdeLiiteNimi = hakukohdeLiiteNimi;
     }
 }
 

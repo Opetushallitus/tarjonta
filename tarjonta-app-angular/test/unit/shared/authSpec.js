@@ -16,52 +16,68 @@
 describe('auth', function() {
 
     var CONFIG_ENV_MOCK = {
-        "env": {
+        env: {
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2",
             "tarjonta.localisations": [],
-            "casUrl" : "cas_myroles_tiimi2",
-            "cas.myroles" : ["USER_tiimi2"]
-        }, "app": {
+            "casUrl" : "cas_myroles_tiimi221",
+            "cas.myroles" : 
+            	["USER_tiimi2", "APP_ANOMUSTENHALLINTA", "APP_ANOMUSTENHALLINTA_CRUD", "APP_ORGANISAATIOHALLINTA",
+            	    "APP_ORGANISAATIOHALLINTA_CRUD", "APP_HENKILONHALLINTA", "APP_HENKILONHALLINTA_CRUD", "APP_KOODISTO",
+            	    "APP_KOODISTO_CRUD", "APP_KOOSTEROOLIENHALLINTA", "APP_KOOSTEROOLIENHALLINTA_CRUD", "APP_OID",
+            	    "APP_OID_CRUD", "APP_OMATTIEDOT", "APP_OMATTIEDOT_CRUD", "APP_TARJONTA", "APP_TARJONTA_CRUD",
+            	    "VIRKAILIJA", "APP_KOOSTEROOLIENHALLINTA_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_ORGANISAATIOHALLINTA_CRUD_1.2.246.562.10.44562157436", "APP_OID_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_ANOMUSTENHALLINTA_CRUD_1.2.246.562.10.44562157436", "APP_KOODISTO_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_OMATTIEDOT_CRUD_1.2.246.562.10.44562157436", "APP_TARJONTA_CRUD_1.2.246.562.10.44562157436",
+            	    "APP_HENKILONHALLINTA_CRUD_1.2.246.562.10.44562157436", "LANG_fi"]
+        }, app: {
             "key-app-1": "mock-value-app-1"
         }
     };
 
-    //set mock data to module by using the value-method,
-    var mockModule = angular.module('test.module', []);
-    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
-
-
-    beforeEach(module('auth'));
-    beforeEach(module('config'));
-    beforeEach(module('test.module'));
 
     describe('AuthService', function() {
-        var scope, controller;
+    	
+        beforeEach(function(){
+            module(function ($provide) {
+                $provide.value('Config', CONFIG_ENV_MOCK);
+            });
+        });
 
-        beforeEach(inject(function($rootScope, $controller) {
-            scope = $rootScope.$new();
+        it('should return user', inject(function(AuthService) {
+           expect("tiimi2").toEqual(AuthService.getUsername());
         }));
 
-        it('get user', inject(function(AuthService) {
-            expect(true).toBe(true);
-            //TODO : Marko korjaa
-           //expect("tiimi2").toEqual(AuthService.getUsername());
-        }));
+        it('should return user organisations', inject(function(AuthService) {
+            expect(1).toEqual(AuthService.getOrganisations().length);
+            expect("1.2.246.562.10.44562157436").toEqual(AuthService.getOrganisations()[0]);
+            
+         }));
+
+        it('should return user language', inject(function(AuthService) {
+            expect("fi").toEqual(AuthService.getLanguage());
+         }));
+
     });
 
+    beforeEach(module('auth'));
+
     describe('MyRolesModel', function() {
-        var scope, controller;
 
-        beforeEach(inject(function($rootScope, $controller) {
-            scope = $rootScope.$new();
-        }));
+        beforeEach(function(){
+            module(function ($provide) {
+                $provide.value('Config', CONFIG_ENV_MOCK);
+            });
+        });
 
-        it('MyRolesModel tests', inject(function(MyRolesModel) {
+
+        it('MyRolesModel tests should have some meaningful asserts!', inject(function(MyRolesModel) {
             MyRolesModel.debug();
-            MyRolesModel.refresh();
+//            MyRolesModel.refresh();
             MyRolesModel.debug();
             expect(true).toEqual(true);
+            console.log("myroles:", MyRolesModel.myroles);
         }));
 
     });

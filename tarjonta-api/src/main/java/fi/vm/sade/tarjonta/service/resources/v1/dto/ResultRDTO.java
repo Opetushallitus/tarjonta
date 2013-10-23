@@ -99,7 +99,12 @@ public class ResultRDTO<T> implements Serializable {
         /**
          * A real "error".
          */
-        ERROR
+        ERROR,
+
+        /**
+         * For those occasions requested resource is not found.
+         */
+        NOT_FOUND
     };
     /**
      * Default status for the result is OK.

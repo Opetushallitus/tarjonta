@@ -26,7 +26,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
-
+    $scope.model.collapse.model = true;
 
 
 
@@ -180,23 +180,27 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveValmis = function() {
         if ($scope.model.hakukohde.oid === undefined) {
-            $scope.model.hakukohde.tila = "VALMIS";
 
-
-            console.log('MODEL: ', $scope.model.hakukohde);
+             console.log('MODEL: ', $scope.model.hakukohde);
             $scope.model.hakukohde.$save();
+        } else {
+
+            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            $scope.model.$update();
         }
     };
 
 
     $scope.model.saveLuonnos = function() {
         //TODO: are we inserting or updating figure it from OID
+        $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
-            $scope.model.hakukohde.tila = "LUONNOS";
-
 
             console.log('MODEL: ', $scope.model.hakukohde);
             $scope.model.hakukohde.$save();
+        } else {
+            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            $scope.model.hakukohde.$update();
         }
     };
 

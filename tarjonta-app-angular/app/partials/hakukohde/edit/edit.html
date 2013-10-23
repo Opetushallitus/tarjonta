@@ -88,7 +88,7 @@
 
 
 
-                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:$viewValue | limitTo:8 |  orderBy:'koodiArvo'">
+                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
                                 <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
                             </address>
                         </div>
@@ -162,15 +162,17 @@
     </tabset>
 
     <hr>
-    <div ng-click="model.hakukohde.collapse.model = !model.hakukohde.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.hakukohde.collapse.model}">Sivun data / malli:</div>
-    </div>
 
-    <div collapse="model.hakukohde.collapse.model">
+
+    <div ng-click="model.collapse.model= !model.collapse.model">
+        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
+    </div>
+    <div ng-if="!model.collapse.model">
+    <div collapse="model.collapse.model">
         <pre>
             {{ model | json }}
         </pre>
     </div>
-
+    </div>
 </div>
 </form>

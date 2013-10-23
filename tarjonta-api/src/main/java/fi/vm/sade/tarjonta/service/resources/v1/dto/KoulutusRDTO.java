@@ -18,9 +18,42 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
  *
  * @author mlyly
  */
-public class KoulutusRDTO extends BaseRDTO {
+public abstract class KoulutusRDTO extends BaseRDTO {
 
     private String _komoOid;
     private String _komotoOid;
+    private String _parentKomoOid;
+    private String _parentKomotoOid;
 
+    public String getKomoOid() {
+        return _komoOid;
+    }
+
+    public void setKomoOid(String _komoOid) {
+        this._komoOid = _komoOid;
+    }
+
+    public String getKomotoOid() {
+        return _komotoOid;
+    }
+
+    public void setKomotoOid(String _komotoOid) {
+        this._komotoOid = _komotoOid;
+    }
+
+    public String getParentKomoOid() {
+        return _parentKomoOid;
+    }
+
+    public void setParentKomoOid(String _parentKomoOid) {
+        this._parentKomoOid = _parentKomoOid;
+    }
+
+    public String getParentKomotoOid() {
+        return _parentKomotoOid;
+    }
+
+    public void setParentKomotoOid(String _parentKomotoOid) {
+        this._parentKomotoOid = _parentKomotoOid;
+    }
 }

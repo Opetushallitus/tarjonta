@@ -14,30 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import java.io.Serializable;
-
 /**
  *
  * @author mlyly
  */
-public class OidRDTO implements Serializable {
+public class KoulutusPerusopetuksenLisaopetusRDTO extends KoulutusRDTO {
 
-    private String _oid;
-    private int _version;
-
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String oid) {
-        this._oid = oid;
-    }
-
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int _version) {
-        this._version = _version;
-    }
 }

@@ -1,6 +1,6 @@
 
 angular.module('app.controllers', ['app.services','localisation','Organisaatio', 'config', 'ResultsTable'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService) {
 
     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
 
@@ -15,10 +15,12 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			"skipparents" : true
 		};
 	}
-
+	
+	
+	
 	setDefaultHakuehdot();
 
-	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], "FI").then(function(koodit) {
+	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
         //console.log("oppilaitostyypit", koodit);
         angular.forEach(koodit, function(koodi){
         	koodi.koodiUriWithVersion=koodi.koodiUri + "#" + koodi.koodiVersio;
@@ -31,6 +33,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	
 	//valittu organisaatio populoidaan tänne
     $scope.organisaatio = {};
+    
 
 	//watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
 	$scope.$watch( 'organisaatio.currentNode', function( newObj, oldObj ) {
@@ -72,7 +75,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
 			console.log("result returned, hits:", vastaus);
-			$scope.tulos = vastaus.organisaatiot;
+			$scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
 		});
     };
 
@@ -110,8 +113,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     // alkamiskaudet
     $scope.seasons = {"*": msgKaikki};
-    // TODO koodi-locale jostain
-    Koodisto.getAllKoodisWithKoodiUri("kausi", "FI").then(function(koodit) {
+    Koodisto.getAllKoodisWithKoodiUri("kausi", AuthService.getLanguage()).then(function(koodit) {
         console.log("koodit", koodit);
         $scope.seasons = {"*": msgKaikki};
 

@@ -17,5 +17,12 @@ app.service('SharedStateService',function($resource, $log,$q, Config){
     this.removeState = function(name) {
         sharedService[name] = undefined;
     };
+    
+    /**
+     * palauta tila olio
+     */
+    this.state = function(){
+    	return sharedService;
+    };
 
 });

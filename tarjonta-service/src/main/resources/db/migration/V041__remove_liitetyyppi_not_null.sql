@@ -1,0 +1,1 @@
+ALTER TABLE hakukohdeliite ALTER COLUMN liitetyyppi DROP NOT NULL;

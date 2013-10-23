@@ -7,11 +7,14 @@
         <div>Käännösten kopiointi annetusta ympäristöstä 'TÄHÄN' ympäristöön.</div>
 
         <input type="text" data-ng-model="model.copyFrom" placeholder="localisointi RESR uri tähän" />
+
+        {{ model.result }}
+
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="dialogCancel()">Peruuta</button>
-        <button class="btn btn-warning" ng-click="dialogOk()">Antaa palaa</button>
+        <button class="btn btn-primary" ng-click="transferDialogCancel()">Peruuta</button>
+        <button class="btn btn-warning" ng-click="transferDialogOk()">Antaa palaa</button>
     </div>
 
 </div>

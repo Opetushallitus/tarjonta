@@ -1,0 +1,1 @@
+ALTER TABLE valintakoe ADD COLUMN valintakoe_nimi varchar(255);

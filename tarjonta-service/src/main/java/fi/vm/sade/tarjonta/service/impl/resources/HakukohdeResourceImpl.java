@@ -43,7 +43,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
@@ -270,8 +270,37 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 
     @Override
-    public HakukohdeRDTO updateUiHakukohde(HakukohdeRDTO hakukohdeRDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public HakukohdeRDTO updateUiHakukohde(String oid,HakukohdeRDTO hakukohdeRDTO) {
+
+        String hakuOid = hakukohdeRDTO.getHakuOid();
+        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+        Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
+
+        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+
+        Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
+
+        hakukohde.setId(hakukohdeTemp.getId());
+        hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+        Haku haku = hakuDAO.findByOid(hakuOid);
+
+        hakukohde.setHaku(haku);
+        //TODO: add sisaiset hakuajat
+
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+        //TODO: valintakoes and liites
+
+        hakukohdeDAO.update(hakukohde);
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                return arg0.getId();
+            }
+        })));
+        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+
+        return hakukohdeRDTO;
     }
 
     @Override
@@ -492,5 +521,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 		}
     	return ret;
 	}
+
+
+
 	
 }

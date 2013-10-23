@@ -20,24 +20,32 @@ import java.io.Serializable;
  *
  * @author mlyly
  */
-public class OidRDTO implements Serializable {
+public class GenericSearchParamsRDTO implements Serializable {
 
-    private String _oid;
-    private int _version;
+    private int _startIndex = 0;
+    private int _count = 100;
 
-    public String getOid() {
-        return _oid;
+    @Override
+    public String toString() {
+        return "GenericSearchParamsRDTO[startIndex=" + getStartIndex() + ", count=" + getCount() + "]";
     }
 
-    public void setOid(String oid) {
-        this._oid = oid;
+    public int getStartIndex() {
+        return _startIndex;
     }
 
-    public int getVersion() {
-        return _version;
+    public void setStartIndex(int _startIndex) {
+        this._startIndex = _startIndex;
     }
 
-    public void setVersion(int _version) {
-        this._version = _version;
+    public int getCount() {
+        return _count;
     }
+
+    public void setCount(int _count) {
+        this._count = _count;
+    }
+
+
+
 }
