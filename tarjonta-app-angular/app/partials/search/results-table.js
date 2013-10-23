@@ -60,9 +60,9 @@ app.directive('resultsTable',function(LocalisationService, loadingService, $log)
 			scope.menuOptions = scope.options(hkOid ? hkOid : kmOid, tila, snimi, {
 				update: function(state) {
 					//console.log("UPDATE");
-	    	    	row.attr("tila", nstate);
+	    	    	row.attr("tila", state);
 	    	    	var em = $("td.state", row);
-	    	    	em.text(LocalisationService.t("tarjonta.tila."+nstate));
+	    	    	em.text(LocalisationService.t("tarjonta.tila."+state));
 				},
 				remove: function() {
 					//console.log("DETACH");
