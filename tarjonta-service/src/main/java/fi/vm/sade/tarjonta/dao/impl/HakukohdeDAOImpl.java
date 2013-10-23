@@ -136,6 +136,14 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
+        if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
+            getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class,hakukohdeLiite.getId()));
+            getEntityManager().flush();
+        }
+    }
+
+    @Override
     public Valintakoe findValintaKoeById(String id) {
         QValintakoe qValintakoe = QValintakoe.valintakoe;
         Long idLong = new Long(id);

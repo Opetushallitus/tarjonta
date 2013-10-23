@@ -148,7 +148,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
             if (hakukohdeOid != null && valintakoe != null) {
                 LOG.debug("INSERTING VALINTAKOE : {} with kieli : {}" , valintakoe.getValintakoeNimi(), valintakoe.getKieli() );
-                List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+                List<Valintakoe> valintakoes = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
                 valintakoes.add(valintakoe);
                 hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
                 ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
@@ -189,7 +189,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
             valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
 
-            List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+
+            List<Valintakoe> valintakoes = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
+            Valintakoe valintakoeToRemove = null;
+            for (Valintakoe valintakoeTemp : valintakoes) {
+                if (valintakoeTemp.getId().equals(valintakoe.getId())) {
+                    valintakoeToRemove = valintakoeTemp;
+                }
+            }
+
+            if (valintakoeToRemove != null) {
+                valintakoes.remove(valintakoeToRemove);
+            }
+
             valintakoes.add(valintakoe);
 
             hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
@@ -284,7 +296,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
              ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
              HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
-             List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
+             List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
              liites.add(hakukohdeLiite);
              hakukohdeDao.updateLiittees(liites,hakukohdeOid);
 
@@ -308,12 +320,94 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        try {
+
+            ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+
+            HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+
+            List<HakukohdeLiite> liites  = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
+            HakukohdeLiite liiteToRemove = null;
+            for (HakukohdeLiite liite:liites) {
+                if (liite.getId().equals(hakukohdeLiite.getId())) {
+                  liiteToRemove = liite;
+                }
+            }
+
+            if (liiteToRemove != null) {
+                liites.remove(liiteToRemove);
+            }
+
+            liites.add(hakukohdeLiite);
+
+            hakukohdeDao.updateLiittees(liites,hakukohdeOid);
+
+            resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
+            resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+
+            return resultRDTO;
+
+        } catch (Exception exp) {
+
+
+           ResultRDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+           errorResultDto.setStatus(ResultRDTO.ResultStatus.OK);
+           errorResultDto.addError(ErrorRDTO.createSystemError(exp,"system.error",hakukohdeOid));
+           return errorResultDto;
+
+        }
+
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        try {
+
+            HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+
+            LOG.debug("LIITE-hakukohdeLiite-id : {}",hakukohdeLiite.getId());
+
+            List<HakukohdeLiite> liitteet = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
+
+            HakukohdeLiite liiteToRemove = null;
+            for (HakukohdeLiite liite : liitteet) {
+                LOG.debug("LIITE-liite id : {}",liite.getId());
+                if (liite.getId().equals(hakukohdeLiite.getId())) {
+
+                   liiteToRemove = liite;
+                }
+            }
+
+            if (liiteToRemove != null) {
+
+                liitteet.remove(liiteToRemove);
+
+                hakukohdeDao.updateLiittees(liitteet,hakukohdeOid);
+
+                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+                booleanResultRDTO.setResult(true);
+                return booleanResultRDTO;
+            }  else {
+                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+                booleanResultRDTO.setResult(false);
+                return booleanResultRDTO;
+            }
+
+
+
+        } catch (Exception exp) {
+            ResultRDTO<Boolean> errorResult = new ResultRDTO<Boolean>();
+            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            errorResult.setResult(false);
+            errorResult.addError(ErrorRDTO.createSystemError(exp, "system.error", hakukohdeOid));
+            return errorResult;
+
+        }
+
     }
 }
