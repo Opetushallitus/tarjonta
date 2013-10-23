@@ -127,7 +127,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         this();
         this.rootOrganisaatioOids = rootOrgOids;
         if (rootOrganisaatioOids != null) {
-            criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
+            criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
         }
     }
 
@@ -151,9 +151,9 @@ public class OrganisaatiohakuView extends VerticalLayout {
         if (userContext.isDoAutoSearch()) {
             this.rootOrganisaatioOids = Lists.newArrayList(userContext.getUserOrganisations());
 
-            criteria.getOidResctrictionList().clear();
-            criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
-            LOG.info("Autosearching orgs, restrictions: " + criteria.getOidResctrictionList());
+            criteria.getOidRestrictionList().clear();
+            criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
+            LOG.info("Autosearching orgs, restrictions: " + criteria.getOidRestrictionList());
             searchOrganisaatios();
 
             //auto select
@@ -228,7 +228,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 criteria = new OrganisaatioSearchCriteria();
                 criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
-                    criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
+                    criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
                 }
                 bind();
                 //initializeData();
@@ -323,10 +323,10 @@ public class OrganisaatiohakuView extends VerticalLayout {
         long time = System.currentTimeMillis();
         LOG.debug("Doing organisaatio search");
         try {
-            criteria.getOidResctrictionList().clear();
+            criteria.getOidRestrictionList().clear();
             if (userContext.isUseRestriction()) {
                 LOG.debug("Using restriction:" + userContext.getUserOrganisations());
-                criteria.getOidResctrictionList().addAll(userContext.getUserOrganisations());
+                criteria.getOidRestrictionList().addAll(userContext.getUserOrganisations());
             }
             organisaatios = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         } catch (Exception ex) {

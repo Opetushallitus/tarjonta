@@ -415,7 +415,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
 
         criteria.setOrganisaatioTyyppi(tyyppi.value());
-        criteria.getOidResctrictionList().add(oid);
+        criteria.getOidRestrictionList().add(oid);
 
         return criteria;
     }
