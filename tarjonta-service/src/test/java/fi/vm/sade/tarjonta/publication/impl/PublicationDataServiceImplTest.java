@@ -42,11 +42,9 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -83,7 +81,7 @@ public class PublicationDataServiceImplTest {
     public void setUp() {
         em.clear();
 
-        setCurrentUser("ophadmin", getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
+        setCurrentUser("mock_test_user", getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
         //We could autowire the class, but then a 
         //test debug mode (at least in Netbean) fails.
@@ -269,53 +267,6 @@ public class PublicationDataServiceImplTest {
         publicationDataService.updatePublicationStatus(null);
     }
 
-    /**
-     * Test helper method. Initializes demo data to given status.
-     *
-     * @param komoStatus
-     * @param otherStatus
-     */
-    private void quickObjectStatusChange(TarjontaTila komoStatus, TarjontaTila... otherStatus) {
-        haku1 = em.find(Haku.class, haku1.getId());
-        hakukohde1 = em.find(Hakukohde.class, hakukohde1.getId());
-        komo1 = em.find(Koulutusmoduuli.class, komo1.getId());
-        komoto1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
-
-        komo1.setTila(komoStatus);
-        if (otherStatus.length == 3) {
-            komoto1.setTila(otherStatus[0]);
-            haku1.setTila(otherStatus[1]);
-            hakukohde1.setTila(otherStatus[2]);
-        } else if (otherStatus.length == 1 && otherStatus != null) {
-            final TarjontaTila tila = otherStatus[0];
-            komoto1.setTila(tila);
-            haku1.setTila(tila);
-            hakukohde1.setTila(tila);
-        } else {
-            throw new RuntimeException("Test data error.");
-        }
-        insertMergeDetach(false);
-
-        final Haku h1 = em.find(Haku.class, haku1.getId());
-        final Hakukohde hk1 = em.find(Hakukohde.class, hakukohde1.getId());
-        final KoulutusmoduuliToteutus k1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
-
-        em.detach(h1);
-        em.detach(hk1);
-        em.detach(k1);
-
-        if (otherStatus.length == 3) {
-            assertEquals("komoto", otherStatus[0], k1.getTila());
-            assertEquals("haku", otherStatus[1], h1.getTila());
-            assertEquals("hakukohde", otherStatus[2], hk1.getTila());
-        } else if (otherStatus.length == 1 && otherStatus != null) {
-            final TarjontaTila tila = otherStatus[0];
-            assertEquals("komoto", tila, k1.getTila());
-            assertEquals("haku", tila, h1.getTila());
-            assertEquals("hakukohde", tila, hk1.getTila());
-        }
-    }
-
     @Test
     public void testSearchHakukohteetByHakuOid() {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
@@ -344,6 +295,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        checkLastUpdatedFields(true, true, true);
 
         //partial publish - only the haku and hakukohde is published
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
@@ -351,6 +303,7 @@ public class PublicationDataServiceImplTest {
 
         //koulutusohjelma not published as it's still luonnos
         check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU);
+        checkLastUpdatedFields(true, false, true);
     }
 
     @Test
@@ -384,18 +337,20 @@ public class PublicationDataServiceImplTest {
         list.add(g2);
 
         /*
-         * Haku not yet ready => no status change fot hakukohde.
+         * Haku not yet ready => no status change for hakukohde.
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        checkLastUpdatedFields(false, true, false);
 
         /*
          * The happy path - in this case also the hakukohde will be published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
-        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        checkLastUpdatedFields(false, true, false);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
 
         /*
          * The partial path - only toteutus is published
@@ -403,6 +358,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
+        checkLastUpdatedFields(false, true, false);
     }
 
     @Test
@@ -474,6 +430,85 @@ public class PublicationDataServiceImplTest {
         assertEquals("haku", statusHaku, h1.getTila());
         assertEquals("toteutus", statusToteutus, k1.getTila());
         assertEquals("hakukohde", statusHakukohde, hk1.getTila());
+    }
+
+    private void checkLastUpdatedFields(boolean haku, boolean toteutus, boolean hakukohde) {
+        Haku h1 = em.find(Haku.class, haku1.getId());
+        Hakukohde hk1 = em.find(Hakukohde.class, hakukohde1.getId());
+        KoulutusmoduuliToteutus k1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        em.detach(h1);
+        em.detach(hk1);
+        em.detach(k1);
+
+        if (haku) {
+            assertNotNull("haku last update date", h1.getLastUpdateDate());
+            assertEquals("haku last update by oid", "mock_test_user", h1.getLastUpdatedByOid());
+        }
+
+        if (toteutus) {
+            assertNotNull("toteutus last update date", k1.getUpdated());
+            assertEquals("toteutus last update by oid", "mock_test_user", k1.getLastUpdatedByOid());
+        }
+
+        if (hakukohde) {
+            assertNotNull("hakukohde last update date", hk1.getLastUpdateDate());
+            assertEquals("hakukohde last update by oid", "mock_test_user", hk1.getLastUpdatedByOid());
+        }
+    }
+
+    /**
+     * Test helper method. Initializes demo data to given status.
+     *
+     * @param komoStatus
+     * @param otherStatus
+     */
+    private void quickObjectStatusChange(TarjontaTila komoStatus, TarjontaTila... otherStatus) {
+        haku1 = em.find(Haku.class, haku1.getId());
+        hakukohde1 = em.find(Hakukohde.class, hakukohde1.getId());
+        komo1 = em.find(Koulutusmoduuli.class, komo1.getId());
+        komoto1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        haku1.setLastUpdateDate(null);
+        haku1.setLastUpdatedByOid(null);
+        //komoto1.setLastUpdateDate(null);
+        komoto1.setLastUpdatedByOid(null);
+        hakukohde1.setLastUpdateDate(null);
+        hakukohde1.setLastUpdatedByOid(null);
+
+        komo1.setTila(komoStatus);
+        if (otherStatus.length == 3) {
+            komoto1.setTila(otherStatus[0]);
+            haku1.setTila(otherStatus[1]);
+            hakukohde1.setTila(otherStatus[2]);
+        } else if (otherStatus.length == 1 && otherStatus != null) {
+            final TarjontaTila tila = otherStatus[0];
+            komoto1.setTila(tila);
+            haku1.setTila(tila);
+            hakukohde1.setTila(tila);
+        } else {
+            throw new RuntimeException("Test data error.");
+        }
+        insertMergeDetach(false);
+
+        final Haku h1 = em.find(Haku.class, haku1.getId());
+        final Hakukohde hk1 = em.find(Hakukohde.class, hakukohde1.getId());
+        final KoulutusmoduuliToteutus k1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        em.detach(h1);
+        em.detach(hk1);
+        em.detach(k1);
+
+        if (otherStatus.length == 3) {
+            assertEquals("komoto", otherStatus[0], k1.getTila());
+            assertEquals("haku", otherStatus[1], h1.getTila());
+            assertEquals("hakukohde", otherStatus[2], hk1.getTila());
+        } else if (otherStatus.length == 1 && otherStatus != null) {
+            final TarjontaTila tila = otherStatus[0];
+            assertEquals("komoto", tila, k1.getTila());
+            assertEquals("haku", tila, h1.getTila());
+            assertEquals("hakukohde", tila, hk1.getTila());
+        }
     }
 
     protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {

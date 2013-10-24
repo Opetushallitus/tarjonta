@@ -330,7 +330,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         final Date lastUpdatedDate = new Date();
 
         final String userOid = getUserOid();
-        Preconditions.checkNotNull(userOid, "Authentication user OID cannot be null.");
+        Preconditions.checkNotNull(userOid, "User OID cannot be null.");
 
         switch (dataType) {
             case HAKU:
@@ -342,7 +342,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                     qHaku.and(QHaku.haku.tila.eq(requiredStatus));
                 }
 
-                hakuUpdate.where(qHaku).set(QHaku.haku.tila, toStatus);
+                hakuUpdate.where(qHaku).set(QHaku.haku.tila, toStatus)
+                        .set(QHaku.haku.lastUpdateDate, lastUpdatedDate)
+                        .set(QHaku.haku.lastUpdatedByOid, userOid);
                 hakuUpdate.execute();
 
                 //update all other data relations to give status
@@ -368,7 +370,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             case KOMO:
                 JPAUpdateClause komoUpdate = new JPAUpdateClause(em, QKoulutusmoduuli.koulutusmoduuli);
                 komoUpdate.where(QKoulutusmoduuli.koulutusmoduuli.oid.in(oids))
-                        .set(QKoulutusmoduuli.koulutusmoduuli.tila, toStatus);
+                        .set(QKoulutusmoduuli.koulutusmoduuli.tila, toStatus) 
+                        .set(QKoulutusmoduuli.koulutusmoduuli.updated, lastUpdatedDate);
                 komoUpdate.execute();
                 break;
             case KOMOTO:
