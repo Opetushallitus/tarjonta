@@ -47,6 +47,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.generic.ui.portlet.security.User;
+import fi.vm.sade.security.SadeUserDetailsWrapper;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -80,6 +82,9 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
+import java.util.Map.Entry;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author Tuomas Katva
@@ -328,8 +333,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private boolean checkHakuAndHakukohdekoulutusKaudet(HakukohdeTyyppi hakukohde, Haku haku) {
 
-
-
         //Get hakukohde koulutukses
         if (hakukohde.getHakukohteenKoulutusOidit() != null) {
 
@@ -344,12 +347,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 }
             }
 
-
         } else {
             //If hakukohde does not have koulutukses it is a fault -> return false
             return false;
         }
-
 
         return true;
     }
@@ -435,7 +436,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
 
             //If hakukohde has other koulutukses then just update it, otherwise remove it.
-
             if (!parameters.isLisaa()) {
                 if (originalHakukohdeKoulutusCount > numberOfKoulutuksesToRemove) {
                     log.info("Removing : {} koulutukses from : {} koulutukses", poistettavatModuuliLinkit.size(), hakukohde.getKoulutusmoduuliToteutuses().size());
@@ -514,7 +514,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
-
         //return fresh copy (that has fresh version so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
         return publicService.lueHakukohde(kysely).getHakukohde();
@@ -577,7 +576,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
-        
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
 
@@ -594,7 +592,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
@@ -708,7 +705,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(komoKoosteTyyppi));
         }
 
-
         if (komoKoosteTyyppi.getParentOid() != null) {
             //added KOMO was a child, not parent.
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
@@ -756,9 +752,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         convertedKomo.setNimi(null);
 
         koulutusmoduuliDAO.update(convertedKomo);
-
-
-
 
         return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(convertedKomo);
     }
@@ -911,8 +904,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
+
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        indexTilatToSolr(tarjontatiedonTila);
+        //indexTilatToSolr(tarjontatiedonTila); 
         return new PaivitaTilaVastausTyyppi();
     }
 
@@ -941,13 +935,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private void addRelatedHakukohteetAndKoulutukset(String hakuOid, List<Long> komotoIds, List<Long> hakukohdeIds) {
         List<String> hakuOids = new ArrayList<String>();
         hakuOids.add(hakuOid);
-        List<Hakukohde> hakukohteet = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
-        for (Hakukohde curhakukohde : hakukohteet) {
-            hakukohdeIds.add(curhakukohde.getId());
-            for (KoulutusmoduuliToteutus komoto : curhakukohde.getKoulutusmoduuliToteutuses()) {
-                komotoIds.add(komoto.getId());
-            }
-        }
+
+        //Hakukohde IDs
+        List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
+
+        //toteutus Ids
+        komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
     }
 
     @Override
@@ -975,7 +968,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         result.setKategoria(md.getKategoria());
         result.setAvain(md.getAvain());
         result.setArvo(md.getArvo());
-
 
         return result;
     }
@@ -1016,4 +1008,5 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return result;
     }
+
 }

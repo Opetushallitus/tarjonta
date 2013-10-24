@@ -32,7 +32,7 @@ public class YhteyshenkiloResourceImpl implements YhteyshenkiloResource {
     @Override
     public List<YhteyshenkiloRDTO> getByOID(String tarjoajaOid, String searchTerm) {
         List<String> organisaatioOids = new ArrayList<String>();//getTarjoaja().getOrganisaatioOidTree();
-        organisaatioOids.add(tarjoajaOid);
+        organisaatioOids.add(tarjoajaOid); 
 
         //If given string is null or empty returning an empty list, i.e. not doing an empty search.
         Preconditions.checkNotNull(organisaatioOids, "A list of organisaatio OIDs cannot be null.");
