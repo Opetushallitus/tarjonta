@@ -23,7 +23,8 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class TestTarjontaSavu {
 
-    private WebDriver driver;
+    private static WebDriver driver = null;
+    private static Boolean driverQuit = false;
     private String baseUrl;
     private StringBuffer verificationErrors = new StringBuffer();
     private SVTUtils doit = new SVTUtils();
@@ -36,7 +37,7 @@ public class TestTarjontaSavu {
     	{
     		FirefoxProfile firefoxProfile = new FirefoxProfile();
     		firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
-    		driver = new FirefoxDriver(firefoxProfile);
+            if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
 //    		driver = new FirefoxDriver(new FirefoxBinary(new File("c:/Selaimet/Firefox17/firefox.exe")), firefoxProfile);
     	}
     	else
@@ -61,7 +62,7 @@ public class TestTarjontaSavu {
     	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
     	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
-
+/* TODO remove this
     @Test
     public void test_T_INT_TAR_SAVU001_Etusivu() throws Exception {
     	doit.echo("Running test_T_INT_TAR_SAVU001_Etusivu ...");
@@ -126,6 +127,8 @@ public class TestTarjontaSavu {
 		doit.footerTest(driver, "Running Luo uusi lukiokoulutus + jatka footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU011_DialogLuoLukiokoulutus OK");
         doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(1);
     }
 
     @Test
@@ -141,6 +144,8 @@ public class TestTarjontaSavu {
 		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU012_MuokkaaLukiokoulutusta OK");
         doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(1);
     }
 
     @Test
@@ -153,6 +158,8 @@ public class TestTarjontaSavu {
         		, doit.textElement(driver, "muiden toimijoiden kanssa")); // lukiokoulutus
 		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU013_MuokkaaLukiokoulutustaKuvailevat OK");
+        doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
         doit.tauko(1);
     }
 
@@ -184,6 +191,8 @@ public class TestTarjontaSavu {
     	while (! doit.isPresentText(driver, "koulutuksen toiseen organisaatioon tai kopioida koulutuksen uuden koulutuksen pohjaksi. Valitse toimenpide, jonka haluat")) 
     	{ doit.tauko(1); }
     	doit.echo("Running test_T_INT_TAR_SAVU014_DialogSiirraTaiKopioiLukio OK");
+    	doit.tauko(1);
+    	doit.textClick(driver, "Peruuta");
     	doit.tauko(1);
     }
 
@@ -228,6 +237,8 @@ public class TestTarjontaSavu {
     	WebElement close = driver.findElement(By.id(closeId));
     	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi.", close);
     	doit.echo("Running test_T_INT_TAR_SAVU016_PoistaLukiokoulutukseltaHakukohde OK");
+    	doit.tauko(1);
+    	close.click();
     	doit.tauko(1);
     }
 
@@ -299,6 +310,8 @@ public class TestTarjontaSavu {
 		doit.footerTest(driver, "Running Luo uusi ammatillinenkoulutus + jatka footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU021_DialogLuoAMP OK");
         doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(1);
     }
 
     @Test
@@ -314,6 +327,8 @@ public class TestTarjontaSavu {
 		doit.footerTest(driver, "Running TARKASTELE AMMATILLISTAKOULUTUSTA footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU022_MuokkaaAMPkoulutusta OK");
         doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(1);
     }
 
     @Test
@@ -327,6 +342,8 @@ public class TestTarjontaSavu {
         		, doit.textElement(driver, "Koulutusohjelman valinta")); // Ammatillinen koulutus
 		doit.footerTest(driver, "Running MUOKKAA KOULUTUSTA koulutuksen kuvailevat tiedot footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU023_MuokkaaAMPkoulutustaKuvailevat OK");
+        doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
         doit.tauko(1);
     }
 
@@ -342,6 +359,8 @@ public class TestTarjontaSavu {
         Assert.assertNotNull("Running SIIRRA TAI KOPIOI ei toimi.", doit.textElement(driver, dlgText));
     	doit.echo("Running test_T_INT_TAR_SAVU024_DialogSiirraTaiKopioiAMP OK");
         doit.tauko(1);
+        doit.textClick(driver, "Peruuta");
+        doit.tauko(1);
     }
 
     @Test
@@ -353,6 +372,8 @@ public class TestTarjontaSavu {
         		, doit.textElement(driver, "Jatko-opintomahdollisuudet"));
 		doit.footerTest(driver, "Running TARKASTELE KOULUTUSTA footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU025_TarkasteleAMPkoulutusta OK");
+        doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
         doit.tauko(1);
     }
 
@@ -380,9 +401,12 @@ public class TestTarjontaSavu {
     	String closeId = doit.idLike(driver, "window_close");
     	WebElement close = driver.findElement(By.id(closeId));
     	Assert.assertNotNull("Running POISTA KOULUTUKSESTA ei toimi.", close);
-    	doit.footerTest(driver, "Running HAKUKOHTEEN KOULUTUKSESTA footer ei toimi.", true);
     	doit.echo("Running test_T_INT_TAR_SAVU026_PoistaAMPstaHakukohde OK");
     	doit.tauko(1);
+    	close.click();
+    	doit.tauko(1);
+        driver.findElement(By.className("v-button-back")).click();
+        doit.tauko(1);
     }
     
     @Test
@@ -398,6 +422,8 @@ public class TestTarjontaSavu {
     	WebElement close = driver.findElement(By.id(closeId));
     	Assert.assertNotNull("Running POISTA KOULUTUS ei toimi.", close);
     	doit.echo("Running test_T_INT_TAR_SAVU027_DialogPoistaAMPKoulutus OK");
+    	doit.tauko(1);
+    	close.click();
     	doit.tauko(1);
     }
     
@@ -500,7 +526,7 @@ public class TestTarjontaSavu {
     	doit.echo("Running test_T_INT_TAR_SAVU107_HAKO_MuokkaaAMPHakukohteenLiitteidenTiedot OK");
     	doit.tauko(1);
     }
-
+*/
     @Test
     public void test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite() throws Exception {
     	doit.echo("Running test_T_INT_TAR_SAVU111_HAKO_MuokkaaAMPHakukohdeLisaaUusiLiite ...");
@@ -944,6 +970,8 @@ public class TestTarjontaSavu {
     			testValinnatLoop();
     		}
     	}
+        driver.quit();
+        driverQuit = true;
     }
 
 	public void testValinnatLoop() throws Exception {
@@ -977,10 +1005,11 @@ public class TestTarjontaSavu {
 	
     @After
     public void tearDown() throws Exception {
-            driver.quit();
-            String verificationErrorString = verificationErrors.toString();
-            if (!"".equals(verificationErrorString)) {
-                    fail(verificationErrorString);
-            }
+//        driver.quit();
+//        driverQuit = true;
+        String verificationErrorString = verificationErrors.toString();
+        if (!"".equals(verificationErrorString)) {
+        	fail(verificationErrorString);
+        }
     }
 }
