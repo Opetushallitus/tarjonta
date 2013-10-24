@@ -38,7 +38,6 @@ import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,9 +76,6 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
 
 /**
  * @author Tuomas Katva
@@ -277,7 +273,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             liites.add(hakukohdeLiite);
         }
 
-        hakukohdeDAO.updateLiittees(liites, hakukohdeOid);
+        hakukohdeDAO.insertLiittees(liites, hakukohdeOid);
     }
 
     private List<HakukohdeLiite> convertLiiteTyyppi(List<HakukohdeLiiteTyyppi> tyyppis) {

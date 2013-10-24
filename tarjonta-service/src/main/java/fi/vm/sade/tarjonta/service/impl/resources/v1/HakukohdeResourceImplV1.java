@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
@@ -187,24 +186,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
         try {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
-            valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
 
 
-            List<Valintakoe> valintakoes = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
-            Valintakoe valintakoeToRemove = null;
-            for (Valintakoe valintakoeTemp : valintakoes) {
-                if (valintakoeTemp.getId().equals(valintakoe.getId())) {
-                    valintakoeToRemove = valintakoeTemp;
-                }
-            }
-
-            if (valintakoeToRemove != null) {
-                valintakoes.remove(valintakoeToRemove);
-            }
-
-            valintakoes.add(valintakoe);
-
-            hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
+            hakukohdeDao.updateSingleValintakoe(valintakoe,hakukohdeOid);
 
             ResultRDTO<ValintakoeV1RDTO> valintakoeResult = new ResultRDTO<ValintakoeV1RDTO>();
             valintakoeResult.setStatus(ResultRDTO.ResultStatus.OK);
@@ -298,7 +282,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
              HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
              List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
              liites.add(hakukohdeLiite);
-             hakukohdeDao.updateLiittees(liites,hakukohdeOid);
+             hakukohdeDao.insertLiittees(liites, hakukohdeOid);
 
              resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
              resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
@@ -327,21 +311,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
             HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
 
-            List<HakukohdeLiite> liites  = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
-            HakukohdeLiite liiteToRemove = null;
-            for (HakukohdeLiite liite:liites) {
-                if (liite.getId().equals(hakukohdeLiite.getId())) {
-                  liiteToRemove = liite;
-                }
-            }
 
-            if (liiteToRemove != null) {
-                liites.remove(liiteToRemove);
-            }
 
-            liites.add(hakukohdeLiite);
-
-            hakukohdeDao.updateLiittees(liites,hakukohdeOid);
+            hakukohdeDao.updateLiite(hakukohdeLiite,hakukohdeOid);
 
             resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
             resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
@@ -368,24 +340,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
             HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
 
-            LOG.debug("LIITE-hakukohdeLiite-id : {}",hakukohdeLiite.getId());
 
-            List<HakukohdeLiite> liitteet = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
 
-            HakukohdeLiite liiteToRemove = null;
-            for (HakukohdeLiite liite : liitteet) {
-                LOG.debug("LIITE-liite id : {}",liite.getId());
-                if (liite.getId().equals(hakukohdeLiite.getId())) {
+            if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
 
-                   liiteToRemove = liite;
-                }
-            }
-
-            if (liiteToRemove != null) {
-
-                liitteet.remove(liiteToRemove);
-
-                hakukohdeDao.updateLiittees(liitteet,hakukohdeOid);
+               hakukohdeDao.removeHakukohdeLiite(hakukohdeLiite);
 
                 ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
                 booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
