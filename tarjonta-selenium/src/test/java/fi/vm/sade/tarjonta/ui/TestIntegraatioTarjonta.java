@@ -74,8 +74,11 @@ public class TestIntegraatioTarjonta {
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.linkKoulutusLuonnosta(driver, "ylioppilastut");
-		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
+//    	WebElement menu = doit.linkKoulutusLuonnosta(driver, "ylioppilastut");
+//    	doit.menuOperaatio(driver, "Muokkaa", "luonnos");
+		doit.haeKoulutuksia(driver, "Luonnos", "ylioppilastut");
+		doit.triangleClickFirstTriangle(driver);
+		doit.menuOperaatioFirstMenu(driver, "Muokkaa");
         Assert.assertNotNull("Running test_T_INT_TAR_KOUL001 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
     	doit.echo("Running test_T_INT_TAR_KOUL001 OK");
