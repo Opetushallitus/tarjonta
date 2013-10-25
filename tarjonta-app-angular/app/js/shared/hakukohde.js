@@ -15,7 +15,7 @@
 
 var app = angular.module('Hakukohde', ['ngResource','config']);
 
-
+//TODO: after refactoring the rest to v1 change this
 app.factory('Hakukohde',function($resource, $log,$q, Config){
 
 
@@ -36,6 +36,37 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
             method: 'GET',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
+    });
+
+
+
+});
+
+
+app.factory('Valintakoe',function($resource, $log,$q, Config) {
+
+    //var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix+"v1/hakukohde/:oid/valintakoe";
+
+    var hakukohdeValintakoeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:oid/valintakoe";
+
+    return $resource(hakukohdeValintakoeUri,{oid:'@oid'},{
+        update: {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        insert: {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        getAll : {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        remove : {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        }
+
     });
 
 });

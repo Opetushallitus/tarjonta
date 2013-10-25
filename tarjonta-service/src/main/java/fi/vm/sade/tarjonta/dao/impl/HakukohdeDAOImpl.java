@@ -106,7 +106,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         Valintakoe managedValintakoe  = findValintaKoeById(valintakoe.getId().toString());
 
-        managedValintakoe.setKuvaus(valintakoe.getKuvaus());
+        if (valintakoe.getKuvaus() != null) {
+            managedValintakoe.setKuvaus(valintakoe.getKuvaus());
+        }
+
         managedValintakoe.setAjankohtas(valintakoe.getAjankohtas());
         managedValintakoe.setKieli(valintakoe.getKieli());
         managedValintakoe.setLisanaytot(valintakoe.getLisanaytot());
