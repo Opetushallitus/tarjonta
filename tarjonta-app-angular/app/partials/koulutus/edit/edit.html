@@ -1,7 +1,11 @@
-<div ng-controller="BaseEditController">
-    <div ng-include="getKoulutusPartialName('edit')"></div>
+<div id="editKoulutus" ng-controller="BaseEditController">
 
-    <hr>
+    <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
+    <div class="body" ng-include="getKoulutusPartialName('edit')"></div>
+
+    <hr/>
+	<div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
+    
     <div ng-click="xmodel.collapse.model = !xmodel.collapse.model">
         <div class="collapseHeader" ng-class="{isOpen : !xmodel.collapse.model}">Sivun data / malli:</div>
     </div>

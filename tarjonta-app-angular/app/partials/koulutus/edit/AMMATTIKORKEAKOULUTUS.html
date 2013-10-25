@@ -1,28 +1,9 @@
-<div>
-    <div class="container-fluid">
 
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="span10">{{model.organisaatio.nimi}}</div>
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="btn" data-ng-click="goBack($event)"><div tt='koulutus.edit.takaisin'></div></div>
-                <div class="btn" ng-click="saveLuonnos($event)"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
-                <div class="btn" ng-click="saveValmis($event)"><div tt='koulutus.edit.tallenna.valmis'></div></div>
-                <div class="btn" ng-click="goToReview($event)"><div tt='koulutus.edit.tallenna.jatka'></div></div>
-            </div>
-        </div>
-    </div>
-    <br/>
-    <tabset>
-        <tab heading="perustiedot">
-            <div ng-include="'partials/koulutus/edit/editPerustiedot.html'"></div>
-        </tab>
-        <tab heading="lisatiedot">
-            <div ng-include="'partials/koulutus/edit/editLisatiedot.html'"></div>
-        </tab>
-    </tabset>
-
-</div>
+<tabset>
+    <tab heading="{{t('koulutus.edit.perustiedot')}}">
+        <div ng-include="'partials/koulutus/edit/editPerustiedot.html'"></div>
+    </tab>
+    <tab heading="{{t('koulutus.edit.lisatiedot')}}">
+        <div ng-include="'partials/koulutus/edit/editLisatiedot.html'"></div>
+    </tab>
+</tabset>
