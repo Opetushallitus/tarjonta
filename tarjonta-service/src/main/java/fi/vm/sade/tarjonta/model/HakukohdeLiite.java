@@ -158,7 +158,9 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     }
 
     public void setHakukohdeLiiteNimi(String hakukohdeLiiteNimi) {
+
         this.hakukohdeLiiteNimi = hakukohdeLiiteNimi;
     }
+
 }
 

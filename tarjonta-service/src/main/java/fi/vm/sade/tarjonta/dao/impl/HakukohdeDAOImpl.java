@@ -87,10 +87,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
-    public void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid) {
+    public void insertLiittees(List<HakukohdeLiite> liites, String hakukohdeOid) {
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
 
-        hakukohde.getLiites().clear();
+        //hakukohde.getLiites().clear();
 
         for (HakukohdeLiite liite : liites) {
             liite.setHakukohde(hakukohde);
@@ -99,6 +99,43 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         hakukohde.getLiites().addAll(liites);
 
         getEntityManager().flush();
+    }
+
+    @Override
+    public void updateSingleValintakoe(Valintakoe valintakoe, String hakukohdeOid) {
+
+        Valintakoe managedValintakoe  = findValintaKoeById(valintakoe.getId().toString());
+
+        managedValintakoe.setKuvaus(valintakoe.getKuvaus());
+        managedValintakoe.setAjankohtas(valintakoe.getAjankohtas());
+        managedValintakoe.setKieli(valintakoe.getKieli());
+        managedValintakoe.setLisanaytot(valintakoe.getLisanaytot());
+        managedValintakoe.setPisterajat(valintakoe.getPisterajat());
+        managedValintakoe.setValintakoeNimi(valintakoe.getValintakoeNimi());
+        managedValintakoe.setTyyppiUri(valintakoe.getTyyppiUri());
+
+
+    }
+
+    @Override
+    public void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid) {
+
+       HakukohdeLiite managedLiite = findHakuKohdeLiiteById(hakukohdeLiite.getId().toString());
+
+
+
+        //Ugly, but so is Hibernate
+       managedLiite.setErapaiva(hakukohdeLiite.getErapaiva());
+       managedLiite.setKieli(hakukohdeLiite.getKieli());
+       managedLiite.setHakukohdeLiiteNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
+       managedLiite.setKuvaus(hakukohdeLiite.getKuvaus());
+       managedLiite.setLiitetyyppi(hakukohdeLiite.getLiitetyyppi());
+       managedLiite.setSahkoinenToimitusosoite(hakukohdeLiite.getSahkoinenToimitusosoite());
+       managedLiite.setToimitusosoite(hakukohdeLiite.getToimitusosoite());
+
+
+       getEntityManager().flush();
+
     }
 
     @Override
@@ -131,6 +168,14 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoe != null && valintakoe.getId() != null) {
             getEntityManager().remove(getEntityManager().find(Valintakoe.class, valintakoe.getId()));
+            getEntityManager().flush();
+        }
+    }
+
+    @Override
+    public void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
+        if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
+            getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class,hakukohdeLiite.getId()));
             getEntityManager().flush();
         }
     }

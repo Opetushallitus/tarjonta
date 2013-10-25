@@ -395,8 +395,11 @@ public class TestTarjontaPunainenLanka {
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
 
     	// HAE
-		WebElement menu = doit.linkKoulutusLuonnosta(driver, kouluTyypinValinta);
-		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
+//		WebElement menu = doit.linkKoulutusLuonnosta(driver, kouluTyypinValinta);
+//		doit.menuOperaatio(driver, "Muokkaa", "luonnos");
+    	doit.haeKoulutuksia(driver, "Luonnos", kouluTyypinValinta);
+    	doit.triangleClickFirstTriangle(driver);
+    	doit.menuOperaatioFirstMenu(driver, "Muokkaa");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0804 muokkaa ei toimi."
                 , doit.textElement(driver, "Tutkintonimike"));
         String puhelinnumero = (System.currentTimeMillis() + "").substring(6);
@@ -751,8 +754,8 @@ public class TestTarjontaPunainenLanka {
         doit.tauko(1);
     	
         String ilmoitettavat = (System.currentTimeMillis() + "").substring(7);
-        doit.sendInput(driver, "Hakijoille ilmoitettavat aloituspaikat", ilmoitettavat);
-        doit.sendInput(driver, "Valinnoissa käytettävät aloituspaikat", "10");
+        doit.sendInput(driver, "Hakijoille ilmoitettavat aloituspaikat", ilmoitettavat + "\t");
+        doit.sendInput(driver, "Valinnoissa käytettävät aloituspaikat", "10\t");
         
 //        doit.sendInputPlusX(driver, "Alku:", "31.07.2014 15:24", 20);
 //        doit.sendInput(driver, "Loppu:", "30.09.2014 15:24");

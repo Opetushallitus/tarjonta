@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
@@ -148,7 +147,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
             if (hakukohdeOid != null && valintakoe != null) {
                 LOG.debug("INSERTING VALINTAKOE : {} with kieli : {}" , valintakoe.getValintakoeNimi(), valintakoe.getKieli() );
-                List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+                List<Valintakoe> valintakoes = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
                 valintakoes.add(valintakoe);
                 hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
                 ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
@@ -187,12 +186,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
         try {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
-            valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
 
-            List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
-            valintakoes.add(valintakoe);
 
-            hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
+            hakukohdeDao.updateSingleValintakoe(valintakoe,hakukohdeOid);
 
             ResultRDTO<ValintakoeV1RDTO> valintakoeResult = new ResultRDTO<ValintakoeV1RDTO>();
             valintakoeResult.setStatus(ResultRDTO.ResultStatus.OK);
@@ -284,9 +280,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
              ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
              HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
-             List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
+             List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
              liites.add(hakukohdeLiite);
-             hakukohdeDao.updateLiittees(liites,hakukohdeOid);
+             hakukohdeDao.insertLiittees(liites, hakukohdeOid);
 
              resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
              resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
@@ -308,12 +304,69 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        try {
+
+            ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+
+            HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+
+
+
+            hakukohdeDao.updateLiite(hakukohdeLiite,hakukohdeOid);
+
+            resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
+            resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+
+            return resultRDTO;
+
+        } catch (Exception exp) {
+
+
+           ResultRDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+           errorResultDto.setStatus(ResultRDTO.ResultStatus.OK);
+           errorResultDto.addError(ErrorRDTO.createSystemError(exp,"system.error",hakukohdeOid));
+           return errorResultDto;
+
+        }
+
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        try {
+
+            HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+
+
+
+            if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
+
+               hakukohdeDao.removeHakukohdeLiite(hakukohdeLiite);
+
+                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+                booleanResultRDTO.setResult(true);
+                return booleanResultRDTO;
+            }  else {
+                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+                booleanResultRDTO.setResult(false);
+                return booleanResultRDTO;
+            }
+
+
+
+        } catch (Exception exp) {
+            ResultRDTO<Boolean> errorResult = new ResultRDTO<Boolean>();
+            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            errorResult.setResult(false);
+            errorResult.addError(ErrorRDTO.createSystemError(exp, "system.error", hakukohdeOid));
+            return errorResult;
+
+        }
+
     }
 }

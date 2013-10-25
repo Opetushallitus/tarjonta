@@ -56,9 +56,15 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     void removeValintakoe(Valintakoe valintakoe);
 
+    void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite);
+
     void updateValintakoe(List<Valintakoe> valintakoes, String hakukohdeOid);
 
-    void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
+    void updateSingleValintakoe(Valintakoe valintakoe, String hakukohdeOid);
+
+    void insertLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
+
+    void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid);
 
     // String getAlkamiskausiUri();
 
