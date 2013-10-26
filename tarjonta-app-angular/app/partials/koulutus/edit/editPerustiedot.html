@@ -192,21 +192,10 @@
 	<tr>
 		<th>{{t('koulutus.edit.opetusmuodot')}}</th>
 		<td>
-			<!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.opetusmuodot.tekstis"></select-->
-			<!--koodistomultiselect selectedkoodiuris="uiModel.opetusmuodos.data" koodiuris="uiModel.opetusmuodos.uris" koodistouri="config.env['koodisto-uris.opetusmuoto']" locale="'FI'"></koodistomultiselect-->
-			<div style="float: left;">
-			    <select multiple="multiple"
-			            ng-model="uiModel.opetusmuodos.uris"
-			            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetusmuodos.data | orderBy:'koodiNimi'">
-			    </select>
-			</div>
-			<div style="float: left;">
-			    <ul>
-			        <li ng-repeat="uri in uiModel.opetusmuodos.uris">
-			            {{searchKoodiByKoodiUri(uri, uiModel.opetusmuodos).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetusmuodos)">X</a>]
-			        </li>
-			    </ul>
-			</div>
+			<multi-select
+			 	model="uiModel.opetusmuodos.data"
+			 	selection="uiModel.opetusmuodos.uris"
+			 	columns="2"/>
 		</td>
 		<td></td>
 	</tr>
@@ -215,24 +204,9 @@
 	<tr>
 		<th>{{t('koulutus.edit.pohjakoulutusvaatimus')}}</th>
 		<td>
-			<!--select multiple data-ng-options="o.koodi.uri as o.arvo for o in model.pohjakoulutusvaatimus.tekstis">
-			    <option value="pohjakoulutusvaatimus">test data</option>>
-			</select-->
-			
-			<!--koodistomultiselect selectedkoodiuris="uiModel.pohjakoulutusvaatimukset.data" koodiuris="uiModel.pohjakoulutusvaatimukset.uris" koodistouri="config.env['koodisto-uris.pohjakoulutusvaatimus']" locale="'FI'"></koodistomultiselect-->
-			<div style="float: left;">
-			    <select multiple="multiple"
-			            ng-model="uiModel.pohjakoulutusvaatimukset.uris"
-			            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.pohjakoulutusvaatimukset.data | orderBy:'koodiNimi'">
-			    </select>
-			</div>
-			<div style="float: left;">
-			    <ul>
-			        <li ng-repeat="uri in uiModel.pohjakoulutusvaatimukset.uris">
-			            {{searchKoodiByKoodiUri(uri, uiModel.pohjakoulutusvaatimukset).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.pohjakoulutusvaatimukset)">X</a>]
-			        </li>
-			    </ul>
-			</div>
+			<multi-select
+			 	model="uiModel.pohjakoulutusvaatimukset.data"
+			 	selection="uiModel.pohjakoulutusvaatimukset.uris"/>
 		</td>
 		<td></td>
 	</tr>
@@ -241,19 +215,10 @@
 	<tr>
 		<th>{{t('koulutus.edit.teemat')}}</th>
 		<td>
-			<div style="float: left;">
-			    <select multiple="multiple"
-			            ng-model="uiModel.teemas.uris"
-			            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.teemas.data | orderBy:'koodiNimi'">
-			    </select>
-			</div>
-			<div style="float: left;">
-			    <ul>
-			        <li ng-repeat="uri in uiModel.teemas.uris">
-			            {{searchKoodiByKoodiUri(uri, uiModel.teemas).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.teemas)">X</a>]
-			        </li>
-			    </ul>
-			</div>
+			<multi-select
+			 	model="uiModel.teemas.data"
+			 	selection="uiModel.teemas.uris"
+			 	columns="2"/>
 		</td>
 		<td></td>
 	</tr>

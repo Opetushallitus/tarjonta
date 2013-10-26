@@ -1,5 +1,5 @@
 
-var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload']);
+var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect']);
 app.controller('BaseEditController',
         ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',

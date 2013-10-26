@@ -1,0 +1,12 @@
+<table class="checklist">
+	<tr ng-repeat="r in rows">
+		<td ng-repeat="e in r">
+			<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> {{e.value}}
+		</td>
+	</tr>
+	<!--
+	<div ng-repeat="e in items">
+		<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> {{e.value}}
+	</div>
+	 -->
+</table>

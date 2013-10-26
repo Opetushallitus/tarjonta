@@ -6,11 +6,13 @@
     <hr/>
 	<div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
     
+    <!-- 
     <div ng-click="xmodel.collapse.model = !xmodel.collapse.model">
         <div class="collapseHeader" ng-class="{isOpen : !xmodel.collapse.model}">Sivun data / malli:</div>
     </div>
 
-    <div collapse="xmodel.collapse.model">
+    <div ng-if="!model.collapse.model">
+     <div collapse="xmodel.collapse.model"">
         TODO fiksaa mallit jotensakin mielekkääksi?
         yksi "model" jonka alla kaikki on? "model.koulutus", "model.uimodel", "model.locale", "model.opetuskieli", etc.
 
@@ -33,4 +35,7 @@
             LOCALE: {{ locale | json }}
         </pre>
     </div>
+    </div>
+     -->
+     
 </div>

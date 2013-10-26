@@ -444,3 +444,12 @@ table.tarjontaForm tr.required th:after {
 table.tarjontaForm tr.required table th:after {
 	display: none;
 }
+
+table.tarjontaForm table.checklist, table.tarjontaForm table.checklist td {
+	width:auto;
+	padding:0 1em 0 0;
+}
+
+table.checklist {
+	margin-bottom:1em;
+}
