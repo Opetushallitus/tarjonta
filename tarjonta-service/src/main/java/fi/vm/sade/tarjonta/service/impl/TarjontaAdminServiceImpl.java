@@ -282,7 +282,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             liites.add(hakukohdeLiite);
         }
 
-        hakukohdeDAO.updateLiittees(liites, hakukohdeOid);
+        hakukohdeDAO.insertLiittees(liites, hakukohdeOid);
     }
 
     private List<HakukohdeLiite> convertLiiteTyyppi(List<HakukohdeLiiteTyyppi> tyyppis) {

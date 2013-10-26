@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
@@ -120,6 +121,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
         List<Valintakoe> valintakokees = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
         for (Valintakoe valintakoe:valintakokees) {
             ValintakoeV1RDTO valintakoeV1RDTO = converter.fromValintakoe(valintakoe);
+
             valintakoeV1RDTOs.add(valintakoeV1RDTO);
         }
         resultRDTO.setResult(valintakoeV1RDTOs);

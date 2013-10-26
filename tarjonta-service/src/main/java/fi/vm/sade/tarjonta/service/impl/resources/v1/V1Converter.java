@@ -281,6 +281,14 @@ public class V1Converter {
             valintakoeV1RDTO.setValintakokeenKuvaus(lisatiedot.get(0));
         }
 
+        if (valintakoeV1RDTO.getKieliUri() != null && tarjontaKoodistoHelper != null) {
+            if (valintakoeV1RDTO.getKieliUri() != null) {
+                KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(valintakoeV1RDTO.getKieliUri());
+
+                valintakoeV1RDTO.setKieliNimi(getDefaultKoodinimi(koodiType.getMetadata()));
+            }
+        }
+
         if (valintakoe.getAjankohtas() != null) {
             for (ValintakoeAjankohta valintakoeAjankohta : valintakoe.getAjankohtas()) {
                 valintakoeV1RDTO.getValintakoeAjankohtas().add(convertValintakoeAjankohtaToValintakoeAjankohtaRDTO(valintakoeAjankohta));
@@ -288,6 +296,17 @@ public class V1Converter {
         }
 
         return valintakoeV1RDTO;
+    }
+
+    private String getDefaultKoodinimi(List<KoodiMetadataType> koodiMetadataTypes) {
+        //TODO: add some logic to determine which language should be shown
+          String koodiNimi = null;
+          for (KoodiMetadataType koodiMetadataType : koodiMetadataTypes) {
+              if (koodiMetadataType.getKieli().equals(KieliType.FI))  {
+                  koodiNimi = koodiMetadataType.getNimi();
+              }
+          }
+        return koodiNimi;
     }
 
 
@@ -300,6 +319,11 @@ public class V1Converter {
         valintakoeAjankohtaRDTO.setLoppuu(valintakoeAjankohta.getPaattymisaika());
         valintakoeAjankohtaRDTO.setLisatiedot(valintakoeAjankohta.getLisatietoja());
         valintakoeAjankohtaRDTO.setOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(valintakoeAjankohta.getAjankohdanOsoite()));
+        if (valintakoeAjankohtaRDTO.getOsoite() != null && valintakoeAjankohtaRDTO.getOsoite().getPostinumero() != null && tarjontaKoodistoHelper != null) {
+            KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(valintakoeAjankohtaRDTO.getOsoite().getPostinumero());
+            valintakoeAjankohtaRDTO.getOsoite().setPostinumeroArvo(postinumeroKoodi.getKoodiArvo());
+        }
+
 
         return valintakoeAjankohtaRDTO;
 
