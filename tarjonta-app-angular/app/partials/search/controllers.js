@@ -133,7 +133,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     if (!$scope.selectedOrgName) {
-        $scope.selectedOrgName = OrganisaatioService.nimi($scope.selectedOrgOid);
+        OrganisaatioService.nimi($scope.selectedOrgOid).then(function(){$scope.selectedOrgName;});
     }
 
     function copyIfSet(dst, key, value, def) {
