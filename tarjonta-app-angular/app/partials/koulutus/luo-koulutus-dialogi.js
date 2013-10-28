@@ -40,7 +40,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 								SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi].push(oppilaitostyyppi);
 								SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi]=SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi] || [];
 								SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi].push(koulutustyyppi);
-//								console.log(oppilaitostyyppi.koodiUri,"<->", koulutustyyppi.koodiUri);
+								console.log(oppilaitostyyppi.koodiUri,"<->", koulutustyyppi.koodiUri);
 							}
 						}
 					};
@@ -86,7 +86,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		}
 		
 		//jos valittavissa vain yksi, 2. selectiä ei näytetä!
-		$scope.piilotaKoulutustyyppi=oltUrit.length<2;
+		//$scope.piilotaKoulutustyyppi=oltUrit.length<2;
 
 		/*
 		//allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
@@ -121,12 +121,16 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
     		console.log("getting koulutustyyppi for ", oppilaitostyyppiUri);
     		var koulutustyypit = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oppilaitostyyppiUri];
     		console.log("got:", koulutustyypit);
-    		
-    		for(var j=0;j<koulutustyypit.length;j++) {
-    			if(sallitutKoulutustyypit.indexOf(koulutustyypit[j])==-1){
-    				sallitutKoulutustyypit.push(koulutustyypit[j]);
+    		if(koulutustyypit) {
+    			for(var j=0;j<koulutustyypit.length;j++) {
+    				if(sallitutKoulutustyypit.indexOf(koulutustyypit[j])==-1){
+    					sallitutKoulutustyypit.push(koulutustyypit[j]);
+    				}
     			}
+    		} else {
+    			console.log("oppilaitostyypille: '", oppilaitostyyppiUri, "' ei löydy koulutustyyppejä");
     		}
+    	
     	}
 		console.log("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
 		}
