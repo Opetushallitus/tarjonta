@@ -361,6 +361,24 @@ table#luo-koulutus-dialogi td{
 	width: 50%;
 }
 
+/* koulutuksen muokkaus/luonti */
+
+div#editKoulutus {
+	margin:20px;
+}
+
+table.tarjontaForm {
+	width:100%;
+}
+
+table.tarjontaForm tr > th {
+	vertical-align: top;
+	text-align: right;
+	width:20%;
+	font-weight:normal;
+	padding-bottom:10px;
+}
+
 table.tarjontaForm tr td {
 	vertical-align: top;
 	width:45%;
