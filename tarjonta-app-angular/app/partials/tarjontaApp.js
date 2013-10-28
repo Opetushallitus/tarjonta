@@ -58,7 +58,9 @@ angular.module('app',
             'angularTreeview',
             'TarjontaConverter',
             'ResultsTable',
-            'imageupload'
+            'imageupload',
+            'MultiSelect',
+            'OrderByNumFilter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -70,6 +72,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                 .when("/etusivu", {
             action: "home.default",
             reloadOnSearch: false
+        })
+                .when("/foo", {
+            action: "foo"//,
         })
                 .when("/index", {
             action: "index",
@@ -257,5 +262,5 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
 // "Production" mode
 //
 angular.module('app').config(function($logProvider) {
-    $logProvider.debugEnabled(false);
+    $logProvider.debugEnabled(true);
 });

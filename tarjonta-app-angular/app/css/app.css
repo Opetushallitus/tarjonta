@@ -357,6 +357,15 @@ div#select-tutkinto-ohjelma .noResults {
 	height:182px;
 }
 
+table#luo-koulutus-dialogi td{
+/* 	height: 200px;
+*/
+	max-height: 200px;
+ 	overflow: auto;
+	vertical-align: top;
+	width: 50%;
+}
+
 /* koulutuksen muokkaus/luonti */
 
 div#editKoulutus {
@@ -420,6 +429,10 @@ table.tarjontaForm input.wide, table.tarjontaForm select.wide {
 	width:100%;
 }
 
+table.tarjontaForm input.thin, table.tarjontaForm select.thin {
+	width:101px;
+}
+
 table.tarjontaForm tr.primary th {
 	font-weight:bold;
 }
@@ -450,6 +463,7 @@ table.tarjontaForm tr.required table th:after {
 	display: none;
 }
 
+
 table.tarjontaForm table.checklist, table.tarjontaForm table.checklist td {
 	width:auto;
 	padding:0 1em 0 0;
@@ -457,4 +471,20 @@ table.tarjontaForm table.checklist, table.tarjontaForm table.checklist td {
 
 table.checklist {
 	margin-bottom:1em;
+}
+
+table.tarjontaForm p.error {
+	color:#ff0000;
+}
+
+table.tarjontaForm p.error:before {
+	content: url('../img/icon-error.png');
+	margin-right:0.5em;
+	position:relative;
+	vertical-align: baseline;
+}
+
+/* firefox-bootstrap-glow-korjaus */
+input:invalid,textarea:invalid,select:invalid {
+	box-shadow: 0 0 6px rgba(0,0,0,0.075);
 }

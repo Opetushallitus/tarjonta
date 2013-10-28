@@ -30,7 +30,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
 
 import java.util.*;
@@ -420,7 +420,7 @@ public class V1Converter {
 
         if (komoto != null) {
             // TODO TYYPPI!?
-            KoulutusAmmattikorkeakouluRDTO k = new KoulutusAmmattikorkeakouluRDTO();
+            KoulutusKorkeakouluRDTO k = new KoulutusKorkeakouluRDTO();
 
             k.setCreated(komoto.getUpdated());
             k.setCreatedBy(komoto.getLastUpdatedByOid());

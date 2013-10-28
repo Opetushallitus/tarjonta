@@ -261,7 +261,7 @@ app.directive('resultsTable',function(LocalisationService, loadingService, $log)
     	forceClear(em);
         $("input.selectAll", em).prop("checked", false);
         
-    	if (data.tuloksia==undefined || data.tuloksia==0) {
+    	if (data===undefined || data.tuloksia==undefined || data.tuloksia==0) {
     		return;
     	}
     	

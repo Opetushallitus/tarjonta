@@ -62,7 +62,7 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
         return {
             restrict: 'EA',
             replace: true,
-            template: '<div>TT TEMPLATE</div>',
+            //template: '<div>TT TEMPLATE</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
                 var t = LocalisationService.t(tAttrs["tt"]);

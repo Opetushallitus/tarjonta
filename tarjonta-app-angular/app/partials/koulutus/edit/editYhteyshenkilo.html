@@ -1,30 +1,28 @@
 <tr class="primary" ng-controller="EditYhteyshenkiloCtrl">
-	<th>{{t('koulutus.edit.yhteyshenkilo.name')}}</th>
+	<th tt="koulutus.edit.yhteyshenkilo.name"/>
 	<td><input class="wide" type="text" ng-model="uiModel.contactPerson.nimet" typeahead-on-select="editYhModel.selectHenkilo()" typeahead="henkilo for henkilo in editYhModel.data | filter:$viewValue"></td>
 	<td><a href="#" ng-click="editYhModel.clearYh()"><span tt='koulutus.edit.tyhjenna'></a></td>
 </tr>
 
 <tr ng-controller="EditYhteyshenkiloCtrl">
-	<th>{{t('koulutus.edit.yhteyshenkilo.email')}}</th>
+	<th tt="koulutus.edit.yhteyshenkilo.email"/>
 	<td><input type="text" data-ng-model="uiModel.contactPerson.sahkoposti" /></td>
 	<td></td>
 </tr>
 
 <tr ng-controller="EditYhteyshenkiloCtrl">
-	<th>{{t('koulutus.edit.yhteyshenkilo.title')}}</th>
+	<th tt="koulutus.edit.yhteyshenkilo.title"/>
 	<td><input type="text" data-ng-model="uiModel.contactPerson.titteli" /></td>
 	<td></td>
 </tr>
 
 <tr ng-controller="EditYhteyshenkiloCtrl">
-	<th>{{t('koulutus.edit.yhteyshenkilo.phone')}}</th>
+	<th tt="koulutus.edit.yhteyshenkilo.phone"/>
 	<td><input type="text" data-ng-model="uiModel.contactPerson.puhelin" /></td>
 	<td></td>
 </tr>
 
 <tr>
 	<th></th>
-	<td colspan="2" class="help">
-		{{t('koulutus.edit.contactPerson.help')}}
-	</td>	
+	<td colspan="2" class="help" tt="koulutus.edit.contactPerson.help"/>
 </tr>

@@ -68,6 +68,7 @@
         <script src="js/shared/directives/koodistoTypeAhead.js"></script>
         <script src="js/shared/directives/org-puu.js"></script>
         <script src="js/shared/directives/multiSelect.js"></script>
+        <script src="js/shared/filters/orderByNum.js"></script>
 
         <script src="js/shared/directives/ngonce.js"></script>
 
@@ -86,6 +87,7 @@
         <script src="partials/hakukohde/edit/valintakokeetController.js"></script>
 
         <script src="partials/koulutus/koulutusController.js"></script>
+        <script src="partials/koulutus/luo-koulutus-dialogi.js"></script>
 
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
@@ -127,8 +129,11 @@
         <div id="tarjonta-body">
             <div data-ng-controller="LocalisationCtrl">
                 <div data-ng-switch on="renderPath[0]">
+                    <div data-ng-switch-when="foo">
+                        <div data-ng-include="'partials/koulutus/index.html'"></div>
+                    </div>
                     <div data-ng-switch-when="home">
-                        <div data-ng-include="'partials/search/search.html'" data-ng-controller="SearchController"></div>
+                        <div data-ng-include="'partials/search/search.html'"></div>
                     </div>
                     <div data-ng-switch-when="kk">
                         <div data-ng-switch on="renderPath[1]">

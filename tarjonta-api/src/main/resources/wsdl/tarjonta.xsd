@@ -1067,8 +1067,9 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="AmmatillinenPeruskoulutus" />
             <xs:enumeration value="Lukiokoulutus"/>
-            <xs:enumeration value="Ammattikorkeakoulutus"/>
-            <xs:enumeration value="Yliopistokoulutus"/>
+             <xs:enumeration value="Korkeakoulutus"/>
+             <xs:enumeration value="Ammattikorkeakoulutus"/>
+             <xs:enumeration value="Yliopistokoulutus"/>
             <xs:enumeration value="PerusopetuksenLisaopetus"/>   
             <xs:enumeration value="ValmentavaJaKuntouttavaOpetus" />
         </xs:restriction>
