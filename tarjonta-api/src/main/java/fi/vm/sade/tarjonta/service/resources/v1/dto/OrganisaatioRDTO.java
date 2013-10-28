@@ -23,6 +23,8 @@ import java.util.List;
  */
 public class OrganisaatioRDTO extends BaseRDTO {
 
+    private String oid;
+    private String nimi;
     private List<LokalisointiRDTO> _nimet;
 
     public void addNimi(LokalisointiRDTO lokalisointi) {
@@ -42,5 +44,33 @@ public class OrganisaatioRDTO extends BaseRDTO {
 
     public void setNimet(List<LokalisointiRDTO> _nimet) {
         this._nimet = _nimet;
+    }
+
+    /**
+     * @return the oid
+     */
+    public String getOid() {
+        return oid;
+    }
+
+    /**
+     * @param oid the oid to set
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
+
+    /**
+     * @return the nimi
+     */
+    public String getNimi() {
+        return nimi;
+    }
+
+    /**
+     * @param nimi the nimi to set
+     */
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 }

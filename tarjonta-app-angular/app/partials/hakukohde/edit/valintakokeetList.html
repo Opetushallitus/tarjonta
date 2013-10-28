@@ -1,3 +1,21 @@
-<div data-ng-repeat="valintakoe in valintakokees">
-     <h1>{{ valintakoe.valintakoeNimi }}</h1>
-</div>
+<accordion-group heading="{{kieli}}" ng-repeat="kieli in model.kielet">
+
+    <table>
+        <tr>
+            <th>Valintakokeen kuvaus</th>
+            <th>Valintakokeen ajat ja sijainnit</th>
+            <th>Lisätietoja valintakokeesta</th>
+        </tr>
+        <tr data-ng-repeat="valintakoe in model.valintakokees">
+           <td>{{ valintakoe.valintakokeenKuvaus.teksti }}</td>
+           <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+               {{  valintakoeaika.osoite.osoiterivi1 }}  , {{ valintakoeaika.osoite.postitoimipaikka }}
+           </td>
+           <td>
+
+           </td>
+        </tr>
+
+    </table>
+
+</accordion-group>

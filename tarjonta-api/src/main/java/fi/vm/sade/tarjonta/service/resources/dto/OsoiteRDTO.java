@@ -24,6 +24,7 @@ public class OsoiteRDTO extends BaseRDTO {
     private String osoiterivi1;
     private String osoiterivi2;
     private String postinumero;
+    private String postinumeroArvo;
     private String postitoimipaikka;
 
     public String getOsoiterivi1() {
@@ -58,4 +59,11 @@ public class OsoiteRDTO extends BaseRDTO {
         this.postitoimipaikka = postitoimipaikka;
     }
 
+    public String getPostinumeroArvo() {
+        return postinumeroArvo;
+    }
+
+    public void setPostinumeroArvo(String postinumeroArvo) {
+        this.postinumeroArvo = postinumeroArvo;
+    }
 }

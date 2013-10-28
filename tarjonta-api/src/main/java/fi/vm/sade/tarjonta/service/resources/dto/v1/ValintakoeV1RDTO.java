@@ -16,6 +16,8 @@ public class ValintakoeV1RDTO extends BaseRDTO {
 
     private String kieliUri;
 
+    private String kieliNimi;
+
     private String valintakoeNimi;
 
     private TekstiRDTO valintakokeenKuvaus;
@@ -65,5 +67,13 @@ public class ValintakoeV1RDTO extends BaseRDTO {
 
     public void setHakukohdeOid(String hakukohdeOid) {
         this.hakukohdeOid = hakukohdeOid;
+    }
+
+    public String getKieliNimi() {
+        return kieliNimi;
+    }
+
+    public void setKieliNimi(String kieliNimi) {
+        this.kieliNimi = kieliNimi;
     }
 }

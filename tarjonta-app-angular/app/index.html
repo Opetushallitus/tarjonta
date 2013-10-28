@@ -43,6 +43,7 @@
         <script src="lib/tinymce/tinymce.min.js"></script>
         <script src="lib/ui-angular-tinymce.js"></script>
         <script src="lib/imageupload.js"></script>
+        <script src="lib/buckets-minified.js"></script>
 
         <script src="js/shared/auth.js"></script>
         <script src="js/shared/permissions.js"></script>
@@ -86,6 +87,7 @@
         <script src="partials/hakukohde/edit/valintakokeetController.js"></script>
 
         <script src="partials/koulutus/koulutusController.js"></script>
+        <script src="partials/koulutus/luo-koulutus-dialogi.js"></script>
 
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
@@ -127,6 +129,9 @@
         <div id="tarjonta-body">
             <div data-ng-controller="LocalisationCtrl">
                 <div data-ng-switch on="renderPath[0]">
+                    <div data-ng-switch-when="foo">
+                        <div data-ng-include="'partials/koulutus/index.html'"></div>
+                    </div>
                     <div data-ng-switch-when="home">
                         <div data-ng-include="'partials/search/search.html'" data-ng-controller="SearchController"></div>
                     </div>

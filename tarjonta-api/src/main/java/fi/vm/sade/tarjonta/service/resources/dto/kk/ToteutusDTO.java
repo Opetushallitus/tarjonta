@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -84,7 +83,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
     }
 
     /**
-     * @param the description data to set
+     * @param tekstis
      */
     public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
         this.kuvaus = tekstis;

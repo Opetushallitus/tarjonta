@@ -73,6 +73,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             action: "home.default",
             reloadOnSearch: false
         })
+                .when("/foo", {
+            action: "foo"//,
+        })
                 .when("/index", {
             action: "index",
             reloadOnSearch: false
