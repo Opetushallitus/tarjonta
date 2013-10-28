@@ -468,3 +468,15 @@ table.checklist {
 	margin-bottom:1em;
 }
 
+table.tarjontaForm p.error {
+	color:#ff0000;
+}
+
+table.tarjontaForm p.error:before {
+	content: url('../img/icon-error.png');
+}
+
+/* firefox-bootstrap-glow-korjaus */
+input:invalid,textarea:invalid,select:invalid {
+	box-shadow: 0 0 6px rgba(0,0,0,0.075);
+}
