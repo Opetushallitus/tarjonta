@@ -415,6 +415,10 @@ table.tarjontaForm input.wide, table.tarjontaForm select.wide {
 	width:100%;
 }
 
+table.tarjontaForm input.thin, table.tarjontaForm select.thin {
+	width:101px;
+}
+
 table.tarjontaForm tr.primary th {
 	font-weight:bold;
 }

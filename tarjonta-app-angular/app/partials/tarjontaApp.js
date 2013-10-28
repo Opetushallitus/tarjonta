@@ -58,7 +58,9 @@ angular.module('app',
             'angularTreeview',
             'TarjontaConverter',
             'ResultsTable',
-            'imageupload'
+            'imageupload',
+            'MultiSelect',
+            'OrderByNumFilter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

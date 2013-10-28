@@ -34,7 +34,7 @@
 	<tr class="padding"><td colspan="3"></td></tr>
 	
 	<!-- tutkinto-ohjelman tunniste -->
-	<tr class="required">
+	<tr>
 		<th>{{t('koulutus.edit.tutkinto-ohjelman-tunniste')}}</th>
 		<td><input type="text" data-ng-model="model.tunniste"  required /></td>
 		<td></td>
@@ -68,7 +68,7 @@
 	</tr>
 	
 	<!-- tutkinto -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.tutkinto')}}</th>
 		<td>
 			<select class="wide" ng-model="uiModel.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto.data | orderBy:'koodiNimi'"></select>
@@ -77,7 +77,7 @@
 	</tr>
 	
 	<!-- tutkintonimike -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.tutkintonimike')}}</th>
 		<td>
 			<select class="wide" ng-model="uiModel.tutkintonimike.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkintonimike.data | orderBy:'koodiNimi'"></select>
@@ -86,7 +86,7 @@
 	</tr>
 	
 	<!-- eqf-luokitus -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.eqf-luokitus')}}</th>
 		<td>
 			<select ng-model="uiModel.eqf.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.eqf.data | orderBy:'koodiNimi'"></select>
@@ -96,10 +96,10 @@
 	
 	<!-- opintojen laajuus -->
 	<!-- TODO järjestys (koodi on string mutta sisältö on numero -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.opintojen-laajuus')}}</th>
 		<td>
-			<select ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data | orderBy:'koodiNimi'"></select>
+			<select ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data | orderByNum:'koodiNimi'"></select>
 		</td>
 		<td></td>
 	</tr>
@@ -130,11 +130,11 @@
 	</tr>
 	
 	<!-- suunniteltu kesto -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.suunniteltu-kesto')}}</th>
 		<td>
-			<input type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
-			<select ng-model="uiModel.suunniteltuKesto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKesto.data | orderBy:'koodiNimi'"></select>
+			<input class="thin" type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
+			<select class="thin" ng-model="uiModel.suunniteltuKesto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKesto.data | orderBy:'koodiNimi'"></select>
 		</td>
 		<td></td>
 	</tr>
@@ -143,11 +143,17 @@
 	<tr class="padding"><td colspan="3"></td></tr>
 	
 	<!-- opetuskielet -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.opetuskielet')}}</th>
 		<td>
 		
 			<!-- TODO Direktiiviksi -->
+			<!-- 
+			<multi-select
+			 	model="uiModel.opetuskielis.data"
+			 	selection="uiModel.opetuskielis.uris"
+			 	columns="3"/>
+			 	-->
 			<div style="float: left;">
 			    <select multiple="multiple"
 			            ng-model="uiModel.opetuskielis.uris"
@@ -161,7 +167,7 @@
 			        </li>
 			    </ul>
 			</div>
-                
+
 		</td>
 		<td></td>
 	</tr>
@@ -189,7 +195,7 @@
 	</tr>
 
 	<!-- opetusmuodot -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.opetusmuodot')}}</th>
 		<td>
 			<multi-select
@@ -201,7 +207,7 @@
 	</tr>
 
 	<!-- pohjakoulutusvaatimus -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.pohjakoulutusvaatimus')}}</th>
 		<td>
 			<multi-select
@@ -212,7 +218,7 @@
 	</tr>
 
 	<!-- teemat -->
-	<tr>
+	<tr class="required">
 		<th>{{t('koulutus.edit.teemat')}}</th>
 		<td>
 			<multi-select
