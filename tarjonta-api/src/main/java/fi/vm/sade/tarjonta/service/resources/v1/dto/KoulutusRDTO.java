@@ -14,46 +14,294 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 /**
  *
  * @author mlyly
  */
 public abstract class KoulutusRDTO extends BaseRDTO {
 
-    private String _komoOid;
-    private String _komotoOid;
-    private String _parentKomoOid;
-    private String _parentKomotoOid;
+    private String komoOid;
+    private String komotoOid;
+    private String parentKomoOid;
+    private String parentKomotoOid;
+
+    private OrganisaatioRDTO organisaatio;
+    //KOODISTO KOMO DATA OBJECTS:
+    private UiDTO koulutuskoodi;
+    private UiDTO koulutusaste;
+    private UiDTO koulutusala;
+    private UiDTO opintoala;
+    private UiDTO tutkinto;
+    private UiDTO tutkintonimike;
+    private UiDTO eqf;
+    private UiDTO opintojenLaajuus;
+    //OTHER DATA
+    private TarjontaTila tila;
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    private Map<KomoTeksti, UiMetaDTO> kuvaus;
+    private KoulutusasteTyyppi koulutusasteTyyppi;
+
+    public KoulutusRDTO() {
+    }
 
     public String getKomoOid() {
-        return _komoOid;
+        return komoOid;
     }
 
     public void setKomoOid(String _komoOid) {
-        this._komoOid = _komoOid;
+        this.komoOid = _komoOid;
     }
 
     public String getKomotoOid() {
-        return _komotoOid;
+        return komotoOid;
     }
 
     public void setKomotoOid(String _komotoOid) {
-        this._komotoOid = _komotoOid;
+        this.komotoOid = _komotoOid;
     }
 
     public String getParentKomoOid() {
-        return _parentKomoOid;
+        return parentKomoOid;
     }
 
     public void setParentKomoOid(String _parentKomoOid) {
-        this._parentKomoOid = _parentKomoOid;
+        this.parentKomoOid = _parentKomoOid;
     }
 
     public String getParentKomotoOid() {
-        return _parentKomotoOid;
+        return parentKomotoOid;
     }
 
     public void setParentKomotoOid(String _parentKomotoOid) {
-        this._parentKomotoOid = _parentKomotoOid;
+        this.parentKomotoOid = _parentKomotoOid;
+    }
+
+    /*
+     * Contact persons
+     */
+    private Set<YhteyshenkiloTyyppi> yhteyshenkilos;
+
+    /**
+     * @return the tila
+     */
+    public TarjontaTila getTila() {
+        return tila;
+    }
+
+    /**
+     * @param tila the tila to set
+     */
+    public void setTila(TarjontaTila tila) {
+        this.tila = tila;
+    }
+
+    /**
+     * @return the description data
+     */
+    public Map<KomoTeksti, UiMetaDTO> getKuvaus() {
+        if (kuvaus == null) {
+            kuvaus = new EnumMap<KomoTeksti, UiMetaDTO>(KomoTeksti.class);
+        }
+        return kuvaus;
+    }
+
+    /**
+     * @param the description data to set
+     */
+    public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
+        this.kuvaus = tekstis;
+    }
+
+    /**
+     * @return the koulutusmoduuliTyyppi
+     */
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    /**
+     * @param koulutusmoduuliTyyppi the koulutusmoduuliTyyppi to set
+     */
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
+
+    /**
+     * @return the koulutuskoodi
+     */
+    public UiDTO getKoulutuskoodi() {
+        return koulutuskoodi;
+    }
+
+    /**
+     * @param koulutuskoodi the koulutuskoodi to set
+     */
+    public void setKoulutuskoodi(UiDTO koulutuskoodi) {
+        this.koulutuskoodi = koulutuskoodi;
+    }
+
+    /**
+     * @return the koulutusaste
+     */
+    public UiDTO getKoulutusaste() {
+        return koulutusaste;
+    }
+
+    /**
+     * @param koulutusaste the koulutusaste to set
+     */
+    public void setKoulutusaste(UiDTO koulutusaste) {
+        this.koulutusaste = koulutusaste;
+    }
+
+    /**
+     * @return the koulutusala
+     */
+    public UiDTO getKoulutusala() {
+        return koulutusala;
+    }
+
+    /**
+     * @param koulutusala the koulutusala to set
+     */
+    public void setKoulutusala(UiDTO koulutusala) {
+        this.koulutusala = koulutusala;
+    }
+
+    /**
+     * @return the opintoala
+     */
+    public UiDTO getOpintoala() {
+        return opintoala;
+    }
+
+    /**
+     * @param opintoala the opintoala to set
+     */
+    public void setOpintoala(UiDTO opintoala) {
+        this.opintoala = opintoala;
+    }
+
+    /**
+     * @return the tutkinto
+     */
+    public UiDTO getTutkinto() {
+        return tutkinto;
+    }
+
+    /**
+     * @param tutkinto the tutkinto to set
+     */
+    public void setTutkinto(UiDTO tutkinto) {
+        this.tutkinto = tutkinto;
+    }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public UiDTO getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * @param tutkintonimike the tutkintonimike to set
+     */
+    public void setTutkintonimike(UiDTO tutkintonimike) {
+        this.tutkintonimike = tutkintonimike;
+    }
+
+    /**
+     * @return the eqf
+     */
+    public UiDTO getEqf() {
+        return eqf;
+    }
+
+    /**
+     * @param eqf the eqf to set
+     */
+    public void setEqf(UiDTO eqf) {
+        this.eqf = eqf;
+    }
+
+    /**
+     * @return the yhteyshenkilos
+     */
+    public Set<YhteyshenkiloTyyppi> getYhteyshenkilos() {
+        if (yhteyshenkilos == null) {
+            yhteyshenkilos = new HashSet<YhteyshenkiloTyyppi>();
+        }
+        return yhteyshenkilos;
+    }
+
+    /**
+     * @param yhteyshenkilos the yhteyshenkilos to set
+     */
+    public void setYhteyshenkilos(Set<YhteyshenkiloTyyppi> yhteyshenkilos) {
+        this.yhteyshenkilos = yhteyshenkilos;
+    }
+
+    /**
+     * @return the organisaatio
+     */
+    public OrganisaatioRDTO getOrganisaatio() {
+        if (organisaatio == null) {
+            organisaatio = new OrganisaatioRDTO();
+        }
+
+        return organisaatio;
+    }
+
+    /**
+     * @param organisaatio the organisaatio to set
+     */
+    public void setOrganisaatio(OrganisaatioRDTO organisaatio) {
+        this.organisaatio = organisaatio;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public UiDTO getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
     }
 }

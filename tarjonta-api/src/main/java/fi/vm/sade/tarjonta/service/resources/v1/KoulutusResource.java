@@ -15,12 +15,11 @@
 package fi.vm.sade.tarjonta.service.resources.v1;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmattikorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusYliopistoRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,16 +59,10 @@ public interface KoulutusResource {
     public ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> postAmmatillinenPeruskoulutus(ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> koulutus);
 
     @POST
-    @Path("AMMATTIKORKEAKOULUTUS")
+    @Path("KORKEAKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusAmmattikorkeakouluRDTO> postAmmattikorkeakoulutus(ResultRDTO<KoulutusAmmattikorkeakouluRDTO> koulutus);
-
-    @POST
-    @Path("YLIOPISTOKOULUTUS")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusYliopistoRDTO> postYliopistokoulutus(ResultRDTO<KoulutusYliopistoRDTO> koulutus);
+    public ResultRDTO<KoulutusKorkeakouluRDTO> postKorkeakouluKoulutus(ResultRDTO<KoulutusKorkeakouluRDTO> koulutus);
 
     @POST
     @Path("PERUSOPETUKSEN_LISAOPETUS")
