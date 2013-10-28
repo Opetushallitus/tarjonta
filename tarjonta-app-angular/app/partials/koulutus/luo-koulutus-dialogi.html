@@ -1,0 +1,41 @@
+<div>
+	<div class="modal-header">
+		<h3><span  tt="luoKoulutusDialogi.otsikko"/></h3>
+		<div tt="luoKoulutusDialogi.kuvaus"></div>
+		<table>
+			<tr>
+				<td><span tt="luoKoulutsDialogi.koulutus"></td>
+				<td><select ng-bind="foo.bar"></select></td>
+				<td><select ng-hide="hideKoulutstyyppi" ng-model="model.koulutustyyppi"
+					ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
+						<option value="">-- valitse --</option>
+				</select></td>
+			</tr>
+		</table>
+		<h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka"/></h4>
+	</div>
+
+	<div class="modal-body">
+		<table width="100%" id="luo-koulutus-dialogi">
+			<tr>
+				<td><div id="orgSearchResults" class="treeview"
+						data-angular-treeview="true" data-tree-id="lk-organisaatio"
+						data-tree-model="organisaatiot" data-node-id="oid"
+						data-node-label="nimi" data-node-children="children"></div></td>
+				<td ng-hide="organisaatioValittu()"><span tt="luoKoulutusDialogi.organisaatiotaEiValittu"/></td>
+				<td ng-show="organisaatioValittu()"><span tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin"/><br>
+					<br>
+					<div ng-repeat="organisaatio in model.organisaatiot">
+						{{organisaatio.nimi}} [ <a ng-click="poistaValittu(organisaatio)">X</a> ]<br> 					
+					</div>
+				</td>
+			</tr>
+		</table>
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn" ng-click="peruuta()"><span tt="luoKoulutusDialogi.peruuta"/></button>
+		<button class="btn" disabled="true" ng-click="liitaToiseenOrganisaatioon()"><span tt="luoKoulutusDialogi.liitaToiseenOrganisaatioon"/></button>
+		<button class="btn btn-primary" ng-disabled="jatkaDisabled()" ng-click="jatka()"><span tt="luoKoulutusDialogi.jatka"/></button>
+	</div>
+</div>

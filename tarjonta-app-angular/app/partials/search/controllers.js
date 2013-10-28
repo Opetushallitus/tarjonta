@@ -16,8 +16,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		};
 	}
 	
-	
-	
 	setDefaultHakuehdot();
 
 	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
@@ -49,6 +47,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    	$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
 	    }
 	}, false);
+	
+	$scope.organisaatioValittu=function(){
+		console.log("organisaatioValittu():", $scope.selectedOrgOid !==undefined, "oid=", $scope.selectedOrgOid);
+		return $scope.selectedOrgOid !==undefined;
+	};
 
 
 	$scope.hakukohdeColumns =['hakutapa','aloituspaikat','koulutuslaji'];
@@ -406,26 +409,42 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $location.path('/hakukohde/new/edit');
     };
     
-    $scope.tutkintoDialogModel = {};
-	
-	$scope.tutkintoDialogModel.open = function() {
-		
-			var modalInstance = $modal.open({
-				scope: $scope,
-				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-				controller: 'SelectTutkintoOhjelmaController'
-			});
-		
-			modalInstance.result.then(function(selectedItem) {
-				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
-				if (selectedItem.koodiUri != null) {
-					$window.location.href = '#/koulutus/edit/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
-				} 
-			}, function() {
-				$scope.tutkintoDialogModel.selected = null;
-				console.log('Cancel, dialog closed');
-			});
+    
+	/**
+	 * Avaa "luoKoulutus 1. dialogi"
+	 */
+	$scope.openLuoKoulutusDialogi = function() {
+		//aseta esivalittu organisaatio
+		$scope.luoKoulutusDialogOrg=$scope.searchedOrgOid;
+		$scope.luoKoulutusDialog = $modal.open({
+			scope: $scope,
+			templateUrl: 'partials/koulutus/luo-koulutus-dialogi.html',
+			controller: 'LuoKoulutusDialogiController',
+		});
 	};
+	
+//	
+//    
+//    $scope.tutkintoDialogModel = {};
+//	
+//	$scope.tutkintoDialogModel.open = function() {
+//		
+//			var modalInstance = $modal.open({
+//				scope: $scope,
+//				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+//				controller: 'SelectTutkintoOhjelmaController'
+//			});
+//		
+//			modalInstance.result.then(function(selectedItem) {
+//				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+//				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+//				if (selectedItem.koodiUri != null) {
+//					$window.location.href = '#/koulutus/edit/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
+//				} 
+//			}, function() {
+//				$scope.tutkintoDialogModel.selected = null;
+//				console.log('Cancel, dialog closed');
+//			});
+//	};
 
 });
