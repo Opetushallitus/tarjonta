@@ -474,6 +474,9 @@ table.tarjontaForm p.error {
 
 table.tarjontaForm p.error:before {
 	content: url('../img/icon-error.png');
+	margin-right:0.5em;
+	position:relative;
+	vertical-align: baseline;
 }
 
 /* firefox-bootstrap-glow-korjaus */
