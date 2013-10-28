@@ -47,12 +47,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    	$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
 	    }
 	}, false);
-	
+
 	$scope.organisaatioValittu=function(){
-		console.log("organisaatioValittu():", $scope.selectedOrgOid !==undefined, "oid=", $scope.selectedOrgOid);
 		return $scope.selectedOrgOid !==undefined;
 	};
-
 
 	$scope.hakukohdeColumns =['hakutapa','aloituspaikat','koulutuslaji'];
 	$scope.koulutusColumns = ['koulutuslaji'];
@@ -415,7 +413,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	 */
 	$scope.openLuoKoulutusDialogi = function() {
 		//aseta esivalittu organisaatio
-		$scope.luoKoulutusDialogOrg=$scope.searchedOrgOid;
+		$scope.luoKoulutusDialogOrg=$scope.selectedOrgOid;
 		$scope.luoKoulutusDialog = $modal.open({
 			scope: $scope,
 			templateUrl: 'partials/koulutus/luo-koulutus-dialogi.html',

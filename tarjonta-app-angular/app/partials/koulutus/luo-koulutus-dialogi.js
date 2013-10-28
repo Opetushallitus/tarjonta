@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.controllers');
+var app = angular.module('app.koulutus.ctrl');
 
 app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Koodisto', '$modal', 'OrganisaatioService', 'SharedStateService', 'AuthService',
 		function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService) {
@@ -50,14 +50,17 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		}		
 	);
 	
-	$scope.organisaatio=$scope.organisaatio||{};
+	$scope.lkorganisaatio=$scope.lkorganisaatio||{};
 	$scope.valitut=$scope.valitut||[];
 	$scope.organisaatiomap=$scope.organisaatiomap||{};
 	$scope.sallitutKoulutustyypit=$scope.sallitutKoulutustyypit||[];
 
+	console.log("organisaatio:", $scope.luoKoulutusDialogOrg);
+
 	// haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
 	OrganisaatioService.etsi({oidRestrictionList:$scope.luoKoulutusDialogOrg||AuthService.getOrganisations()}).then(function(vastaus) {
-		$scope.organisaatiot = vastaus.organisaatiot;
+		console.log("asetetaan org data modeliin");
+		$scope.lkorganisaatiot = vastaus.organisaatiot;
 		//rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
 		var buildMapFrom=function(orglist) {
 			for(var i=0;i<orglist.length;i++) {
@@ -69,7 +72,6 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 			}
 		};
 		buildMapFrom(vastaus.organisaatiot);
-
 
 		//hakee kaikki valittavissa olevat koulutustyypit
      	var oltUrit = [];
@@ -84,7 +86,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		}
 		
 		//jos valittavissa vain yksi, 2. selectiä ei näytetä!
-		$scope.piilotaKoulutustyyppi=oltUrit.length<1;
+		$scope.piilotaKoulutustyyppi=oltUrit.length<2;
 
 		/*
 		//allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
@@ -95,9 +97,9 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	});
 	
 	// Watchi valitulle organisaatiolle
-	$scope.$watch('organisaatio.currentNode', function(organisaatio, oldVal) {
+	$scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
 		//XXX nyt vain yksi organisaatio valittavissa
-	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
+	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && organisaatio.oid!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
 	    	lisaaOrganisaatio(organisaatio);
 	    }
 	});
