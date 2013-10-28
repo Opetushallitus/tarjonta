@@ -25,7 +25,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 
 	   /**
 	    * query (hakuehdot)
-	    * @param hakuehdot, muodossa:
+	    * @param hakuehdot, muodossa: (java OrganisaatioSearchCriteria -luokka)
 	    * {
 		*   "searchStr" : "",
 		*   "organisaatiotyyppi" : "",
@@ -39,15 +39,15 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 	    */
 	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-	       $log.info('searching organisaatiot, q:', hakuehdot);
+//	       $log.info('searching organisaatiot, q:', hakuehdot);
 
 	       orgHaku.get(hakuehdot,function(result){
-	           $log.info("resolving promise with hit count:" + result.numHits);
+//	           $log.info("resolving promise with hit count:" + result.numHits);
 	           localizeAll(result.organisaatiot);
 	           ret.resolve(result);
 	       });
 	       
-	       $log.info('past query now, returning promise...:');
+//	       $log.info('past query now, returning promise...:');
 	       return ret.promise;
 	   },
 	   
