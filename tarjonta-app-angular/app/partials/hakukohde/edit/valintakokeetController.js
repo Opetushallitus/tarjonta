@@ -10,7 +10,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    $scope.model.valintakokees = [];
 
-   var valintaKokeetResource = Valintakoe.getAll({ oid : $scope.model.hakukohdeOid });
+   var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohdeOid });
     console.log('LOADING VALINTAKOKEES');
 
     var valintaKokeetPromise  = valintaKokeetResource.$promise;
@@ -31,6 +31,29 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    });
 
+  var addToValintakokees = function(valintakoe) {
+
+      var valintakoeFound = false;
+      var foundValintakoe = undefined;
+      angular.forEach($scope.model.valintakokees,function(loopValintakoe){
+           if (loopValintakoe.oid === valintakoe.oid) {
+               valintakoeFound = true;
+               foundValintakoe = valintakoeFound;
+           }
+      });
+
+      if (!valintakoeFound) {
+          $scope.model.valintakokees.push(valintakoe);
+      } else {
+          var index  = $scope.model.valintakokees.indexOf(foundValintakoe);
+          $scope.model.valintakokees.splice(index,1);
+          $scope.model.valintakokees.push(valintakoe);
+
+      }
+
+
+  };
+
    $scope.model.muokaaValintakoetta = function(valintakoe) {
 
        var modalInstance = $modal.open({
@@ -45,6 +68,13 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
        });
 
        modalInstance.result.then(function (selectedItem) {
+          if (selectedItem.oid === undefined) {
+              selectedItem.hakukohdeOid =  $scope.model.hakukohdeOid;
+              console.log('SAVING : ',selectedItem);
+              var valintakoeResource = new Valintakoe(selectedItem);
+
+              valintakoeResource.$save();
+          }
 
        }, function () {
            $log.info('Modal dismissed at: ' + new Date());
@@ -156,7 +186,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
            $scope.model.valintakoe = {
                valintakoeAjankohtas : [],
                valintakokeenKuvaus : {
-                   osoite : {}
+
                }
            };
        }

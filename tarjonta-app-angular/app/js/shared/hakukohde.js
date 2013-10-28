@@ -47,9 +47,9 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
 
     //var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix+"v1/hakukohde/:oid/valintakoe";
 
-    var hakukohdeValintakoeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:oid/valintakoe";
+    var hakukohdeValintakoeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:hakukohdeOid/valintakoe";
 
-    return $resource(hakukohdeValintakoeUri,{oid:'@oid'},{
+    return $resource(hakukohdeValintakoeUri,{hakukohdeOid:'@hakukohdeOid'},{
         update: {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
