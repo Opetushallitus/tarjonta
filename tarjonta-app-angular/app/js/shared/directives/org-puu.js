@@ -41,12 +41,11 @@
 					var template = drawChildren([org]);
 					var dom = $compile(template);
 					//poista c-<oid>, päivitä o-<oid>
-					//console.log("opening org, template:" , drawChildren([org]));
+					console.log("opening org:", org );
 					//organisaatio auki
-					$("#c-" + eid).detach();
-					$("#o-" + eid).replaceWith( dom (SharedStateService.state.puut[treeId].scope));
+					$("#" + treeId + "-c-" + eid).detach();
+					$("#" + treeId + "-o-" + eid).replaceWith( dom (SharedStateService.state.puut[treeId].scope));
 				};
-				
 
 				function getOrg(id, list) {
 //					console.log("data has:", list.length ," entries");
@@ -73,7 +72,7 @@
 				scope.toggleOrg=function(id, element){
 //					console.log("toggle valittu!");
 
-//					console.log("id param:", id);
+					console.log("id param:", id);
 					var org = getOrg(id, SharedStateService.state.puut[treeId].data);
 					//console.log("selected org:", org);
 					if(org.open===undefined){
@@ -112,7 +111,7 @@
 					redraw(org);
 					
 					//aseta valittu organisaatio scopeen jotta voidaan watchilla seurata kun organisaatio valitaan puusta
-					scope.organisaatio.currentNode=org;
+					scope[treeId].currentNode=org;
 				};
 				
 				
@@ -137,7 +136,7 @@
 				var drawChildren=function(children){
 
 					var orgToString = function(eid, oid, label, cssclass, selected){
-						return "<li id=\"o-" + eid +  "\" ><i ng-click=\"toggleOrg('" + oid + "')\" class='" + cssclass + "'/></i><span" + (selected?" class=\"selected\"":"") + " ng-click=\"selectOrg('" + oid + "')\">" + label + "</span></li>";
+						return "<li id=\"" + treeId + "-o-" + eid +  "\" ><i ng-click=\"toggleOrg('"+ oid + "')\" class='" + cssclass + "'/></i><span" + (selected?" class=\"selected\"":"") + " ng-click=\"selectOrg('" + oid + "')\">" + label + "</span></li>";
 					};
 
 					var template="";
@@ -152,7 +151,7 @@
 								//auki
 								template = template + orgToString(eid, org.oid,org[nodeLabel], "expanded", org.selected);
 								//lapset
-								template = template + "<div id=\"c-" + eid + "\" class=\"treeview\"><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
+								template = template + "<div id=\"" + treeId + "-c-" + eid + "\" class=\"treeview\"><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
 							} else {
 								//kiinni
 								template = template + orgToString(eid, org.oid,org[nodeLabel], "collapsed", org.selected);
@@ -178,6 +177,7 @@
 				/**
 				 * Watchi puun datalle
 				 */
+				console.log("adding watch to:" + treeModel);
 				scope.$watch(treeModel, function (newList, oldList) {
 					console.log("tila muuttunut!");
 					SharedStateService.state.puut[treeId].data = newList;
