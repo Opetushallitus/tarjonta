@@ -2,32 +2,30 @@
 <div  data-ng-controller="SearchController"><div class="wsidebar-left well">
 
     <div id="orgSearch">
-        <form ng-submit="submitOrg()">
-            <input name="tekstihaku" ng-model="hakuehdot.searchStr" type="text"
-                   value="" name="searchString" class="text search"
-                   placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
+        <input name="tekstihaku" ng-model="hakuehdot.searchStr" type="text" ng-enter="submitOrg()"
+               value="" name="searchString" class="text search"
+               placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
 
-            <select ng-model="hakuehdot.organisaatiotyyppi"
-                    ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
-                <option value="">{{t("organisaatiohaku.organisaatiotyypit.prompt")}}</option>
-            </select>
+        <select ng-model="hakuehdot.organisaatiotyyppi"
+                ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
+            <option value="">{{t("organisaatiohaku.organisaatiotyypit.prompt")}}</option>
+        </select>
 
-            <select ng-model="hakuehdot.oppilaitostyyppi"
-                    ng-options="koodi.koodiUriWithVersion as koodi.koodiNimi for koodi in oppilaitostyypit">
-                <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
-            </select>
+        <select ng-model="hakuehdot.oppilaitostyyppi"
+                ng-options="koodi.koodiUriWithVersion as koodi.koodiNimi for koodi in oppilaitostyypit">
+            <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
+        </select>
 
-            <input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
-            <label for="passiiviset">{{t("organisaatiohaku.label.nayta.myos.lakkautetut") }}</label><br/><br/>
+        <input ng-model="hakuehdot.lakkautetut" type="checkbox" name="includePassive" id="passiiviset" value="true">
+        <label for="passiiviset">{{t("organisaatiohaku.label.nayta.myos.lakkautetut") }}</label><br/><br/>
 
-            <input ng-model="hakuehdot.suunnitellut" type="checkbox" name="includePlanned" id="suunnitellut" value="true">
-            <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
+        <input ng-model="hakuehdot.suunnitellut" type="checkbox" name="includePlanned" id="suunnitellut" value="true">
+        <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
 
-            <div class="buttons">
-                <div class="btn btn-primary" ng-click="resetOrg()"><div tt="organisaatiohaku.button.tyhjenna"></div></div>
-                <div class="btn btn-primary" ng-click="submitOrg()"><div tt="organisaatiohaku.button.hae"></div></div>
-            </div>
-        </form>
+        <div class="buttons">
+            <div class="btn btn-primary" ng-click="resetOrg()"><div tt="organisaatiohaku.button.tyhjenna"></div></div>
+            <div class="btn btn-primary" ng-click="submitOrg()"><div tt="organisaatiohaku.button.hae"></div></div>
+        </div>
     </div>
 
     <div id="orgSearchResults" class="treeview" data-angular-treeview="true"
