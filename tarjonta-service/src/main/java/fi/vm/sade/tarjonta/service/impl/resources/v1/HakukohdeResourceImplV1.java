@@ -189,12 +189,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
 
+            LOG.debug("UPDATEVALINTAKOE SIZE: {} ", valintakoe.getAjankohtas().size());
 
             hakukohdeDao.updateSingleValintakoe(valintakoe,hakukohdeOid);
-
+            LOG.debug("UPDATED VALINTAKOE");
             ResultRDTO<ValintakoeV1RDTO> valintakoeResult = new ResultRDTO<ValintakoeV1RDTO>();
             valintakoeResult.setStatus(ResultRDTO.ResultStatus.OK);
-            valintakoeResult.setResult(converter.fromValintakoe(valintakoe));
+            valintakoeResult.setResult(valintakoeV1RDTO);
             return valintakoeResult;
 
         } catch (Exception exp) {

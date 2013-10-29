@@ -110,10 +110,13 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             managedValintakoe.setKuvaus(valintakoe.getKuvaus());
         }
 
-        managedValintakoe.setAjankohtas(valintakoe.getAjankohtas());
+        managedValintakoe.getAjankohtas().removeAll(managedValintakoe.getAjankohtas());
+
+        managedValintakoe.getAjankohtas().addAll(valintakoe.getAjankohtas());
         managedValintakoe.setKieli(valintakoe.getKieli());
         managedValintakoe.setLisanaytot(valintakoe.getLisanaytot());
-        managedValintakoe.setPisterajat(valintakoe.getPisterajat());
+        managedValintakoe.getPisterajat().removeAll(managedValintakoe.getPisterajat());
+        managedValintakoe.getPisterajat().addAll(valintakoe.getPisterajat());
         managedValintakoe.setValintakoeNimi(valintakoe.getValintakoeNimi());
         managedValintakoe.setTyyppiUri(valintakoe.getTyyppiUri());
 

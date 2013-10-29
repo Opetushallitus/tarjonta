@@ -313,8 +313,10 @@ public class V1Converter {
     private ValintakoeAjankohtaRDTO convertValintakoeAjankohtaToValintakoeAjankohtaRDTO(ValintakoeAjankohta valintakoeAjankohta) {
 
         ValintakoeAjankohtaRDTO valintakoeAjankohtaRDTO = new ValintakoeAjankohtaRDTO();
+        if (valintakoeAjankohta.getId() != null) {
+            valintakoeAjankohtaRDTO.setOid(valintakoeAjankohta.getId().toString());
+        }
 
-        valintakoeAjankohtaRDTO.setOid(valintakoeAjankohta.getId().toString());
         valintakoeAjankohtaRDTO.setAlkaa(valintakoeAjankohta.getAlkamisaika());
         valintakoeAjankohtaRDTO.setLoppuu(valintakoeAjankohta.getPaattymisaika());
         valintakoeAjankohtaRDTO.setLisatiedot(valintakoeAjankohta.getLisatietoja());

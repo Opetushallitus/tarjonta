@@ -68,13 +68,16 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
        });
 
        modalInstance.result.then(function (selectedItem) {
-          if (selectedItem.oid === undefined) {
-              selectedItem.hakukohdeOid =  $scope.model.hakukohdeOid;
-              console.log('SAVING : ',selectedItem);
-              var valintakoeResource = new Valintakoe(selectedItem);
 
+              selectedItem.hakukohdeOid =  $scope.model.hakukohdeOid;
+              console.log('SELECTED VALINTAKOE : ', selectedItem);
+              var valintakoeResource = new Valintakoe(selectedItem);
+           if (selectedItem.oid === undefined) {
               valintakoeResource.$save();
-          }
+           } else {
+               valintakoeResource.$update();
+           }
+
 
        }, function () {
            $log.info('Modal dismissed at: ' + new Date());
