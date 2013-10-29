@@ -1,0 +1,22 @@
+<div>
+    <button class="btn btn-primary" ng-click="model.newLiite()">{{t('tarjonta.hakukohde.valintakoe.listaus.uusi.liite')}}</button>
+    <br/>
+    <br/>
+    <accordion-group heading="{{kieli}}" ng-repeat="kieli in model.liitteenkielet">
+
+        <table class="table table-hover">
+             <tr>
+                 <th>{{t('tarjonta.hakukohde.valintakoe.listaus.liitteen.kuvaus')}}</th>
+                 <th>{{t('tarjonta.hakukohde.valintakoe.listaus.liitteen.osoite')}}</th>
+             </tr>
+            <tr data-ng-repeat="liite in model.liitteet">
+               <td>{{ liite.liitteenKuvaus.teksti }}</td>
+                <td>{{ liite.toimitettavaMennessa | date: 'dd.MM.yyyy HH:mm'  }} <br/>
+                {{ liite.liitteenToimitusOsoite.osoiterivi1 }} , {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
+                </td>
+            </tr>
+         </table>
+
+    </accordion-group>
+
+</div>

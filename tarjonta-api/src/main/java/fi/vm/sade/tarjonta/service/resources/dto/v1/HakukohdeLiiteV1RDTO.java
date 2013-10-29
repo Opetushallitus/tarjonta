@@ -13,6 +13,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     private String kieliUri;
 
+    private String kieliNimi;
+
     private String liitteenNimi;
 
     private TekstiRDTO liitteenKuvaus;
@@ -69,5 +71,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setSahkoinenToimitusOsoite(String sahkoinenToimitusOsoite) {
         this.sahkoinenToimitusOsoite = sahkoinenToimitusOsoite;
+    }
+
+    public String getKieliNimi() {
+        return kieliNimi;
+    }
+
+    public void setKieliNimi(String kieliNimi) {
+        this.kieliNimi = kieliNimi;
     }
 }

@@ -85,10 +85,10 @@ public interface HakukohdeResource {
     public ResultRDTO<ValintakoeV1RDTO> updateValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
 
     @DELETE
-    @Path("/{oid}/valintakoe")
+    @Path("/{oid}/valintakoe/{valintakoeId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<Boolean> removeValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
+    public ResultRDTO<Boolean> removeValintakoe(@PathParam("oid") String hakukohdeOid,@PathParam("valintakoeId") String valintakoeOid);
 
     @GET
     @Path("/{oid}/liite")
@@ -109,8 +109,8 @@ public interface HakukohdeResource {
 
 
     @DELETE
-    @Path("/{oid}/liite")
+    @Path("/{oid}/liite/{liiteId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid,@PathParam("liiteId") String liiteId);
 }

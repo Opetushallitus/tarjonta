@@ -11,11 +11,10 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
    $scope.model.valintakokees = [];
 
    var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohdeOid });
-    console.log('LOADING VALINTAKOKEES');
+
 
     var valintaKokeetPromise  = valintaKokeetResource.$promise;
    valintaKokeetPromise.then(function(valintakokees){
-       console.log('GOT KOKEES : ', valintakokees);
 
            angular.forEach(valintakokees.result,function(valintakoe){
               if (valintakoe !== undefined) {
@@ -26,7 +25,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
               }
            });
            $scope.model.kielet = kieliSet.toArray();
-           console.log('KIELET : ', $scope.model.kielet);
+
 
 
    });
@@ -53,6 +52,19 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 
   };
+
+    $scope.model.poistaValintakoe = function(valintakoe) {
+
+        var index =  $scope.model.valintakokees.indexOf(valintakoe);
+        $scope.model.valintakokees.splice(index,1);
+        valintakoe.hakukohdeOid = $scope.model.hakukohdeOid;
+        valintakoe.valintakoeOid = valintakoe.oid;
+        console.log('REMOVING VALINTAKOE :',valintakoe);
+        var valintakoeResource = new Valintakoe(valintakoe);
+        valintakoeResource.$delete();
+
+    };
+
 
    $scope.model.muokaaValintakoetta = function(valintakoe) {
 

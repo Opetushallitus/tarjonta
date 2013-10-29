@@ -42,14 +42,39 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
 
 });
 
+app.factory('Liite',function($resource) {
+    //var hakukohdeLiiteUri = Config.env.tarjontaRestUrlPrefix+"v1/hakukohde/:oid/liite/:liiteId";
+    var hakukohdeLiiteUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:hakukohdeOid/liite/:liiteId";
+
+    return $resource(hakukohdeLiiteUri,{hakukohdeOid:'@hakukohdeOid',liiteId:'@liiteId'},{
+        update: {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        insert: {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        get : {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        remove : {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        }
+    });
+
+});
+
 
 app.factory('Valintakoe',function($resource, $log,$q, Config) {
 
-    //var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix+"v1/hakukohde/:oid/valintakoe";
+    //var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix+"v1/hakukohde/:oid/valintakoe/:valintakoeOid";
 
-    var hakukohdeValintakoeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:hakukohdeOid/valintakoe";
+    var hakukohdeValintakoeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:hakukohdeOid/valintakoe/:valintakoeOid";
 
-    return $resource(hakukohdeValintakoeUri,{hakukohdeOid:'@hakukohdeOid'},{
+    return $resource(hakukohdeValintakoeUri,{hakukohdeOid:'@hakukohdeOid',valintakoeOid:'@valintakoeOid'},{
         update: {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}

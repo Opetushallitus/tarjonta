@@ -196,8 +196,16 @@ public class V1Converter {
     public HakukohdeLiiteV1RDTO fromHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
         HakukohdeLiiteV1RDTO hakukohdeLiiteV1RDTO = new HakukohdeLiiteV1RDTO();
 
-        hakukohdeLiiteV1RDTO.setOid(hakukohdeLiite.getId().toString());
-        hakukohdeLiiteV1RDTO.setKieliUri(hakukohdeLiite.getKieli());
+        if (hakukohdeLiite.getId() != null) {
+            hakukohdeLiiteV1RDTO.setOid(hakukohdeLiite.getId().toString());
+        }
+        if (hakukohdeLiite.getKieli() != null) {
+            hakukohdeLiiteV1RDTO.setKieliUri(hakukohdeLiite.getKieli());
+            KoodiType kieliKoodi = tarjontaKoodistoHelper.getKoodiByUri(hakukohdeLiite.getKieli());
+            hakukohdeLiiteV1RDTO.setKieliNimi(getDefaultKoodinimi(kieliKoodi.getMetadata()));
+        }
+
+
         hakukohdeLiiteV1RDTO.setLiitteenNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
         hakukohdeLiiteV1RDTO.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteV1RDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());

@@ -214,11 +214,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<Boolean> removeValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
+    public ResultRDTO<Boolean> removeValintakoe(String hakukohdeOid, String valintakoeOid) {
         try {
 
-            Valintakoe valintakoe = new Valintakoe();
-            valintakoe.setId(new Long(valintakoeV1RDTO.getOid()));
+            LOG.debug("REMOVEVALINTAKOE: {}", valintakoeOid);
+            Valintakoe valintakoe =  hakukohdeDao.findValintaKoeById(valintakoeOid);
             hakukohdeDao.removeValintakoe(valintakoe);
 
             ResultRDTO<Boolean> resultRDTO = new ResultRDTO<Boolean>();
@@ -337,11 +337,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+    public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, String liiteId) {
 
         try {
 
-            HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
+            HakukohdeLiite hakukohdeLiite = hakukohdeDao.findHakuKohdeLiiteById(liiteId);
 
 
 
