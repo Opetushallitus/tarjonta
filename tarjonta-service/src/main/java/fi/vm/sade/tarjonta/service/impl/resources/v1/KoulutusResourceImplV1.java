@@ -34,16 +34,16 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.KoulutusResource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -77,7 +77,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
-public class KoulutusResourceImplV1 implements KoulutusResource {
+public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
     @Autowired
@@ -118,20 +118,20 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public ResultRDTO<KoulutusRDTO> findByOid(String oid) {
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
 
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 
-        ResultRDTO resultRDTO = new ResultRDTO();
+        ResultV1RDTO resultRDTO = new ResultV1RDTO();
         resultRDTO.setResult(conversionService.convert(komoto, KorkeakouluDTO.class));
         return resultRDTO;
     }
 
     @Override
-    public ResultRDTO<KoulutusKorkeakouluRDTO> postKorkeakouluKoulutus(ResultRDTO<KoulutusKorkeakouluRDTO> koulutus) {
+    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(ResultV1RDTO<KoulutusKorkeakouluV1RDTO> koulutus) {
         // permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
-        KoulutusKorkeakouluRDTO dto = koulutus.getResult();
+        KoulutusKorkeakouluV1RDTO dto = koulutus.getResult();
         validateRestObjectKorkeakouluDTO(dto);
 
         KoulutusmoduuliToteutus toteutus = null;
@@ -146,12 +146,12 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
 
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         // publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
-        ResultRDTO resultRDTO = new ResultRDTO();
+        ResultV1RDTO resultRDTO = new ResultV1RDTO();
         resultRDTO.setResult(conversionService.convert(toteutus, KorkeakouluDTO.class));
         return resultRDTO;
     }
 
-    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluRDTO dto) {
+    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
@@ -163,7 +163,7 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
         return koulutusmoduuliToteutusDAO.insert(newKomo);
     }
 
-    private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(final KoulutusKorkeakouluRDTO dto) {
+    private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getOid(), "KOMOTO OID cannot be null.");
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID : %s.", dto.getOid());
@@ -190,7 +190,7 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
         return Response.ok().build();
     }
 
-    private void validateRestObjectKorkeakouluDTO(final KoulutusKorkeakouluRDTO dto) {
+    private void validateRestObjectKorkeakouluDTO(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
@@ -214,14 +214,14 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public TekstiRDTO loadTekstis(String oid) {
+    public TekstiV1RDTO loadTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
 
-        TekstiRDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
+        TekstiV1RDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-        TekstiRDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
+        TekstiV1RDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
         komotoTekstiDto.getTekstis().putAll(komoTekstiDto.getTekstis());
 
         //combine komo&komoto text data to the dto;
@@ -229,18 +229,18 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public ResultRDTO<TekstiRDTO> loadKomotoTekstis(String oid) {
+    public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
 
-        ResultRDTO<TekstiRDTO> resultRDTO = new ResultRDTO<TekstiRDTO>();
+        ResultV1RDTO<TekstiV1RDTO> resultRDTO = new ResultV1RDTO<TekstiV1RDTO>();
         resultRDTO.setResult(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()));
         return resultRDTO;
     }
 
     @Override
-    public Response saveKomotoTekstis(String oid, TekstiRDTO<KomotoTeksti> dto) {
+    public Response saveKomotoTekstis(String oid, TekstiV1RDTO<KomotoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -250,18 +250,18 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public ResultRDTO<TekstiRDTO> loadKomoTekstis(String oid) {
+    public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
 
-        ResultRDTO<TekstiRDTO> resultRDTO = new ResultRDTO<TekstiRDTO>();
+        ResultV1RDTO<TekstiV1RDTO> resultRDTO = new ResultV1RDTO<TekstiV1RDTO>();
         resultRDTO.setResult(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getKoulutusmoduuli().getTekstit()));
         return resultRDTO;
     }
 
     @Override
-    public Response saveKomoTekstis(String oid, TekstiRDTO<KomoTeksti> dto) {
+    public Response saveKomoTekstis(String oid, TekstiV1RDTO<KomoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -273,9 +273,9 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public ResultRDTO<KoulutusmoduuliRelationRDTO> getKoulutusRelation(String koulutuskoodi) {
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
-        KoulutusmoduuliRelationRDTO relation = null;
+        KoulutusmoduuliRelationV1RDTO relation = null;
         if (koulutuskoodi.contains("_")) {
             //simple paramter check if data is koodisto service koodi URI.
             relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
@@ -288,7 +288,7 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
             relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
         }
 
-        ResultRDTO<KoulutusmoduuliRelationRDTO> resultRDTO = new ResultRDTO<KoulutusmoduuliRelationRDTO>();
+        ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();
         resultRDTO.setResult(relation);
         return resultRDTO;
     }
@@ -327,26 +327,26 @@ public class KoulutusResourceImplV1 implements KoulutusResource {
     }
 
     @Override
-    public ResultRDTO<KoulutusLukioRDTO> postLukiokoulutus(ResultRDTO<KoulutusLukioRDTO> koulutus) {
+    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(ResultV1RDTO<KoulutusLukioV1RDTO> koulutus) {
         LOG.info("postLukiokoulutus({})", koulutus);
 
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> postAmmatillinenPeruskoulutus(ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> koulutus) {
+    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> koulutus) {
         LOG.info("postAmmatillinenPeruskoulutus({})", koulutus);
 
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> postPerusopetuksenLisaopetusKoulutus(ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> koulutus) {
+    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> postValmentavaJaKuntouttavaKoulutus(ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> koulutus) {
+    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

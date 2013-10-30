@@ -30,14 +30,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  *
  * @author mlyly
  */
-public abstract class KoulutusRDTO extends KoulutusmoduuliRelationRDTO {
+public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
 
     private String komoOid;
     private String komotoOid;
     private String parentKomoOid;
     private String parentKomotoOid;
 
-    private OrganisaatioRDTO organisaatio;
+    private OrganisaatioV1RDTO organisaatio;
 
     //OTHER DATA
     private TarjontaTila tila;
@@ -45,7 +45,7 @@ public abstract class KoulutusRDTO extends KoulutusmoduuliRelationRDTO {
     private Map<KomoTeksti, UiMetaDTO> kuvaus;
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
-    public KoulutusRDTO() {
+    public KoulutusV1RDTO() {
     }
 
     public String getKomoOid() {
@@ -150,9 +150,9 @@ public abstract class KoulutusRDTO extends KoulutusmoduuliRelationRDTO {
     /**
      * @return the organisaatio
      */
-    public OrganisaatioRDTO getOrganisaatio() {
+    public OrganisaatioV1RDTO getOrganisaatio() {
         if (organisaatio == null) {
-            organisaatio = new OrganisaatioRDTO();
+            organisaatio = new OrganisaatioV1RDTO();
         }
 
         return organisaatio;
@@ -161,7 +161,7 @@ public abstract class KoulutusRDTO extends KoulutusmoduuliRelationRDTO {
     /**
      * @param organisaatio the organisaatio to set
      */
-    public void setOrganisaatio(OrganisaatioRDTO organisaatio) {
+    public void setOrganisaatio(OrganisaatioV1RDTO organisaatio) {
         this.organisaatio = organisaatio;
     }
 

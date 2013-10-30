@@ -17,15 +17,15 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -50,42 +50,42 @@ import javax.ws.rs.core.Response;
  * @author mlyly
  */
 @Path("/v1/koulutus")
-public interface KoulutusResource {
+public interface KoulutusV1Resource {
 
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusRDTO> findByOid(@PathParam("oid") String oid);
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
     @Path("LUKIOKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusLukioRDTO> postLukiokoulutus(ResultRDTO<KoulutusLukioRDTO> koulutus);
+    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(ResultV1RDTO<KoulutusLukioV1RDTO> koulutus);
 
     @POST
     @Path("AMMATILLINEN_PERUSKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> postAmmatillinenPeruskoulutus(ResultRDTO<KoulutusAmmatillinenPeruskoulutusRDTO> koulutus);
+    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> koulutus);
 
     @POST
     @Path("KORKEAKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusKorkeakouluRDTO> postKorkeakouluKoulutus(ResultRDTO<KoulutusKorkeakouluRDTO> koulutus);
+    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(ResultV1RDTO<KoulutusKorkeakouluV1RDTO> koulutus);
 
     @POST
     @Path("PERUSOPETUKSEN_LISAOPETUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> postPerusopetuksenLisaopetusKoulutus(ResultRDTO<KoulutusPerusopetuksenLisaopetusRDTO> koulutus);
+    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> koulutus);
 
     @POST
     @Path("VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> postValmentavaJaKuntouttavaKoulutus(ResultRDTO<KoulutusValmentavaJaKuntouttavaRDTO> koulutus);
+    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> koulutus);
 
     @DELETE
     @Path("{oid}")
@@ -94,34 +94,34 @@ public interface KoulutusResource {
     @GET
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiRDTO loadTekstis(@PathParam("oid") String oid);
+    public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<KoulutusmoduuliRelationRDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
 
     @GET
     @Path("{oid}/komoto/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<TekstiRDTO> loadKomotoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komoto/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomotoTeksti> dto);
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomotoTeksti> dto);
 
     @GET
     @Path("{oid}/komo/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<TekstiRDTO> loadKomoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komo/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomoTeksti> dto);
+    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomoTeksti> dto);
 
     @DELETE
     @Path("{oid}/teksti")

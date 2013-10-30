@@ -25,12 +25,12 @@ import java.util.Map;
  * @author Jani Wilén
  * @param <TYPE>
  */
-public class TekstiRDTO<TYPE extends Enum> implements Serializable {
+public class TekstiV1RDTO<TYPE extends Enum> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Map<TYPE, UiMetaDTO> tekstis;
 
-    public TekstiRDTO() {
+    public TekstiV1RDTO() {
     }
 
     /**

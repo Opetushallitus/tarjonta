@@ -61,7 +61,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -351,7 +351,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 KorkeakouluDTO kk = getKKKoulutus();
                 OidResultDTO result = koulutusResource.createToteutus(kk);
 
-                HakukohdeRDTO hakukohde = getHakukohde(result.getOid());
+                HakukohdeV1RDTO hakukohde = getHakukohde(result.getOid());
                 hakukohdeResource.insertHakukohde(hakukohde);
             }
 
@@ -392,8 +392,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return kk;
     }
 
-    private HakukohdeRDTO getHakukohde(String koulutusOid) {
-        HakukohdeRDTO hakukohde = new HakukohdeRDTO();
+    private HakukohdeV1RDTO getHakukohde(String koulutusOid) {
+        HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
         hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
                 .getOid());
         TekstiRDTO nimi = new TekstiRDTO();

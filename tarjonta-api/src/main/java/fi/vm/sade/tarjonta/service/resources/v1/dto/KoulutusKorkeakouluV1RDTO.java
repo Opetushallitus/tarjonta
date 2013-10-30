@@ -23,7 +23,7 @@ import java.util.Date;
  *
  * @author mlyly
  */
-public class KoulutusKorkeakouluRDTO extends KoulutusRDTO {
+public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     private UiMetaDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class KoulutusKorkeakouluRDTO extends KoulutusRDTO {
     private Date koulutuksenAlkamisPvm;
     private UiMetaDTO ammattinimikkeet;
 
-    public KoulutusKorkeakouluRDTO() {
+    public KoulutusKorkeakouluV1RDTO() {
     }
 
     /**

@@ -20,7 +20,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
  *
  * @author jani
  */
-public class KoulutusmoduuliRelationRDTO extends BaseRDTO  {
+public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO  {
 
     //KOODISTO KOMO DATA OBJECTS:
     private UiDTO koulutuskoodi;

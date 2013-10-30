@@ -21,7 +21,7 @@ import java.util.Date;
  * Basic class for V! RDTO's
  * @author mlyly
  */
-public class BaseRDTO implements Serializable {
+public class BaseV1RDTO implements Serializable {
 
     private Date created;
     private String createdBy;

@@ -22,7 +22,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KoulutusmoduuliRelationDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
@@ -80,11 +80,11 @@ public class KoulutuskoodiRelations {
         return dto;
     }
     
-    public KoulutusmoduuliRelationRDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final Locale locale) {
+    public KoulutusmoduuliRelationV1RDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
         Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri);
 
-        KoulutusmoduuliRelationRDTO dto = new KoulutusmoduuliRelationRDTO();
+        KoulutusmoduuliRelationV1RDTO dto = new KoulutusmoduuliRelationV1RDTO();
         dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, locale));
 
         for (KoodiType type : koodistoRelations) {
