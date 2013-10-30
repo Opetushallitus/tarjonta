@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.resources;
+package fi.vm.sade.tarjonta.service.resources.v1;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 
-@Path("/yhteyshenkilo")
-public interface YhteyshenkiloResource {
+@Path("/v1/yhteyshenkilo")
+public interface YhteyshenkiloV1Resource {
 
     /**
      * /yhteyshenkilo/{tarjoajaOid}

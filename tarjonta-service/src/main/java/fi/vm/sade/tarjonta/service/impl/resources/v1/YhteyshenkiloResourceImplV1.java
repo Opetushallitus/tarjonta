@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.impl.resources;
+package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +16,12 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.OrganisaatioHenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.tarjonta.service.resources.YhteyshenkiloResource;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.YhteyshenkiloV1Resource;
 
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
-public class YhteyshenkiloResourceImpl implements YhteyshenkiloResource {
+public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
     
     @Autowired
     private OrganisaatioService organisaatioService;
