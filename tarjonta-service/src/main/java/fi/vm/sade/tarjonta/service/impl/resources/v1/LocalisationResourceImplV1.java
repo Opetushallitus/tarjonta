@@ -12,12 +12,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.impl.resources;
+package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.LocalisationDAO;
 import fi.vm.sade.tarjonta.model.Localisation;
-import fi.vm.sade.tarjonta.service.resources.LocalisationResource;
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.LocalisationV1Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -33,9 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
-public class LocalisationResourceImpl implements LocalisationResource {
+public class LocalisationResourceImplV1 implements LocalisationV1Resource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LocalisationResourceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocalisationResourceImplV1.class);
     @Autowired
     private LocalisationDAO localisationDAO;
 

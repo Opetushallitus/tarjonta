@@ -43,14 +43,14 @@
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl" />
-    <bean id="tarjontaLocalisationResource" class="fi.vm.sade.tarjonta.service.impl.resources.LocalisationResourceImpl" />
-    <bean id="tarjontaTilaResource" class="fi.vm.sade.tarjonta.service.impl.resources.TilaResourceImpl" />
     <bean id="yhteyshenkiloResource" class="fi.vm.sade.tarjonta.service.impl.resources.YhteyshenkiloResourceImpl" />
 
     <!-- API V1 -->
     <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1" />
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
+    <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1" />
+    <bean id="tarjontaLocalisationResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LocalisationResourceImplV1" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -82,9 +82,6 @@
 
     <!-- CORS (cross domain) support for rest services -->
     <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
-    <!--     <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
-       <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
-    -->
     <!--
         REST Services
     -->
@@ -98,14 +95,14 @@
             <ref bean="tarjontaKomotoResource"/>
             <ref bean="indexerResource"/>
             <ref bean="tarjontaKoulutusResource"/>
-            <ref bean="tarjontaLocalisationResource"/>
-            <ref bean="tarjontaTilaResource"/>
             <ref bean="yhteyshenkiloResource"/>
 
             <!-- API V1 -->
+            <ref bean="tarjontaTilaResourceV1"/>
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
+            <ref bean="tarjontaLocalisationResourceV1"/>
 
         </jaxrs:serviceBeans>
         <jaxrs:providers>

@@ -130,7 +130,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         
         final TarjontaTila tila = TarjontaTila.valueOf(koulutus.getTila());
         
-        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getTarjoaja().getTarjoajaOid());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getTarjoaja().getOid());
 
         boolean hakuStarted = tarjontaPresenter.isHakuStartedForKoulutus(koulutus.getKomotoOid());
         
@@ -168,7 +168,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             showSummaryView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
-            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getTarjoaja().getTarjoajaOid());
+            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getTarjoaja().getOid());
 
             switch (koulutus.getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
@@ -272,7 +272,7 @@ public class KoulutusResultRow extends HorizontalLayout {
                         && koulutus.getKomotoOid() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
-                    tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getTarjoaja().getTarjoajaOid());
+                    tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getTarjoaja().getOid());
 
                 } else if (koulutus != null
                         && koulutus != null) {

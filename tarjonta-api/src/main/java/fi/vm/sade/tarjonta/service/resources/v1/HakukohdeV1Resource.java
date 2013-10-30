@@ -14,8 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
@@ -29,6 +31,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -114,4 +117,24 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid,@PathParam("liiteId") String liiteId);
+    
+    /**
+     * Hakukysely tarjonnan käyttöliittymää varten.
+     *
+     * @param searchTerms
+     * @param organisationOids filter result to be in or "under" given organisations
+     * @param hakukohdeTilas  filter result to be only in states given
+     * @return
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> search(@QueryParam("searchTerms") String searchTerms,
+            @QueryParam("organisationOid") List<String> organisationOids,
+            @QueryParam("tila") List<String> hakukohdeTilas,
+            @QueryParam("alkamisKausi") String alkamisKausi,
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi
+            );
+
+
 }

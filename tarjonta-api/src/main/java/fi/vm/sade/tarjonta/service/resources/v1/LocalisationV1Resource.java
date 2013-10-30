@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.resources;
+package fi.vm.sade.tarjonta.service.resources.v1;
 
 import fi.vm.sade.tarjonta.service.resources.dto.LocalisationRDTO;
 import java.util.List;
@@ -34,8 +34,8 @@ import javax.ws.rs.core.MediaType;
  *
  * @author mlyly
  */
-@Path("/localisation")
-public interface LocalisationResource {
+@Path("/v1/localisation")
+public interface LocalisationV1Resource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

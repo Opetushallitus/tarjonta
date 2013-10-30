@@ -30,13 +30,13 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
@@ -61,7 +61,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.PostConstruct;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -106,16 +105,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private KoulutusmoduuliDAO _komoDao;
     @Autowired
     private KoulutusmoduuliToteutusDAO _komotoDao;
-
-    private V1Converter _converter;
-
-    @PostConstruct
-    private void init() {
-        LOG.info("init()");
-        _converter = new V1Converter();
-        _converter.setKomoDao(_komoDao);
-        _converter.setKomotoDao(_komotoDao);
-    }
+    @Autowired
+    private ConverterV1 converter;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid) {
@@ -305,7 +296,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @SuppressWarnings("unchecked")
     @Override
-    public HakutuloksetRDTO<KoulutusHakutulosRDTO> searchInfo(
+    public HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> searchInfo(
             String searchTerms,
             List<String> organisationOids,
             String hakukohdeTila,
@@ -323,7 +314,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
-        return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
+        return converter.fromKoulutuksetVastaus(r);
     }
 
     @Override

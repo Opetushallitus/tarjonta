@@ -1,11 +1,13 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 
-public class TarjoajaHakutulosRDTO<T extends KoulutusHakutulosRDTO> extends BaseRDTO {
+
+public class TarjoajaHakutulosV1RDTO<T extends KoulutusHakutulosV1RDTO> extends BaseRDTO {
 
 	private static final long serialVersionUID = 1L;
 	

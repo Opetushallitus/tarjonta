@@ -4,7 +4,6 @@ package fi.vm.sade.tarjonta.service.search;
 import java.io.Serializable;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 
@@ -15,7 +14,7 @@ public class KoulutusPerustieto implements Serializable
     private Nimi nimi = new Nimi();
     private String koulutusmoduuli;
     private String koulutusmoduuliToteutus;
-    private TarjoajaTyyppi tarjoaja;
+    private Tarjoaja tarjoaja;
     private TarjontaTila tila;
     private KoodistoKoodi koulutuskoodi;
     private KoodistoKoodi koulutusohjelmakoodi;
@@ -63,11 +62,11 @@ public class KoulutusPerustieto implements Serializable
         this.koulutusmoduuliToteutus = value;
     }
 
-    public TarjoajaTyyppi getTarjoaja() {
+    public Tarjoaja getTarjoaja() {
         return tarjoaja;
     }
 
-    public void setTarjoaja(TarjoajaTyyppi value) {
+    public void setTarjoaja(Tarjoaja value) {
         this.tarjoaja = value;
     }
 

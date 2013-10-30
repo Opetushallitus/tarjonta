@@ -54,25 +54,6 @@ public interface HakukohdeResource {
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("hakukohdeTila") List<String> hakukohdeTilas);
 
-    /**
-     * Hakukysely tarjonnan käyttöliittymää varten.
-     *
-     * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given organisations
-     * @param hakukohdeTilas  filter result to be only in states given
-     * @return
-     */
-    @GET
-    @Path("/search")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(@QueryParam("searchTerms") String searchTerms,
-            @QueryParam("organisationOid") List<String> organisationOids,
-            @QueryParam("tila") List<String> hakukohdeTilas,
-            @QueryParam("alkamisKausi") String alkamisKausi,
-            @QueryParam("alkamisVuosi") Integer alkamisVuosi
-            );
-
-
     @POST
     @Path("/ui")
     @Consumes(MediaType.APPLICATION_JSON)

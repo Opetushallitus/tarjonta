@@ -10,7 +10,6 @@ public class KoulutuksetVastaus implements Serializable
 
     private final static long serialVersionUID = 100L;
     private List<KoulutusPerustieto> koulutukset = new ArrayList<KoulutusPerustieto>();
-    private int hitCount;
 
     public List<KoulutusPerustieto> getKoulutukset() {
         return koulutukset;
@@ -19,10 +18,6 @@ public class KoulutuksetVastaus implements Serializable
         this.koulutukset = koulutukset;
     }
     public int getHitCount() {
-        return hitCount;
+        return koulutukset.size();
     }
-    public void setHitCount(int hitCount) {
-        this.hitCount = hitCount;
-    }
-
 }
