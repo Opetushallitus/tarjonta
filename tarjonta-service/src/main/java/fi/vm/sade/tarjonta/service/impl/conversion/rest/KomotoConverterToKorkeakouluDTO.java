@@ -128,6 +128,10 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setPohjakoulutusvaatimukset(convertToUiMetaDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
         kkDto.setSuunniteltuKesto(suunniteltuKestoDTO(komoto.getSuunniteltuKestoArvo(), komoto.getSuunniteltuKestoYksikko()));
         kkDto.setAmmattinimikkeet(convertToUiMetaDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
+        
+        if (komoto.getHinta() != null) {
+            kkDto.setHinta(komoto.getHinta().doubleValue());
+        }
 
         TekstiRDTO<KomoTeksti> komoKuvaus = new TekstiRDTO<KomoTeksti>();
         komoKuvaus.setTekstis(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());

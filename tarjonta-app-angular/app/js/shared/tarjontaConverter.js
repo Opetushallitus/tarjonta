@@ -43,6 +43,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
 
         //console.log('LANG', languageUri, metas, apiModel);
         if (factory.isNull(metas[languageUri])) {
+            metas[languageUri] = {};
             factory.createLanguage(metas, languageUri);
         }
     };
@@ -67,13 +68,21 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         return {"tekstis": base};
     };
 
-    factory.addLangForDescUiField = function(apiModel, lang) {
+    factory.addLangForDescUiField = function(apiModel, key, lang) {
         if (angular.isUndefined(apiModel.tekstis)) {
             factory.throwError('Tarjonta API model tekstis object cannot be undefined!');
         }
 
+        if (angular.isUndefined(apiModel.tekstis[key])) {
+            apiModel.tekstis[key] = {meta: {}};
+        }
+
+        factory.addMetaLanguage(apiModel.tekstis[key], lang);
+    };
+
+    factory.addLangForDescUiFields = function(apiModel, lang) {
         angular.forEach(apiModel.tekstis, function(val, key) {
-            factory.addMetaLanguage(val, lang);
+            factory.addLangForDescUiField(apiModel, key, lang);
         });
     };
 
@@ -88,21 +97,21 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             opintoala: {'validate': true, 'required': true, nullable: false}
         }, COMBO: {
             //in correct place
-            suunniteltuKesto: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
+            suunniteltuKesto: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
+            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
-            tutkinto: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkinto'},
-            tutkintonimike: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkintonimike'},
-            eqf: {'type': 'COMBO', 'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.eqf-luokitus'}
-
+            tutkinto: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkinto'},
+            tutkintonimike: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkintonimike'},
+            eqf: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.eqf-luokitus'},
         }, MCOMBO: {
             pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus'},
             opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuoto'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
-            teemas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.teemat'}
+            teemas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.teemat'},
+            ammattinimikkeet: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
             koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},
-            koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'AMMATTIKORKEAKOULUTUS'},
+            koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'KORKEAKOULUTUS'},
             tila: {'validate': true, 'required': true, 'nullable': false, 'default': 'LUONNOS'},
             tunniste: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''}
         }, DATE: {
@@ -128,7 +137,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
                     'KANSAINVALISTYMINEN',
                     'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
                     'LISATIETOA_OPETUSKIELISTA',
-                    'TUTKIMUKSEN_PAINOPISTEET'
+                    'TUTKIMUKSEN_PAINOPISTEET',
+                    'PAAAINEEN_VALINTA'
                 ])}
         }
     };
@@ -345,7 +355,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
 
         angular.forEach(factory.STRUCTURE.DESC, function(value, key) {
             apiModel[key] = value.default;
-            factory.addLangForDescUiField(apiModel[key], languages[0]);
+            factory.addLangForDescUiFields(apiModel[key], languages[0]);
         });
 
         console.log("createAPIModel", apiModel);

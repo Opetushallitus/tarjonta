@@ -16,18 +16,16 @@ app.controller('BaseEditController',
                     koulutus: $scope.koulutusx, // preloaded in route resolve
                     foo: "bar"
                 };
-                $scope.opetuskieli = 'kieli_fi';
+                $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.uiModel = null;
                 $scope.config = {env: cfg.env, app: cfg.app, 'locationPath': $location.path()};
                 $scope.locale = "FI"
-
 
                 $scope.init = function() {
 
                     /*
                      * INITIALISE DATA MODELS
                      */
-
                     converter.createAPIModel($scope.model, cfg.app.userLanguages);
                     var uiModel = converter.createUiModels({});
                     /*
@@ -308,11 +306,26 @@ app.controller('BaseEditController',
                     }
                 };
 
-                $scope.getKuvausApiModelLanguageUri = function(kieliuri) {
-                    var koodis = [];
-                    var komoTekstis = $scope.model.kuvausKomo.tekstis;
+                $scope.getKuvausApiModelLanguageUri = function(kuvaus, key, kieliuri) {
+                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus.tekstis)) {
+                        converter.throwError("Description text object cannot be null.");
+                    }
 
-                    angular.forEach(komoTekstis, function(val, key) {
+                    if (angular.isUndefined(kuvaus.tekstis[key])) {
+                        //both key and lang uri are missing
+                        converter.addLangForDescUiField(kuvaus, key, kieliuri);
+                    } else if (angular.isUndefined(kuvaus.tekstis[key].meta[kieliuri])) {
+                        //key is available, but lang uri is missing
+                        converter.addLangForDescUiField(kuvaus, key, kieliuri);
+                    }
+
+                    return kuvaus.tekstis[key].meta[kieliuri].koodi;
+                };
+
+                $scope.getKuvausApiModelLanguageUris = function(tekstis, kieliuri) {
+                    var koodis = [];
+
+                    angular.forEach(tekstis, function(val, key) {
                         var kieli = val.meta[kieliuri];
                         if (!angular.isUndefined(kieli)) {
                             koodis.push(kieli.koodi);
