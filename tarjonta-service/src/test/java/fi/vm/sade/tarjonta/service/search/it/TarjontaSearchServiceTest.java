@@ -74,12 +74,13 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class })
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
@@ -139,27 +140,27 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.555"))).toReturn(
-                Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.556"))).toReturn(
-                Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.557"))).toReturn(
-                Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets.newHashSet(
-                        "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
+                                "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
                 .toReturn(
                         Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
                                 getOrganisaatio("1.2.3.4.556"),
                                 getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets.newHashSet(
-                        "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
-                Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
-                        getOrganisaatio("1.2.3.4.556")));
+                                "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                                getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(organisaatioService.findByOid("1.2.3.4.555")).toReturn(
                 getOrgDTO("1.2.3.4.555"));
 
@@ -190,21 +191,21 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
                 LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
+                                        .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
                 hakukohde = tarjontaFixtures
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
                 hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
+                                        .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
                 hakukohde = tarjontaFixtures
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
                 hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
+                                        .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
             }
 
@@ -341,7 +342,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Test
     public void testKKHakukohde() throws SolrServerException {
         createTestDataInTransaction();
-        
+
         // tee kk koulutus ja hakukohde
         executeInTransaction(new Runnable() {
             @Override
@@ -355,7 +356,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             }
 
         });
-        
+
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.setNimi("kkhakukohdenimi");
         HakukohteetVastaus vastaus = tarjontaSearchService
@@ -365,7 +366,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     private KorkeakouluDTO getKKKoulutus() {
-        
+
         KorkeakouluDTO kk = new KorkeakouluDTO();
         kk.getKoulutusohjelma()
                 .getMeta()
@@ -387,6 +388,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
         kk.setSuunniteltuKesto(new SuunniteltuKestoDTO(null,
                 "suunniteltu-kesto-uri", "1", null));
+        kk.setKoulutuksenAlkamisPvm(new DateTime(2013, 1, 1, 1, 1).toDate());
         return kk;
     }
 
@@ -417,7 +419,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     /**
      * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on
      * hookattu nyt transaktion onnistumiseen.
-     * 
+     *
      * @param runnable
      */
     private void executeInTransaction(final Runnable runnable) {
@@ -439,7 +441,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
-                vastaus);
+                        vastaus);
     }
 
     private KoodiType getKoodiType(String uri, String arvo) {

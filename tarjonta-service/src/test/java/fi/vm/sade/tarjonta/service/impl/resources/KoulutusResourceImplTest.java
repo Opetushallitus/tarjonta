@@ -25,7 +25,6 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -71,7 +70,6 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -165,8 +163,12 @@ public class KoulutusResourceImplTest {
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "solrIndexer", solrIndexer);
+
+        //no need for replay or verify:
         Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
-       //Whitebox.setInternalState(convertToKomoto, "komotoKoulutusConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(convertToDTO, "komotoKoulutusConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(convertToKomoto, "komoKoulutusConverters", komoKoulutusConverters);
+        Whitebox.setInternalState(convertToKomoto, "komotoKoulutusConverters", komotoKoulutusConverters);
     }
 
     @After
