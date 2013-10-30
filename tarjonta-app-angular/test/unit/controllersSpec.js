@@ -190,7 +190,7 @@ describe('Edit koulutus insert/edit/load', function() {
         expect(scope.model.opetusmuodos).toEqual(EMPTY_META_UI_MODEL);
 
         expect(scope.model.koulutusmoduuliTyyppi).toEqual('TUTKINTO');
-        expect(scope.model.koulutusasteTyyppi).toEqual('AMMATTIKORKEAKOULUTUS');
+        expect(scope.model.koulutusasteTyyppi).toEqual('KORKEAKOULUTUS');
         expect(scope.model.tila).toEqual('LUONNOS');
 
         expect(scope.uiModel.contactPerson).toEqual({henkiloTyyppi: 'YHTEYSHENKILO'});
