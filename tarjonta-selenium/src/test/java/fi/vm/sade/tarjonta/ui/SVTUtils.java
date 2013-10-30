@@ -2067,4 +2067,172 @@ public class SVTUtils {
 		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi."
 				, this.textElement(driver, "Koulutukset"));
 	}
+
+    public String[] getGwtIdList(WebDriver driver)
+    {
+    String page = driver.getPageSource();
+    String[] gwtidParts = page.split(" id=\"gwt-uid-");
+            String gwtIds = "";
+    for (int i = 0; i < gwtidParts.length; i++) {
+            String gwtid = gwtidParts[i];
+            gwtid = gwtid.substring(0, gwtid.indexOf("\""));
+            if (gwtid.length() < 10) { gwtIds = gwtIds + "gwt-uid-" + gwtid + ":"; }
+    }
+    String[] gwtidList = gwtIds.split(":");
+    return gwtidList;
+    }
+
+    public void menuWakeTargetGwt(WebDriver driver, String htmlOperaatio, String gwtId)
+    {
+    	int counter = 0;
+    	int counter2 = 0;
+    	while (! this.isPresentText(driver, htmlOperaatio))
+    	{
+    		while (true)
+    		{
+    			try {
+    				WebElement menu3 = getMenuNearestGwtId(driver, gwtId);
+    				menuOpen(driver, menu3);
+    				WebElement menu4 = getMenuNearestGwtId(driver, gwtId);
+    				menu4.click();
+    				break;
+    			} catch (Exception e) {
+    				counter2++;
+    				if (counter2 > 30)
+    				{
+    					this.echo("ERROR: Menun aukaisu ei onnistu. (" + gwtId + ")");
+    					return;
+    				}
+    				tauko(1);
+    			}
+    		}
+    		counter++;
+    		if (counter > 30)
+    		{
+    			this.echo("ERROR: Menun aukaisu ei onnistu. (" + gwtId + ")");
+    			return;
+    		}
+    	}
+    }
+
+    public WebElement getMenuNearestGwtId(WebDriver driver, String gwtId)
+    {
+            WebElement gwtIdElement = driver.findElement(By.id(gwtId));
+            return this.findNearestElementForElement(driver, gwtIdElement, "//img[@class='v-icon']");
+    }
+
+    public WebElement findNearestElementForElement(WebDriver driver, WebElement textElement, String xpathExpression)
+    {
+        WebElement input = null;
+        Object[] eles = driver.findElements(By.xpath(xpathExpression)).toArray();
+        int i = 1;
+        int minDistance = 100000;
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled() || el.getLocation().x < 0 || el.getLocation().y < 0) { continue; }
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance < minDistance) { minDistance = distance; }
+        }
+
+        for (Object ele : eles)
+        {
+                WebElement el = (WebElement)ele;
+                if (! el.isDisplayed() || ! el.isEnabled() || el.getLocation().x < 0 || el.getLocation().y < 0) { continue; }
+                int distance = getDistance((Point)textElement.getLocation(), (Point)el.getLocation());
+                if (distance == minDistance) { input = el; }
+        }
+
+        return input;
+    }
+
+    public void haeKoulutuksia(WebDriver driver, String tila, String teksti, String vuosi)
+    {
+        if (tila != null && tila.length() > 0) { filterTila(driver, tila); }
+        if (teksti != null && teksti.length() > 0) { filterVapaaTeksti(driver, teksti); }
+        if (vuosi != null && vuosi.length() > 0) { this.filterVuosi(driver, vuosi); }
+        driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
+        Assert.assertNotNull("Running Hae koulutuksia ei toimi."
+                , this.textElement(driver, "Koulutukset ("));
+        tauko(1);
+    }
+
+    public String ddmmyyyyhhmiTomorrow()
+    {
+        String zero = "0";
+        String zerodd = "0";
+        String mzero = "0";
+        String hzero = "0";
+        int yyyy = Calendar.getInstance().get(Calendar.YEAR);
+        int mm = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int dd = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int mi = Calendar.getInstance().get(Calendar.MINUTE);
+        int hh = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if (dd < 28) { dd = dd + 1; } else { mm++; }
+        if (mm > 9) { zero = ""; }
+        if (dd > 9) { zerodd = ""; }
+        if (mi > 9) { mzero = ""; }
+        if (hh > 9) { hzero = ""; }
+        String ddmmyyyyhhmi = zerodd + dd + "." + zero + mm + "." + yyyy + " " + hzero + hh + ":" + mzero + mi ;
+        return ddmmyyyyhhmi;
+    }
+
+    public void sendInputSelect(WebDriver driver, String label, String value)
+    {
+        Assert.assertNotNull("Haettua kenttaa ei loydy", this.textElement(driver, label));
+        WebElement input = findNearestElement(label, "//select", driver);
+        input.sendKeys(value);
+        tauko(1);
+    }
+
+    public void menuOperaatioLastMenu(WebDriver driver, String operaatio)
+    {
+        WebElement menu = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+        int i = 0;
+        while (menu == null)
+        {
+                menu = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+                this.tauko(1);
+                i++;
+                if (i > 30) { int a = 1 / 0; }
+        }
+        menu.click();
+        Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+        tauko(1);
+        String htmlOperaatio = "<span class=\"v-menubar-menuitem-caption\">" + operaatio + "</span>";
+        if (! this.isPresentText(driver, htmlOperaatio))
+        {
+                // avataan menu uudestaan
+                WebElement menu2 = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+                menu2.click();
+                tauko(1);
+                WebElement menu3 = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+                menuWakeLast(driver, htmlOperaatio);
+                Assert.assertNotNull("Menu ei aukee.", this.textElement(driver, "Tarkastele"));
+                Assert.assertNotNull("Operaatio ei tule esiin.", this.isPresentText(driver, htmlOperaatio));
+                tauko(1);
+        }
+        driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='" + operaatio + "']")).click();
+    }
+
+    public void menuWakeLast(WebDriver driver, String htmlOperaatio)
+    {
+        int counter = 0;
+                while (! this.isPresentText(driver, htmlOperaatio))
+                {
+                        WebElement menu3 = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+                        //              menu3.click();
+                        tauko(1);
+                        menuOpen(driver, menu3);
+                        tauko(1);
+                        WebElement menu4 = driver.findElement(By.xpath("(//img[@class='v-icon'])[last()]"));
+                        menu4.click();
+                        counter++;
+                        if (counter > 30)
+                        {
+                                this.echo("ERROR: Menun aukaisu ei onnistu. (last)");
+                                return;
+                        }
+                }
+    }
 }
