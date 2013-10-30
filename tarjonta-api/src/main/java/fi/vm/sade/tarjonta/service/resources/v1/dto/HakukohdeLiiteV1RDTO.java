@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.resources.dto.v1;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;

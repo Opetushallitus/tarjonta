@@ -26,12 +26,12 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
 import java.util.*;
 

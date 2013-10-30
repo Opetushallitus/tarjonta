@@ -14,11 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.v1.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

@@ -7,7 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.*;
-import fi.vm.sade.tarjonta.service.resources.dto.v1.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
