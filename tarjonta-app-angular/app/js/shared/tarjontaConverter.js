@@ -2,11 +2,80 @@ var app = angular.module('TarjontaConverter', ['ngResource', 'config', 'auth']);
 app.factory('TarjontaConverterFactory', function(Koodisto) {
     var factory = {};
 
+    factory.isNull = function(obj) {
+        if (obj === null || typeof obj === 'undefined') {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     factory.createBaseUiFieldArvo = function(arvo) {
         return {"arvo": arvo};
     };
+
     factory.createBaseUiField = function(uri, versio, arvo) {
         return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
+    };
+
+    factory.createLanguage = function(apiModel, langKoodiUri) {
+        apiModel[langKoodiUri] = {'koodi': {'arvo': '', 'uri': langKoodiUri, 'versio': -1}};
+    };
+
+    factory.createMetaLanguages = function(apiModel, languageUris) {
+        if (angular.isUndefined(apiModel)) {
+            factory.throwError('Tarjonta API model object cannot be undefined!');
+        }
+        console.log('LANGS', languageUris);
+        angular.forEach(languageUris, function(langUri) {
+            factory.addMetaLanguage(apiModel, langUri);
+        });
+    };
+
+    factory.addMetaLanguage = function(apiModel, languageUri) {
+        if (angular.isUndefined(apiModel)) {
+            factory.throwError('Tarjonta API model object cannot be undefined!');
+        }
+        var metas = apiModel.meta;
+
+        if (angular.isUndefined(metas)) {
+            factory.throwError('Tarjonta API model meta object cannot be undefined!');
+        }
+
+        //console.log('LANG', languageUri, metas, apiModel);
+        if (factory.isNull(metas[languageUri])) {
+            factory.createLanguage(metas, languageUri);
+        }
+    };
+
+    factory.addMetaField = function(obj) {
+        if (factory.isNull(obj)) {
+            return {"meta": {}};
+        } else {
+            obj.meta = {};
+            return obj;
+        }
+    };
+
+    factory.createBaseDescUiField = function(arrKeys) {
+        var base = {};
+
+        angular.forEach(arrKeys, function(val) {
+            base[val] = factory.addMetaField(null);
+            factory.createMetaLanguages(base[val], []);
+        });
+
+        return {"tekstis": base};
+    };
+
+    factory.addLangForDescUiField = function(apiModel, lang) {
+        if (angular.isUndefined(apiModel.tekstis)) {
+            factory.throwError('Tarjonta API model tekstis object cannot be undefined!');
+        }
+        
+        angular.forEach(apiModel.tekstis, function(val, key) {
+            factory.addMetaLanguage(val, lang);
+        });
     };
 
     factory.STRUCTURE = {
@@ -41,66 +110,20 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             koulutuksenAlkamisPvm: {'type': 'DATE', 'validate': true, 'required': true, nullable: false, default: new Date()}
         }, BOOL: {
             opintojenMaksullisuus: {'type': 'BOOL', 'validate': true, 'required': true, nullable: false, default: false}
+        }, DESC: {
+            kuvausKomo: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
+                    'KOULUTUKSEN_RAKENNE',
+                    'JATKOOPINTO_MAHDOLLISUUDET',
+                    'TAVOITTEET'
+                ])},
+            kuvausKomoto: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([])}
         }
     };
 
 
-    /**
-     * Create full data model for tarjonta rest service.
-     * 
-     * @param {type} apiModel
-     * @returns {undefined}
-     */
-    factory.createAPIModel = function(apiModel, languages) {
-        angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
-            apiModel[key] = factory.addMetaField(value.default);
 
-            console.log('INIT LANGS', languages, apiModel[key]);
-            factory.createMetaLanguages(apiModel[key], languages);
-        });
 
-        angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
-            apiModel[ key] = factory.createBaseUiField(null, null, null);
-        });
 
-        angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
-            apiModel[key] = factory.createBaseUiField(null, null, null);
-        });
-
-        angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
-            apiModel[key] = factory.addMetaField(factory.createBaseUiField(null, null, null));
-        });
-
-        angular.forEach(factory.STRUCTURE.DATE, function(value, key) {
-            apiModel[key] = value.default;
-        });
-
-        angular.forEach(factory.STRUCTURE.STR, function(value, key) {
-            apiModel[key] = value.default;
-        });
-
-        angular.forEach(factory.STRUCTURE.BOOL, function(value, key) {
-            apiModel[ key] = value.default;
-        });
-
-        console.log("createAPIModel", apiModel);
-    };
-
-    factory.addMetaField = function(obj) {
-        if (factory.isNull(obj)) {
-            return {"meta": {}};
-        } else {
-            obj.meta = {};
-            return obj;
-        }
-    };
-    factory.isNull = function(obj) {
-        if (obj === null || typeof obj === 'undefined') {
-            return true;
-        } else {
-            return false;
-        }
-    };
     /**
      * Convert person data to UI format.
      * 
@@ -109,7 +132,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
      */
     factory.converPersonObjectForUi = function(person) {
         if (factory.isNull(person)) {
-            throw 'Contact percon cannot be null';
+            factory.throwError('Contact percon cannot be null');
         }
         person.nimet = person.etunimet + ' ' + person.sukunimi;
         return person; //dummy
@@ -220,9 +243,9 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         uiModel['contactPerson'] = {henkiloTyyppi: 'YHTEYSHENKILO'};
         uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
         uiModel['tekstis'] = {
-            TAVOITTEET: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
-            KOULUTUKSEN_RAKENNE: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
-            JATKOOPINTO_MAHDOLLISUUDET: {meta: {kieli_fi: {koodi: { arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: { koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: { koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}}};
+            TAVOITTEET: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
+            KOULUTUKSEN_RAKENNE: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
+            JATKOOPINTO_MAHDOLLISUUDET: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}}};
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoSingleModel();
@@ -231,6 +254,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
+
+        return uiModel;
     };
 
     factory.createUiKoodistoSingleModel = function() {
@@ -240,7 +265,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         return {'data': [], 'uris': []};
     };
     factory.throwError = function(msg) {
-        throw 'Tarjonta application error - ' + msg;
+        throw new Error('Tarjonta application error - ' + msg);
     };
     factory.searchKoodiByKoodiUri = function(koodiUri, uiModel) {
         var i = 0;
@@ -263,23 +288,52 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }
     };
 
-    factory.createLanguage = function(apiModel, langKoodiUri) {
-        apiModel[langKoodiUri] = {'koodi': {'arvo': '', 'uri': langKoodiUri, 'versio': -1}};
-    };
 
-    factory.createMetaLanguages = function(apiModel, languageUris) {
-        console.log('LANGS', languageUris);
-        angular.forEach(languageUris, function(langUri) {
-            factory.addMetaLanguage(apiModel, langUri);
+
+    /**
+     * Create full data model for tarjonta rest service.
+     * 
+     * @param {type} apiModel
+     * @returns {undefined}
+     */
+    factory.createAPIModel = function(apiModel, languages) {
+        angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
+            apiModel[key] = factory.addMetaField(value.default);
+
+            console.log('INIT LANGS', languages, apiModel[key]);
+            factory.createMetaLanguages(apiModel[key], languages);
         });
-    };
 
-    factory.addMetaLanguage = function(apiModel, languageUri) {
-        var metas = apiModel.meta;
-        console.log('LANG', languageUri, metas, apiModel);
-        if (factory.isNull(metas[languageUri])) {
-            factory.createLanguage(metas, languageUri);
-        }
+        angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
+            apiModel[ key] = factory.createBaseUiField(null, null, null);
+        });
+
+        angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
+            apiModel[key] = factory.createBaseUiField(null, null, null);
+        });
+
+        angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
+            apiModel[key] = factory.addMetaField(factory.createBaseUiField(null, null, null));
+        });
+
+        angular.forEach(factory.STRUCTURE.DATE, function(value, key) {
+            apiModel[key] = value.default;
+        });
+
+        angular.forEach(factory.STRUCTURE.STR, function(value, key) {
+            apiModel[key] = value.default;
+        });
+
+        angular.forEach(factory.STRUCTURE.BOOL, function(value, key) {
+            apiModel[key] = value.default;
+        });
+
+        angular.forEach(factory.STRUCTURE.DESC, function(value, key) {
+            apiModel[key] = value.default;
+            factory.addLangForDescUiField(apiModel[key], languages[0]);
+        });
+
+        console.log("createAPIModel", apiModel);
     };
 
     return factory;

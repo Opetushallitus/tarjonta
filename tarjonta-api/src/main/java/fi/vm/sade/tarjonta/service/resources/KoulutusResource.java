@@ -32,7 +32,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -81,29 +81,29 @@ public interface KoulutusResource {
     @GET
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiDTO loadTekstis(@PathParam("oid") String oid);
+    public TekstiRDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/komoto/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiDTO loadKomotoTekstis(@PathParam("oid") String oid);
+    public TekstiRDTO loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komoto/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiDTO<KomotoTeksti> dto);
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomotoTeksti> dto);
 
     @GET
     @Path("{oid}/komo/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiDTO loadKomoTekstis(@PathParam("oid") String oid);
+    public TekstiRDTO loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komo/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiDTO<KomoTeksti> dto);
+    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomoTeksti> dto);
 
     @DELETE
     @Path("{oid}/teksti")

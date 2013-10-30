@@ -37,15 +37,15 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import java.util.Collection;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,6 +59,9 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
     private static final Logger LOG = LoggerFactory.getLogger(KomotoConverterToKorkeakouluDTO.class);
     @Autowired(required = true)
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
+
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private static final String DEMO_LOCALE = "fi";
@@ -83,11 +86,16 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
         kkDto.setOpintojenLaajuus(simpleUiDTO("unavailable"));
         kkDto.setKoulutuskoodi(convertToUiMetaDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
-        //KOMO
 
+        TekstiRDTO<KomotoTeksti> komotoKuvaus = new TekstiRDTO<KomotoTeksti>();
+        komotoKuvaus.setTekstis(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()).getTekstis());
+        kkDto.setKuvausKomoto(komotoKuvaus);
+
+        //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
         KoulutusasteTyyppi koulutusasteTyyppi = EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi());
         switch (koulutusasteTyyppi) {
+            case KORKEAKOULUTUS:
             case YLIOPISTOKOULUTUS:
             case AMMATTIKORKEAKOULUTUS:
                 kkDto.setKoulutusohjelma(koulutusohjelmaUiMetaDTO(komo.getNimi(), DEMO_LOCALE, koulutusasteTyyppi + "->koulutusohjelma"));
@@ -120,7 +128,11 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setPohjakoulutusvaatimukset(convertToUiMetaDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
         kkDto.setSuunniteltuKesto(suunniteltuKestoDTO(komoto.getSuunniteltuKestoArvo(), komoto.getSuunniteltuKestoYksikko()));
         kkDto.setAmmattinimikkeet(convertToUiMetaDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
-        kkDto.setKuvaus(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
+
+        TekstiRDTO<KomoTeksti> komoKuvaus = new TekstiRDTO<KomoTeksti>();
+        komoKuvaus.setTekstis(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
+        kkDto.setKuvausKomo(komoKuvaus);
+
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
         return kkDto;

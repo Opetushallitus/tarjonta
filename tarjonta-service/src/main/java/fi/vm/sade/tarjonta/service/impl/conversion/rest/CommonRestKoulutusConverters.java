@@ -19,7 +19,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.TekstiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -41,8 +42,8 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private static final String DEMO_LOCALE = "FI";
 
-    public TekstiDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit) {
-        TekstiDTO tekstis = new TekstiDTO();
+    public TekstiRDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit) {
+        TekstiRDTO tekstis = new TekstiRDTO();
         for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
             UiMetaDTO dto = new UiMetaDTO();
 
@@ -73,7 +74,7 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
         return koodiUri;
     }
 
-    public void convertTekstiDTOToMonikielinenTeksti(TekstiDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
+    public void convertTekstiDTOToMonikielinenTeksti(TekstiRDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
         Map<TYPE, UiMetaDTO> tekstis = tekstiDto.getTekstis();
         for (Map.Entry<TYPE, UiMetaDTO> e : tekstis.entrySet()) {
             Map<String, UiDTO> restMeta = e.getValue().getMeta();
@@ -86,12 +87,15 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
             }
             //  MonikielinenTeksti merged = MonikielinenTeksti.merge(oldMt, newMt);
             for (Map.Entry<String, UiDTO> restKaannos : restMeta.entrySet()) {
-                if (restKaannos.getValue().getKoodi().getArvo() != null) {
-                    TekstiKaannos searchByKielikoodi = searchByKielikoodi(merge, restKaannos.getKey());
-                    searchByKielikoodi.setArvo(restKaannos.getValue().getArvo());
-                    merge.addTekstiKaannos(searchByKielikoodi);
+                String newArvo = restKaannos.getValue().getKoodi().getArvo();
+                TekstiKaannos searchByKielikoodi = searchByKielikoodi(merge, restKaannos.getKey());
+                searchByKielikoodi.setArvo(newArvo);
+                if (newArvo != null && newArvo.length() > 0) {
+                    System.err.println("new arvo : " + newArvo);
                 }
+                merge.addTekstiKaannos(searchByKielikoodi);
             }
+            tekstit.put(e.getKey(), merge);
         }
     }
 

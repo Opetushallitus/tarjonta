@@ -13,8 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +25,12 @@ import java.util.Map;
  * @author Jani Wilén
  * @param <TYPE>
  */
-public class TekstiDTO<TYPE extends Enum> implements Serializable {
+public class TekstiRDTO<TYPE extends Enum> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Map<TYPE, UiMetaDTO> tekstis;
 
-    public TekstiDTO() {
+    public TekstiRDTO() {
     }
 
     /**
