@@ -17,7 +17,6 @@ angular.module('app.kk',
             'config',
             'auth',
             'TarjontaConverter',
-            'TinyMceRichText',
             'imageupload'
         ]);
 
@@ -51,7 +50,6 @@ angular.module('app',
             'KoodistoArvoCombo',
             'SharedStateService',
             'DateTimePicker',
-            'TinyMceRichText',
             'Hakukohde',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
