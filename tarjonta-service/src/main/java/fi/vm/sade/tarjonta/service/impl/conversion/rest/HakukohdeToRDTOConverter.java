@@ -6,7 +6,9 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
-import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
