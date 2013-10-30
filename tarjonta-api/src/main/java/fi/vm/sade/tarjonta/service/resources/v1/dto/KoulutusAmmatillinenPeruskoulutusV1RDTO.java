@@ -18,6 +18,6 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
  *
  * @author mlyly
  */
-public class KoulutusLukioRDTO extends KoulutusRDTO {
+public class KoulutusAmmatillinenPeruskoulutusV1RDTO extends KoulutusV1RDTO {
 
 }

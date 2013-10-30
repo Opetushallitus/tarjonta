@@ -16,10 +16,12 @@
 package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -48,7 +50,8 @@ public abstract class ToteutusDTO extends BaseRDTO {
     //OTHER DATA
     private TarjontaTila tila;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-    private Map<KomoTeksti, UiMetaDTO> kuvaus;
+    private TekstiV1RDTO<KomoTeksti> kuvausKomo;
+    private TekstiV1RDTO<KomotoTeksti> kuvausKomoto;
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
     public ToteutusDTO() {
@@ -70,23 +73,6 @@ public abstract class ToteutusDTO extends BaseRDTO {
      */
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
-    }
-
-    /**
-     * @return the description data
-     */
-    public Map<KomoTeksti, UiMetaDTO> getKuvaus() {
-        if (kuvaus == null) {
-            kuvaus = new EnumMap<KomoTeksti, UiMetaDTO>(KomoTeksti.class);
-        }
-        return kuvaus;
-    }
-
-    /**
-     * @param tekstis
-     */
-    public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
-        this.kuvaus = tekstis;
     }
 
     /**
@@ -252,7 +238,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
 
     @Override
     public String toString() {
-         return ReflectionToStringBuilder.reflectionToString(this);
+        return ReflectionToStringBuilder.reflectionToString(this);
     }
 
     /**
@@ -282,4 +268,40 @@ public abstract class ToteutusDTO extends BaseRDTO {
     public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
+
+    /**
+     * @return the kuvausKomo
+     */
+    public TekstiV1RDTO<KomoTeksti> getKuvausKomo() {
+        if (kuvausKomo == null) {
+            kuvausKomo = new TekstiV1RDTO<KomoTeksti>();
+        }
+        return kuvausKomo;
+    }
+
+    /**
+     * @param kuvausKomo the kuvausKomo to set
+     */
+    public void setKuvausKomo(TekstiV1RDTO<KomoTeksti> kuvausKomo) {
+        this.kuvausKomo = kuvausKomo;
+    }
+
+    /**
+     * @return the kuvausKomoto
+     */
+    public TekstiV1RDTO<KomotoTeksti> getKuvausKomoto() {
+        if (kuvausKomoto == null) {
+            kuvausKomoto = new TekstiV1RDTO<KomotoTeksti>();
+        }
+
+        return kuvausKomoto;
+    }
+
+    /**
+     * @param kuvausKomoto the kuvausKomoto to set
+     */
+    public void setKuvausKomoto(TekstiV1RDTO<KomotoTeksti> kuvausKomoto) {
+        this.kuvausKomoto = kuvausKomoto;
+    }
+
 }

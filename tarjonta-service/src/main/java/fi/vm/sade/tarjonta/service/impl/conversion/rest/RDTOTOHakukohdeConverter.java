@@ -10,7 +10,7 @@ import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
@@ -25,14 +25,14 @@ import java.util.Set;
 /*
 * @author: Tuomas Katva 10/14/13
 */
-public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeRDTO,Hakukohde> {
+public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,Hakukohde> {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(RDTOTOHakukohdeConverter.class);
     @Autowired
     private OIDService oidService;
     @Override
-    public Hakukohde convert(HakukohdeRDTO hakukohdeRDTO) {
+    public Hakukohde convert(HakukohdeV1RDTO hakukohdeRDTO) {
 
         Hakukohde hakukohde = new Hakukohde();
         String newHakukohdeOid = null;

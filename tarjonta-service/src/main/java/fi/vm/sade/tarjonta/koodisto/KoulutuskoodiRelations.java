@@ -22,6 +22,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KoulutusmoduuliRelationDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
@@ -51,7 +52,8 @@ public class KoulutuskoodiRelations {
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
-    public KoulutusmoduuliRelationDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final Locale locale) {
+    @Deprecated
+    public KoulutusmoduuliRelationDTO getKomoRelation(final String koulutuskoodiUri, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
         Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri);
 
@@ -77,6 +79,34 @@ public class KoulutuskoodiRelations {
 
         return dto;
     }
+    
+    public KoulutusmoduuliRelationV1RDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final Locale locale) {
+        Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
+        Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri);
+
+        KoulutusmoduuliRelationV1RDTO dto = new KoulutusmoduuliRelationV1RDTO();
+        dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, locale));
+
+        for (KoodiType type : koodistoRelations) {
+            LOG.info("KOODISTO : " + type.getKoodisto().getKoodistoUri());
+            if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
+                dto.setKoulutusala(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOALA_URI)) {
+                dto.setOpintoala(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI)) {
+                dto.setTutkintonimike(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTO_NIMI_URI)) {
+                dto.setTutkinto(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSASTE_URI)) {
+                dto.setKoulutusaste(listaaKoodi(type.getKoodiUri(), locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_EQF_LUOKITUS_URI)) {
+                dto.setEqf(listaaKoodi(type.getKoodiUri(), locale));
+            }
+        }
+
+        return dto;
+    }
+
 
     private Collection<KoodiType> getKoulutusRelations(String koulutuskoodiUri) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koulutuskoodi URI cannot be null");

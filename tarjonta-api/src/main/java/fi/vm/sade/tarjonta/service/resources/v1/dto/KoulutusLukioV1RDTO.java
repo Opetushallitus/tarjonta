@@ -14,38 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import java.io.Serializable;
-
 /**
  *
  * @author mlyly
  */
-public class GenericSearchParamsRDTO implements Serializable {
-
-    private int _startIndex = 0;
-    private int _count = 100;
-
-    @Override
-    public String toString() {
-        return "GenericSearchParamsRDTO[startIndex=" + getStartIndex() + ", count=" + getCount() + "]";
-    }
-
-    public int getStartIndex() {
-        return _startIndex;
-    }
-
-    public void setStartIndex(int _startIndex) {
-        this._startIndex = _startIndex;
-    }
-
-    public int getCount() {
-        return _count;
-    }
-
-    public void setCount(int _count) {
-        this._count = _count;
-    }
-
-
+public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
 
 }

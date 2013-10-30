@@ -26,11 +26,11 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
 import java.util.*;
@@ -63,16 +63,16 @@ public class V1Converter {
         return _hakuDao;
     }
 
-    public HakuRDTO fromHakuToHakuRDTO(String oid) {
+    public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
         return fromHakuToHakuRDTO(getHakuDao().findByOid(oid));
     }
 
-    private HakuRDTO fromHakuToHakuRDTO(Haku haku) {
+    private HakuV1RDTO fromHakuToHakuRDTO(Haku haku) {
         if (haku == null) {
             return null;
         }
 
-        HakuRDTO t = new HakuRDTO();
+        HakuV1RDTO t = new HakuV1RDTO();
 
         t.setOid(haku.getOid());
         t.setModified(haku.getLastUpdateDate());
@@ -136,10 +136,10 @@ public class V1Converter {
      * @param hakukohde
      * @return
      */
-    public HakukohdeRDTO toHakukohdeRDTO(Hakukohde hakukohde) {
+    public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         LOG.info("toHakukohdeRDTO({})", hakukohde);
 
-        HakukohdeRDTO t = new HakukohdeRDTO();
+        HakukohdeV1RDTO t = new HakukohdeV1RDTO();
 
 
         LOG.info("  -> result = {}", t);
@@ -152,7 +152,7 @@ public class V1Converter {
      * @param hakukohde
      * @return
      */
-    public Hakukohde toHakukohde(HakukohdeRDTO hakukohde) {
+    public Hakukohde toHakukohde(HakukohdeV1RDTO hakukohde) {
         LOG.info("toHakukohde({})", hakukohde);
         Hakukohde t = null;
 
@@ -421,16 +421,16 @@ public class V1Converter {
         this._komotoDao = _komotoDao;
     }
 
-    public KoulutusRDTO fromKomotoToKoulutusRDTO(KoulutusmoduuliToteutus komoto) {
+    public KoulutusV1RDTO fromKomotoToKoulutusRDTO(KoulutusmoduuliToteutus komoto) {
         LOG.warn("fromKomotoToKoulutusRDTO({}) -- ONLY PARTIALLY IMPLEMENTED!", komoto);
 
         // TODO implement me!
 
-        KoulutusRDTO t = null;
+        KoulutusV1RDTO t = null;
 
         if (komoto != null) {
             // TODO TYYPPI!?
-            KoulutusKorkeakouluRDTO k = new KoulutusKorkeakouluRDTO();
+            KoulutusKorkeakouluV1RDTO k = new KoulutusKorkeakouluV1RDTO();
 
             k.setCreated(komoto.getUpdated());
             k.setCreatedBy(komoto.getLastUpdatedByOid());
@@ -449,7 +449,7 @@ public class V1Converter {
         return t;
     }
 
-    public KoulutusRDTO fromKomotoToKoulutusRDTO(String oid) {
+    public KoulutusV1RDTO fromKomotoToKoulutusRDTO(String oid) {
         return fromKomotoToKoulutusRDTO(getKomotoDao().findByOid(oid));
     }
 

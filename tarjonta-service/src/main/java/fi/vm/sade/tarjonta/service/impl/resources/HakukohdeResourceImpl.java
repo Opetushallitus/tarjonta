@@ -47,7 +47,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -169,11 +169,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
     @Override
-    public HakukohdeRDTO findByOid(String oid) {
+    public HakukohdeV1RDTO findByOid(String oid) {
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
 
-        HakukohdeRDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeRDTO.class);
+        HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
 
         return hakukohdeRDTO;
 
@@ -270,7 +270,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
 
     @Override
-    public HakukohdeRDTO updateUiHakukohde(String oid,HakukohdeRDTO hakukohdeRDTO) {
+    public HakukohdeV1RDTO updateUiHakukohde(String oid,HakukohdeV1RDTO hakukohdeRDTO) {
 
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
@@ -304,7 +304,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
     @Override
-    public HakukohdeRDTO insertHakukohde(HakukohdeRDTO hakukohdeRDTO) {
+    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
 
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");

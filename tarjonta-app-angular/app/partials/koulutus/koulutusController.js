@@ -29,7 +29,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
             var result;
             var type = $scope.koulutusx.koulutusasteTyyppi;
 
-            var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|AMMATTIKORKEAKOULUTUS|YLIOPISTOKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
+            var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
 
             if (patt.test(type)) {
                 result = "partials/koulutus/" + actionType + "/" + type + ".html";

@@ -35,6 +35,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,6 +51,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<KorkeakouluDTO, KoulutusmoduuliToteutus> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KorkeakouluDTOConverterToKomoto.class);
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
@@ -104,6 +110,8 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         komo.setKoulutustyyppi(dto.getKoulutusasteTyyppi().value());
 
+        komoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
+
         /*
          * KOMOTO data fields
          */
@@ -123,6 +131,7 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
+        komotoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
         return komoto;
     }
 
@@ -130,7 +139,6 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         Preconditions.checkNotNull(dto, "KoodiUriDTO object cannot be null! Error in field : %s.", msg);
         Preconditions.checkNotNull(dto.getUri(), "KoodiUriDTO's koodisto koodi URI cannot be null! Error in field : %s.", msg);
         Preconditions.checkNotNull(dto.getVersio(), "KoodiUriDTO's koodisto koodi version for koodi '%s' cannot be null! Error in field : %s.", dto.getUri(), msg);
-
 
         String trimmedKoodiVersion = dto.getVersio().trim();
 

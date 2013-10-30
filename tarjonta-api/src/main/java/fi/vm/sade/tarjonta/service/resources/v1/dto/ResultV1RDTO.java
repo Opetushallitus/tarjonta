@@ -73,7 +73,7 @@ import java.util.List;
  *
  * @author mlyly
  */
-public class ResultRDTO<T> implements Serializable {
+public class ResultV1RDTO<T> implements Serializable {
 
     /**
      * Generic error codes.
@@ -117,7 +117,7 @@ public class ResultRDTO<T> implements Serializable {
     /**
      * "Sub" errors for this one (if this one is a "master" error).
      */
-    private List<ErrorRDTO> _errors;
+    private List<ErrorV1RDTO> _errors;
 
     public ResultStatus getStatus() {
         return _status;
@@ -135,18 +135,18 @@ public class ResultRDTO<T> implements Serializable {
         _result = result;
     }
 
-    public List<ErrorRDTO> getErrors() {
+    public List<ErrorV1RDTO> getErrors() {
         return _errors;
     }
 
-    public void setErrors(List<ErrorRDTO> _errors) {
+    public void setErrors(List<ErrorV1RDTO> _errors) {
         this._errors = _errors;
     }
 
-    public void addError(ErrorRDTO error) {
+    public void addError(ErrorV1RDTO error) {
         if (error != null) {
             if (getErrors() == null) {
-                setErrors(new ArrayList<ErrorRDTO>());
+                setErrors(new ArrayList<ErrorV1RDTO>());
             }
             getErrors().add(error);
         }

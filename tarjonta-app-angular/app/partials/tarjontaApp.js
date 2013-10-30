@@ -129,7 +129,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
             resolve: {
                 koulutusx: function(TarjontaService, $log, $route) {
                     $log.info("/koulutus/ID/edit", $route);
-                    return {koulutusasteTyyppi: "AMMATTIKORKEAKOULUTUS"}
+                    return {koulutusasteTyyppi: "KORKEAKOULUTUS"}
                 }
             }
         })

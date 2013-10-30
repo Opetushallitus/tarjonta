@@ -9,7 +9,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	
 	 // Tähän populoidaan formin valinnat:
 	$scope.model={
-		koulutustyyppi:"",
+		koulutustyyppi:undefined,
 		organisaatiot:[]
 	};
 
@@ -45,12 +45,23 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 						}
 					};
 				};
-				Koodisto.getYlapuolisetKoodit(koulutustyyppi.koodiUri, AuthService.getLanguage()).then(ylapuoliset(koulutustyyppi));
+				
+				var promise=Koodisto.getYlapuolisetKoodit(koulutustyyppi.koodiUri, AuthService.getLanguage()).then(ylapuoliset(koulutustyyppi));
+				console.log("promise:", promise);
 			}
 		}		
 	);
 	
-	$scope.lkorganisaatio=$scope.lkorganisaatio||{};
+	$scope.lkorganisaatio=$scope.lkorganisaatio||{currentNode:undefined};
+	// Watchi valitulle organisaatiolle
+	$scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
+		console.log("oprganisaatio valittu", organisaatio);
+		//XXX nyt vain yksi organisaatio valittavissa
+	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && organisaatio.oid!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
+	    	lisaaOrganisaatio(organisaatio);
+	    }
+	});
+
 	$scope.valitut=$scope.valitut||[];
 	$scope.organisaatiomap=$scope.organisaatiomap||{};
 	$scope.sallitutKoulutustyypit=$scope.sallitutKoulutustyypit||[];
@@ -59,7 +70,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 	// haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
 	OrganisaatioService.etsi({oidRestrictionList:$scope.luoKoulutusDialogOrg||AuthService.getOrganisations()}).then(function(vastaus) {
-		console.log("asetetaan org data modeliin");
+		console.log("asetetaan org hakutulos modeliin.");
 		$scope.lkorganisaatiot = vastaus.organisaatiot;
 		//rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
 		var buildMapFrom=function(orglist) {
@@ -85,7 +96,9 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	    	}
 		}
 		
-		//jos valittavissa vain yksi, 2. selectiä ei näytetä!
+		console.log("oppilaitostyyppejä:", oltUrit.length);
+		
+		//jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
 		//$scope.piilotaKoulutustyyppi=oltUrit.length<2;
 
 		/*
@@ -96,13 +109,6 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		
 	});
 	
-	// Watchi valitulle organisaatiolle
-	$scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-		//XXX nyt vain yksi organisaatio valittavissa
-	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && organisaatio.oid!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
-	    	lisaaOrganisaatio(organisaatio);
-	    }
-	});
 
 	var lisaaOrganisaatio = function(organisaatio) {
     	$scope.model.organisaatiot.push(organisaatio);
@@ -195,6 +201,10 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	$scope.jatka = function() {
 		$scope.tutkintoDialogModel={};
 		
+		//XXX nyt vain kk kovakoodattuna!!
+		if($scope.model.koulutustyyppi.koodiUri==="koulutustyyppi_3"){
+			
+		
 		console.log("avataan uusi dialogi");
 		var modalInstance = $modal.open({
 			scope: $scope,
@@ -216,6 +226,34 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 			console.log('Cancel, dialog closed');
 			$scope.luoKoulutusDialog.close();
 		});
+		} else {
+			
+			//ei toteutettu hässäkkä, positetaan kun muutkin tyypit on tuettu:
+			$scope.dialog={
+                title: "ei toteutettu",
+                description: "",
+                ok: "ok",
+                cancel: "cancel"
+            };
+			
+			$scope.eitoteutettu = $modal.open({
+				scope: $scope,
+				templateUrl: 'partials/common/dialog.html',
+				controller: function(){
+					$scope.onClose=function(){
+						console.log("close!");
+						$scope.eitoteutettu.close();
+					};
+					$scope.onAction=function(){
+						console.log("close!");
+						$scope.eitoteutettu.close();
+					};
+				}});
+						
+					
+			//muussa tapauksessa sulje dialogi
+			//$scope.luoKoulutusDialog.close();
+		}
 
 	};
 
@@ -257,17 +295,3 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 } ]);
 
 
-//app.controller('LuoKoulutusTestController', [ '$scope', '$modal',
-//                                         		function($scope, $modal) {
-//	/**
-//	 * Avaa dialogi, ei kuulu tähän kontrolleriin, mutta helpottaa testaamista
-//	 */
-//	$scope.open = function() {
-//		$scope.luoKoulutusDialog = $modal.open({
-//			scope: $scope,
-//			templateUrl: 'partials/koulutus/luo-koulutus-dialogi.html',
-//			controller: 'LuoKoulutusDialogiController'
-//		});
-//				
-//	};
-//}]);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -11,15 +11,31 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources;
+package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -27,56 +43,53 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
-import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.Response;
 
 /**
- * JSON resource for Tarjonta Application.
  *
- * @author Jani Wilén
+ * @author mlyly
  */
-@Path("/koulutus")
-public interface KoulutusResource {
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public String help();
+@Path("/v1/koulutus")
+public interface KoulutusV1Resource {
 
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ToteutusDTO getToteutus(@PathParam("oid") String oid);
-
-    @GET
-    @Path("/koulutuskoodi/{koulutuskoodi}")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ToteutusDTO getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
-
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public OidResultDTO updateToteutus(KorkeakouluDTO dto);
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
+    @Path("LUKIOKOULUTUS")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public OidResultDTO createToteutus(KorkeakouluDTO dto);
+    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(ResultV1RDTO<KoulutusLukioV1RDTO> koulutus);
+
+    @POST
+    @Path("AMMATILLINEN_PERUSKOULUTUS")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> koulutus);
+
+    @POST
+    @Path("KORKEAKOULUTUS")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(ResultV1RDTO<KoulutusKorkeakouluV1RDTO> koulutus);
+
+    @POST
+    @Path("PERUSOPETUKSEN_LISAOPETUS")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> koulutus);
+
+    @POST
+    @Path("VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> koulutus);
 
     @DELETE
     @Path("{oid}")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response deleteToteutus(@PathParam("oid") String oid);
+    public Response deleteByOid(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/tekstis")
@@ -84,9 +97,14 @@ public interface KoulutusResource {
     public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
+    @Path("/koulutuskoodi/{koulutuskoodi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
+
+    @GET
     @Path("{oid}/komoto/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiV1RDTO loadKomotoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
@@ -97,7 +115,7 @@ public interface KoulutusResource {
     @GET
     @Path("{oid}/komo/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiV1RDTO loadKomoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
@@ -112,7 +130,7 @@ public interface KoulutusResource {
 
     @POST
     @Path("{oid}/kuva")
-    @Consumes({"image/jpeg", "image/png"})
+    @Consumes({"image/jpeg", "image/png", "image/gif"})
     public Response saveKuva(@PathParam("oid") String oid, InputStream in, @HeaderParam("Content-Type") String fileType, @HeaderParam("Content-Length") long fileSize, @PathParam("uri") String kieliUri) throws IOException;
 
     @DELETE

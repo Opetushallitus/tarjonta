@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author mlyly
  */
-public class ErrorRDTO implements Serializable {
+public class ErrorV1RDTO implements Serializable {
 
     /**
      * Generic error codes.
@@ -84,8 +84,8 @@ public class ErrorRDTO implements Serializable {
      * @param messageParameters
      * @return
      */
-    public static ErrorRDTO createInfo(String key, String... messageParameters) {
-        ErrorRDTO result = new ErrorRDTO();
+    public static ErrorV1RDTO createInfo(String key, String... messageParameters) {
+        ErrorV1RDTO result = new ErrorV1RDTO();
 
         result.setErrorCode(ErrorCode.INFO);
         result.setErrorMessageKey(key);
@@ -102,8 +102,8 @@ public class ErrorRDTO implements Serializable {
      * @param messageParameters
      * @return
      */
-    public static ErrorRDTO createSystemError(Throwable ex, String key, String... messageParameters) {
-        ErrorRDTO result = createInfo(key, messageParameters);
+    public static ErrorV1RDTO createSystemError(Throwable ex, String key, String... messageParameters) {
+        ErrorV1RDTO result = createInfo(key, messageParameters);
         result.setErrorCode(ErrorCode.ERROR);
 
         if (ex != null) {
@@ -123,14 +123,14 @@ public class ErrorRDTO implements Serializable {
      * @param messageParameters
      * @return
      */
-    public static ErrorRDTO createValidationError(String field, String key, String... messageParameters) {
-        ErrorRDTO result = createInfo(key, messageParameters);
+    public static ErrorV1RDTO createValidationError(String field, String key, String... messageParameters) {
+        ErrorV1RDTO result = createInfo(key, messageParameters);
         result.setErrorCode(ErrorCode.VALIDATION);
         result.setErrorField(field);
         return result;
     }
 
-    private static void fillInMessageParameters(ErrorRDTO result, String... messageParameters) {
+    private static void fillInMessageParameters(ErrorV1RDTO result, String... messageParameters) {
         if (messageParameters != null) {
             result.setErrorMessageParameters(new ArrayList<String>());
             for (String messageParam : messageParameters) {

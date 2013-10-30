@@ -7,7 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.*;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -77,18 +77,18 @@ public interface HakukohdeResource {
     @Path("/ui")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeRDTO insertHakukohde(HakukohdeRDTO hakukohdeRDTO);
+    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO);
 
     @PUT
     @Path("/ui/{oid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeRDTO updateUiHakukohde(@PathParam("oid") String oid,HakukohdeRDTO hakukohdeRDTO);
+    public HakukohdeV1RDTO updateUiHakukohde(@PathParam("oid") String oid,HakukohdeV1RDTO hakukohdeRDTO);
 
     @GET
     @Path("/ui/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakukohdeRDTO findByOid(@PathParam("oid") String oid);
+    public HakukohdeV1RDTO findByOid(@PathParam("oid") String oid);
     /**
      * /hakukohde/{oid}
      *

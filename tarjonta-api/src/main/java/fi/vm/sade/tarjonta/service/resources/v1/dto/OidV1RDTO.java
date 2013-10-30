@@ -20,7 +20,7 @@ import java.io.Serializable;
  *
  * @author mlyly
  */
-public class OidRDTO implements Serializable {
+public class OidV1RDTO implements Serializable {
 
     private String _oid;
     private int _version;

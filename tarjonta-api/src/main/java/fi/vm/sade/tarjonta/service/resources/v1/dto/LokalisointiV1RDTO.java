@@ -20,16 +20,16 @@ import java.io.Serializable;
  *
  * @author mlyly
  */
-public class LokalisointiRDTO implements Serializable {
+public class LokalisointiV1RDTO implements Serializable {
 
     private String _kieli;
     private String _kieliUri;
     private String _arvo;
 
-    public LokalisointiRDTO() {
+    public LokalisointiV1RDTO() {
     }
 
-    public LokalisointiRDTO(String kieli, String kieliUri, String arvo) {
+    public LokalisointiV1RDTO(String kieli, String kieliUri, String arvo) {
         this._kieli = kieli;
         this._kieliUri = kieliUri;
         this._arvo = arvo;

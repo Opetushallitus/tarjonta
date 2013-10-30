@@ -14,10 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -47,45 +47,45 @@ import javax.ws.rs.core.MediaType;
  * @author mlyly
  */
 @Path("/v1/haku")
-public interface HakuResource {
+public interface HakuV1Resource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<List<OidRDTO>> search(@QueryParam("") GenericSearchParamsRDTO params);
+    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params);
 
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<HakuRDTO> findByOid(@PathParam("oid") String oid);
+    public ResultV1RDTO<HakuV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<HakuRDTO> createHaku(HakuRDTO haku);
+    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<HakuRDTO> updateHaku(HakuRDTO haku);
+    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
 
     @DELETE
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
+    public ResultV1RDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<List<OidRDTO>> getHakukohdesForHaku(@PathParam("oid") String oid, @QueryParam("") GenericSearchParamsRDTO params);
+    public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(@PathParam("oid") String oid, @QueryParam("") GenericSearchParamsV1RDTO params);
 
     // TODO: @POST OID/hakukohde - add hakukohde?
     @GET
     @Path("{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<String> getHakuState(@PathParam("oid") String oid);
+    public ResultV1RDTO<String> getHakuState(@PathParam("oid") String oid);
 
     @PUT
     @Path("{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultRDTO<String> setHakuState(@PathParam("oid") String oid, String state);
+    public ResultV1RDTO<String> setHakuState(@PathParam("oid") String oid, String state);
 }

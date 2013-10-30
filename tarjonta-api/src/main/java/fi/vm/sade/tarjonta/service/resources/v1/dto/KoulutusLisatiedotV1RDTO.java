@@ -14,26 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * Simple DTO for simple usage.
- *
- * This is ment to be used in "dynamic" situations, when the data can be pretty much anything.
- *
- * MAYBE NOT A GOOD IDEA?
  *
  * @author mlyly
  */
-public class KeyValueRDTO extends HashMap<String, Serializable> {
+public class KoulutusLisatiedotV1RDTO extends BaseV1RDTO {
 
-    public KeyValueRDTO() {
-    }
-
-    public KeyValueRDTO(String key, Serializable value) {
-        this();
-        put(key, value);
-    }
 }

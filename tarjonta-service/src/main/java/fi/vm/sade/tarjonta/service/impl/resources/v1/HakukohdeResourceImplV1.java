@@ -19,12 +19,12 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author mlyly
  */
-public class HakukohdeResourceImplV1 implements HakukohdeResource {
+public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplV1.class);
 
@@ -72,44 +72,44 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
     }
 
     @Override
-    public ResultRDTO<List<OidRDTO>> search() {
+    public ResultV1RDTO<List<OidV1RDTO>> search() {
         LOG.error("search()");
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<HakukohdeRDTO> findByOid(String oid) {
+    public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
         LOG.error("findByOid({})", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<HakukohdeRDTO> createHaku(HakukohdeRDTO hakukohde) {
+    public ResultV1RDTO<HakukohdeV1RDTO> createHaku(HakukohdeV1RDTO hakukohde) {
         LOG.error("createHaku({})", hakukohde);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<HakukohdeRDTO> updateHaku(HakukohdeRDTO hakukohde) {
+    public ResultV1RDTO<HakukohdeV1RDTO> updateHaku(HakukohdeV1RDTO hakukohde) {
         LOG.error("updateHaku({})", hakukohde);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<Boolean> deleteHaku(String oid) {
+    public ResultV1RDTO<Boolean> deleteHaku(String oid) {
         LOG.error("deleteHaku({})", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(String hakukohdeOid) {
+    public ResultV1RDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(String hakukohdeOid) {
 
-        ResultRDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultRDTO<List<ValintakoeV1RDTO>>();
+        ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
 
         if (hakukohdeOid == null) {
-            resultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
-            ErrorRDTO errorRDTO = new ErrorRDTO();
-            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             errorRDTO.setErrorField("hakukohdeOid");
             errorRDTO.setErrorTechnicalInformation("Hakukohde oid cannot be null");
             resultRDTO.addError(errorRDTO);
@@ -125,14 +125,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             valintakoeV1RDTOs.add(valintakoeV1RDTO);
         }
         resultRDTO.setResult(valintakoeV1RDTOs);
-        resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+        resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp) {
-            resultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
-            ErrorRDTO errorRDTO = new ErrorRDTO();
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
             exp.printStackTrace();
             errorRDTO.setErrorTechnicalInformation(exp.toString());
-            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             resultRDTO.addError(errorRDTO);
         }
         return resultRDTO;
@@ -143,7 +143,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
+    public ResultV1RDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
@@ -152,16 +152,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
                 List<Valintakoe> valintakoes = hakukohdeDao.findValintakoeByHakukohdeOid(hakukohdeOid);
                 valintakoes.add(valintakoe);
                 hakukohdeDao.updateValintakoe(valintakoes,hakukohdeOid);
-                ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
+                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
                 ValintakoeV1RDTO result = converter.fromValintakoe(valintakoe);
-                rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+                rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 rdtoResultRDTO.setResult(result);
                 return rdtoResultRDTO;
             }else {
-                ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
-                rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
-                ErrorRDTO errorRDTO = new ErrorRDTO();
-                errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+                rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+                ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+                errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
                 errorRDTO.setErrorTechnicalInformation("Hakukohde cannot be null when inserting valintakoe");
                 rdtoResultRDTO.addError(errorRDTO);
                 return rdtoResultRDTO;
@@ -169,12 +169,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             }
 
         } catch (Exception exp) {
-           ResultRDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultRDTO<ValintakoeV1RDTO>();
-           rdtoResultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
-           ErrorRDTO errorRDTO = new ErrorRDTO();
+           ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+           rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+           ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
            exp.printStackTrace();
            errorRDTO.setErrorTechnicalInformation(exp.toString());
-           errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+           errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
            rdtoResultRDTO.addError(errorRDTO);
 
            return rdtoResultRDTO;
@@ -184,7 +184,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
+    public ResultV1RDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
@@ -193,17 +193,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
             hakukohdeDao.updateSingleValintakoe(valintakoe,hakukohdeOid);
             LOG.debug("UPDATED VALINTAKOE");
-            ResultRDTO<ValintakoeV1RDTO> valintakoeResult = new ResultRDTO<ValintakoeV1RDTO>();
-            valintakoeResult.setStatus(ResultRDTO.ResultStatus.OK);
+            ResultV1RDTO<ValintakoeV1RDTO> valintakoeResult = new ResultV1RDTO<ValintakoeV1RDTO>();
+            valintakoeResult.setStatus(ResultV1RDTO.ResultStatus.OK);
             valintakoeResult.setResult(valintakoeV1RDTO);
             return valintakoeResult;
 
         } catch (Exception exp) {
-           ResultRDTO<ValintakoeV1RDTO> errorResult = new ResultRDTO<ValintakoeV1RDTO>();
+           ResultV1RDTO<ValintakoeV1RDTO> errorResult = new ResultV1RDTO<ValintakoeV1RDTO>();
 
-            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
-            ErrorRDTO errorRDTO = new ErrorRDTO();
-            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             exp.printStackTrace();
             errorRDTO.setErrorTechnicalInformation(exp.toString());
             errorResult.addError(errorRDTO);
@@ -214,26 +214,26 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<Boolean> removeValintakoe(String hakukohdeOid, String valintakoeOid) {
+    public ResultV1RDTO<Boolean> removeValintakoe(String hakukohdeOid, String valintakoeOid) {
         try {
 
             LOG.debug("REMOVEVALINTAKOE: {}", valintakoeOid);
             Valintakoe valintakoe =  hakukohdeDao.findValintaKoeById(valintakoeOid);
             hakukohdeDao.removeValintakoe(valintakoe);
 
-            ResultRDTO<Boolean> resultRDTO = new ResultRDTO<Boolean>();
+            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<Boolean>();
             resultRDTO.setResult(true);
-            resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             return resultRDTO;
 
 
         } catch (Exception exp) {
-            ResultRDTO<Boolean> resultRDTO = new ResultRDTO<Boolean>();
+            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<Boolean>();
             resultRDTO.setResult(false);
-            resultRDTO.setStatus(ResultRDTO.ResultStatus.ERROR);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
-            ErrorRDTO errorRDTO = new ErrorRDTO();
-            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             exp.printStackTrace();
             errorRDTO.setErrorTechnicalInformation(exp.toString());
 
@@ -245,10 +245,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(String hakukohdeOid) {
+    public ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(String hakukohdeOid) {
         try {
 
-            ResultRDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultRDTO<List<HakukohdeLiiteV1RDTO>>();
+            ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
 
             List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
             List<HakukohdeLiiteV1RDTO> liiteV1RDTOs = new ArrayList<HakukohdeLiiteV1RDTO>();
@@ -259,16 +259,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
              }
             }
 
-            listResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+            listResultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             listResultRDTO.setResult(liiteV1RDTOs);
             return listResultRDTO;
 
         } catch (Exception exp) {
-            ResultRDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultRDTO<List<HakukohdeLiiteV1RDTO>>();
-            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             exp.printStackTrace();
-            ErrorRDTO errorRDTO = new ErrorRDTO();
-            errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             errorRDTO.setErrorTechnicalInformation(exp.toString());
             errorResult.addError(errorRDTO);
             return errorResult;
@@ -277,25 +277,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+    public ResultV1RDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
          try {
 
-             ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+             ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
              HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
              List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
              liites.add(hakukohdeLiite);
              hakukohdeDao.insertLiittees(liites, hakukohdeOid);
 
              resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
-             resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
              return resultRDTO;
 
          } catch (Exception exp) {
-             ResultRDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultRDTO<HakukohdeLiiteV1RDTO>();
-             errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
-             ErrorRDTO errorRDTO = new ErrorRDTO();
-             errorRDTO.setErrorCode(ErrorRDTO.ErrorCode.ERROR);
+             ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+             errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+             ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+             errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
              exp.printStackTrace();
              errorRDTO.setErrorTechnicalInformation(exp.toString());
              errorResult.addError(errorRDTO);
@@ -306,11 +306,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
+    public ResultV1RDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
         try {
 
-            ResultRDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultRDTO<HakukohdeLiiteV1RDTO>();
+            ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
 
             HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
 
@@ -319,16 +319,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
             hakukohdeDao.updateLiite(hakukohdeLiite,hakukohdeOid);
 
             resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
-            resultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
             return resultRDTO;
 
         } catch (Exception exp) {
 
 
-           ResultRDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultRDTO<HakukohdeLiiteV1RDTO>();
-           errorResultDto.setStatus(ResultRDTO.ResultStatus.OK);
-           errorResultDto.addError(ErrorRDTO.createSystemError(exp,"system.error",hakukohdeOid));
+           ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+           errorResultDto.setStatus(ResultV1RDTO.ResultStatus.OK);
+           errorResultDto.addError(ErrorV1RDTO.createSystemError(exp,"system.error",hakukohdeOid));
            return errorResultDto;
 
         }
@@ -337,7 +337,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultRDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, String liiteId) {
+    public ResultV1RDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, String liiteId) {
 
         try {
 
@@ -349,13 +349,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
                hakukohdeDao.removeHakukohdeLiite(hakukohdeLiite);
 
-                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
-                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.OK);
+                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 booleanResultRDTO.setResult(true);
                 return booleanResultRDTO;
             }  else {
-                ResultRDTO<Boolean> booleanResultRDTO = new ResultRDTO<Boolean>();
-                booleanResultRDTO.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<Boolean>();
+                booleanResultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
                 booleanResultRDTO.setResult(false);
                 return booleanResultRDTO;
             }
@@ -363,10 +363,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeResource {
 
 
         } catch (Exception exp) {
-            ResultRDTO<Boolean> errorResult = new ResultRDTO<Boolean>();
-            errorResult.setStatus(ResultRDTO.ResultStatus.ERROR);
+            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             errorResult.setResult(false);
-            errorResult.addError(ErrorRDTO.createSystemError(exp, "system.error", hakukohdeOid));
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp, "system.error", hakukohdeOid));
             return errorResult;
 
         }

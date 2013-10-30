@@ -1,13 +1,15 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 
 import java.util.*;
 
 /*
 * @author: Tuomas Katva 10/11/13
 */
-public class HakukohdeRDTO extends BaseRDTO {
+public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimi;
 

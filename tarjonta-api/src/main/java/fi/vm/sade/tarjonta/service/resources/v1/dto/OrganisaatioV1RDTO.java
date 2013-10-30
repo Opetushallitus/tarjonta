@@ -21,28 +21,28 @@ import java.util.List;
  *
  * @author mlyly
  */
-public class OrganisaatioRDTO extends BaseRDTO {
+public class OrganisaatioV1RDTO extends BaseV1RDTO {
 
     private String oid;
     private String nimi;
-    private List<LokalisointiRDTO> _nimet;
+    private List<LokalisointiV1RDTO> _nimet;
 
-    public void addNimi(LokalisointiRDTO lokalisointi) {
+    public void addNimi(LokalisointiV1RDTO lokalisointi) {
         getNimet().add(lokalisointi);
     }
 
     public void addNimi(String kieli, String kieliUri, String arvo) {
-        getNimet().add(new LokalisointiRDTO(kieli, kieliUri, arvo));
+        getNimet().add(new LokalisointiV1RDTO(kieli, kieliUri, arvo));
     }
 
-    public List<LokalisointiRDTO> getNimet() {
+    public List<LokalisointiV1RDTO> getNimet() {
         if (_nimet == null) {
-            _nimet = new ArrayList<LokalisointiRDTO>();
+            _nimet = new ArrayList<LokalisointiV1RDTO>();
         }
         return _nimet;
     }
 
-    public void setNimet(List<LokalisointiRDTO> _nimet) {
+    public void setNimet(List<LokalisointiV1RDTO> _nimet) {
         this._nimet = _nimet;
     }
 
