@@ -216,8 +216,8 @@ public class TestTarjontaLuoAineistoa {
         doit.sendInput(driver, "Suunniteltu kesto", "3");
         doit.sendInput(driver, "Opetusmuoto", "Oppisopimuskoulutus");
         doit.popupItemClick(driver, "Oppisopimuskoulutus");
-        doit.sendInputPlusX(driver, "Suunniteltu kesto", "Kuukausi", 150); // Valitse aikayksikko
-        doit.popupItemClick(driver, "Kuukausi");
+        doit.sendInputPlusX(driver, "Suunniteltu kesto", "kuukautta", 150); // Valitse aikayksikko
+        doit.popupItemClick(driver, "kuukautta");
 
         doit.sendInput(driver, "Opetuskieli", "suomi");
         doit.sendInput(driver, "Opetuskieli", "suomi");

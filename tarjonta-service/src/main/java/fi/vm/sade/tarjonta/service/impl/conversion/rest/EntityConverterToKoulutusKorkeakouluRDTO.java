@@ -35,8 +35,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -52,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author jani
  */
-public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KoulutusKorkeakouluRDTO> {
+public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KoulutusKorkeakouluV1RDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToKoulutusKorkeakouluRDTO.class);
     @Autowired(required = true)
@@ -64,9 +64,9 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
     private OrganisaatioService organisaatioService;
 
     @Override
-    public KoulutusKorkeakouluRDTO convert(KoulutusmoduuliToteutus komoto) {
+    public KoulutusKorkeakouluV1RDTO convert(KoulutusmoduuliToteutus komoto) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
-        KoulutusKorkeakouluRDTO kkDto = new KoulutusKorkeakouluRDTO();
+        KoulutusKorkeakouluV1RDTO kkDto = new KoulutusKorkeakouluV1RDTO();
         if (komoto == null) {
             return kkDto;
         }
@@ -282,7 +282,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         }
     }
 
-    private OrganisaatioRDTO searchOrganisaationNimi(String tarjoajaOid) {
+    private OrganisaatioV1RDTO searchOrganisaationNimi(String tarjoajaOid) {
         final OrganisaatioDTO organisaatioDto = organisaatioService.findByOid(tarjoajaOid);
 
         Preconditions.checkNotNull(organisaatioDto, "OrganisaatioDTO object cannot be null.");
@@ -305,7 +305,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         }
 
         Preconditions.checkNotNull(nimi, "OrganisaatioDTO name object cannot be null.");
-        OrganisaatioRDTO organisaatioRDTO = new OrganisaatioRDTO();
+        OrganisaatioV1RDTO organisaatioRDTO = new OrganisaatioV1RDTO();
         organisaatioRDTO.setOid(organisaatioDto.getOid());
         organisaatioRDTO.setNimi(organisaatioDto.getOid());
         return organisaatioRDTO;

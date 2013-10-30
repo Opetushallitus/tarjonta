@@ -37,7 +37,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -87,7 +87,7 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
         kkDto.setOpintojenLaajuus(simpleUiDTO("unavailable"));
         kkDto.setKoulutuskoodi(convertToUiMetaDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
 
-        TekstiRDTO<KomotoTeksti> komotoKuvaus = new TekstiRDTO<KomotoTeksti>();
+        TekstiV1RDTO<KomotoTeksti> komotoKuvaus = new TekstiV1RDTO<KomotoTeksti>();
         komotoKuvaus.setTekstis(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()).getTekstis());
         kkDto.setKuvausKomoto(komotoKuvaus);
 
@@ -133,7 +133,7 @@ public class KomotoConverterToKorkeakouluDTO extends AbstractFromDomainConverter
             kkDto.setHinta(komoto.getHinta().doubleValue());
         }
 
-        TekstiRDTO<KomoTeksti> komoKuvaus = new TekstiRDTO<KomoTeksti>();
+        TekstiV1RDTO<KomoTeksti> komoKuvaus = new TekstiV1RDTO<KomoTeksti>();
         komoKuvaus.setTekstis(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
         kkDto.setKuvausKomo(komoKuvaus);
 

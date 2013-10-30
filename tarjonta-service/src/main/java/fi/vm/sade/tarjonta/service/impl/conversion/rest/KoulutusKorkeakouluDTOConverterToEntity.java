@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Jani Wilén
  */
-public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainConverter<KoulutusKorkeakouluRDTO, KoulutusmoduuliToteutus> {
+public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainConverter<KoulutusKorkeakouluV1RDTO, KoulutusmoduuliToteutus> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusKorkeakouluDTOConverterToEntity.class);
     @Autowired
@@ -58,7 +58,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Override
-    public KoulutusmoduuliToteutus convert(KoulutusKorkeakouluRDTO dto) {
+    public KoulutusmoduuliToteutus convert(KoulutusKorkeakouluV1RDTO dto) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;

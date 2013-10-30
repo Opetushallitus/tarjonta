@@ -28,11 +28,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -81,29 +79,29 @@ public interface KoulutusResource {
     @GET
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiRDTO loadTekstis(@PathParam("oid") String oid);
+    public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/komoto/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiRDTO loadKomotoTekstis(@PathParam("oid") String oid);
+    public TekstiV1RDTO loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komoto/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomotoTeksti> dto);
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomotoTeksti> dto);
 
     @GET
     @Path("{oid}/komo/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiRDTO loadKomoTekstis(@PathParam("oid") String oid);
+    public TekstiV1RDTO loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/komo/tekstis")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiRDTO<KomoTeksti> dto);
+    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomoTeksti> dto);
 
     @DELETE
     @Path("{oid}/teksti")
@@ -135,25 +133,6 @@ public interface KoulutusResource {
     @Path("{oid}/tila")
     @Produces(MediaType.TEXT_PLAIN)
     public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
-
-    /**
-     * Hakukysely tarjonnan käyttöliittymää varten.
-     *
-     * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given
-     * organisations
-     * @param hakukohdeTilas filter result to be only in states given
-     * @return
-     */
-    @GET
-    @Path("/search")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakutuloksetRDTO<KoulutusHakutulosRDTO> searchInfo(@QueryParam("searchTerms") String searchTerms,
-            @QueryParam("organisationOid") List<String> organisationOids,
-            @QueryParam("tila") String koulutusTila,
-            @QueryParam("alkamisKausi") String alkamisKausi,
-            @QueryParam("alkamisVuosi") Integer alkamisVuosi
-    );
 
     /**
      * /koulutus/OID/hakukohteet

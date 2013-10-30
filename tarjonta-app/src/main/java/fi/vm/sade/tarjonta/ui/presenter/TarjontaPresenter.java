@@ -1264,7 +1264,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 KoulutusPerustieto firstKoulutus = getModel().getSelectedKoulutukset().get(0);
 
                 //set tarjoaja
-                getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getTarjoajaOid());
+                getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getOid());
 
                 //set koulutusastetyyppi
                 getModel().getHakukohde().setKoulutusasteTyyppi(firstKoulutus.getKoulutustyyppi());
@@ -1511,7 +1511,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     ? curKoulutus.getKoulutuskoodi().getUri()
                     : curKoulutus.getKoulutusohjelmakoodi().getUri();
             try {
-                final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getTarjoaja().getTarjoajaOid());
+                final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getTarjoaja().getOid());
                 TarjontaTila tila = curKoulutus.getTila();
 
                 if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS))
@@ -1719,7 +1719,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
         // Creating the datasource model
         for (KoulutusPerustieto curKoulutus : getModel().getKoulutukset()) {
-            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi()).getValue();
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi());
             if (!map.containsKey(koulutusKey)) {
                 //LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
@@ -2103,7 +2103,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     private boolean tarjoajaMatches(String tarjoajaOid, KoulutusPerustieto KoulutusPerustieto) {
-        return (tarjoajaOid != null) && tarjoajaOid.equals(KoulutusPerustieto.getTarjoaja().getTarjoajaOid());
+        return (tarjoajaOid != null) && tarjoajaOid.equals(KoulutusPerustieto.getTarjoaja().getOid());
     }
 
     private boolean pohjakoulutusMatches(String pohjakoulutusvaatimus, KoulutusPerustieto KoulutusPerustieto) {
@@ -2184,7 +2184,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void toggleCreateHakukohde() {
         String organisaatioOid = null;
         if(_model.getSelectedKoulutukset().size()>0) {
-            organisaatioOid = _model.getSelectedKoulutukset().get(0).getTarjoaja().getTarjoajaOid();
+            organisaatioOid = _model.getSelectedKoulutukset().get(0).getTarjoaja().getOid();
         }
         
         if(organisaatioOid==null) {

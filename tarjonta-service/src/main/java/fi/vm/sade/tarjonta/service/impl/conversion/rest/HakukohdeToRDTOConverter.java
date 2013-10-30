@@ -9,7 +9,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
 import java.util.ArrayList;
@@ -20,11 +20,11 @@ import java.util.StringTokenizer;
 /*
 * @author: Tuomas Katva 10/11/13
 */
-public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,HakukohdeRDTO> {
+public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,HakukohdeV1RDTO> {
 
     @Override
-    public HakukohdeRDTO convert(Hakukohde hakukohde)  {
-        HakukohdeRDTO hakukohdeRDTO = new HakukohdeRDTO();
+    public HakukohdeV1RDTO convert(Hakukohde hakukohde)  {
+        HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
         hakukohdeRDTO.setHakukohteenNimiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getHakukohdeNimi()));
         hakukohdeRDTO.setVersion(hakukohde.getVersion());

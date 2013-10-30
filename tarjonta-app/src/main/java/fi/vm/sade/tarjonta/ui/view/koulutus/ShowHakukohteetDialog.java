@@ -156,7 +156,7 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
         return presenter.getUiHelper().getKoulutusNimi(koulutus) 
                 + ", " + presenter.getUiHelper().getAjankohtaStr(koulutus) 
                 + ", " + presenter.getUiHelper().getKoulutuslaji(koulutus)
-                + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), koulutus.getTarjoaja().getNimi()).getValue();
+                + ", " + TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koulutus.getTarjoaja().getNimi());
     }
     
     private void showSummaryView(HakukohdePerustieto hakukohde) {

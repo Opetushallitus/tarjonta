@@ -390,7 +390,7 @@ public class ListKoulutusView extends VerticalLayout {
                         //presenter.getTarjoaja().setSelectedOrganisationOid(presenter.getModel().getSelectedKoulutukset().get(0).getTarjoaja().getTarjoajaOid());
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(), null);
                         presenter.getTarjoaja().setSelectedResultRowOrganisationOid(
-                                presenter.getModel().getSelectedKoulutukset().get(0).getTarjoaja().getTarjoajaOid());
+                                presenter.getModel().getSelectedKoulutukset().get(0).getTarjoaja().getOid());
                     }
                 }
             }
@@ -692,7 +692,7 @@ public class ListKoulutusView extends VerticalLayout {
 
         case CREATE:
             final KoulutusPerustieto freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutukset().get(0);
-            Object parent = findParent(freshKoulutus.getTarjoaja().getTarjoajaOid());
+            Object parent = findParent(freshKoulutus.getTarjoaja().getOid());
             if(parent==null) {
                 //need to add new org to tree, falling back to reload for now!
                 reload();
@@ -720,7 +720,7 @@ public class ListKoulutusView extends VerticalLayout {
             final KoulutusResultRow curRow = (KoulutusResultRow) (categoryTree.getContainerProperty(itemId, COLUMN_A).getValue());
             if (curRow.getChildren() != null) {
                 if (tarjoajaOid.equals(curRow.getChildren().get(0)
-                        .getTarjoaja().getTarjoajaOid())) {
+                        .getTarjoaja().getOid())) {
                     return itemId;
                 }
             }

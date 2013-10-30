@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.resources.TilaResource;
+import fi.vm.sade.tarjonta.service.resources.v1.TilaV1Resource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * 
  * @author Timo Santasalo / Teknokala Ky
- * @see TilaResource
+ * @see TilaV1Resource
  */
 public class TilaRDTO implements Serializable {
 

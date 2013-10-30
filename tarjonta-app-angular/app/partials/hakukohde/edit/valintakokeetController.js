@@ -220,11 +220,6 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
        };
 
-       $scope.debugSave = function() {
-
-           console.log('DATA : ', $scope.model.valintakoe);
-
-       };
 
        $scope.save = function() {
           if (selectedKieli !== undefined) {

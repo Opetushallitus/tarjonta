@@ -19,7 +19,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -42,8 +42,8 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private static final String DEMO_LOCALE = "FI";
 
-    public TekstiRDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit) {
-        TekstiRDTO tekstis = new TekstiRDTO();
+    public TekstiV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit) {
+        TekstiV1RDTO tekstis = new TekstiV1RDTO();
         for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
             UiMetaDTO dto = new UiMetaDTO();
 
@@ -74,7 +74,7 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
         return koodiUri;
     }
 
-    public void convertTekstiDTOToMonikielinenTeksti(TekstiRDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
+    public void convertTekstiDTOToMonikielinenTeksti(TekstiV1RDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
         Map<TYPE, UiMetaDTO> tekstis = tekstiDto.getTekstis();
         for (Map.Entry<TYPE, UiMetaDTO> e : tekstis.entrySet()) {
             Map<String, UiDTO> restMeta = e.getValue().getMeta();

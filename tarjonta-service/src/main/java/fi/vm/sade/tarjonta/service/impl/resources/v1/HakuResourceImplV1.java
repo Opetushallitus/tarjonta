@@ -16,14 +16,13 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
-public class HakuResourceImplV1 implements HakuResource {
+public class HakuResourceImplV1 implements HakuV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
 
@@ -45,23 +44,15 @@ public class HakuResourceImplV1 implements HakuResource {
     private HakuDAO _hakuDao;
     @Autowired
     private HakukohdeDAO _hakuHakuDAODao;
-
-    private V1Converter _converter;
-
-    @PostConstruct
-    private void init() {
-        LOG.info("init()");
-        _converter = new V1Converter();
-        _converter.setHakuDao(_hakuDao);
-        _converter.setHakukohdeDao(_hakuHakuDAODao);
-    }
+    @Autowired
+    private ConverterV1 _converter;
 
     @Override
-    public ResultRDTO<List<OidRDTO>> search(GenericSearchParamsRDTO params) {
+    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {
         LOG.info("search({})", params);
 
-        ResultRDTO<List<OidRDTO>>  result = new ResultRDTO<List<OidRDTO>>();
-        result.setStatus(ResultRDTO.ResultStatus.OK);
+        ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>();
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         // TODO implement the search!
 
@@ -69,56 +60,56 @@ public class HakuResourceImplV1 implements HakuResource {
     }
 
     @Override
-    public ResultRDTO<HakuRDTO> findByOid(String oid) {
+    public ResultV1RDTO<HakuV1RDTO> findByOid(String oid) {
         LOG.info("findByOid({})", oid);
 
-        ResultRDTO<HakuRDTO> result = new ResultRDTO<HakuRDTO>();
+        ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
         try {
             result.setResult(_converter.fromHakuToHakuRDTO(oid));
             if (result.getResult() == null) {
-                result.setStatus(ResultRDTO.ResultStatus.NOT_FOUND);
+                result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             } else {
-                result.setStatus(ResultRDTO.ResultStatus.OK);
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
             }
         } catch (Exception ex) {
-            result.setStatus(ResultRDTO.ResultStatus.ERROR);
-            result.addError(ErrorRDTO.createSystemError(ex, "system.error", oid));
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.addError(ErrorV1RDTO.createSystemError(ex, "system.error", oid));
         }
 
         return result;
     }
 
     @Override
-    public ResultRDTO<HakuRDTO> createHaku(HakuRDTO haku) {
+    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         LOG.info("createHaku({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ResultRDTO<HakuRDTO> updateHaku(HakuRDTO haku) {
+    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
         LOG.info("updateHaku({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ResultRDTO<Boolean> deleteHaku(String oid) {
+    public ResultV1RDTO<Boolean> deleteHaku(String oid) {
         LOG.info("deleteHaku({})", oid);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ResultRDTO<List<OidRDTO>> getHakukohdesForHaku(String oid, GenericSearchParamsRDTO params) {
+    public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(String oid, GenericSearchParamsV1RDTO params) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<String> getHakuState(String oid) {
+    public ResultV1RDTO<String> getHakuState(String oid) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ResultRDTO<String> setHakuState(String oid, String state) {
+    public ResultV1RDTO<String> setHakuState(String oid, String state) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

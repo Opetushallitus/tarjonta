@@ -11,6 +11,8 @@ import java.util.Date;
 */
 public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
+    private String hakukohdeOid;
+
     private String kieliUri;
 
     private String kieliNimi;
@@ -79,5 +81,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setKieliNimi(String kieliNimi) {
         this.kieliNimi = kieliNimi;
+    }
+
+    public String getHakukohdeOid() {
+        return hakukohdeOid;
+    }
+
+    public void setHakukohdeOid(String hakukohdeOid) {
+        this.hakukohdeOid = hakukohdeOid;
     }
 }

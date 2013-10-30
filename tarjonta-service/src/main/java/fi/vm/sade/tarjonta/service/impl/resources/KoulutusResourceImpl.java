@@ -47,12 +47,12 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.ToteutusDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -124,29 +124,6 @@ public class KoulutusResourceImpl implements KoulutusResource {
             }
             return koulutuskoodiRelations.getKomoRelation(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public HakutuloksetRDTO<KoulutusHakutulosRDTO> searchInfo(
-            String searchTerms,
-            List<String> organisationOids,
-            String hakukohdeTila,
-            String alkamisKausi,
-            Integer alkamisVuosi) {
-
-        organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
-
-        KoulutuksetKysely q = new KoulutuksetKysely();
-        q.setNimi(searchTerms);
-        q.setKoulutuksenAlkamiskausi(alkamisKausi);
-        q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
-        q.getTarjoajaOids().addAll(organisationOids);
-        q.setKoulutuksenTila(hakukohdeTila == null ? null : TarjontaTila.valueOf(hakukohdeTila).asDto());
-
-        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
-
-        return (HakutuloksetRDTO<KoulutusHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
     }
 
     @Override
@@ -269,14 +246,14 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public TekstiRDTO loadTekstis(String oid) {
+    public TekstiV1RDTO loadTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
 
-        TekstiRDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
+        TekstiV1RDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-        TekstiRDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
+        TekstiV1RDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
         komotoTekstiDto.getTekstis().putAll(komoTekstiDto.getTekstis());
 
         //combine komo&komoto text data to the dto;
@@ -284,7 +261,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public TekstiRDTO loadKomotoTekstis(String oid) {
+    public TekstiV1RDTO loadKomotoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -292,7 +269,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public Response saveKomotoTekstis(String oid, TekstiRDTO<KomotoTeksti> dto) {
+    public Response saveKomotoTekstis(String oid, TekstiV1RDTO<KomotoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -302,7 +279,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public TekstiRDTO loadKomoTekstis(String oid) {
+    public TekstiV1RDTO loadKomoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -310,7 +287,7 @@ public class KoulutusResourceImpl implements KoulutusResource {
     }
 
     @Override
-    public Response saveKomoTekstis(String oid, TekstiRDTO<KomoTeksti> dto) {
+    public Response saveKomoTekstis(String oid, TekstiV1RDTO<KomoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);

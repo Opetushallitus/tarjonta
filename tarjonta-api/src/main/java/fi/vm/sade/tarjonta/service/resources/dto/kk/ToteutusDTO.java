@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.service.resources.dto.kk;
 
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
@@ -50,8 +50,8 @@ public abstract class ToteutusDTO extends BaseRDTO {
     //OTHER DATA
     private TarjontaTila tila;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-    private TekstiRDTO<KomoTeksti> kuvausKomo;
-    private TekstiRDTO<KomotoTeksti> kuvausKomoto;
+    private TekstiV1RDTO<KomoTeksti> kuvausKomo;
+    private TekstiV1RDTO<KomotoTeksti> kuvausKomoto;
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
     public ToteutusDTO() {
@@ -272,9 +272,9 @@ public abstract class ToteutusDTO extends BaseRDTO {
     /**
      * @return the kuvausKomo
      */
-    public TekstiRDTO<KomoTeksti> getKuvausKomo() {
+    public TekstiV1RDTO<KomoTeksti> getKuvausKomo() {
         if (kuvausKomo == null) {
-            kuvausKomo = new TekstiRDTO<KomoTeksti>();
+            kuvausKomo = new TekstiV1RDTO<KomoTeksti>();
         }
         return kuvausKomo;
     }
@@ -282,16 +282,16 @@ public abstract class ToteutusDTO extends BaseRDTO {
     /**
      * @param kuvausKomo the kuvausKomo to set
      */
-    public void setKuvausKomo(TekstiRDTO<KomoTeksti> kuvausKomo) {
+    public void setKuvausKomo(TekstiV1RDTO<KomoTeksti> kuvausKomo) {
         this.kuvausKomo = kuvausKomo;
     }
 
     /**
      * @return the kuvausKomoto
      */
-    public TekstiRDTO<KomotoTeksti> getKuvausKomoto() {
+    public TekstiV1RDTO<KomotoTeksti> getKuvausKomoto() {
         if (kuvausKomoto == null) {
-            kuvausKomoto = new TekstiRDTO<KomotoTeksti>();
+            kuvausKomoto = new TekstiV1RDTO<KomotoTeksti>();
         }
 
         return kuvausKomoto;
@@ -300,7 +300,7 @@ public abstract class ToteutusDTO extends BaseRDTO {
     /**
      * @param kuvausKomoto the kuvausKomoto to set
      */
-    public void setKuvausKomoto(TekstiRDTO<KomotoTeksti> kuvausKomoto) {
+    public void setKuvausKomoto(TekstiV1RDTO<KomotoTeksti> kuvausKomoto) {
         this.kuvausKomoto = kuvausKomoto;
     }
 
