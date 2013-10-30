@@ -70,9 +70,9 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
 
                 return function postLink(scope, iElement, iAttrs, controller) {
                     // $timeout(scope.$destroy.bind(scope), 0);
-                }
+                };
             }
-        }
+        };
     }]);
 
 /**
