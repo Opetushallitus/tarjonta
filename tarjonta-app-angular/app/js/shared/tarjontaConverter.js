@@ -26,7 +26,6 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         if (angular.isUndefined(apiModel)) {
             factory.throwError('Tarjonta API model object cannot be undefined!');
         }
-        console.log('LANGS', languageUris);
         angular.forEach(languageUris, function(langUri) {
             factory.addMetaLanguage(apiModel, langUri);
         });
@@ -72,7 +71,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         if (angular.isUndefined(apiModel.tekstis)) {
             factory.throwError('Tarjonta API model tekstis object cannot be undefined!');
         }
-        
+
         angular.forEach(apiModel.tekstis, function(val, key) {
             factory.addMetaLanguage(val, lang);
         });
@@ -114,9 +113,23 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             kuvausKomo: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
                     'KOULUTUKSEN_RAKENNE',
                     'JATKOOPINTO_MAHDOLLISUUDET',
-                    'TAVOITTEET'
+                    'TAVOITTEET',
+                    'PATEVYYS'
                 ])},
-            kuvausKomoto: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([])}
+            kuvausKomoto: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
+                    'MAKSULLISUUS',
+                    'ARVIOINTIKRITEERIT',
+                    'LOPPUKOEVAATIMUKSET',
+                    'PAINOTUS',
+                    'KOULUTUSOHJELMAN_VALINTA',
+                    'KUVAILEVAT_TIEDOT',
+                    'SISALTO',
+                    'SIJOITTUMINEN_TYOELAMAAN',
+                    'KANSAINVALISTYMINEN',
+                    'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
+                    'LISATIETOA_OPETUSKIELISTA',
+                    'TUTKIMUKSEN_PAINOPISTEET'
+                ])}
         }
     };
 
@@ -297,10 +310,12 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
      * @returns {undefined}
      */
     factory.createAPIModel = function(apiModel, languages) {
+        if (angular.isUndefined(languages) || !angular.isArray(languages) || languages.length === 0) {
+            factory.throwError("No default language uris, array must have at least one language uri.");
+        }
+
         angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
             apiModel[key] = factory.addMetaField(value.default);
-
-            console.log('INIT LANGS', languages, apiModel[key]);
             factory.createMetaLanguages(apiModel[key], languages);
         });
 

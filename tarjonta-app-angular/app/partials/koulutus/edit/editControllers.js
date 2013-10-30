@@ -51,7 +51,7 @@ app.controller('BaseEditController',
                     /*
                      * HANDLE ROUTING
                      */
-                    if (!angular.isUndefined($routeParams.id)) {
+                    if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null) {
                         //load data for edit
                         $scope.xmodel.koulutus.$promise.then(function(data) {
                             $scope.search(data);
