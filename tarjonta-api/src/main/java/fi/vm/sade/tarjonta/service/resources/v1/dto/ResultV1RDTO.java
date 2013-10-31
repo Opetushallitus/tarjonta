@@ -75,6 +75,8 @@ import java.util.List;
  */
 public class ResultV1RDTO<T> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Generic error codes.
      */
@@ -125,6 +127,13 @@ public class ResultV1RDTO<T> implements Serializable {
 
     public void setStatus(ResultStatus _status) {
         this._status = _status;
+    }
+
+    public ResultV1RDTO() {
+    }
+
+    public ResultV1RDTO(T result) {
+        setResult(result);
     }
 
     public T getResult() {

@@ -64,7 +64,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     
     @Override
-    public HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> search(String searchTerms,
+    public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
             String alkamisKausi, Integer alkamisVuosi) {
 
@@ -86,7 +86,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
 
-        return converter.fromHakukohteetVastaus(r);
+        return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
     
     @Override

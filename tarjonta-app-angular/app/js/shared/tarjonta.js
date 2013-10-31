@@ -64,6 +64,8 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
+        	result = result.result // unwrap v1
+        	console.log("result:", result);
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
@@ -97,6 +99,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
+        	result = result.result;  //unwrap v1
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
 

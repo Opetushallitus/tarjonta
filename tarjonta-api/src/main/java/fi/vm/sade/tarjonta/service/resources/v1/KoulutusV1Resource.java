@@ -167,7 +167,7 @@ public interface KoulutusV1Resource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> searchInfo(@QueryParam("searchTerms") String searchTerms,
+    public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
