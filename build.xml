@@ -44,10 +44,10 @@
 			
 			<!-- deploy lates from local maven repo -->
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
-				<include name="*.war"/>
+				<include name="*${pom.version}.war"/>
 			</fileset>
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
-				<include name="*.war"/>
+				<include name="*${pom.version}.war"/>
 			</fileset>
 		</scp>
 
@@ -56,8 +56,8 @@
 				mkdir ${tomcat.home}/webapps/tarjonta-service;
 				mkdir ${tomcat.home}/webapps/tarjonta-app;
 				
-				unzip -qo -d${tomcat.home}/webapps/tarjonta-service ${tomcat.home}/webapps/tarjonta-service*.war;
-				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*.war;
+				unzip -qo -d${tomcat.home}/webapps/tarjonta-service ${tomcat.home}/webapps/tarjonta-service*${pom.version}.war;
+				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*${pom.version}.war;
 				
 				rm -rf ${tomcat.home}/webapps/*.war;
 				"
