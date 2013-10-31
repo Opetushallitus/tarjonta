@@ -58,17 +58,17 @@ public interface HakukohdeV1Resource {
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<HakukohdeV1RDTO> createHaku(HakukohdeV1RDTO hakukohde);
+    public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohde);
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHaku(HakukohdeV1RDTO hakukohde);
+    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(HakukohdeV1RDTO hakukohde);
 
     @DELETE
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
+    public ResultV1RDTO<Boolean> deleteHakukohde(@PathParam("oid") String oid);
 
 
     @GET

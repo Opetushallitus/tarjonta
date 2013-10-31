@@ -14,10 +14,15 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
@@ -29,16 +34,22 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Nullable;
 
 /**
  *
@@ -58,6 +69,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     
     @Autowired(required=true)
     TarjontaSearchService tarjontaSearchService;
+
+    @Autowired
+    private IndexerResource solrIndexer;
+
+    @Autowired
+    private ConversionService conversionService;
+
+    @Autowired(required = true)
+    private PublicationDataService publication;
+
+
+    @Autowired(required = true)
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private ConverterV1 converter;
@@ -91,38 +115,146 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     
     @Override
     public String hello() {
-        LOG.error("hello()");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return "OK";
     }
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
-        LOG.error("search()");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Hakukohde> hakukohdeList =  hakukohdeDao.findAll();
+
+        List<OidV1RDTO> oidList = new ArrayList<OidV1RDTO>();
+        if (hakukohdeList != null && hakukohdeList.size() > 0) {
+
+            for (Hakukohde hakukohde:hakukohdeList) {
+
+                OidV1RDTO oidi = new OidV1RDTO();
+                oidi.setOid(hakukohde.getOid());
+                oidList.add(oidi);
+            }
+            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            result.setResult(oidList);
+            return result;
+        } else {
+            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return result;
+        }
+
+
     }
 
     @Override
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
-        LOG.error("findByOid({})", oid);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeWithKomotosByOid(oid);
+
+        HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+        result.setResult(hakukohdeRDTO);
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        return result;
     }
 
     @Override
-    public ResultV1RDTO<HakukohdeV1RDTO> createHaku(HakukohdeV1RDTO hakukohde) {
-        LOG.error("createHaku({})", hakukohde);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+        String hakuOid = hakukohdeRDTO.getHakuOid();
+        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+        hakukohdeRDTO.setOid(null);
+        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+
+        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
+
+        Haku haku = hakuDao.findByOid(hakuOid);
+        hakukohde.setHaku(haku);
+
+        hakukohde = hakukohdeDao.insert(hakukohde);
+
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+
+        //TODO, add valintakokees and liittees etc.
+
+        hakukohdeDao.update(hakukohde);
+
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                return arg0.getId();
+            }
+        })));
+        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+
+        hakukohdeRDTO.setOid(hakukohde.getOid());
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        result.setResult(hakukohdeRDTO);
+        return result;
     }
 
     @Override
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHaku(HakukohdeV1RDTO hakukohde) {
-        LOG.error("updateHaku({})", hakukohde);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+        String hakuOid = hakukohdeRDTO.getHakuOid();
+        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+        Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
+
+        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+
+        Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
+
+        hakukohde.setId(hakukohdeTemp.getId());
+        hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+        Haku haku = hakuDao.findByOid(hakuOid);
+
+        hakukohde.setHaku(haku);
+        //TODO: add sisaiset hakuajat
+
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+        //TODO: valintakoes and liites
+
+        hakukohdeDao.update(hakukohde);
+        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+                return arg0.getId();
+            }
+        })));
+        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        result.setResult(hakukohdeRDTO);
+
+        return result;
     }
 
     @Override
-    public ResultV1RDTO<Boolean> deleteHaku(String oid) {
-        LOG.error("deleteHaku({})", oid);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ResultV1RDTO<Boolean> deleteHakukohde(String oid) {
+        try {
+            Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
+            if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
+                for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
+                    koulutus.removeHakukohde(hakukohde);
+                }
+            }
+
+            hakukohdeDao.remove(hakukohde);
+            solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohde.getOid()));
+            ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+            result.setResult(true);
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            return  result;
+
+        } catch (Exception exp) {
+            LOG.warn("Exception occured when removing hakukohde {}, exception : {}" , oid,exp.toString());
+            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp,null));
+            return errorResult;
+
+        }
     }
 
     @Override
@@ -395,5 +527,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         }
 
+    }
+
+    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
+        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
+
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            komoto.addHakukohde(hakukohde);
+            komotos.add(komoto);
+        }
+
+        return komotos;
     }
 }

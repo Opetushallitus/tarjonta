@@ -82,19 +82,19 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
-        LOG.info("createHaku({})", haku);
+        LOG.info("createHakukohde({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
-        LOG.info("updateHaku({})", haku);
+        LOG.info("updateHakukohde({})", haku);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
-        LOG.info("deleteHaku({})", oid);
+        LOG.info("deleteHakukohde({})", oid);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
