@@ -3,7 +3,7 @@
             <h3>{{ model.translations.title}}</h3>
         </div>
         <div class="modal-body">
-          <form name="valintakoe">
+          <form name="ValintakoeModalForm">
               <div class="container-fluid ">
               <fieldset>
                   <div class="row-fluid">
@@ -21,9 +21,9 @@
                   </div>
                   <div class="row-fluid">
                       <div class="span2 label-right">{{ model.translations.valintakoeAjankohtaSijainti}}</div>
-                      <div class="span10"><input type="text" data-ng-model="model.selectedAjankohta.osoite.osoiterivi1" required />
+                      <div class="span10"><input type="text" data-ng-model="model.selectedAjankohta.osoite.osoiterivi1"  />
                       <input type="text"   ng-model="model.selectedAjankohta.osoite.postinumeroArvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-                      <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.selectedAjankohta.osoite.postitoimipaikka" required />
+                      <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.selectedAjankohta.osoite.postitoimipaikka"  />
 
                   </div>
                  </div>
@@ -34,7 +34,7 @@
                   </div>
                   <div class="row-fluid">
                       <div class="span2 label-right">{{ model.translations.valintakoeAjankohtaLisatieto}}</div>
-                      <div class="span8"><input type="text" placeholder="" data-ng-model="model.selectedAjankohta.lisatiedot" required /></div>
+                      <div class="span8"><input type="text" placeholder="" data-ng-model="model.selectedAjankohta.lisatiedot"  /></div>
                       <div class="span2"><button class="btn btn-primary" ng-click="lisaaTiedot()">{{ model.translations.valintakoeAjankohtaLisaa }}</button></div>
                   </div>
                    {{ model.translations.valintakoeAjankohtaTauluTitle }}
@@ -62,7 +62,7 @@
         <div class="modal-footer">
 
             <button class="btn btn-warning" ng-click="cancel()">{{ model.translations.cancel }}</button>
-            <button class="btn btn-primary" ng-click="save()">{{ model.translations.ok }}</button>
+            <button class="btn btn-primary" ng-disabled="!ValintakoeModalForm.$valid" ng-click="save()">{{ model.translations.ok }}</button>
         </div>
 
 </div>
