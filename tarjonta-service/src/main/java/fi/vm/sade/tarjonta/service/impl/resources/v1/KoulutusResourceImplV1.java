@@ -296,7 +296,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @SuppressWarnings("unchecked")
     @Override
-    public HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> searchInfo(
+    public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
             String searchTerms,
             List<String> organisationOids,
             String hakukohdeTila,
@@ -314,7 +314,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
-        return converter.fromKoulutuksetVastaus(r);
+        return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converter.fromKoulutuksetVastaus(r));
     }
 
     @Override

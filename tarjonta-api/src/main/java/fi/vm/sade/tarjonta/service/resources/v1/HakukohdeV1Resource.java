@@ -129,7 +129,7 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> search(@QueryParam("searchTerms") String searchTerms,
+    public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") List<String> hakukohdeTilas,
             @QueryParam("alkamisKausi") String alkamisKausi,
