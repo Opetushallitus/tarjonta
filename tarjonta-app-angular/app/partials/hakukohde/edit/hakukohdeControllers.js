@@ -98,6 +98,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
+    $scope.model.canSaveHakukohde = function() {
+        return $scope.editHakukohdeForm.$valid;
+    }
 
 
     //$scope.model.koodiuriPromise = $q.defer();

@@ -1,16 +1,16 @@
-<form>
+<form name="editHakukohdeForm">
 <div class="container-fluid" data-ng-controller="HakukohdeEditController">
     <div class="row-fluid">
         <div class="span12">
             <div class="btn" data-ng-click="model.takaisin()"><div tt='koulutus.edit.takaisin'></div></div>
-            <div class="btn" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
-            <div class="btn" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
+            <div class="btn" ng-disabled="model.canSaveHakukohde()" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
+            <div class="btn" ng-disabled="model.canSaveHakukohde()" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
         </div>
     </div>
     <br/>
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
-            <form name="luoHakukohde">
+            <!--<form name="editHakukohdeForm">   -->
 
 
                 <div class="container-fluid ">
@@ -141,7 +141,8 @@
 
 
 
-            </form>
+         <!--   </form>     -->
+
         </tab>
 
         <tab heading="{{t('kk.hakukohde.valintakokeet')}}">

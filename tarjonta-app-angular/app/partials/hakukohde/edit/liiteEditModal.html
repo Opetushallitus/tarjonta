@@ -3,7 +3,7 @@
         <h3>{{ model.translations.title}}</h3>
     </div>
     <div class="modal-body">
-        <form name="valintakoe">
+        <form name="liiteModalForm">
             <div class="container-fluid ">
                 <fieldset>
                     <div class="row-fluid">
@@ -52,11 +52,12 @@
                     </div>
                </fieldset>
             </div>
+
         </form>
     </div>
     <div class="modal-footer">
 
         <button class="btn btn-warning" ng-click="model.cancel()">{{ model.translations.peruuta }}</button>
-        <button class="btn btn-primary" ng-click="model.save()">{{ model.translations.tallenna }}</button>
+        <button class="btn btn-primary" ng-disabled="!model.canSave()" ng-click="model.save()">{{ model.translations.tallenna }}</button>
     </div>
 </div>

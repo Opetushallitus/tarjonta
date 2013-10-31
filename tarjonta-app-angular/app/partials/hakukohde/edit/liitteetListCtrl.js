@@ -81,6 +81,20 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
        $scope.model.muokkaaLiitetta(undefined);
     };
 
+    $scope.model.poistaLiite = function(liite) {
+
+           var index = $scope.model.liitteet.indexOf(liite);
+           $scope.model.liitteet.splice(index,1);
+           liite.hakukohdeOid = $scope.model.hakukohdeOid;
+           liite.liiteId = liite.oid;
+
+        var liiteResource = new Liite(liite);
+        liiteResource.$delete();
+
+
+
+    };
+
 
     //Hakukohdeliite modal controller
 
@@ -177,6 +191,10 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             $scope.model.liite.liitteenToimitusOsoite.postitoimipaikka = organisaationOsoite.postitoimipaikka;
 
         };
+
+        $scope.model.canSave = function() {
+           return $scope.liiteModalForm.$valid;
+        }
 
          $scope.model.translations = {
 
