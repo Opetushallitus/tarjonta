@@ -1,14 +1,14 @@
+<form name="LiiteModalForm">
 <div>
     <div class="modal-header">
         <h3>{{ model.translations.title}}</h3>
     </div>
     <div class="modal-body">
-        <form name="liiteModalForm">
             <div class="container-fluid ">
                 <fieldset>
                     <div class="row-fluid">
                         <div class="span2 label-right">{{ model.translations.kuvausKieli}}</div>
-                        <div class="span5"><koodistocombo onchangecallback="model.koodistoComboCallback" koodistouri="'kieli'" locale="'FI'" koodiuri="model.liite.kieliUri"></koodistocombo> </div>
+                        <div class="span5"><koodistocombo onchangecallback="model.koodistoComboCallback" koodistouri="'kieli'" locale="'FI'" koodiuri="model.liite.kieliUri" required></koodistocombo> </div>
                     </div>
                     <div class="row-fluid">
                         <div class="span2 label-right">{{ model.translations.liitteenNimi}}</div>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="row-fluid">
                         <div class="span2 label-right">{{ model.translations.toimitettavaMennessa}}</div>
-                        <div class="span4"><date-time-picker selecteddatetime="model.liite.toimitettavaMennessa"></date-time-picker> </div>
+                        <div class="span4"><date-time-picker selecteddatetime="model.liite.toimitettavaMennessa" required></date-time-picker> </div>
                    </div>
                    <div class="row-fluid">
                         <div class="span2 label-right"></div>
@@ -47,17 +47,19 @@
                         <div class="span2 label-right">{{ model.translations.voidaanToimittaaSahkoisesti }}</div>
                         <div class="span10">
                             <input type="checkbox" ng-model="model.voidaanToimittaaSahkoisesti"/> <br/>
-                            <input type="text" ng-disabled="!model.voidaanToimittaaSahkoisesti" ng-model="model.liite.sahkoinenToimitusOsoite">
+                            <input type="text" ng-disabled="!model.voidaanToimittaaSahkoisesti" data-ng-required="model.voidaanToimittaaSahkoisesti" ng-model="model.liite.sahkoinenToimitusOsoite">
                         </div>
                     </div>
                </fieldset>
             </div>
 
-        </form>
+
     </div>
     <div class="modal-footer">
 
         <button class="btn btn-warning" ng-click="model.cancel()">{{ model.translations.peruuta }}</button>
-        <button class="btn btn-primary" ng-disabled="!model.canSave()" ng-click="model.save()">{{ model.translations.tallenna }}</button>
+        <button class="btn btn-primary" ng-disabled="!LiiteModalForm.$valid" ng-click="model.save()">{{ model.translations.tallenna }}</button>
     </div>
 </div>
+
+</form>

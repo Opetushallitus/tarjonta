@@ -99,6 +99,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     $scope.model.canSaveHakukohde = function() {
+        console.log('CAN SAVE HAKUKOHDE', $scope.editHakukohdeForm.$valid);
         return $scope.editHakukohdeForm.$valid;
     }
 

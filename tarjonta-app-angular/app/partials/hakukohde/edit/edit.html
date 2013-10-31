@@ -1,16 +1,16 @@
-<form name="editHakukohdeForm">
+<!--<form name="editHakukohdeForm"> -->
 <div class="container-fluid" data-ng-controller="HakukohdeEditController">
     <div class="row-fluid">
         <div class="span12">
             <div class="btn" data-ng-click="model.takaisin()"><div tt='koulutus.edit.takaisin'></div></div>
-            <div class="btn" ng-disabled="model.canSaveHakukohde()" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
-            <div class="btn" ng-disabled="model.canSaveHakukohde()" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
+            <div class="btn" ng-disabled="!model.canSaveHakukohde()" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
+            <div class="btn" ng-disabled="!model.canSaveHakukohde()" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
         </div>
     </div>
     <br/>
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
-            <!--<form name="editHakukohdeForm">   -->
+            <form name="editHakukohdeForm">
 
 
                 <div class="container-fluid ">
@@ -64,7 +64,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></div></div>
                         <div class="span10">
-                            <input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" required />
+                            <input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua"  />
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                         <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
                         <div class="span10">
                             <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
-                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
+                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
                         </div>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
 
 
 
-         <!--   </form>     -->
+          </form>
 
         </tab>
 
@@ -182,4 +182,4 @@
     </div>
     </div>
 </div>
-</form>
+<!--</form>-->

@@ -70,7 +70,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
        var modalInstance = $modal.open({
            templateUrl: 'partials/hakukohde/edit/valintakoeModal.html',
-           controller: ValintakoeModalInstanceController,
+           controller: 'ValintakoeModalInstanceController',
            windowClass: 'valintakoe-modal',
            resolve: {
                valintakoe: function () {
@@ -103,137 +103,136 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    };
 
-
-    //Valintakoe modal controller
-
-   var ValintakoeModalInstanceController = function($scope, $modalInstance,LocalisationService,Koodisto,valintakoe) {
-
-       $scope.model = {};
-
-       $scope.model.selectedAjankohta = {
-           osoite : {}
-       };
+});
 
 
-       var selectedKieli = undefined;
+//Valintakoe modal controller
+app.controller('ValintakoeModalInstanceController', function($scope, $modalInstance,LocalisationService,Koodisto,valintakoe) {
 
-       //Koodisto helper methods
-       var findKoodiWithArvo = function(koodi,koodis)  {
+    $scope.model = {};
 
-
-           console.log('Trying to find with : ',koodi);
-           console.log('From :', koodis.length);
-           var foundKoodi;
-
-           angular.forEach(koodis,function(koodiLoop){
-               if (koodiLoop.koodiArvo === koodi){
-                   foundKoodi = koodiLoop;
-               }
-           });
+    $scope.model.selectedAjankohta = {
+        osoite : {}
+    };
 
 
-           return foundKoodi;
-       };
+    var selectedKieli = undefined;
 
-       var findKoodiWithUri = function(koodi,koodis)  {
-
-
-           var foundKoodi;
-
-           angular.forEach(koodis,function(koodiLoop){
-               if (koodiLoop.koodiUri === koodi){
-                   foundKoodi = koodiLoop;
-               }
-           });
+    //Koodisto helper methods
+    var findKoodiWithArvo = function(koodi,koodis)  {
 
 
-           return foundKoodi;
-       };
+        console.log('Trying to find with : ',koodi);
+        console.log('From :', koodis.length);
+        var foundKoodi;
 
-       var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
-
-       koodistoPromise.then(function(koodisParam){
-           $scope.model.koodis = koodisParam;
-
-           if ($scope.model.selectedAjankohta.osoite.postinumero !== undefined) {
-
-               var koodi =  findKoodiWithUri(postinumero,$scope.model.koodis);
-
-               $scope.model.postinumeroarvo.arvo = koodi.koodiArvo;
-           }
-       });
-
-       $scope.model.onKieliTypeAheadChange = function() {
-           var koodi = findKoodiWithArvo($scope.model.selectedAjankohta.osoite.postinumeroArvo,$scope.model.koodis);
-
-           $scope.model.selectedAjankohta.osoite.postinumeroArvo = koodi.koodiArvo;
-           $scope.model.selectedAjankohta.osoite.postinumero = koodi.koodiUri;
-           $scope.model.selectedAjankohta.osoite.postitoimipaikka = koodi.koodiNimi;
-
-       };
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiArvo === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
 
 
-      $scope.model.translations = {
-          title : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.otsikko'),
-          kuvausKieli : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.kuvauskieli'),
-          valintakoeNimi : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.valintakoenimi'),
-          valintakoeKuvaus : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.kuvaus'),
-          valintakoeAjankohtaSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.sijainti'),
-          valintakoeAjankohtaAika : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.aika'),
-          valintakoeAjankohtaLisatieto : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisatieto'),
-          valintakoeAjankohtaLisaa : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisaa'),
-          valintakoeAjankohtaTauluTitle : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.title'),
-          valintakoeAjankohtaTauluSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.sijaint'),
-          valintakoeAjankohtaTauluAjankohta : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.aika'),
-          valintakoeAjankohtaTauluLisatiedot : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.lisatietoja'),
-          ok : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ok'),
-          cancel : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.cancel')
-      }
+        return foundKoodi;
+    };
+
+    var findKoodiWithUri = function(koodi,koodis)  {
 
 
-       $scope.model.koodistoComboCallback  = function(kieli) {
-           selectedKieli = kieli;
-       };
+        var foundKoodi;
 
-       if (valintakoe !== undefined) {
-           $scope.model.valintakoe = valintakoe;
-       } else {
-           $scope.model.valintakoe = {
-               valintakoeAjankohtas : [],
-               valintakokeenKuvaus : {
-
-               }
-           };
-       }
-
-       $scope.cancel = function () {
-           $modalInstance.dismiss('cancel');
-       };
-
-       $scope.lisaaTiedot = function() {
-
-          $scope.model.valintakoe.valintakoeAjankohtas.push($scope.model.selectedAjankohta);
-
-          $scope.model.selectedAjankohta = {
-              osoite : {}
-          };
-
-       };
+        angular.forEach(koodis,function(koodiLoop){
+            if (koodiLoop.koodiUri === koodi){
+                foundKoodi = koodiLoop;
+            }
+        });
 
 
-       $scope.save = function() {
-          if (selectedKieli !== undefined) {
-              $scope.model.valintakoe.kieliNimi = selectedKieli.koodiNimi;
-              $scope.model.valintakoe.valintakokeenKuvaus.nimi = selectedKieli.koodiNimi;
-              $scope.model.valintakoe.valintakokeenKuvaus.arvo  = selectedKieli.koodiArvo;
-              $scope.model.valintakoe.valintakokeenKuvaus.versio = selectedKieli.koodiVersio;
-          }
+        return foundKoodi;
+    };
 
-          $scope.model.valintakoe.valintakokeenKuvaus.uri = $scope.model.valintakoe.kieliUri;
-          $modalInstance.close($scope.model.valintakoe);
-       };
+    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
+
+    koodistoPromise.then(function(koodisParam){
+        $scope.model.koodis = koodisParam;
+
+        if ($scope.model.selectedAjankohta.osoite.postinumero !== undefined) {
+
+            var koodi =  findKoodiWithUri(postinumero,$scope.model.koodis);
+
+            $scope.model.postinumeroarvo.arvo = koodi.koodiArvo;
+        }
+    });
+
+    $scope.model.onKieliTypeAheadChange = function() {
+        var koodi = findKoodiWithArvo($scope.model.selectedAjankohta.osoite.postinumeroArvo,$scope.model.koodis);
+
+        $scope.model.selectedAjankohta.osoite.postinumeroArvo = koodi.koodiArvo;
+        $scope.model.selectedAjankohta.osoite.postinumero = koodi.koodiUri;
+        $scope.model.selectedAjankohta.osoite.postitoimipaikka = koodi.koodiNimi;
+
+    };
 
 
-   };
+    $scope.model.translations = {
+        title : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.otsikko'),
+        kuvausKieli : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.kuvauskieli'),
+        valintakoeNimi : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.valintakoenimi'),
+        valintakoeKuvaus : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.kuvaus'),
+        valintakoeAjankohtaSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.sijainti'),
+        valintakoeAjankohtaAika : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.aika'),
+        valintakoeAjankohtaLisatieto : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisatieto'),
+        valintakoeAjankohtaLisaa : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisaa'),
+        valintakoeAjankohtaTauluTitle : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.title'),
+        valintakoeAjankohtaTauluSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.sijaint'),
+        valintakoeAjankohtaTauluAjankohta : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.aika'),
+        valintakoeAjankohtaTauluLisatiedot : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.lisatietoja'),
+        ok : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ok'),
+        cancel : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.cancel')
+    }
+
+
+    $scope.model.koodistoComboCallback  = function(kieli) {
+        selectedKieli = kieli;
+    };
+
+    if (valintakoe !== undefined) {
+        $scope.model.valintakoe = valintakoe;
+    } else {
+        $scope.model.valintakoe = {
+            valintakoeAjankohtas : [],
+            valintakokeenKuvaus : {
+
+            }
+        };
+    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.lisaaTiedot = function() {
+
+        $scope.model.valintakoe.valintakoeAjankohtas.push($scope.model.selectedAjankohta);
+
+        $scope.model.selectedAjankohta = {
+            osoite : {}
+        };
+
+    };
+
+
+    $scope.save = function() {
+        if (selectedKieli !== undefined) {
+            $scope.model.valintakoe.kieliNimi = selectedKieli.koodiNimi;
+            $scope.model.valintakoe.valintakokeenKuvaus.nimi = selectedKieli.koodiNimi;
+            $scope.model.valintakoe.valintakokeenKuvaus.arvo  = selectedKieli.koodiArvo;
+            $scope.model.valintakoe.valintakokeenKuvaus.versio = selectedKieli.koodiVersio;
+        }
+
+        $scope.model.valintakoe.valintakokeenKuvaus.uri = $scope.model.valintakoe.kieliUri;
+        $modalInstance.close($scope.model.valintakoe);
+    };
+
 
 });
