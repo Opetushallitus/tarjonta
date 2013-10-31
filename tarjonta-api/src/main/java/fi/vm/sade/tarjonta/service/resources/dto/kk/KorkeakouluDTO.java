@@ -26,6 +26,7 @@ public class KorkeakouluDTO extends ToteutusDTO {
     private UiMetaDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
     private String tunniste; //tutkinto-ohjelman tunniste
+
     /*
      * Other user selected form input data
      */
@@ -35,10 +36,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
     /*
      * KK
      */
+    private Double hinta;
     private Boolean opintojenMaksullisuus;
     private UiMetaDTO pohjakoulutusvaatimukset;
     private UiMetaDTO teemas;
-    private UiDTO opintojenLaajuus;
     private Date koulutuksenAlkamisPvm;
     private UiMetaDTO ammattinimikkeet;
 
@@ -163,20 +164,6 @@ public class KorkeakouluDTO extends ToteutusDTO {
     }
 
     /**
-     * @return the opintojenLaajuus
-     */
-    public UiDTO getOpintojenLaajuus() {
-        return opintojenLaajuus;
-    }
-
-    /**
-     * @param opintojenLaajuus the opintojenLaajuus to set
-     */
-    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
-        this.opintojenLaajuus = opintojenLaajuus;
-    }
-
-    /**
      * @return the koulutuksenAlkamisPvm
      */
     public Date getKoulutuksenAlkamisPvm() {
@@ -208,6 +195,10 @@ public class KorkeakouluDTO extends ToteutusDTO {
      * @return the ammattinimikkeet
      */
     public UiMetaDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new UiMetaDTO();
+        }
+
         return ammattinimikkeet;
     }
 
@@ -216,5 +207,19 @@ public class KorkeakouluDTO extends ToteutusDTO {
      */
     public void setAmmattinimikkeet(UiMetaDTO ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    /**
+     * @return the hinta
+     */
+    public Double getHinta() {
+        return hinta;
+    }
+
+    /**
+     * @param hinta the hinta to set
+     */
+    public void setHinta(Double hinta) {
+        this.hinta = hinta;
     }
 }

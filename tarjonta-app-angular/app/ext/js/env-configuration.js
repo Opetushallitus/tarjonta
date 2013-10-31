@@ -83,8 +83,8 @@ window.CONFIG = {
         //
 
         // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/",
-        // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/",
-        "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/",
+//"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
 
         // "tarjontaLocalisationRestUrl" : "http://localhost:8084/tarjonta-service/rest/localisation/",
         "tarjontaLocalisationRestUrl": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/localisation/",

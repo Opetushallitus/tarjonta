@@ -60,6 +60,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KomotoConverterToKorkeakouluDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto;
@@ -68,6 +69,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+
 import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +104,7 @@ public class KoulutusResourceImplTest {
     private static final String OPETUSKIELI = "opetuskieli";
     private static final String POHJAKOULUTUS = "pohjakoulutus";
     private static final String OPETUMUOTO = "opetusmuto";
+    private static final String AMMATTINIMIKE = "ammattinimike";
     private static final String EQF = "EQF";
     private static final String KOMO_OID = "komo_oid";
     private static final String KOMOTO_OID = "komoto_oid";
@@ -192,13 +195,16 @@ public class KoulutusResourceImplTest {
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setTunniste(TUNNISTE);
+        dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
+        dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         dto.setKoulutuksenAlkamisPvm(DATE.toDate());
         dto.getTeemas().getMeta().put(URI_KIELI_FI, toKoodiUri(TEEMA));
         dto.getOpetuskielis().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
         dto.getOpetusmuodos().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
+        dto.getAmmattinimikkeet().getMeta().put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
+
         dto.getPohjakoulutusvaatimukset().getMeta().put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
         dto.setSuunniteltuKesto(new SuunniteltuKestoDTO(SUUNNITELTU_KESTO_VALUE, SUUNNITELTU_KESTO + "_uri", "1", null));
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
@@ -225,6 +231,7 @@ public class KoulutusResourceImplTest {
         expectMetaUri(TEEMA);
         expectMetaUri(OPETUSKIELI);
         expectMetaUri(OPETUMUOTO);
+        expectMetaUri(AMMATTINIMIKE);
         expectMetaUri(POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO);
 
@@ -257,7 +264,7 @@ public class KoulutusResourceImplTest {
         assertEquals(ORGANISAATIO_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
-        assertEquals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, result.getKoulutusasteTyyppi());
+        assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
         final UiDTO koulutusohjelmaFi = result.getKoulutusohjelma().getMeta().get(URI_KIELI_FI);
         assertNotNull("No koulutusohjelma name by '" + URI_KIELI_FI + "'", koulutusohjelmaFi);
 
@@ -276,8 +283,9 @@ public class KoulutusResourceImplTest {
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO, result.getKoulutusmoduuliTyyppi());
-        assertEquals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, result.getKoulutusasteTyyppi());
+        assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
+        assertEquals(new Double(1.11), result.getHinta());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
         assertEquals(DATE.toDate(), result.getKoulutuksenAlkamisPvm());
 
@@ -285,6 +293,7 @@ public class KoulutusResourceImplTest {
         assertEqualMetaDto(OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(OPETUMUOTO, result.getOpetusmuodos());
         assertEqualMetaDto(POHJAKOULUTUS, result.getPohjakoulutusvaatimukset());
+        assertEqualMetaDto(AMMATTINIMIKE, result.getAmmattinimikkeet());
 
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKesto().getArvo());
         assertEquals(SUUNNITELTU_KESTO + "_uri", result.getSuunniteltuKesto().getKoodi().getUri());

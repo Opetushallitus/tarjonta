@@ -40,16 +40,12 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -117,34 +113,6 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         LOG.debug("  result={}", result);
         return result;
     }
-
-    @SuppressWarnings("unchecked")
-	@Override
-    public HakutuloksetRDTO<HakukohdeHakutulosRDTO> search(
-    		String searchTerms,
-    		List<String> organisationOids,
-    		List<String> hakukohdeTilas,
-    		String alkamisKausi,
-    		Integer alkamisVuosi) {
-
-		organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
-		hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
-
-		HakukohteetKysely q = new HakukohteetKysely();
-		q.setNimi(searchTerms);
-		q.setKoulutuksenAlkamiskausi(alkamisKausi);
-		q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
-		q.getTarjoajaOids().addAll(organisationOids);
-
-		for (String s : hakukohdeTilas) {
-		    q.getTilat().add(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
-		}
-
-		HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
-
-		return (HakutuloksetRDTO<HakukohdeHakutulosRDTO>) conversionService.convert(r, HakutuloksetRDTO.class);
-    }
-
 
     // /hakukohde/OID
     @Override

@@ -17,15 +17,10 @@ public class HakukohteetVastaus implements Serializable {
     }
 
     public int getHitCount() {
-        return hitCount;
+        return hakukohteet.size();
     }
 
-    public void setHitCount(int hitCount) {
-        this.hitCount = hitCount;
-    }
 
     private List<HakukohdePerustieto> hakukohteet = new ArrayList<HakukohdePerustieto>();
-
-    private int hitCount;
 
 }

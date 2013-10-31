@@ -14,9 +14,9 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import fi.vm.sade.tarjonta.service.resources.dto.HakutuloksetRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KoulutusHakutulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
@@ -52,6 +52,7 @@ import javax.ws.rs.core.Response;
 @Path("/v1/koulutus")
 public interface KoulutusV1Resource {
 
+    
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -166,13 +167,14 @@ public interface KoulutusV1Resource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakutuloksetRDTO<KoulutusHakutulosRDTO> searchInfo(@QueryParam("searchTerms") String searchTerms,
+    public HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
     );
 
+    
     /**
      * /koulutus/OID/hakukohteet
      *

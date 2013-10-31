@@ -33,7 +33,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
@@ -43,9 +42,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
@@ -55,15 +51,6 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
  */
 public class IndexDataUtils {
 	
-    private static final String LANG_EN = "en";
-
-
-    private static final String LANG_SV = "sv";
-
-
-    private static final String LANG_FI = "fi";
-
-
     private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
 
 
@@ -199,33 +186,23 @@ public class IndexDataUtils {
 		}
     }
     
-    public static TarjoajaTyyppi createTarjoaja(SolrDocument koulutusDoc,
+    public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
-        final TarjoajaTyyppi tarjoaja = new TarjoajaTyyppi();
-        tarjoaja.setTarjoajaOid("" + koulutusDoc.getFieldValue(ORG_OID));
+        final Tarjoaja tarjoaja = new Tarjoaja();
+        tarjoaja.setOid("" + koulutusDoc.getFieldValue(ORG_OID));
         final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja
-                .getTarjoajaOid());
+                .getOid());
         if (organisaatio != null) {
-            tarjoaja.setNimi(getOrganisaatioNimi(orgResponse.get(tarjoaja.getTarjoajaOid())));
+            tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
         }
         
         return tarjoaja;
     }
 
-   private static MonikielinenTekstiTyyppi getOrganisaatioNimi(
+   private static Nimi getOrganisaatioNimi(
             OrganisaatioPerustieto org) {
-        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        if (org != null) {
-            for(String lang: new String[]{LANG_FI, LANG_SV, LANG_EN}){
-                final String val = org.getNimi(lang);
-                if(val!=null) {
-                    Teksti nimiFi = new Teksti(val, lang);
-                    nimi.getTeksti().add(nimiFi);
-                }
-            }
-        }
-        
-        Preconditions.checkArgument(nimi.getTeksti().size() > 0);
+        Nimi nimi = new Nimi();
+        nimi.putAll(org.getNimi());
         return nimi;
     }
    

@@ -138,7 +138,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     private Set<Map.Entry<String, List<KoulutusPerustieto>>> createDataMap() {
         Map<String, List<KoulutusPerustieto>> dataMap = new HashMap<String, List<KoulutusPerustieto>>();
         for (KoulutusPerustieto curKoulutus : this.koulutukset) {
-            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curKoulutus.getTarjoaja().getNimi()).getValue();
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),curKoulutus.getTarjoaja().getNimi());
             if (!dataMap.containsKey(koulutusKey)) {
                 List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
                 koulutuksetM.add(curKoulutus);

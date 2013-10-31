@@ -23,7 +23,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
@@ -45,16 +44,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private HakuDAO _hakuDao;
     @Autowired
     private HakukohdeDAO _hakuHakuDAODao;
-
-    private V1Converter _converter;
-
-    @PostConstruct
-    private void init() {
-        LOG.info("init()");
-        _converter = new V1Converter();
-        _converter.setHakuDao(_hakuDao);
-        _converter.setHakukohdeDao(_hakuHakuDAODao);
-    }
+    @Autowired
+    private ConverterV1 _converter;
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {

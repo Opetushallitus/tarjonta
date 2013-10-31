@@ -38,6 +38,8 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -126,6 +128,11 @@ public class KorkeakouluDTOConverterToKomoto extends AbstractToDomainConverter<K
         komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), "opetuskielis"));
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
+        komoto.setAmmattinimikes(convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), "ammattinimikkeet"));
+
+        if (dto.getHinta() != null) {
+            komoto.setHinta(new BigDecimal(dto.getHinta().toString()));
+        }
 
         komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKesto"), dto.getSuunniteltuKesto().getArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());

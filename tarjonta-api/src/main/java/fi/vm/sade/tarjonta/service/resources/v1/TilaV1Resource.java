@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.resources;
+package fi.vm.sade.tarjonta.service.resources.v1;
 
 import java.util.Map;
 
@@ -12,15 +12,15 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST palvelu tarjonnan staattiselle tilainformaatiolle.
- *
+ * 
  * <pre>
- * GET    /tila
+ * GET / tila
  * </pre>
- *
+ * 
  * @author Timo Santasalo / Teknokala Ky
  */
-@Path("/tila")
-public interface TilaResource {
+@Path("/v1/tila")
+public interface TilaV1Resource {
 
     @GET
     @Path("/")

@@ -14,22 +14,25 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.slf4j.Logger;
@@ -52,19 +55,40 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    
+    @Autowired(required=true)
+    TarjontaSearchService tarjontaSearchService;
 
+    @Autowired
+    private ConverterV1 converter;
 
-    private V1Converter converter;
+    
+    @Override
+    public HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> search(String searchTerms,
+            List<String> organisationOids, List<String> hakukohdeTilas,
+            String alkamisKausi, Integer alkamisVuosi) {
 
-    @PostConstruct
-    private void init() {
-        LOG.info("init()");
-        converter = new V1Converter();
-        converter.setHakuDao(hakuDao);
-        converter.setHakukohdeDao(hakukohdeDao);
-        converter.setTarjontaKoodistoHelper(tarjontaKoodistoHelper);
+        organisationOids = organisationOids != null ? organisationOids
+                : new ArrayList<String>();
+        hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas
+                : new ArrayList<String>();
+
+        HakukohteetKysely q = new HakukohteetKysely();
+        q.setNimi(searchTerms);
+        q.setKoulutuksenAlkamiskausi(alkamisKausi);
+        q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+        q.getTarjoajaOids().addAll(organisationOids);
+
+        for (String s : hakukohdeTilas) {
+            q.getTilat().add(
+                    fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
+        }
+
+        HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+
+        return converter.fromHakukohteetVastaus(r);
     }
-
+    
     @Override
     public String hello() {
         LOG.error("hello()");

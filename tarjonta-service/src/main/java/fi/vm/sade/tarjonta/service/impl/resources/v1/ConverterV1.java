@@ -27,44 +27,52 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TarjoajaHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 
 import java.util.*;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * API V1 converters to/from model/domain.
  *
  * @author mlyly
  */
-public class V1Converter {
+@Service
+public class ConverterV1 {
 
-    private static final Logger LOG = LoggerFactory.getLogger(V1Converter.class);
-    // ----------------------------------------------------------------------
-    // HAKU
-    // ----------------------------------------------------------------------
-    HakuDAO _hakuDao;
-
-    public void setHakuDao(HakuDAO _hakuDao) {
-        this._hakuDao = _hakuDao;
-    }
-
-    public HakuDAO getHakuDao() {
-        if (_hakuDao == null) {
-            throw new IllegalStateException("HAKUDAO == NULL");
-        }
-        return _hakuDao;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(ConverterV1.class);
+    @Autowired
+    HakuDAO hakuDao;
+    @Autowired
+    KoulutusmoduuliDAO komoDao;
+    @Autowired
+    KoulutusmoduuliToteutusDAO komotoDao;
+    @Autowired
+    HakukohdeDAO hakukohdeDao;
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
-        return fromHakuToHakuRDTO(getHakuDao().findByOid(oid));
+        return fromHakuToHakuRDTO(hakuDao.findByOid(oid));
     }
 
     private HakuV1RDTO fromHakuToHakuRDTO(Haku haku) {
@@ -105,30 +113,6 @@ public class V1Converter {
     // ----------------------------------------------------------------------
     // HAKUKOHDE
     // ----------------------------------------------------------------------
-    HakukohdeDAO _hakukohdeDao;
-
-    public HakukohdeDAO getHakukohdeDao() {
-        if (_hakukohdeDao == null) {
-            throw new IllegalStateException("HAKUKOHDEDAO == NULL");
-        }
-        return _hakukohdeDao;
-    }
-
-    public void setHakukohdeDao(HakukohdeDAO _hakukohdeDao) {
-        this._hakukohdeDao = _hakukohdeDao;
-    }
-
-
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-
-    public TarjontaKoodistoHelper getTarjontaKoodistoHelper() {
-        return tarjontaKoodistoHelper;
-    }
-
-    public void setTarjontaKoodistoHelper(TarjontaKoodistoHelper tarjontaKoodistoHelper) {
-        this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
-    }
-
 
     /**
      * Convert domain Hakukohde to REST HakukohdeRDTO.
@@ -349,7 +333,7 @@ public class V1Converter {
                 tekstiRDTO.setUri(checkAndRemoveForEmbeddedVersionInUri(tekstiKaannos.getKieliKoodi()));
                 tekstiRDTO.setTeksti(tekstiKaannos.getArvo());
                 try {
-                    KoodiType koodiType = getTarjontaKoodistoHelper().getKoodiByUri(tekstiKaannos.getKieliKoodi());
+                    KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(tekstiKaannos.getKieliKoodi());
                     //TODO: should it return nimi instead ? But with what language ?
                     tekstiRDTO.setArvo(koodiType.getKoodiArvo());
                     tekstiRDTO.setVersio(koodiType.getVersio());
@@ -396,31 +380,6 @@ public class V1Converter {
     // KOULUTUS
     // ----------------------------------------------------------------------
 
-    KoulutusmoduuliDAO _komoDao;
-    KoulutusmoduuliToteutusDAO _komotoDao;
-
-    public KoulutusmoduuliDAO getKomoDao() {
-        if (_komoDao == null) {
-            throw new IllegalStateException("KOMODAO == NULL");
-        }
-        return _komoDao;
-    }
-
-    public KoulutusmoduuliToteutusDAO getKomotoDao() {
-        if (_komotoDao == null) {
-            throw new IllegalStateException("KOMOTODAO == NULL");
-        }
-        return _komotoDao;
-    }
-
-    public void setKomoDao(KoulutusmoduuliDAO _komoDao) {
-        this._komoDao = _komoDao;
-    }
-
-    public void setKomotoDao(KoulutusmoduuliToteutusDAO _komotoDao) {
-        this._komotoDao = _komotoDao;
-    }
-
     public KoulutusV1RDTO fromKomotoToKoulutusRDTO(KoulutusmoduuliToteutus komoto) {
         LOG.warn("fromKomotoToKoulutusRDTO({}) -- ONLY PARTIALLY IMPLEMENTED!", komoto);
 
@@ -450,7 +409,111 @@ public class V1Converter {
     }
 
     public KoulutusV1RDTO fromKomotoToKoulutusRDTO(String oid) {
-        return fromKomotoToKoulutusRDTO(getKomotoDao().findByOid(oid));
+        return fromKomotoToKoulutusRDTO(komotoDao.findByOid(oid));
+    }
+
+    
+    public HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> fromHakukohteetVastaus(HakukohteetVastaus source) {
+        HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> ret = new HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>();
+
+        Map<String, TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>>();
+
+        for (HakukohdePerustieto ht : source.getHakukohteet()) {
+            TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> rets = getTarjoaja(
+                    ret, tarjoajat, ht);
+            rets.getTulokset().add(convert(ht));
+        }
+
+        // XX use hitCount when implemented
+        ret.setTuloksia(source.getHakukohteet().size());
+
+        return ret;
+    }
+
+    private HakukohdeHakutulosV1RDTO convert(HakukohdePerustieto ht) {
+        HakukohdeHakutulosV1RDTO ret = new HakukohdeHakutulosV1RDTO();
+
+        ret.setOid(ht.getOid());
+        ret.setNimi(ht.getNimi());
+        ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
+                .getKoulutuksenAlkamiskausi().getNimi());
+        ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
+        ret.setHakutapa(ht.getHakutapaNimi());
+        ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
+        ret.setKoulutuslaji(ht.getKoulutuslaji() == null ? null : ht
+                .getKoulutuslaji().getNimi());
+        ret.setTila(TarjontaTila.valueOf(ht.getTila()));
+
+        return ret;
+    }
+
+    private TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> getTarjoaja(
+            HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO> tulos,
+            Map<String, TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>> tarjoajat,
+            HakukohdePerustieto ht) {
+        TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> ret = tarjoajat
+                .get(ht.getTarjoajaOid());
+        if (ret == null) {
+            ret = new TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>();
+            tarjoajat.put(ht.getTarjoajaOid(), ret);
+            ret.setOid(ht.getTarjoajaOid());
+            ret.setNimi(ht.getTarjoajaNimi());
+            tulos.getTulokset().add(ret);
+        }
+        return ret;
+    }
+    
+    public HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> fromKoulutuksetVastaus(KoulutuksetVastaus source) {
+        HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> ret = new HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>();
+
+        Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>>();
+
+        for (KoulutusPerustieto ht : source.getKoulutukset()) {
+            TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> rets = getTarjoaja(
+                    ret, tarjoajat, ht);
+            rets.getTulokset().add(convert(ht));
+        }
+
+        ret.setTuloksia(source.getHitCount());
+
+        return ret;
+    }
+
+    private KoulutusHakutulosV1RDTO convert(KoulutusPerustieto ht) {
+        KoulutusHakutulosV1RDTO ret = new KoulutusHakutulosV1RDTO();
+
+        ret.setOid(ht.getKomotoOid());
+        ret.setNimi(ht.getNimi());
+        ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
+                .getKoulutuksenAlkamiskausi().getNimi());
+        ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
+        if (ht.getPohjakoulutusvaatimus() != null) {
+            ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus()
+                    .getNimi());
+        }
+        if (ht.getKoulutuslaji() != null) {
+            ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
+        }
+        ret.setTila(TarjontaTila.valueOf(ht.getTila()));
+        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
+
+        return ret;
+    }
+
+    private TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> getTarjoaja(
+            HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> tulos,
+            Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat,
+            KoulutusPerustieto ht) {
+        TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht
+                .getTarjoaja().getOid());
+        if (ret == null) {
+            ret = new TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>();
+            tarjoajat.put(ht.getTarjoaja().getOid(), ret);
+            ret.setOid(ht.getTarjoaja().getOid());
+            ret.setNimi(ht.getTarjoaja().getNimi());
+            tulos.getTulokset().add(ret);
+        }
+        return ret;
     }
 
 

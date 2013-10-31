@@ -1,9 +1,10 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.util.Map;
 
 
-public class HakukohdeHakutulosRDTO extends KoulutusHakutulosRDTO {
+
+public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 
 	private static final long serialVersionUID = 1L;
 
