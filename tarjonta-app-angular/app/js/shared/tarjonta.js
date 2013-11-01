@@ -192,41 +192,21 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
      * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
      * @returns {undefined}
      */
-    dataFactory.insertKoulutus = function(json, func) {
-        console.log("insertKoulutus()", json);
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
+    dataFactory.koulutus = function() {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/KORKEAKOULUTUS/", {}, {
             update: {
-                method: 'PUT',
+                method: 'POST',
+                //  withCredentials: true,
+                //isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             save: {
                 method: 'POST',
+                //  withCredentials: true,
+               // isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
-        koulutus.save(json, func);
-    };
-
-    /**
-     * PUT: Update KOMOTO + KOMO data objects. API object must be valid.
-     *
-     * @param json data in JSON format.
-     * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
-     * @returns {undefined}
-     */
-    dataFactory.updateKoulutus = function(json, func) {
-        console.log("updateKoulutus(): ", json);
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
-            update: {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            },
-            save: {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            }
-        });
-        koulutus.update(json, func);
     };
 
     dataFactory.deleteKoulutus = function(id) {
@@ -302,10 +282,14 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': komotoOid}, {
             update: {
                 method: 'PUT',
+                //withCredentials: true,
+                isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             save: {
                 method: 'POST',
+                // withCredentials: true,
+                isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             get: {

@@ -43,6 +43,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     private UiDTO opintojenLaajuus;
     private Date koulutuksenAlkamisPvm;
     private UiMetaDTO ammattinimikkeet;
+    private Double hinta;
 
     public KoulutusKorkeakouluV1RDTO() {
     }
@@ -218,5 +219,19 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setAmmattinimikkeet(UiMetaDTO ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    /**
+     * @return the hinta
+     */
+    public Double getHinta() {
+        return hinta;
+    }
+
+    /**
+     * @param hinta the hinta to set
+     */
+    public void setHinta(Double hinta) {
+        this.hinta = hinta;
     }
 }
