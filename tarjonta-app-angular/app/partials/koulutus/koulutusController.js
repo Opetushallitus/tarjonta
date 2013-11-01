@@ -22,12 +22,12 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
 
-        $scope.koulutusx = $route.current.locals.koulutusx;
-        $log.info("  --> koulutusx == ", $scope.koulutusx);
+        $scope.koulutusModel = $route.current.locals.koulutusModel;
+        $log.info("  --> koulutusx == ", $scope.koulutusModel);
 
         $scope.getKoulutusPartialName = function(actionType) {
             var result;
-            var type = $scope.koulutusx.koulutusasteTyyppi;
+            var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
 
             var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
 

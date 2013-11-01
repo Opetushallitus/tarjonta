@@ -143,10 +143,6 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }
     };
 
-
-
-
-
     /**
      * Convert person data to UI format.
      * 
@@ -159,7 +155,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }
         person.nimet = person.etunimet + ' ' + person.sukunimi;
         return person; //dummy
-    }
+    };
 
     /**
      * Convert koodisto component data model to API meta model.
@@ -186,7 +182,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     };
     factory.apiModelUri = function(uri, versio) {
         return {"uri": uri, "versio": versio};
-    }
+    };
 
     factory.convertKoodistoCombo = function(strValue, kbObj) {
         return {'arvo': strValue, 'koodi': factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio)};
@@ -311,7 +307,13 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }
     };
 
-
+    factory.updateOrganisationApiModel = function(apiModel, oid, nimi) {
+        if (factory.isNull(apiModel)) {
+            factory.throwError('API model must be object, or empty object');
+        }
+        //fetch org name and OID from Organisation service
+        apiModel.organisaatio = {"oid": oid, "nimi": nimi}
+    };
 
     /**
      * Create full data model for tarjonta rest service.
@@ -342,7 +344,11 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.DATE, function(value, key) {
-            apiModel[key] = value.default;
+            if (!angular.isUndefined(apiModel[key])) {
+                apiModel[key] = new Date(apiModel[key]); //example convert long to date koulutuksenAlkamisPvm
+            } else {
+                apiModel[key] = value.default;
+            }
         });
 
         angular.forEach(factory.STRUCTURE.STR, function(value, key) {
@@ -358,8 +364,11 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             factory.addLangForDescUiFields(apiModel[key], languages[0]);
         });
 
+
         console.log("createAPIModel", apiModel);
     };
+
+
 
     return factory;
 });

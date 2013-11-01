@@ -127,34 +127,35 @@ public class KoulutusIndexEntityToSolrDocument implements
             }
         }
 
-        if(koulutus.getKoulutusTyyppi()!=null) {
+        if (koulutus.getKoulutusTyyppi() != null) {
             final KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.fromValue(koulutus.getKoulutusTyyppi());
-            switch(tyyppi) {
-            case LUKIOKOULUTUS: 
+            switch (tyyppi) {
+                case LUKIOKOULUTUS:
                 //koulutusohjelma ilman pohjakoulutusta
-                
-                break;
-            case AMMATTIKORKEAKOULUTUS:
-            case YLIOPISTOKOULUTUS:
-                //vapaavalintainen nimi
-                MonikielinenTeksti nimi = indexerDao.getNimiForKoulutus(koulutus.getKoulutusId());
-                for(TekstiKaannos tekstikaannos: nimi.getTekstis()) {
-                    Preconditions.checkNotNull(koodiService);
-                    KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
 
-                    if(type!=null) {
-                        add(komotoDoc, NIMET, tekstikaannos.getArvo());
-                        add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
+                    break;
+                case KORKEAKOULUTUS:
+                case AMMATTIKORKEAKOULUTUS:
+                case YLIOPISTOKOULUTUS:
+                    //vapaavalintainen nimi
+                    MonikielinenTeksti nimi = indexerDao.getNimiForKoulutus(koulutus.getKoulutusId());
+                    for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
+                        Preconditions.checkNotNull(koodiService);
+                        KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+
+                        if (type != null) {
+                            add(komotoDoc, NIMET, tekstikaannos.getArvo());
+                            add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
+                        }
                     }
-                }
-                break;
-            default:
-                //muut: koulutusohjelma, pohjakoulutus
-                break;
+                    break;
+                default:
+                    //muut: koulutusohjelma, pohjakoulutus
+                    break;
             }
-            
+
         }
-        
+
         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());

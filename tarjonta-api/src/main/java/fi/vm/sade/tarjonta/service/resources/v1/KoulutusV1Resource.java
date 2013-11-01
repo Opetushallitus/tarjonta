@@ -52,41 +52,40 @@ import javax.ws.rs.core.Response;
 @Path("/v1/koulutus")
 public interface KoulutusV1Resource {
 
-    
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
-    @Path("LUKIOKOULUTUS")
+    @Path("/LUKIOKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(ResultV1RDTO<KoulutusLukioV1RDTO> koulutus);
+    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus);
 
     @POST
-    @Path("AMMATILLINEN_PERUSKOULUTUS")
+    @Path("/AMMATILLINEN_PERUSKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> koulutus);
+    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus);
 
     @POST
-    @Path("KORKEAKOULUTUS")
+    @Path("/KORKEAKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(ResultV1RDTO<KoulutusKorkeakouluV1RDTO> koulutus);
+    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO koulutus);
 
     @POST
-    @Path("PERUSOPETUKSEN_LISAOPETUS")
+    @Path("/PERUSOPETUKSEN_LISAOPETUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> koulutus);
+    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus);
 
     @POST
-    @Path("VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
+    @Path("/VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> koulutus);
+    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus);
 
     @DELETE
     @Path("{oid}")
@@ -174,7 +173,6 @@ public interface KoulutusV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
     );
 
-    
     /**
      * /koulutus/OID/hakukohteet
      *

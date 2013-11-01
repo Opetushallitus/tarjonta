@@ -34,7 +34,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                     koodi_uri: "kieli_en"
                 },
             ],
-            koulutus: $scope.koulutusx, // preloaded in route resolve, see
+            koulutus: $scope.koulutusModel.result, // preloaded in route resolve, see
             foo: "bar"
         };
 
@@ -98,7 +98,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             }
 
             tarjontaService.getKoulutus({oid: oid}, function(data) {
-                $scope.model.koulutus = data;
+                $scope.model.koulutus = data.result;
                 $log.info("  load got: ", $scope.model.koulutus);
             });
         };

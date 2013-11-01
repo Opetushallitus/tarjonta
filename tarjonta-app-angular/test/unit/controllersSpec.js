@@ -16,103 +16,102 @@
 //  }));
 //});
 
-/*
- describe('Edit koulutus testeja', function() {
- beforeEach(module('ngGrid'));
- var CONFIG_ENV_MOCK = {
- "env": {
- "key-env-1": "mock-value-env-1",
- "key-env-2": "mock-value-env-2"
- }, "app": {
- "key-app-1": "mock-value-app-1",
- "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
- }
- }
- 
- //set mock data to module by using the value-method,
- var mockModule = angular.module('test.module', []);
- mockModule.value('globalConfig', CONFIG_ENV_MOCK);
- 
- beforeEach(module('test.module')); //mock module with the mock data
- beforeEach(module('TarjontaConverter'));
- beforeEach(module('imageupload'));
- beforeEach(module('app.edit.ctrl'));
- beforeEach(module('config'));
- var $scope, $modalInstance;
- beforeEach(inject(function($rootScope) {
- $scope = $rootScope.$new();
- $modalInstance = {
- $scope: $scope,
- templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
- controller: 'SelectTutkintoOhjelmaController'
- };
- }));
- it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
- $controller('SelectTutkintoOhjelmaController', {
- $scope: $scope,
- $modalInstance: $modalInstance
- 
- });
- expect($scope.stoModel.hakutulokset).toEqual([]);
- expect($scope.stoModel.koulutusala).toEqual('');
- expect($scope.stoModel.active).toEqual({});
- 
- }));
- it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
- $controller('SelectTutkintoOhjelmaController', {
- $scope: $scope,
- $modalInstance: $modalInstance
- });
- 
- $scope.stoModel.hakulause = 'AMK';
- $scope.clearCriteria();
- expect($scope.stoModel.hakulause).toEqual('');
- }));
- it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
- $controller('EditYhteyshenkiloCtrl', {
- $scope: $scope,
- });
- 
- $scope.uiModel = {};
- 
- $scope.uiModel.contactPerson = {};
- $scope.uiModel.contactPerson.nimet = 'Testi nimi';
- $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
- $scope.uiModel.contactPerson.titteli = 'Herra';
- $scope.uiModel.contactPerson.puhelin = '050432134534';
- $scope.uiModel.contactPerson.etunimet = 'Testi';
- $scope.uiModel.contactPerson.sukunimi = 'nimi';
- 
- $scope.editYhModel.clearYh();
- expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
- }));
- it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller) {
- $controller('EditYhteyshenkiloCtrl', {
- $scope: $scope,
- });
- 
- $scope.editYhModel.searchPersonMap = {};
- 
- $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'};
- $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'};
- 
- $scope.uiModel = {};
- 
- $scope.uiModel.contactPerson = {};
- 
- $scope.uiModel.contactPerson.nimet = 'Pekka Pekkola';
- 
- expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
- 
- $scope.editYhModel.selectHenkilo();
- 
- expect($scope.uiModel.contactPerson.etunimet).toEqual('Pekka');
- 
- }));
- 
- });
- 
- */
+
+describe('Edit koulutus testeja', function() {
+    beforeEach(module('ngGrid'));
+    var CONFIG_ENV_MOCK = {
+        "env": {
+            "key-env-1": "mock-value-env-1",
+            "key-env-2": "mock-value-env-2"
+        }, "app": {
+            "key-app-1": "mock-value-app-1",
+            "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
+        }
+    }
+
+    //set mock data to module by using the value-method,
+    var mockModule = angular.module('test.module', []);
+    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+
+    beforeEach(module('test.module')); //mock module with the mock data
+    beforeEach(module('TarjontaConverter'));
+    beforeEach(module('imageupload'));
+    beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('config'));
+    var $scope, $modalInstance;
+    beforeEach(inject(function($rootScope) {
+        $scope = $rootScope.$new();
+        $modalInstance = {
+            $scope: $scope,
+            templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+            controller: 'SelectTutkintoOhjelmaController'
+        };
+    }));
+    it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
+        $controller('SelectTutkintoOhjelmaController', {
+            $scope: $scope,
+            $modalInstance: $modalInstance
+
+        });
+        expect($scope.stoModel.hakutulokset).toEqual([]);
+        expect($scope.stoModel.koulutusala).toEqual('');
+        expect($scope.stoModel.active).toEqual({});
+
+    }));
+    it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
+        $controller('SelectTutkintoOhjelmaController', {
+            $scope: $scope,
+            $modalInstance: $modalInstance
+        });
+
+        $scope.stoModel.hakulause = 'AMK';
+        $scope.clearCriteria();
+        expect($scope.stoModel.hakulause).toEqual('');
+    }));
+    it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
+        $controller('EditYhteyshenkiloCtrl', {
+            $scope: $scope,
+        });
+
+        $scope.uiModel = {};
+
+        $scope.uiModel.contactPerson = {};
+        $scope.uiModel.contactPerson.nimet = 'Testi nimi';
+        $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
+        $scope.uiModel.contactPerson.titteli = 'Herra';
+        $scope.uiModel.contactPerson.puhelin = '050432134534';
+        $scope.uiModel.contactPerson.etunimet = 'Testi';
+        $scope.uiModel.contactPerson.sukunimi = 'nimi';
+
+        $scope.editYhModel.clearYh();
+        expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
+    }));
+    it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller) {
+        $controller('EditYhteyshenkiloCtrl', {
+            $scope: $scope,
+        });
+
+        $scope.editYhModel.searchPersonMap = {};
+
+        $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'};
+        $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'};
+
+        $scope.uiModel = {};
+
+        $scope.uiModel.contactPerson = {};
+
+        $scope.uiModel.contactPerson.nimet = 'Pekka Pekkola';
+
+        expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
+
+        $scope.editYhModel.selectHenkilo();
+
+        expect($scope.uiModel.contactPerson.etunimet).toEqual('Pekka');
+
+    }));
+
+});
+
 describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('ngGrid'));
     beforeEach(module('ngRoute'));
