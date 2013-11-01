@@ -37,10 +37,12 @@ import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +59,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToKoulutusKorkeakouluRDTO.class);
     @Autowired(required = true)
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    @Autowired(required = true)
+    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private static final String DEMO_LOCALE = "fi";
@@ -73,19 +77,25 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
 
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         kkDto.setOid(komoto.getOid());
-        kkDto.setTila(komoto.getTila());
+        kkDto.setKomotoOid(komoto.getOid());
         kkDto.setKomoOid(komo.getOid());
+        kkDto.setTila(komoto.getTila());
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
         // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
         kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
         kkDto.setOpintojenLaajuus(simpleUiDTO("unavailable"));
         kkDto.setKoulutuskoodi(convertToUiMetaDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
-        //KOMO
 
+        TekstiV1RDTO<KomotoTeksti> komotoKuvaus = new TekstiV1RDTO<KomotoTeksti>();
+        komotoKuvaus.setTekstis(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()).getTekstis());
+        kkDto.setKuvausKomoto(komotoKuvaus);
+
+        //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
         KoulutusasteTyyppi koulutusasteTyyppi = EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi());
         switch (koulutusasteTyyppi) {
+            case KORKEAKOULUTUS:
             case YLIOPISTOKOULUTUS:
             case AMMATTIKORKEAKOULUTUS:
                 kkDto.setKoulutusohjelma(koulutusohjelmaUiMetaDTO(komo.getNimi(), DEMO_LOCALE, koulutusasteTyyppi + "->koulutusohjelma"));
@@ -118,7 +128,15 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         kkDto.setPohjakoulutusvaatimukset(convertToUiMetaDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
         kkDto.setSuunniteltuKesto(suunniteltuKestoDTO(komoto.getSuunniteltuKestoArvo(), komoto.getSuunniteltuKestoYksikko()));
         kkDto.setAmmattinimikkeet(convertToUiMetaDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
-        kkDto.setKuvaus(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
+
+        if (komoto.getHinta() != null) {
+            kkDto.setHinta(komoto.getHinta().doubleValue());
+        }
+
+        TekstiV1RDTO<KomoTeksti> komoKuvaus = new TekstiV1RDTO<KomoTeksti>();
+        komoKuvaus.setTekstis(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
+        kkDto.setKuvausKomo(komoKuvaus);
+
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
         return kkDto;
@@ -307,7 +325,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         Preconditions.checkNotNull(nimi, "OrganisaatioDTO name object cannot be null.");
         OrganisaatioV1RDTO organisaatioRDTO = new OrganisaatioV1RDTO();
         organisaatioRDTO.setOid(organisaatioDto.getOid());
-        organisaatioRDTO.setNimi(organisaatioDto.getOid());
+        organisaatioRDTO.setNimi(nimi);
         return organisaatioRDTO;
     }
 }

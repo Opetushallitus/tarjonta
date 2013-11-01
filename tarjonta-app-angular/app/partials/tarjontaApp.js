@@ -58,7 +58,8 @@ angular.module('app',
             'ResultsTable',
             'imageupload',
             'MultiSelect',
-            'OrderByNumFilter'
+            'OrderByNumFilter',
+            'CommonDirectives'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -68,150 +69,145 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
         $routeProvider
                 .when("/etusivu", {
-            action: "home.default",
-            reloadOnSearch: false
-        })
+                    action: "home.default",
+                    reloadOnSearch: false
+                })
                 .when("/foo", {
-            action: "foo"//,
-        })
+                    action: "foo"//,
+                })
                 .when("/index", {
-            action: "index",
-            reloadOnSearch: false
-        })
+                    action: "index",
+                    reloadOnSearch: false
+                })
                 .when("/etusivu/:oid", {
-            action: "home.default",
-            reloadOnSearch: false
-        })
+                    action: "home.default",
+                    reloadOnSearch: false
+                })
                 .when("/kk/edit/:orgOid/:komotoOid", {
-            action: "kk.edit"
-        })
+                    action: "kk.edit"
+                })
                 .when("/kk/edit/:type/:part/:org/:komoto/:koulutuskoodi", {
-            action: "kk.edit"
-        })
+                    action: "kk.edit"
+                })
                 .when('/kk/review/:id', {
-            action: "kk.review"
-        })
+                    action: "kk.review"
+                })
                 .when('/kk/review/:id/:part', {
-            action: "kk.review"
-        })
+                    action: "kk.review"
+                })
                 .when('/helpers/localisations', {
-            action: "helpers.localisations"
-        })
+                    action: "helpers.localisations"
+                })
 
                 .when("/kk/edit/hakukohde", {
-            action: "kk.hakukohde.create"
-        })
+                    action: "kk.hakukohde.create"
+                })
 
                 .when('/koulutus/:id', {
-            action: "koulutus.review",
-            controller: 'KoulutusRoutingController',
-            resolve: {
-                koulutusx: function(TarjontaService, $log, $route) {
-                    $log.info("/koulutus/ID", $route);
-                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
-                }
-            }
-        })
+                    action: "koulutus.review",
+                    controller: 'KoulutusRoutingController',
+                    resolve: {
+                        koulutusModel: function(TarjontaService, $log, $route) {
+                            $log.info("/koulutus/ID", $route);
+                            return TarjontaService.getKoulutus({oid: $route.current.params.id}).$promise;
+                        }
+                    }
+                })
                 .when('/koulutus/:id/edit', {
-            action: "koulutus.edit",
-            controller: 'KoulutusRoutingController',
-            resolve: {
-                koulutusx: function(TarjontaService, $log, $route) {
-                    $log.info("/koulutus/ID/edit", $route);
-                    return TarjontaService.getKoulutus({oid: $route.current.params.id});
-                }
-            }
-        })
+                    action: "koulutus.edit",
+                    controller: 'KoulutusRoutingController',
+                    resolve: {
+                        koulutusModel: function(TarjontaService, $log, $route) {
+                            $log.info("/koulutus/ID/edit", $route);
+                            return TarjontaService.getKoulutus({oid: $route.current.params.id}).$promise;
+                        }
+                    }
+                })
 
                 .when('/koulutus/edit/:org/:koulutuskoodi', {
-            action: "koulutus.edit",
-            controller: 'KoulutusRoutingController',
-            resolve: {
-                koulutusx: function(TarjontaService, $log, $route) {
-                    $log.info("/koulutus/ID/edit", $route);
-                    return {koulutusasteTyyppi: "KORKEAKOULUTUS"}
-                }
-            }
-        })
+                    action: "koulutus.edit",
+                    controller: 'KoulutusRoutingController',
+                    resolve: {
+                        koulutusModel: function(TarjontaService, $log, $route) {
+                            $log.info("/koulutus/ID/edit", $route);
+                            return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
+                        }
+                    }
+                })
 
                 .when('/hakukohde/:id', {
-            action: "hakukohde.review",
-            controller: 'HakukohdeRoutingController',
-            resolve: {
-                hakukohdex: function(TarjontaService, $log, $route) {
-                    $log.info("/hakukohde/ID", $route);
-                    return TarjontaService.getHakukohde({oid: $route.current.params.id});
-                }
-            }
-        })
-                .when('/hakukohde/:id/edit', {
-            action: "hakukohde.edit",
-            controller: 'HakukohdeRoutingController',
-            resolve: {
-                hakukohdex: function(Hakukohde, $log, $route,SharedStateService) {
-                    $log.info("/hakukohde/ID", $route);
-                    if ("new" === $route.current.params.id) {
-
-                        var selectedTarjoajaOids;
-                        var selectedKoulutusOids;
-
-                        if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
-                            selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
-                        } else {
-                            selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                    action: "hakukohde.review",
+                    controller: 'HakukohdeRoutingController',
+                    resolve: {
+                        hakukohdex: function(TarjontaService, $log, $route) {
+                            $log.info("/hakukohde/ID", $route);
+                            return TarjontaService.getHakukohde({oid: $route.current.params.id});
                         }
-
-                        if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
-                            selectedKoulutusOids =  SharedStateService.getFromState('SelectedKoulutukses');
-                        } else {
-                            selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
-                        }
-                        //Initialize model and arrays inside it
-
-                        return new Hakukohde({
-
-                            liitteidenToimitusOsoite : {
-
-                            },
-                            tarjoajaOids : selectedTarjoajaOids,
-                            hakukohteenNimet : [
-                                {
-                                    "uri": "kieli_fi",
-                                    "nimi": "suomi",
-
-                                    "teksti": ""
-                                }
-                            ],
-                            hakukelpoisuusvaatimusUris : [],
-                            hakukohdeKoulutusOids : selectedKoulutusOids,
-                            hakukohteenLiitteet : [],
-                            valintakokeet : [],
-
-                            lisatiedot : [
-
-                            ]
-                        });
-
-                      //  SharedStateService.removeState('SelectedKoulutukses');
-
-                    } else {
-
-                        var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
-
-                        return deferredHakukohde.$promise;
-
-                      /*var deferredHakukohde = $q.defer();
-                          Hakukohde.get({oid: $route.current.params.id},function(result){
-
-                              deferredHakukohde.resolve(result);
-                      });
-                       //return deferredHakukohde.$promise;
-                        return deferredHakukohde.promise;  */
-
                     }
-                }
-            }
-        })
+                })
+                .when('/hakukohde/:id/edit', {
+                    action: "hakukohde.edit",
+                    controller: 'HakukohdeRoutingController',
+                    resolve: {
+                        hakukohdex: function(Hakukohde, $log, $route, SharedStateService) {
+                            $log.info("/hakukohde/ID", $route);
+                            if ("new" === $route.current.params.id) {
+
+                                var selectedTarjoajaOids;
+                                var selectedKoulutusOids;
+
+                                if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
+                                    selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
+                                } else {
+                                    selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                                }
+
+                                if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
+                                    selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
+                                } else {
+                                    selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
+                                }
+                                //Initialize model and arrays inside it
+
+                                return new Hakukohde({
+                                    liitteidenToimitusOsoite: {
+                                    },
+                                    tarjoajaOids: selectedTarjoajaOids,
+                                    hakukohteenNimet: [
+                                        {
+                                            "uri": "kieli_fi",
+                                            "nimi": "suomi",
+                                            "teksti": ""
+                                        }
+                                    ],
+                                    hakukelpoisuusvaatimusUris: [],
+                                    hakukohdeKoulutusOids: selectedKoulutusOids,
+                                    hakukohteenLiitteet: [],
+                                    valintakokeet: [],
+                                    lisatiedot: [
+                                    ]
+                                });
+
+                                //  SharedStateService.removeState('SelectedKoulutukses');
+
+                            } else {
+
+                                var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+
+                                return deferredHakukohde.$promise;
+
+                                /*var deferredHakukohde = $q.defer();
+                                 Hakukohde.get({oid: $route.current.params.id},function(result){
+                                 
+                                 deferredHakukohde.resolve(result);
+                                 });
+                                 //return deferredHakukohde.$promise;
+                                 return deferredHakukohde.promise;  */
+
+                            }
+                        }
+                    }
+                })
 
 
                 .when('/koodistoTest', {action: 'koodistoTest'})

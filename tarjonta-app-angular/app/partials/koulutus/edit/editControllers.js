@@ -6,72 +6,91 @@ app.controller('BaseEditController',
             function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto, $modal) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
-                $scope.model = {
-                };
-                $scope.xmodel = {
-                    routeParams: $routeParams,
-                    collapse: {
-                        model: true
-                    },
-                    koulutus: $scope.koulutusx, // preloaded in route resolve
-                    foo: "bar"
-                };
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
-                $scope.uiModel = null;
+                $scope.koodistoLocale = "FI";
                 $scope.config = {env: cfg.env, app: cfg.app, 'locationPath': $location.path()};
-                $scope.locale = "FI"
+                $scope.uiModel = null;
+                $scope.model = null;
 
                 $scope.init = function() {
+                    var uiModel = {};
+                    var model = {};
 
-                    /*
-                     * INITIALISE DATA MODELS
-                     */
-                    converter.createAPIModel($scope.model, cfg.app.userLanguages);
-                    var uiModel = converter.createUiModels({});
-                    /*
-                     * Init language texts, like 'suomi' 'englanti' etc.
-                     */
-                    angular.forEach($scope.model.koulutusohjelma.meta, function(val, key) {
-                        if (angular.isUndefined(val.koodi.kaannos)) {
-                            $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.locale);
-                        }
-                    });
+                    converter.createUiModels(uiModel);
+                    converter.createAPIModel(model, cfg.app.userLanguages);
 
-                    /*
-                     * LOAD KOODISTO DATA
-                     */
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
-                        $scope.searchKoodisByKoodistoUri(uiModel[key], cfg.env[value.koodisto], $scope.locale);
-                    });
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                        $scope.searchKoodisByKoodistoUri(uiModel[key], cfg.env[value.koodisto], $scope.locale);
-                    });
                     /*
                      * HANDLE ROUTING
                      */
-                    if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null) {
-                        //load data for edit
-                        $scope.xmodel.koulutus.$promise.then(function(data) {
-                            $scope.search(data);
+                    if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
+                        //DATA WAS LOADED BY KOMOTO OID
+                        model = $scope.koulutusModel.result;
+
+                        angular.forEach(model.yhteyshenkilos, function(value, key) {
+                            if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
+                                $scope.uiModel.contactPerson = converter.converPersonObjectForUi(value);
+                            } else if (value.henkiloTyyppi === 'ECTS_KOORDINAATTORI') {
+                                $scope.uiModel.ectsCoordinator = converter.converPersonObjectForUi(value);
+                            } else {
+                                converter.throwError('Undefined henkilotyyppi : ', value);
+                            }
                         });
+
+                        converter.createMetaLanguages(model.koulutusohjelma, cfg.app.userLanguages);
+                        angular.forEach(model.koulutusohjelma.meta, function(val, key) {
+                            if (angular.isUndefined(val.koodi.kaannos)) {
+                                $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.koodistoLocale);
+                            }
+                        });
+
+                        $scope.updateMultiSelectKoodistoData(uiModel, model);
+
                     } else if (!angular.isUndefined($routeParams.org)) {
-                        var orgOid = $scope.getOrganisaatioOid({});
-                        $scope.model.organisaatio = $scope.getOrganisationApiModel({}, "");
-                        var promiseOrg = organisaatioService.nimi(orgOid);
-                        promiseOrg.then(function(vastaus) {
-                            console.log("result returned, hits:", vastaus);
-                            $scope.model.organisaatio.nimi = vastaus;
-                        });
+                        //CREATE NEW KOULUTUS
                         $scope.loadRelationKoodistoData();
+                        var promiseOrg = organisaatioService.nimi($routeParams.org);
+                        promiseOrg.then(function(vastaus) {
+                            converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
+                        });
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
 
+                    /*
+                     * INITIALISE DATA MODELS
+                     */
+
+
+
+                    /*
+                     * Init language texts, like 'suomi' 'englanti' etc.
+                     */
+                    angular.forEach(model.koulutusohjelma.meta, function(val, key) {
+                        if (angular.isUndefined(val.koodi.kaannos)) {
+                            $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.koodistoLocale);
+                        }
+                    });
+
+                    /*
+                     * LOAD ALL KOODISTO KOODIS
+                     */
+                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                        $scope.searchKoodisByKoodistoUri(uiModel[key], cfg.env[value.koodisto], $scope.koodistoLocale);
+                    });
+                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                        $scope.searchKoodisByKoodistoUri(uiModel[key], cfg.env[value.koodisto], $scope.koodistoLocale);
+                    });
+
+
+                    /*
+                     * INIT SCOPES FOR RENDERER
+                     */
                     $scope.uiModel = uiModel;
+                    $scope.model = model;
                 };
                 $scope.loadRelationKoodistoData = function() {
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
-                        var koodistoData = angular.copy(data);
+                        var koodistoData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
                             $scope.model[key] = koodistoData[key];
                         });
@@ -92,19 +111,16 @@ app.controller('BaseEditController',
                         converter.throwError('Undefined tila');
                     }
 
-                    var apiModel = $scope.saveModelConverter(tila);
-                    tarjontaService.insertKoulutus(apiModel, function(resp) {
+                    var KoulutusRes = tarjontaService.koulutus();
+                    var apiModelReadyForSve = $scope.saveModelConverter(tila);
+
+                    KoulutusRes.save(apiModelReadyForSve, function(response) {
+                        var model = response.result;
                         //Callback
-                        console.log("Insert data response from POST: %j", resp);
-                        $scope.model.oid = resp.oid;
+                        console.log("Insert data response from POST: %j", response);
+                        $scope.model.oid = model.oid;
                         $location.path('/koulutus/' + $scope.model.oid + '/edit/');
                     });
-
-//                    var KomoKuvaus = tarjontaService.resourceKomoKuvaus($scope.model.oid);
-//                    KomoKuvaus.save({tekstis: $scope.uiModel.tekstis}, function(res) {
-//                        console.log("save success kuvaus", res);
-//                    });
-
                 };
 
                 $scope.saveModelConverter = function(tila) {
@@ -138,43 +154,7 @@ app.controller('BaseEditController',
                     console.log(JSON.stringify(apiModel));
                     return apiModel;
                 };
-                $scope.search = function(xmode) {
-                    console.log("search()", xmode);
-                    var komotoOid = $routeParams.id;
 
-                    $scope.model = angular.copy(xmode);
-                    console.log("search()", $scope.model);
-
-                    converter.createMetaLanguages($scope.model.koulutusohjelma, cfg.app.userLanguages);
-                    angular.forEach($scope.model.koulutusohjelma.meta, function(val, key) {
-                        if (angular.isUndefined(val.koodi.kaannos)) {
-                            $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.locale);
-                        }
-                    });
-
-                    $scope.updateMultiSelectKoodistoData($scope.uiModel, $scope.model);
-                    $scope.model.koulutuksenAlkamisPvm = new Date($scope.model.koulutuksenAlkamisPvm);
-                    angular.forEach($scope.model.yhteyshenkilos, function(value, key) {
-                        if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
-                            $scope.uiModel.contactPerson = converter.converPersonObjectForUi(value);
-                        } else if (value.henkiloTyyppi === 'ECTS_KOORDINAATTORI') {
-                            $scope.uiModel.ectsCoordinator = converter.converPersonObjectForUi(value);
-                        } else {
-                            converter.throwError('Undefined henkilotyyppi : ', value);
-                        }
-                    })
-
-                    var KomoKuvaus = tarjontaService.resourceKomoKuvaus();
-                    KomoKuvaus.get({oid: komotoOid}, function(res) {
-                        console.log("success kuvaus", res);
-                        if (!angular.isUndefined(res) && !angular.isUndefined(res.tekstis)) {
-                            for (var i = 0; i < res.tekstis.length; i++) {
-                                $scope.uiModel.tekstis = res.tekstis[i];
-                            }
-                        }
-
-                    });
-                };
                 /**
                  * Handle data load for koodisto data combo boxes.
                  *
@@ -183,7 +163,6 @@ app.controller('BaseEditController',
                  */
                 $scope.updateMultiSelectKoodistoData = function(uiModel, apiModel) {
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
-                        console.log(key, value);
                         $scope.updateKoodiUriToUiModel(uiModel[key], apiModel[key]);
                     });
                     //multi select models
@@ -197,7 +176,6 @@ app.controller('BaseEditController',
                     }, uiModel.uris);
                 };
                 $scope.updateKoodiUriToUiModel = function(uiModel, apiModel) {
-                    console.log(apiModel);
                     if (converter.isNull(apiModel) || converter.isNull(apiModel.koodi)) {
                         console.warn("<api-model>.koodi.uri is missing.", apiModel);
                     } else {
@@ -212,35 +190,14 @@ app.controller('BaseEditController',
                     //remove all meta data fields, if any
                     angular.forEach(converter.STRUCTURE, function(value, key) {
                         if ('MLANG' !== key) {
-                            console.log(converter.STRUCTURE.MLANG, "!==", key)
                             //MLANG objects needs the meta fields
                             angular.forEach(value, function(value, key) {
-
                                 converter.deleteMetaField(m[key]);
                             });
                         }
                     });
                 };
-                $scope.getOrganisaatioOid = function(m) {
-                    var paramOid = $routeParams.org;
-                    var apiOid = m.organisaatioOid;
-                    if (!converter.isNull(paramOid)) {
-                        return paramOid;
-                    } else if (!converter.isNull(apiOid)) {
-                        return apiOid;
-                    } else {
-                        converter.throwError('Tarjonta application error - no organisaation OID available.');
-                    }
-                };
-                $scope.getOrganisationApiModel = function(apiModel, nimi) {
-                    if (converter.isNull(apiModel)) {
-                        throw 'API model must be object, or empty object';
-                    }
-                    //organisation OID selector logic : update -> model oid, create -> param oid
-                    var orgOid = $scope.getOrganisaatioOid(apiModel);
-                    //fetch org name and OID from Organisation service
-                    return {"oid": orgOid, "nimi": nimi};
-                };
+
                 $scope.searchKoodi = function(apiModel, koodistouri, uri, locale) {
                     var promise = koodisto.getKoodi(koodistouri, uri, locale);
                     promise.then(function(data) {
@@ -283,10 +240,9 @@ app.controller('BaseEditController',
                 };
                 $scope.goToReview = function(event) {
                     $log.info("goBack()...");
-                    $location.path("/koulutus/" + $scope.model.oid);
+                    $location.path("/koulutus/" + $scope.model.komotoOid);
                 };
-                console.log("preloaded data!", $scope.xmodel.koulutus);
-                $scope.init();
+
                 $scope.single = function(image) {
                     var formData = new FormData();
                     formData.append('image', image, image.name);
@@ -339,4 +295,5 @@ app.controller('BaseEditController',
                     return koodis;
                 };
 
+                $scope.init();
             }]);

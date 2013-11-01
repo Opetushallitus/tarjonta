@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author mlyly
  */
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
-
+    
     private String komoOid;
     private String komotoOid;
     private String parentKomoOid;
@@ -42,8 +43,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     //OTHER DATA
     private TarjontaTila tila;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-    private Map<KomoTeksti, UiMetaDTO> kuvaus;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    private TekstiV1RDTO<KomoTeksti> kuvausKomo;
+    private TekstiV1RDTO<KomotoTeksti> kuvausKomoto;
 
     public KoulutusV1RDTO() {
     }
@@ -97,23 +99,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
      */
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
-    }
-
-    /**
-     * @return the description data
-     */
-    public Map<KomoTeksti, UiMetaDTO> getKuvaus() {
-        if (kuvaus == null) {
-            kuvaus = new EnumMap<KomoTeksti, UiMetaDTO>(KomoTeksti.class);
-        }
-        return kuvaus;
-    }
-
-    /**
-     * @param the description data to set
-     */
-    public void setKuvaus(Map<KomoTeksti, UiMetaDTO> tekstis) {
-        this.kuvaus = tekstis;
     }
 
     /**
@@ -182,6 +167,41 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
      */
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    /**
+     * @return the kuvausKomo
+     */
+    public TekstiV1RDTO<KomoTeksti> getKuvausKomo() {
+        if (kuvausKomo == null) {
+            kuvausKomo = new TekstiV1RDTO<KomoTeksti>();
+        }
+
+        return kuvausKomo;
+    }
+
+    /**
+     * @param kuvausKomo the kuvausKomo to set
+     */
+    public void setKuvausKomo(TekstiV1RDTO<KomoTeksti> kuvausKomo) {
+        this.kuvausKomo = kuvausKomo;
+    }
+
+    /**
+     * @return the kuvausKomoto
+     */
+    public TekstiV1RDTO<KomotoTeksti> getKuvausKomoto() {
+        if (kuvausKomoto == null) {
+            kuvausKomoto = new TekstiV1RDTO<KomotoTeksti>();
+        }
+        return kuvausKomoto;
+    }
+
+    /**
+     * @param kuvausKomoto the kuvausKomoto to set
+     */
+    public void setKuvausKomoto(TekstiV1RDTO<KomotoTeksti> kuvausKomoto) {
+        this.kuvausKomoto = kuvausKomoto;
     }
 
 }
