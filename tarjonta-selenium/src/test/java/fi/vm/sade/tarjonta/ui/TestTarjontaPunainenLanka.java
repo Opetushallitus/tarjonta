@@ -905,13 +905,13 @@ public class TestTarjontaPunainenLanka {
     @Test
     public void testReport() throws Exception {
         SVTUtils doit = new SVTUtils();
-        doit.alustaVaatimukset(TarjontaPunainenLankaVaatimukset);
+//        doit.alustaVaatimukset(TarjontaPunainenLankaVaatimukset);
         TarjontaPunainenLankaVaatimukset.KattavuusRaportti();
 
 //        doit.alustaVaatimukset(TarjontaVaatimukset);
 //        TarjontaVaatimukset.KattavuusRaportti();
 
-        doit.alustaVaatimukset(TarjontaTapaukset);
+//        doit.alustaVaatimukset(TarjontaTapaukset);
         TarjontaTapaukset.KattavuusRaportti();
     }
 
