@@ -47,24 +47,27 @@ public class TestTarjontaElements {
         firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
         driver = new FirefoxDriver(firefoxProfile);
 
-        baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
+        baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         qa = false;
-        if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true"))
+        if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true"))
         {
         	qa = true;
         }
         reppu = false;
-        if (SVTUtils.prop.getProperty("tarjonta-selenium.reppu").equals("true"))
+        if (SVTUtils.prop.getProperty("testaus-selenium.reppu").equals("true"))
         {
         	reppu = true;
         }
         luokka = false;
-        if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true"))
+        if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true"))
         {
         	luokka = true;
         }
-        if (first) { selain = doit.palvelimenVersio(driver, baseUrl); }
+        if (first) 
+        {
+        	selain = doit.palvelimenVersio(driver, baseUrl, SVTUtils.prop.getProperty("testaus-selenium.tarjonta-versio-url")); 
+        }
     }
     
     public void frontPage() throws Exception
@@ -78,28 +81,30 @@ public class TestTarjontaElements {
 //            doit.alustaSelaimet(TarjontaElementitSelaimet, "TarjontaElementitSelaimet");
             TarjontaElementitTekstit.KattavuusRaporttiHiljaa = true;
     	}
-		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
-		doit.tauko(1);
-        // LOGIN REPULLE tai luokka
-        if (reppu || luokka || qa)
-        {
-            doit.reppuLogin(driver);
-            driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.tarjonta-url"));
-        }
-        Boolean skip = true;
-        while (skip)
-        {
-                if (doit.isPresentText(driver, "Tarjontaan")) { skip = false; }
-                if (doit.isPresentText(driver, "Valitse kaikki")) { skip = false; }
-                doit.tauko(1);
-        }
-        if (doit.isPresentText(driver, "Tarjontaan"))
-        {
-                doit.textClick(driver, "Tarjontaan");
-        }
-        Assert.assertNotNull("Running TarjontaElements000 Etusivu ei toimi."
-        , doit.textElement(driver, "Valitse kaikki"));
-        doit.footerTest(driver, "Running TarjontaElements000 Etusivu footer ei toimi.", true);
+    	doit.virkailijanPalvelut(driver, baseUrl);
+    	doit.tarjonnanEtusivu(driver, baseUrl);
+//		driver.get(baseUrl + SVTUtils.prop.getProperty("testaus-selenium.oph-login-url"));
+//		doit.tauko(1);
+//        // LOGIN REPULLE tai luokka
+//        if (reppu || luokka || qa)
+//        {
+//            doit.reppuLogin(driver);
+//            driver.get(baseUrl + SVTUtils.prop.getProperty("testaus-selenium.tarjonta-url"));
+//        }
+//        Boolean skip = true;
+//        while (skip)
+//        {
+//                if (doit.isPresentText(driver, "Tarjontaan")) { skip = false; }
+//                if (doit.isPresentText(driver, "Valitse kaikki")) { skip = false; }
+//                doit.tauko(1);
+//        }
+//        if (doit.isPresentText(driver, "Tarjontaan"))
+//        {
+//                doit.textClick(driver, "Tarjontaan");
+//        }
+//        Assert.assertNotNull("Running TarjontaElements000 Etusivu ei toimi."
+//        , doit.textElement(driver, "Valitse kaikki"));
+//        doit.footerTest(driver, "Running TarjontaElements000 Etusivu footer ei toimi.", true);
         if (first) { doit.echo("Running TarjontaElements000 Etusivu OK"); }
         doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
         first = false;
@@ -733,10 +738,10 @@ public class TestTarjontaElements {
         		+ ".*<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*<div class=\"v-filterselect-button\"></div>"
         		+ ".*v-required-field-indicator"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutus tai tutkinto</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Koulutusohjelma</div>"
         		+ ".*" + htmlAbsoluteLeft
@@ -785,7 +790,7 @@ public class TestTarjontaElements {
 				+ ".*v-required-field-indicator"
         		+ ".*<div class=\"v-label v-label-undef-w\">Linkki opetussuunnitelmaan</div>"
 //        		+ ".*<div class=\"v-label v-label-undef-w\">Yhteyshenkilö</div>"
-        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
+//        		+ ".*<input type=\"text\" class=\"v-textfield v-textfield-prompt\""
         		+ ".*<span class=\"v-button-caption\">Tyhjennä tiedot</span>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Tehtävänimike</div>"
         		+ ".*<div class=\"v-label v-label-undef-w\">Sähköposti</div>"
@@ -805,7 +810,7 @@ public class TestTarjontaElements {
 //        		+ ".*14KPL" + htmlAbsoluteLeft18 // rivitys vaihtelee
         		+ ".*9KPL<span class=\"v-button-caption\">"
         		+ ".*6KPLv-required-field-indicator"
-        		+ ".*5KPLv-textfield v-textfield-prompt"
+//        		+ ".*5KPLv-textfield v-textfield-prompt"
         		+ ".*6KPL<input type=\"text\" class=\"v-filterselect-input"
         		+ ".*6KPL<div class=\"v-filterselect-button\"></div>"
         		+ ".*1KPLv-datefield-textfield"
