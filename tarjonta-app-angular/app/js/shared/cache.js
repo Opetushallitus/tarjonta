@@ -16,6 +16,8 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 	var cacheData = {};
 	
 	var cacheService = {};
+	
+	var cacheRequests = {};
 
 	/**
 	 * Täydentää cache-avaimen.
@@ -119,11 +121,25 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 		if (res!=undefined) {
 			ret.resolve(res);
 		} else {
+			// palautetaan käynnissä oleva requesti jos sellainen on
+			if (cacheRequests[key.key]) {
+				console.log("Cache request hit", key);
+				return cacheRequests[key.key];
+			} else {
+				cacheRequests[key.key] = ret.promise;
+			}
+			
 			var query = $q.defer();
+			
 			query.promise.then(function(res){
 				cacheService.insert(key, res);
+				cacheRequests[key.key] = undefined;
 				ret.resolve(res);
-			});
+			}/*, function(res){
+				// virhe -> tallennetaan null 10 sekunniksi jatkuvat toistamisen estämiseksi
+				cacheService.insert({key: key.key, expires: 10000}, null);
+				ret.resolve(null);
+			}*/);
 			getter(query);
 		}
 		return ret.promise;	
