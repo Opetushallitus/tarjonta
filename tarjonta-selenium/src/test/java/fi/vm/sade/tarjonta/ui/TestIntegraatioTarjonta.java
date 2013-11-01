@@ -112,7 +112,8 @@ public class TestIntegraatioTarjonta {
     	doit.echo("Running test_T_INT_TAR_HKOH001 ...");
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         doit.haeHakukohteita(driver, "Luonnos", null);
-        doit.triangleClickLastTriangle(driver);
+//        doit.triangleClickLastTriangle(driver);
+        doit.triangleClickNearestTriangle(driver, "Valitse kaikki");
         Assert.assertNotNull("Running hae luonnos ei toimi.", doit.textElement(driver, "luonnos"));
     	doit.echo("Running test_T_INT_TAR_HKOH001 OK");
     }
@@ -177,6 +178,7 @@ public class TestIntegraatioTarjonta {
     public void tearDown() throws Exception {
 //    	if (driver != null) { driver.quit(); }
 //      driverQuit = true;
+    	doit.quit(driver);
     	String verificationErrorString = verificationErrors.toString();
     	if (!"".equals(verificationErrorString)) {
     		fail(verificationErrorString);

@@ -2734,6 +2734,11 @@ public class SVTUtils {
 		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi.", this.textElement(driver, "Kirjaudu ulos"));
 	}
 
+	public void quit(WebDriver driver)
+	{
+		if (System.getProperty("test").indexOf("#") > 0) { driver.quit(); }
+	}
+
 	public void refreshTarjontaEtusivu(WebDriver driver)
 	{
 		try {
