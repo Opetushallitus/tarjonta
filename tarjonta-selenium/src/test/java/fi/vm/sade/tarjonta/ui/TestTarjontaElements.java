@@ -75,7 +75,7 @@ public class TestTarjontaElements {
     		doit.echo("Running ================================================================="); 
             doit.messagesPropertiesInit();
             TarjontaElementitTekstit.alustaKattavuusKohde("TarjontaElementitTekstit");
-            doit.alustaSelaimet(TarjontaElementitSelaimet, "TarjontaElementitSelaimet");
+//            doit.alustaSelaimet(TarjontaElementitSelaimet, "TarjontaElementitSelaimet");
             TarjontaElementitTekstit.KattavuusRaporttiHiljaa = true;
     	}
 		driver.get(baseUrl + SVTUtils.prop.getProperty("tarjonta-selenium.oph-login-url"));
