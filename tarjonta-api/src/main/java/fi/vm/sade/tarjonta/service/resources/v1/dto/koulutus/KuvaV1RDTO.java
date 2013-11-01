@@ -13,16 +13,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
+
+import java.io.Serializable;
 
 /**
  *
- * @author Jani Wilén
+ * @author jani
  */
-public class KoulutusmoduuliRelationDTO extends ToteutusDTO {
-
-    private static final long serialVersionUID = 1L;
-
-    public KoulutusmoduuliRelationDTO() {
-    }
+public class KuvaV1RDTO  implements Serializable{
+    
 }

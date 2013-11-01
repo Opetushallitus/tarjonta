@@ -18,10 +18,10 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUriV1DTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
 import java.util.Locale;
@@ -45,11 +45,11 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     public TekstiV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit) {
         TekstiV1RDTO tekstis = new TekstiV1RDTO();
         for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
-            UiMetaDTO dto = new UiMetaDTO();
+            UiMetaV1RDTO dto = new UiMetaV1RDTO();
 
             Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstis();
             for (TekstiKaannos kaannos : tekstis1) {
-                UiDTO uri = new UiDTO();
+                UiV1RDTO uri = new UiV1RDTO();
                 uri.setKoodi(convertKoodiUri(kaannos.getKieliKoodi(), kaannos.getArvo()));
                 uri.setArvo(kaannos.getArvo());
                 dto.getMeta().put(uri.getKoodi().getUri(), uri);
@@ -60,8 +60,8 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
         return tekstis;
     }
 
-    private KoodiUriDTO convertKoodiUri(final String koodistoKoodiUri, final String arvo) {
-        KoodiUriDTO koodiUri = new KoodiUriDTO();
+    private KoodiUriV1DTO convertKoodiUri(final String koodistoKoodiUri, final String arvo) {
+        KoodiUriV1DTO koodiUri = new KoodiUriV1DTO();
         if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodistoKoodiUri);
             koodiUri.setUri(type.getKoodiUri());
@@ -75,9 +75,9 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     }
 
     public void convertTekstiDTOToMonikielinenTeksti(TekstiV1RDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
-        Map<TYPE, UiMetaDTO> tekstis = tekstiDto.getTekstis();
-        for (Map.Entry<TYPE, UiMetaDTO> e : tekstis.entrySet()) {
-            Map<String, UiDTO> restMeta = e.getValue().getMeta();
+        Map<TYPE, UiMetaV1RDTO> tekstis = tekstiDto.getTekstis();
+        for (Map.Entry<TYPE, UiMetaV1RDTO> e : tekstis.entrySet()) {
+            Map<String, UiV1RDTO> restMeta = e.getValue().getMeta();
 
             MonikielinenTeksti merge = tekstit.get(e.getKey());
 
@@ -86,7 +86,7 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
                 tekstit.put(e.getKey(), merge);
             }
             //  MonikielinenTeksti merged = MonikielinenTeksti.merge(oldMt, newMt);
-            for (Map.Entry<String, UiDTO> restKaannos : restMeta.entrySet()) {
+            for (Map.Entry<String, UiV1RDTO> restKaannos : restMeta.entrySet()) {
                 String newArvo = restKaannos.getValue().getKoodi().getArvo();
                 TekstiKaannos searchByKielikoodi = searchByKielikoodi(merge, restKaannos.getKey());
                 searchByKielikoodi.setArvo(newArvo);

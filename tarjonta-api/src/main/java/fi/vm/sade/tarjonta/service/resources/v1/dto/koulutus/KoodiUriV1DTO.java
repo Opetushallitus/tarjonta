@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class KoodiUriDTO implements Serializable {
+public class KoodiUriV1DTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String uri;
@@ -29,10 +29,10 @@ public class KoodiUriDTO implements Serializable {
     private String arvo;
     private String kaannos;
 
-    public KoodiUriDTO() {
+    public KoodiUriV1DTO() {
     }
 
-    public KoodiUriDTO(String uri, String versio, String arvo) {
+    public KoodiUriV1DTO(String uri, String versio, String arvo) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;

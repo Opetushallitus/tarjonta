@@ -12,12 +12,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.resources.v1.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 /**
  *
  * @author mlyly
  */
-public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
+public class KoulutusValmentavaJaKuntouttavaV1RDTO extends KoulutusV1RDTO {
 
 }

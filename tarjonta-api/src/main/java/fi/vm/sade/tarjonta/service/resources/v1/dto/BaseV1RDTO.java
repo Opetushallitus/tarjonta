@@ -30,6 +30,9 @@ public class BaseV1RDTO implements Serializable {
     private String oid;
     private Long version;
 
+    public BaseV1RDTO() {
+    }
+
     public Date getCreated() {
         return created;
     }
