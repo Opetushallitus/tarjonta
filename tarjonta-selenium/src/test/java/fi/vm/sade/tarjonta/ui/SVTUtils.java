@@ -57,7 +57,7 @@ public class SVTUtils {
 			Properties vProp = new Properties();
 			try {
 				vProp.load(new FileInputStream(versionFile));
-		        echo2("Running tarjonta-selenium.git-version=" + vProp.getProperty("testaus-selenium.git-version"));
+		        echo2("Running testaus-selenium.git-version=" + vProp.getProperty("testaus-selenium.git-version"));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IOException("ERROR: Can't read version properties file. " + versionFile);
