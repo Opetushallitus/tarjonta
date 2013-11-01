@@ -144,9 +144,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
+
+
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
-        Hakukohde hakukohde = hakukohdeDao.findHakukohdeWithKomotosByOid(oid);
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
         HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
 
@@ -158,6 +161,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
@@ -194,6 +198,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
@@ -231,6 +236,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO<Boolean> deleteHakukohde(String oid) {
         try {
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
@@ -258,6 +264,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(String hakukohdeOid) {
 
         ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
