@@ -824,15 +824,16 @@ public class TestTarjontaPunainenLanka {
     	doit.echo("Running TarjontaPunainenLanka TC0812 ...");
     	TarjontaTapaukset.setKattavuus("TC0812", Kattavuus.KATTAVUUSERROR);
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
-        
-        doit.textClick(driver, "Hakukohteet");
-        doit.tauko(1);
-        WebElement menu = doit.TarkasteleHakukohdeLuonnosta(driver, "");
-        if (menu == null)
-        {
-        	doit.echo("Running Ei ole luonnoksia hakukohteille.");
-        	int a = 1 / 0;
-        }
+        doit.haeHakukohteita(driver, "Luonnos", null);
+        doit.triangleClickFirstTriangle(driver);
+//        doit.textClick(driver, "Hakukohteet");
+//        doit.tauko(1);
+//        WebElement menu = doit.TarkasteleHakukohdeLuonnosta(driver, "");
+//        if (menu == null)
+//        {
+//        	doit.echo("Running Ei ole luonnoksia hakukohteille.");
+//        	int a = 1 / 0;
+//        }
         // otetaan organisaatio muistiin
         String organisaatio = doit.getTextMinusY(driver, "luonnos", "//div[@class='v-label v-label-undef-w' and contains(text(),')')]");
         organisaatio = organisaatio.substring(0, organisaatio.indexOf("(") - 1);

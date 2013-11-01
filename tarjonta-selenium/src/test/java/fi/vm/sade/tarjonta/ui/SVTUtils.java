@@ -2429,7 +2429,7 @@ public class SVTUtils {
     	this.tauko(1);
     }
 
-	public WebElement TarkasteleHakukohdeLuonnosta(WebDriver driver, String haku) throws Exception {
+	public WebElement TarkasteleHakukohdeLuonnostapois(WebDriver driver, String haku) throws Exception {
     	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
     	search.clear();
     	search.sendKeys(haku);
