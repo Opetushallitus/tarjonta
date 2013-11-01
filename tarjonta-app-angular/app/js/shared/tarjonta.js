@@ -140,17 +140,13 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
      */
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
-        var url = Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU");
+        var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"),{},{
+        	update: { method: 'POST'}        	
+        });
 
-        jQuery.ajax(url, {
-            method: "POST",
-            dataType: "text",
-            success: function(nstate) {
-                ret.resolve(nstate);
-
-                // TODO päivitä cache
-
-            }
+        tila.update(function(nstate) {
+        	console.log("resolving:", nstate);
+                ret.resolve(nstate.result);
         });
 
         return ret.promise;
@@ -171,16 +167,16 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
 
     dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "/hakukohteet").query({}, function(res) {
-            ret.resolve(cleanAndLocalizeArray(res));
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "/hakukohteet").get({}, function(res) {
+            ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
     }
 
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + oid + "/koulutukset").query({}, function(res) {
-            ret.resolve(cleanAndLocalizeArray(res));
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + oid + "/koulutukset").get({}, function(res) {
+            ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
     }

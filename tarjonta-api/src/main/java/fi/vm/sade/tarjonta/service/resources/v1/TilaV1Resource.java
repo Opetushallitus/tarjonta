@@ -7,7 +7,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.tarjonta.service.resources.dto.TilaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TilaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -25,6 +26,6 @@ public interface TilaV1Resource {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<TarjontaTila, TilaRDTO> getTilat();
+    public ResultV1RDTO<Map<TarjontaTila, TilaV1RDTO>> getTilat();
 
 }

@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * REST service for hakukohde's.
@@ -137,18 +136,6 @@ public interface HakukohdeResource {
     public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
     
     /**
-     * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
-     * 
-     * @param oid Hakukohteen oid.
-     * @param tila Kohdetila.
-     * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
-     */
-    @POST
-    @Path("{oid}/tila")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
-
-    /**
      * /hakukohde/OID/nimi
      *
      * Resolves the Hakukohde name from the tarjoaja and hakukohde.
@@ -160,16 +147,5 @@ public interface HakukohdeResource {
     @Path("{oid}/nimi")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeNimiRDTO getHakukohdeNimi(@PathParam("oid") String oid);
-
-    /**
-     * /hakukohde/OID/koulutukset
-     *
-     * @param oid
-     * @return
-     */
-    @GET
-    @Path("{oid}/koulutukset")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<NimiJaOidRDTO> getKoulutukset(@PathParam("oid") String oid);
 
 }
