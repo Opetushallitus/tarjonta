@@ -825,7 +825,7 @@ public class TestTarjontaPunainenLanka {
     	TarjontaTapaukset.setKattavuus("TC0812", Kattavuus.KATTAVUUSERROR);
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         doit.haeHakukohteita(driver, "Luonnos", null);
-        doit.triangleClickFirstTriangle(driver);
+        doit.triangleClickLastTriangle(driver);
 //        doit.textClick(driver, "Hakukohteet");
 //        doit.tauko(1);
 //        WebElement menu = doit.TarkasteleHakukohdeLuonnosta(driver, "");
