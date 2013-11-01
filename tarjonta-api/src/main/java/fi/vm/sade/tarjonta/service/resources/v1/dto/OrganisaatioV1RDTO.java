@@ -27,6 +27,15 @@ public class OrganisaatioV1RDTO extends BaseV1RDTO {
     private String nimi;
     private List<LokalisointiV1RDTO> _nimet;
 
+    public OrganisaatioV1RDTO() {
+    }
+
+    public OrganisaatioV1RDTO(String oid, String nimi, List<LokalisointiV1RDTO> _nimet) {
+        this.oid = oid;
+        this.nimi = nimi;
+        this._nimet = _nimet;
+    }
+
     public void addNimi(LokalisointiV1RDTO lokalisointi) {
         getNimet().add(lokalisointi);
     }

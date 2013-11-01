@@ -12,11 +12,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.resources.v1.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
 import java.util.Date;
 
 /**
@@ -25,24 +22,23 @@ import java.util.Date;
  */
 public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
-    private UiMetaDTO koulutusohjelma;
+    private UiMetaV1RDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
      */
-    private SuunniteltuKestoDTO suunniteltuKesto;
-    private UiMetaDTO opetuskielis;
-    private UiMetaDTO opetusmuodos;
+    private SuunniteltuKestoV1RDTO suunniteltuKesto;
+    private UiMetaV1RDTO opetuskielis;
+    private UiMetaV1RDTO opetusmuodos;
     /*
      * KK
      */
     private Boolean opintojenMaksullisuus;
-    private UiMetaDTO pohjakoulutusvaatimukset;
-    private UiMetaDTO teemas;
-    private UiDTO opintojenLaajuus;
+    private UiMetaV1RDTO pohjakoulutusvaatimukset;
+    private UiMetaV1RDTO teemas;
     private Date koulutuksenAlkamisPvm;
-    private UiMetaDTO ammattinimikkeet;
+    private UiMetaV1RDTO ammattinimikkeet;
     private Double hinta;
 
     public KoulutusKorkeakouluV1RDTO() {
@@ -51,9 +47,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @return the koulutusohjelma
      */
-    public UiMetaDTO getKoulutusohjelma() {
+    public UiMetaV1RDTO getKoulutusohjelma() {
         if (koulutusohjelma == null) {
-            koulutusohjelma = new UiMetaDTO();
+            koulutusohjelma = new UiMetaV1RDTO();
         }
         return koulutusohjelma;
     }
@@ -61,7 +57,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param koulutusohjelma the koulutusohjelma to set
      */
-    public void setKoulutusohjelma(UiMetaDTO koulutusohjelma) {
+    public void setKoulutusohjelma(UiMetaV1RDTO koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
     }
 
@@ -82,9 +78,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @return the opetuskielis
      */
-    public UiMetaDTO getOpetuskielis() {
+    public UiMetaV1RDTO getOpetuskielis() {
         if (opetuskielis == null) {
-            opetuskielis = new UiMetaDTO();
+            opetuskielis = new UiMetaV1RDTO();
         }
 
         return opetuskielis;
@@ -93,16 +89,16 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param opetuskielis the opetuskielis to set
      */
-    public void setOpetuskielis(UiMetaDTO opetuskielis) {
+    public void setOpetuskielis(UiMetaV1RDTO opetuskielis) {
         this.opetuskielis = opetuskielis;
     }
 
     /**
      * @return the opetusmuodos
      */
-    public UiMetaDTO getOpetusmuodos() {
+    public UiMetaV1RDTO getOpetusmuodos() {
         if (opetusmuodos == null) {
-            opetusmuodos = new UiMetaDTO();
+            opetusmuodos = new UiMetaV1RDTO();
         }
 
         return opetusmuodos;
@@ -111,16 +107,16 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param opetusmuodos the opetusmuodos to set
      */
-    public void setOpetusmuodos(UiMetaDTO opetusmuodos) {
+    public void setOpetusmuodos(UiMetaV1RDTO opetusmuodos) {
         this.opetusmuodos = opetusmuodos;
     }
 
     /**
      * @return the pohjakoulutusvaatimukset
      */
-    public UiMetaDTO getPohjakoulutusvaatimukset() {
+    public UiMetaV1RDTO getPohjakoulutusvaatimukset() {
         if (pohjakoulutusvaatimukset == null) {
-            pohjakoulutusvaatimukset = new UiMetaDTO();
+            pohjakoulutusvaatimukset = new UiMetaV1RDTO();
         }
 
         return pohjakoulutusvaatimukset;
@@ -129,16 +125,16 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
      */
-    public void setPohjakoulutusvaatimukset(UiMetaDTO pohjakoulutusvaatimukset) {
+    public void setPohjakoulutusvaatimukset(UiMetaV1RDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
 
     /**
      * @return the teemas
      */
-    public UiMetaDTO getTeemas() {
+    public UiMetaV1RDTO getTeemas() {
         if (teemas == null) {
-            teemas = new UiMetaDTO();
+            teemas = new UiMetaV1RDTO();
         }
 
         return teemas;
@@ -147,7 +143,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param teemas the teemas to set
      */
-    public void setTeemas(UiMetaDTO teemas) {
+    public void setTeemas(UiMetaV1RDTO teemas) {
         this.teemas = teemas;
     }
 
@@ -163,20 +159,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setTunniste(String tunniste) {
         this.tunniste = tunniste;
-    }
-
-    /**
-     * @return the opintojenLaajuus
-     */
-    public UiDTO getOpintojenLaajuus() {
-        return opintojenLaajuus;
-    }
-
-    /**
-     * @param opintojenLaajuus the opintojenLaajuus to set
-     */
-    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
-        this.opintojenLaajuus = opintojenLaajuus;
     }
 
     /**
@@ -196,28 +178,32 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @return the suunniteltuKesto
      */
-    public SuunniteltuKestoDTO getSuunniteltuKesto() {
+    public SuunniteltuKestoV1RDTO getSuunniteltuKesto() {
         return suunniteltuKesto;
     }
 
     /**
      * @param suunniteltuKesto the suunniteltuKesto to set
      */
-    public void setSuunniteltuKesto(SuunniteltuKestoDTO suunniteltuKesto) {
+    public void setSuunniteltuKesto(SuunniteltuKestoV1RDTO suunniteltuKesto) {
         this.suunniteltuKesto = suunniteltuKesto;
     }
 
     /**
      * @return the ammattinimikkeet
      */
-    public UiMetaDTO getAmmattinimikkeet() {
+    public UiMetaV1RDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new UiMetaV1RDTO();
+        }
+
         return ammattinimikkeet;
     }
 
     /**
      * @param ammattinimikkeet the ammattinimikkeet to set
      */
-    public void setAmmattinimikkeet(UiMetaDTO ammattinimikkeet) {
+    public void setAmmattinimikkeet(UiMetaV1RDTO ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
     }
 

@@ -21,8 +21,8 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,7 +35,7 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-public class KoulutusKoodiToUiDTOConverter<DTO extends UiDTO> {
+public class KoulutusKoodiToUiDTOConverter<DTO extends UiV1RDTO> {
 
     public KoulutusKoodiToUiDTOConverter() {
     }
@@ -61,23 +61,23 @@ public class KoulutusKoodiToUiDTOConverter<DTO extends UiDTO> {
         dto.setArvo(koodiMetadata.getNimi());
         dto.setKoodiUri(koodiType.getKoodiUri(), koodiType.getVersio() + "", koodiType.getKoodiArvo());
 
-        if (dto instanceof UiMetaDTO) {
+        if (dto instanceof UiMetaV1RDTO) {
             //add all languages to the UI object
-            UiMetaDTO meta = (UiMetaDTO) dto;
+            UiMetaV1RDTO meta = (UiMetaV1RDTO) dto;
             meta.setMeta(convertMetadata(koodiType.getMetadata()));
         }
 
         return dto;
     }
 
-    private Map<String, UiDTO> convertMetadata(final List<KoodiMetadataType> languageMetaData) {
-        Map<String, UiDTO> teksti = Maps.<String, UiDTO>newHashMap();
+    private Map<String, UiV1RDTO> convertMetadata(final List<KoodiMetadataType> languageMetaData) {
+        Map<String, UiV1RDTO> teksti = Maps.<String, UiV1RDTO>newHashMap();
 
         for (KoodiMetadataType meta : languageMetaData) {
             final KieliType kieli = meta.getKieli();
 
             if (kieli != null && meta.getNimi() != null && !meta.getNimi().isEmpty()) {
-                teksti.put(kieli.value(), new UiDTO(null, kieli.name(), null, kieli.value()));
+                teksti.put(kieli.value(), new UiV1RDTO(null, kieli.name(), null, kieli.value()));
             }
         }
 
