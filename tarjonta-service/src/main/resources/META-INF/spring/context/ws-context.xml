@@ -93,7 +93,6 @@
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
             <ref bean="indexerResource"/>
-            <ref bean="tarjontaKoulutusResource"/>
 
             <!-- API V1 -->
             <ref bean="tarjontaTilaResourceV1"/>
