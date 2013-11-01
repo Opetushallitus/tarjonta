@@ -21,7 +21,7 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
 
 
     //var hakukohdeUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/ui/:oid";
-    var hakukohdeUri = "http://localhost:9090/tarjonta-service/rest/hakukohde/ui/:oid";
+    var hakukohdeUri = "http://localhost:9090/tarjonta-service/rest/v1/hakukohde/:oid";
 
     return $resource(hakukohdeUri,{oid:'@oid'},{
         update: {
