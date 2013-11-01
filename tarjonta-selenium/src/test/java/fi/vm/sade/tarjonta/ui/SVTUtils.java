@@ -2429,7 +2429,7 @@ public class SVTUtils {
     	this.tauko(1);
     }
 
-	public WebElement TarkasteleHakukohdeLuonnosta(WebDriver driver, String haku) throws Exception {
+	public WebElement TarkasteleHakukohdeLuonnostapois(WebDriver driver, String haku) throws Exception {
     	WebElement search = driver.findElements(By.className("v-textfield-search-box")).get(1);
     	search.clear();
     	search.sendKeys(haku);
@@ -2713,8 +2713,19 @@ public class SVTUtils {
 
 	public WebElement getTriangleForLastHakukohde(WebDriver driver)
 	{
-        return driver.findElements(By.className("v-treetable-treespacer"))
-        		.get(driver.findElements(By.className("v-treetable-treespacer")).size() - 1);
+		WebElement triangle;
+		List<WebElement> triangles = driver.findElements(By.className("v-treetable-treespacer"));
+		int i = 1;
+		int count = triangles.size();
+		while (true)
+		{
+			triangle = triangles.get(driver.findElements(By.className("v-treetable-treespacer")).size() - i);
+			if (triangle == null) { break; }
+			if (triangle.isDisplayed()) { break; }
+			i--;
+			if (count == i) { break; }
+		}
+        return triangle;
 	}	  
 
 	public void refresh(WebDriver driver)
