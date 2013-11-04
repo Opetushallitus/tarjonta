@@ -113,6 +113,8 @@ public class TestIntegraatioTarjonta {
     	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
         doit.haeHakukohteita(driver, "Luonnos", null);
 //        doit.triangleClickLastTriangle(driver);
+        doit.sendPageToFile(driver);
+        doit.screenShot("triangleClickNearestTriangle", driver);
         doit.triangleClickNearestTriangle(driver, "Valitse kaikki");
         Assert.assertNotNull("Running hae luonnos ei toimi.", doit.textElement(driver, "luonnos"));
     	doit.echo("Running test_T_INT_TAR_HKOH001 OK");
