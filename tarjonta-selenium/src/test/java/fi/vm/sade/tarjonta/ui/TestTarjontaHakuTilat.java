@@ -30,10 +30,10 @@ public class TestTarjontaHakuTilat {
             firefoxProfile.setEnableNativeEvents(true);
             firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
             if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url");
+            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true")) { reppu = "luokka"; }
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { reppu = "qa"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
     }
 
     //    Luo haku
@@ -123,8 +123,9 @@ public class TestTarjontaHakuTilat {
     //    Hae haku
     public void haeHaku(String hakuSana, String tila
     		, Boolean muokkaa, Boolean julkaise, Boolean peruuta, Boolean poista, Boolean valmiina) throws Exception {
-    	doit.echo("Running testHaeHaku ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
         doit.ValikotHakujenYllapito(driver, baseUrl);
+    	doit.echo("Running testHaeHaku ...");
     	this.haeHakua(tila, hakuSana);
     	// LOOPATAAN LOYDETTYJEN MENUT LAPI JA TEHDAAN TARKISTUS
     	String htmlOperaatioMuokkaa = "<span class=\"v-menubar-menuitem-caption\">Muokkaa</span>";
@@ -198,8 +199,9 @@ public class TestTarjontaHakuTilat {
 
     //    Luo haku
     public void luoHaku(String nimi, String hakuVuosi, String alkaa, String paattyy, String tila) throws Exception {
-    	doit.echo("Running testLuoHaku ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
         doit.ValikotHakujenYllapito(driver, baseUrl);
+    	doit.echo("Running testLuoHaku ...");
         doit.textClick(driver, "Luo uusi haku");
         Assert.assertNotNull("Running LuoHaku Luo uusi haku ei toimi."
                 , doit.textElement(driver, "Hakulomake"));
@@ -210,22 +212,30 @@ public class TestTarjontaHakuTilat {
         String ddmmyyyyhhmi = doit.ddmmyyyyhhmiString();
 //        String nimi = reppu + "haku" + yyyymmdd + "_" + millis;
         String kuvaus = "kuvaus " + nimi + millis;
+        
+        String output = hakuVuosi + "\t\t" // -vuosi
+        		+ hakuVuosi + "\t\t\t\t" // -vuosi
+        		+ kuvaus + "\t" // Hakuajan tunniste
+        		+ alkaa + "\t" // Hakuaika alkaa
+        		+ paattyy; // Hakuaika päättyy
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", output, 200);
+
         doit.sendInput(driver, "Hakutyyppi", "Varsinainen haku");
         doit.popupItemClick(driver, "Varsinainen haku");
         doit.sendInput(driver, "Hakukausi ja -vuosi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", hakuVuosi + "\t", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", hakuVuosi + "\t", 200);
         doit.sendInput(driver, "Koulutuksen alkamiskausi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", hakuVuosi + "\t", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", hakuVuosi + "\t", 300);
         doit.sendInput(driver, "Haun kohdejoukko", "Ammatillinen koulutus ja lukiokoulutus");
         doit.popupItemClick(driver, "Ammatillinen koulutus ja lukiokoulutus");
         doit.sendInput(driver, "Hakutapa", "Yhteishaku");
         doit.popupItemClick(driver, "Yhteishaku");
         doit.sendInputPlusY(driver, "Haun nimi*", nimi);
-        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
-        doit.sendInput(driver, "Hakuaika alkaa", alkaa);
-        doit.sendInput(driver, "Hakuaika päättyy", paattyy);
+//        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
+//        doit.sendInput(driver, "Hakuaika alkaa", alkaa);
+//        doit.sendInput(driver, "Hakuaika päättyy", paattyy);
         doit.sendInput(driver, "Haussa käytetään sijoittelua", "SELECTED");
 
         if (tila.equals("luonnos"))
@@ -249,6 +259,7 @@ public class TestTarjontaHakuTilat {
         					|| doit.isPresentText(driver, "Hakuvuosi on pakollinen tieto")
         					|| doit.isPresentText(driver, "Haun nimi puuttuu")
         					|| doit.isPresentText(driver, "Koulutuksen alkamisvuosi on pakollinen tieto")
+        					|| doit.isPresentText(driver, "Koulutuksen alkamisvuosi tulee olla numeerinen arvo")
         					)
         			{
         				if (doit.isPresentText(driver, "Hakuajan alku- ja loppu"))
@@ -260,7 +271,8 @@ public class TestTarjontaHakuTilat {
         				{        					
         					doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", hakuVuosi + "\t", 200);
         				}
-        				else if (doit.isPresentText(driver, "Koulutuksen alkamisvuosi on pakollinen tieto"))
+        				else if (doit.isPresentText(driver, "Koulutuksen alkamisvuosi on pakollinen tieto")
+        					|| doit.isPresentText(driver, "Koulutuksen alkamisvuosi tulee olla numeerinen arvo"))
         				{
         					doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", hakuVuosi + "\t", 300);
         				}
@@ -363,11 +375,12 @@ public class TestTarjontaHakuTilat {
 
     @After
     public void tearDown() throws Exception {
-            driver.quit();
-            driverQuit = true;
-            String verificationErrorString = verificationErrors.toString();
-            if (!"".equals(verificationErrorString)) {
-                    fail(verificationErrorString);
-            }
+//    	driver.quit();
+//    	driverQuit = true;
+    	doit.quit(driver);
+    	String verificationErrorString = verificationErrors.toString();
+    	if (!"".equals(verificationErrorString)) {
+    		fail(verificationErrorString);
+    	}
     }
 }
