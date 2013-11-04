@@ -17,18 +17,21 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusAmmatillinenPeruskoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusLukioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusPerusopetuksenLisaopetusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusValmentavaJaKuntouttavaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusPerusopetuksenLisaopetusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmentavaJaKuntouttavaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
+
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -151,8 +154,8 @@ public interface KoulutusV1Resource {
     @POST
     @PUT
     @Path("{oid}/tila")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
@@ -182,6 +185,6 @@ public interface KoulutusV1Resource {
     @GET
     @Path("{oid}/hakukohteet")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<NimiJaOidRDTO> getHakukohteet(@PathParam("oid") String oid);
+    public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(@PathParam("oid") String oid);
 
 }

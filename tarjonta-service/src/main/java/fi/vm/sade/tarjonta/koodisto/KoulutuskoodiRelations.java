@@ -19,10 +19,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KoulutusmoduuliRelationDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
@@ -39,8 +37,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class KoulutuskoodiRelations {
 
-    private static final KoulutusKoodiToUiDTOConverter<UiDTO> koulutusKoodiToKoodiModel = new KoulutusKoodiToUiDTOConverter<UiDTO>();
-    private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImpl.class);
+    private static final KoulutusKoodiToUiDTOConverter<UiV1RDTO> koulutusKoodiToKoodiModel = new KoulutusKoodiToUiDTOConverter<UiV1RDTO>();
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutuskoodiRelations.class);
     private static final String[] SEARCH_KOMO_KOODISTOS = new String[]{
         KoodistoURI.KOODISTO_OPINTOALA_URI,
         KoodistoURI.KOODISTO_TUTKINTO_NIMI_URI,
@@ -51,34 +49,6 @@ public class KoulutuskoodiRelations {
     };
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-
-    @Deprecated
-    public KoulutusmoduuliRelationDTO getKomoRelation(final String koulutuskoodiUri, final Locale locale) {
-        Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
-        Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri);
-
-        KoulutusmoduuliRelationDTO dto = new KoulutusmoduuliRelationDTO();
-        dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, locale));
-
-        for (KoodiType type : koodistoRelations) {
-            LOG.info("KOODISTO : " + type.getKoodisto().getKoodistoUri());
-            if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
-                dto.setKoulutusala(listaaKoodi(type.getKoodiUri(), locale));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOALA_URI)) {
-                dto.setOpintoala(listaaKoodi(type.getKoodiUri(), locale));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI)) {
-                dto.setTutkintonimike(listaaKoodi(type.getKoodiUri(), locale));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTO_NIMI_URI)) {
-                dto.setTutkinto(listaaKoodi(type.getKoodiUri(), locale));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSASTE_URI)) {
-                dto.setKoulutusaste(listaaKoodi(type.getKoodiUri(), locale));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_EQF_LUOKITUS_URI)) {
-                dto.setEqf(listaaKoodi(type.getKoodiUri(), locale));
-            }
-        }
-
-        return dto;
-    }
     
     public KoulutusmoduuliRelationV1RDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
@@ -127,9 +97,9 @@ public class KoulutuskoodiRelations {
      * @param locale
      * @return
      */
-    private UiDTO listaaKoodi(final String uri, final Locale locale) {
+    private UiV1RDTO listaaKoodi(final String uri, final Locale locale) {
         Preconditions.checkNotNull(uri, "Koodisto URI was null - an unknown URI data cannot be loaded.");
         KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(uri);
-        return koulutusKoodiToKoodiModel.convertKoodiTypeToUiDTO(UiDTO.class, koodiByUri, locale);
+        return koulutusKoodiToKoodiModel.convertKoodiTypeToUiDTO(UiV1RDTO.class, koodiByUri, locale);
     }
 }

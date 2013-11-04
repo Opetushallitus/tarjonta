@@ -463,34 +463,5 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return cal.get(Calendar.YEAR);
     }
 
-	@Override
-    @Transactional(readOnly = false)
-	public String updateTila(String oid, TarjontaTila tila) {
-		Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(oid);
-    	Preconditions.checkArgument(hk!=null, "Hakukohdetta ei löytynyt: %s", oid);
-    	if (!hk.getTila().acceptsTransitionTo(tila)) {
-    		return hk.getTila().toString();
-    	}
-    	hk.setTila(tila);
-    	hakukohdeDAO.update(hk);
-    	solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
-    	return tila.toString();
-	}
-	
-	@Override
-	public List<NimiJaOidRDTO> getKoulutukset(String oid) {
-		KoulutuksetKysely ks = new KoulutuksetKysely();
-		ks.getHakukohdeOids().add(oid);
-
-		KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
-    	List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
-		for (KoulutusPerustieto kp : kv.getKoulutukset()) {
-			ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
-		}
-    	return ret;
-	}
-
-
-
 	
 }

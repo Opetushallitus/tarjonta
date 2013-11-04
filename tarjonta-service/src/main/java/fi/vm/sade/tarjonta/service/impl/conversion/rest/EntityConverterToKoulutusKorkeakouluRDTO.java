@@ -31,13 +31,13 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KoodiUriDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUriV1DTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.SuunniteltuKestoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -150,14 +150,14 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return "";
     }
 
-    private UiDTO simpleUiDTO(final String arvo) {
-        UiDTO dto = new UiDTO();
+    private UiV1RDTO simpleUiDTO(final String arvo) {
+        UiV1RDTO dto = new UiV1RDTO();
         dto.setArvo(nullStr(arvo));
         return dto;
     }
 
-    private static UiMetaDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final String langCode, final String msg) {
-        UiMetaDTO meta = new UiMetaDTO();
+    private static UiMetaV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final String langCode, final String msg) {
+        UiMetaV1RDTO meta = new UiMetaV1RDTO();
         final String code = langCode.toLowerCase();
 
         for (TekstiKaannos tk : mt.getTekstis()) {
@@ -171,20 +171,20 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
             if (koodiUri.contains(code)) {
                 meta.setArvo(text); //in user's language.
             }
-            meta.getMeta().put(koodiUri, new UiDTO(null, koodiUri, type.getVersio() + "", text));
+            meta.getMeta().put(koodiUri, new UiV1RDTO(null, koodiUri, type.getVersio() + "", text));
         }
         return meta;
     }
 
-    private SuunniteltuKestoDTO suunniteltuKestoDTO(final String kestoArvo, String kestoArvoKoodiUri) {
-        SuunniteltuKestoDTO kesto = new SuunniteltuKestoDTO();
-        SuunniteltuKestoDTO dto = (SuunniteltuKestoDTO) convertToKoodiUriDTO(kesto, kestoArvoKoodiUri, DEMO_LOCALE, "tutkinto-ohjelma->SuunniteltuKestoTyyppi", false);
+    private SuunniteltuKestoV1RDTO suunniteltuKestoDTO(final String kestoArvo, String kestoArvoKoodiUri) {
+        SuunniteltuKestoV1RDTO kesto = new SuunniteltuKestoV1RDTO();
+        SuunniteltuKestoV1RDTO dto = (SuunniteltuKestoV1RDTO) convertToKoodiUriDTO(kesto, kestoArvoKoodiUri, DEMO_LOCALE, "tutkinto-ohjelma->SuunniteltuKestoTyyppi", false);
         dto.setArvo(nullStr(kestoArvo));
         return dto;
     }
 
-    private KoodiUriDTO convertKoodiUri(final String koodistoKoodiUri, final String arvo) {
-        KoodiUriDTO koodiUri = new KoodiUriDTO();
+    private KoodiUriV1DTO convertKoodiUri(final String koodistoKoodiUri, final String arvo) {
+        KoodiUriV1DTO koodiUri = new KoodiUriV1DTO();
         if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodistoKoodiUri);
             koodiUri.setUri(type.getKoodiUri());
@@ -197,29 +197,29 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return koodiUri;
     }
 
-    private UiDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName, boolean allowNullKoodi) {
+    private UiV1RDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName, boolean allowNullKoodi) {
         if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
             return convertToUiMetaDTO(koodistoKoodiUri, locale, fieldName, allowNullKoodi);
         }
         return simpleUiDTO(null);
     }
 
-    private UiDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName) {
+    private UiV1RDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName) {
         return komoData(koodistoKoodiUri, locale, fieldName, false);
     }
 
-    private UiMetaDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean allowNullKoodi) {
-        UiMetaDTO koodiUriDto = new UiMetaDTO();
+    private UiMetaV1RDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean allowNullKoodi) {
+        UiMetaV1RDTO koodiUriDto = new UiMetaV1RDTO();
         convertKoodiUriToKoodiUriListDTO(fromKoodiUri, koodiUriDto, new Locale(langCode.toLowerCase()), fieldName, allowNullKoodi);
         return koodiUriDto;
     }
 
-    private UiMetaDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName) {
+    private UiMetaV1RDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName) {
         return convertToUiMetaDTO(fromKoodiUri, langCode, fieldName, false);
     }
 
-    private UiMetaDTO convertToUiMetaDTO(final Set<KoodistoUri> fromKoodiUris, final String langCode, final String fieldName) {
-        UiMetaDTO koodiUriListDTO = new UiMetaDTO();
+    private UiMetaV1RDTO convertToUiMetaDTO(final Set<KoodistoUri> fromKoodiUris, final String langCode, final String fieldName) {
+        UiMetaV1RDTO koodiUriListDTO = new UiMetaV1RDTO();
         for (KoodistoUri koodiUri : fromKoodiUris) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodiUri.getKoodiUri());
 
@@ -230,7 +230,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return koodiUriListDTO;
     }
 
-    private UiDTO convertToKoodiUriDTO(UiDTO uiDto, final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
+    private UiV1RDTO convertToKoodiUriDTO(UiV1RDTO uiDto, final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(langCode, "Locale object cannot be null. field in " + fieldName);
 
@@ -250,11 +250,11 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return uiDto;
     }
 
-    private UiDTO convertToKoodiUriDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
-        return convertToKoodiUriDTO(new UiDTO(), fromKoodiUri, langCode, fieldName, convertKoodiLang);
+    private UiV1RDTO convertToKoodiUriDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
+        return convertToKoodiUriDTO(new UiV1RDTO(), fromKoodiUri, langCode, fieldName, convertKoodiLang);
     }
 
-    private void convertKoodiUriToKoodiUriListDTO(final String fromKoodiUri, final UiMetaDTO koodiUriListDto, final Locale locale, final String fieldName, boolean allowNullKoodisto) {
+    private void convertKoodiUriToKoodiUriListDTO(final String fromKoodiUri, final UiMetaV1RDTO koodiUriListDto, final Locale locale, final String fieldName, boolean allowNullKoodisto) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(locale, "Locale object cannot be null in field in " + fieldName);
         Preconditions.checkNotNull(koodiUriListDto, "UiListDTO object cannot be null in field " + fieldName);
@@ -271,12 +271,12 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         }
     }
 
-    private UiDTO toKoodiUriDTO(UiDTO uiDto, final String fromKoodiUri, final KoodiType koodiByUri, final Locale locale) {
+    private UiV1RDTO toKoodiUriDTO(UiV1RDTO uiDto, final String fromKoodiUri, final KoodiType koodiByUri, final Locale locale) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null.");
         Preconditions.checkNotNull(koodiByUri, "Locale object cannot be null.");
 
         if (uiDto == null) {
-            uiDto = new UiDTO();
+            uiDto = new UiV1RDTO();
         }
 
         uiDto.setKoodi(convertKoodiUri(fromKoodiUri, koodiByUri.getKoodiArvo()));
@@ -288,12 +288,12 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return uiDto;
     }
 
-    private void addOtherLanguages(final UiMetaDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
+    private void addOtherLanguages(final UiMetaV1RDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
         Preconditions.checkNotNull(koodiUriDto, "KoodiUriDTO object cannot be null.");
         for (KoodiMetadataType meta : metadata) {
             final String kieliUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(meta.getKieli().value());
 
-            UiDTO dto = new UiDTO();
+            UiV1RDTO dto = new UiV1RDTO();
             dto.setKoodi(convertKoodiUri(kieliUri, meta.getKieli().value()));
             dto.setArvo(meta.getNimi());
             koodiUriDto.getMeta().put(kieliUri, dto);

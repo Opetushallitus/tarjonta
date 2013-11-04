@@ -53,15 +53,15 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.KoulutusResource;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.OrgDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.OidResultDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.SuunniteltuKestoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -114,7 +114,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private HakukohdeResource hakukohdeResource;
 
     @Autowired
-    private KoulutusResource koulutusResource;
+    private KoulutusV1Resource koulutusResource;
 
     @Autowired
     private KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAO;
@@ -165,6 +165,15 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 getOrgDTO("1.2.3.4.555"));
 
         stubKoodi(koodiService, "kieli_fi", "FI");
+        stubKoodi(koodiService, "koulutus-uri", "FI");
+        stubKoodi(koodiService, "tutkinto-uri", "FI");
+        stubKoodi(koodiService, "laajuus-uri", "FI");
+        stubKoodi(koodiService, "koulutusaste-uri", "FI");
+        stubKoodi(koodiService, "koulutusala-uri", "FI");
+        stubKoodi(koodiService, "opintoala-uri", "FI");
+        stubKoodi(koodiService, "tutkintonimike-uri", "FI");
+        stubKoodi(koodiService, "EQF-uri", "FI");
+        stubKoodi(koodiService, "suunniteltu-kesto-uri", "FI");
 
         super.before();
     }
@@ -173,6 +182,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
         organisaatioDTO.setOid(string);
         organisaatioDTO.setNimi(new MonikielinenTekstiTyyppi());
+
+        organisaatioDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("organisaation nimi", "FI"));
         return organisaatioDTO;
     }
 
@@ -321,9 +332,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-
-                KorkeakouluDTO kk = getKKKoulutus();
-                koulutusResource.createToteutus(kk);
+                KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
+                koulutusResource.postKorkeakouluKoulutus(kkKoulutus);
 
                 // HakukohdeRDTO hakukohde = getHakukohde();
                 // hakukohdeResource.insertHakukohde(hakukohde);
@@ -347,11 +357,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-
-                KorkeakouluDTO kk = getKKKoulutus();
-                OidResultDTO result = koulutusResource.createToteutus(kk);
-
-                HakukohdeV1RDTO hakukohde = getHakukohde(result.getOid());
+                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
+                ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKorkeakouluKoulutus(kk);
+                HakukohdeV1RDTO hakukohde = getHakukohde(postKorkeakouluKoulutus.getResult().getOid());
                 hakukohdeResource.insertHakukohde(hakukohde);
             }
 
@@ -365,28 +373,28 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertEquals(1, vastaus.getHakukohteet().size());
     }
 
-    private KorkeakouluDTO getKKKoulutus() {
+    private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
-        KorkeakouluDTO kk = new KorkeakouluDTO();
+        KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
         kk.getKoulutusohjelma()
                 .getMeta()
                 .put("kieli_fi",
-                        new UiDTO(null, "kieli_fi", "1", "Otsikko suomeksi"));
+                        new UiV1RDTO(null, "kieli_fi", "1", "Otsikko suomeksi"));
 
-        kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.YLIOPISTOKOULUTUS);
+        kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
-        kk.setOrganisaatio(new OrgDTO("1.2.3.4.555", null));
-        kk.setTutkinto(new UiDTO(null, "tutkinto-uri", "1", null));
-        kk.setOpintojenLaajuus(new UiDTO(null, "laajuus-uri", "1", null));
-        kk.setKoulutusaste(new UiDTO(null, "koulutusaste-uri", "1", null));
-        kk.setKoulutusala(new UiDTO(null, "koulutusala-uri", "1", null));
-        kk.setOpintoala(new UiDTO(null, "opintoala-uri", "1", null));
-        kk.setTutkintonimike(new UiDTO(null, "tutkintonimike-uri", "1", null));
-        kk.setEqf(new UiDTO(null, "EQF-uri", "1", null));
-        kk.setKoulutuskoodi(new UiDTO(null, "koulutus-uri", "1", null));
+        kk.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4.555", null, null));
+        kk.setTutkinto(new UiV1RDTO(null, "tutkinto-uri", "1", null));
+        kk.setOpintojenLaajuus(new UiV1RDTO(null, "laajuus-uri", "1", null));
+        kk.setKoulutusaste(new UiV1RDTO(null, "koulutusaste-uri", "1", null));
+        kk.setKoulutusala(new UiV1RDTO(null, "koulutusala-uri", "1", null));
+        kk.setOpintoala(new UiV1RDTO(null, "opintoala-uri", "1", null));
+        kk.setTutkintonimike(new UiV1RDTO(null, "tutkintonimike-uri", "1", null));
+        kk.setEqf(new UiV1RDTO(null, "EQF-uri", "1", null));
+        kk.setKoulutuskoodi(new UiV1RDTO(null, "koulutus-uri", "1", null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
-        kk.setSuunniteltuKesto(new SuunniteltuKestoDTO(null,
+        kk.setSuunniteltuKesto(new SuunniteltuKestoV1RDTO(null,
                 "suunniteltu-kesto-uri", "1", null));
         kk.setKoulutuksenAlkamisPvm(new DateTime(2013, 1, 1, 1, 1).toDate());
         return kk;

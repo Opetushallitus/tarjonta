@@ -13,38 +13,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
+ * @param <TYPE>
  */
-public class UiMetaDTO extends UiDTO {
+public class TekstiV1RDTO<TYPE extends Enum> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Map<String, UiDTO> meta;
+    private Map<TYPE, UiMetaV1RDTO> tekstis;
 
-    public UiMetaDTO() {
+    public TekstiV1RDTO() {
     }
 
     /**
      * @return the tekstis
      */
-    public Map<String, UiDTO> getMeta() {
-        if (meta == null) {
-            meta = new HashMap<String, UiDTO>();
+    public Map<TYPE, UiMetaV1RDTO> getTekstis() {
+        if (tekstis == null) {
+            tekstis = new HashMap<TYPE, UiMetaV1RDTO>();
         }
-        return meta;
+
+        return tekstis;
     }
 
     /**
      * @param tekstis the tekstis to set
      */
-    public void setMeta(Map<String, UiDTO> meta) {
-        this.meta = meta;
+    public void setTekstis(Map<TYPE, UiMetaV1RDTO> tekstis) {
+        this.tekstis = tekstis;
     }
+
 }

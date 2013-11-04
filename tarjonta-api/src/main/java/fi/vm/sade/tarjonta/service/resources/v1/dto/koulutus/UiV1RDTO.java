@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import java.io.Serializable;
 
@@ -21,13 +21,13 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class UiDTO implements Serializable {
+public class UiV1RDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private KoodiUriDTO koodi;
+    private KoodiUriV1DTO koodi;
     private String arvo;
 
-    public UiDTO() {
+    public UiV1RDTO() {
     }
 
     /**
@@ -37,9 +37,9 @@ public class UiDTO implements Serializable {
      * @param koodiVersio //Koodisto koodi version number in String format '1'
      * @param koodiArvo //ISO language code like 'EN', 'FI' etc.
      */
-    public UiDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
+    public UiV1RDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
         this.arvo = arvo;
-        koodi = new KoodiUriDTO(koodiUri, koodiVersio, koodiArvo);
+        koodi = new KoodiUriV1DTO(koodiUri, koodiVersio, koodiArvo);
     }
 
     /**
@@ -59,18 +59,18 @@ public class UiDTO implements Serializable {
     /**
      * @return the koodi
      */
-    public KoodiUriDTO getKoodi() {
+    public KoodiUriV1DTO getKoodi() {
         return koodi;
     }
 
     /**
      * @param koodi the koodi to set
      */
-    public void setKoodi(KoodiUriDTO koodi) {
+    public void setKoodi(KoodiUriV1DTO koodi) {
         this.koodi = koodi;
     }
 
     public void setKoodiUri(String uri, String versio, String arvo) {
-        koodi = new KoodiUriDTO(uri, versio, arvo);
+        koodi = new KoodiUriV1DTO(uri, versio, arvo);
     }
 }

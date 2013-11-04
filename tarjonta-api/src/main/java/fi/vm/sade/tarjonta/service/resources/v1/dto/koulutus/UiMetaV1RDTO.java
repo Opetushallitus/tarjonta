@@ -13,53 +13,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import java.io.Serializable;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
  */
-public class OidResultDTO implements Serializable {
+public class UiMetaV1RDTO extends UiV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    private String oid;
-    private Long version;
+    private Map<String, UiV1RDTO> meta;
 
-    public OidResultDTO() {
-    }
-
-    public OidResultDTO(String oid, Long version) {
-        this.oid = oid;
-        this.version = version;
+    public UiMetaV1RDTO() {
     }
 
     /**
-     * @return the oid
+     * @return the tekstis
      */
-    public String getOid() {
-        return oid;
+    public Map<String, UiV1RDTO> getMeta() {
+        if (meta == null) {
+            meta = new HashMap<String, UiV1RDTO>();
+        }
+        return meta;
     }
 
     /**
-     * @param oid the oid to set
+     * @param tekstis the tekstis to set
      */
-    public void setOid(String oid) {
-        this.oid = oid;
-    }
-
-    /**
-     * @return the version
-     */
-    public Long getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setMeta(Map<String, UiV1RDTO> meta) {
+        this.meta = meta;
     }
 }

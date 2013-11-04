@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.impl.resources;
+package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -23,9 +23,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.KorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.SuunniteltuKestoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.SuunniteltuKestoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
@@ -60,11 +59,12 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.impl.resources.KoulutusResourceImpl;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KomotoConverterToKorkeakouluDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KorkeakouluDTOConverterToKomoto;
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiMetaDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -88,7 +88,7 @@ import org.springframework.core.convert.TypeDescriptor;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
-public class KoulutusResourceImplTest {
+public class KoulutusResourceImplV1Test {
 
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
@@ -114,13 +114,13 @@ public class KoulutusResourceImplTest {
     private static final String SUUNNITELTU_KESTO_VALUE = "10";
     private static final String SUUNNITELTU_KESTO = "suunnteltu_kesto";
     private static final String[] PERSON = {"henkilo_oid", "firstanames", "lastname", "Mr.", "oph@oph.fi", "12345678"};
-    private KoulutusResourceImpl instance;
+    private KoulutusResourceImplV1 instance;
     private final DateTime DATE = new DateTime(2013, 1, 1, 1, 1);
     private OrganisaatioService organisaatioServiceMock;
     private OIDService oidServiceMock;
     private ConversionService conversionServiceMock;
-    private KomotoConverterToKorkeakouluDTO convertToDTO;
-    private KorkeakouluDTOConverterToKomoto convertToKomoto;
+    private EntityConverterToKoulutusKorkeakouluRDTO convertToDTO;
+    private KoulutusKorkeakouluDTOConverterToEntity convertToKomoto;
     private ConvertEntityStub convertToEntityStub;
     private ConvertDtoStub convertToDTOStub;
     private OrganisaatioDTO organisaatioDTO;
@@ -151,9 +151,9 @@ public class KoulutusResourceImplTest {
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
 
         //INIT DATA CONVERTERS
-        convertToDTO = new KomotoConverterToKorkeakouluDTO();
-        convertToKomoto = new KorkeakouluDTOConverterToKomoto();
-        instance = new KoulutusResourceImpl();
+        convertToDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
+        convertToKomoto = new KoulutusKorkeakouluDTOConverterToEntity();
+        instance = new KoulutusResourceImplV1();
         convertToEntityStub = new ConvertEntityStub();
         convertToDTOStub = new ConvertDtoStub();
 
@@ -180,7 +180,7 @@ public class KoulutusResourceImplTest {
 
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage {
-        KorkeakouluDTO dto = new KorkeakouluDTO();
+        KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
         /*
          * KOMO data fields:
          */
@@ -206,14 +206,14 @@ public class KoulutusResourceImplTest {
         dto.getAmmattinimikkeet().getMeta().put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
 
         dto.getPohjakoulutusvaatimukset().getMeta().put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
-        dto.setSuunniteltuKesto(new SuunniteltuKestoDTO(SUUNNITELTU_KESTO_VALUE, SUUNNITELTU_KESTO + "_uri", "1", null));
+        dto.setSuunniteltuKesto(new SuunniteltuKestoV1RDTO(SUUNNITELTU_KESTO_VALUE, SUUNNITELTU_KESTO + "_uri", "1", null));
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuus(toKoodiUri(LAAJUUS_ARVO));
 
         //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(2);
-        expect(conversionServiceMock.convert(isA(KorkeakouluDTO.class), eq(KoulutusmoduuliToteutus.class))).andStubDelegateTo(convertToEntityStub);
-        expect(conversionServiceMock.convert(isA(KoulutusmoduuliToteutus.class), eq(KorkeakouluDTO.class))).andStubDelegateTo(convertToDTOStub);
+        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(3);
+        expect(conversionServiceMock.convert(isA(KoulutusKorkeakouluV1RDTO.class), eq(KoulutusmoduuliToteutus.class))).andStubDelegateTo(convertToEntityStub);
+        expect(conversionServiceMock.convert(isA(KoulutusmoduuliToteutus.class), eq(KoulutusKorkeakouluV1RDTO.class))).andStubDelegateTo(convertToDTOStub);
         //the calls of the OidServices must be in correct order!
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
@@ -244,13 +244,13 @@ public class KoulutusResourceImplTest {
         /*
          * INSERT KORKEAKOULU TO DB
          */
-        instance.createToteutus(dto);
-
+        instance.postKorkeakouluKoulutus(dto);
         /*
          * LOAD KORKEAKOULU DTO FROM DB
          */
-        final KorkeakouluDTO result = (KorkeakouluDTO) instance.getToteutus(KOMOTO_OID);
-        assertLoadData(result);
+        final ResultV1RDTO result = instance.findByOid(KOMOTO_OID);
+        KoulutusKorkeakouluV1RDTO result1 = (KoulutusKorkeakouluV1RDTO) result.getResult();
+        assertLoadData(result1);
 
         verify(oidServiceMock);
         verify(organisaatioServiceMock);
@@ -258,14 +258,15 @@ public class KoulutusResourceImplTest {
         verify(tarjontaKoodistoHelperMock);
     }
 
-    private void assertLoadData(final KorkeakouluDTO result) {
+    private void assertLoadData(final KoulutusKorkeakouluV1RDTO result) {
         assertNotNull(result);
+
         assertEquals(KOMOTO_OID, result.getOid());
         assertEquals(ORGANISAATIO_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
         assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
-        final UiDTO koulutusohjelmaFi = result.getKoulutusohjelma().getMeta().get(URI_KIELI_FI);
+        final UiV1RDTO koulutusohjelmaFi = result.getKoulutusohjelma().getMeta().get(URI_KIELI_FI);
         assertNotNull("No koulutusohjelma name by '" + URI_KIELI_FI + "'", koulutusohjelmaFi);
 
         assertEquals(URI_KIELI_FI, koulutusohjelmaFi.getKoodi().getUri()); //name of the koulutusohjelma
@@ -309,31 +310,31 @@ public class KoulutusResourceImplTest {
 
     }
 
-    private static UiDTO toKoodiUri(final String type) {
-        return new UiDTO(null, type + "_uri", "1", null);
+    private static UiV1RDTO toKoodiUri(final String type) {
+        return new UiV1RDTO(null, type + "_uri", "1", null);
     }
 
-    private static UiDTO toMetaValue(final String value, String lang) {
-        return new UiDTO(null, lang, "1", value);
+    private static UiV1RDTO toMetaValue(final String value, String lang) {
+        return new UiV1RDTO(null, lang, "1", value);
     }
 
-    private static UiDTO toValue(final String value) {
-        return new UiDTO(value, null, null, null);
+    private static UiV1RDTO toValue(final String value) {
+        return new UiV1RDTO(value, null, null, null);
     }
 
     private void expectKOMOKoodistoUri(final String field) {
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field));
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi");
+        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field)).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(2);
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi").times(2);
     }
 
     private void expectMetaUri(final String field) {
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field));
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field);
+        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field)).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(2);
     }
 
-    private void assertEqualDtoKoodi(final String field, final UiDTO dto) {
+    private void assertEqualDtoKoodi(final String field, final UiV1RDTO dto) {
         assertNotNull("UiDTO : " + field, dto);
         assertNotNull("KoodiDTO : " + field, dto.getKoodi());
         assertEquals(field + "_uri", dto.getKoodi().getUri());
@@ -342,10 +343,10 @@ public class KoulutusResourceImplTest {
         assertEquals(field, dto.getKoodi().getArvo());
     }
 
-    private void assertEqualMetaDto(final String field, final UiMetaDTO dto) {
+    private void assertEqualMetaDto(final String field, final UiMetaV1RDTO dto) {
 
         assertEquals(true, dto.getMeta().containsKey(field + "_uri"));
-        UiDTO get = dto.getMeta().get(field + "_uri");
+        UiV1RDTO get = dto.getMeta().get(field + "_uri");
         assertEquals(field, get.getKoodi().getArvo());
         assertEquals(field + "_uri", get.getKoodi().getUri());
         assertEquals("1", get.getKoodi().getVersio());
@@ -365,7 +366,7 @@ public class KoulutusResourceImplTest {
 
         @Override
         public <T> T convert(Object o, Class<T> type) {
-            return (T) convertToKomoto.convert((KorkeakouluDTO) o);
+            return (T) convertToKomoto.convert((KoulutusKorkeakouluV1RDTO) o);
         }
 
         @Override
@@ -374,7 +375,7 @@ public class KoulutusResourceImplTest {
         }
     }
 
-    private class ConvertDtoStub<T extends KorkeakouluDTO> implements ConversionService {
+    private class ConvertDtoStub<T extends KoulutusKorkeakouluV1RDTO> implements ConversionService {
 
         @Override
         public boolean canConvert(Class<?> type, Class<?> type1) {

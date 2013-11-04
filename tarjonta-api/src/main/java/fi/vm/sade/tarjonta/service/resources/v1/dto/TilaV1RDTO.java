@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  * @author Timo Santasalo / Teknokala Ky
  * @see TilaV1Resource
  */
-public class TilaRDTO implements Serializable {
+public class TilaV1RDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

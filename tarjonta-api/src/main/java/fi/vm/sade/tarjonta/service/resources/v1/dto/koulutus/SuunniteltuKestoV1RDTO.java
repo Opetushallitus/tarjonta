@@ -13,15 +13,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
-package fi.vm.sade.tarjonta.service.resources.dto.kk;
-
-import java.io.Serializable;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 /**
  *
- * @author jani
+ * @author Jani Wilén
  */
-public class KuvaDTO  implements Serializable{
+public class SuunniteltuKestoV1RDTO extends UiV1RDTO {
+
+    private static final long serialVersionUID = 1L;
+
+    public SuunniteltuKestoV1RDTO() {
+    }
     
+    public SuunniteltuKestoV1RDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
+        super(arvo, koodiUri, koodiVersio, koodiArvo);
+    }
 }

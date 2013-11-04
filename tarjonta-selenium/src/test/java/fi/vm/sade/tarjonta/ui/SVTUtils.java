@@ -57,7 +57,7 @@ public class SVTUtils {
 			Properties vProp = new Properties();
 			try {
 				vProp.load(new FileInputStream(versionFile));
-		        echo2("Running tarjonta-selenium.git-version=" + vProp.getProperty("testaus-selenium.git-version"));
+		        echo2("Running testaus-selenium.git-version=" + vProp.getProperty("testaus-selenium.git-version"));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IOException("ERROR: Can't read version properties file. " + versionFile);
@@ -2713,14 +2713,30 @@ public class SVTUtils {
 
 	public WebElement getTriangleForLastHakukohde(WebDriver driver)
 	{
-        return driver.findElements(By.className("v-treetable-treespacer"))
-        		.get(driver.findElements(By.className("v-treetable-treespacer")).size() - 1);
+		WebElement triangle;
+		List<WebElement> triangles = driver.findElements(By.className("v-treetable-treespacer"));
+		int i = 1;
+		int count = triangles.size();
+		while (true)
+		{
+			triangle = triangles.get(driver.findElements(By.className("v-treetable-treespacer")).size() - i);
+			if (triangle == null) { break; }
+			if (triangle.isDisplayed()) { break; }
+			i--;
+			if (count == i) { break; }
+		}
+        return triangle;
 	}	  
 
 	public void refresh(WebDriver driver)
 	{
         driver.navigate().refresh();
 		Assert.assertNotNull("Running HAKUKOHTEEN TARKASTELU ei toimi.", this.textElement(driver, "Kirjaudu ulos"));
+	}
+
+	public void quit(WebDriver driver)
+	{
+		if (System.getProperty("test").indexOf("#") > 0) { driver.quit(); }
 	}
 
 	public void refreshTarjontaEtusivu(WebDriver driver)

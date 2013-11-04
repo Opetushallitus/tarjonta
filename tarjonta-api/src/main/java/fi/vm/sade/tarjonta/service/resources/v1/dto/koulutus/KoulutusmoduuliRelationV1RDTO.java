@@ -12,135 +12,138 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-package fi.vm.sade.tarjonta.service.resources.v1.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.dto.kk.UiDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
 
 /**
  *
  * @author jani
  */
-public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO  {
+public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
 
     //KOODISTO KOMO DATA OBJECTS:
-    private UiDTO koulutuskoodi;
-    private UiDTO koulutusaste;
-    private UiDTO koulutusala;
-    private UiDTO opintoala;
-    private UiDTO tutkinto;
-    private UiDTO tutkintonimike;
-    private UiDTO eqf;
-    private UiDTO opintojenLaajuus;
+    private UiV1RDTO koulutuskoodi;
+    private UiV1RDTO koulutusaste;
+    private UiV1RDTO koulutusala;
+    private UiV1RDTO opintoala;
+    private UiV1RDTO tutkinto;
+    private UiV1RDTO tutkintonimike;
+    private UiV1RDTO eqf;
+    private UiV1RDTO opintojenLaajuus;
 
     /**
      * @return the koulutuskoodi
      */
-    public UiDTO getKoulutuskoodi() {
+    public UiV1RDTO getKoulutuskoodi() {
         return koulutuskoodi;
     }
 
     /**
      * @param koulutuskoodi the koulutuskoodi to set
      */
-    public void setKoulutuskoodi(UiDTO koulutuskoodi) {
+    public void setKoulutuskoodi(UiV1RDTO koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
 
     /**
      * @return the koulutusaste
      */
-    public UiDTO getKoulutusaste() {
+    public UiV1RDTO getKoulutusaste() {
         return koulutusaste;
     }
 
     /**
      * @param koulutusaste the koulutusaste to set
      */
-    public void setKoulutusaste(UiDTO koulutusaste) {
+    public void setKoulutusaste(UiV1RDTO koulutusaste) {
         this.koulutusaste = koulutusaste;
     }
 
     /**
      * @return the koulutusala
      */
-    public UiDTO getKoulutusala() {
+    public UiV1RDTO getKoulutusala() {
         return koulutusala;
     }
 
     /**
      * @param koulutusala the koulutusala to set
      */
-    public void setKoulutusala(UiDTO koulutusala) {
+    public void setKoulutusala(UiV1RDTO koulutusala) {
         this.koulutusala = koulutusala;
     }
 
     /**
      * @return the opintoala
      */
-    public UiDTO getOpintoala() {
+    public UiV1RDTO getOpintoala() {
         return opintoala;
     }
 
     /**
      * @param opintoala the opintoala to set
      */
-    public void setOpintoala(UiDTO opintoala) {
+    public void setOpintoala(UiV1RDTO opintoala) {
         this.opintoala = opintoala;
     }
 
     /**
      * @return the tutkinto
      */
-    public UiDTO getTutkinto() {
+    public UiV1RDTO getTutkinto() {
         return tutkinto;
     }
 
     /**
      * @param tutkinto the tutkinto to set
      */
-    public void setTutkinto(UiDTO tutkinto) {
+    public void setTutkinto(UiV1RDTO tutkinto) {
         this.tutkinto = tutkinto;
     }
 
     /**
      * @return the tutkintonimike
      */
-    public UiDTO getTutkintonimike() {
+    public UiV1RDTO getTutkintonimike() {
         return tutkintonimike;
     }
 
     /**
      * @param tutkintonimike the tutkintonimike to set
      */
-    public void setTutkintonimike(UiDTO tutkintonimike) {
+    public void setTutkintonimike(UiV1RDTO tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
     }
 
     /**
      * @return the eqf
      */
-    public UiDTO getEqf() {
+    public UiV1RDTO getEqf() {
         return eqf;
     }
 
     /**
      * @param eqf the eqf to set
      */
-    public void setEqf(UiDTO eqf) {
+    public void setEqf(UiV1RDTO eqf) {
         this.eqf = eqf;
     }
 
     /**
      * @return the opintojenLaajuus
      */
-    public UiDTO getOpintojenLaajuus() {
+    public UiV1RDTO getOpintojenLaajuus() {
         return opintojenLaajuus;
     }
 
     /**
      * @param opintojenLaajuus the opintojenLaajuus to set
      */
-    public void setOpintojenLaajuus(UiDTO opintojenLaajuus) {
+    public void setOpintojenLaajuus(UiV1RDTO opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
+
 }
