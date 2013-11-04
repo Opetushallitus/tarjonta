@@ -65,10 +65,10 @@ public class ConverterV1 {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
-        return fromHakuToHakuRDTO(hakuDao.findByOid(oid));
+        return fromHakuToHakuRDTO(hakuDao.findByOid(oid),false);
     }
 
-    private HakuV1RDTO fromHakuToHakuRDTO(Haku haku) {
+    public HakuV1RDTO fromHakuToHakuRDTO(Haku haku,boolean addHakukohdes) {
         if (haku == null) {
             return null;
         }
@@ -80,24 +80,29 @@ public class ConverterV1 {
         t.setModifiedBy(haku.getLastUpdatedByOid());
         t.setCreated(null);
         t.setCreatedBy(null);
+        t.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
+        t.setHakukausiUri(haku.getHakukausiUri());
+        t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
+        t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        t.setHakulomakeUri(haku.getHakulomakeUrl());
+        t.setHakutapaUri(haku.getHakutapaUri());
+        t.setHakutyyppiUri(haku.getHakutyyppiUri());
+        t.setHaunTunniste(haku.getHaunTunniste());
+        t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
+        t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
+        t.setLastUpdatedDate(haku.getLastUpdateDate());
+        t.setTila(haku.getTila().name());
+        t.setNimi(convertMonikielinenTekstiToTekstiDTOs(haku.getNimi() ));
+        t.setHakukausiVuosi(haku.getHakukausiVuosi());
 
-        // TODO implement
-
-//        t.set(haku.getHakuaikas());
-//        t.set(haku.getHakukausiUri());
-//        t.set(haku.getHakukausiVuosi());
+        if (addHakukohdes) {
+            if (haku.getHakukohdes() != null) {
+                for (Hakukohde hakukohde:haku.getHakukohdes()) {
+                    t.getHakukohdeOids().add(hakukohde.getOid());
+                }
+            }
+        }
 //        t.set(haku.getHakukohdes());
-//        t.set(haku.getHakulomakeUrl());
-//        t.set(haku.getHakutapaUri());
-//        t.set(haku.getHakutyyppiUri());
-//        t.set(haku.getHaunTunniste());
-//        t.set(haku.getKohdejoukkoUri());
-//        t.set(haku.getKoulutuksenAlkamisVuosi());
-//        t.set(haku.getKoulutuksenAlkamiskausiUri());
-//        t.set(haku.getLastUpdateDate());
-//        t.set(haku.getLastUpdatedByOid());
-//        t.set(haku.getNimi());
-//        t.set(haku.getTila());
 
         return t;
     }

@@ -16,13 +16,18 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
@@ -41,9 +46,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
 
     @Autowired
-    private HakuDAO _hakuDao;
-    @Autowired
-    private HakukohdeDAO _hakuHakuDAODao;
+    private HakuDAO hakuDAO;
+
     @Autowired
     private ConverterV1 _converter;
 
@@ -57,6 +61,38 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO implement the search!
 
         return result;
+    }
+
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+
+        SearchCriteriaType search = new SearchCriteriaType();
+        search.setMeneillaan(true);
+        search.setPaattyneet(true);
+        search.setTulevat(true);
+        List<Haku> hakus = hakuDAO.findAll(search);
+
+        LOG.debug("FOUND  : {} hakus",hakus.size());
+        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+        if (hakus != null && hakus.size() > 0) {
+            for (Haku haku:hakus) {
+
+                HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku,false);
+                hakuDtos.add(hakuV1RDTO);
+            }
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            resultV1RDTO.setResult(hakuDtos);
+        } else {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        }
+
+
+
+
+        return  resultV1RDTO;
+
     }
 
     @Override

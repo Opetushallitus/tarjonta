@@ -68,6 +68,11 @@ public interface HakuV1Resource {
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
 
+    @GET
+    @Path("/findAll")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus();
+
     @DELETE
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
