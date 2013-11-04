@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('MultiSelect', ['ngResource']);
+var app = angular.module('MultiSelect', ['pasvaz.bindonce']);
 
 app.directive('multiSelect',function($log) {
 	
