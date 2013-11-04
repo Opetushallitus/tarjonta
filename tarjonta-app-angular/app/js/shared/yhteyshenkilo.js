@@ -1,9 +1,10 @@
 angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 
 //"organisaatioservice"
-.factory('YhteyshenkiloService', function ($resource, $log, $q, Config) {
+.factory('YhteyshenkiloService', function ($resource, $log, $q, Config, CacheService) {
 	
-	var henkHaku = $resource("/yhteyshenkilot.json");
+	// TODO rest-palvelu
+	var henkHaku = $resource("/tarjonta-app/yhteyshenkilot.json");
 
 	return {
 
@@ -12,15 +13,8 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	    */
 	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-	       $log.info('searching yhteyshenkiot, q:', hakuehdot);
-
-	       henkHaku.get(hakuehdot,function(result){
-	           $log.info("resolving promise");
-	           ret.resolve(result);
-	       });
-	       
-	       $log.info('past query now, returning promise...:');
-	       return ret.promise;
+	       //$log.info('searching yhteyshenkiot, q:', hakuehdot);
+	       return CacheService.lookupResource("yhteyshenkilot/*", henkHaku);
 	   }
 	
 	

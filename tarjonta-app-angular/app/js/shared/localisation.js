@@ -145,7 +145,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         } else {
             // Unknown translation, maybe create placeholder for it?
             $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
-
+            
             this.createMissingTranslation(key, locale, "[" + key + " " + locale + "]")
                     .then(function(newEntry) {
                 $log.info("  created: ", newEntry);
@@ -153,7 +153,8 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             }, function(value) {
                 $log.error("  FAILED TO CREATE ", value);
             });
-
+             
+            
             // Create temporary placeholder for next requests
             this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
             this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};

@@ -14,15 +14,22 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
@@ -41,11 +48,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
 
     @Autowired
-    private HakuDAO _hakuDao;
-    @Autowired
-    private HakukohdeDAO _hakuHakuDAODao;
+    private HakuDAO hakuDAO;
+
     @Autowired
     private ConverterV1 _converter;
+
+    @Autowired
+    private OIDService oidService;
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {
@@ -57,6 +66,38 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO implement the search!
 
         return result;
+    }
+
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+
+        SearchCriteriaType search = new SearchCriteriaType();
+        search.setMeneillaan(true);
+        search.setPaattyneet(true);
+        search.setTulevat(true);
+        List<Haku> hakus = hakuDAO.findAll(search);
+
+        LOG.debug("FOUND  : {} hakus",hakus.size());
+        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+        if (hakus != null && hakus.size() > 0) {
+            for (Haku haku:hakus) {
+
+                HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku,false);
+                hakuDtos.add(hakuV1RDTO);
+            }
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            resultV1RDTO.setResult(hakuDtos);
+        } else {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        }
+
+
+
+
+        return  resultV1RDTO;
+
     }
 
     @Override
@@ -82,8 +123,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
-        LOG.info("createHakukohde({})", haku);
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+          haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+
+          Haku hakuToInsert = _converter.convertHakuV1DRDTOToHaku(haku);
+
+          Haku hakuResult = hakuDAO.insert(hakuToInsert);
+
+          ResultV1RDTO<HakuV1RDTO> hakuResultDto = new ResultV1RDTO<HakuV1RDTO>();
+
+            hakuResultDto.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            hakuResultDto.setResult( _converter.fromHakuToHakuRDTO(hakuResult,false));
+
+          return hakuResultDto;
+
+        } catch (Exception exp) {
+             exp.printStackTrace();
+            LOG.warn("EXCEPTION createHaku : {}",exp.toString());
+            ResultV1RDTO<HakuV1RDTO> errorResult = new ResultV1RDTO<HakuV1RDTO>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp,"system.error"));
+            return errorResult;
+
+        }
     }
 
     @Override
@@ -94,8 +157,26 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
-        LOG.info("deleteHakukohde({})", oid);
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        Haku hakuToRemove = hakuDAO.findByOid(oid);
+
+        if (hakuToRemove != null) {
+
+            hakuDAO.remove(hakuToRemove);
+
+            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
+            resultV1RDTO.setResult(true);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            return resultV1RDTO;
+
+
+        }  else {
+            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
+            resultV1RDTO.setResult(false);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return resultV1RDTO;
+        }
+
     }
 
     @Override

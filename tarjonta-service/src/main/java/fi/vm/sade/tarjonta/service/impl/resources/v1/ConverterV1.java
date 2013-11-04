@@ -26,16 +26,9 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TarjoajaHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -72,10 +65,10 @@ public class ConverterV1 {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
-        return fromHakuToHakuRDTO(hakuDao.findByOid(oid));
+        return fromHakuToHakuRDTO(hakuDao.findByOid(oid),false);
     }
 
-    private HakuV1RDTO fromHakuToHakuRDTO(Haku haku) {
+    public HakuV1RDTO fromHakuToHakuRDTO(Haku haku,boolean addHakukohdes) {
         if (haku == null) {
             return null;
         }
@@ -87,28 +80,99 @@ public class ConverterV1 {
         t.setModifiedBy(haku.getLastUpdatedByOid());
         t.setCreated(null);
         t.setCreatedBy(null);
+        t.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
+        t.setHakukausiUri(haku.getHakukausiUri());
+        t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
+        t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        t.setHakulomakeUri(haku.getHakulomakeUrl());
+        t.setHakutapaUri(haku.getHakutapaUri());
+        t.setHakutyyppiUri(haku.getHakutyyppiUri());
+        t.setHaunTunniste(haku.getHaunTunniste());
+        t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
+        t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
+        t.setLastUpdatedDate(haku.getLastUpdateDate());
+        t.setTila(haku.getTila().name());
+        t.setNimi(convertMonikielinenTekstiToTekstiDTOs(haku.getNimi() ));
+        t.setHakukausiVuosi(haku.getHakukausiVuosi());
 
-        // TODO implement
-
-//        t.set(haku.getHakuaikas());
-//        t.set(haku.getHakukausiUri());
-//        t.set(haku.getHakukausiVuosi());
+        if (addHakukohdes) {
+            if (haku.getHakukohdes() != null) {
+                for (Hakukohde hakukohde:haku.getHakukohdes()) {
+                    t.getHakukohdeOids().add(hakukohde.getOid());
+                }
+            }
+        }
 //        t.set(haku.getHakukohdes());
-//        t.set(haku.getHakulomakeUrl());
-//        t.set(haku.getHakutapaUri());
-//        t.set(haku.getHakutyyppiUri());
-//        t.set(haku.getHaunTunniste());
-//        t.set(haku.getKohdejoukkoUri());
-//        t.set(haku.getKoulutuksenAlkamisVuosi());
-//        t.set(haku.getKoulutuksenAlkamiskausiUri());
-//        t.set(haku.getLastUpdateDate());
-//        t.set(haku.getLastUpdatedByOid());
-//        t.set(haku.getNimi());
-//        t.set(haku.getTila());
 
         return t;
     }
 
+    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO) {
+        Haku haku = new Haku();
+
+        haku.setOid(hakuV1RDTO.getOid());
+        haku.setHakukausiUri(hakuV1RDTO.getHakukausiUri());
+        haku.setHakukausiVuosi(hakuV1RDTO.getHakukausiVuosi());
+        haku.setHakulomakeUrl(hakuV1RDTO.getHakulomakeUri());
+        haku.setHaunTunniste(hakuV1RDTO.getHaunTunniste());
+        haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
+        haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
+        haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        haku.setKoulutuksenAlkamiskausiUri(hakuV1RDTO.getKoulutuksenAlkamiskausiUri());
+        haku.setKoulutuksenAlkamisVuosi(hakuV1RDTO.getKoulutuksenAlkamisVuosi());
+        haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        haku.setTila(TarjontaTila.valueOf(hakuV1RDTO.getTila()));
+        haku.setNimi(convertTekstiRDTOToMonikielinenTeksti(hakuV1RDTO.getNimi()));
+        if (hakuV1RDTO.getHakuaikas() != null ){
+           for (HakuaikaV1RDTO hakuaikaRDTO: hakuV1RDTO.getHakuaikas()) {
+               haku.addHakuaika(convertHakuaikaV1RDTOToHakuaika(hakuaikaRDTO));
+
+           }
+        }
+
+
+        return haku;
+    }
+
+
+    private Hakuaika convertHakuaikaV1RDTOToHakuaika(HakuaikaV1RDTO hakuaikaV1RDTO) {
+
+        Hakuaika hakuaika = new Hakuaika();
+
+        hakuaika.setSisaisenHakuajanNimi(hakuaikaV1RDTO.getNimi());
+        hakuaika.setAlkamisPvm(hakuaikaV1RDTO.getAlkuPvm());
+        hakuaika.setPaattymisPvm(hakuaikaV1RDTO.getLoppuPvm());
+
+        return hakuaika;
+
+    }
+
+
+    private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
+        HakuaikaV1RDTO hakuaikaV1RDTO = new HakuaikaV1RDTO();
+
+        hakuaikaV1RDTO.setAlkuPvm(hakuaika.getAlkamisPvm());
+        hakuaikaV1RDTO.setLoppuPvm(hakuaika.getPaattymisPvm());
+        hakuaikaV1RDTO.setNimi(hakuaika.getSisaisenHakuajanNimi());
+
+        return hakuaikaV1RDTO;
+    }
+
+    private List<HakuaikaV1RDTO> convertHakuaikaListToV1RDTO(Set<Hakuaika> hakuaikas) {
+        List<HakuaikaV1RDTO> hakuV1RDTOs = new ArrayList<HakuaikaV1RDTO>();
+
+        if (hakuaikas != null) {
+
+            for (Hakuaika hakuaika:hakuaikas) {
+
+                hakuV1RDTOs.add(convertHakuaikaToV1RDTO(hakuaika));
+
+            }
+
+        }
+
+        return hakuV1RDTOs;
+    }
 
     // ----------------------------------------------------------------------
     // HAKUKOHDE
