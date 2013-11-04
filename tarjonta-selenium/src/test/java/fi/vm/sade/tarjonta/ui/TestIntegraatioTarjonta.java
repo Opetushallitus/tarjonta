@@ -57,6 +57,36 @@ public class TestIntegraatioTarjonta {
     	doit.echo("Running test_T_INT_TAR_ETUS001 OK");
     }
     
+    
+    //Tarjonnan hakukohde
+	@Test
+    public void test_T_INT_TAR_HKOH001() throws Exception {
+    	try {
+    		HKOH001loop();
+    	} catch (Exception e) {
+    		try {
+    			doit.printMyStackTrace(e);
+    			HKOH001loop();
+    		} catch (Exception e2) {
+    			doit.printMyStackTrace(e2);
+    			HKOH001loop();
+    		}
+    	}
+    }
+
+    public void HKOH001loop() throws Exception {
+		doit.frontPage(driver, baseUrl);
+    	doit.echo("Running test_T_INT_TAR_HKOH001 ...");
+    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
+        doit.haeHakukohteita(driver, "Luonnos", null);
+        doit.triangleClickLastTriangle(driver);
+//        doit.sendPageToFile(driver);
+//        doit.screenShot("triangleClickNearestTriangle", driver);
+//        doit.triangleClickNearestTriangle(driver, "Valitse kaikki");
+        Assert.assertNotNull("Running hae luonnos ei toimi.", doit.textElement(driver, "luonnos"));
+    	doit.echo("Running test_T_INT_TAR_HKOH001 OK");
+    }
+    
 	//Tarjonnan koulutus
 	@Test
     public void test_T_INT_TAR_KOUL001() throws Exception {
@@ -89,35 +119,6 @@ public class TestIntegraatioTarjonta {
     	doit.echo("Running test_T_INT_TAR_KOUL001 OK");
     	driver.findElement(By.className("v-button-back")).click();
     	doit.tauko(1);
-    }
-    
-    //Tarjonnan hakukohde
-	@Test
-    public void test_T_INT_TAR_HKOH001() throws Exception {
-    	try {
-    		HKOH001loop();
-    	} catch (Exception e) {
-    		try {
-    			doit.printMyStackTrace(e);
-    			HKOH001loop();
-    		} catch (Exception e2) {
-    			doit.printMyStackTrace(e2);
-    			HKOH001loop();
-    		}
-    	}
-    }
-
-    public void HKOH001loop() throws Exception {
-		doit.frontPage(driver, baseUrl);
-    	doit.echo("Running test_T_INT_TAR_HKOH001 ...");
-    	doit.ValikotKoulutustenJaHakukohteidenYllapito(driver, baseUrl);
-        doit.haeHakukohteita(driver, "Luonnos", null);
-//        doit.triangleClickLastTriangle(driver);
-        doit.sendPageToFile(driver);
-        doit.screenShot("triangleClickNearestTriangle", driver);
-        doit.triangleClickNearestTriangle(driver, "Valitse kaikki");
-        Assert.assertNotNull("Running hae luonnos ei toimi.", doit.textElement(driver, "luonnos"));
-    	doit.echo("Running test_T_INT_TAR_HKOH001 OK");
     }
 
 	//(Tarjonnan) haun etusivu
