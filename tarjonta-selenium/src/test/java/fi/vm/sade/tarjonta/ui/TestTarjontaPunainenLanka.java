@@ -34,7 +34,7 @@ public class TestTarjontaPunainenLanka {
             firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
             driver = new FirefoxDriver(firefoxProfile);
 //          driver = new FirefoxDriver(new FirefoxBinary(new File("c:/Selaimet/Firefox17/firefox.exe")), firefoxProfile);
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url");
+            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
@@ -42,7 +42,7 @@ public class TestTarjontaPunainenLanka {
     {
             if (first)
             {
-                    doit.palvelimenVersio(driver, baseUrl);
+                    doit.palvelimenVersio(driver, baseUrl, SVTUtils.prop.getProperty("testaus-selenium.tarjonta-versio-url"));
                     TarjontaTapaukset.alustaKattavuusKohde("TarjontaPunainenLankaTestiTapaukset");
                     TarjontaPunainenLankaVaatimukset.alustaKattavuusKohde("TarjontaPunainenLankaVaatimukset");
 //                    TarjontaVaatimukset.alustaKattavuusKohde("TarjontaVaatimukset");
@@ -58,15 +58,17 @@ public class TestTarjontaPunainenLanka {
             }
 
             // LOGIN
-            driver.get(baseUrl);
-            doit.tauko(1);
-            doit.reppuLogin(driver);
-            doit.tauko(1);
-            driver.get(baseUrl);
-            doit.tauko(1);
-            Assert.assertNotNull("Running TarjontaPunainenLanka000 Etusivu ei toimi."
-                            , doit.textElement(driver, "Tervetuloa Opintopolun virkailijan palveluihin!"));
-            doit.tauko(1);
+//            doit.virkailijanPuoli(driver, baseUrl, SVTUtils.prop.getProperty("testaus-selenium.tarjonta-versio-url"));
+            doit.virkailijanPalvelut(driver, baseUrl);
+//            driver.get(baseUrl);
+//            doit.tauko(1);
+//            doit.reppuLogin(driver);
+//            doit.tauko(1);
+//            driver.get(baseUrl);
+//            doit.tauko(1);
+//            Assert.assertNotNull("Running TarjontaPunainenLanka000 Etusivu ei toimi."
+//                            , doit.textElement(driver, "Tervetuloa Opintopolun virkailijan palveluihin!"));
+//            doit.tauko(1);
             first = false;
     }
 
@@ -171,8 +173,8 @@ public class TestTarjontaPunainenLanka {
         doit.sendInput(driver, "Suunniteltu kesto", "3");
         doit.sendInput(driver, "Opetusmuoto", "Oppisopimuskoulutus");
         doit.popupItemClick(driver, "Oppisopimuskoulutus");
-        doit.sendInputPlusX(driver, "Suunniteltu kesto", "Kuukausi", 150); // Valitse aikayksikko
-        doit.popupItemClick(driver, "Kuukausi");
+        doit.sendInputPlusX(driver, "Suunniteltu kesto", "kuukautta", 150); // Valitse aikayksikko
+        doit.popupItemClick(driver, "kuukautta");
         doit.sendInput(driver, "Opetuskieli", "suomi");
         doit.popupItemClick(driver, "suomi");
         
@@ -313,8 +315,8 @@ public class TestTarjontaPunainenLanka {
 
         doit.sendInput(driver, "Suunniteltu kesto", "3");
         doit.doubleclick(driver, "Iltaopetus"); // Opetusmuoto
-        doit.sendInputPlusX(driver, "Suunniteltu kesto", "Kuukausi", 150); // Valitse aikayksikko
-        doit.popupItemClick(driver, "Kuukausi");
+        doit.sendInputPlusX(driver, "Suunniteltu kesto", "kuukautta", 150); // Valitse aikayksikko
+        doit.popupItemClick(driver, "kuukautta");
         doit.sendInput(driver, "Opetuskieli", "suomi");
         doit.popupItemClick(driver, "suomi");
         
@@ -456,29 +458,76 @@ public class TestTarjontaPunainenLanka {
         String millis = System.currentTimeMillis() + "";
         String nimi = "nimi " + millis;
         String kuvaus = "kuvaus " + millis;
+        String output = "" // "Varsinainen haku\t" // Hakutyyppi
+//        		+ "Syksy\t" // Hakukausi ja
+        		+ "2014\t\t" // -vuosi
+//        		+ "Syksy\t" // Koulutuksen alkamiskausi ja
+        		+ "2014\t\t\t\t" // -vuosi
+//        		+ "Aikuiskoulutus\t" // Haun kohdejoukko
+//        		+ "Erillishaku\t" // Hakutapa
+//        		+ nimi + "\t\t\t" // Haun nimi
+        		+ kuvaus + "\t" // Hakuajan tunniste
+        		+ "31.07.2014 15:24\t" // Hakuaika alkaa
+        		+ "31.08.2014 15:24"; // Hakuaika päättyy
+        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", output, 200);
+        /////////////////////////////////////////////////////////
         doit.sendInput(driver, "Hakutyyppi", "Varsinainen haku");
         doit.popupItemClick(driver, "Varsinainen haku");
         doit.sendInput(driver, "Hakukausi ja -vuosi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014\t", 200);
-//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
-//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014", 200);
+//        doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014\t", 200);
         doit.sendInput(driver, "Koulutuksen alkamiskausi", "Syksy");
         doit.popupItemClick(driver, "Syksy");
-        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014\t", 300);
-//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
-//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014", 300);
+//        doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014\t", 300);
         doit.sendInput(driver, "Haun kohdejoukko", "Aikuiskoulutus");
         doit.popupItemClick(driver, "Aikuiskoulutus");
         doit.sendInput(driver, "Hakutapa", "Erillishaku");
         doit.popupItemClick(driver, "Erillishaku");
         doit.sendInputPlusY(driver, "Haun nimi", nimi);
-        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
-        doit.sendInput(driver, "Hakuaika alkaa", "31.07.2014 15:24");
-        doit.sendInput(driver, "Hakuaika päättyy", "31.08.2014 15:24");
+//        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus + "\t31.07.2014 15:24\t31.08.2014 15:24");
+//        doit.tauko(60);
+////        doit.sendInputTextArea(driver, "Hakuajan tunniste", kuvaus);
+////        doit.sendInput(driver, "Hakuaika alkaa", "31.07.2014 15:24");
+////        doit.sendInput(driver, "Hakuaika päättyy", "31.08.2014 15:24");
         doit.sendInput(driver, "Haussa käytetään sijoittelua", "SELECTED");
 
         doit.textClick(driver, "Tallenna luonnoksena");
+    	while (true)
+    	{
+    		try {
+    	        Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Tallenna luonnoksena ei toimi."
+    	                , doit.textElement(driver, "Tallennus onnistui"));
+    			break;
+    		} catch (Exception e) {
+    			while (doit.isVisibleText(driver, "Hakuajan alku- ja loppu")
+    					|| doit.isVisibleText(driver, "Hakuvuosi on pakollinen tieto")
+    					|| doit.isVisibleText(driver, "Haun nimi puuttuu")
+    					|| doit.isVisibleText(driver, "Koulutuksen alkamisvuosi on pakollinen tieto")
+    					)
+    			{
+    				if (doit.isPresentText(driver, "Hakuajan alku- ja loppu"))
+    				{
+    					doit.sendInput(driver, "Hakuaika alkaa", "31.07.2014 15:24");
+    					doit.sendInput(driver, "Hakuaika päättyy", "31.08.2014 15:24");
+    				}
+    				else if (doit.isPresentText(driver, "Hakuvuosi on pakollinen tieto"))
+    				{        					
+    					doit.sendInputPlusX(driver, "Hakukausi ja -vuosi", "2014\t", 200);
+    				}
+    				else if (doit.isPresentText(driver, "Koulutuksen alkamisvuosi on pakollinen tieto"))
+    				{
+    					doit.sendInputPlusX(driver, "Koulutuksen alkamiskausi", "2014\t", 300);
+    				}
+    				else if (doit.isPresentText(driver, "Haun nimi puuttuu"))
+    				{
+    					doit.sendInputPlusY(driver, "Haun nimi*", nimi);
+    				}
+    				doit.textClick(driver, "Tallenna luonnoksena");
+    				doit.refresh(driver);
+    			}
+    		}
+    	}
+        //////////////////////////////////
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Tallenna luonnoksena ei toimi."
                 , doit.textElement(driver, "Tallennus onnistui"));
         doit.tauko(1);
@@ -511,18 +560,17 @@ public class TestTarjontaPunainenLanka {
         doit.tauko(1);
         
         // POISTA LUOTU HAKU
-        doit.menuOperaatio(driver, "Poista", nimi);
-		Assert.assertNotNull("Running TarjontaPunainenLanka TC0807 Haun poisto ei toimi."
-				, doit.textElement(driver, "Haluatko varmasti poistaa alla mainitun haun"));
-        doit.textClick(driver, "Jatka");
+//        doit.menuOperaatio(driver, "Poista", nimi); // Poista painike on tiella
+        doit.checkboxSelectNearestCheckbox(driver, nimi);
+        doit.textClick(driver, "Poista");
+		Assert.assertNotNull("Running Haun poisto ei toimi."
+				, doit.textElement(driver, "Haluatko varmasti poistaa seuraavan haun"));
+        doit.textClickLast(driver, "Poista");
+		Assert.assertNotNull("Running Haun poisto ei toimi.", doit.textElement(driver, "Poistettiin"));
         doit.tauko(1);
         driver.navigate().refresh();
         doit.tauko(1);
-        if (doit.isPresentText(driver, nimi)) 
-        { 	
-        	Assert.assertNull("Running TarjontaPunainenLanka TC0807 Haun poisto ei toimi."
-				, doit.textElement(driver, nimi));
-        }
+        Assert.assertFalse("Running Haun poisto ei toimi.", doit.isVisibleText(driver, nimi));
     	doit.echo("SUCCESSFUL testTC0807");
     	TarjontaTapaukset.setKattavuus("TC0807", Kattavuus.KATTAVUUSOK);
     }
@@ -599,9 +647,9 @@ public class TestTarjontaPunainenLanka {
         doit.sendInput(driver, "Ryhmä", "Lukio");
         Assert.assertNotNull("Running TarjontaPunainenLanka TC0816 Ryhma Lukio ei toimi."
                 , doit.textElement(driver, "Lukio"));
-        if (doit.isPresentText(driver, "Lukio * "))
+        if (doit.isPresentText(driver, "Lukio * * "))
         {
-            doit.popupItemClick(driver, "Lukio * ");
+            doit.popupItemClick(driver, "Lukio * * ");
         }
         else
         {
@@ -643,8 +691,8 @@ public class TestTarjontaPunainenLanka {
     	TarjontaTapaukset.setKattavuus("TC0817", Kattavuus.KATTAVUUSERROR);
         doit.ValikotValintaperusteKuvaustenYllapito(driver, baseUrl);
         
-        doit.sendInput(driver, "Ryhmä", "Lukio * ");
-        doit.popupItemClick(driver, "Lukio * ");
+        doit.sendInput(driver, "Ryhmä", "Lukio * * ");
+        doit.popupItemClick(driver, "Lukio * * ");
 
         String millis = System.currentTimeMillis() + "";
         String kuvaus = "kuvaus muutos " + millis;
@@ -918,10 +966,10 @@ public class TestTarjontaPunainenLanka {
 
     @After
     public void tearDown() throws Exception {
-            driver.quit();
-            String verificationErrorString = verificationErrors.toString();
-            if (!"".equals(verificationErrorString)) {
-                    fail(verificationErrorString);
-            }
+    	driver.quit();
+    	String verificationErrorString = verificationErrors.toString();
+    	if (!"".equals(verificationErrorString)) {
+    		fail(verificationErrorString);
+    	}
     }
 }
