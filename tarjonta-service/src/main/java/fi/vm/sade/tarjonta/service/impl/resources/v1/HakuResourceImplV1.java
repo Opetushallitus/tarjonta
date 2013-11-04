@@ -130,8 +130,26 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
-        LOG.info("deleteHakukohde({})", oid);
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        Haku hakuToRemove = hakuDAO.findByOid(oid);
+
+        if (hakuToRemove != null) {
+
+            hakuDAO.remove(hakuToRemove);
+
+            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
+            resultV1RDTO.setResult(true);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            return resultV1RDTO;
+
+
+        }  else {
+            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
+            resultV1RDTO.setResult(false);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return resultV1RDTO;
+        }
+
     }
 
     @Override

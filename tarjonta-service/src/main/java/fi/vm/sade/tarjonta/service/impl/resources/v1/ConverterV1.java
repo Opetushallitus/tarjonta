@@ -108,6 +108,21 @@ public class ConverterV1 {
     }
 
 
+
+
+    private Hakuaika convertHakuaikaV1RDTOToHakuaika(HakuaikaV1RDTO hakuaikaV1RDTO) {
+
+        Hakuaika hakuaika = new Hakuaika();
+
+        hakuaika.setSisaisenHakuajanNimi(hakuaikaV1RDTO.getNimi());
+        hakuaika.setAlkamisPvm(hakuaikaV1RDTO.getAlkuPvm());
+        hakuaika.setPaattymisPvm(hakuaikaV1RDTO.getLoppuPvm());
+
+        return hakuaika;
+
+    }
+
+
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
         HakuaikaV1RDTO hakuaikaV1RDTO = new HakuaikaV1RDTO();
 
