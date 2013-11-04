@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
@@ -21,6 +22,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -41,10 +43,17 @@ import javax.ws.rs.core.MediaType;
 @Path("/v1/hakukohde")
 public interface HakukohdeV1Resource {
 
-    @GET
-    @Path("/hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello();
+    /**
+     * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on sallittu).
+     * 
+     * @param oid Hakukohteen oid.
+     * @param tila Kohdetila.
+     * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut sallittu).
+     */
+    @POST
+    @Path("{oid}/tila")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -117,7 +126,8 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid,@PathParam("liiteId") String liiteId);
-    
+
+
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
      *
@@ -136,5 +146,15 @@ public interface HakukohdeV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi
             );
 
-
+    /**
+     * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search rajapinnasta
+     * /hakukohde/OID/koulutukset
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/koulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<List<NimiJaOidRDTO>> getKoulutukset(@PathParam("oid") String oid);
 }

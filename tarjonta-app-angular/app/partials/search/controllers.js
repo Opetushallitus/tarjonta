@@ -49,7 +49,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	}, false);
 
 	$scope.organisaatioValittu=function(){
-		return $scope.selectedOrgOid !==undefined;
+		return $scope.selectedOrgOid !==undefined && $scope.selectedOrgOid !== OPH_ORG_OID;
 	};
 
 	$scope.hakukohdeColumns =['hakutapa','aloituspaikat','koulutuslaji'];
@@ -75,7 +75,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		//console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
 		hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
 		hakutulos.then(function(vastaus){
-			console.log("result returned, hits:", vastaus);
+//			console.log("result returned, hits:", vastaus);
 			$scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
 		});
     };
@@ -266,11 +266,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     
     $scope.hakukohdeOptions = function(oid, tila, nimi, actions) {
 		return rowActions("hakukohde", oid, tila, nimi, actions);
-    }
+    };
 
     $scope.koulutusOptions = function(oid, tila, nimi, actions) {
 		return rowActions("koulutus", oid, tila, nimi, actions);
-    }
+    };
     
     $scope.search = function() {
     	var spec = {
@@ -297,7 +297,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         	$scope.hakukohdeResultCount = " ("+data.tuloksia+")";
         });
         
-    }
+    };
+    
+    $scope.luoKoulutusDisabled=function(){
+    	var disabled = !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
+//    	console.log("luoKoulutusDisabled, organisaatioValittu:", $scope.organisaatioValittu(), "canCreateKoulutus:", $scope.koulutusActions.canCreateKoulutus);
+        return disabled;
+    };
+    
 
     if ($scope.spec.terms!="") {
     	if ($scope.spec.terms=="*") {
@@ -310,19 +317,19 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
     $scope.report = function() {
         console.log("TODO raportti");
-    }
+    };
 
     var DeleteDialogCtrl = function($scope, $modalInstance) {
     	
     	$scope.ok = function() {
     		$modalInstance.close();
-    	}
+    	};
     	
     	$scope.cancel = function() {
     		$modalInstance.dismiss();
-    	}
+    	};
     	
-    }
+    };
     
     $scope.openDeleteDialog = function(prefix, oid, nimi, action) {
     	
