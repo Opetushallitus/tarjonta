@@ -2582,6 +2582,7 @@ public class SVTUtils {
     	driver.findElement(By.xpath("(//span[text() = 'Hae'])[2]")).click();
         Assert.assertNotNull("Running Hae koulutuksia ei toimi."
                 , this.textElement(driver, "Koulutukset ("));
+        this.textClick(driver, "Koulutukset (");
     	tauko(1);
     }
 
