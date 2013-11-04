@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
@@ -35,14 +36,20 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,11 +120,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
     
-    @Override
-    public String hello() {
-       return "OK";
-    }
-
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
         List<Hakukohde> hakukohdeList =  hakukohdeDao.findAll();
@@ -546,5 +548,33 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         return komotos;
+    }
+    
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
+        Hakukohde hk = hakukohdeDao.findHakukohdeByOid(oid);
+        Preconditions.checkArgument(hk != null, "Hakukohdetta ei löytynyt: %s",
+                oid);
+        if (!hk.getTila().acceptsTransitionTo(tila)) {
+            return new ResultV1RDTO<String>(hk.getTila().toString());
+        }
+        hk.setTila(tila);
+        hakukohdeDao.update(hk);
+        solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
+        return new ResultV1RDTO<String>(tila.toString());
+    }
+
+    @Override
+    public ResultV1RDTO<List<NimiJaOidRDTO>> getKoulutukset(String oid) {
+        KoulutuksetKysely ks = new KoulutuksetKysely();
+        ks.getHakukohdeOids().add(oid);
+
+        KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
+        List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+        for (KoulutusPerustieto kp : kv.getKoulutukset()) {
+            ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
+        }
+        return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
     }
 }

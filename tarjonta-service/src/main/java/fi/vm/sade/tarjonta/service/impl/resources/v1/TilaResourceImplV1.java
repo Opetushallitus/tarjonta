@@ -3,18 +3,19 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import java.util.EnumMap;
 import java.util.Map;
 
-import fi.vm.sade.tarjonta.service.resources.dto.TilaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.TilaV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.TilaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class TilaResourceImplV1 implements TilaV1Resource {
 
-    private final Map<TarjontaTila, TilaRDTO> tilat;
+    private final Map<TarjontaTila, TilaV1RDTO> tilat;
 
     public TilaResourceImplV1() {
-        tilat = new EnumMap<TarjontaTila, TilaRDTO>(TarjontaTila.class);
+        tilat = new EnumMap<TarjontaTila, TilaV1RDTO>(TarjontaTila.class);
         for (TarjontaTila tila : TarjontaTila.values()) {
-            TilaRDTO dto = new TilaRDTO();
+            TilaV1RDTO dto = new TilaV1RDTO();
             dto.setCancellable(tila.isCancellable());
             dto.setMutable(tila.isMutable());
             dto.setPublic(tila.isPublic());
@@ -31,8 +32,8 @@ public class TilaResourceImplV1 implements TilaV1Resource {
     }
 
     @Override
-    public Map<TarjontaTila, TilaRDTO> getTilat() {
-        return tilat;
+    public ResultV1RDTO<Map<TarjontaTila, TilaV1RDTO>> getTilat() {
+        return new ResultV1RDTO<Map<TarjontaTila,TilaV1RDTO>>(tilat);
     }
 
 }

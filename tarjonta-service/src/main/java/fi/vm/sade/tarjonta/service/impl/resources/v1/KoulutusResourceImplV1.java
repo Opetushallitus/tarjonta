@@ -50,16 +50,19 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -199,7 +202,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public List<NimiJaOidRDTO> getHakukohteet(String oid) {
+    public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(String oid) {
         HakukohteetKysely ks = new HakukohteetKysely();
         ks.getKoulutusOids().add(oid);
 
@@ -208,7 +211,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (HakukohdePerustieto hk : vs.getHakukohteet()) {
             ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
         }
-        return ret;
+        return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
     }
 
     @Override
@@ -300,10 +303,19 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public String updateTila(String oid, TarjontaTila tila) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkArgument(komoto != null, "Koulutusta ei löytynyt: %s", oid);
+        if (!komoto.getTila().acceptsTransitionTo(tila)) {
+            return new ResultV1RDTO<String>(komoto.getTila().toString());
+        }
+        komoto.setTila(tila);
+        koulutusmoduuliToteutusDAO.update(komoto);
+        solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
+        return new ResultV1RDTO<String>(tila.toString());
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
