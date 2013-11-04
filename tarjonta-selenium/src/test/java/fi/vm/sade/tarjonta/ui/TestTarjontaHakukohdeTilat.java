@@ -32,10 +32,10 @@ public class TestTarjontaHakukohdeTilat {
             firefoxProfile.setEnableNativeEvents(true);
             firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
             if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url");
+            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true")) { reppu = "luokka"; }
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { reppu = "qa"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
     }
 
     //    Luo hakukohde
@@ -54,16 +54,18 @@ public class TestTarjontaHakukohdeTilat {
 
     @Test public void testHaeHakukohde_TILA221() throws Exception { haeHakukohde("Luonnos", true, true, false, false, true); }
     @Test public void testHaeHakukohde_TILA222() throws Exception { haeHakukohde("Valmis", true, true, true, false, true); }
-    @Test public void testHaeHakukohde_TILA223() throws Exception { haeHakukohde("Julkaistu", true, true, false, true, true); }
-    @Test public void testHaeHakukohde_TILA224() throws Exception { haeHakukohde("Peruttu", true, true, true, false, true);
+    @Test public void testHaeHakukohde_TILA223() throws Exception { haeHakukohde("Julkaistu", true, false, false, true, true); }
+    @Test public void testHaeHakukohde_TILA224() throws Exception { haeHakukohde("Peruttu", true, false, true, false, true);
     driver.quit();
     driverQuit = true;
     }
 
+    // argumentti poista - tarkoittaa pikkumenujen nakyvyytta
     public void haeHakukohde(String tila
     		, Boolean muokkaa, Boolean poista, Boolean julkaise, Boolean peruuta, Boolean poistaKoulutus) throws Exception {
-    	doit.echo("Running haeHakukohde ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
     	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.echo("Running haeHakukohde ...");
     	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
     	doit.textClick(driver, "Kerttulin lukio");
         Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, "Koulutukset ("));
@@ -98,11 +100,11 @@ public class TestTarjontaHakukohdeTilat {
 	    	}
 	    	if (peruuta)
 	    	{
-	    		Assert.assertNotNull("Running Peruuta ei toimi.", doit.textElement(driver, "Peruuta koulutus"));
+	    		Assert.assertNotNull("Running Peruuta ei toimi.", doit.textElement(driver, "Peruuta hakukohde"));
 	    	}
 	    	else
 	    	{
-	    		Assert.assertFalse("Running Peruuta ei toimi.", doit.isPresentText(driver, "Peruuta koulutus"));
+	    		Assert.assertFalse("Running Peruuta ei toimi.", doit.isPresentText(driver, "Peruuta hakukohde"));
 	    	}
 	    	if (poista)
 	    	{
@@ -116,14 +118,33 @@ public class TestTarjontaHakukohdeTilat {
 	    	}
 		}
 		doit.textClick(driver, "Tarkastele");
-		Assert.assertNotNull("Running Muokkaa ei toimi.", doit.textElement(driver, "muiden toimijoiden kanssa"));
+		Assert.assertNotNull("Running Muokkaa ei toimi.", doit.textElement(driver, "Hakukohteen tiedot"));
+		Assert.assertNotNull("Running Muokkaa ei toimi.", doit.textElement(driver, "Liitteiden toimitusosoite"));
 		Assert.assertNotNull("Running Poista ei toimi.", doit.textElement(driver, "Poista"));
+    	if (tila.equals("Luonnos"))
+    	{
+	    	Assert.assertNotNull("Running luonnos ei toimi.", doit.textElement(driver, ", luonnos"));
+    	}
+    	if (tila.equals("Valmis"))
+    	{
+	    	Assert.assertNotNull("Running valmis ei toimi.", doit.textElement(driver, ", valmis"));
+    	}
+    	if (tila.equals("Julkaistu"))
+    	{
+	    	Assert.assertNotNull("Running JULKAISTU ei toimi.", doit.textElement(driver, ", julkaistu"));
+    	}
+    	if (tila.equals("Peruttu"))
+    	{
+	    	Assert.assertNotNull("Running valmis ei toimi.", doit.textElement(driver, ", peruttu"));
+    	}
 		doit.tauko(1);
+
 		doit.textClick(driver, "muokkaa");
-		Assert.assertNotNull("Running Muokkaa ei toimi.", doit.textElement(driver, "Puhelinnumero"));
+		Assert.assertNotNull("Running Muokkaa ei toimi."
+				, doit.textElement(driver, "voidaan kuvata muuta hakemiseen olennaisesti liittyv"));
 		doit.tauko(1);
-    	Assert.assertTrue("Running HaeHaku Valmiina ei toimi.", doit.textElement(driver, "Tallenna valmiina").isEnabled());
-		Assert.assertNotNull("Running HaeHaku Tila ei toimi.", doit.textElement(driver, tila.toUpperCase()));
+    	Assert.assertTrue("Running Valmiina ei toimi.", doit.textElement(driver, "Tallenna valmiina").isEnabled());
+		Assert.assertNotNull("Running Tila ei toimi.", doit.textElement(driver, tila.toUpperCase()));
     	if (tila.equals("Luonnos"))
     	{
 	    	Assert.assertTrue("Running Luonnoksena ei toimi.", doit.textElement(driver, "Tallenna luonnoksena").isEnabled());
@@ -133,14 +154,16 @@ public class TestTarjontaHakukohdeTilat {
 	    	Assert.assertNotNull("Running Luonnoksena ei toimi."
 	    			, driver.findElement(By.xpath("//div[contains(@class,'v-disabled') and span/span[text()='Tallenna luonnoksena']]")));
     	}
+    	Assert.assertNotNull("Running " + tila + " ei toimi.", doit.textElement(driver, tila.toUpperCase()));
     	
-    	doit.echo("Running haeKoulutus OK");
+    	doit.echo("Running haeHakukohde OK");
     	doit.tauko(1);        
     }
 
     public void luoHakukohde(String koulutusVuosi, String tila) throws Exception {
-    	doit.echo("Running luoHakukohde ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
     	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.echo("Running luoHakukohde ...");
     	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
     	doit.textClick(driver, "Kerttulin lukio");
         Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, "Koulutukset ("));
@@ -171,23 +194,41 @@ public class TestTarjontaHakukohdeTilat {
         }
         if (koulutusVuosi.equals("2013"))
         {
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_voimassa"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_paattynyt"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_voimassa"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_paattynyt"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_voimassa"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_paattynyt"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_voimassa"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_paattynyt"));        	
+            try {
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_voimassa"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_paattynyt"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_voimassa"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_paattynyt"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_voimassa"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_paattynyt"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_voimassa"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_paattynyt"));
+			} catch (Exception e) {
+	    		doit.sendInputExact(driver, "Haku", reppu + "_luonnos_voimassa"); doit.popupItemClick(driver, reppu + "_luonnos_voimassa");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_luonnos_paattynyt"); doit.popupItemClick(driver, reppu + "_luonnos_paattynyt");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_valmis_voimassa"); doit.popupItemClick(driver, reppu + "_valmis_voimassa");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_valmis_paattynyt"); doit.popupItemClick(driver, reppu + "_valmis_paattynyt");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_julkaistu_voimassa"); doit.popupItemClick(driver, reppu + "_julkaistu_voimassa");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_julkaistu_paattynyt"); doit.popupItemClick(driver, reppu + "_julkaistu_paattynyt");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_peruttu_voimassa"); doit.popupItemClick(driver, reppu + "_peruttu_voimassa");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_peruttu_paattynyt"); doit.popupItemClick(driver, reppu + "_peruttu_paattynyt");
+			}        	
     		doit.sendInputExact(driver, "Haku", reppu + "_luonnos_paattynyt");
     		doit.popupItemClick(driver, reppu + "_luonnos_paattynyt");
         }
         if (koulutusVuosi.equals("2023"))
         {
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_suunnitteilla"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_suunnitteilla"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_suunnitteilla"));
-            Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_suunnitteilla"));
+            try {
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_luonnos_suunnitteilla"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_valmis_suunnitteilla"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_julkaistu_suunnitteilla"));
+				Assert.assertNotNull("Running LUO UUSI HAKUKOHDE ei toimi.", doit.textElement(driver, reppu + "_peruttu_suunnitteilla"));
+			} catch (Exception e) {
+	    		doit.sendInputExact(driver, "Haku", reppu + "_luonnos_suunnitteilla"); doit.popupItemClick(driver, reppu + "_luonnos_suunnitteilla");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_valmis_suunnitteilla"); doit.popupItemClick(driver, reppu + "_valmis_suunnitteilla");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_julkaistu_suunnitteilla"); doit.popupItemClick(driver, reppu + "_julkaistu_suunnitteilla");
+	    		doit.sendInputExact(driver, "Haku", reppu + "_peruttu_suunnitteilla"); doit.popupItemClick(driver, reppu + "_peruttu_suunnitteilla");
+			}
     		doit.sendInputExact(driver, "Haku", reppu + "_peruttu_suunnitteilla");
     		doit.popupItemClick(driver, reppu + "_peruttu_suunnitteilla");
         }
@@ -222,19 +263,19 @@ public class TestTarjontaHakukohdeTilat {
         	}
 		}
         driver.findElement(By.className("v-button-back")).click();
-        doit.tauko(2);
+        doit.refreshTarjontaEtusivu(driver);
     	
         // JULKAISE
         if (tila.equals("julkaistu") || tila.equals("peruttu"))
         {
-            if (! doit.isPresentText(driver, "Koulutuksen alkamisvuosi"))
-            {
-            	doit.tauko(10);
-            	driver.navigate().refresh();
-            	doit.tauko(1);
-            }
-            Assert.assertNotNull("Running valikot ei toimi.", doit.textElement(driver, "Koulutuksen alkamisvuosi"));
-            doit.tauko(1);
+//            if (! doit.isPresentText(driver, "Koulutuksen alkamisvuosi"))
+//            {
+//            	doit.tauko(10);
+//            	driver.navigate().refresh();
+//            	doit.tauko(1);
+//            }
+//            Assert.assertNotNull("Running valikot ei toimi.", doit.textElement(driver, "Koulutuksen alkamisvuosi"));
+//            doit.tauko(1);
             doit.textClick(driver, "Hakukohteet (");
             doit.tauko(2);
             doit.triangleClickFirstTriangle(driver);
@@ -259,6 +300,7 @@ public class TestTarjontaHakukohdeTilat {
     public void tearDown() throws Exception {
 //    	driver.quit();
 //    	driverQuit = true;
+    	doit.quit(driver);
     	String verificationErrorString = verificationErrors.toString();
     	if (!"".equals(verificationErrorString)) {
     		fail(verificationErrorString);
