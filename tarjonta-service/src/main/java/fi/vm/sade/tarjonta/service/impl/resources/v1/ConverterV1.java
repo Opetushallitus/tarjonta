@@ -107,7 +107,32 @@ public class ConverterV1 {
         return t;
     }
 
+    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO) {
+        Haku haku = new Haku();
 
+        haku.setOid(hakuV1RDTO.getOid());
+        haku.setHakukausiUri(hakuV1RDTO.getHakukausiUri());
+        haku.setHakukausiVuosi(hakuV1RDTO.getHakukausiVuosi());
+        haku.setHakulomakeUrl(hakuV1RDTO.getHakulomakeUri());
+        haku.setHaunTunniste(hakuV1RDTO.getHaunTunniste());
+        haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
+        haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
+        haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        haku.setKoulutuksenAlkamiskausiUri(hakuV1RDTO.getKoulutuksenAlkamiskausiUri());
+        haku.setKoulutuksenAlkamisVuosi(hakuV1RDTO.getKoulutuksenAlkamisVuosi());
+        haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        haku.setTila(TarjontaTila.valueOf(hakuV1RDTO.getTila()));
+        haku.setNimi(convertTekstiRDTOToMonikielinenTeksti(hakuV1RDTO.getNimi()));
+        if (hakuV1RDTO.getHakuaikas() != null ){
+           for (HakuaikaV1RDTO hakuaikaRDTO: hakuV1RDTO.getHakuaikas()) {
+               haku.addHakuaika(convertHakuaikaV1RDTOToHakuaika(hakuaikaRDTO));
+
+           }
+        }
+
+
+        return haku;
+    }
 
 
     private Hakuaika convertHakuaikaV1RDTOToHakuaika(HakuaikaV1RDTO hakuaikaV1RDTO) {

@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -50,6 +52,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private ConverterV1 _converter;
+
+    @Autowired
+    private OIDService oidService;
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {
@@ -118,8 +123,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
-        LOG.info("createHakukohde({})", haku);
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+          haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+
+          Haku hakuToInsert = _converter.convertHakuV1DRDTOToHaku(haku);
+
+          Haku hakuResult = hakuDAO.insert(hakuToInsert);
+
+          ResultV1RDTO<HakuV1RDTO> hakuResultDto = new ResultV1RDTO<HakuV1RDTO>();
+
+            hakuResultDto.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            hakuResultDto.setResult( _converter.fromHakuToHakuRDTO(hakuResult,false));
+
+          return hakuResultDto;
+
+        } catch (Exception exp) {
+             exp.printStackTrace();
+            LOG.warn("EXCEPTION createHaku : {}",exp.toString());
+            ResultV1RDTO<HakuV1RDTO> errorResult = new ResultV1RDTO<HakuV1RDTO>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp,"system.error"));
+            return errorResult;
+
+        }
     }
 
     @Override
