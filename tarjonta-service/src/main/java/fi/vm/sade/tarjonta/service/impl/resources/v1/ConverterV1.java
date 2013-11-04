@@ -26,16 +26,9 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TarjoajaHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -109,6 +102,32 @@ public class ConverterV1 {
         return t;
     }
 
+
+    private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
+        HakuaikaV1RDTO hakuaikaV1RDTO = new HakuaikaV1RDTO();
+
+        hakuaikaV1RDTO.setAlkuPvm(hakuaika.getAlkamisPvm());
+        hakuaikaV1RDTO.setLoppuPvm(hakuaika.getPaattymisPvm());
+        hakuaikaV1RDTO.setNimi(hakuaika.getSisaisenHakuajanNimi());
+
+        return hakuaikaV1RDTO;
+    }
+
+    private List<HakuaikaV1RDTO> convertHakuaikaListToV1RDTO(Set<Hakuaika> hakuaikas) {
+        List<HakuaikaV1RDTO> hakuV1RDTOs = new ArrayList<HakuaikaV1RDTO>();
+
+        if (hakuaikas != null) {
+
+            for (Hakuaika hakuaika:hakuaikas) {
+
+                hakuV1RDTOs.add(convertHakuaikaToV1RDTO(hakuaika));
+
+            }
+
+        }
+
+        return hakuV1RDTOs;
+    }
 
     // ----------------------------------------------------------------------
     // HAKUKOHDE
