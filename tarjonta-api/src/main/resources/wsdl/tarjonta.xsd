@@ -603,13 +603,13 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element minOccurs="1" maxOccurs="1" name="jatkoOpintoMahdollisuudet"
-                        type="tns:MonikielinenTekstiTyyppi">
-                <xs:annotation>
-                    <xs:documentation>Jatko-opintomahdollisuudet</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-			-->
+<xs:element minOccurs="1" maxOccurs="1" name="jatkoOpintoMahdollisuudet"
+            type="tns:MonikielinenTekstiTyyppi">
+    <xs:annotation>
+        <xs:documentation>Jatko-opintomahdollisuudet</xs:documentation>
+    </xs:annotation>
+</xs:element>
+            -->
 			
             <xs:element minOccurs="1" maxOccurs="1" name="tutkinnonTavoitteet" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
@@ -799,20 +799,20 @@
             <!-- Valmentava ja kuntouttava opetus -koulutustyypilla -->
             <xs:element name="Laajuus" type="tns:KoulutuksenKestoTyyppi"/>          
             <!-- 
-            <xs:element name="KoulutusohjelmanValinta" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-             -->
+           <xs:element name="KoulutusohjelmanValinta" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
+           <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+            -->
             <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
 
             <!-- Koulutuksen lisätiedot (additional information) -->
             <xs:element name="Ammattinimikkeet" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <!-- 
-            <xs:element name="KuvailevatTiedot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="Sisalto" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="SijoittuminenTyoelamaan" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="Kansainvalistyminen" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="YhteistyoMuidenToimijoidenKanssa" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
-             -->
+           <xs:element name="KuvailevatTiedot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+           <xs:element name="Sisalto" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+           <xs:element name="SijoittuminenTyoelamaan" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+           <xs:element name="Kansainvalistyminen" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+           <xs:element name="YhteistyoMuidenToimijoidenKanssa" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+            -->
 
             <xs:element minOccurs="0" maxOccurs="unbounded" name="tekstit" type="tns:NimettyMonikielinenTekstiTyyppi"/>
 
@@ -1067,11 +1067,15 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="AmmatillinenPeruskoulutus" />
             <xs:enumeration value="Lukiokoulutus"/>
-             <xs:enumeration value="Korkeakoulutus"/>
-             <xs:enumeration value="Ammattikorkeakoulutus"/>
-             <xs:enumeration value="Yliopistokoulutus"/>
+            <xs:enumeration value="Korkeakoulutus"/>
+            <xs:enumeration value="Ammattikorkeakoulutus"/>
+            <xs:enumeration value="Yliopistokoulutus"/>
             <xs:enumeration value="PerusopetuksenLisaopetus"/>   
             <xs:enumeration value="ValmentavaJaKuntouttavaOpetus" />
+            <xs:enumeration value="AmmOhjaavaJaValmistavaKoulutus" /><!-- Ammatilliseen koulutukseen ohjaava ja valmistava koulutus -->
+            <xs:enumeration value="MaahanmAmmValmistavaKoulutus" /><!-- Maahanmuuttajien ammatilliseen koulutukseen valmistava koulutus -->
+            <xs:enumeration value="MaahanmLukioValmistavaKoulutus" /><!-- Maahanmuuttajien lukiokoulutukseen valmistava koulutus -->
+            <xs:enumeration value="VapaanSivistystyonKoulutus" /><!-- Vapaan sivistystyon koulutus -->
         </xs:restriction>
     </xs:simpleType>
     

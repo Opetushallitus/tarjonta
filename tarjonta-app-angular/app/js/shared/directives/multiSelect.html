@@ -1,7 +1,7 @@
 <table class="checklist">
-	<tr ng-repeat="r in rows">
-		<td ng-repeat="e in r">
-			<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> {{e.value}}
+	<tr bindonce ng-repeat="r in rows">
+		<td bindonce ng-repeat="e in r">
+			<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> <span bo-text="e.value"/>
 		</td>
 	</tr>
 	<!--

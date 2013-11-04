@@ -31,10 +31,10 @@ public class TestTarjontaKoulutusTilat {
             firefoxProfile.setEnableNativeEvents(true);
             firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
             if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url");
+            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true")) { reppu = "luokka"; }
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { reppu = "qa"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
     }
 
     //    Luo Lukio koulutus
@@ -63,8 +63,9 @@ public class TestTarjontaKoulutusTilat {
 
     public void haeKoulutus(String tila
     		, Boolean muokkaa, Boolean julkaise, Boolean peruuta, Boolean poista, Boolean valmiina) throws Exception {
-    	doit.echo("Running haeKoulutus ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
     	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.echo("Running haeKoulutus ...");
     	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
     	doit.textClick(driver, "Kerttulin lukio");
 		Assert.assertNotNull("Running Muokkaa ei toimi.", doit.textElement(driver, "Koulutukset ("));
@@ -140,8 +141,9 @@ public class TestTarjontaKoulutusTilat {
     }
     
     public void luoLukioKoulutus(String vuosi, String tila) throws Exception {
-    	doit.echo("Running luoLukioKoulutus ...");
+    	doit.virkailijanPalvelut(driver, baseUrl);
     	doit.tarjonnanEtusivu(driver, baseUrl);
+    	doit.echo("Running luoLukioKoulutus ...");
     	doit.haePalvelunTarjoaja(driver, "kerttulin", "Kerttulin lukio");
         // LUO UUSI LUKIOKOULUTUS (validialog)
         doit.textClick(driver, "Kerttulin lukio");
@@ -178,8 +180,8 @@ public class TestTarjontaKoulutusTilat {
         doit.sendInput(driver, "Suunniteltu kesto", "3");
         doit.sendInputSelect(driver, "Opetusmuoto", "Oppisopimuskoulutus\n");
 //        doit.popupItemClick(driver, "Oppisopimuskoulutus");
-        doit.sendInputPlusX(driver, "Suunniteltu kesto", "Kuukausi", 150); // Valitse aikayksikko
-        doit.popupItemClick(driver, "Kuukausi");
+        doit.sendInputPlusX(driver, "Suunniteltu kesto", "kuukautta", 150); // Valitse aikayksikko
+        doit.popupItemClick(driver, "kuukautta");
 
         doit.sendInput(driver, "Opetuskieli", "suomi");
         doit.tauko(2);
@@ -197,12 +199,11 @@ public class TestTarjontaKoulutusTilat {
         doit.tauko(1);
         driver.findElement(By.className("v-button-back")).click();
         doit.tauko(1);
+        doit.refreshTarjontaEtusivu(driver);
+        doit.tauko(1);
                     	
         if (tila.equals("Julkaistu") || tila.equals("Peruutettu"))
         {
-            doit.tauko(10);
-            driver.navigate().refresh();
-            doit.tauko(1);
             Assert.assertNotNull("Running valikot ei toimi.", doit.textElement(driver, "Koulutuksen alkamisvuosi"));
             doit.tauko(1);
 
@@ -227,6 +228,7 @@ public class TestTarjontaKoulutusTilat {
     public void tearDown() throws Exception {
 //        driver.quit();
 //        driverQuit = true;
+    	doit.quit(driver);
         String verificationErrorString = verificationErrors.toString();
         if (!"".equals(verificationErrorString)) {
         	fail(verificationErrorString);
