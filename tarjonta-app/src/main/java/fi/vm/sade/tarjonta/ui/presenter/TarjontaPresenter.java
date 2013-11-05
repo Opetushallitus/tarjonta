@@ -618,7 +618,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
             if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
-                    && curKoulutus.getKoulutuksenAlkamiskausi().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
+                    && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
             }
