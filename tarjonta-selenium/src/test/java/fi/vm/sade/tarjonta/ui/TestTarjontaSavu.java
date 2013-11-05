@@ -298,6 +298,7 @@ public class TestTarjontaSavu { // KOULUTUS AMP
 	
     @After
     public void tearDown() throws Exception {
+    	doit.quit(driver);
 //    	driver.quit();
 //    	driverQuit = true;
         String verificationErrorString = verificationErrors.toString();

@@ -30,10 +30,10 @@ public class TestTarjontaLuoAineistoa {
             firefoxProfile.setEnableNativeEvents(true);
             firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
             driver = new FirefoxDriver(firefoxProfile);
-            baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url");
+            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.luokka").equals("true")) { reppu = "luokka"; }
-    		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { reppu = "qa"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
+    		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
     }
 
     //    Luo haku

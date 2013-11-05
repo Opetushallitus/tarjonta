@@ -26,14 +26,14 @@ public class TestTarjontaHakuTilat {
 
     @Before
     public void setUp() throws Exception {
-            FirefoxProfile firefoxProfile = new FirefoxProfile();
-            firefoxProfile.setEnableNativeEvents(true);
-            firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
-            if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
-            baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
-            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    		if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
-    		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
+    	FirefoxProfile firefoxProfile = new FirefoxProfile();
+    	firefoxProfile.setEnableNativeEvents(true);
+    	firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" );
+    	if (driver == null || driverQuit) { driver = new FirefoxDriver(firefoxProfile); driverQuit = false; }
+    	baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url");
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    	if (SVTUtils.prop.getProperty("testaus-selenium.luokka").equals("true")) { reppu = "luokka"; }
+    	if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { reppu = "qa"; }
     }
 
     //    Luo haku

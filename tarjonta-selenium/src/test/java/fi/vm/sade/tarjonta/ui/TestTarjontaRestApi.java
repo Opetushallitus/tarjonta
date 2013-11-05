@@ -29,8 +29,8 @@ public class TestTarjontaRestApi {
 	public void setUp() throws Exception {
 		RestApiRajaPinnat.alustaKattavuusKohde("RestApiRajaPinnat");
 		SVTUtils doit = new SVTUtils();
-		http = SVTUtils.prop.getProperty("tarjonta-selenium.restapi");
-		if (SVTUtils.prop.getProperty("tarjonta-selenium.qa").equals("true")) { qa = true; }
+		http = SVTUtils.prop.getProperty("testaus-selenium.restapi");
+		if (SVTUtils.prop.getProperty("testaus-selenium.qa").equals("true")) { qa = true; }
 	}
 	
 	@Test

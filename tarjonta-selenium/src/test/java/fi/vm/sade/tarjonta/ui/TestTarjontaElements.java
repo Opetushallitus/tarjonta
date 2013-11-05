@@ -890,7 +890,7 @@ public class TestTarjontaElements {
         doit.messagesPropertiesCoverage(driver, TarjontaElementitTekstit);
 	}
 
-	@Test
+//	@Test
 	public void testReport() throws IOException
 	{
 		// END

@@ -28,7 +28,7 @@ public class TestTarjontaSekalaista {
 		FirefoxProfile firefoxProfile = new FirefoxProfile();
 		firefoxProfile.setPreference( "intl.accept_languages", "fi-fi,fi" ); 
 		driver = new FirefoxDriver(firefoxProfile);
-    	baseUrl = SVTUtils.prop.getProperty("tarjonta-selenium.oph-url"); // "http://localhost:8080/"
+    	baseUrl = SVTUtils.prop.getProperty("testaus-selenium.oph-url"); // "http://localhost:8080/"
     	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 

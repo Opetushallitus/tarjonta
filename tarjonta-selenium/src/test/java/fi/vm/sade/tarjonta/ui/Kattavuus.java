@@ -35,7 +35,7 @@ public class Kattavuus {
 
     public void setKattavuus(String key, String status)
     {
-    String metriikkaMode = SVTUtils.prop.getProperty("tarjonta-selenium.metriikka");
+    String metriikkaMode = SVTUtils.prop.getProperty("testaus-selenium.metriikka");
     if (metriikkaMode != null && metriikkaMode.equals("true")) { useFiles = true; }
             KattavuusTaulukko.setProperty(key, status);
             if (status == KATTAVUUSOK)
@@ -56,7 +56,7 @@ public class Kattavuus {
 	String otsikko = KattavuusTaulukko.getProperty(KATTAVUUSKOHDE);
 	if (otsikko == null || otsikko.length() == 0) { int a = 1 / 0; }
     	SVTUtils doit = new SVTUtils();
-    	String metriikkaMode = SVTUtils.prop.getProperty("tarjonta-selenium.metriikka");
+    	String metriikkaMode = SVTUtils.prop.getProperty("testaus-selenium.metriikka");
     	if (metriikkaMode != null && metriikkaMode.equals("true")) { useFiles = true; }
     	doit.echo("");
     	doit.echo("-----------------------------------------");
