@@ -151,27 +151,11 @@
 		<th tt="koulutus.edit.opetuskielet"/>
 		<td>
 		
-			<!-- TODO Direktiiviksi -->
-			<!-- 
 			<multi-select
 			 	model="uiModel.opetuskielis.data"
 			 	selection="uiModel.opetuskielis.uris"
-			 	columns="3"/>
-			 	-->
-			<div style="float: left;">
-			    <select multiple="multiple"
-			            ng-model="uiModel.opetuskielis.uris"
-			            ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opetuskielis.data | orderBy:'koodiNimi'">
-			    </select>
-			</div>
-			<div style="float: left;">
-			    <ul>
-			        <li ng-repeat="uri in uiModel.opetuskielis.uris">
-			            {{searchKoodiByKoodiUri(uri, uiModel.opetuskielis).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.opetuskielis)">X</a>]
-			        </li>
-			    </ul>
-			</div>
-
+			 	display="dualpane"/>
+			 
 		</td>
 		<td>
 			<p class="error" ng-show="uiModel.opetuskielis.uris.length==0" tt="koulutus.edit.opetuskielet.required"/>

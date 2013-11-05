@@ -21,28 +21,42 @@ app.directive('multiSelect',function($log) {
 		}
 	
 		return ret;
-	}
-	
+	}	
 	
 	function controller($scope) {
 		$scope.items = [];
+		$scope.preselection = [];
+		$scope.names = {};
 
-		if ($scope.columns == null) {
+		if ($scope.columns == undefined) {
 			$scope.columns = 1;
 		}		
 
-		if ($scope.display == null) {
+		if ($scope.display == undefined) {
 			$scope.display = "checklist";
-		}		
+		}
 		
-		if ($scope.key == null) {
+		if ($scope.key == undefined) {
 			$scope.key = "koodiUri";
 		}
 		
-		if ($scope.value == null) {
+		if ($scope.value == undefined) {
 			$scope.value = "koodiNimi";
 		}
 		
+		// (multi)select-valinta
+		$scope.onPreselection = function(preselection) {
+			for (var i in preselection) {
+				if ($scope.selection.indexOf(preselection[i])==-1) {
+					$scope.selection.push(preselection[i]);
+				}
+			}
+			$scope.selection.sort(function(a, b){
+				return $scope.names[a].localeCompare($scope.names[b]);
+			});
+		}
+
+		// checkbox-valinta
 		$scope.toggle = function(k) {
 			var p = $scope.selection.indexOf(k);
 			if (p==-1) {
@@ -59,13 +73,15 @@ app.directive('multiSelect',function($log) {
 				key: e[$scope.key],
 				value: e[$scope.value]
 			});
+			$scope.names[e[$scope.key]] = e[$scope.value];
 		}
 		
 		$scope.items.sort(function(a, b){
 			return a.value.localeCompare(b.value);
 		});
 		
-		$scope.rows = columnize($scope.items, $scope.columns);		
+		$scope.rows = columnize($scope.items, $scope.columns);
+		
 	}
 
     return {
@@ -74,8 +90,8 @@ app.directive('multiSelect',function($log) {
         templateUrl : "js/shared/directives/multiSelect.html",
         controller: controller,
         scope: {
-        	display: "@", // checklist
-        	columns: "@", // sarakkeiden määrä
+        	display: "@", // checklist | dualpane
+        	columns: "@", // sarakkeiden määrä (vain checklist)
         	key: "@", // arvo-avain (vakio: koodiUri)
         	value: "@", // nimi-avain (vakio: koodiNimi)
         	model: "=", // map jossa arvo->nimi

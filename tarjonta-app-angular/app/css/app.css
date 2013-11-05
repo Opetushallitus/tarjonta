@@ -463,16 +463,6 @@ table.tarjontaForm tr.required table th:after {
 	display: none;
 }
 
-
-table.tarjontaForm table.checklist, table.tarjontaForm table.checklist td {
-	width:auto;
-	padding:0 1em 0 0;
-}
-
-table.checklist {
-	margin-bottom:1em;
-}
-
 table.tarjontaForm p.error {
 	color:#ff0000;
 }
@@ -488,3 +478,31 @@ table.tarjontaForm p.error:before {
 input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
 }
+
+/* multiselect */
+div.multiselect table.checklist {
+	margin-bottom:1em;
+}
+
+div.multiselect table.checklist, div.multiselect table.checklist td {
+	width:auto;
+	padding:0 1em 0 0;
+}
+
+div.multiselect div.dualpane select {
+	width:40%;
+	height:82px;
+}
+
+div.multiselect div.dualpane ul {
+	float:left;
+	border-radius:4px;
+	border: 1px solid #cccccc;
+	width:40%;
+	height:82px;
+	margin:0 20px 0 0;
+	padding:0 7px 0 7px;
+	overflow:auto;
+}
+
+

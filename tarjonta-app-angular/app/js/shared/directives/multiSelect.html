@@ -1,12 +1,26 @@
-<table class="checklist">
-	<tr bindonce ng-repeat="r in rows">
-		<td bindonce ng-repeat="e in r">
-			<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> <span bo-text="e.value"/>
-		</td>
-	</tr>
-	<!--
-	<div ng-repeat="e in items">
-		<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> {{e.value}}
+<div ng-cloak ng-switch="display" class="multiselect">
+	
+	<!-- dualpane -->
+	<div class="dualpane" ng-switch-when="dualpane">	
+		<select bindonce multiple="multiple"
+				ng-model="preselection"
+				ng-options="e.key as e.value for e in items"
+				ng-change="onPreselection(preselection)">
+	    </select>
+	    <ul>
+	    	<li ng-repeat="k in selection">
+	 			<a href ng-click="toggle(k)">[x]</a> {{names[k]}}
+	    	</li>
+	    
+	    </ul>
 	</div>
-	 -->
-</table>
+	
+	<!-- checklist -->
+	<table class="checklist" ng-switch-default>
+		<tr bindonce ng-repeat="r in rows">
+			<td bindonce ng-repeat="e in r">
+				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> <span bo-text="e.value"/>
+			</td>
+		</tr>
+	</table>
+</div>
