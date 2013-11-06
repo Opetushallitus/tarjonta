@@ -67,9 +67,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
-    private static final String OID_PRE = "1.2.246.562.5.";
-    private static long oidMin = 1000000000L;
-    private static long oidMax = 10000000000L;
 
     @Override
     public Koulutusmoduuli create(Koulutusmoduuli moduuli) {
@@ -108,10 +105,13 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         switch (koulutus.getKoulutustyyppi()) {
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break.
+            case PERUSOPETUKSEN_LISAOPETUS: //no break.
+            case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break.
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS://no break.
             case AMMATILLINEN_PERUSKOULUTUS:
-                moduuli = handleToisenAsteenModuuli(koulutus);
-                break;
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                 moduuli = handleToisenAsteenModuuli(koulutus);
                 break;
             case LUKIOKOULUTUS:
@@ -121,7 +121,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case YLIOPISTOKOULUTUS:
                 moduuli = handleKorkeakoulumoduuli(koulutus);
                 break;
-             
+
             default:
                 throw new RuntimeException("Unsupported koulutustyyppi.");
         }
@@ -270,7 +270,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
-        	EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
@@ -285,8 +285,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
-        	EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
-        	//parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
+            EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
