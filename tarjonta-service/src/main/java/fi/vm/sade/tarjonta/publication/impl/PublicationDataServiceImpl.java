@@ -521,19 +521,22 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     public String getUserOid() {
-        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-            final Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Preconditions.checkNotNull(SecurityContextHolder.getContext(), "Context object cannot be null.");
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Preconditions.checkNotNull(authentication, "Authentication object cannot be null.");
+        final Object principal = authentication.getPrincipal();
 
-            if (principal != null && principal instanceof SadeUserDetailsWrapper) {
-                SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-                log.info("User SadeUserDetailsWrapper : {}", sadeUser);
-                return sadeUser.getUsername(); //should be an user OID, not name.
-            } else if (SecurityContextHolder.getContext().getAuthentication().getName() != null) {
-                //should be an user OID, not name.
-                log.info("User oid  : {}", SecurityContextHolder.getContext().getAuthentication().getName());
-                return SecurityContextHolder.getContext().getAuthentication().getName();
-            }
+        if (principal != null && principal instanceof SadeUserDetailsWrapper) {
+            SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
+            log.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
+            return sadeUser.getUsername(); //should be an user OID, not name.
+        } else if (authentication.getName() != null) {
+            //should be an user OID, not name.
+            log.info("User oid  : {}", authentication.getName());
+            return authentication.getName();
         }
+
+        log.error("No an user OID found! Authentication : {}", authentication);
         return null;
     }
 }
