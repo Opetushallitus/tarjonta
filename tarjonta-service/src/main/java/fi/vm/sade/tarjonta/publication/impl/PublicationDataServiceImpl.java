@@ -526,10 +526,11 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
             if (principal != null && principal instanceof SadeUserDetailsWrapper) {
                 SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-                return sadeUser.getPassword(); //should be OID
-            } else if (principal != null && principal instanceof String) {
-                return (String) principal;
+                log.info("User SadeUserDetailsWrapper : {}", sadeUser);
+                return sadeUser.getPassword(); //should be an user OID, not name.
             } else if (SecurityContextHolder.getContext().getAuthentication().getName() != null) {
+                //should be an user OID, not name.
+                log.info("User oid  : {}", SecurityContextHolder.getContext().getAuthentication().getName());
                 SecurityContextHolder.getContext().getAuthentication().getName();
             }
         }
