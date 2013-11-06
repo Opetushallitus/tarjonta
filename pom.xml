@@ -4,7 +4,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>7.0-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
@@ -33,7 +33,7 @@
         <module>tarjonta-shared</module>
         <module>tarjonta-enricher</module>
         <module>tarjonta-service</module>
-	<module>tarjonta-app-angular</module>
+		<module>tarjonta-app-angular</module>
         <module>tarjonta-app</module>
 
     </modules>
