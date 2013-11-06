@@ -105,6 +105,7 @@ public class TarjontaKomoDataTest {
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = "uri_laajuusyksikko";
         KoodistoURI.KOODISTO_LUKIOLINJA_URI = "uri_lukiolinja";
         KoodistoURI.KOODISTO_OPPILAITOSTYYPPI_URI = "uri_oppilaitostyyppi";
+        KoodistoURI.KOODISTO_EQF_LUOKITUS_URI = "uri_eqf";
 
         List<String> readLines = FileUtils.readLines(FileUtils.getFile("src", "test", "resources", "test_resource_koodis.csv"), "UTF8");
         Map<String, KoodiType> map = new HashMap<String, KoodiType>();
@@ -163,22 +164,53 @@ public class TarjontaKomoDataTest {
         assertEquals("4", next.getEqfKoodiarvo());
         assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
 
-
         instance = new KomoExcelReader(GenericRow.class, GenericRow.COLUMNS_AMMATILLINEN, 300);
         result = instance.read(resource.getPath(), verbose);
-        boolean founded = false;
+        int founded = 0;
         for (GenericRow g : result) {
             if (g.getKoulutuskoodiKoodiarvo().equals("039999")) { //special case
                 assertEquals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS, g.getKoulutusasteTyyppiEnum());
                 assertEquals("0003", g.getRelaatioKoodiarvo());
                 assertEquals("32", g.getKoulutusasteKoodiarvo());
                 assertEquals(null, g.getLaajuusKoodiarvo());
-                assertEquals("4", g.getEqfKoodiarvo());
+                assertEquals("3", g.getEqfKoodiarvo());
                 assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
-                founded = true;
+                founded++;
+            } else if (g.getKoulutuskoodiKoodiarvo().equals("039996")) { //special case
+                assertEquals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0005", g.getRelaatioKoodiarvo());
+                assertEquals("32", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals(null, g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded++;
+            } else if (g.getKoulutuskoodiKoodiarvo().equals("039998")) { //special case
+                assertEquals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0006", g.getRelaatioKoodiarvo());
+                assertEquals("32", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals(null, g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded++;
+            } else if (g.getKoulutuskoodiKoodiarvo().equals("099999")) { //special case
+                assertEquals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0007", g.getRelaatioKoodiarvo());
+                assertEquals("90", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals(null, g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded++;
+            } else if (g.getKoulutuskoodiKoodiarvo().equals("020075")) { //special case
+                assertEquals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0004", g.getRelaatioKoodiarvo());
+                assertEquals("22", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals(null, g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded++;
             }
         }
-        assertEquals(true, founded);
+        assertEquals("One or many special cases are missing", 5, founded);
         assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
     }
 
@@ -190,7 +222,7 @@ public class TarjontaKomoDataTest {
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
         RelaatioMap excelDataMap = new RelaatioMap(result, true);
 
-        assertEquals(86, result.size());
+        assertEquals("count of excel rows", 87, result.size());
         GenericRow next = excelDataMap.get("0000");
 
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, next.getKoulutusasteTyyppiEnum());
@@ -205,6 +237,13 @@ public class TarjontaKomoDataTest {
 
         next = excelDataMap.get("0086");
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
+
+        next = excelDataMap.get("0089");
+        assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
+        
+//        next = excelDataMap.get("0090"); //special case 'nivelvaihe'
+//        assertEquals("039997", next.getKoulutuskoodiKoodiarvo());
+//        assertEquals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS, next.getKoulutusasteTyyppiEnum());
     }
 
     @Test
@@ -292,55 +331,47 @@ public class TarjontaKomoDataTest {
      * The test uses the real KOMO excel data!
      */
     @Test
-    @Ignore
     public void testGetLoadedDataUpdate() throws IOException, ExceptionMessage {
-        final Capture<HaeKoulutusmoduulitKyselyTyyppi> kysely = new Capture<HaeKoulutusmoduulitKyselyTyyppi>();
 
         final Capture<KoulutusmoduuliKoosteTyyppi> komoParent = new Capture<KoulutusmoduuliKoosteTyyppi>();
         final Capture<KoulutusmoduuliKoosteTyyppi> komoChild = new Capture<KoulutusmoduuliKoosteTyyppi>();
-        final Capture<PaivitaTilaTyyppi> tila = new Capture<PaivitaTilaTyyppi>();
-
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + getOid()).anyTimes();
+        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + createNeOid()).anyTimes();
         expect(tarjontaAdminServiceMock.paivitaKoulutusmoduuli(capture(komoParent))).andReturn(NOT_IMPLEMENTED);
         expect(tarjontaAdminServiceMock.paivitaKoulutusmoduuli(capture(komoChild))).andReturn(NOT_IMPLEMENTED);
-        expect(tarjontaAdminServiceMock.paivitaTilat(capture(tila))).andReturn(new PaivitaTilaVastausTyyppi());
 
-        expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(capture(kysely))).andAnswer(
-                new IAnswer<HaeKoulutusmoduulitVastausTyyppi>() {
-            @Override
-            public HaeKoulutusmoduulitVastausTyyppi answer() throws Throwable {
-                HaeKoulutusmoduulitVastausTyyppi v = new HaeKoulutusmoduulitVastausTyyppi();
-                KoulutusmoduuliTulos tulos = new KoulutusmoduuliTulos();
-
-                /*
-                 * KOMO PARENT
-                 */
-                KoulutusmoduuliKoosteTyyppi parentKomo = new KoulutusmoduuliKoosteTyyppi();
-                parentKomo.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-                parentKomo.setKoulutuskoodiUri(kysely.getValue().getKoulutuskoodiUri());
-                parentKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
-                parentKomo.setOid("komo_parent_oid_" + getOid());
-
-                /*
-                 * KOMO CHILD
-                 */
-                KoulutusmoduuliKoosteTyyppi parentChild = new KoulutusmoduuliKoosteTyyppi();
-                parentChild.setParentOid(parentKomo.getOid());
-                parentChild.setOid("komo_child_oid_" + getOid());
-                parentChild.setKoulutuskoodiUri(kysely.getValue().getKoulutuskoodiUri());
-                parentChild.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-                parentChild.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-                parentChild.setKoulutusohjelmakoodiUri("koulutusohjelma");
-
-                tulos.setKoulutusmoduuli(parentChild);
-                v.getKoulutusmoduuliTulos().add(tulos);
-
-                return v;
-            }
-        });
+        HaeKoulutusmoduulitVastausTyyppi result = new HaeKoulutusmoduulitVastausTyyppi();
 
         /*
-         * replay
+         * KOMO PARENT
+         */
+        KoulutusmoduuliTulos parentTulos = new KoulutusmoduuliTulos();
+        KoulutusmoduuliKoosteTyyppi parentKomo = new KoulutusmoduuliKoosteTyyppi();
+        parentKomo.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        parentKomo.setKoulutuskoodiUri("uri_tutkinto_371101#1");
+        parentKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        parentKomo.setOid("komo_parent_oid_" + createNeOid());
+        parentTulos.setKoulutusmoduuli(parentKomo);
+
+        /*
+         * KOMO CHILD
+         */
+        KoulutusmoduuliTulos childTulos = new KoulutusmoduuliTulos();
+        KoulutusmoduuliKoosteTyyppi parentChild = new KoulutusmoduuliKoosteTyyppi();
+        parentChild.setParentOid(parentKomo.getOid());
+        parentChild.setOid("komo_child_oid_" + createNeOid());
+        parentChild.setKoulutuskoodiUri("uri_tutkinto_371101#1");
+        parentChild.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        parentChild.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        parentChild.setKoulutusohjelmakoodiUri("uri_koulutusohjelma_1511#1");
+        childTulos.setKoulutusmoduuli(parentChild);
+
+        result.getKoulutusmoduuliTulos().add(childTulos);
+        result.getKoulutusmoduuliTulos().add(parentTulos);
+
+        expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(isA(HaeKoulutusmoduulitKyselyTyyppi.class))).andReturn(result);
+
+        /*
+         * replays
          */
         replay(oidServiceMock);
         replay(tarjontaAdminServiceMock);
@@ -371,10 +402,6 @@ public class TarjontaKomoDataTest {
         assertEquals("uri_tutkinto_371101#1", komoChild.getValue().getKoulutuskoodiUri());
         assertEquals("uri_koulutusohjelma_1511#1", komoChild.getValue().getKoulutusohjelmakoodiUri());
         assertEquals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, komoChild.getValue().getKoulutusmoduuliTyyppi());
-
-        assertNotNull(tila.getValue().getTilaOids().get(0).getTila());
-        assertEquals(SisaltoTyyppi.KOMO, tila.getValue().getTilaOids().get(0).getSisalto());
-        assertEquals(TarjontaTila.JULKAISTU, tila.getValue().getTilaOids().get(0).getTila());
     }
 
     /**
@@ -384,12 +411,11 @@ public class TarjontaKomoDataTest {
      * @throws ExceptionMessage
      */
     @Test
-    @Ignore
     public void testGetLoadedDataInsert() throws IOException, ExceptionMessage {
         final Capture<KoulutusmoduuliKoosteTyyppi> komoParent = new Capture<KoulutusmoduuliKoosteTyyppi>();
         final Capture<KoulutusmoduuliKoosteTyyppi> komoChild = new Capture<KoulutusmoduuliKoosteTyyppi>();
 
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + getOid()).anyTimes();
+        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + createNeOid()).anyTimes();
         expect(tarjontaAdminServiceMock.lisaaKoulutusmoduuli(capture(komoParent))).andReturn(expectKoulutusmoduuliKoosteTyyppi());
         expect(tarjontaAdminServiceMock.lisaaKoulutusmoduuli(capture(komoChild))).andReturn(expectKoulutusmoduuliKoosteTyyppi());
 
@@ -398,14 +424,14 @@ public class TarjontaKomoDataTest {
 
         expect(tarjontaPublicServiceMock.haeKoulutusmoduulit(capture(kysely))).andAnswer(
                 new IAnswer<HaeKoulutusmoduulitVastausTyyppi>() {
-            @Override
-            public HaeKoulutusmoduulitVastausTyyppi answer() throws Throwable {
-                HaeKoulutusmoduulitVastausTyyppi v = new HaeKoulutusmoduulitVastausTyyppi();
-                v.getKoulutusmoduuliTulos();
+                    @Override
+                    public HaeKoulutusmoduulitVastausTyyppi answer() throws Throwable {
+                        HaeKoulutusmoduulitVastausTyyppi v = new HaeKoulutusmoduulitVastausTyyppi();
+                        v.getKoulutusmoduuliTulos();
 
-                return v;
-            }
-        });
+                        return v;
+                    }
+                });
 
         /*
          * replay
@@ -443,7 +469,7 @@ public class TarjontaKomoDataTest {
         assertEquals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, komoChild.getValue().getKoulutusmoduuliTyyppi());
     }
 
-    private int getOid() {
+    private int createNeOid() {
         return oid++;
     }
     private Predicate<ExcelMigrationDTO> searchMigrationObject = new Predicate<ExcelMigrationDTO>() {
@@ -466,7 +492,7 @@ public class TarjontaKomoDataTest {
 
     private KoulutusmoduuliKoosteTyyppi expectKoulutusmoduuliKoosteTyyppi() {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
-        tyyppi.setOid("komo_" + getOid());
+        tyyppi.setOid("komo_" + createNeOid());
         tyyppi.setKoulutuskoodiUri("uri_tutkinto_371101#1");
         return tyyppi;
     }
