@@ -685,6 +685,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
          * Check type and fetch an existing KOMO, if any.
          */
         switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break.
+            case PERUSOPETUKSEN_LISAOPETUS: //no break.
+            case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break.
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break.
             case AMMATILLINEN_PERUSKOULUTUS:
                 //fetch children or parent
@@ -734,6 +739,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
          */
         if (komoKoosteTyyppi.getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
             switch (komoKoosteTyyppi.getKoulutustyyppi()) {
+                case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
+                case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
+                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break.
+                case PERUSOPETUKSEN_LISAOPETUS: //no break.
+                case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break.
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break.
                 case AMMATILLINEN_PERUSKOULUTUS:
                     //fetch children or parent

@@ -28,18 +28,18 @@ import static org.junit.Assert.*;
  */
 public class DataReaderTest {
 
-    private Set<ExcelMigrationDTO> parnetkomosWithChildsDtos;
+    private Set<ExcelMigrationDTO> parentkomosWithChildsDtos;
     private Set<ExcelMigrationDTO> onlyParentKomoDtos;
 
     public DataReaderTest() throws IOException {
         final DataReader instance = new DataReader();
-        parnetkomosWithChildsDtos = instance.getData();
+        parentkomosWithChildsDtos = instance.getData();
         onlyParentKomoDtos = instance.getValmentavaData();
     }
 
     @Test
     public void testImportCount() throws IOException {
-        assertEquals(233, parnetkomosWithChildsDtos.size()); //total count of KOMOs
+        assertEquals(239, parentkomosWithChildsDtos.size()); //total count of KOMOs
        // assertEquals(1, onlyParentKomoDtos.size()); //total count of KOMOs
     }
 
@@ -111,7 +111,7 @@ public class DataReaderTest {
     }
 
     private ExcelMigrationDTO searchByKoulutuskoodi(String koulutuskoodi, String koulutusohjelmakoodi, String lukiolinja) {
-        for (ExcelMigrationDTO dto : parnetkomosWithChildsDtos) {
+        for (ExcelMigrationDTO dto : parentkomosWithChildsDtos) {
             if (koulutusohjelmakoodi != null && koulutuskoodi.equals(dto.getKoulutuskoodiKoodiarvo()) && koulutusohjelmakoodi.equals(dto.getKoulutusohjelmanKoodiarvo())) {
                 return dto;
             } else if (lukiolinja != null && koulutuskoodi.equals(dto.getKoulutuskoodiKoodiarvo()) && lukiolinja.equals(dto.getLukiolinjaKoodiarvo())) {

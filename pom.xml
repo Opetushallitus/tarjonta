@@ -4,7 +4,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>7.0-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
@@ -33,12 +33,17 @@
         <module>tarjonta-shared</module>
         <module>tarjonta-enricher</module>
         <module>tarjonta-service</module>
-	<module>tarjonta-app-angular</module>
+		<module>tarjonta-app-angular</module>
         <module>tarjonta-app</module>
 
     </modules>
     
     <repositories>
+    <repository>
+        <id>oph-sade-artifactory</id>
+        <name>oph-sade-artifactory-releases</name>
+        <url>http://penaali.hard.ware.fi/artifactory/libs-3rd-party</url>
+    </repository>
        <repository>
             <id>oph-sade-artifactory-snapshots</id>
             <url>http://penaali.hard.ware.fi/artifactory/oph-sade-snapshot-local</url>
@@ -51,5 +56,13 @@
             <url>http://penaali.hard.ware.fi/artifactory/oph-sade-release-local</url>
         </repository>
     </repositories>
+<pluginRepositories>
+<pluginRepository>
+<id>oph-sade-artifactory</id>
+        <name>oph-sade-artifactory-releases</name>
+        <url>http://penaali.hard.ware.fi/artifactory/libs-3rd-party</url>
+
+</pluginRepository>
+</pluginRepositories>
 
 </project>

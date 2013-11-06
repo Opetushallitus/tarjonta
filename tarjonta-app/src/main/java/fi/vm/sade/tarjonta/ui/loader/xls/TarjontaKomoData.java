@@ -138,7 +138,6 @@ public class TarjontaKomoData {
         dbChildKomos = new HashMap<String, KoulutusmoduuliKoosteTyyppi>();//<lukiolinja/koulutuohjelma, child>
 
         //separate imported flat data to child and parent objects
-
         separateExcelKomos();
         separateDbKomos();
 
@@ -262,6 +261,11 @@ public class TarjontaKomoData {
 
         KoulutusmoduuliKoosteTyyppi koChildKomo = new KoulutusmoduuliKoosteTyyppi();
         switch (dto.getKoulutusateTyyppi()) {
+            case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
+            case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, has thesame data structure as amm
             case AMMATILLINEN_PERUSKOULUTUS:
                 final String koulutusohjelmanKoodiarvo = dto.getKoulutusohjelmanKoodiarvo();
@@ -295,6 +299,11 @@ public class TarjontaKomoData {
         koChildKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         //other:
         switch (dto.getKoulutusateTyyppi()) {
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case PERUSOPETUKSEN_LISAOPETUS:
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                 break;
             default:
@@ -322,6 +331,11 @@ public class TarjontaKomoData {
         tutkinto.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURI.KOODISTO_KOULUTUSASTE_URI));
 
         switch (dto.getKoulutusateTyyppi()) {
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case PERUSOPETUKSEN_LISAOPETUS:
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                 break;
             default:
@@ -329,7 +343,6 @@ public class TarjontaKomoData {
                 tutkinto.setLaajuusarvoUri(dto.getLaajuusUri()); //120, not a koodisto value
                 break;
         }
-
 
         tutkinto.setKoulutustyyppi(dto.getKoulutusateTyyppi());
         /*
@@ -434,10 +447,14 @@ public class TarjontaKomoData {
                             Preconditions.checkNotNull(dbParentOid, "Parent OID cannot be null.");
                             //update childrend
                             switch (excelChildKomo.getKoulutustyyppi()) {
+                                case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
+                                case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
+                                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+                                case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+                                case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, same data structure as the amm.
                                 case AMMATILLINEN_PERUSKOULUTUS:
                                     if (dbParentOid != null && dbChildKomos.containsKey(koulutusohjelmakoodiUri)) {
-                                        
                                         //overwrite and add target to parent
                                         updateRelations(excelChildKomo, dbChildKomos.get(koulutusohjelmakoodiUri).getOid(), dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri);
                                         tarjontaAdminService.paivitaKoulutusmoduuli(excelChildKomo);
@@ -447,6 +464,7 @@ public class TarjontaKomoData {
                                         newKomoOids.add(excelChildKomo.getOid());
                                     }
                                     break;
+                               
                                 case LUKIOKOULUTUS:
                                     //log.debug("LUKIOKOULUTUS {}", lukiolinjaUri);
 
@@ -484,7 +502,11 @@ public class TarjontaKomoData {
             geneerinenTilaTyyppi.setTila(TarjontaTila.JULKAISTU);
             paivitaTilaTyyppi.getTilaOids().add(geneerinenTilaTyyppi);
         }
-        tarjontaAdminService.paivitaTilat(paivitaTilaTyyppi);
+
+        //only publish inserted oids
+        if (!paivitaTilaTyyppi.getTilaOids().isEmpty()) {
+            tarjontaAdminService.paivitaTilat(paivitaTilaTyyppi);
+        }
     }
 
     private void publishKomo(final String oid) {
@@ -508,7 +530,11 @@ public class TarjontaKomoData {
                     log.info("Processing DB KOMOs... {}", count);
                 }
                 KoulutusmoduuliKoosteTyyppi kkt = t.getKoulutusmoduuli();
+                Preconditions.checkNotNull(kkt, "KoulutusmoduuliKoosteTyyppi cannot be null.");
+
                 final String koulutuskoodiUri = kkt.getKoulutuskoodiUri();
+                Preconditions.checkNotNull(koulutuskoodiUri, "koulutuskoodi URI cannot be null.");
+
                 switch (kkt.getKoulutusmoduuliTyyppi()) {
                     case TUTKINTO:
                         if (!dbParentKomos.containsKey(koulutuskoodiUri)) {
@@ -528,7 +554,12 @@ public class TarjontaKomoData {
                         break;
                     case TUTKINTO_OHJELMA:
                         switch (kkt.getKoulutustyyppi()) {
-                            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break
+                            case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
+                            case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
+                            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+                            case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+                            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
+                            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, has the same data structure as amm
                             case AMMATILLINEN_PERUSKOULUTUS:
                                 final String koulutusOhjelmaUri = kkt.getKoulutusohjelmakoodiUri();
                                 dbChildKomos.put(koulutusOhjelmaUri, kkt);

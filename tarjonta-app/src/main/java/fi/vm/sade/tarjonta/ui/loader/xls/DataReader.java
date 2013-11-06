@@ -71,8 +71,6 @@ public class DataReader {
         mergedData = new HashSet<ExcelMigrationDTO>();
         valmentavaData = new HashSet<ExcelMigrationDTO>();
 
-
-
         /* 
          * LUKIO : data conversion to BASE DTO 
          */
@@ -122,6 +120,11 @@ public class DataReader {
                     row.setLukiolinjaKoodiarvo(koulutusohjelmaKoodi);
                     checkTutkintonimike(row, mapTutkintonimikes, koulutusohjelmaKoodi);
                     break;
+                case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                case PERUSOPETUKSEN_LISAOPETUS:
+                case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                     row.setKoulutusohjelmanKoodiarvo(koulutusohjelmaKoodi);
                     break;
@@ -184,7 +187,6 @@ public class DataReader {
         RelaatioMap mapAmm = new RelaatioMap(readerForAmmatillinen.read(getFilePath(GenericRow.FILENAME_AMMATILLINEN), false), true);
         final KomoExcelReader<TutkintonimikeRow> readerForAmmNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, TutkintonimikeRow.COLUMNS_AMMATILLINEN, DEFAULT_READ_LIMIT_ROWS_MIN);
         TutkintonimikeMap mapAmmTukintonimike = new TutkintonimikeMap(readerForAmmNimike.read(getFilePath(TutkintonimikeRow.FILENAME_AMMATILLINEN), true));
-
 
         KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset = createAmmKoulutusohjelmanKuvauksetMap();
         addKoulutusohjelmaRelatedData(mapAmm, mapAmmTukintonimike, koulutusohjelmanKuvaukset);
