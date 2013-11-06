@@ -380,6 +380,8 @@ table.tarjontaForm tr > th {
 	vertical-align: top;
 	text-align: right;
 	width:20%;
+	min-width:250px;
+	max-width:300px;
 	font-weight:normal;
 	padding-bottom:10px;
 }
