@@ -531,7 +531,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             } else if (SecurityContextHolder.getContext().getAuthentication().getName() != null) {
                 //should be an user OID, not name.
                 log.info("User oid  : {}", SecurityContextHolder.getContext().getAuthentication().getName());
-                SecurityContextHolder.getContext().getAuthentication().getName();
+                return SecurityContextHolder.getContext().getAuthentication().getName();
             }
         }
         return null;
