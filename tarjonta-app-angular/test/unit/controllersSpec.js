@@ -36,6 +36,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('TarjontaConverter'));
     beforeEach(module('imageupload'));
+    beforeEach(module('TarjontaCache'));
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('config'));
     var $scope, $modalInstance;
