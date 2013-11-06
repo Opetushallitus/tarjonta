@@ -43,6 +43,7 @@ import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.events.Event;
 import fi.vm.sade.events.EventSender;
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
@@ -67,6 +68,7 @@ import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import javax.persistence.Query;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -370,7 +372,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             case KOMO:
                 JPAUpdateClause komoUpdate = new JPAUpdateClause(em, QKoulutusmoduuli.koulutusmoduuli);
                 komoUpdate.where(QKoulutusmoduuli.koulutusmoduuli.oid.in(oids))
-                        .set(QKoulutusmoduuli.koulutusmoduuli.tila, toStatus) 
+                        .set(QKoulutusmoduuli.koulutusmoduuli.tila, toStatus)
                         .set(QKoulutusmoduuli.koulutusmoduuli.updated, lastUpdatedDate);
                 komoUpdate.execute();
                 break;
@@ -520,7 +522,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
     public String getUserOid() {
         if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-            return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            final Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (principal != null && principal instanceof SadeUserDetailsWrapper) {
+                SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
+                return sadeUser.getPassword(); //should be OID
+            } else if (principal != null && principal instanceof String) {
+                return (String) principal;
+            } else if (SecurityContextHolder.getContext().getAuthentication().getName() != null) {
+                SecurityContextHolder.getContext().getAuthentication().getName();
+            }
         }
         return null;
     }
