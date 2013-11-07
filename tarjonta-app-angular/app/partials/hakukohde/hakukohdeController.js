@@ -22,13 +22,31 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
 
+        if ($route.current.locals.hakukohdex.result === undefined) {
 
-        $scope.model = {
-            collapse: {
-                model : true
-            },
-            hakukohde : $route.current.locals.hakukohdex
+            $scope.model = {
+                collapse: {
+                    model : true
+                },
+                hakukohde : {}
+            }
+
+
+            $scope.model.hakukohde.result = $route.current.locals.hakukohdex;
+
+        } else {
+
+            $scope.model = {
+                collapse: {
+                    model : true
+                },
+                hakukohde : $route.current.locals.hakukohdex
+            }
+
         }
+
+
+
 
 
         $scope.hakukohdex = $route.current.locals.hakukohdex;
