@@ -160,9 +160,19 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent implements Prop
        
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
-        if (!isYksilollistettyPerusopetus) {
+        if (!isYksilollistettyPerusopetus && !isKoulutusSortOfErityisopetus()) {
             liitteenTyyppi.getField().removeItem(KoodistoURI.KOODI_TODISTUKSET_URI);
         }
+    }
+    
+    private boolean isKoulutusSortOfErityisopetus() {
+        KoulutusasteTyyppi koulutustyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        return koulutustyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
     }
 
     private String T(String key) {

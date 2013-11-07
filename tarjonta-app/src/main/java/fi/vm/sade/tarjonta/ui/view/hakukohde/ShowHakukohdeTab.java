@@ -584,51 +584,65 @@ public class ShowHakukohdeTab extends VerticalLayout {
         VerticalLayout hdrLayout = new VerticalLayout();
         hdrLayout.setMargin(true);
         //if (checkHaunAlkaminen()) {
-            hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                    new ClickListener() {
-                private static final long serialVersionUID = 5019806363620874205L;
-
-                @Override
-                public void buttonClick(ClickEvent clickEvent) {
-                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                            presenter.getModel().getHakukohde().getOid(), null, null);
-                }
-            }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+        hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+            
+            @Override
+            public void buttonClick(ClickEvent clickEvent) {
+                presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                        presenter.getModel().getHakukohde().getOid(), null, null);
+            }
+        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
         //}
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
-        addItemToGrid(grid, "hakukohdeNimi", uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null));
-        addItemToGrid(grid, "yhteishaunKoulutustunnus", uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo());
+        KoulutusasteTyyppi kTyyppi = presenter.getModel().getHakukohde().getKoulutusasteTyyppi();
+        String hakukohdeNimiStr = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ?  presenter.getModel().getHakukohde().getEditedHakukohdeNimi() : uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null);
+        addItemToGrid(grid, "hakukohdeNimi", hakukohdeNimiStr);
+        String yhTunnus = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ? "-" :  uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo();
+        addItemToGrid(grid, "yhteishaunKoulutustunnus", yhTunnus);
         addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuViewModel()));
         addItemToGrid(grid, "hakuaika", getHakuaikaStr());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
         if (checkLukioKoulutus()) {
-
+            
             addItemToGrid(grid, "alinHyvaksyttyvaKeskiarvo", presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo());
             addItemToGrid(grid, "painotettavatOppiaineet", getHakukohdeOppiaineet());
-
+            
         }
         //addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid, "lisatietojaHakemisesta", getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
-        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
-        addItemToGrid(grid, "liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm() == null ? null
-                : sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));
-        addItemToGrid(grid, "liitteidenToimitusOsoite", getHakukohdeLiiteOsoite(presenter.getModel().getHakukohde()));
-        if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
-            Link sahkoinenToimOsoiteLink = new Link(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite(), new ExternalResource(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite()));
-            sahkoinenToimOsoiteLink.setTargetName("_blank");
-            addItemToGrid(grid, "sahkoinenToimOsoite", sahkoinenToimOsoiteLink);
+        if (!isHakukohdeNivelvaihe()) {
+            SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+            addItemToGrid(grid, "liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm() == null ? null
+                    : sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));
+            addItemToGrid(grid, "liitteidenToimitusOsoite", getHakukohdeLiiteOsoite(presenter.getModel().getHakukohde()));
+            if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
+                Link sahkoinenToimOsoiteLink = new Link(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite(), new ExternalResource(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite()));
+                sahkoinenToimOsoiteLink.setTargetName("_blank");
+                addItemToGrid(grid, "sahkoinenToimOsoite", sahkoinenToimOsoiteLink);
+            }
         }
         //grid.setColumnExpandRatio(0,0.2f);
         grid.setColumnExpandRatio(1, 1f);
-
+        
         hdrLayout.addComponent(grid);
         hdrLayout.setComponentAlignment(grid, Alignment.TOP_LEFT);
         layout.addComponent(hdrLayout);
-
+        
     }
+        
+        private boolean isHakukohdeNivelvaihe() {
+            KoulutusasteTyyppi kTyyppi = presenter.getModel().getHakukohde().getKoulutusasteTyyppi();
+            return kTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                    || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                    || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                    || kTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
+                    || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+        }
 
     private String getHakukohdeOppiaineet() {
         StringBuilder sb = new StringBuilder();

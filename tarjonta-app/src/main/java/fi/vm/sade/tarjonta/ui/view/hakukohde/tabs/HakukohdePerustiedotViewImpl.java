@@ -92,7 +92,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
           validateHakukohdeHakuaika(hakukohde);  
         } 
         
-        if (!formView.isSahkoinenToimOsoiteChecked()) {
+        if (presenter.isKoulutusNivelvaihe() || !formView.isSahkoinenToimOsoiteChecked()) {
             hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
         }
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)

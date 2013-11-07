@@ -45,6 +45,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<ValintakoeViewModel> valintaKokees;
     private List<PainotettavaOppiaineViewModel> painotettavat;
     private HakukohdeNameUriModel selectedHakukohdeNimi; //combobox
+    private String editedHakukohdeNimi; //text field
     private String alinHyvaksyttavaKeskiarvo;
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
@@ -85,6 +86,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         setAlinHyvaksyttavaKeskiarvo(null);
         setViimeisinPaivittaja(null);
         setViimeisinPaivitysPvm(null);
+        setEditedHakukohdeNimi(null);
 
         /*
          * Not null values.
@@ -163,6 +165,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         eb.append(alinHyvaksyttavaKeskiarvo, other.alinHyvaksyttavaKeskiarvo);
         eb.append(viimeisinPaivittaja, other.viimeisinPaivittaja);
         eb.append(viimeisinPaivitysPvm, other.viimeisinPaivitysPvm);
+        eb.append(editedHakukohdeNimi, other.editedHakukohdeNimi);
         return eb.isEquals();
     }
 
@@ -200,7 +203,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         .append(viimeisinPaivittaja)
         .append(viimeisinPaivitysPvm)
         .append(soraKuvaus)
-        .append(valintaPerusteidenKuvaus);
+        .append(valintaPerusteidenKuvaus)
+        .append(editedHakukohdeNimi);
         
         /*if (lisatiedot != null) {
             for (KielikaannosViewModel curKaannos : lisatiedot) {
@@ -256,7 +260,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     /**
      * @return the hakukohdeNimi
      */
-    public String getHakukohdeNimi() {
+    public String getHakukohdeNimi() { 
         return selectedHakukohdeNimi.getKoodiUriWithVersion();
     }
 
@@ -581,5 +585,13 @@ public class HakukohdeViewModel extends BaseUIViewModel {
      */
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    public String getEditedHakukohdeNimi() {
+        return editedHakukohdeNimi;
+    }
+
+    public void setEditedHakukohdeNimi(String editedHakukohdeNimi) {
+        this.editedHakukohdeNimi = editedHakukohdeNimi;
     }
 }

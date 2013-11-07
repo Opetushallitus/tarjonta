@@ -26,11 +26,12 @@ public class KoulutusIndexEntity {
     private String koulutuslaji;
 
     @QueryProjection
-    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri) {
+    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri, String koulutusTyyppi) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimusUri;
+        this.koulutusTyyppi = koulutusTyyppi;
     }
 
     @QueryProjection

@@ -230,6 +230,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             model.setOpintojenLaajuusTot("");
             model.setOpintojenLaajuusyksikkoTot("");
         }
+        
         isValmentavaOpetus = koulutusModel.getKoulutuksenTyyppi() != null 
                 && koulutusModel.getKoulutuksenTyyppi().getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
         

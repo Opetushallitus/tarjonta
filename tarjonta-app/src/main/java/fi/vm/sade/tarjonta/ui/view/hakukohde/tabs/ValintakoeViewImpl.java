@@ -238,7 +238,7 @@ public class ValintakoeViewImpl extends VerticalLayout {
 
         //set data to ui components
         final List<ValintakoeViewModel> valintaKokees = presenter.getModel().getHakukohde().getValintaKokees();
-
+        
         switch (koulutustyyppi) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 if (ammValintakoeTable == null) {
@@ -249,6 +249,46 @@ public class ValintakoeViewImpl extends VerticalLayout {
                 reloadAmmatillinenValintakoeKoeTable(valintaKokees);
                 break;
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                if (ammValintakoeTable == null) {
+                    //data table in a window dialog
+                    buildToinenAsteLayout(this);
+                    buildAmmatillinenValintakoeKoeTable(this);
+                }
+                reloadAmmatillinenValintakoeKoeTable(valintaKokees);
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
                 if (ammValintakoeTable == null) {
                     //data table in a window dialog
                     buildToinenAsteLayout(this);

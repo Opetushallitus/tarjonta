@@ -119,6 +119,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("selectedHakukohdeNimi")
     @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
     private ComboBox hakukohteenNimiCombo;
+    @PropertyId("editedHakukohdeNimi")
+    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
+    private TextField hakukohteenNimiText;
 //    @PropertyId("tunnisteKoodi")
     private TextField tunnisteKoodiText;
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
@@ -234,23 +237,25 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public void initForm() {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-        hakukohteenNimiCombo.setImmediate(true);
-        hakukohteenNimiCombo.setRequired(true);
-        hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
-            private static final long serialVersionUID = -382717228031608542L;
-
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
-                    HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
-                    setTunnisteKoodi(selectedHakukohde.getHakukohdeArvo());
-                } else {
-                    LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
-                            (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
+        if (!KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(model.getKoulutusasteTyyppi())) {
+            hakukohteenNimiCombo.setImmediate(true);
+            hakukohteenNimiCombo.setRequired(true);
+            hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
+                private static final long serialVersionUID = -382717228031608542L;
+                
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
+                        HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
+                        setTunnisteKoodi(selectedHakukohde.getHakukohdeArvo());
+                    } else {
+                        LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
+                                (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
+                    }
                 }
-            }
-        });
-
+            });
+        }
+        
         if (presenter != null && presenter.getModel() != null && model != null) {
             selectHakuAika(model.getHakuaika(), model.getHakuViewModel());
             setCustomHakuaika(this.doesHakukohdeNeedCustomhakuaika(), (model.getHakuaikaAlkuPvm() != null) && (model.getHakuaikaLoppuPvm() != null));//hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null)
@@ -260,8 +265,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
     
     private boolean doesHakukohdeNeedCustomhakuaika() {
+        KoulutusasteTyyppi kTyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
         boolean isErityisopetus = (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)) 
-                || presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);        
+                || kTyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);        
         boolean isLisahaku = hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null);; 
         return isLisahaku || isErityisopetus;
     }
@@ -273,11 +280,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         
-        if (presenter.getModel().getSelectedKoulutukset() != null
+        /*if (presenter.getModel().getSelectedKoulutukset() != null
                 && !presenter.getModel().getSelectedKoulutukset().isEmpty()
-                && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
+                && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio*/
             pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
-        }
+        //}
         
 
         //Build main item container
@@ -286,56 +293,67 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
 
-        if (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)) {
+        if (doesHakukohdeNeedValintaperusteField()) {
             mainLayout.addComponent(buildBottomAreaValintaperusteTab());
         }
 
         addComponent(mainLayout);
     }
+    
+    private boolean doesHakukohdeNeedValintaperusteField() {
+        return (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
+                || presenter.isKoulutusNivelvaihe();
+    }
+    
+
 
     private GridLayout buildGrid() {
         Preconditions.checkNotNull(koulutusasteTyyppi, "KoulutusasteTyyppi enum cannot be null.");
-
+        
         itemContainer = new GridLayout(2, 1);
         itemContainer.setWidth(UiConstant.PCT100);
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
-
+        
         addItemToGrid("", buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
         hakuAikaLabel = addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaSelector());
-
+        
         //OVT-4671, agreed that hakukelpoisuus vaatimus is removed from form.
         //addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
-
+        
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText", buildValinnoissaKaytettavatAloitusPaikat());
-
+        
         if (this.koulutusasteTyyppi == KoulutusasteTyyppi.LUKIOKOULUTUS) {
             addItemToGrid("PerustiedotView.alinHyvaksyttavaKeskiarvoText", buildAlinHyvaksyttavaKeskiarvo());
             addItemToGrid("PerustiedotView.painotettavatOppiaineet", buildPainotettavatOppiaineet());
         }
-
+        
         //addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
-        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildOsoiteSelectLabel());
-        addItemToGrid("", buildOsoiteSelect());
-        addItemToGrid("", buildLiitteidenToimitusOsoite());
-        addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
-        addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
-        addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
-
+        if (!presenter.isKoulutusNivelvaihe()) {
+            addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildOsoiteSelectLabel());
+            addItemToGrid("", buildOsoiteSelect());
+            addItemToGrid("", buildLiitteidenToimitusOsoite());
+            addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
+            addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
+            addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
+                
+            checkCheckboxes();
+            
+            if (muuOsoite) {
+                enableOrDeEnableOsoite(true);
+            } else {
+                enableOrDeEnableOsoite(false);
+            }
+        } else {
+            setLiitteidenToimOsoite();
+        }
+        
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
-
-        checkCheckboxes();
-
-        if (muuOsoite) {
-            enableOrDeEnableOsoite(true);
-        } else {
-            enableOrDeEnableOsoite(false);
-        }
-
+        
         return itemContainer;
     }
 
@@ -1091,7 +1109,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             //the same pohjakoulutus
             if (presenter.getModel().getSelectedKoulutukset() != null
                     && !presenter.getModel().getSelectedKoulutukset().isEmpty()
-                    && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
+                    && !presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
                 //String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
                 Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus, KoodistoURI.KOODISTO_HAKUKOHDE_URI, false, SuhteenTyyppiType.SISALTYY);
                 hakukohdeKoodis.retainAll(pkHakukohdeKoodis);
@@ -1115,16 +1133,22 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      *
      */
     private HorizontalLayout buildHakukode() {
+        //Tänne vaihtoehtoisesti tekstikenttä!
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-        hakukohteenNimiCombo = buildHaku();
-        hakukohteenNimiCombo.setRequired(true);
-        hl.addComponent(hakukohteenNimiCombo);
-        tunnisteKoodiText = UiUtil.textField(hl, "", T("PerustiedotView.tunnistekoodi.prompt"), true);
-        tunnisteKoodiText.setEnabled(false);
+        if (KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(model.getKoulutusasteTyyppi())) {
+            this.hakukohteenNimiText = UiUtil.textField(hl);
+        } else {
+        
+            hakukohteenNimiCombo = buildHaku();
+            hakukohteenNimiCombo.setRequired(true);
+            hl.addComponent(hakukohteenNimiCombo);
+            tunnisteKoodiText = UiUtil.textField(hl, "", T("PerustiedotView.tunnistekoodi.prompt"), true);
+            tunnisteKoodiText.setEnabled(false);
 
-        hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_LEFT);
-//        hl.setExpandRatio(tunnisteKoodiText, 5l);
-        hl.setComponentAlignment(tunnisteKoodiText, Alignment.TOP_LEFT);
+            hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_LEFT);
+            //        hl.setExpandRatio(tunnisteKoodiText, 5l);
+            hl.setComponentAlignment(tunnisteKoodiText, Alignment.TOP_LEFT);
+        }
         return hl;
     }
 

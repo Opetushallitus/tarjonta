@@ -122,7 +122,18 @@ public class KoodistoURI {
     public static String KOODI_KOHDEJOUKKO_VALMENTAVA_URI;
     public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI; //
     public static String KOODI_POHJAKOULUTUS_PERUSKOULU_URI;
+    public static String KOODI_KOHDEJOUKKO_VALMISTAVA_URI;
+    public static String KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI;
     
+    @Value("${koodisto-uris.vapaaSivistys:haunkohdejoukko_18#1}")
+    public void setKoodiKohdejoukkoVapaaSivistysUri(String uri) {
+        KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.valmistavaOpetus:haunkohdejoukko_17#1}")
+    public void setKoodiKohdejoukkoValmistavaUri(String uri) {
+        KOODI_KOHDEJOUKKO_VALMISTAVA_URI = uri;
+    }
 
     @Value("${koodisto-uris.pohjakoulutusPeruskoulu:pohjakoulutusvaatimustoinenaste_pk#1}")
     public void setKoodiPohjakoulutusperuskouluUri(String uri) {

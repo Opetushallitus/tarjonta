@@ -362,7 +362,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             throw new RuntimeException("Data validation failed - koulutusaste numeric code is required!");
         }
 
-        if (koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste()) && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
+        if ((koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste()) 
+                || koulutusaste.equals(KoulutusasteType.TUNTEMATON.getKoulutusaste())
+                || koulutusaste.equals(KoulutusasteType.PERUSOPETUKSEN_LISAOPETUS)) 
+             && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
             throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
         } else if (koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste())) {
             //Lukio tutkinto do not have koulutusohjema data.

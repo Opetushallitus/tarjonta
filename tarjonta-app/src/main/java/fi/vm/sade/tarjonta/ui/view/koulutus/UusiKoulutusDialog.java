@@ -133,7 +133,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                 if (koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer
                         && (((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri())
                                 || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri())
-                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri()))
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                                || ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).getKoodiType().getKoodiUri().contains(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri()))
                         && pohjakoulutusvaatimusCombo.getValue() == null) {
                     errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
                     return;
@@ -155,7 +160,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                             getParent().removeWindow(UusiKoulutusDialog.this);
                         } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) 
                                 || contains(type, Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS) 
-                                || contains(type, Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS)) {
+                                || contains(type, Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS)
+                                || contains(type, Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS)
+                                || contains(type, Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS)
+                                || contains(type, Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS)
+                                || contains(type, Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS)
+                                || contains(type, Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
                             presenter.showKoulutusEditView(selectedOrgs.values(), ((KoodiContainer) pohjakoulutusvaatimusCombo.getValue()).getKoodiType().getKoodiUri(), type);
                             logger.info("ammatillinen peruskoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);
@@ -255,7 +265,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         
         boolean isEnabled = koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
                 || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()) 
-                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
+                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())
+                || koodiUri.contains(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS.getKoulutustyyppiUri())
+                || koodiUri.contains(Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                || koodiUri.contains(Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                || koodiUri.contains(Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
+                || koodiUri.contains(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri());
         
         pohjakoulutusvaatimusLbl.setVisible(isEnabled);
         pohjakoulutusvaatimusCombo.setVisible(isEnabled);

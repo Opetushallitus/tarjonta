@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  * Convert "Hakukohde" to {@link SolrInputDocument} so that it can be indexed.
@@ -77,17 +78,19 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             return Collections.EMPTY_LIST;
         }
         
+        List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
+        
         add(hakukohdeDoc, OID, hakukohde.getOid());
         IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHakukausiUri(), koodiService);
         add(hakukohdeDoc, VUOSI_KOODI, hakukohde.getHakukausiVuosi());
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHakutapaUri());
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(hakukohdeDoc, TILA, hakukohde.getTila());
-        addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi(), hakukohde.getId());
+        addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi(), hakukohde.getId(), koulutuses);
         addHakuTiedot(hakukohdeDoc, getHakuajat(hakukohde.getHakuId()));
         addTekstihaku(hakukohdeDoc);
         add(hakukohdeDoc, HAUN_OID, hakukohde.getHakuOid());
-        List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
+        
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
@@ -158,15 +161,15 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         add(hakukohdeDoc, HAUN_PAATTYMISPVM, getEndDateStr(hakuajat));
     }
 
-    private void addNimitiedot(SolrInputDocument doc, String hakukohdeNimi, long id) {
+    private void addNimitiedot(SolrInputDocument doc, String hakukohdeNimi, long id, List<KoulutusIndexEntity> koulutuses) {
         if (hakukohdeNimi == null) {
             // kk? nimi monikielisenä tekstinä
             MonikielinenTeksti nimi = indexerDao.getNimiForHakukohde(id);
             for(TekstiKaannos tekstikaannos: nimi.getTekstis()) {
                 Preconditions.checkNotNull(koodiService);
                 KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
-
-
+                
+                
                 if(type!=null) {
                     add(doc, NIMET, tekstikaannos.getArvo());
                     add(doc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
@@ -176,18 +179,29 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             
             return;
         }
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
-
-        if (koodi != null) {
-            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-            add(doc, HAKUKOHTEEN_NIMI_FI, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-            add(doc, HAKUKOHTEEN_NIMI_SV, metadata.getNimi());
-            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-            add(doc, HAKUKOHTEEN_NIMI_EN, metadata.getNimi());
+       
+        //Vapaan sivistyon koulutus has an edited name, not a koodiuri
+        if (!koulutuses.isEmpty() 
+                && !koulutuses.get(0).getKoulutusTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.value())) {
+            
+            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
+            
+            if (koodi != null) {
+                KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+                add(doc, HAKUKOHTEEN_NIMI_FI, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+                add(doc, HAKUKOHTEEN_NIMI_SV, metadata.getNimi());
+                metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+                add(doc, HAKUKOHTEEN_NIMI_EN, metadata.getNimi());
+                add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
+            }
+        } else {
+            add(doc, HAKUKOHTEEN_NIMI_FI, hakukohdeNimi);
+            add(doc, HAKUKOHTEEN_NIMI_SV, hakukohdeNimi);
+            add(doc, HAKUKOHTEEN_NIMI_EN, hakukohdeNimi);
             add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
         }
-
+        
     }
 
     private void addHakutapaTiedot(SolrInputDocument doc, String hakutapaUri) {

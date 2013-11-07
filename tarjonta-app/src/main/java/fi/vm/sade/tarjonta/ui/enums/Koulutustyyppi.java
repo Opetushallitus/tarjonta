@@ -26,7 +26,12 @@ public enum Koulutustyyppi {
     TOINEN_ASTE_AMMATILLINEN_KOULUTUS("koulutustyyppi_1"),
     KORKEAKOULU("koulutustyyppi_3"),
     TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS("koulutustyyppi_4"),
-    TOINEN_ASTE_VALMENTAVA_KOULUTUS("koulutustyyppi_5");
+    TOINEN_ASTE_VALMENTAVA_KOULUTUS("koulutustyyppi_5"),
+    PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"),
+    AMMATILLISEEN_OHJAAVA_KOULUTUS("koulutustyyppi_7"),
+    MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS("koulutustyyppi_8"),
+    MAMU_LUKIOON_OHJAAVA_KOULUTUS("koulutustyyppi_9"),
+    VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10");
     private String koulutustyyppiUri;
 
     Koulutustyyppi(String koulutustyyppiUri) {

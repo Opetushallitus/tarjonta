@@ -116,19 +116,22 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             hl.setWidth("100%");
             hl.setSizeFull();
             if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
-                Label hakukohdeNameLbl = new Label(uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi()));
+                HakukohdeViewModel hkVM = presenter.getModel().getHakukohde();
+                String hkLabelStr = hkVM.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) 
+                        ? hkVM.getEditedHakukohdeNimi() : uiHelper.getKoodiNimi(hkVM.getHakukohdeNimi());
+                Label hakukohdeNameLbl = new Label(hkLabelStr);
                 hakukohdeNameLbl.setStyleName(Oph.LABEL_H1);
 
                 StringBuilder tilaSb = new StringBuilder();
                 tilaSb.append("( ");
-                tilaSb.append(presenter.getModel().getHakukohde().getTila().value());
+                tilaSb.append(hkVM.getTila().value());
                 tilaSb.append(" ,tallennettu ");
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-                tilaSb.append(sdf.format(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm()));
+                tilaSb.append(sdf.format(hkVM.getViimeisinPaivitysPvm()));
                 tilaSb.append(", ");
 
 
-                tilaSb.append(tryGetViimPaivittaja(presenter.getModel().getHakukohde().getViimeisinPaivittaja()));
+                tilaSb.append(tryGetViimPaivittaja(hkVM.getViimeisinPaivittaja()));
                 tilaSb.append(")");
                 Label tilaLbl = new Label(tilaSb.toString());
 
@@ -334,7 +337,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
           validateHakukohdeHakuaika(hakukohde);  
         } 
-        if (!perustiedot.isSahkoinenToimOsoiteChecked()) {
+        if (presenter.isKoulutusNivelvaihe() || !perustiedot.isSahkoinenToimOsoiteChecked()) {
             hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
         }
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)

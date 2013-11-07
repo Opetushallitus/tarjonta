@@ -182,11 +182,25 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
         this.setMargin(true);
         this.addComponent(buildGridLayout());
 
-        if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+        if (isKoulutusSortOfAmmatillinen()) {
             this.addComponent(buildSaveCancelButtonLayout());
         }
 
         initForm();
+    }
+    
+    private boolean isKoulutusSortOfAmmatillinen() {
+        return (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+               || isKoulutusSortOfErityisopetus());
+    }
+    
+    private boolean isKoulutusSortOfErityisopetus() {
+        return koulutustyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)
+                || koulutustyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
     }
 
     private String T(String key) {
@@ -404,7 +418,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
         
         boolean isYksilollistettyPerusopetus = pkVaatimus != null 
                 && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI);
-        if (!isYksilollistettyPerusopetus) {
+        if (!isYksilollistettyPerusopetus && !isKoulutusSortOfErityisopetus()) {
             valintakoeTyyppi.getField().removeItem(KoodistoURI.KOODI_HAASTATTELU_URI);
         }
     }

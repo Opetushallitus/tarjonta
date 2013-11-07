@@ -37,6 +37,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -175,6 +176,21 @@ public class KoulutusResultRow extends HorizontalLayout {
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case PERUSOPETUKSEN_LISAOPETUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case VAPAAN_SIVISTYSTYON_KOULUTUS:
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
                 case LUKIOKOULUTUS:
@@ -352,6 +368,21 @@ public class KoulutusResultRow extends HorizontalLayout {
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;
             case LUKIOKOULUTUS:

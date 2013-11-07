@@ -61,6 +61,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -162,7 +163,7 @@ public class TarjontaUIHelper {
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getKoulutusOids().addAll(komotoOids);
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
-
+        
         List<String> sourceKoodiUris = new ArrayList<String>();
         for (KoulutusPerustieto koulutus : vastaus.getKoulutukset()) {
             switch (koulutus.getKoulutustyyppi()) {
@@ -172,12 +173,26 @@ public class TarjontaUIHelper {
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                     sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
                     break;
+                case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
+                case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
+                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
+                case PERUSOPETUKSEN_LISAOPETUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
+                case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    break;
                 case LUKIOKOULUTUS:
                     sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
                     break;
 
                 case AMMATTIKORKEAKOULUTUS:
-                case PERUSOPETUKSEN_LISAOPETUS:
                 case YLIOPISTOKOULUTUS:
                 default:
                     LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutus);

@@ -162,7 +162,13 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
 
         AbstractLayout headerLayout = null;
 
-        if (koulutusastetyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+        if (koulutusastetyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)
+                || koulutusastetyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)) {
             headerLayout = buildHeaderLayout();
         }
 
