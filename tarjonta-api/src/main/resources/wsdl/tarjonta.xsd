@@ -148,6 +148,11 @@
                         maxOccurs="1"
                         minOccurs="0"/>
 
+            <xs:element name="kaksoisTutkinto"
+                        type="xs:boolean"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+
             <xs:element name="hakukohdeKoulutukses"
                         type="tns:KoulutusKoosteTyyppi"
                         minOccurs="0"

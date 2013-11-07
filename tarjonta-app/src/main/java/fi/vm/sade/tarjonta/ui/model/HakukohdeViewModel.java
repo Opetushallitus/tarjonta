@@ -49,6 +49,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    private boolean kaksoisTutkinto;
     private Set<String> opetusKielet;
     
     private boolean customHakuaikaEnabled;
@@ -581,5 +582,13 @@ public class HakukohdeViewModel extends BaseUIViewModel {
      */
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    public boolean isKaksoisTutkinto() {
+        return kaksoisTutkinto;
+    }
+
+    public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
+        this.kaksoisTutkinto = kaksoisTutkinto;
     }
 }
