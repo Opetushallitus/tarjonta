@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
@@ -119,14 +120,18 @@ public class ShowHakukohdeTab extends VerticalLayout {
     }
 
     private void buildKuvauksetLayout(VerticalLayout layout) {
-    	
-        if (!presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS)
-    		&& !presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
+        
+        //tyypit joille valintaperustekuvaukset näytetään hakukohteessa...
+        final List<KoulutusasteTyyppi> showValintaperusteetForTypes=Lists.newArrayList(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, KoulutusasteTyyppi.YLIOPISTOKOULUTUS, KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS );
+
+        //tyypit joille sorakuvaukset näytetään hakukohteessa...
+        final List<KoulutusasteTyyppi> showSoraForTypes=Lists.newArrayList(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, KoulutusasteTyyppi.YLIOPISTOKOULUTUS);
+
+        if (!showValintaperusteetForTypes.contains(presenter.getModel().getHakukohde().getKoulutusasteTyyppi())) {
            return;
         }
-
     	
-    	//if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && !presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().isEmpty()) {
+        //if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && !presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().isEmpty()) {
         VerticalLayout valintaperusteetLayout = new VerticalLayout();
         valintaperusteetLayout.setMargin(true);
         //if (checkHaunAlkaminen()) {
@@ -145,8 +150,11 @@ public class ShowHakukohdeTab extends VerticalLayout {
         grid.setWidth("100%");
         grid.setMargin(true);
 
+        
         addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus(), MetaCategory.VALINTAPERUSTEKUVAUS));
-        addRichTextToGrid(grid, "soraKuvausTeksti", getLanguageString(presenter.getModel().getHakukohde().getSoraKuvaus(), MetaCategory.SORA_KUVAUS));
+        if (showSoraForTypes.contains(presenter.getModel().getHakukohde().getKoulutusasteTyyppi())) {
+                addRichTextToGrid(grid, "soraKuvausTeksti", getLanguageString(presenter.getModel().getHakukohde().getSoraKuvaus(), MetaCategory.SORA_KUVAUS));
+        }
 
         grid.setColumnExpandRatio(1, 1f);
         valintaperusteetLayout.addComponent(grid);

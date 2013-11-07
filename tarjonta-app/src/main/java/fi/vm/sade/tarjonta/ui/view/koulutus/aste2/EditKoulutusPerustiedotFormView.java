@@ -225,7 +225,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
-
+        
         if (model.getOid() == null || model.getOid().equals("-1")) {
             model.setOpintojenLaajuusTot("");
             model.setOpintojenLaajuusyksikkoTot("");

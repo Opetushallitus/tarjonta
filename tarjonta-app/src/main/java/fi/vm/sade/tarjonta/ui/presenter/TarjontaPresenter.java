@@ -846,6 +846,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         this.getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusvaatimusUri);
         KoodiModel koulutuksenTyyppi = new KoodiModel();
+        koulutuksenTyyppi.setKoodistoUri(type.getKoodiUri());//setKoodi(type.getKoodiUri());
+        koulutuksenTyyppi.setKoodistoUriVersio(type.getKoodiUri());
         koulutuksenTyyppi.setKoodi(type.getKoodiUri());
         this.getModel().getKoulutusPerustiedotModel().setKoulutuksenTyyppi(koulutuksenTyyppi);
         getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
@@ -1077,6 +1079,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());
+            
+            
             
             KoodiModel tyyppiModel = new KoodiModel();
             if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)) {

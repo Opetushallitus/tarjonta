@@ -377,3 +377,22 @@ input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
 }
 
+/* ilmoitusviestit */
+
+.msgInfo, .msgError, .msgOk {
+	border-radius: 4px;	
+	padding: 36px 36px 36px 86px;
+	margin:18px 0 18px 0;
+}
+
+.msgOk {
+	background: #e4f4f9 url('../img/icon28-ok.png') 36px 36px no-repeat;
+}
+
+.msgInfo {
+	background: #e4f4f9 url('../img/icon28-info.png') 36px 36px no-repeat;
+}
+
+.msgError {
+	background: #e4f4f9 url('../img/icon28-error.png') 36px 36px no-repeat;
+}

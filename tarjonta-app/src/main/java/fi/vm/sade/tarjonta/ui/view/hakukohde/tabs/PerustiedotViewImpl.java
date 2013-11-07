@@ -74,6 +74,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -206,6 +207,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private String hakutyyppiLisahakuUrl;
     
     private String pkVaatimus;
+    private KoulutusasteTyyppi koulutusastetyyppi;
     
     /*
      *
@@ -280,13 +282,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         
-        /*if (presenter.getModel().getSelectedKoulutukset() != null
-                && !presenter.getModel().getSelectedKoulutukset().isEmpty()
-                && presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio*/
-            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
-        //}
         
+            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
 
+        if (presenter.getModel().getSelectedKoulutukset() != null
+                && !presenter.getModel().getSelectedKoulutukset().isEmpty()) {
+            final KoulutusPerustieto koulutus = presenter.getModel()
+                    .getSelectedKoulutukset().get(0);
+            if (koulutus.getKoulutustyyppi() == KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) {
+                pkVaatimus = presenter.getModel().getSelectedKoulutukset()
+                        .get(0).getPohjakoulutusvaatimus().getUri();
+            }
+            koulutusastetyyppi = koulutus.getKoulutustyyppi();
+        }
+        
         //Build main item container
         mainLayout.addComponent(buildGrid());
 
@@ -302,6 +311,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     
     private boolean doesHakukohdeNeedValintaperusteField() {
         return (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
+                || (koulutusastetyyppi!=null && koulutusastetyyppi == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
                 || presenter.isKoulutusNivelvaihe();
     }
     
@@ -432,9 +442,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Override
     public void removeOppiaineRow(PainotettavaOppiaineViewModel painotettava) {
-        Preconditions.checkNotNull(painotettava, "PainotettavaOppiaineViewModel object cannot be null.");
-        Preconditions.checkNotNull(model, "HakukohdeViewModel object cannot be null.");
-        Preconditions.checkNotNull(model.getPainotettavat(), "PainotettavaOppiaine list object cannot be null.");
+//        Preconditions.checkNotNull(painotettava, "PainotettavaOppiaineViewModel object cannot be null.");
+//        Preconditions.checkNotNull(model, "HakukohdeViewModel object cannot be null.");
+//        Preconditions.checkNotNull(model.getPainotettavat(), "PainotettavaOppiaine list object cannot be null.");
 
         for (int y = 1; y < painotettavatOppiaineet.getRows(); y++) {
             final TextField textField = (TextField) painotettavatOppiaineet.getComponent(1, y);
@@ -1102,6 +1112,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox buildHaku() {
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
+        Preconditions.checkArgument(tarjontaUIHelper!=null, "tarjonta UI helper ei saa olla null");
+        Preconditions.checkArgument(model!=null, "model ei saa olla null");
+        
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(model.getKomotoOids());
         
         if (presenter.getModel().getSelectedKoulutukset() != null) {
