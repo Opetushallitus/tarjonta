@@ -184,6 +184,14 @@ public class TarjontaKomoDataTest {
                 assertEquals(null, g.getEqfKoodiarvo());
                 assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
                 founded++;
+            } else if (g.getKoulutuskoodiKoodiarvo().equals("039997")) { //special case
+                assertEquals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS, g.getKoulutusasteTyyppiEnum());
+                assertEquals("0090", g.getRelaatioKoodiarvo());
+                assertEquals("31", g.getKoulutusasteKoodiarvo());
+                assertEquals(null, g.getLaajuusKoodiarvo());
+                assertEquals(null, g.getEqfKoodiarvo());
+                assertEquals(null, g.getLaajuusyksikkoKoodiarvo());
+                founded++;
             } else if (g.getKoulutuskoodiKoodiarvo().equals("039998")) { //special case
                 assertEquals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS, g.getKoulutusasteTyyppiEnum());
                 assertEquals("0006", g.getRelaatioKoodiarvo());
@@ -210,7 +218,7 @@ public class TarjontaKomoDataTest {
                 founded++;
             }
         }
-        assertEquals("One or many special cases are missing", 5, founded);
+        assertEquals("One or many special cases are missing", 6, founded);
         assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
     }
 
@@ -240,10 +248,6 @@ public class TarjontaKomoDataTest {
 
         next = excelDataMap.get("0089");
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
-        
-//        next = excelDataMap.get("0090"); //special case 'nivelvaihe'
-//        assertEquals("039997", next.getKoulutuskoodiKoodiarvo());
-//        assertEquals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS, next.getKoulutusasteTyyppiEnum());
     }
 
     @Test

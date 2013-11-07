@@ -66,10 +66,10 @@ describe('localisation', function() {
         // When an unknown translation is referred to - a "["+key+"]" value should be returned
         it('unknown keys should be wrapped to []', inject(function() {
             var key1 = "this.is.a.test";
-            expect(scope.t(key1)).toEqual("[" + key1 + "]");
+            expect(scope.t(key1)).toEqual("[" + key1.replace(/\./g, " . ") + "]");
 
             var key2 = "this.is.a.test.too";
-            expect(scope.t(key2)).toEqual("[" + key2 + "]");
+            expect(scope.t(key2)).toEqual("[" + key2.replace(/\./g, " . ") + "]");
 
             var key3 = "this.is.a.test.too_XXX";
             expect(scope.t(key3)).toEqual(THE_OFFICIAL_TEST_VALUE_FI);

@@ -1,128 +1,71 @@
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div style="float: left;">
-            <select ng-model="uiModel.ammattinimikkeet.uris"  multiple="multiple"
-                    ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.ammattinimikkeet.data | orderBy:'koodiNimi'">
-            </select>
-        </div>
-        <div style="float: left;">
-            <ul>
-                <li ng-repeat="uri in uiModel.ammattinimikkeet.uris">
-                    {{searchKoodiByKoodiUri(uri, uiModel.ammattinimikkeet).koodiNimi}} [<a href ng-click="removeKoodiByKoodiUri(uri, uiModel.ammattinimikkeet)">X</a>]
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="row-fluid" ng-init="setTabLang(uiModel.opetuskielis.uris[0])">
-        <ul>
-            <li ng-repeat="kieliUri in uiModel.opetuskielis.uris" style="display:block;float:left;padding:0 10px;"><a href ng:click="setTabLang(kieliUri)"> {{searchKoodiByKoodiUri(kieliUri, uiModel.opetuskielis).koodiNimi}} </a></li>
-        </ul>
-    </div>
+<form name="lisatiedotForm">
+<table class="tarjontaForm">
 
-    <div class="row-fluid" ng-repeat="kieliUri in uiModel.opetuskielis.uris" ng:show="uiModel.tabLang === kieliUri">
+	<!-- ammattinimikkeet -->
+	<tr class="info">
+		<th tt="koulutus.edit.ammattinimikkeet.title"/>
+		<td>
+			<multi-select
+			 	model="uiModel.ammattinimikkeet.data"
+			 	selection="uiModel.ammattinimikkeet.uris"
+			 	display="dualpane"/>
+		</td>
+		<td></td>
+	</tr>
+	
+</table>
 
-        <!-- koulutukselliset ja ammatilliset tavoitteet-->
-        <div ng-init="TAVOITTEET = getKuvausApiModelLanguageUri(model.kuvausKomo, 'TAVOITTEET', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.tavoitteet.title"></div>
-            <div class="help" tt="koulutus.edit.tavoitteet.help"></div>
-            <textarea ui-tinymce text="" ng-model="TAVOITTEET.arvo"></textarea>
-        </div>
+<div ng-show="uiModel.opetuskielis.uris.length==0">(TODO i18n valitse ainakin yksi opetuskieli tähän..?)</div>
 
-        <div ng-init="LISATIETOA_OPETUSKIELISTA = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'LISATIETOA_OPETUSKIELISTA', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.lisatietoa_opetuskielista.title"></div>
-            <div class="help" tt="koulutus.edit.lisatietoa_opetuskielista.help"></div>
-            <textarea ui-tinymce text="" ng-model="LISATIETOA_OPETUSKIELISTA.arvo"></textarea>
-        </div>
+<tabset>
+	<tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}">
 
-        <div ng-init="PAAAINEEN_VALINTA = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'PAAAINEEN_VALINTA', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.paaaineen_valinta.title"></div>
-            <div class="help" tt="koulutus.edit.paaaineen_valinta.help"></div>
-            <textarea ui-tinymce text="" ng-model="PAAAINEEN_VALINTA.arvo"></textarea>
-        </div>
+		<table class="tarjontaForm">
+		
+			<tbody ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+				<tr>
+					<th>{{t('koulutus.edit.'+lisatieto+'.title')}}</th>
+					<td colspan="2">
+						<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>
+						<br/> <!-- TODO poista kun tinymce:llä on kunnon leiska tjsp.. -->
+					</td>
+				</tr>
+				
+				<tr class="required" ng-show="lisatieto == 'MAKSULLISUUS'">
+                	<th tt="koulutus.edit.maksullisuus.hinta"></th>
+                	<td>
+	               	 	<input required name="hinta" class="thin" type="text" data-ng-model="model.hinta" required />
+    	           		<span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
+                	</td>
+                	<td>
+                		<p class="error" ng-show="lisatiedotForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required"/>
+                	</td>
+           		</tr>
 
-        <div ng-init="MAKSULLISUUS = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'MAKSULLISUUS', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.maksullisuus.title"></div>
-            <div class="help" tt="koulutus.edit.maksullisuus.help"></div>
-            <div>
-                <span tt="koulutus.edit.maksullisuus.hinta" />
-                <input required name="suunniteltuKesto" class="thin" type="text" data-ng-model="model.hinta" required />
-                <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa" />
-            </div>
-            <textarea ui-tinymce text="" ng-model="MAKSULLISUUS.arvo"></textarea>
-        </div>
+				<tr ng-show="lisatieto == 'KOULUTUKSEN_RAKENNE'">
+					<th tt="koulutus.edit.kuva.title"></th>
+					<td>
+						<input id="inputImage2" 
+		                   url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
+		                   type="file" 
+		                   accept="image/*" 
+		                   image="image2" 
+		                   resize-max-height="300"
+		                   resize-max-width="250"
+		                   resize-quality="0.9" />
+		                <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
+		            	
+	            	</td>
+					<td><img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/></td>
+				</tr>
+				
+				<tr>
+					<th></th>
+					<td colspan="2" class="help">{{t('koulutus.edit.'+lisatieto+'.help')}}</td>
+				</tr>
+			</tbody>
 
-        <div ng-init="SIJOITTUMINEN_TYOELAMAAN = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'SIJOITTUMINEN_TYOELAMAAN', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.sijoittuminen_tyoelamaan.title"></div>
-            <div class="help" tt="koulutus.edit.sijoittuminen_tyoelamaan.help"></div>
-            <textarea ui-tinymce text="" ng-model="SIJOITTUMINEN_TYOELAMAAN.arvo"></textarea>
-        </div>
-
-        <div ng-init="PATEVYYS = getKuvausApiModelLanguageUri(model.kuvausKomo, 'PATEVYYS', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.patevyys.title"></div>
-            <div class="help" tt="koulutus.edit.patevyys.help"></div>
-            <textarea ui-tinymce text="" ng-model="PATEVYYS.arvo"></textarea>
-        </div>
-
-
-        <div ng-init="JATKOOPINTO_MAHDOLLISUUDET = getKuvausApiModelLanguageUri(model.kuvausKomo, 'JATKOOPINTO_MAHDOLLISUUDET', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.jatkoopinto_mahdollisuudet.title"></div>
-            <div class="help" tt="koulutus.edit.jatkoopinto_mahdollisuudet.help"></div>
-            <textarea ui-tinymce text="" ng-model="JATKOOPINTO_MAHDOLLISUUDET.arvo"></textarea>
-        </div>
-
-        <hr/>
-
-        <!-- koulutuksen sisalto??? -->
-        <div ng-init="SISALTO = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'SISALTO', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.sisalto.title"></div>
-            <div class="help" tt="koulutus.edit.sisalto.help"></div>
-            <textarea ui-tinymce text="" ng-model="SISALTO.arvo"></textarea>
-        </div>
-
-        <div ng-init="KOULUTUKSEN_RAKENNE = getKuvausApiModelLanguageUri(model.kuvausKomo, 'KOULUTUKSEN_RAKENNE', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.koulutuksen_rakenne.title"></div>
-            <div class="help" tt="koulutus.edit.koulutuksen_rakenne.help"></div>
-            <textarea ui-tinymce text="" ng-model="KOULUTUKSEN_RAKENNE.arvo"></textarea>
-        </div>
-
-        <div ng-init="KANSAINVALISTYMINEN = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'KANSAINVALISTYMINEN', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.kansainvalistuminen.title"></div>
-            <div class="help" tt="koulutus.edit.kansainvalistuminen.help"></div>
-            <textarea ui-tinymce text="" ng-model="KANSAINVALISTYMINEN.arvo"></textarea>
-        </div>
-
-        <div ng-init="YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA = getKuvausApiModelLanguageUri(model.kuvausKomoto, 'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA', kieliUri)">
-            <br/>
-            <div tt="koulutus.edit.yhteistyo_muiden_toimijoiden_kanssa.title"></div>
-            <div class="help" tt="koulutus.edit.yhteistyo_muiden_toimijoiden_kanssa.help"></div>
-            <textarea ui-tinymce text="" ng-model="YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA.arvo"></textarea>
-        </div>
-
-        <div>
-            <label for="inputImage2"></label>
-            <input id="inputImage2" 
-                   url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
-                   type="file" 
-                   accept="image/*" 
-                   image="image2" 
-                   resize-max-height="300"
-                   resize-max-width="250"
-                   resize-quality="0.9" />
-            <!--img ng-show="image2" ng-src="{{image2.url}}" type="{{image2.file.type}}"/>
-            <p>Resized</p-->
-            <img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
-            <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
-        </div>
-        <hr />
-    </div>
-</div>
+		</table>
+	</tab>
+</tabset>
+</form>

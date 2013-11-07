@@ -39,7 +39,7 @@ public class DataReaderTest {
 
     @Test
     public void testImportCount() throws IOException {
-        assertEquals(238, parentkomosWithChildsDtos.size()); //total count of KOMOs
+        assertEquals(239, parentkomosWithChildsDtos.size()); //total count of KOMOs
        // assertEquals(1, onlyParentKomoDtos.size()); //total count of KOMOs
     }
 

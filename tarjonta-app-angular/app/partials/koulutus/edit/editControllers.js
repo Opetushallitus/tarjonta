@@ -1,16 +1,39 @@
 
-var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter']);
+var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation']);
 app.controller('BaseEditController',
-        ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService',
+        ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-            function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, $window, converter, koodisto, $modal) {
+            function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
-                $scope.koodistoLocale = "FI";
+                $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
                 $scope.config = {env: cfg.env, app: cfg.app, 'locationPath': $location.path()};
                 $scope.uiModel = null;
                 $scope.model = null;
+                                
+                // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
+                $scope.lisatiedot = 
+                	[
+             		"TAVOITTEET",
+                	"LISATIETOA_OPETUSKIELISTA",
+                    "PAAAINEEN_VALINTA",
+                	"MAKSULLISUUS",
+                	"SIJOITTUMINEN_TYOELAMAAN",
+            		"PATEVYYS",
+            		"JATKOOPINTO_MAHDOLLISUUDET",
+                	"SISALTO",
+             		"KOULUTUKSEN_RAKENNE",
+                	"LOPPUKOEVAATIMUKSET", // leiskassa oli "lopputyön kuvaus"
+                	"KANSAINVALISTYMINEN",
+                	"YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
+                	"TUTKIMUKSEN_PAINOPISTEET",
+                	
+                	"ARVIOINTIKRITEERIT",
+                	"PAINOTUS",
+                	"KOULUTUSOHJELMAN_VALINTA",
+                	"KUVAILEVAT_TIEDOT"
+                	];
 
                 $scope.init = function() {
                     var uiModel = {};
@@ -294,6 +317,17 @@ app.controller('BaseEditController',
                     });
                     return koodis;
                 };
+                
+                // TODO omaksi direktiivikseen tjsp..
+                $scope.kieliFromKoodi = function(koodi) {
+                	var kd = $scope.uiModel.opetuskielis.data;
+                	for (var i in kd) {
+                		if (koodi==kd[i].koodiUri) {
+                			return kd[i].koodiNimi;
+                		}
+                	}
+                	return koodi;
+                }
 
                 $scope.init();
             }]);

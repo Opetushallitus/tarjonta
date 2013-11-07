@@ -263,7 +263,7 @@ public class TarjontaKomoData {
         switch (dto.getKoulutusateTyyppi()) {
             case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
             case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
-
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
             case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
             case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, has thesame data structure as amm
@@ -285,7 +285,6 @@ public class TarjontaKomoData {
                  */
                 ConversionUtils.setTeksti(koChildKomo.getTekstit(), KomoTeksti.TAVOITTEET, dto.getKoulutusohjelmanKuvaukset().getTavoiteTeksti());
                 break;
-            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as lukio
             case LUKIOKOULUTUS:
                 Preconditions.checkNotNull(dto.getLukiolinjaKoodiarvo(), "Lukiolinja koodi uri cannot be null.");
 
@@ -450,12 +449,12 @@ public class TarjontaKomoData {
                             switch (excelChildKomo.getKoulutustyyppi()) {
                                 case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
                                 case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
+                                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                                 case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                                 case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, same data structure as the amm.
                                 case AMMATILLINEN_PERUSKOULUTUS:
                                     if (dbParentOid != null && dbChildKomos.containsKey(koulutusohjelmakoodiUri)) {
-
                                         //overwrite and add target to parent
                                         updateRelations(excelChildKomo, dbChildKomos.get(koulutusohjelmakoodiUri).getOid(), dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri);
                                         tarjontaAdminService.paivitaKoulutusmoduuli(excelChildKomo);
@@ -465,7 +464,7 @@ public class TarjontaKomoData {
                                         newKomoOids.add(excelChildKomo.getOid());
                                     }
                                     break;
-                                case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as lukio
+                               
                                 case LUKIOKOULUTUS:
                                     //log.debug("LUKIOKOULUTUS {}", lukiolinjaUri);
 
@@ -557,7 +556,7 @@ public class TarjontaKomoData {
                         switch (kkt.getKoulutustyyppi()) {
                             case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break, has the same data structure as amm
                             case PERUSOPETUKSEN_LISAOPETUS: //no break, has the same data structure as amm
-
+                            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                             case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                             case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break, has the same data structure as amm
                             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS: //no break, has the same data structure as amm
@@ -565,7 +564,6 @@ public class TarjontaKomoData {
                                 final String koulutusOhjelmaUri = kkt.getKoulutusohjelmakoodiUri();
                                 dbChildKomos.put(koulutusOhjelmaUri, kkt);
                                 break;
-                            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break, has the same data structure as lukio
                             case LUKIOKOULUTUS:
                                 final String lukiolinjaUri = kkt.getLukiolinjakoodiUri();
                                 dbChildKomos.put(lukiolinjaUri, kkt);

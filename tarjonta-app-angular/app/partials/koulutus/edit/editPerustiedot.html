@@ -1,4 +1,4 @@
-<form name="form">
+<form name="perustiedotForm">
 <table class="tarjontaForm">
 	<!-- koulutuskoodi -->
 	<tr class="info">
@@ -8,7 +8,6 @@
 	</tr>
 	
 	<!-- koulutusohjelma -->
-	<!-- TODO kielien lisäys ja poisto -->
 	<tr class="required">
 		<th tt="koulutus.edit.koulutusohjelma"/>
 		<td>
@@ -70,7 +69,7 @@
 			<select required name="tutkinto" class="wide" ng-model="uiModel.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto.data | orderBy:'koodiNimi'"></select>
 		</td>
 		<td>
-			<p class="error" ng-show="form.tutkinto.$error.required" tt="koulutus.edit.tutkinto.required"/>
+			<p class="error" ng-show="perustiedotForm.tutkinto.$error.required" tt="koulutus.edit.tutkinto.required"/>
 		</td>
 	</tr>
 	
@@ -81,7 +80,7 @@
 			<select required name="tutkintoNimike" class="wide" ng-model="uiModel.tutkintonimike.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkintonimike.data | orderBy:'koodiNimi'"></select>
 		</td>
 		<td>
-			<p class="error" ng-show="form.tutkintoNimike.$error.required" tt="koulutus.edit.tutkintonimike.required"/>
+			<p class="error" ng-show="perustiedotForm.tutkintoNimike.$error.required" tt="koulutus.edit.tutkintonimike.required"/>
 		</td>
 	</tr>
 	
@@ -92,19 +91,18 @@
 			<select required name="eqfLuokitus" ng-model="uiModel.eqf.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.eqf.data | orderBy:'koodiNimi'"></select>
 		</td>
 		<td>
-			<p class="error" ng-show="form.eqfLuokitus.$error.required" tt="koulutus.edit.eqfLuokitus.required"/>
+			<p class="error" ng-show="perustiedotForm.eqfLuokitus.$error.required" tt="koulutus.edit.eqfLuokitus.required"/>
 		</td>
 	</tr>
 	
 	<!-- opintojen laajuus -->
-	<!-- TODO järjestys (koodi on string mutta sisältö on numero -->
 	<tr class="required">
 		<th tt="koulutus.edit.opintojen-laajuus"/>
 		<td>
 			<select required name="opintojenLaajuus" ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data | orderByNum:'koodiNimi'"></select>
 		</td>
 		<td>
-			<p class="error" ng-show="form.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
+			<p class="error" ng-show="perustiedotForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
 		</td>
 	</tr>
 	<tr>
@@ -126,7 +124,7 @@
 	            data-ng-required="true" />
 		</td>
 		<td>
-			<p class="error" ng-show="form.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>
+			<p class="error" ng-show="perustiedotForm.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>
 		</td>
 	</tr>
 	
@@ -138,7 +136,7 @@
 			<select required name="suunniteltuKestoYksikko" class="thin" ng-model="uiModel.suunniteltuKesto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKesto.data | orderBy:'koodiNimi'"></select>
 		</td>
 		<td>
-			<p class="error" ng-show="form.suunniteltuKesto.$error.required || form.suunniteltuKestoYksikko.$error.required"
+			<p class="error" ng-show="perustiedotForm.suunniteltuKesto.$error.required || perustiedotForm.suunniteltuKestoYksikko.$error.required"
 				tt="koulutus.edit.suunniteltu-kesto.required"/>
 		</td>
 	</tr>

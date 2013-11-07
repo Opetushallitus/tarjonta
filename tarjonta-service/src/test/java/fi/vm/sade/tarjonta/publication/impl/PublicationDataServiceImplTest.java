@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.publication.impl;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.security.SadeUserDetailsWrapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -45,11 +46,13 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Collection;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  *
@@ -518,7 +521,44 @@ public class PublicationDataServiceImplTest {
     }
 
     protected final void setCurrentUser(final String oid, final List<GrantedAuthority> grantedAuthorities) {
-        Authentication auth = new TestingAuthenticationToken(oid, null, grantedAuthorities);
+        SadeUserDetailsWrapper sadeUserDetailsWrapper = new SadeUserDetailsWrapper(new UserDetails() {
+
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                return grantedAuthorities;
+            }
+
+            @Override
+            public String getPassword() {
+                return "no_password";
+            }
+
+            @Override
+            public String getUsername() {
+                return oid;
+            }
+
+            @Override
+            public boolean isAccountNonExpired() {
+                return true;
+            }
+
+            @Override
+            public boolean isAccountNonLocked() {
+                return false;
+            }
+
+            @Override
+            public boolean isCredentialsNonExpired() {
+                return false;
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+        }, "FI");
+        Authentication auth = new TestingAuthenticationToken(sadeUserDetailsWrapper, null, grantedAuthorities);
         setAuthentication(auth);
     }
 

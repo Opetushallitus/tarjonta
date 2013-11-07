@@ -153,14 +153,13 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             }, function(value) {
                 $log.error("  FAILED TO CREATE ", value);
             });
-             
-            
+
+            result = "[" + key.replace(/\./g, " . ") + "]";
+
             // Create temporary placeholder for next requests
             this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
             this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
-            this.localisationMapByLocaleAndKey[locale][key] = {key: key, locale: locale, value: "[" + key + "]"};
-
-            result = "[" + key + "]";
+            this.localisationMapByLocaleAndKey[locale][key] = {key: key, locale: locale, value: result};
         }
 
         // result = result + "-" + new Date();
