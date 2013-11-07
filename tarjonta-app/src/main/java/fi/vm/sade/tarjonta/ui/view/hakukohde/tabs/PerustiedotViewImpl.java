@@ -281,18 +281,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      */
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
-        
-        
-            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
+            
 
         if (presenter.getModel().getSelectedKoulutukset() != null
                 && !presenter.getModel().getSelectedKoulutukset().isEmpty()) {
+            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null 
+                    ? presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri() : null;
             final KoulutusPerustieto koulutus = presenter.getModel()
                     .getSelectedKoulutukset().get(0);
-            if (koulutus.getKoulutustyyppi() == KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) {
-                pkVaatimus = presenter.getModel().getSelectedKoulutukset()
-                        .get(0).getPohjakoulutusvaatimus().getUri();
-            }
             koulutusastetyyppi = koulutus.getKoulutustyyppi();
         }
         
@@ -302,14 +298,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
 
-        if (doesHakukohdeNeedValintaperusteField()) {
+        if (isHakukohdeAnErkkaOrValmentava()) {
             mainLayout.addComponent(buildBottomAreaValintaperusteTab());
         }
 
         addComponent(mainLayout);
     }
     
-    private boolean doesHakukohdeNeedValintaperusteField() {
+    private boolean isHakukohdeAnErkkaOrValmentava() {
         return (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
                 || (koulutusastetyyppi!=null && koulutusastetyyppi == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
                 || presenter.isKoulutusNivelvaihe();
@@ -342,7 +338,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
         
         //addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
-        if (!presenter.isKoulutusNivelvaihe()) {
+        if (!this.isHakukohdeAnErkkaOrValmentava()) {
             addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildOsoiteSelectLabel());
             addItemToGrid("", buildOsoiteSelect());
             addItemToGrid("", buildLiitteidenToimitusOsoite());
