@@ -186,7 +186,7 @@ public class TarjontaKomoDataTest {
                 founded++;
             } else if (g.getKoulutuskoodiKoodiarvo().equals("039997")) { //special case
                 assertEquals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS, g.getKoulutusasteTyyppiEnum());
-                assertEquals("0090", g.getRelaatioKoodiarvo());
+                assertEquals("0008", g.getRelaatioKoodiarvo());
                 assertEquals("31", g.getKoulutusasteKoodiarvo());
                 assertEquals(null, g.getLaajuusKoodiarvo());
                 assertEquals(null, g.getEqfKoodiarvo());
