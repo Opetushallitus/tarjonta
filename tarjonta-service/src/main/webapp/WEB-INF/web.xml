@@ -27,9 +27,19 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>healthcheck</servlet-name>
+        <servlet-class>fi.vm.sade.lokalisointi.service.HealthCheck</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>cxf</servlet-name>
         <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>healthcheck</servlet-name>
+        <url-pattern>/healthcheck</url-pattern>
     </servlet-mapping>
 
     <filter>
