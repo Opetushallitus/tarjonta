@@ -188,7 +188,6 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<Long> findUnindexedHakukohdeIds() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).limit(100).list(hakukohde.id);
-
     }
 
     /**
@@ -197,7 +196,10 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<Long> findUnindexedKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return q(komoto).where(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated))).limit(100).list(komoto.id);
+        final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+        final Predicate time = bb(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated)));
+        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull().or(komo.nimi.isNotNull())).and(time).getValue();
+        return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).limit(100).list(komoto.id);
     }
 
     @Override
