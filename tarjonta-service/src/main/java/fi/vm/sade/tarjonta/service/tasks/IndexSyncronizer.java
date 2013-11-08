@@ -3,6 +3,8 @@ package fi.vm.sade.tarjonta.service.tasks;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -23,18 +25,22 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 @Profile("default")
 public class IndexSyncronizer {
     
+    final Logger logger = LoggerFactory.getLogger(IndexSyncronizer.class);
+    
     @Autowired
-    IndexerDAO indexerDao;
+    private IndexerDAO indexerDao;
 
     @Autowired
-    IndexerResource indexerResource;
+    private IndexerResource indexerResource;
 
     @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
+        logger.info("Etsitään indeksoimattomia koulutuksia");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
         for (Long id : ids) {
             Date now = new Date();
+            logger.info("indeksoidaan " + id);
             indexerResource.indexHakukohteet(Lists.newArrayList(id));
             indexerDao.updateHakukohdeIndexed(id, now);
         }            
@@ -50,7 +56,5 @@ public class IndexSyncronizer {
             indexerDao.updateKoulutusIndexed(id, now);
         }            
     }
-
-
 
 }
