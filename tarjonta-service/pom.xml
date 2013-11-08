@@ -20,6 +20,18 @@
     </properties>
 
     <dependencies>
+
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+<version>1.7.5</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </dependency>
+
+
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
@@ -30,12 +42,33 @@
             <groupId>fi.vm.sade.log</groupId>
             <artifactId>log-client</artifactId>
             <version>${log.version}</version>
+	    <exclusions>
+		<exclusion>
+                    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-log4j12</artifactId>
+		</exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+	    </exclusions>
         </dependency>
 
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-shared</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
 
@@ -49,15 +82,37 @@
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-enricher</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-solr-client</artifactId>
             <version>${organisaatio.api.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
@@ -68,7 +123,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+    -->    <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
             <version>${generic.version}</version>
@@ -80,8 +135,12 @@
             <type>pom</type>
             <exclusions>
                 <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -94,6 +153,17 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>1.8.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -109,6 +179,16 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>dbunit-support</artifactId>
             <scope>test</scope>
+<exclusions>
+              <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+</exclusions>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
@@ -157,15 +237,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- todo: tartteeks oikeesti servicessä vaadin depsuja? -->
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>dependencies-vaadin</artifactId>
-            <version>${generic.version}</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-events</artifactId>
@@ -183,6 +254,21 @@
     	    <artifactId>solr-core</artifactId>
     	    <version>4.2.0</version>
     	    <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -199,19 +285,6 @@
             <artifactId>cglib</artifactId>
             <version>2.2</version>
         </dependency>
-
-<!--        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-    -->
-<!--        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xerces</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-    -->
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
@@ -220,7 +293,18 @@
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
-            <version>3.1.0</version>
+    <version>3.1.0</version>
+<exclusions>
+      <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+</exclusions>
+
         </dependency>
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
@@ -250,7 +334,13 @@
         <!--<filters>
             <filter>src/main/filter/filter-${env}.properties</filter>
         </filters>-->
-        <plugins>
+
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>7.2.0.v20101020</version>
+      </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
