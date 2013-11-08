@@ -36,11 +36,11 @@ public class IndexSyncronizer {
     @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
-        logger.info("Etsitään indeksoimattomia koulutuksia");
+        logger.debug("Etsitään indeksoimattomia hakukohteita");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
         for (Long id : ids) {
             Date now = new Date();
-            logger.info("indeksoidaan " + id);
+            logger.debug("indeksoidaan hakukohde " + id);
             indexerResource.indexHakukohteet(Lists.newArrayList(id));
             indexerDao.updateHakukohdeIndexed(id, now);
         }            
@@ -49,8 +49,10 @@ public class IndexSyncronizer {
     @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateHakukohteet() {
+        logger.debug("Etsitään indeksoimattomia koulutuksia");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
         for (Long id : ids) {
+            logger.debug("indeksoidaan koulutus " + id);
             Date now = new Date();
             indexerResource.indexKoulutukset(Lists.newArrayList(id));
             indexerDao.updateKoulutusIndexed(id, now);
