@@ -99,7 +99,7 @@ public class HakukohdeViewModelToDTOConverter {
         	hakukohde.setSoraKuvausTeksti(convertTekstis(hakukohdevm.getSoraKuvaus().getKaannokset()));
         }
 
-
+        hakukohde.setKaksoisTutkinto(hakukohdevm.isKaksoisTutkinto());
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
         KoulutusasteTyyppi hkKoulutusaste = hakukohdevm.getKoulutusasteTyyppi();
@@ -254,7 +254,11 @@ public class HakukohdeViewModelToDTOConverter {
 
         hakukohdeVM.getLisatiedot().clear();
         hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
+        try {
+        hakukohdeVM.setKaksoisTutkinto(hakukohdeTyyppi.isKaksoisTutkinto());
+        } catch (Exception exp) {
 
+        }
         hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());
         hakukohdeVM.setLiitteidenSahkoinenToimitusOsoite(hakukohdeTyyppi.getSahkoinenToimitusOsoite());
         hakukohdeVM.setLiitteidenToimitusPvm(hakukohdeTyyppi.getLiitteidenToimitusPvm());

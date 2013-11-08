@@ -1,0 +1,1 @@
+ALTER TABLE hakukohdeliite ADD COLUMN kaksoisTutkinto boolean DEFAULT FALSE;
