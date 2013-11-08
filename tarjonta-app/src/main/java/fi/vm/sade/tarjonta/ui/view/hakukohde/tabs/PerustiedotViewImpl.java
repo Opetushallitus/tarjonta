@@ -162,6 +162,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private TextField alinHyvaksyttavaKeskiarvoText;
     private OptionGroup osoiteSelectOptionGroup;
 
+    @PropertyId("kaksoisTutkinto")
+    private CheckBox kaksoistutkintoCheckbox;
 
     @PropertyId("customHakuaikaEnabled")
     private CheckBox customHakuaika;
@@ -345,7 +347,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
             addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
-                
+            addItemToGrid("PerustiedotView.kaksoistutkinto",buildKaksoistutkintoField());
             checkCheckboxes();
             
             if (muuOsoite) {
@@ -361,6 +363,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         itemContainer.setColumnExpandRatio(1, 1f);
         
         return itemContainer;
+    }
+
+    private AbstractComponent buildKaksoistutkintoField() {
+
+        VerticalLayout verticalLayout = new VerticalLayout();
+
+        kaksoistutkintoCheckbox = new CheckBox();
+
+        verticalLayout.addComponent(kaksoistutkintoCheckbox);
+
+        return verticalLayout;
+
     }
 
     private AbstractComponent buildPainotettavatOppiaineet() {

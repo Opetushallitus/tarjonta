@@ -1059,6 +1059,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         haku.addHakuaika(hakuaika);
         this.hakuDAO.insert(haku);
         hakukohde.setHaku(haku);
+        hakukohde.setKaksoisTutkinto(false);
         hakukohde = this.hakukohdeDAO.insert(hakukohde);
         HakukohdeLiite liite = new HakukohdeLiite();
         liite.setHakukohde(hakukohde);
@@ -1098,6 +1099,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         try {
             HakukohdeTyyppi newHakukohde = fixtures.createHakukohdeTyyppi();
             newHakukohde.setOid("oid");
+            newHakukohde.setKaksoisTutkinto(false);
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
             koulutus.setTarjoaja(SAMPLE_TARJOAJA);
             koulutus.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);

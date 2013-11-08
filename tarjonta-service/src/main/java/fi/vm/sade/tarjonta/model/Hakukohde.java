@@ -67,8 +67,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     private boolean kaytetaanHaunPaattymisenAikaa;
     @Column(name = "kaytetaanJarjestelmanValintapalvelua")
     private boolean kaytetaanJarjestelmanValintapalvelua;
-    /*@Column(name = "kaksoisTutkinto")
-    private boolean kaksoisTutkinto = false;*/
+    @Column(name = "kaksoisTutkinto")
+    private boolean kaksoisTutkinto = false;
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
     /*@Column(name = "hakukelpoisuusvaatimus")
@@ -541,11 +541,11 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.hakukohdeMonikielinenNimi = hakukohdeMonikielinenNimi;
     }
 
-    /*public boolean isKaksoisTutkinto() {
+    public boolean isKaksoisTutkinto() {
         return kaksoisTutkinto;
     }
 
     public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
-    }*/
+    }
 }
