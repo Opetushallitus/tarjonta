@@ -55,11 +55,11 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
         hakukohde.setHakuaikaAlkuPvm(s.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(s.getHakuaikaLoppuPvm());
-        try {
+        /*try {
         hakukohde.setKaksoisTutkinto(s.isKaksoisTutkinto());
         } catch (Exception exp) {
 
-        }
+        }*/
         Set<String> okielet = new TreeSet<String>();
         for (KoulutusmoduuliToteutus komoto : s.getKoulutusmoduuliToteutuses()) {
         	for (KoodistoUri ku : komoto.getOpetuskielis()) {

@@ -470,8 +470,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
+        
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
+        
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+        
 
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
@@ -479,6 +482,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
                 curKoul.removeHakukohde(hakukohde);
             }
+            
             try {
                 log.info("Removing hakukohde from index...");
                 solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
@@ -487,8 +491,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 throw new TarjontaBusinessException("indexing.error", e);
             }
 
-            hakukohdeDAO.remove(hakukohde);
+            
+            hakukohdeDAO.remove(hakukohde);       
         }
+        
         return new HakukohdeTyyppi();
     }
 

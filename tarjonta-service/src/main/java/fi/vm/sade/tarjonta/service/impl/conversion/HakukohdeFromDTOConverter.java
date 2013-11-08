@@ -48,11 +48,11 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setHakukohdeKoodistoNimi(from.getHakukohdeKoodistoNimi());
         hakukohde.setHakuaikaAlkuPvm(from.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(from.getHakuaikaLoppuPvm());
-        try {
+        /*try {
         hakukohde.setKaksoisTutkinto(from.isKaksoisTutkinto());
         } catch (Exception exp) {
 
-        }
+        }*/
         //Valintaperustekuvaus is stored now in MonikielinenMetaData table.
         //hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset())); 
         hakukohde.setValintojenAloituspaikatLkm(from.getValinnanAloituspaikat());
