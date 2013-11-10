@@ -21,7 +21,9 @@ import java.util.*;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.view.common.*;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusHakukohdeRow;
 import org.slf4j.Logger;
@@ -238,7 +240,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 	        .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
 	        .addText("opintojenLaajuus", opintojenLaajuus)
 	        .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
-	        .addText("pohjakoulutusvaatimus", modelToStr(model.getPohjakoulutusvaatimus()))
+	        .addText("pohjakoulutusvaatimus", findPohjakoulutusVaatimus(model.getPohjakoulutusvaatimus()))
 	        .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))
 	        .addXhtml("tavoitteet", modelToStr(model.getTavoitteet()))
 	        .addXhtml("jatkoopintomahdollisuudet", modelToStr(model.getJatkoopintomahdollisuudet()))
@@ -316,6 +318,20 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private void buildYhteyshenkilo(FormGridBuilder grid, YhteyshenkiloModel model) {
     	grid.addText("yhteyshenkilo", noNullStr(model.getYhtHenkTitteli()) + " " + noNullStr(model.getYhtHenkKokoNimi()))
     		.addText(null, noNullStr(model.getYhtHenkPuhelin()) + " " + noNullStr(model.getYhtHenkEmail()));
+    }
+
+    private String findPohjakoulutusVaatimus(KoodiModel pohjakoulutusVaatimusKoodi) {
+
+        String pohjaKoulutusVaatimusNimi = null;
+
+        if (pohjakoulutusVaatimusKoodi.getKoodi() != null) {
+            pohjaKoulutusVaatimusNimi = _tarjontaUIHelper.getKoodiNimi(pohjakoulutusVaatimusKoodi.getKoodi());
+        } else {
+            pohjaKoulutusVaatimusNimi = "POHJAKOULUTUS NOT FOUND";
+        }
+
+        return pohjaKoulutusVaatimusNimi;
+
     }
 
     private String suunniteltuKesto(final String kestoUri, final String kestoTyyppiUri) {
