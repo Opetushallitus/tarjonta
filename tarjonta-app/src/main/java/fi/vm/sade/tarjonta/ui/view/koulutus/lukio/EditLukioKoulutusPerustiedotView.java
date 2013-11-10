@@ -69,6 +69,7 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
+            //TODO Tuomas: check why form is saved even validation fails. Creates empty koulutukses, but only with lukiokoulutukses
             presenter.getLukioPresenter().saveKoulutus(tila, KoulutusActiveTab.PERUSTIEDOT);
             presenter.getLukioPresenter().getReloadKoulutusListData();
             return model.getKomotoOid();
