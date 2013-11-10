@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -327,6 +328,11 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             perustiedot.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
         }
 
+        if (koulutus.getPohjakoulutusvaatimus() != null ) {
+            KoodiModel pohjakoulutusKoodi = new KoodiModel();
+            pohjakoulutusKoodi.setKoodi(koulutus.getPohjakoulutusvaatimus().getUri());
+            perustiedot.setPohjakoulutusvaatimus(pohjakoulutusKoodi);
+        }
         /*
          * contact person data conversion
          */
