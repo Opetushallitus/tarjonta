@@ -328,11 +328,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             perustiedot.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
         }
 
-        if (koulutus.getPohjakoulutusvaatimus() != null ) {
-            KoodiModel pohjakoulutusKoodi = new KoodiModel();
-            pohjakoulutusKoodi.setKoodi(koulutus.getPohjakoulutusvaatimus().getUri());
-            perustiedot.setPohjakoulutusvaatimus(pohjakoulutusKoodi);
-        }
+
         /*
          * contact person data conversion
          */
@@ -351,6 +347,12 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         //6-numero koodi arvo 
         perustiedot.setKoulutuskoodi(perustiedot.getKoulutuskoodiModel().getKoodi());
 
+        if (koulutus.getPohjakoulutusvaatimus() != null) {
+            KoodiModel pohjakoulutusVaatimusKoodiModel = new KoodiModel();
+            pohjakoulutusVaatimusKoodiModel.setKoodi(koulutus.getPohjakoulutusvaatimus().getUri());
+            perustiedot.setPohjakoulutusvaatimus(pohjakoulutusVaatimusKoodiModel);
+
+        }
 
         return perustiedot;
     }

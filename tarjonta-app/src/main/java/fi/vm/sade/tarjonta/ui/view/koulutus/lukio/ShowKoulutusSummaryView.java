@@ -324,10 +324,10 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         String pohjaKoulutusVaatimusNimi = null;
 
-        if (pohjakoulutusVaatimusKoodi.getKoodi() != null) {
+        if (pohjakoulutusVaatimusKoodi != null && pohjakoulutusVaatimusKoodi.getKoodi() != null) {
             pohjaKoulutusVaatimusNimi = _tarjontaUIHelper.getKoodiNimi(pohjakoulutusVaatimusKoodi.getKoodi());
         } else {
-            pohjaKoulutusVaatimusNimi = "POHJAKOULUTUS NOT FOUND";
+            pohjaKoulutusVaatimusNimi = "";
         }
 
         return pohjaKoulutusVaatimusNimi;
