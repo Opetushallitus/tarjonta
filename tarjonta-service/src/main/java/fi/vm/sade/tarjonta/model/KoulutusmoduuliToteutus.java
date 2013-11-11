@@ -41,6 +41,7 @@ import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -68,6 +69,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Koulutusmoduuli koulutusmoduuli;
     @Column(name = "tarjoaja")
     private String tarjoaja;
+
+//    //Valmentava ja kuntouttava koulutus käyttää tätä nimeä
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi")
+    private MonikielinenTeksti nimi;
+
+    public MonikielinenTeksti getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(MonikielinenTeksti nimi) {
+        this.nimi = nimi;
+    }
+
     /**
      * Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      */

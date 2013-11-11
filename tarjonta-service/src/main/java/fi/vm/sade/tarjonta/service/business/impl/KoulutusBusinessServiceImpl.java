@@ -132,6 +132,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
         EntityUtils.copyFields(koulutus, komotoModel);
+        
         komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);

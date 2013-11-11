@@ -188,8 +188,18 @@ public final class EntityUtils {
         }
         to.setYhteyshenkilos(yhteyshenkilos);
         to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
-
+        
+        copyNimi(from.getNimi(), to);
         copyLisatiedotFields(from, to);
+    }
+
+    private static void copyNimi(MonikielinenTekstiTyyppi nimi,
+            KoulutusmoduuliToteutus to) {
+        if (nimi != null
+                && nimi.getTeksti().size() > 0) {
+            final Teksti teksti = nimi.getTeksti().get(0);
+            to.setNimi( new MonikielinenTeksti(teksti.getKieliKoodi(), teksti.getValue()));
+        }
     }
 
     public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
@@ -245,6 +255,10 @@ public final class EntityUtils {
         toKoulutus.setLinkkis(toLinkkis);
 
         toKoulutus.setLastUpdatedByOid(fromKoulutus.getViimeisinPaivittajaOid());
+        
+        
+        copyNimi(fromKoulutus.getNimi(), toKoulutus);
+
     }
 
     /**

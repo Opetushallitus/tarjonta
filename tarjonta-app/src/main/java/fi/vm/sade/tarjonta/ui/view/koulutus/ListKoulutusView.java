@@ -226,10 +226,11 @@ public class ListKoulutusView extends VerticalLayout {
 
     private void addKoulutusRow(Object parentId,
             KoulutusPerustieto curKoulutus) {
-        KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, getKoulutusNimi(curKoulutus));
+        final String nimi = uiHelper.getKoulutusNimi(curKoulutus);
+        KoulutusResultRow rowStyleInner = new KoulutusResultRow(uiHelper, curKoulutus, nimi);
         categoryTree.addItem(curKoulutus);
         categoryTree.setParent(curKoulutus, parentId);
-        categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(uiHelper.getKoulutusNimi(curKoulutus), true));
+        categoryTree.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(nimi, true));
         setKoulutusRowProperties(curKoulutus);
         categoryTree.setChildrenAllowed(curKoulutus, false);
     }
@@ -256,10 +257,6 @@ public class ListKoulutusView extends VerticalLayout {
         });
         wrapper.addComponent(valKaikki);
         addComponent(wrapper);
-    }
-
-    private String getKoulutusNimi(KoulutusPerustieto koulutus) {
-        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), koulutus.getNimi());
     }
 
     /**

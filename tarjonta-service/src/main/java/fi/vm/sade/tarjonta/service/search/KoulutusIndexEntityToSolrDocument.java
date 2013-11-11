@@ -138,7 +138,11 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case AMMATTIKORKEAKOULUTUS:
                 case YLIOPISTOKOULUTUS:
                     //vapaavalintainen nimi
-                    MonikielinenTeksti nimi = indexerDao.getNimiForKoulutus(koulutus.getKoulutusId());
+                    MonikielinenTeksti nimi = indexerDao.getKomoNimi(koulutus.getKoulutusId());
+                    if(nimi==null) {
+                        nimi = new MonikielinenTeksti();
+                    }
+                    
                     for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
                         Preconditions.checkNotNull(koodiService);
                         KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
@@ -147,7 +151,27 @@ public class KoulutusIndexEntityToSolrDocument implements
                             add(komotoDoc, NIMET, tekstikaannos.getArvo());
                             add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
                         }
+                    }                    
+                    break;
+                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
+                    
+                    if(nimi==null) {
+                        nimi = new MonikielinenTeksti();
                     }
+                    
+                    for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
+                        Preconditions.checkNotNull(koodiService);
+                        KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+
+                        if (type != null) {
+                            add(komotoDoc, NIMET, tekstikaannos.getArvo());
+                            add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
+                        }
+                    }                    
+
+                    
+                    
                     break;
                 default:
                     //muut: koulutusohjelma, pohjakoulutus

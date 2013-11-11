@@ -41,7 +41,7 @@ import org.apache.solr.common.SolrDocumentList;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
-public class SolrDocumentToKoulutusmoduuliToteutusConverter {
+public class SolrDocumentToKoulutusConverter {
 
     public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
@@ -112,7 +112,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
             for(int i=0;i<nimet.size();i++) {
                 asetaNimiArvosta(koulutus.getNimi(), koulutusDoc, (String)nimienKielet.get(i), (String)nimet.get(i));
             }
-        } else {
+        } else { //no name set
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSOHJELMA_FI);
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSOHJELMA_SV);
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSOHJELMA_EN);

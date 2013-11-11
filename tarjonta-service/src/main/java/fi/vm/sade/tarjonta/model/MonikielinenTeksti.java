@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -28,7 +29,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import fi.vm.sade.generic.model.BaseEntity;
+import com.google.common.collect.Lists;
 
 /**
  * Translatable texts with modest "metadata" properties.
@@ -62,6 +63,21 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
         } else {
             kaannos.setArvo(teksti);
             //kaannos.setVersion(null);
+        }
+    }
+    
+    public MonikielinenTeksti() {
+    }
+    
+    /**
+     * Construct Monikielinen teksti from lang, value pairs. for every pair n the
+     * nth lang is at data[n*2], the nth value is at data[n*2+1].
+     * 
+     * @param data
+     */
+    public MonikielinenTeksti(String... data) {
+        for (int i = 0; i < data.length / 2; i++) {
+            addTekstiKaannos(data[i * 2], data[i * 2 + 1]);
         }
     }
 
@@ -145,6 +161,10 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
         } catch(Throwable t) {
             return super.toString();
         }
+    }
+
+    public List<TekstiKaannos> getKaannoksetAsList(){
+        return Lists.newArrayList(tekstis.values());
         
     }
 

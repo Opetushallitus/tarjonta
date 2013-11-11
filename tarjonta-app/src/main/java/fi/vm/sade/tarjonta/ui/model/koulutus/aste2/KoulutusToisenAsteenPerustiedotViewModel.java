@@ -24,8 +24,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -52,9 +50,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
-    @SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
-    
     private static final long serialVersionUID = 4511930754933045032L;
     private List<KoulutusmoduuliKoosteTyyppi> komos;
     private List<KoulutuskoodiModel> koulutuskoodit;
@@ -63,6 +58,18 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
     private MonikielinenTekstiModel koulutusohjelmaTavoitteet;
+
+    //Valmentavassa ja kuntouttavassa koulutuksessa editoitava nimi
+    private String nimi;
+    
+    public String getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
+    }
+
     private Long version;
     public Long getVersion() {
         return version;
@@ -133,12 +140,14 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOpetuskieli(null);
         setKoulutuskoodit(new ArrayList<KoulutuskoodiModel>());
         setKoulutusohjelmat(new ArrayList<KoulutusohjelmaModel>());
+        setNimi(null); //optional, vain valmentavassa ja kuntouttavassa?
         setOpsuLinkki(null); //optional
         setYhtHenkEmail(null); //optional
         setYhtHenkKokoNimi(null); //optional
         setYhtHenkPuhelin(null); //optional
         setYhtHenkTitteli(null); //optional
         setYhtHenkiloOid(null); //optional
+        setNimi(null);
 
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
@@ -296,20 +305,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
-    }
-
-    /**
-     * @return the toteutuksenNimet
-     */
-    public List<MonikielinenTekstiTyyppi.Teksti> getToteutuksenNimet() {
-        return toteutuksenNimet;
-    }
-
-    /**
-     * @param toteutuksenNimet the toteutuksenNimet to set
-     */
-    public void setToteutuksenNimet(List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet) {
-        this.toteutuksenNimet = toteutuksenNimet;
     }
 
     /**
