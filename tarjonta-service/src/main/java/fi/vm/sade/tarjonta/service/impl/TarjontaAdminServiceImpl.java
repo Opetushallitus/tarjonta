@@ -31,9 +31,7 @@ import javax.jws.WebParam;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +76,7 @@ import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
+
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
@@ -127,6 +125,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private PermissionChecker permissionChecker;
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
+
+
 
     @Override
     @Transactional(readOnly = false)
@@ -591,6 +591,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return vastaus;
     }
+
+
+
+
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)

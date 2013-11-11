@@ -16,12 +16,9 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,9 +132,19 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
-
+        komotoModel.setAlkamiskausi(getKausiFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
+        komotoModel.setAlkamisVuosi(getYearFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoModel);
         return koulutusmoduuliToteutusDAO.findByOid(response.getOid());
+    }
+
+    private String getKausiFromDate(Date aloituspvm) {
+        return IndexDataUtils.parseKausiKoodi(aloituspvm);
+    }
+
+    private Integer getYearFromDate(Date aloitusPvm)  {
+        return new Integer(IndexDataUtils.parseYear(aloitusPvm));
+
     }
 
     private Koulutusmoduuli handleToisenAsteenModuuli(LisaaKoulutusTyyppi koulutus) {
@@ -252,6 +259,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         EntityUtils.copyFields(koulutus, model);
         model.setViimIndeksointiPvm(model.getUpdated());
+        model.setAlkamisVuosi(getYearFromDate(model.getKoulutuksenAlkamisPvm()));
+        model.setAlkamiskausi(getKausiFromDate(model.getKoulutuksenAlkamisPvm()));
         koulutusmoduuliToteutusDAO.update(model);
         model = koulutusmoduuliToteutusDAO.read(model.getId());
 

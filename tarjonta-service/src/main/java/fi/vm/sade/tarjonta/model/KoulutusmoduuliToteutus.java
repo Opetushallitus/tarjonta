@@ -174,6 +174,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name="hinta")
     private BigDecimal hinta;
+
+    @Column(name = "alkamiskausi")
+    private String alkamiskausi;
+
+    @Column(name = "alkamisvuosi")
+    private Integer alkamisVuosi;
     
     
     public String getOpintojenLaajuusArvo() {
@@ -815,5 +821,21 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setHinta(BigDecimal hinta) {
         this.hinta = hinta;
+    }
+
+    public String getAlkamiskausi() {
+        return alkamiskausi;
+    }
+
+    public void setAlkamiskausi(String alkamiskausi) {
+        this.alkamiskausi = alkamiskausi;
+    }
+
+    public Integer getAlkamisVuosi() {
+        return alkamisVuosi;
+    }
+
+    public void setAlkamisVuosi(Integer alkamisVuosi) {
+        this.alkamisVuosi = alkamisVuosi;
     }
 }
