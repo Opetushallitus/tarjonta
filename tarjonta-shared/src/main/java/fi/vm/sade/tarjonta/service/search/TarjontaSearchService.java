@@ -281,7 +281,7 @@ public class TarjontaSearchService {
             if (orgOids.size() > 0) {
                 Map<String, OrganisaatioPerustieto> orgs = searchOrgs(orgOids);
                 
-                SolrDocumentToKoulutusmoduuliToteutusConverter converter = new SolrDocumentToKoulutusmoduuliToteutusConverter();
+                SolrDocumentToKoulutusConverter converter = new SolrDocumentToKoulutusConverter();
 
                 response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs);
 

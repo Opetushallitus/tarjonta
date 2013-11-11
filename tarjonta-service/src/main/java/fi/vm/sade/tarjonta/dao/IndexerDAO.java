@@ -97,7 +97,7 @@ public interface IndexerDAO {
      * @param id komoto id
      * @return
      */
-    MonikielinenTeksti getNimiForKoulutus(Long id);
+    MonikielinenTeksti getKomoNimi(Long id);
 
     /**
      * Find nimi for hakukohde, used in kk hakukohdes
@@ -131,5 +131,12 @@ public interface IndexerDAO {
      * @param time
      */
     void updateKoulutusIndexed(Long id, Date time);
+
+    /**
+     * Palauta nimi komotosta (käytetään erikoistapauksissa valmentava)
+     * @param koulutusId komoto id
+     * @return
+     */
+    MonikielinenTeksti getKomotoNimi(Long koulutusId);
 
 }

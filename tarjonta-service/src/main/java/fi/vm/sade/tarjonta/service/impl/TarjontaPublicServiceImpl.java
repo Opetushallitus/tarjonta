@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -626,6 +627,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             toKoulutus.setHinta(fromKoulutus.getHinta().toString());
         }
         toKoulutus.setMaksullisuus(false); //todo
+        
+        MonikielinenTeksti nimi = fromKoulutus.getNimi();
+        if(nimi!=null && nimi.getTekstis().size()>0){
+            TekstiKaannos tk = nimi.getKaannoksetAsList().get(0);
+            toKoulutus.setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()))));
+        }
 
         return toKoulutus;
     }

@@ -35,9 +35,18 @@ import java.util.Map.Entry;
 public class MonikielinenTekstiModel extends KoulutusKoodistoModel implements Comparable<MonikielinenTekstiModel> {
 
     private static final long serialVersionUID = -3004063117090257469L;
-    private static final String ERROR_NULL = "Language code cannot be null.";
     private Map<String, KielikaannosViewModel> kaannokset = Maps.<String, KielikaannosViewModel>newHashMap();
 
+    
+    public MonikielinenTekstiModel() {
+        // TODO Auto-generated constructor stub
+    }
+    
+    public MonikielinenTekstiModel(List<KielikaannosViewModel> tekstit) {
+        for(KielikaannosViewModel kkvm: tekstit) {
+            addKielikaannos(kkvm);
+        }
+    }
     /**
      * @return the kielikaannos
      */

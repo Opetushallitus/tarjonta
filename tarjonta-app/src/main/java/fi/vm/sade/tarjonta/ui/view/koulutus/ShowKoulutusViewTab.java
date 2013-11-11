@@ -31,6 +31,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -333,8 +334,13 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
         layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuskoodiModel().getKoodistoUri(), locale)));
 
-
-        layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusohjelmaModel().getKoodistoUri(), locale)));
+        if(presenter.getModel().getKoulutusPerustiedotModel().getNimi()!=null) {
+            // show nimi if available
+            layout.add(getTextRow("koulutusohjelma", presenter.getModel().getKoulutusPerustiedotModel().getNimi()));
+        } else {
+            //else show koodi
+            layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusohjelmaModel().getKoodistoUri(), locale)));
+        }
         layout.addSpace();
 
         if (koulutusaste != null) {

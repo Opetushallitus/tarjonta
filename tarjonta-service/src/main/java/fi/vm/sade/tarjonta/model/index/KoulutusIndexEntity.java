@@ -122,4 +122,20 @@ public class KoulutusIndexEntity {
         return koulutuslaji;
     }
 
+    @Override
+    public String toString() {
+        return "KoulutusIndexEntity [koulutusId=" + koulutusId + ", oid=" + oid
+                + ", tarjoaja=" + tarjoaja + ", koulutusTyyppi="
+                + koulutusTyyppi + ", koulutusohjelmaKoodi="
+                + koulutusohjelmaKoodi + ", lukiolinja=" + lukiolinja
+                + ", koulutusKoodi=" + koulutusKoodi + ", tutkintonimike="
+                + tutkintonimike + ", koulutuksenAlkamisPvm="
+                + koulutuksenAlkamisPvm + ", tila=" + tila
+                + ", koulutusmoduuliOid=" + koulutusmoduuliOid
+                + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
+                + ", koulutuslaji=" + koulutuslaji + "]";
+    }
+    
+    
+    
 }

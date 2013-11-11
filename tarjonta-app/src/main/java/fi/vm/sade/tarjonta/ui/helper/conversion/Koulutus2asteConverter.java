@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
@@ -50,6 +51,7 @@ import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -156,6 +158,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setOpsuLinkki(tyyppi.getLinkki().get(0).getUri());
         }
 
+        if(tyyppi.getNimi()!=null && tyyppi.getNimi().getTeksti().size()==1) {
+            //aseta nimi jos on (valmentava ka kuntouttava)
+            model2Aste.setNimi(tyyppi.getNimi().getTeksti().get(0).getValue());
+        }
+        
         return model2Aste;
     }
 
@@ -205,6 +212,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             tyyppi.setLaajuus(laajuus);
         }
         
+        if(model.getNimi()!=null) {
+            String lang = model.getOpetuskieli();
+            tyyppi.setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti(model.getNimi(), lang))));
+        }
 
         return tyyppi;
     }
