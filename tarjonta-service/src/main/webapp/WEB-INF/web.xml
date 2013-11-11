@@ -22,14 +22,14 @@
     </listener>
 
     <servlet>
-        <servlet-name>cxf</servlet-name>
-        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <servlet-name>healthcheck</servlet-name>
+        <servlet-class>fi.vm.sade.tarjonta.service.HealthCheck</servlet-class>
     </servlet>
 
     <servlet>
-        <servlet-name>healthcheck</servlet-name>
-        <servlet-class>fi.vm.sade.tarjonta.service.HealthCheck</servlet-class>
+        <servlet-name>cxf</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
