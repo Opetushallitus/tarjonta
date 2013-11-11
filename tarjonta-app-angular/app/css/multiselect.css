@@ -6,6 +6,7 @@ div.multiselect table.checklist {
 div.multiselect table.checklist, div.multiselect table.checklist td {
 	width:auto;
 	padding:0 1em 0 0;
+	vertical-align:top;
 }
 
 div.multiselect div.dualpane select {

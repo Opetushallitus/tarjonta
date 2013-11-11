@@ -181,7 +181,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             console.log('Calling getKoodistoWithKoodiUri with : ' + koodiUriParam + ' ' + locale);
 
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri'}).get({koodistoUri: koodiUriParam}, function(data) {
+            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri'}).query({koodistoUri: koodiUriParam}, function(data) {
                 var returnTarjontaKoodi = {
                     koodistoUri: data.koodistoUri,
                     tila: data.tila

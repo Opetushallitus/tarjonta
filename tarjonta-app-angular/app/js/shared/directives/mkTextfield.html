@@ -1,0 +1,14 @@
+<table class="mkTextfield">
+
+	<tr ng-repeat="e in data">
+		<th>{{codes[e.uri]}} <a href ng-click="removeLang(e.uri)" ng-show="e.removable">[X]</a></th>
+		<td><input type="text" ng-model="e.value" ng-change="updateModel()"/></td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+			<a href tt="koulutus.edit.lisaa-kieli" ng-click="addLang()"></a>
+		</td>
+	</tr>
+
+</table>

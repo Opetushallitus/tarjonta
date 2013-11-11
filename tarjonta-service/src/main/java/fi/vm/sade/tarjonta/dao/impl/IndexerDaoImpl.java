@@ -167,13 +167,20 @@ public class IndexerDaoImpl implements IndexerDAO {
     
     
     @Override
-    public MonikielinenTeksti getNimiForKoulutus(Long koulutusId) {
+    public MonikielinenTeksti getKomoNimi(Long koulutusId) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         return q(komoto)
                 .join(komoto.koulutusmoduuli, koulutusmoduuli).join(koulutusmoduuli.nimi).where(komoto.id.eq(koulutusId)).singleResult(koulutusmoduuli.nimi);
     }
-    
+
+    @Override
+    public MonikielinenTeksti getKomotoNimi(Long koulutusId) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return q(komoto)
+                .join(komoto.nimi).where(komoto.id.eq(koulutusId)).singleResult(komoto.nimi);
+    }
+
     @Override
     public MonikielinenTeksti getNimiForHakukohde(Long hakukohdeId) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
