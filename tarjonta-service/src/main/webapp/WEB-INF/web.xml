@@ -29,7 +29,7 @@
 
     <servlet>
         <servlet-name>healthcheck</servlet-name>
-        <servlet-class>fi.vm.sade.lokalisointi.service.HealthCheck</servlet-class>
+        <servlet-class>fi.vm.sade.tarjonta.service.HealthCheck</servlet-class>
     </servlet>
 
     <servlet-mapping>
