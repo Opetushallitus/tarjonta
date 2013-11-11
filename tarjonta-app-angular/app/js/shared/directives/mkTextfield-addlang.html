@@ -1,0 +1,16 @@
+<div id="mkTextfieldADL">
+
+    <div class="modal-header">
+        <h3 tt="tarjonta.mkt.valitse_lisattava_kieli"></h3>
+    </div>
+    
+    <ul class="modal-body">
+		<li ng-repeat="(uri, title) in codes"><a href ng-click="select(uri)">{{title}}</a></li>
+		
+    </ul>
+    
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()" tt="tarjonta.toiminnot.peruuta">(cancel)</button>
+    </div>
+
+</div>

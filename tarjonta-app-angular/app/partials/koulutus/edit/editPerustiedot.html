@@ -11,6 +11,20 @@
 	<tr class="required">
 		<th tt="koulutus.edit.koulutusohjelma"/>
 		<td>
+			<mk-textfield
+				model="model.koulutusohjelma.meta"
+				init="config.app.userLanguages">
+			</mk-textfield>
+		</td>
+		<td>
+			<p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p> 
+		</td>
+	</tr>
+	
+	<!--
+	<tr class="required">
+		<th tt="koulutus.edit.koulutusohjelma"/>
+		<td>			 
 			<table>
 				<tr data-ng-repeat="lang in config.app.userLanguages">
 					<th>{{model.koulutusohjelma.meta[lang].koodi.kaannos}}</th>
@@ -22,6 +36,8 @@
 			<a href="#" tt="koulutus.edit.lisaa-kieli"/>
 		</td>
 	</tr>
+	-->
+	
 	<tr>
 		<th></th>
 		<td colspan="2" class="help" tt="koulutus.edit.lisaa-kieli.help"/>
