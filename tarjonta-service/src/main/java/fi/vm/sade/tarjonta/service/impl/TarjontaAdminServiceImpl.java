@@ -926,7 +926,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        //indexTilatToSolr(tarjontatiedonTila); 
+        indexTilatToSolr(tarjontatiedonTila); 
         return new PaivitaTilaVastausTyyppi();
     }
 
