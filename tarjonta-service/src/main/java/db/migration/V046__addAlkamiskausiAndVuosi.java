@@ -23,7 +23,8 @@ public class V046__addAlkamiskausiAndVuosi implements SpringJdbcMigration{
     String koulutusModuuliTotQuery = "SELECT * FROM koulutusmoduuli_toteutus kt WHERE alkamiskausi IS NULL";
 
     public void migrate(JdbcTemplate jdbcTemplate) throws Exception {
-        LOG.debug("Running V046 migration...");
+        LOG.info("RUNNING V046 MIGRATION...");
+        System.out.print("RUNNING V046 MIGRATION...");
         List<QueryResult> results = jdbcTemplate.query(koulutusModuuliTotQuery,new RowMapper<QueryResult>() {
             @Override
             public QueryResult mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -31,12 +32,13 @@ public class V046__addAlkamiskausiAndVuosi implements SpringJdbcMigration{
 
                 result.setAlkamisPvm(resultSet.getDate("koulutuksen_alkamis_pvm"));
                 result.setOid(resultSet.getString("oid"));
-                result.setId(result.getId());
+                result.setId(resultSet.getInt("id"));
 
                 return result;
             }
         });
         LOG.debug("UPDATING {} rows",results.size());
+        System.out.println("UPDATING " + results.size() + " ROWS");
         for (QueryResult result : results) {
             updateKomoto(result,jdbcTemplate);
         }
@@ -44,13 +46,20 @@ public class V046__addAlkamiskausiAndVuosi implements SpringJdbcMigration{
 
     private void updateKomoto(QueryResult result, JdbcTemplate jdbcTemplate) {
       try {
-       String kausi = IndexDataUtils.parseKausi(result.getAlkamisPvm());
+       if (result.getAlkamisPvm() != null ) {
+       String kausi = IndexDataUtils.parseKausiKoodi(result.getAlkamisPvm());
        String vuosi = IndexDataUtils.parseYear(result.getAlkamisPvm());
-
-       jdbcTemplate.update("UPDATE koulutusmoduuli_toteutus SET alkamiskausi = ?, alkamisvuosi = ? WHERE id = ?",new Object[]{kausi,vuosi,result.getId()});
-       LOG.debug("Update row {} with values {}", result.getId(),kausi + " " +vuosi);
+       String updateSql = "UPDATE koulutusmoduuli_toteutus SET alkamiskausi = '" + kausi + "' , alkamisvuosi = " + vuosi +"  WHERE id = " +result.getId();
+       System.out.println("UPDATING WITH SQL : " + updateSql);
+       jdbcTemplate.update(updateSql);
+       LOG.info("Updated row {} with values {}", result.getId(),kausi + " " +vuosi);
+       System.out.println("UPDATE ROW " + result.getId() + " WITH VALUES : " + kausi + " " + vuosi);
+       } else {
+           System.out.println("ROW " + result.getId() + " HAD ALKAMISPVM NULL. NOT UPDATED");
+       }
       } catch (Exception exp ){
           LOG.warn("SOMETHING WENT WRONG IN V046-migration, with row {} EXCEPTION : {}", result.getId(),exp.toString());
+          System.out.println("SOMETHING WENT WRONG IN V046-migration, with row : " + result.getId() + " EXCEPTION : " + exp.toString());
       }
     }
 
