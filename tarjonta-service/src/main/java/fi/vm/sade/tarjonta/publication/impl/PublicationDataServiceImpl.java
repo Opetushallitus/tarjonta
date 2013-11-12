@@ -366,6 +366,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 hakukohdeUpdate.where(qHakukohde)
                         .set(QHakukohde.hakukohde.tila, toStatus)
                         .set(QHakukohde.hakukohde.lastUpdateDate, lastUpdatedDate)
+                        .set(QHakukohde.hakukohde.viimIndeksointiPvm, lastUpdatedDate)
                         .set(QHakukohde.hakukohde.lastUpdatedByOid, userOid);
                 hakukohdeUpdate.execute();
                 break;
@@ -389,6 +390,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 komotoUpdate.where(qToteutus)
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.tila, toStatus)
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.updated, lastUpdatedDate)
+                        .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.viimIndeksointiPvm, lastUpdatedDate)
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.lastUpdatedByOid, userOid);
                 komotoUpdate.execute();
 

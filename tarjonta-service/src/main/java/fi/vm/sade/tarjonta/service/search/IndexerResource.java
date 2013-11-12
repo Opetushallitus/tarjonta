@@ -204,6 +204,9 @@ public class IndexerResource {
     }
 
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
+        if(hakukohdeIdt.size()==0) {
+            return;
+        }
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
         int index = 0;
@@ -256,6 +259,9 @@ public class IndexerResource {
      * @throws SolrServerException
      */
     public void indexKoulutukset(List<Long> koulutukset) {
+        if(koulutukset.size()==0) {
+            return;
+        }
         int batch_size = 50;
         int index = 0;
         do {
