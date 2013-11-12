@@ -94,7 +94,7 @@ public class LearningOpportunityEnricherTest {
         xpath = XPathFactory.newInstance().newXPath();
         xpath.setNamespaceContext(new PublicationNamespaceContext());
 
-        System.out.print(out.toString());
+        //System.out.print(out.toString());
 
     }
 

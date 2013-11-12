@@ -29,7 +29,7 @@ public class PublicationNamespaceContext implements NamespaceContext {
     public String getNamespaceURI(String prefix) {
 
         String namespace = "http://publication.tarjonta.sade.vm.fi/types";
-        System.out.println("getNamespaceURI: " + prefix + " -> " + namespace);
+        //System.out.println("getNamespaceURI: " + prefix + " -> " + namespace);
 
         return namespace;
 
@@ -42,7 +42,7 @@ public class PublicationNamespaceContext implements NamespaceContext {
             throw new IllegalStateException("getNamespaceURI");
         }
         // Not needed in this context.
-        System.out.println("**************** getPrefix: " + namespaceURI);
+        //System.out.println("**************** getPrefix: " + namespaceURI);
         return null;
     }
 
@@ -53,7 +53,7 @@ public class PublicationNamespaceContext implements NamespaceContext {
             throw new IllegalStateException("getNamespaceURI");
         }
         // Not needed in this context.
-        System.out.println("**************** getPrefixes: " + namespaceURI);
+//        System.out.println("**************** getPrefixes: " + namespaceURI);
         return null;
     }
 

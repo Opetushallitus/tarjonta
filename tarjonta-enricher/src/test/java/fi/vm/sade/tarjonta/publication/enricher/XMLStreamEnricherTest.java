@@ -48,7 +48,7 @@ public class XMLStreamEnricherTest {
 
         String output = enrich("src/test/resources/enrich-minimal-in.xml");
 
-        System.out.println("enriched output: " + output);
+        //System.out.println("enriched output: " + output);
 
         // todo: as far as I can see, the enrichment works but the comparison fails! smoke test org.custommonkey.xmlunit.Diff
         //

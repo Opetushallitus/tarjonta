@@ -50,7 +50,7 @@ public class XMLFilteringPOCTest {
         filter.setContentHandler(new XMLWriter(out));
         filter.parse(new InputSource(INPUT_FILE));
 
-        System.out.println("output: \n" + out.toString());
+        //System.out.println("output: \n" + out.toString());
 
     }
 
