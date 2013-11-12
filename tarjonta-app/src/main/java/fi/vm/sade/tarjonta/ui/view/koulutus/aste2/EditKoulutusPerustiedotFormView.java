@@ -290,8 +290,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     presenter.loadKoulutusohjelmat();
                     Collections.sort(koulutusModel.getKoulutusohjelmat());
                     bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
-                    if(koulutusModel.getKoulutusohjelmat().size()==1) {
-                        //automatically select if only one!
+                    if(koulutusModel.getKoulutusohjelmat().size()==1 && isValmentavaOpetus) {
+                        //automatically select if only one selection!
                         koulutusModel.setKoulutusohjelmaModel(koulutusModel.getKoulutusohjelmat().get(0));
                     }
                     disableOrEnableComponents(true);
@@ -316,8 +316,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
 
         
-        if(koulutusModel.getKoulutuskoodit().size()==1){
-            
+        if(koulutusModel.getKoulutuskoodit().size()==1 && isValmentavaOpetus){
             KoulutuskoodiModel km = koulutusModel.getKoulutuskoodit().get(0);
             //ainoa valinta, valitse suoraan
             koulutusModel.setKoulutuskoodiModel(km);
