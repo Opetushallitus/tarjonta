@@ -242,7 +242,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         Haku h = fixtures.createPersistedHaku();
 
 
-        System.out.println("haku version:" + h.getVersion());
+        //System.out.println("haku version:" + h.getVersion());
 
         ListaaHakuTyyppi hakutyyppi = new ListaaHakuTyyppi();
         hakutyyppi.setHakuOid(h.getOid());

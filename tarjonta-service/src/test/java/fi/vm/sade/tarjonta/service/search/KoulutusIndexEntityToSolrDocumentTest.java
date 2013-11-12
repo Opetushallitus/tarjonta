@@ -133,7 +133,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
                         .getValue());
 
-        System.out.println(doc);
+        //System.out.println(doc);
         
         Assert.assertEquals("kausi_k#0",
                 doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
