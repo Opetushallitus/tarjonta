@@ -134,6 +134,7 @@
         <!-- kaikki tarjonta-roina tämän sisään!! -->
         <div id="tarjonta-body">
             <div data-ng-controller="LocalisationCtrl">
+
                 <div data-ng-switch on="renderPath[0]">
                     <div data-ng-switch-when="foo">
                         <div data-ng-include="'partials/koulutus/index.html'"></div>
@@ -196,7 +197,7 @@
                     <hr>
                     Footer, route counter = {{count}}<br>
                     <a href="#/etusivu">Etusivulle</a>
-                    <a href="#/helpers/localisations">Käännökset</a>
+                    <a href="/lokalisointi">Käännösten hallinta</a>
 
                     <div>
                         <span data-ng-click="showTheSheisse = !showTheSheisse"
@@ -280,9 +281,9 @@
             });
 
             //
-            // Preload application localisation
+            // Preload application localisations for tarjonta
             //
-            var localisationUrl = window.CONFIG.env.tarjontaRestUrlPrefix + "localisation";
+            var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta";
             console.log("** Loading localisation info; from: ", localisationUrl);
             init_counter++;
             jQuery.ajax(localisationUrl, {
