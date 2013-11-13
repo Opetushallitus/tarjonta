@@ -99,8 +99,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     $scope.model.canSaveHakukohde = function() {
-        console.log('CAN SAVE HAKUKOHDE', $scope.editHakukohdeForm.$valid);
-        return $scope.editHakukohdeForm.$valid;
+        if ($scope.editHakukohdeForm !== undefined) {
+            return $scope.editHakukohdeForm.$valid;
+        } else {
+            return false;
+        }
+
     }
 
 
@@ -217,9 +221,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var hakuPromise = HakuService.getAllHakus();
 
 
-    hakuPromise.then(function(hakuDatas) {
 
+    hakuPromise.then(function(hakuDatas) {
+        console.log('GOT HAKUS ', hakuDatas.length);
         angular.forEach(hakuDatas,function(haku){
+
+            angular.forEach(haku.nimi,function(nimi){
+                //TODO: replace this with localization value
+               if (nimi.arvo === "FI") {
+                   haku.lokalisoituNimi = nimi.teksti;
+               }
+            });
+
             $scope.model.hakus.push(haku);
         });
 
