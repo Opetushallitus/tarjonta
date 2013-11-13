@@ -146,7 +146,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusala;
     private Label tavoitteet;
     private Label jatkoopintomahdollisuudet;
-    private Label pohjakoulutusvaatimus;
+    //private Label pohjakoulutusvaatimus;
     private Label koulutuslaji;
 
     public EditLukioKoulutusPerustiedotFormView() {
@@ -228,7 +228,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
         opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
         koulutuslaji = buildLabel(this, "koulutuslaji");
-        pohjakoulutusvaatimus = buildLabel(this, "pohjakoulutusvaatimus");
+        //pohjakoulutusvaatimus = buildLabel(this, "pohjakoulutusvaatimus");
 
         koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         tavoitteet = buildLabel(this, "tavoitteet");
@@ -477,7 +477,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         labelDataBind(tavoitteet, model.getTavoitteet());
         labelDataBind(jatkoopintomahdollisuudet, model.getJatkoopintomahdollisuudet());
         labelDataBind(koulutuslaji, model.getKoulutuslaji());
-        labelDataBind(pohjakoulutusvaatimus, model.getPohjakoulutusvaatimus());
+        //labelDataBind(pohjakoulutusvaatimus, model.getPohjakoulutusvaatimus());
 
         disableOrEnableComponents(true);
     }
@@ -492,7 +492,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         tavoitteet.setValue("");
         jatkoopintomahdollisuudet.setValue("");
         tutkintonimike.setValue("");
-        pohjakoulutusvaatimus.setValue("");
+        //pohjakoulutusvaatimus.setValue("");
         koulutuskoodi.setValue("");
 
     }
