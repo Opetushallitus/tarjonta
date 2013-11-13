@@ -17,6 +17,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
    valintaKokeetPromise.then(function(valintakokees){
 
            angular.forEach(valintakokees.result,function(valintakoe){
+               console.log('GOT VALINTAKOE: ' , valintakoe);
                addValintakoeToList(valintakoe);
            });
 
