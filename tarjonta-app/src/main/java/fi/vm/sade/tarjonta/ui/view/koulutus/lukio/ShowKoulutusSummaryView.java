@@ -20,6 +20,7 @@ import java.util.*;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
+import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
@@ -79,6 +80,8 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private TarjontaPresenter _presenter;
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
+    @Autowired
+    private TarjontaUIHelper uiHelper;
     private TarjontaDialogWindow tarjontaDialog;
     private final String datePattern = "dd.MM.yyyy HH:mm";
     private OrganisaatioContext context;
@@ -153,9 +156,10 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         return vl;
     }
 
-    private Label buildTallennettuLabel(Date date) {
+    private Label buildTallennettuLabel(Date date, String viimPaivittajaOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
-        Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + " )");
+        String viimPaivittaja = uiHelper.findUserWithOid(viimPaivittajaOid);
+        Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja +  " )");
         return lastUpdLbl;
     }
 
@@ -207,7 +211,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         Label viimeisinPaivitysPvm = null;
         if (model instanceof KoulutusLukioPerustiedotViewModel && ((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm() != null) {
 
-           viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm());
+           viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm(),((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivittajaOid());
         }
 
         

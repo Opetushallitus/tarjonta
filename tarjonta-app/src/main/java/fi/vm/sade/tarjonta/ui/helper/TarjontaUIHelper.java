@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import net.sf.ehcache.CacheManager;
 
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.authentication.service.UserService;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -101,6 +103,9 @@ public class TarjontaUIHelper {
     private String langKoodiUriEn;
     @Value("${koodisto.language.sv.uri:kieli_sv}")
     private String langKoodiUriSv;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
     private static final String[] SEARCH_KOMO_KOODISTOS = new String[]{
@@ -695,6 +700,16 @@ public class TarjontaUIHelper {
         
         //happens when map is empty?
         return null;
+    }
+
+    public String findUserWithOid(String oid) {
+        if (oid != null) {
+            HenkiloType henkiloType = userService.findByOid(oid);
+            return henkiloType.getKayttajatunnus();
+        } else {
+            return "";
+        }
+
     }
     
     /**
