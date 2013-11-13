@@ -41,7 +41,7 @@
 					var template = drawChildren([org]);
 					var dom = $compile(template);
 					//poista c-<oid>, päivitä o-<oid>
-					console.log("opening org:", org );
+//					console.log("opening org:", org );
 					//organisaatio auki
 					$("#" + treeId + "-c-" + eid).detach();
 					$("#" + treeId + "-o-" + eid).replaceWith( dom (SharedStateService.state.puut[treeId].scope));
@@ -69,10 +69,10 @@
 				/**
 				 * Solmu avataan/suljetaan
 				 */
-				scope.toggleOrg=function(id, element){
+				scope.toggleOrg=function(id){
 //					console.log("toggle valittu!");
 
-					console.log("id param:", id);
+//					console.log("id param:", id);
 					var org = getOrg(id, SharedStateService.state.puut[treeId].data);
 					//console.log("selected org:", org);
 					if(org.open===undefined){
@@ -88,8 +88,9 @@
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
-//					console.log("organisaatio valittu!", oid);
+	//				console.log("organisaatio valittu!", treeId);
 					var current = SharedStateService.state.puut[treeId].selected;
+					
 					
 //					console.log("vanha valinta", current);
 					if(current!==undefined) {
@@ -99,14 +100,19 @@
 						if(org!==undefined){
 							org.selected=false;
 							redraw(org);
-							current = undefined;
 						}
+					}
+					var unselect = (oid===SharedStateService.state.puut[treeId].selected);
+					if (unselect) {
+						SharedStateService.state.puut[treeId].selected=undefined;
+						scope[treeId].currentNode=undefined;
+						return;
 					}
 //					console.log("etsitään uutta");
 					var org = getOrg(oid, SharedStateService.state.puut[treeId].data);
 //					console.log("uusi:", org);
 
-					org.selected="true";
+					org.selected=true;
 					SharedStateService.state.puut[treeId].selected=oid;
 					redraw(org);
 					
@@ -119,7 +125,7 @@
 				
 				//tree id
 				var treeId = attrs.treeId;
-				console.log("treeid:", treeId);
+//				console.log("treeid:", treeId);
 			
 				//tree model
 				var treeModel = attrs.treeModel;
