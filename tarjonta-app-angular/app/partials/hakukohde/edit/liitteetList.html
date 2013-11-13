@@ -6,10 +6,12 @@
 
         <table class="table table-hover">
              <tr>
+
                  <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.kuvaus')}}</th>
                  <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.osoite')}}</th>
              </tr>
-            <tr data-ng-repeat="liite in model.liitteet">
+            <tr data-ng-repeat="liite in model.liitteet | filter:liite.kieliNimi:kieli">
+
                <td>{{ liite.liitteenKuvaus.teksti }}</td>
                 <td>{{ liite.toimitettavaMennessa | date: 'dd.MM.yyyy HH:mm'  }} <br/>
                 {{ liite.liitteenToimitusOsoite.osoiterivi1 }} , {{ liite.liitteenToimitusOsoite.postitoimipaikka }}

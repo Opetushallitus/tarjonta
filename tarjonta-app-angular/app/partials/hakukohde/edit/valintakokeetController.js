@@ -1,6 +1,6 @@
 var app =  angular.module('app.kk.edit.hakukohde.ctrl')
 
-app.controller('ValintakokeetController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Valintakoe, HakuService, $modal ,Config,$location) {
+app.controller('ValintakokeetController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Valintakoe,dialogService, HakuService, $modal ,Config,$location) {
 
 
    var kieliSet = new buckets.Set();
@@ -76,14 +76,35 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
     $scope.model.poistaValintakoe = function(valintakoe) {
 
-        var index =  $scope.model.valintakokees.indexOf(valintakoe);
+        var texts = {
+            title: LocalisationService.t("hakukohde.valintakokeet.list.remove.title"),
+            description: LocalisationService.t("hakukohde.valintakokeet.list.remove.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
+
+        var d = dialogService.showDialog(texts);
+
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+                var index =  $scope.model.valintakokees.indexOf(valintakoe);
+                $scope.model.valintakokees.splice(index,1);
+                valintakoe.hakukohdeOid = $scope.model.hakukohdeOid;
+                valintakoe.valintakoeOid = valintakoe.oid;
+                console.log('REMOVING VALINTAKOE :',valintakoe);
+                var valintakoeResource = new Valintakoe(valintakoe);
+                valintakoeResource.$delete();
+            }
+        });
+
+       /* var index =  $scope.model.valintakokees.indexOf(valintakoe);
         $scope.model.valintakokees.splice(index,1);
         valintakoe.hakukohdeOid = $scope.model.hakukohdeOid;
         valintakoe.valintakoeOid = valintakoe.oid;
         console.log('REMOVING VALINTAKOE :',valintakoe);
         var valintakoeResource = new Valintakoe(valintakoe);
         valintakoeResource.$delete();
-
+        */
     };
 
 

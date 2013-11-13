@@ -452,7 +452,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
              liites.add(hakukohdeLiite);
              hakukohdeDao.insertLiittees(liites, hakukohdeOid);
 
-             resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
+             resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
              resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
              return resultRDTO;
 

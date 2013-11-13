@@ -1,6 +1,6 @@
 var app =  angular.module('app.kk.edit.hakukohde.ctrl');
 
-app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, HakuService, $modal ,Config,$location) {
+app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, dialogService , HakuService, $modal ,Config,$location) {
 
      var kieliSet = new buckets.Set();
 
@@ -19,13 +19,69 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         console.log('LIITTEET GOT: ',liitteet);
 
         angular.forEach(liitteet.result,function(liite){
-           kieliSet.add(liite.kieliNimi);
+            addLiiteToLiitteet(liite);
+        });
 
-          $scope.model.liitteet.push(liite);
+
+    });
+
+    var addLiiteToLiitteet = function(liite) {
+        console.log('ADDING LIITE : ', liite);
+        if (liite !== undefined) {
+
+            checkForExistingLiite(liite);
+
+            kieliSet.add(liite.kieliNimi);
+
+            $scope.model.liitteet.push(liite);
+            $scope.model.liitteenkielet = kieliSet.toArray();
+        }
+
+    } ;
+
+    var checkKieles = function() {
+
+        kieliSet.clear();
+        angular.forEach($scope.model.liitteet,function(liite){
+            kieliSet.add(liite.kieliNimi);
         });
         $scope.model.liitteenkielet = kieliSet.toArray();
 
-    });
+    }
+
+
+    var removeLiiteFromList = function(liite) {
+        var index = $scope.model.liitteet.indexOf(liite);
+        $scope.model.liitteet.splice(index,1);
+        liite.hakukohdeOid = $scope.model.hakukohdeOid;
+        liite.liiteId = liite.oid;
+
+        var liiteResource = new Liite(liite);
+        liiteResource.$delete();
+        checkKieles();
+    };
+
+    var checkForExistingLiite = function(liite) {
+
+        var foundLiite;
+
+        angular.forEach($scope.model.liitteet,function(loopLiite){
+
+            if (loopLiite.oid === liite.oid) {
+                foundLiite = loopLiite;
+            }
+
+        });
+
+        if (foundLiite !== undefined) {
+
+            var index = $scope.model.liitteet.indexOf(foundLiite);
+
+            $scope.model.liitteet.splice(index,1);
+
+        }
+
+    };
 
     $scope.model.muokkaaLiitetta = function(liite) {
 
@@ -63,16 +119,27 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             }
         });
 
-        modalInstance.result.then(function(liite){
+        modalInstance.result.then(function(selectedItem){
              liite.hakukohdeOid = $scope.model.hakukohdeOid;
-            console.log('GOT LIITE: ', liite);
-             var liiteResource  = new Liite(liite);
-             if (liite.oid === undefined) {
-                 liiteResource.$save();
+            console.log('GOT LIITE: ', selectedItem);
+             var liiteResurssi  = new Liite(selectedItem);
+             if (selectedItem.oid === undefined) {
+
+                 var returnResource = liiteResurssi.$save();
+
+                 returnResource.then(function(liiteResponse){
+                     console.log('LIITE RESPONSE : ', liiteResponse);
+                    console.log('LIITE TO ADD : ', liiteResponse.result);
+                    addLiiteToLiitteet(liiteResponse.result);
+                });
+
              } else {
-                 liiteResource.$update();
+                 var liiteResourcePromise = liiteResource.$update();
+                 liiteResourcePromise.then(function(liiteResult){
+                     addLiiteToLiitteet(liiteResult.result);
+                 });
              }
-            $scope.model.liitteet.push(liite);
+            //$scope.model.liitteet.push(liite);
         });
 
     };
@@ -83,15 +150,20 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     $scope.model.poistaLiite = function(liite) {
 
-           var index = $scope.model.liitteet.indexOf(liite);
-           $scope.model.liitteet.splice(index,1);
-           liite.hakukohdeOid = $scope.model.hakukohdeOid;
-           liite.liiteId = liite.oid;
 
-        var liiteResource = new Liite(liite);
-        liiteResource.$delete();
+        var texts = {
+            title: LocalisationService.t("hakukohde.liitteet.list.remove.title"),
+            description: LocalisationService.t("hakukohde.liitteet.list.remove.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
 
-
+        var d = dialogService.showDialog(texts);
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+                removeLiiteFromList(liite);
+            }
+        });
 
     };
 
