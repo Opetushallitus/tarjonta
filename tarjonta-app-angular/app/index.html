@@ -99,8 +99,6 @@
 
         <script src="partials/hakukohde/hakukohdeController.js"></script>
 
-        <script src="partials/helpers/localisationControllers.js"></script>
-
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
 
         <script src="partials/common/dialogService.js"></script>
@@ -152,13 +150,6 @@
                             </div>
                         </div><!-- /renderPath[1] -->
                     </div><!-- 0:/kk -->
-                    <div data-ng-switch-when="helpers">
-                        <div data-ng-switch on="renderPath[1]">
-                            <div data-ng-switch-when="localisations">
-                                <div data-ng-include="'partials/helpers/localisation.html'" data-ng-controller="HelpersLocalisationCtrl"></div>
-                            </div>
-                        </div>
-                    </div><!-- 0:/helpers -->
 
                     <div data-ng-switch-when="koulutus">
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="KoulutusRoutingController">

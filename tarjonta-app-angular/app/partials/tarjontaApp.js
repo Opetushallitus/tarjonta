@@ -32,7 +32,6 @@ angular.module('app',
             'app.test.controllers',
             'app.kk',
             'app.koulutus.ctrl',
-            'app.helpers',
             'app.dialog',
             'ngRoute',
             'ngResource',
@@ -194,7 +193,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-                                 
+
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;
