@@ -19,53 +19,33 @@
 
 <tabset>
 	<tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}">
-
-		<table class="tarjontaForm">
+	
+		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+			
+			<h4>{{t('koulutus.edit.'+lisatieto+'.title')}}</h4>			
+			<p>{{t('koulutus.edit.'+lisatieto+'.help')}}</p>
+			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>
+			<br/>
+			
+		</div>
+	
+		<div ng-show="lisatieto == 'KOULUTUKSEN_RAKENNE'">
 		
-			<tbody ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
-				<tr>
-					<th>{{t('koulutus.edit.'+lisatieto+'.title')}}</th>
-					<td colspan="2">
-						<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>
-						<br/> <!-- TODO poista kun tinymce:llä on kunnon leiska tjsp.. -->
-					</td>
-				</tr>
-				
-				<tr class="required" ng-show="lisatieto == 'MAKSULLISUUS'">
-                	<th tt="koulutus.edit.maksullisuus.hinta"></th>
-                	<td>
-	               	 	<input required name="hinta" class="thin" type="text" data-ng-model="model.hinta" required />
-    	           		<span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
-                	</td>
-                	<td>
-                		<p class="error" ng-show="lisatiedotForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required"/>
-                	</td>
-           		</tr>
+			<h4 tt="koulutus.edit.kuva.title"></h4>
 
-				<tr ng-show="lisatieto == 'KOULUTUKSEN_RAKENNE'">
-					<th tt="koulutus.edit.kuva.title"></th>
-					<td>
-						<input id="inputImage2" 
-		                   url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
-		                   type="file" 
-		                   accept="image/*" 
-		                   image="image2" 
-		                   resize-max-height="300"
-		                   resize-max-width="250"
-		                   resize-quality="0.9" />
-		                <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
-		            	
-	            	</td>
-					<td><img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/></td>
-				</tr>
-				
-				<tr>
-					<th></th>
-					<td colspan="2" class="help">{{t('koulutus.edit.'+lisatieto+'.help')}}</td>
-				</tr>
-			</tbody>
-
-		</table>
+			<input id="inputImage2" 
+                  url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
+                  type="file" 
+                  accept="image/*" 
+                  image="image2" 
+                  resize-max-height="300"
+                  resize-max-width="250"
+                  resize-quality="0.9" />
+            <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
+	           	
+			<img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
+		</div>
+		
 	</tab>
 </tabset>
 </form>

@@ -189,6 +189,16 @@
 		<td></td>
 	</tr>
 	<tr>
+       	<th tt="koulutus.edit.maksullisuus.hinta"></th>
+       	<td>
+       	 	<input name="hinta" class="thin" type="text" data-ng-model="model.hinta" required ng-disabled="!model.opintojenMaksullisuus" />
+       		<span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
+       	</td>
+       	<td>
+       		<p class="error" ng-show="lisatiedotForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required"/>
+       	</td>
+   	</tr>
+	<tr>
 		<th></th>
 		<td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help"/>
 	</tr>
