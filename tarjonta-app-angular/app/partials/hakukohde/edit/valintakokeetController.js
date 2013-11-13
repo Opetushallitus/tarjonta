@@ -17,18 +17,39 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
    valintaKokeetPromise.then(function(valintakokees){
 
            angular.forEach(valintakokees.result,function(valintakoe){
-              if (valintakoe !== undefined) {
-
-                      kieliSet.add(valintakoe.kieliNimi);
-                      $scope.model.valintakokees.push(valintakoe);
-
-              }
+               addValintakoeToList(valintakoe);
            });
-           $scope.model.kielet = kieliSet.toArray();
+
 
 
 
    });
+
+  var addValintakoeToList = function(valintakoe) {
+      if (valintakoe !== undefined) {
+          checkForExistingValintaKoe(valintakoe);
+          kieliSet.add(valintakoe.kieliNimi);
+          $scope.model.valintakokees.push(valintakoe);
+
+      }
+      $scope.model.kielet = kieliSet.toArray();
+  };
+
+  var checkForExistingValintaKoe = function(valintakoe) {
+      var foundValintakoe;
+      angular.forEach($scope.model.valintakokees,function(loopValintakoe){
+
+          if (loopValintakoe.oid === valintakoe.oid) {
+             foundValintakoe = loopValintakoe;
+          }
+
+      });
+
+      if (foundValintakoe !== undefined) {
+          var index = $scope.model.valintakokees.indexOf(foundValintakoe);
+          $scope.model.valintakokees.splice(index,1);
+      }
+  };
 
   var addToValintakokees = function(valintakoe) {
 
@@ -87,15 +108,17 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
            if (selectedItem.oid === undefined) {
               var returnResource = valintakoeResource.$save();
               returnResource.then(function(valintakoe){
-                  console.log('GOT VALINTAKOE : ' , valintakoe.result);
-                     $scope.model.valintakokees.push(valintakoe.result);
-                    console.log('VALINTAKOKEES : ', $scope.model.valintakokees);
+
+                  addValintakoeToList(valintakoe.result);
+
+
 
               });
            } else {
                var returnResource =  valintakoeResource.$update();
                returnResource.then(function(valintakoe) {
-                   $scope.model.valintakokees.push(valintakoe.result);
+                   addValintakoeToList(valintakoe.result);
+
                });
            }
 
