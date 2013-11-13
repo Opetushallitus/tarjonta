@@ -28,23 +28,21 @@
 			<br/>
 			
 		</div>
-	
-		<div ng-show="lisatieto == 'KOULUTUKSEN_RAKENNE'">
-		
-			<h4 tt="koulutus.edit.kuva.title"></h4>
 
-			<input id="inputImage2" 
-                  url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
-                  type="file" 
-                  accept="image/*" 
-                  image="image2" 
-                  resize-max-height="300"
-                  resize-max-width="250"
-                  resize-quality="0.9" />
-            <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
-	           	
-			<img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
-		</div>
+		<h4 tt="koulutus.edit.kuva.title"></h4>
+
+		<input id="inputImage2" 
+                 url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
+                 type="file" 
+                 accept="image/*" 
+                 image="image2" 
+                 resize-max-height="300"
+                 resize-max-width="250"
+                 resize-quality="0.9" />
+           <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
+           	
+		<img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
+
 		
 	</tab>
 </tabset>
