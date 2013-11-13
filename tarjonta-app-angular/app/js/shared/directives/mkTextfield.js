@@ -12,9 +12,9 @@ app.directive('mkTextfield',function(Koodisto, LocalisationService, $log, $modal
 			$scope.model = {};
 		}
 		
-		if (!$scope.init) {
-			$scope.init = [];
-		}
+		//if (!$scope.init || !($scope.init instanceof Array) || $scope.init.length==0) {
+		$scope.init = window.CONFIG.app.userLanguages;
+		//}
 		
 		$scope.data = [];
 		
@@ -46,7 +46,7 @@ app.directive('mkTextfield',function(Koodisto, LocalisationService, $log, $modal
 		for (var i in $scope.init) {
 			var lang = $scope.init[i];
 			if (!$scope.model[lang]) {
-				data.push({uri:lang, value:"", removable: false});
+				$scope.data.push({uri:lang, value:"", removable: false});
 			}
 		}
 		
@@ -98,7 +98,7 @@ app.directive('mkTextfield',function(Koodisto, LocalisationService, $log, $modal
         templateUrl : "js/shared/directives/mkTextfield.html",
         controller: controller,
         scope: {
-        	init: "=", // lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
+        	//init: "=", // lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
         	model: "=", // map jossa kieliuri -> teksti
         	//required: "@" // jos tosi, vähintään yksi arvo vaaditaan
         }

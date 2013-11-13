@@ -27,8 +27,8 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 
 
 
-                $resource(hakuUri).query({},function(hakus){
-                    hakuPromise.resolve(hakus);
+                $resource(hakuUri).get({},function(hakus){
+                    hakuPromise.resolve(hakus.result);
                 });
 
 

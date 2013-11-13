@@ -227,6 +227,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     //Hakukohde nimi chooser dialog controller
+    /*
     var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
 
         $scope.model.hakukohdenimi = {};
@@ -304,7 +305,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     };
-
+	*/
 
 
 });
