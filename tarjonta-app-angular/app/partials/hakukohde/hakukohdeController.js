@@ -16,12 +16,13 @@
 
 var app = angular.module('app.hakukohde.ctrl', []);
 
-app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route',
-    function HakukohdeRoutingController($scope, $log, $routeParams, $route) {
+app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','Hakukohde' ,
+    function HakukohdeRoutingController($scope, $log, $routeParams, $route,Hakukohde) {
         $log.info("HakukohdeRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
 
+        $log.info('HAKUKOHDE : ', $route.current.locals.hakukohdex.result);
         if ($route.current.locals.hakukohdex.result === undefined) {
 
             $scope.model = {
@@ -32,15 +33,16 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
             }
 
 
-            $scope.model.hakukohde.result = $route.current.locals.hakukohdex;
+            $scope.model.hakukohde = $route.current.locals.hakukohdex;
 
         } else {
+            var hakukohdeResource = new Hakukohde( $route.current.locals.hakukohdex.result);
 
             $scope.model = {
                 collapse: {
                     model : true
                 },
-                hakukohde : $route.current.locals.hakukohdex
+                hakukohde : hakukohdeResource
             }
 
         }

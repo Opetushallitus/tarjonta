@@ -263,17 +263,6 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         }
         String koodiUri = ((KoodiContainer) koulutuksenTyyppiCombo.getValue()).koodiType.getKoodiUri();
         
-        boolean isEnabled = koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
-                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()) 
-                || koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())
-                || koodiUri.contains(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS.getKoulutustyyppiUri())
-                || koodiUri.contains(Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
-                || koodiUri.contains(Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
-                || koodiUri.contains(Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())
-                || koodiUri.contains(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri());
-        
-        pohjakoulutusvaatimusLbl.setVisible(isEnabled);
-        pohjakoulutusvaatimusCombo.setVisible(isEnabled);
         
         this.buildPohjakoulutusvaatimusCombo(koodiUri);
         
@@ -289,6 +278,16 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         for(KoodiType curKoodi : koodit) {
             this.pohjakoulutusvaatimusCombo.addItem(new KoodiContainer(curKoodi));
         }
+        
+        if (this.pohjakoulutusvaatimusCombo.getItemIds().size() == 1) {
+            this.pohjakoulutusvaatimusCombo.setValue(this.pohjakoulutusvaatimusCombo.getItemIds().iterator().next());
+        } 
+        boolean isVisible = (this.pohjakoulutusvaatimusCombo.getItemIds().size() > 1) 
+                                && !koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_LUKIO.getKoulutustyyppiUri());
+
+        
+        pohjakoulutusvaatimusLbl.setVisible(isVisible);
+        pohjakoulutusvaatimusCombo.setVisible(isVisible);
     }
 
     private ComboBox buildKoulutusValintaCombo() {

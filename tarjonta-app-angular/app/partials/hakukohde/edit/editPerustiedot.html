@@ -16,7 +16,7 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.haut"/>
 		<td>
-			<select required class="wide" ng-model="model.hakukohde.result.hakuOid" data-ng-options="haku.oid as haku.nimi.kieli_fi for haku in model.hakus"/>
+			<select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -39,7 +39,7 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"/>
 		<td>
-			<input class="thin" type="text" data-ng-model="model.hakukohde.result.aloituspaikatLkm" required />
+			<input class="thin" type="text" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -50,7 +50,7 @@
 	<tr>
 		<th tt="kk.hakukohde.valintapalvelu"/>
 		<td>
-			<input type="checkbox" data-ng-model="model.hakukohde.result.kaytetaanJarjestelmanValintaPalvelua"  />
+			<input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua"  />
 			<span tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></span>
 		</td>
 		<td>
@@ -80,9 +80,9 @@
 	<tr>
 		<th></th>
 		<td>			
-			<input placeholder="(Katuosoite)" class="wide" type="text" ng-disabled="!osoiteType" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.osoiterivi1" />   <br/>
-			<input placeholder="(Postinumero)" type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-			<input placeholder="(Postitoimipaikka)" type="text" disabled="true" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka" />
+			<input type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
+			<input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
+			<input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -103,7 +103,7 @@
 	<tr>
 		<th tt="kk.hakukohde.sahkoinentoimitusosoite"/>
 		<td>
-			<input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.result.sahkoinenToimitusOsoite"/>
+			<input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -136,23 +136,22 @@
 <!-- TODO mkTextarea -->
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span2">
+            <div class="span2 label-right"><div tt="kk.hakukohde.lisatietoja.hakemisesta"></div></div>
 
-        </div>
         <div class="span4">
             <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="'FI'"></koodistotypeahead>
         </div>
         <div class="span5">
             <accordion close-others="oneAtATime">
-                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.result.lisatiedot">
+                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
                    <!-- <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text> -->
-                      <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                  </accordion-group>
+                    <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
+                </accordion-group>
 
 
 
-              </accordion>
-          </div>
+            </accordion>
+        </div>
 
-      </div>
-  </div>
+    </div>
+</div>

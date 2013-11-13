@@ -143,7 +143,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
                 public void buttonClick(ClickEvent clickEvent) {
                     getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
                 }
-            }, null, presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+            }, null, null,presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
         //}
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -168,11 +168,13 @@ public class ShowHakukohdeTab extends VerticalLayout {
         final List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet(false);
 
         Date lastUpdated = null;
+        String lastupdateBy = null;
 
         //get the latest date
         for (HakukohdeLiiteViewModel liite : loadHakukohdeLiitteet) {
             if (lastUpdated == null || lastUpdated.before(liite.getViimeisinPaivitysPvm())) {
                 lastUpdated = liite.getViimeisinPaivitysPvm();
+                lastupdateBy = liite.getViimeisinPaivittaja();
             }
         }
 
@@ -186,7 +188,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
                     presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                             presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
                 }
-            }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+            }, lastUpdated, lastupdateBy,presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
         //}
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -318,7 +320,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
                     presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                             presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
                 }
-            }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+            }, lastUpdated,presenter.getModel().getHakukohde().getViimeisinPaivittaja(), presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
         //}
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
@@ -573,9 +575,10 @@ public class ShowHakukohdeTab extends VerticalLayout {
         return rows;
     }
 
-    private Label buildTallennettuLabel(Date date) {
+    private Label buildTallennettuLabel(Date date, String viimPaivOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
-        Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+        String viimPaivittaja = uiHelper.findUserWithOid(viimPaivOid);
+        Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
         return lastUpdLbl;
     }
     
@@ -601,7 +604,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, null);
             }
-        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
+        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(),presenter.getModel().getHakukohde().getViimeisinPaivittaja() ,presenter.getPermission().userCanUpdateHakukohde(getContext(), !checkHaunAlkaminen())));
         //}
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -783,12 +786,13 @@ public class ShowHakukohdeTab extends VerticalLayout {
         parent.addComponent(split);
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Date lastUpdatedLabel, boolean showButton) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Date lastUpdatedLabel, String lastUpdateBy , boolean showButton) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         final Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
-        final Label buildTallennettuLabel = lastUpdatedLabel != null ? buildTallennettuLabel(lastUpdatedLabel) : null;
+        final Label buildTallennettuLabel = lastUpdatedLabel != null ? buildTallennettuLabel(lastUpdatedLabel, lastUpdateBy) : null;
+
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);

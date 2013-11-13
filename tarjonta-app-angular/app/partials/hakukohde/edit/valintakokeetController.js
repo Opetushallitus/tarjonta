@@ -4,7 +4,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 
    var kieliSet = new buckets.Set();
-   $scope.model.hakukohdeOid  =  $scope.model.hakukohde.result.oid;
+   $scope.model.hakukohdeOid  =  $scope.model.hakukohde.oid;
 
    $scope.model.kielet = [];
 
@@ -17,18 +17,39 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
    valintaKokeetPromise.then(function(valintakokees){
 
            angular.forEach(valintakokees.result,function(valintakoe){
-              if (valintakoe !== undefined) {
-
-                      kieliSet.add(valintakoe.kieliNimi);
-                      $scope.model.valintakokees.push(valintakoe);
-
-              }
+               addValintakoeToList(valintakoe);
            });
-           $scope.model.kielet = kieliSet.toArray();
+
 
 
 
    });
+
+  var addValintakoeToList = function(valintakoe) {
+      if (valintakoe !== undefined) {
+          checkForExistingValintaKoe(valintakoe);
+          kieliSet.add(valintakoe.kieliNimi);
+          $scope.model.valintakokees.push(valintakoe);
+
+      }
+      $scope.model.kielet = kieliSet.toArray();
+  };
+
+  var checkForExistingValintaKoe = function(valintakoe) {
+      var foundValintakoe;
+      angular.forEach($scope.model.valintakokees,function(loopValintakoe){
+
+          if (loopValintakoe.oid === valintakoe.oid) {
+             foundValintakoe = loopValintakoe;
+          }
+
+      });
+
+      if (foundValintakoe !== undefined) {
+          var index = $scope.model.valintakokees.indexOf(foundValintakoe);
+          $scope.model.valintakokees.splice(index,1);
+      }
+  };
 
   var addToValintakokees = function(valintakoe) {
 
@@ -85,9 +106,20 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
               console.log('SELECTED VALINTAKOE : ', selectedItem);
               var valintakoeResource = new Valintakoe(selectedItem);
            if (selectedItem.oid === undefined) {
-              valintakoeResource.$save();
+              var returnResource = valintakoeResource.$save();
+              returnResource.then(function(valintakoe){
+
+                  addValintakoeToList(valintakoe.result);
+
+
+
+              });
            } else {
-               valintakoeResource.$update();
+               var returnResource =  valintakoeResource.$update();
+               returnResource.then(function(valintakoe) {
+                   addValintakoeToList(valintakoe.result);
+
+               });
            }
 
 

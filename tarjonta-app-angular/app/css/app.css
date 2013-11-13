@@ -357,14 +357,15 @@ div#select-tutkinto-ohjelma .noResults {
 	height:182px;
 }
 
-table#luo-koulutus-dialogi td{
-/* 	height: 200px;
-*/
-	max-height: 200px;
- 	overflow: auto;
-	vertical-align: top;
-	width: 50%;
+/** luo koulutus dialogi **/
+div#luo-koulutus-dialogi select {
+	width: 100%;
 }
+
+div#luo-koulutus-dialogi div.modal-body {
+	height:180px;
+}
+
 
 /* koulutuksen muokkaus/luonti */
 
@@ -397,3 +398,6 @@ input:invalid,textarea:invalid,select:invalid {
 .msgError {
 	background: #e4f4f9 url('../img/icon28-error.png') 36px 36px no-repeat;
 }
+
+
+

@@ -14,7 +14,7 @@
  */
 
 angular.module('Haku', [ 'ngResource', 'config' ])
-.factory('HakuService',function($resource,$q,Config){
+.factory('HakuService',function($http,$q,Config){
 
 
         var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
@@ -27,10 +27,17 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 
 
 
-                $resource(hakuUri).get({},function(hakus){
-                    hakuPromise.resolve(hakus.result);
-                });
+               $http({method: 'GET', url:hakuUri}).success(function(data, status, headers, config) {
+                   // this callback will be called asynchronously
 
+                   hakuPromise.resolve(data.result);
+                   // when the response is available
+               }).error(function(data, status, headers, config) {
+
+                   console.log('ERROR OCCURRED GETTING HAKUS: ' , status);
+                   // called asynchronously if an error occurs
+                   // or server returns response with an error status.
+               });
 
 
 
