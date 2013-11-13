@@ -88,8 +88,9 @@
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
-//					console.log("organisaatio valittu!", oid);
+					console.log("organisaatio valittu!", treeId);
 					var current = SharedStateService.state.puut[treeId].selected;
+					
 					
 //					console.log("vanha valinta", current);
 					if(current!==undefined) {
@@ -99,8 +100,13 @@
 						if(org!==undefined){
 							org.selected=false;
 							redraw(org);
-							current = undefined;
 						}
+					}
+					var unselect = (oid===SharedStateService.state.puut[treeId].selected);
+					if (unselect) {
+						SharedStateService.state.puut[treeId].selected=undefined;
+						scope[treeId].currentNode=undefined;
+						return;
 					}
 //					console.log("etsitään uutta");
 					var org = getOrg(oid, SharedStateService.state.puut[treeId].data);

@@ -72,7 +72,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	$scope.lkorganisaatio=$scope.lkorganisaatio||{currentNode:undefined};
 	// Watchi valitulle organisaatiolle
 	$scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-		//console.log("oprganisaatio valittu", organisaatio);
+		console.log("oprganisaatio valittu", organisaatio);
 		//XXX nyt vain yksi organisaatio valittavissa
 	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && organisaatio.oid!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
 	    	lisaaOrganisaatio(organisaatio);
@@ -113,7 +113,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	    	}
 		}
 		
-		console.log("oppilaitostyyppejä:", oltUrit.length);
+		//console.log("oppilaitostyyppejä:", oltUrit.length);
 		
 		//jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
 		//$scope.piilotaKoulutustyyppi=oltUrit.length<2;
@@ -121,7 +121,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		
 		$q.all(promises).then(function(){
 			paivitaKoulutustyypit(oltUrit);
-		    console.log("all done!");
+		    //console.log("all done!");
 		 });
 
 		/*
@@ -149,7 +149,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
     		var oppilaitostyyppiUri = oppilaitostyypit[i];
     		console.log("getting koulutustyyppi for ", oppilaitostyyppiUri);
     		var koulutustyypit = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oppilaitostyyppiUri];
-    		console.log("got:", koulutustyypit);
+    		//console.log("got:", koulutustyypit);
     		if(koulutustyypit) {
     			for(var j=0;j<koulutustyypit.length;j++) {
     				if(sallitutKoulutustyypit.indexOf(koulutustyypit[j])==-1){
@@ -161,7 +161,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
     		}
     	
     	}
-		console.log("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
+		//console.log("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
 		}
 		$scope.sallitutKoulutustyypit = sallitutKoulutustyypit;
 	};
@@ -228,25 +228,23 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		if($scope.model.koulutustyyppi.koodiUri==="koulutustyyppi_3"){
 			
 		
-		console.log("avataan uusi dialogi");
 		var modalInstance = $modal.open({
 			scope: $scope,
 			templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
 			controller: 'SelectTutkintoOhjelmaController'
 		});
-		console.log("uusi dialogi avattu");
 		
 		modalInstance.result.then(function(selectedItem) {
 			$scope.luoKoulutusDialog.close();
-			console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-			console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+//			console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+//			console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
 			if (selectedItem.koodiUri != null) {
 				console.log("org:", $scope.model.organisaatiot[0]);
 				$location.path('/koulutus/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
 			} 
 		}, function() {
 			$scope.tutkintoDialogModel.selected = null;
-			console.log('Cancel, dialog closed');
+//			console.log('Cancel, dialog closed');
 			$scope.luoKoulutusDialog.close();
 		});
 		} else {
