@@ -10,7 +10,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
      $scope.model.liitteet = [];
 
-    var liitteetResource = Liite.get({hakukohdeOid: $scope.model.hakukohde.result.oid});
+    var liitteetResource = Liite.get({hakukohdeOid: $scope.model.hakukohde.oid});
 
     var liitteetPromise = liitteetResource.$promise;
 

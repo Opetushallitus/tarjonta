@@ -4,7 +4,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 
    var kieliSet = new buckets.Set();
-   $scope.model.hakukohdeOid  =  $scope.model.hakukohde.result.oid;
+   $scope.model.hakukohdeOid  =  $scope.model.hakukohde.oid;
 
    $scope.model.kielet = [];
 
@@ -85,9 +85,18 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
               console.log('SELECTED VALINTAKOE : ', selectedItem);
               var valintakoeResource = new Valintakoe(selectedItem);
            if (selectedItem.oid === undefined) {
-              valintakoeResource.$save();
+              var returnResource = valintakoeResource.$save();
+              returnResource.then(function(valintakoe){
+                  console.log('GOT VALINTAKOE : ' , valintakoe.result);
+                     $scope.model.valintakokees.push(valintakoe.result);
+                    console.log('VALINTAKOKEES : ', $scope.model.valintakokees);
+
+              });
            } else {
-               valintakoeResource.$update();
+               var returnResource =  valintakoeResource.$update();
+               returnResource.then(function(valintakoe) {
+                   $scope.model.valintakokees.push(valintakoe.result);
+               });
            }
 
 

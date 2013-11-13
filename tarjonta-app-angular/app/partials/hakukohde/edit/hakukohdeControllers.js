@@ -36,8 +36,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.allkieles = [];
     $scope.model.selectedKieliUris = [];
 
-    if ($scope.model.hakukohde.result.lisatiedot !== undefined) {
-        angular.forEach($scope.model.hakukohde.result.lisatiedot,function(lisatieto){
+    if ($scope.model.hakukohde.lisatiedot !== undefined) {
+        angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
 
             $scope.model.selectedKieliUris.push(lisatieto.uri);
         });
@@ -51,15 +51,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var removeLisatieto = function(koodi){
 
         var foundLisatieto;
-         angular.forEach($scope.model.hakukohde.result.lisatiedot,function(lisatieto) {
+         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto) {
                if (lisatieto.uri === koodi) {
                    foundLisatieto = lisatieto;
                }
          });
 
         if (foundLisatieto !== undefined) {
-            var index = $scope.model.hakukohde.result.lisatiedot.indexOf(foundLisatieto);
-            $scope.model.hakukohde.result.lisatiedot.splice(index,1);
+            var index = $scope.model.hakukohde.lisatiedot.indexOf(foundLisatieto);
+            $scope.model.hakukohde.lisatiedot.splice(index,1);
         }
 
     }
@@ -132,22 +132,22 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.onKieliTypeAheadChange = function() {
        var koodi = findKoodiWithArvo($scope.model.postinumeroarvo.arvo,$scope.model.koodis);
 
-       $scope.model.hakukohde.result.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
-       $scope.model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
+       $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
+       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
 
     };
 
-    console.log('HAKUKOHDE : ' , $scope.model.hakukohde.result);
-   
-    var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.result.tarjoajaOids[0]);
+    console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
+
+    var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
     //When organisaatio is loaded set the liitteiden toimitusosoite on the model
     orgPromise.then(function(data){
         if (data.postiosoite !== undefined) {
 
             console.log('GOT OSOITE:', data.postiosoite);
-            $scope.model.hakukohde.result.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
-            $scope.model.hakukohde.result.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
-            $scope.model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+            $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+            $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+            $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
             postinumero = data.postiosoite.postinumeroUri;
         }
     });
@@ -157,7 +157,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.allkieles !== undefined) {
             var lisatietoFound = false;
             //Check that selected kieli does not exist in list
-            angular.forEach($scope.model.hakukohde.result.lisatiedot,function(lisatieto) {
+            angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto) {
                  if (lisatieto.uri === kieliUri) {
                      lisatietoFound = true;
                  }
@@ -170,7 +170,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     "teksti": ""
                 };
 
-                $scope.model.hakukohde.result.lisatiedot.push(newLisatieto);
+                $scope.model.hakukohde.lisatiedot.push(newLisatieto);
             }
 
         }
@@ -183,34 +183,49 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.postinumeroCallback = function(selectedPostinumero) {
        console.log('Postinumero callback : ', selectedPostinumero);
 
-       $scope.model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
+       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
     //TODO: Should tila come from constants ?
 
     $scope.model.saveValmis = function() {
-        if ($scope.model.hakukohde.result.oid === undefined) {
+        if ($scope.model.hakukohde.oid === undefined) {
 
-             console.log('MODEL: ', $scope.model.hakukohde.result);
-            $scope.model.hakukohde.result.$save();
+             console.log('MODEL: ', $scope.model.hakukohde);
+           var returnResource =   $scope.model.hakukohde.$save();
+           returnResource.then(function(hakukohde){
+               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+           });
+
         } else {
 
-            console.log('UPDATE MODEL : ', $scope.model.hakukohde.result);
-            $scope.model.$update();
+            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            var returnResource = $scope.model.$update();
+            returnResource.then(function(hakukohde){
+                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+            });
         }
     };
 
 
     $scope.model.saveLuonnos = function() {
-        //TODO: are we inserting or updating figure it from OID
-        $scope.model.hakukohde.result.tila = "LUONNOS";
-        if ($scope.model.hakukohde.result.oid === undefined) {
 
-            console.log('MODEL: ', $scope.model.hakukohde.result);
-            $scope.model.hakukohde.result.$save();
+        $scope.model.hakukohde.tila = "LUONNOS";
+        if ($scope.model.hakukohde.oid === undefined) {
+
+            console.log('MODEL: ', $scope.model.hakukohde);
+           var returnResource =  $scope.model.hakukohde.$save();
+            returnResource.then(function(hakukohde) {
+               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+
+            });
+
         } else {
-            console.log('UPDATE MODEL : ', $scope.model.hakukohde.result);
-            $scope.model.hakukohde.result.$update();
+            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            var returnResource =  $scope.model.hakukohde.$update();
+            returnResource.then(function(hakukohde){
+                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+            });
         }
     };
 
@@ -268,20 +283,20 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     $scope.model.removeNimi = function(hakukohdeNimi){
-        if ($scope.model.hakukohde.result.hakukohteenNimet.length > 1) {
+        if ($scope.model.hakukohde.hakukohteenNimet.length > 1) {
 
             var nimiToRemove ;
 
 
 
-            angular.forEach($scope.model.hakukohde.result.hakukohteenNimet,function(hakukohteenNimi){
+            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohteenNimi){
                 if (hakukohteenNimi.nimi === hakukohdeNimi.nimi && hakukohteenNimi.uri === hakukohdeNimi.uri) {
                     nimiToRemove = hakukohteenNimi;
                 }
             });
 
-           var index = $scope.model.hakukohde.result.hakukohteenNimet.indexOf(nimiToRemove);
-            $scope.model.hakukohde.result.hakukohteenNimet.splice(index,1);
+           var index = $scope.model.hakukohde.hakukohteenNimet.indexOf(nimiToRemove);
+            $scope.model.hakukohde.hakukohteenNimet.splice(index,1);
         }
     };
 
@@ -300,14 +315,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             var selectedItemExists = false;
 
-            angular.forEach($scope.model.hakukohde.result.hakukohteenNimet,function(hakukohdenimi){
+            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohdenimi){
                  if (hakukohdenimi.uri === selectedItem.uri) {
                      selectedItemExists = true;
                  }
             });
 
             if (!selectedItemExists) {
-                $scope.model.hakukohde.result.hakukohteenNimet.push(selectedItem);
+                $scope.model.hakukohde.hakukohteenNimet.push(selectedItem);
             }
 
 

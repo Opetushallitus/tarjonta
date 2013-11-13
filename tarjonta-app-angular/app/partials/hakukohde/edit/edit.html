@@ -18,7 +18,7 @@
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakukohdenimi"></div></div>
                         <div class="span3">
 
-                            <div data-ng-repeat="hakukohdenimi in model.hakukohde.result.hakukohteenNimet" >
+                            <div data-ng-repeat="hakukohdenimi in model.hakukohde.hakukohteenNimet" >
                                 <label>{{hakukohdenimi.nimi}}</label>
                                 <input type="text" data-ng-model="hakukohdenimi.teksti" required />
                                 <a href="" data-ng-click="model.removeNimi(hakukohdenimi)">X</a>
@@ -37,7 +37,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.haut"></div></div>
                         <div class="span10">
-                            <select ng-model="model.hakukohde.result.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakukelpoisuusvaatimukset"></div></div>
                         <div class="span10">
-                            <koodistomultiselect koodiuris="model.hakukohde.result.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
+                            <koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
                         <div class="span10">
-                            <input type="text" data-ng-model="model.hakukohde.result.aloituspaikatLkm" required />
+                            <input type="text" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></div></div>
                         <div class="span10">
-                            <input type="checkbox" data-ng-model="model.hakukohde.result.kaytetaanJarjestelmanValintaPalvelua"  />
+                            <input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua"  />
                         </div>
                     </div>
                 </div>
@@ -84,12 +84,12 @@
                             </label>
                             <address>
 
-                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
+                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
 
 
 
                                 <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka" required />
+                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
                             </address>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
                         <div class="span10">
                             <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
-                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.result.sahkoinenToimitusOsoite">
+                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
                         </div>
                     </div>
                 </div>
@@ -109,21 +109,20 @@
                     <div class="row-fluid">
                         <div class="span2 label-right"><div tt="kk.hakukohde.liitteidenToimitusPvm"></div></div>
                         <div class="span10">
-                            <date-time-picker selecteddatetime="model.hakukohde.result.liitteidenToimitusPvm"></date-time-picker>
+                            <date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
                         </div>
                     </div>
                 </div>
                 <div class="container-fluid">
                     <div class="row-fluid">
-                        <div class="span2">
+                            <div class="span2 label-right"><div tt="kk.hakukohde.lisatietoja.hakemisesta"></div></div>
 
-                        </div>
                         <div class="span4">
                             <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="'FI'"></koodistotypeahead>
                         </div>
                         <div class="span5">
                             <accordion close-others="oneAtATime">
-                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.result.lisatiedot">
+                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
                                    <!-- <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text> -->
                                     <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
                                 </accordion-group>
