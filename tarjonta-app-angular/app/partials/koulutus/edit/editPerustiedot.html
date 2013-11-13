@@ -11,9 +11,7 @@
 	<tr class="required">
 		<th tt="koulutus.edit.koulutusohjelma"/>
 		<td>
-			<mk-textfield
-				model="model.koulutusohjelma.meta">
-			</mk-textfield>
+			<mk-textfield type="koulutus" model="model.koulutusohjelma.meta"></mk-textfield>
 		</td>
 		<td>
 			<p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p> 
@@ -167,6 +165,7 @@
 			<multi-select
 			 	model="uiModel.opetuskielis.data"
 			 	selection="uiModel.opetuskielis.uris"
+                                promise="uiModel.opetuskielis.promise"
 			 	display="dualpane"/>
 			 
 		</td>
@@ -210,6 +209,7 @@
 			<multi-select
 			 	model="uiModel.opetusmuodos.data"
 			 	selection="uiModel.opetusmuodos.uris"
+                                promise="uiModel.opetusmuodos.promise"
 			 	columns="2"/>
 		</td>
 		<td>
@@ -223,7 +223,9 @@
 		<td>
 			<multi-select
 			 	model="uiModel.pohjakoulutusvaatimukset.data"
-			 	selection="uiModel.pohjakoulutusvaatimukset.uris"/>
+			 	selection="uiModel.pohjakoulutusvaatimukset.uris"
+                                promise="uiModel.pohjakoulutusvaatimukset.promise"
+                                />
 		</td>
 		<td>
 			<p class="error" ng-show="uiModel.pohjakoulutusvaatimukset.uris.length==0" tt="koulutus.edit.pohjakoulutusvaatimus.required"/>
@@ -237,6 +239,7 @@
 			<multi-select
 			 	model="uiModel.teemas.data"
 			 	selection="uiModel.teemas.uris"
+                                promise="uiModel.teemas.promise"
 			 	columns="2"/>
 		</td>
 		<td></td>

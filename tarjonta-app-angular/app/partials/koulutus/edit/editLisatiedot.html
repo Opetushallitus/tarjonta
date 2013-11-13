@@ -8,6 +8,7 @@
 			<multi-select
 			 	model="uiModel.ammattinimikkeet.data"
 			 	selection="uiModel.ammattinimikkeet.uris"
+                                promise="uiModel.ammattinimikkeet.promise"
 			 	display="dualpane"/>
 		</td>
 		<td></td>
@@ -20,11 +21,12 @@
 <tabset>
 	<tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}">
 	
-		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
 			
-			<h4>{{t('koulutus.edit.'+lisatieto+'.title')}}</h4>			
-			<p>{{t('koulutus.edit.'+lisatieto+'.help')}}</p>
-			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>
+			<h4>{{t('koulutus.edit.'+lisatieto.type +'.title')}}</h4>			
+			<p>{{t('koulutus.edit.'+lisatieto.type +'.help')}}</p>
+			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri).arvo"> </textarea>
+			
 			<br/>
 			
 		</div>

@@ -106,7 +106,6 @@ public class TarjontaFixtures {
         monikielinenTeksti.addTekstiKaannos("fi", "testi");
         valintakoe.setKuvaus(monikielinenTeksti);
 
-
         return valintakoe;
     }
 
@@ -298,6 +297,19 @@ public class TarjontaFixtures {
         return haku;
     }
 
+    public BinaryData createBinaryData() {
+        BinaryData image = new BinaryData();
+
+        byte[] bytes = new byte[1];
+        bytes[0] = 1;
+
+        image.setData(bytes);
+        image.setFilename("filename");
+        image.setMimeType("mimetype");
+        
+        return image;
+    }
+
     public Haku createPersistedHaku() {
         return hakuDAO.insert(createHaku());
     }
@@ -336,7 +348,6 @@ public class TarjontaFixtures {
         hakukohdeDAO.update(h);
         h = hakukohdeDAO.read(h.getId());
         flush();
-
 
         hakukohdeDAO.update(h);
 

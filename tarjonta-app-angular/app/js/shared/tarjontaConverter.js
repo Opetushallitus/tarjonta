@@ -278,7 +278,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     };
 
     factory.createUiKoodistoSingleModel = function() {
-        return {'arvo': '', 'data': {}, 'uri': null};
+        return {'arvo': '', 'data': [], 'uri': null};
     };
     factory.createUiKoodistoMultiModel = function() {
         return {'data': [], 'uris': []};

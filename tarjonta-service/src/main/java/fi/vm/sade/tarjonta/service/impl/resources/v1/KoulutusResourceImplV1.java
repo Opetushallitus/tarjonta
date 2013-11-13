@@ -25,6 +25,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
@@ -43,6 +44,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmentavaJ
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -72,6 +74,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import javax.ws.rs.core.MultivaluedMap;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
 /**
  *
@@ -105,10 +117,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired(required = true)
     private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
     @Autowired
-    private KoulutusmoduuliDAO _komoDao;
-    @Autowired
-    private KoulutusmoduuliToteutusDAO _komotoDao;
-    @Autowired
     private ConverterV1 converter;
     // @Autowired
     // private PermissionChecker permissionChecker;
@@ -117,9 +125,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
 
-        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
-        KoulutusasteTyyppi koulutusasteTyyppi = KoulutusasteTyyppi.fromValue(komoto.getKoulutusmoduuli().getKoulutustyyppi());
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
+        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+        if (komoto == null) {
+            return resultRDTO;
+        }
+
+        KoulutusasteTyyppi koulutusasteTyyppi = KoulutusasteTyyppi.fromValue(komoto.getKoulutusmoduuli().getKoulutustyyppi());
+
         switch (koulutusasteTyyppi) {
             case KORKEAKOULUTUS:
                 resultRDTO.setResult(conversionService.convert(komoto, KoulutusKorkeakouluV1RDTO.class));
@@ -315,7 +328,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
         return new ResultV1RDTO<String>(tila.toString());
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
@@ -364,12 +377,55 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public Response saveKuva(String oid, InputStream in, String fileType, long fileSize, String kieliUri) throws IOException {
+    public Response deleteKuva(String oid, String kieliUri) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Response deleteKuva(String oid, String kieliUri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ResultV1RDTO<KuvaV1RDTO> getKuva(String oid, String kieliUri) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
+        final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
+        KuvaV1RDTO dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), Base64.encodeBase64String(bin.getData()));
+        ResultV1RDTO<KuvaV1RDTO> v1 = new ResultV1RDTO<KuvaV1RDTO>(dto);
+        return v1;
+    }
+
+    @Override
+    public Response saveKuva(String oid, String kieliUri, MultipartBody body) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
+        Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
+        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
+        LOG.info("Headers : {}", body.getRootAttachment().getHeaders());
+
+        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+        Attachment att = body.getRootAttachment();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+        InputStream in = null;
+        try {
+            in = att.getDataHandler().getInputStream();
+
+            try {
+                IOUtils.copy(in, outputStream);
+                BinaryData bin = new BinaryData();
+                bin.setData(outputStream.toByteArray());
+                bin.setFilename(att.getContentDisposition().getParameter("filename"));
+                bin.setMimeType(att.getDataHandler().getContentType());
+                komoto.addKuva(kieliUri, bin);
+                this.koulutusmoduuliToteutusDAO.update(komoto);
+            } catch (IOException ex) {
+                LOG.error("BinaryData save failed for komoto OID {}.", oid, ex);
+            } finally {
+                IOUtils.closeQuietly(in);
+                IOUtils.closeQuietly(outputStream);
+            }
+        } catch (IOException ex) {
+            LOG.error("Image upload failed for komoto OID {}.", oid, ex);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+
+        return Response.ok().build();
     }
 }

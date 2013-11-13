@@ -215,7 +215,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
      * @returns created lookup map and stores it to local services variable
      */
     this.updateLookupMap = function() {
-        $log.debug("updateLookupMap()");
+        $log.info("updateLookupMap()");
 
         var tmp = {};
 
@@ -231,7 +231,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
 
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.debug("===> result ", this.localisationMapByLocaleAndKey);
+        $log.info("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 
