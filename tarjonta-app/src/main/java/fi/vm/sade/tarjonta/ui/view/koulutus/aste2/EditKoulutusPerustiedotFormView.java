@@ -27,11 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activity.InvalidActivityException;
+import javax.naming.directory.InvalidAttributeValueException;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.impl.NotNullValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -40,9 +42,10 @@ import org.vaadin.addon.formbinder.PropertyId;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.data.validator.NullValidator;
+import com.vaadin.data.validator.IntegerValidator;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -61,6 +64,7 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -547,12 +551,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
 
         koulutuksenNimi = UiUtil.textField(null, null, null, null, null);
-        
 
         if (isValmentavaOpetus) {
             grid.addComponent(koulutuksenNimi);
             koulutuksenNimi.setWidth(300, UNITS_PIXELS);
-            koulutuksenNimi.addValidator(new NullValidator("EditKoulutusPerustiedotFormView.koulutusohjelman.nimi.tyhja", false));
+            koulutuksenNimi.setRequired(true);
+            koulutuksenNimi.setRequiredError(I18N.getMessage("EditKoulutusPerustiedotFormView.koulutusohjelman.nimi.tyhja"));
         } else {
             grid.addComponent(cbKoulutusohjelma);
         }

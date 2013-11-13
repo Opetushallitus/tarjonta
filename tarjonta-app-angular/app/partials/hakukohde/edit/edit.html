@@ -1,177 +1,28 @@
-<!--<form name="editHakukohdeForm"> -->
-<div class="container-fluid" data-ng-controller="HakukohdeEditController">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="btn" data-ng-click="model.takaisin()"><div tt='koulutus.edit.takaisin'></div></div>
-            <div class="btn" ng-disabled="!model.canSaveHakukohde()" ng-click="model.saveLuonnos()"><div tt='koulutus.edit.tallenna.luonnos'></div></div>
-            <div class="btn" ng-disabled="!model.canSaveHakukohde()" ng-click="model.saveValmis()"><div tt='koulutus.edit.tallenna.valmis'></div></div>
-        </div>
-    </div>
-    <br/>
+<div id="editHakukohde" ng-controller="HakukohdeEditController">
+
+    <div class="header" ng-include="'partials/hakukohde/edit/header.html'"></div>
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
-            <form name="editHakukohdeForm">
-
-
-                <div class="container-fluid ">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.hakukohdenimi"></div></div>
-                        <div class="span3">
-
-                            <div data-ng-repeat="hakukohdenimi in model.hakukohde.result.hakukohteenNimet" >
-                                <label>{{hakukohdenimi.nimi}}</label>
-                                <input type="text" data-ng-model="hakukohdenimi.teksti" required />
-                                <a href="" data-ng-click="model.removeNimi(hakukohdenimi)">X</a>
-                            </div>
-
-                        </div>
-                        <div class="span2">
-                            <a href="" data-ng-click="model.openNimiDialog()">{{t('tarjonta.hakukohde.toiminnot.lisaa.nimi')}}</a>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.haut"></div></div>
-                        <div class="span10">
-                            <select ng-model="model.hakukohde.result.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.hakukelpoisuusvaatimukset"></div></div>
-                        <div class="span10">
-                            <koodistomultiselect koodiuris="model.hakukohde.result.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"></div></div>
-                        <div class="span10">
-                            <input type="text" data-ng-model="model.hakukohde.result.aloituspaikatLkm" required />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></div></div>
-                        <div class="span10">
-                            <input type="checkbox" data-ng-model="model.hakukohde.result.kaytetaanJarjestelmanValintaPalvelua"  />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.liitteidentoimitusosoite"></div></div>
-                        <div class="span10">
-                            <label class="radio">
-                                <input type="radio" ng-model="osoiteType" >
-                                {{t('tarjonta.hakukohde.label.oletus.postisoite')}}
-
-                            </label>  <br/>
-                            <label class="radio">
-                                <input type="radio" ng-model="osoiteType"  value="false">
-                                {{t('tarjonta.hakukohde.label.muu.osoite')}}
-                            </label>
-                            <address>
-
-                                <input  type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
-
-
-
-                                <input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-                                <input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.result.liitteidenToimitusOsoite.postitoimipaikka" required />
-                            </address>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></div></div>
-                        <div class="span10">
-                            <input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/> <br/>
-                            <input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.result.sahkoinenToimitusOsoite">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2 label-right"><div tt="kk.hakukohde.liitteidenToimitusPvm"></div></div>
-                        <div class="span10">
-                            <date-time-picker selecteddatetime="model.hakukohde.result.liitteidenToimitusPvm"></date-time-picker>
-                        </div>
-                    </div>
-                </div>
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div class="span2">
-
-                        </div>
-                        <div class="span4">
-                            <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="'FI'"></koodistotypeahead>
-                        </div>
-                        <div class="span5">
-                            <accordion close-others="oneAtATime">
-                                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.result.lisatiedot">
-                                   <!-- <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text> -->
-                                    <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                                </accordion-group>
-
-
-
-                            </accordion>
-                        </div>
-
-                    </div>
-                </div>
-
-
-
-
-
-
-          </form>
-
+        	<form name="editHakukohdeForm">
+	            <div data-ng-include="'partials/hakukohde/edit/editPerustiedot.html'"></div>
+			</form>
         </tab>
-
         <tab heading="{{t('kk.hakukohde.valintakokeet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController">
-
-            </div>
-
+            <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
         </tab>
-
         <tab heading="{{t('kk.hakukohde.liitteet')}}">
-
-            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController">
-
-            </div>
-
+            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
         </tab>
-
         <tab heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
-
-
-
+			TODO valintaperustekuvaukset
         </tab>
 
     </tabset>
-
-    <hr>
-
-
-    <div ng-click="model.collapse.model= !model.collapse.model">
+    <hr/>
+	<div class="footer" ng-include="'partials/hakukohde/edit/controls.html'"></div>
+    
+    <!-- 
+  <div ng-click="model.collapse.model= !model.collapse.model">
         <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
     </div>
     <div ng-if="!model.collapse.model">
@@ -180,6 +31,7 @@
             {{ model | json }}
         </pre>
     </div>
-    </div>
+ </div>
+     -->
+     
 </div>
-<!--</form>-->

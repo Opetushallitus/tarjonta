@@ -175,13 +175,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     liitteidenToimitusOsoite: {
                                     },
                                     tarjoajaOids: selectedTarjoajaOids,
-                                    hakukohteenNimet: [
-                                        {
-                                            "uri": "kieli_fi",
-                                            "nimi": "suomi",
-                                            "teksti": ""
-                                        }
-                                    ],
+                                    hakukohteenNimet: {},
                                     hakukelpoisuusvaatimusUris: [],
                                     hakukohdeKoulutusOids: selectedKoulutusOids,
                                     hakukohteenLiitteet: [],

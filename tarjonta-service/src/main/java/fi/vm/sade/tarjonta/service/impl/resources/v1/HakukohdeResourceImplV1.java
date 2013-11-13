@@ -201,7 +201,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
         Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
@@ -452,7 +452,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
              liites.add(hakukohdeLiite);
              hakukohdeDao.insertLiittees(liites, hakukohdeOid);
 
-             resultRDTO.setResult(converter.fromHakukohdeLiite(liites.get(0)));
+             resultRDTO.setResult(converter.fromHakukohdeLiite(hakukohdeLiite));
              resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
              return resultRDTO;
 

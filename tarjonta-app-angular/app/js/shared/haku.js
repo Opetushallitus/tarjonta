@@ -34,12 +34,10 @@ angular.module('Haku', [ 'ngResource', 'config' ])
                    // when the response is available
                }).error(function(data, status, headers, config) {
 
-                       console.log('ERROR OCCURRED GETTING HAKUS: ' , status);
-                       // called asynchronously if an error occurs
-                       // or server returns response with an error status.
-                   });
-
-
+                   console.log('ERROR OCCURRED GETTING HAKUS: ' , status);
+                   // called asynchronously if an error occurs
+                   // or server returns response with an error status.
+               });
 
 
 

@@ -70,9 +70,10 @@ public interface HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohde);
 
     @PUT
+    @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(HakukohdeV1RDTO hakukohde);
+    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(@PathParam("oid") String hakukohdeOid,HakukohdeV1RDTO hakukohde);
 
     @DELETE
     @Path("{oid}")
