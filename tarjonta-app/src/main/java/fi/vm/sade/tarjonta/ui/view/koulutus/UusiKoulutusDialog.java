@@ -283,8 +283,14 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
             this.pohjakoulutusvaatimusCombo.setValue(this.pohjakoulutusvaatimusCombo.getItemIds().iterator().next());
         } 
         
+        logger.error("pohjakoulutus size: " + this.pohjakoulutusvaatimusCombo.getItemIds().size());
+        logger.error("koulutustyyppi uri: " + koodiUri);
+        logger.error("lukio koulutustyyppi uri: " + Koulutustyyppi.TOINEN_ASTE_LUKIO.getKoulutustyyppiUri());
         boolean isVisible = (this.pohjakoulutusvaatimusCombo.getItemIds().size() > 1) 
                                 && !koodiUri.contains(Koulutustyyppi.TOINEN_ASTE_LUKIO.getKoulutustyyppiUri());
+        
+        logger.error("isVisible: " + isVisible);
+        
         pohjakoulutusvaatimusLbl.setVisible(isVisible);
         pohjakoulutusvaatimusCombo.setVisible(isVisible);
     }
