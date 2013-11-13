@@ -21,10 +21,21 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	SharedStateService.state.luoKoulutusaDialogi = SharedStateService.state.luoKoulutusaDialogi || {};
 	SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit=SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit || {};
 	SharedStateService.state.luoKoulutusaDialogi.koulutustyypit=SharedStateService.state.luoKoulutusaDialogi.koulutustyypit || {};
+
+
+	var promises =[];
 	
+	if(!SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit){
+		var deferred = $q.defer();
+		promises.push(deferred.promise);
+	}
 	SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit = SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit || Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi','fi').then(
 		function(koodit){
+			
+			var subpromises =[];
+
 			for(var i=0;i<koodit.length;i++) {
+				console.log("koulutustyyppikoodi:", koodit[i]);
 				SharedStateService.state.luoKoulutusaDialogi[koodit[i]]=[];
 				var koulutustyyppi = koodit[i];
 
@@ -47,15 +58,21 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 				};
 				
 				var promise=Koodisto.getYlapuolisetKoodit(koulutustyyppi.koodiUri, AuthService.getLanguage()).then(ylapuoliset(koulutustyyppi));
-				console.log("promise:", promise);
+				subpromises.push(promise);
 			}
+			
+			$q.all(subpromises).then(function(){
+				console.log("all sub promises are now resolved!", deferred);
+				deferred.resolve();
+			});
+			
 		}		
 	);
 	
 	$scope.lkorganisaatio=$scope.lkorganisaatio||{currentNode:undefined};
 	// Watchi valitulle organisaatiolle
 	$scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-		console.log("oprganisaatio valittu", organisaatio);
+		//console.log("oprganisaatio valittu", organisaatio);
 		//XXX nyt vain yksi organisaatio valittavissa
 	    if($scope.model.organisaatiot.length==0 && organisaatio!==undefined && organisaatio.oid!==undefined && $scope.model.organisaatiot.indexOf(organisaatio)==-1){
 	    	lisaaOrganisaatio(organisaatio);
@@ -66,11 +83,11 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	$scope.organisaatiomap=$scope.organisaatiomap||{};
 	$scope.sallitutKoulutustyypit=$scope.sallitutKoulutustyypit||[];
 
-	console.log("organisaatio:", $scope.luoKoulutusDialogOrg);
+//	console.log("organisaatio:", $scope.luoKoulutusDialogOrg);
 
 	// haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
 	OrganisaatioService.etsi({oidRestrictionList:$scope.luoKoulutusDialogOrg||AuthService.getOrganisations()}).then(function(vastaus) {
-		console.log("asetetaan org hakutulos modeliin.");
+		//console.log("asetetaan org hakutulos modeliin.");
 		$scope.lkorganisaatiot = vastaus.organisaatiot;
 		//rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
 		var buildMapFrom=function(orglist) {
@@ -100,6 +117,12 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		
 		//jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
 		//$scope.piilotaKoulutustyyppi=oltUrit.length<2;
+
+		
+		$q.all(promises).then(function(){
+			paivitaKoulutustyypit(oltUrit);
+		    console.log("all done!");
+		 });
 
 		/*
 		//allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
