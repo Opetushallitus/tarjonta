@@ -26,7 +26,7 @@
 			<h4>{{t('koulutus.edit.'+lisatieto.type+'.title')}}</h4>			
 			<p>{{t('koulutus.edit.'+lisatieto.type+'.help')}}</p>
 			
-			<rich-textarea model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto.type, kieliUri).arvo"></rich-textarea>
+			<rich-textarea max="1500" model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto.type, kieliUri).arvo"></rich-textarea>
 			
 			<!--
 			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>

@@ -4,34 +4,47 @@ var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bi
 
 app.directive('richTextarea',function(LocalisationService, $log) {
 	
-	function canCloseEditor() {
-		// tutkitaan, onko tinymce-popup-valikko auki
-		var mc = $(".mce-menu");
+	function windowContainsElements(selector) {
+		var mc = $(selector);
+		console.log(selector+" mcs="+mc.size());
 		if (mc.size()==0) {
-			return true;
+			return false;
 		}
-		var ret = true;
+		var ret = false;
 		mc.each(function(i, e){
+			console.log(selector+" e["+i+"] = ",e);
 			if ($(e).css("display") != "none") {
-				ret = false;
+				ret = true;
 			}
 		});
-		
 		return ret;
+	}
+	
+	function canCloseEditor() {
+		return !windowContainsElements(".mce-menu")
+			&& !windowContainsElements(".mce-tooltip");
 	}
 		
 	function controller($scope) {
 		
 		$scope.tinymceOptions = {
-			height:"auto"
+			height:"100%",
+			statusbar:false,
+			menubar:false,
+			resize:false
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
 		
 		$scope.edit = false;
+	
+		$scope.charCount = function() {
+			return $($scope.element).text().length;
+		}
 		
 		$scope.startEdit = function() {
 			$scope.edit = true;
 		}
+		
 		$scope.stopEdit = function() {
 			if (canCloseEditor()) {
 				$scope.edit = false;
@@ -46,8 +59,12 @@ app.directive('richTextarea',function(LocalisationService, $log) {
         templateUrl : "js/shared/directives/richTextarea.html",
         controller: controller,
         scope: {
-        	model: "=" // teksti
-        }
+        	model: "=", // teksti
+        	max: "@"
+        },
+		link: function(scope, element, attrs, controller) {
+			scope.element = $(".previewBody", element);
+		}
     }
     
 });

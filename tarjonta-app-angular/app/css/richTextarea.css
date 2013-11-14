@@ -20,16 +20,22 @@ div.richTextArea > div.preview:hover {
 }
 
 div.richTextArea > div.editor {
-	border: 1px solid #000000;
 	overflow:hidden;
-	height:250px;
+	height:100%;
 }
 
 div.richTextArea > div.editor > div.mce-tinymce {
 	height:100%;
-	margin-top:-2px;
 }
 
 div.richTextArea > div.editor > div.mce-tinymce > iframe {
 	height:auto;	
+}
+
+div.richTextArea > div.editor > p {
+	text-align:right;
+}
+
+div.richTextArea > div.editor > p.overflow {
+	color:#ff0000;
 }
