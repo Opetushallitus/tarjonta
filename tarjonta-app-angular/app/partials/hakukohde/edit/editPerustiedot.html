@@ -5,7 +5,7 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.hakukohdenimi"/>
 		<td>
-			<mk-textfield model="model.hakukohde.result.hakukohteenNimet"></mk-textfield>
+			<mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -28,7 +28,7 @@
 		<th tt="kk.hakukohde.hakukelpoisuusvaatimukset"/>
 		<td>
 			<!-- TODO multiselect -->
-			<koodistomultiselect koodiuris="model.hakukohde.result.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
+			<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -124,7 +124,7 @@
 	<tr>
 		<th></th>
 		<td>
-			<date-time-picker selecteddatetime="model.hakukohde.result.liitteidenToimitusPvm"></date-time-picker>
+			<date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
