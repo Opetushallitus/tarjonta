@@ -43,6 +43,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
     }
 
+    //Placeholder for multiselect remove when refactored
+    $scope.model.temp = {};
+    //TODO: fix and retrieve language from somewhere
+    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta','fi');
+
     $scope.model.postinumeroarvo = {
 
     };

@@ -15,7 +15,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimiUri;
 
-    private List<TekstiRDTO> hakukohteenNimet;
+    //private List<TekstiRDTO> hakukohteenNimet;
+
+    private HashMap<String,String> hakukohteenNimet;
 
     private Set<String> tarjoajaOids;
 
@@ -77,6 +79,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakukohteenNimi = hakukohteenNimi;
     }
 
+    /*
     public List<TekstiRDTO> getHakukohteenNimet() {
         if (hakukohteenNimet == null) {
             hakukohteenNimet = new ArrayList<TekstiRDTO>();
@@ -86,7 +89,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakukohteenNimet(List<TekstiRDTO> hakukohteenNimet) {
         this.hakukohteenNimet = hakukohteenNimet;
-    }
+    }*/
 
     public String getHakuOid() {
         return hakuOid;
@@ -319,5 +322,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
         this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+    }
+
+    public HashMap<String, String> getHakukohteenNimet() {
+        return hakukohteenNimet;
+    }
+
+    public void setHakukohteenNimet(HashMap<String, String> hakukohteenNimet) {
+        this.hakukohteenNimet = hakukohteenNimet;
     }
 }

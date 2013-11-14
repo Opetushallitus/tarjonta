@@ -70,7 +70,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         for (var kieliUri in $scope.init) {
             var lang = $scope.init[kieliUri];
             if (angular.isUndefined($scope.model[lang])) {
-                data.push({uri: lang, value: "", removable: false});
+                $scope.data.push({uri: lang, value: "", removable: false});
             }
         }
 
