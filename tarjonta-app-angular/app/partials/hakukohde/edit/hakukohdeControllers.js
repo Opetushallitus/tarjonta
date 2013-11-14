@@ -43,6 +43,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
     }
 
+    console.log('SAMIN VAATIMA CONSOLELOG: ', $scope.model.hakukohde);
+
     $scope.model.postinumeroarvo = {
 
     };
