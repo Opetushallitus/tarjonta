@@ -12,10 +12,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /*
 * @author: Tuomas Katva 10/11/13
@@ -40,7 +37,8 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         }
 
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
-           hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToTekstiDTOs(hakukohde.getHakukohdeMonikielinenNimi()));
+            hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
+           //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToTekstiDTOs(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
         for (String hakukelpoisuusVaatimus:hakukohde.getHakukelpoisuusVaatimukset()) {
@@ -93,6 +91,18 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
 
 
         return hakukohdeRDTO;
+    }
+
+    private HashMap<String,String> convertMonikielinenTekstiToHashMap(MonikielinenTeksti teksti) {
+        HashMap<String,String> returnValue = new HashMap<String, String>();
+
+        for (TekstiKaannos tekstiKaannos : teksti.getKaannoksetAsList()) {
+
+            returnValue.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+
+        }
+
+        return returnValue;
     }
 
     private List<TekstiRDTO> convertMonikielinenTekstiToTekstiDTOs(MonikielinenTeksti monikielinenTeksti) {

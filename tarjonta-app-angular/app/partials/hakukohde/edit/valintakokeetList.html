@@ -9,7 +9,7 @@
             <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus')}}</th>
             <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika')}}</th>
             <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot')}}</th>
-        </tr>
+        </tr>                                                                                            
         <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
            <td>{{ valintakoe.valintakokeenKuvaus.teksti }}</td>
            <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">

@@ -4,10 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -404,11 +401,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
         hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
                 .getOid());
-        TekstiRDTO nimi = new TekstiRDTO();
-        nimi.setUri("kieli_fi");
-        nimi.setTeksti("kkhakukohdenimi");
-        ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
-        nimet.add(nimi);
+
+        //TekstiRDTO nimi = new TekstiRDTO();
+        HashMap<String,String> nimet = new HashMap<String,String>();
+        nimet.put("kieli_fi","kkhakukohdenimi");
+        //nimi.setUri("kieli_fi");
+        //nimi.setTeksti("kkhakukohdenimi");
+        //ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
+        //nimet.add(nimi);
 
         hakukohde.setHakukohteenNimet(nimet);
         hakukohde.setTila(TarjontaTila.JULKAISTU.toString());
