@@ -22,11 +22,6 @@
     </listener>
 
     <servlet>
-        <servlet-name>healthcheck</servlet-name>
-        <servlet-class>fi.vm.sade.tarjonta.service.HealthCheck</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>cxf</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
@@ -35,11 +30,6 @@
     <servlet-mapping>
         <servlet-name>cxf</servlet-name>
         <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>healthcheck</servlet-name>
-        <url-pattern>/healthcheck</url-pattern>
     </servlet-mapping>
 
     <filter>
