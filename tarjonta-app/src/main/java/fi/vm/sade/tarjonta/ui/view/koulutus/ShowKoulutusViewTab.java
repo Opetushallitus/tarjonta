@@ -290,9 +290,15 @@ public class ShowKoulutusViewTab extends CustomComponent {
         return "";
     }
 
-    private Label buildTallennettuLabel(Date date) {
+    private Label buildTallennettuLabel(Date date, String lastUpdatedBy) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
-        Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+        Label lastUpdLbl = null;
+        if (lastUpdatedBy != null) {
+            String lastUpdater =  uiHelper.findUserWithOid(lastUpdatedBy);
+            lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " +  lastUpdater +   " )");
+        } else {
+        lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+        }
         return lastUpdLbl;
     }
 
@@ -305,7 +311,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         Label lastUpdDateLbl = null;
         if (model.getViimeisinPaivitysPvm() != null) {
-            lastUpdDateLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm());
+            lastUpdDateLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm(),model.getViimeisinPaivittajaOid());
         }
 
         layout.addHeader(buildHeaderLayout(i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
