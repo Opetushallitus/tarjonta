@@ -27,8 +27,13 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.hakukelpoisuusvaatimukset"/>
 		<td>
+            <multi-select
+                    model="temp"
+                    selection="model.hakukohde.hakukelpoisuusvaatimusUris"
+                    promise="model.hakukelpoisuusVaatimusPromise"
+                    display="dualpane"/>
 			<!-- TODO multiselect -->
-			<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>
+			<!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
