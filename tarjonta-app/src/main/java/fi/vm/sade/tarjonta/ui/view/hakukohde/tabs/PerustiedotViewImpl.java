@@ -106,7 +106,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
-    
+
     private static final long serialVersionUID = 1L;
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
@@ -174,7 +174,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("hakuaikaLoppuPvm")
     @NotNull(message = "{validation.Hakukohde.hakuaikaLoppu.notNull}")
     private DateField hakuaikaLoppuPvm;
-    
+
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     private HakukohteenKuvausTabSheet valintaperusteTabs;
     private HakukohdeLisatiedotTabSheet lisatiedotTabs;
@@ -188,7 +188,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
     private HakukohdeViewModel model;
-    
+
     private HorizontalLayout customDatesLayout;
 
     public GridLayout getPainotettavatOppiaineet() {
@@ -204,13 +204,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Value("${koodisto-uris.yhteishaku}")
     private String hakutapaYhteishakuUrl;
-    
+
     @Value("${koodisto-uris.lisahaku}")
     private String hakutyyppiLisahakuUrl;
-    
+
     private String pkVaatimus;
     private KoulutusasteTyyppi koulutusastetyyppi;
-    
+
     /*
      *
      * Init view with new model
@@ -228,7 +228,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     public boolean isSahkoinenToimOsoiteChecked() {
-        return myosSahkoinenToimitusSallittuCb.booleanValue();
+        return (myosSahkoinenToimitusSallittuCb == null) ? false : myosSahkoinenToimitusSallittuCb.booleanValue();
     }
 
     @Override
@@ -246,7 +246,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             hakukohteenNimiCombo.setRequired(true);
             hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
                 private static final long serialVersionUID = -382717228031608542L;
-                
+
                 @Override
                 public void valueChange(ValueChangeEvent event) {
                     if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
@@ -259,7 +259,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             });
         }
-        
+
         if (presenter != null && presenter.getModel() != null && model != null) {
             selectHakuAika(model.getHakuaika(), model.getHakuViewModel());
             setCustomHakuaika(this.doesHakukohdeNeedCustomhakuaika(), (model.getHakuaikaAlkuPvm() != null) && (model.getHakuaikaLoppuPvm() != null));//hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null)
@@ -267,13 +267,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
         hakuAikaCombo.setVisible(false);
     }
-    
+
     private boolean doesHakukohdeNeedCustomhakuaika() {
         KoulutusasteTyyppi kTyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
-        boolean isErityisopetus = (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)) 
+        boolean isErityisopetus = (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
                 || kTyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
-                || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);        
-        boolean isLisahaku = hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null);; 
+                || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+        boolean isLisahaku = hakutyyppiLisahakuUrl.equals(model.getHakuViewModel() != null ?  model.getHakuViewModel().getHakutyyppi() : null);;
         return isLisahaku || isErityisopetus;
     }
 
@@ -283,17 +283,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      */
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
-            
+
 
         if (presenter.getModel().getSelectedKoulutukset() != null
                 && !presenter.getModel().getSelectedKoulutukset().isEmpty()) {
-            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null 
+            pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null
                     ? presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri() : null;
             final KoulutusPerustieto koulutus = presenter.getModel()
                     .getSelectedKoulutukset().get(0);
             koulutusastetyyppi = koulutus.getKoulutustyyppi();
         }
-        
+
         //Build main item container
         mainLayout.addComponent(buildGrid());
 
@@ -306,39 +306,39 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         addComponent(mainLayout);
     }
-    
+
     private boolean isHakukohdeAnErkkaOrValmentava() {
         return (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
                 || (koulutusastetyyppi!=null && koulutusastetyyppi == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
                 || presenter.isKoulutusNivelvaihe();
     }
-    
+
 
 
     private GridLayout buildGrid() {
         Preconditions.checkNotNull(koulutusasteTyyppi, "KoulutusasteTyyppi enum cannot be null.");
-        
+
         itemContainer = new GridLayout(2, 1);
         itemContainer.setWidth(UiConstant.PCT100);
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
-        
+
         addItemToGrid("", buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
         hakuAikaLabel = addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaSelector());
-        
+
         //OVT-4671, agreed that hakukelpoisuus vaatimus is removed from form.
         //addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
-        
+
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText", buildValinnoissaKaytettavatAloitusPaikat());
-        
+
         if (this.koulutusasteTyyppi == KoulutusasteTyyppi.LUKIOKOULUTUS) {
             addItemToGrid("PerustiedotView.alinHyvaksyttavaKeskiarvoText", buildAlinHyvaksyttavaKeskiarvo());
             addItemToGrid("PerustiedotView.painotettavatOppiaineet", buildPainotettavatOppiaineet());
         }
-        
+
         //addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
         if (!this.isHakukohdeAnErkkaOrValmentava()) {
             addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildOsoiteSelectLabel());
@@ -349,7 +349,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
             addItemToGrid("PerustiedotView.kaksoistutkinto",buildKaksoistutkintoField());
             checkCheckboxes();
-            
+
             if (muuOsoite) {
                 enableOrDeEnableOsoite(true);
             } else {
@@ -358,10 +358,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         } else {
             setLiitteidenToimOsoite();
         }
-        
+
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
-        
+
         return itemContainer;
     }
 
@@ -815,7 +815,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //Hakuaika is ok if it has not started yet.
     	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
-    
+
     /*
      * Checks if hakuaika is acceptable for hakukohde in case the user is oph user
      */
@@ -823,7 +823,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //If hakuaika has not ended it is acceptable for hakukohde
         return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
     }
-    
+
     /*
      * Checks if haku is acceptable for hakukohde in case the user is oph user
      */
@@ -840,17 +840,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
         return false;
     }
-    
+
     /*
      * Checking if the haku is acceptable for hakukohde
      */
     private boolean accepts(HakuViewModel hm) {
-        
+
         //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(hm);
         }
-        
+
         //If it is lisahaku it is ok for hakukohde if the haku has not ended
         if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
                 && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
@@ -860,7 +860,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	if (hm.getAlkamisPvm() != null && !hm.getAlkamisPvm().before(new Date())) {
     		return true;
     	}
-    	
+
     	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
     		if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
@@ -869,7 +869,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	}
     	return false;
     }
-    
+
 
     /*
      *
@@ -879,7 +879,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
-        
+
         List<HakuViewModel> fhaut = new ArrayList<HakuViewModel>();
         for (HakuViewModel hvm : haut) {
         	if (accepts(hvm)) {
@@ -908,7 +908,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private void prepareHakuAikas(HakuViewModel hk) {
         BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
-        
+
         if (hk != null) {
             model.setHakuaika(null);
             if (hk.getSisaisetHakuajat().isEmpty()) {
@@ -922,7 +922,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         	boolean hamSelected = false;
             for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
             	if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hk.getHakutyyppi()))) {
-            	    
+
             		hvms.add(ham);
             		if (!hamSelected) {
             		    model.setHakuaika(ham);
@@ -935,14 +935,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
 
         hakuAikaCombo.setContainerDataSource(container);
-        
+
         selectHakuAika(model.getHakuaika(), hk);
     	setCustomHakuaika(doesHakukohdeNeedCustomhakuaika(), (model.getHakuaika()==null));//this.hakutyyppiLisahakuUrl.equals(model.getHakuViewModel().getHakutyyppi())
     	//hakuAikaCombo.setEnabled(true);
     }
 
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk) {
-    	
+
         hakuAikaCombo.setEnabled(hk != null && hk.getSisaisetHakuajat().size() > 1);
         //hakuAikaLabel.setVisible(hakuAikaCombo.isVisible());
 
@@ -958,7 +958,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             hakuAikaContentLabel.setValue(getHakuaikaString(hvm.getAlkamisPvm(), hvm.getPaattymisPvm()));
         }
     }
-    
+
     private String getHakuaikaString(Date alkamisPvm, Date paattymisPvm) {
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         return df.format(alkamisPvm) + " - " + df.format(paattymisPvm) ;
@@ -968,7 +968,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	setCustomHakuaikaEnabled(visible);
     	setCustomHakuaikaSelected(visible && true);
     }
-    
+
     private void setCustomHakuaikaEnabled(boolean visible) {
     	customHakuaika.setVisible(false);
     	customDatesLayout.setVisible(visible);
@@ -976,7 +976,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	hakuaikaAlkuPvm.setEnabled(enabled);
     	hakuaikaLoppuPvm.setEnabled(enabled);*/
     }
-    
+
     private void setCustomHakuaikaSelected(boolean selected) {
     	if (!customHakuaika.getValue().equals(selected)) {
     		customHakuaika.setValue(selected);
@@ -989,18 +989,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     	hakuAikaCombo.setEnabled(!selected);
     	hakuAikaCombo.setRequired(!selected);
-    	    	
+
     	//if (selected) {
     	//	hakuAikaCombo.setValue(null);
     	//}
     }
-    
+
     private class HakuaikaRangeValidator implements Listener {
-    	
+
 		private static final long serialVersionUID = 1L;
-		
+
 		private final boolean alku;
-    	
+
     	public HakuaikaRangeValidator(boolean alku) {
 			super();
 			this.alku = alku;
@@ -1012,11 +1012,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 			if (hvm==null) {
 				return;
 			}
-			
+
 			DateField df = alku ? hakuaikaAlkuPvm : hakuaikaLoppuPvm;
 			Date spvm = (Date) df.getValue();
 			Date opvm = (Date) (alku ? hakuaikaLoppuPvm : hakuaikaAlkuPvm).getValue();
-			
+
 			if (spvm==null) {
 				return;
 			}
@@ -1027,32 +1027,32 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 			} else if (spvm.after(hvm.getPaattymisPvm())) {
 				spvm = hvm.getPaattymisPvm();
 			}
-			
+
 			// rajaa annetun alku/loppupvm:n mukaan
 			if (opvm!=null && ((alku && spvm.after(opvm)) || (!alku && spvm.before(opvm)))) {
 				spvm = opvm;
 			}
-			
+
 			if (!spvm.equals(df.getValue())) {
 				df.setValue(spvm);
 			}
-			
+
     	}
     }
-    
+
     private AbstractComponent buildHakuaikaSelector() {
     	VerticalLayout layout = new VerticalLayout();
-    	
+
         hakuAikaCombo = new ComboBox();
         hakuAikaCombo.setRequired(true);
         hakuAikaCombo.setWidth("500px");
-        
+
         this.hakuAikaContentLabel = new Label();
-        
+
         layout.addComponent(hakuAikaCombo);
         layout.addComponent(hakuAikaContentLabel);
-        
-        
+
+
         customHakuaika = new CheckBox("Käytetään hakukohdekohtaista hakuaikaa"); // TODO i18n
         customHakuaika.setImmediate(true);
         customHakuaika.addListener(new Listener() {
@@ -1062,45 +1062,45 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 				setCustomHakuaikaSelected(((Boolean)customHakuaika.getValue()).booleanValue());
 			}
 		});
-        
+
         hakuaikaAlkuPvm = new DateField();
         hakuaikaAlkuPvm.setDateFormat(HakuajatView.DATE_FORMAT);
         hakuaikaAlkuPvm.setImmediate(true);
         //hakuaikaAlkuPvm.addListener(new HakuaikaRangeValidator(true));
-        
+
         hakuaikaLoppuPvm = new DateField();
         hakuaikaLoppuPvm.setDateFormat(HakuajatView.DATE_FORMAT);
         hakuaikaLoppuPvm.setImmediate(true);
         //hakuaikaLoppuPvm.addListener(new HakuaikaRangeValidator(false));
-        
+
         // estää aikakojen asettamisen väärinpäin
         new DateRangeEnforcer(hakuaikaAlkuPvm, hakuaikaLoppuPvm);
-        
+
         layout.addComponent(customHakuaika);
         customHakuaika.addStyleName(Oph.SPACING_BOTTOM_10);
         customHakuaika.addStyleName(Oph.SPACING_TOP_30);
-        
+
         customDatesLayout = new HorizontalLayout();
         layout.addComponent(customDatesLayout);
-        
+
         Label alkuLabel = new Label("Alku:"); // TODO i18n
         Label loppuLabel = new Label("Loppu:"); // TODO i18n
         alkuLabel.addStyleName(Oph.SPACING_RIGHT_10);
 
         loppuLabel.addStyleName(Oph.SPACING_RIGHT_10);
         loppuLabel.addStyleName(Oph.SPACING_LEFT_20);
-        
+
         customDatesLayout.addComponent(alkuLabel);
-        customDatesLayout.setComponentAlignment(alkuLabel, Alignment.BOTTOM_LEFT); 
-        
+        customDatesLayout.setComponentAlignment(alkuLabel, Alignment.BOTTOM_LEFT);
+
         customDatesLayout.addComponent(hakuaikaAlkuPvm);
-        
+
         customDatesLayout.addComponent(loppuLabel);
-        customDatesLayout.setComponentAlignment(loppuLabel, Alignment.BOTTOM_LEFT); 
+        customDatesLayout.setComponentAlignment(loppuLabel, Alignment.BOTTOM_LEFT);
 
         customDatesLayout.addComponent(hakuaikaLoppuPvm);
-        
-        
+
+
         return layout;
     }
 
@@ -1124,9 +1124,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         Preconditions.checkArgument(tarjontaUIHelper!=null, "tarjonta UI helper ei saa olla null");
         Preconditions.checkArgument(model!=null, "model ei saa olla null");
-        
+
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(model.getKomotoOids());
-        
+
         if (presenter.getModel().getSelectedKoulutukset() != null) {
             //We can get the first koulutukses pohjakouluvaatimus, because all selected koulutukses should have
             //the same pohjakoulutus
@@ -1141,7 +1141,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             for (KoodiType koodiType : hakukohdeKoodis) {
                 hakukohdes.add(HakukohdeViewModelToDTOConverter.hakukohdeNameUriModelFromKoodi(koodiType));
             }
-            
+
             BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);
             hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
             hakukohteenNimiCombo.setImmediate(true);
@@ -1161,7 +1161,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(model.getKoulutusasteTyyppi())) {
             this.hakukohteenNimiText = UiUtil.textField(hl);
         } else {
-        
+
             hakukohteenNimiCombo = buildHaku();
             hakukohteenNimiCombo.setRequired(true);
             hl.addComponent(hakukohteenNimiCombo);
@@ -1179,12 +1179,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     public List<KielikaannosViewModel> getLisatiedot() {
         return this.lisatiedotTabs.getKieliKaannokset();
     }
-    
+
     @Override
     public List<KielikaannosViewModel> getValintaperusteet() {
         if (this.valintaperusteTabs != null) {
             return this.valintaperusteTabs.getKieliKaannokset();
-        } 
+        }
         return new ArrayList<KielikaannosViewModel>();
     }
 
@@ -1194,7 +1194,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         getLisatiedot().clear();
         getLisatiedot().addAll(lisatiedot);
     }
-    
+
     @Override
     public void reloadValintaperusteet(final List<KielikaannosViewModel> valintaperusteet) {
         Preconditions.checkNotNull(valintaperusteet, "List of KielikaannosViewModel objects cannot be null");
@@ -1214,7 +1214,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         vl.addComponent(lisatiedotTabs);
         return vl;
     }
-    
+
     private VerticalLayout buildBottomAreaValintaperusteTab() {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
@@ -1231,7 +1231,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private HakukohdeLisatiedotTabSheet buildLanguageTab() {
         return new HakukohdeLisatiedotTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
     }
-    
+
     private HakukohteenKuvausTabSheet buildValintaperusteTab() {//String width, String height, LisaaKuvausDialog.Mode mode
         return new HakukohteenKuvausTabSheet(this.presenter, "500px", "250px", LisaaKuvausDialog.Mode.VAPE);
     }
