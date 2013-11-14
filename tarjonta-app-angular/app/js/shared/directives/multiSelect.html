@@ -2,7 +2,7 @@
 	
 	<!-- dualpane -->
 	<div class="dualpane" ng-switch-when="dualpane">	
-		<select bindonce multiple="multiple"
+		<select  bindonce multiple="multiple"
 				ng-model="preselection"
 				ng-options="e.key as e.value for e in items"
 				ng-change="onPreselection(preselection)">

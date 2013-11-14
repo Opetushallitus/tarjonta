@@ -2,27 +2,28 @@
 <button class="btn btn-primary" ng-click="model.newValintakoe()">{{t('tarjonta.hakukohde.valintakoe.listaus.uusi.valintakoe')}}</button>
    <br/>
    <br/>
-    <accordion-group heading="{{kieli}}" ng-repeat="kieli in model.kielet">
+    <tabset>
+        <tab heading="{{kieli}}" ng-repeat="kieli in model.kielet">
+            <table class="table table-hover">
+                <tr>
+                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus')}}</th>
+                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika')}}</th>
+                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot')}}</th>
+                </tr>                                                                                            
+                <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
+                    <td>{{ valintakoe.valintakokeenKuvaus.teksti }}</td>
+                    <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                        {{  valintakoeaika.alkaa | date: 'dd.MM.yyyy HH:mm' }} - {{ valintakoeaika.loppuu | date: 'dd.MM.yyyy HH:mm' }}    <br/>
+                        {{  valintakoeaika.osoite.osoiterivi1 }}  , {{ valintakoeaika.osoite.postitoimipaikka }}
+                    </td>
+                    <td>
+                        <a href="" data-ng-click="model.muokaaValintakoetta(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.muokkaa')}}</a>
+                        <a href="" data-ng-click="model.poistaValintakoe(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.poista')}}</a>
+                    </td>
+                </tr>
 
-    <table class="table table-hover">
-        <tr>
-            <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus')}}</th>
-            <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika')}}</th>
-            <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot')}}</th>
-        </tr>
-        <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
-           <td>{{ valintakoe.valintakokeenKuvaus.teksti }}</td>
-           <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
-               {{  valintakoeaika.alkaa | date: 'dd.MM.yyyy HH:mm' }} - {{ valintakoeaika.loppuu | date: 'dd.MM.yyyy HH:mm' }}    <br/>
-               {{  valintakoeaika.osoite.osoiterivi1 }}  , {{ valintakoeaika.osoite.postitoimipaikka }}
-           </td>
-           <td>
-                <a href="" data-ng-click="model.muokaaValintakoetta(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.muokkaa')}}</a>
-                <a href="" data-ng-click="model.poistaValintakoe(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.poista')}}</a>
-           </td>
-        </tr>
+            </table>
+        </tab>
+    </tabset>
 
-    </table>
-
-</accordion-group>
 </div>

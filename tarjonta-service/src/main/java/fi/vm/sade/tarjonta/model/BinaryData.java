@@ -13,68 +13,48 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
+package fi.vm.sade.tarjonta.model;
 
-import java.io.Serializable;
+import javax.persistence.*;
+
+import fi.vm.sade.generic.model.BaseEntity;
 
 /**
+ * Store images and other binary data.
  *
  * @author jani
  */
-public class KuvaV1RDTO implements Serializable {
-
+@Entity
+public class BinaryData extends BaseEntity {
     private String filename;
     private String mimeType;
-    private String base64data;
 
-    public KuvaV1RDTO() {
+    @Lob
+    @Basic(fetch=FetchType.LAZY)
+    private byte[] data;
+
+    public byte[] getData() {
+        return data;
     }
 
-    public KuvaV1RDTO(String filename, String mimeType, String base64data) {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.base64data = base64data;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
-    /**
-     * @return the filename
-     */
     public String getFilename() {
         return filename;
     }
 
-    /**
-     * @param filename the filename to set
-     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    /**
-     * @return the mimeType
-     */
     public String getMimeType() {
         return mimeType;
     }
 
-    /**
-     * @param mimeType the mimeType to set
-     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
-    /**
-     * @return the base64data
-     */
-    public String getBase64data() {
-        return base64data;
-    }
-
-    /**
-     * @param base64data the base64data to set
-     */
-    public void setBase64data(String base64data) {
-        this.base64data = base64data;
-    }
 }

@@ -1,6 +1,6 @@
 var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
 
-app.factory('TarjontaService', function($resource, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
+app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
@@ -64,8 +64,8 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
-        	result = result.result // unwrap v1
-        	for (var i in result.tulokset) {
+            result = result.result // unwrap v1
+            for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
                 for (var j in t.tulokset) {
@@ -98,7 +98,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
-        	result = result.result;  //unwrap v1
+            result = result.result;  //unwrap v1
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
 
@@ -140,13 +140,13 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
      */
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
-        var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"),{},{
-        	update: { method: 'POST'}        	
+        var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"), {}, {
+            update: {method: 'POST'}
         });
 
         tila.update(function(nstate) {
-        	console.log("resolving:", nstate);
-                ret.resolve(nstate.result);
+            console.log("resolving:", nstate);
+            ret.resolve(nstate.result);
         });
 
         return ret.promise;
@@ -199,7 +199,7 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
             save: {
                 method: 'POST',
                 //  withCredentials: true,
-               // isArray: true,
+                // isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
@@ -293,6 +293,27 @@ app.factory('TarjontaService', function($resource, Config, LocalisationService, 
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
+    };
+
+    dataFactory.saveImage = function(komotoOid, kieliuri, image, fnSuccess, fnError) {
+        if (angular.isUndefined(komotoOid) || komotoOid === null) {
+            throw new Error('Komoto OID cannot be undefined or null.');
+        }
+
+        if (angular.isUndefined(kieliuri) || kieliuri === null) {
+            throw new Error('Language URI cannot be undefined or null.');
+        }
+
+        if (angular.isUndefined(image) || image === null) {
+            throw new Error('Image object cannot be undefined or null.');
+        }
+
+        var formData = new FormData();
+        formData.append('image', image.file, image.name);
+        $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
+            headers: {'Content-Type': 'multipart/form-data'},
+            transformRequest: angular.identity
+        }).success(fnSuccess).error(fnError);
     };
 
     return dataFactory;

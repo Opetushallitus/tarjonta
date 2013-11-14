@@ -11,29 +11,27 @@ app.controller('BaseEditController',
                 $scope.config = {env: cfg.env, app: cfg.app, 'locationPath': $location.path()};
                 $scope.uiModel = null;
                 $scope.model = null;
-                                
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = 
-                	[
-             		"TAVOITTEET",
-                	"LISATIETOA_OPETUSKIELISTA",
-                    "PAAAINEEN_VALINTA",
-                	"MAKSULLISUUS",
-                	"SIJOITTUMINEN_TYOELAMAAN",
-            		"PATEVYYS",
-            		"JATKOOPINTO_MAHDOLLISUUDET",
-                	"SISALTO",
-             		"KOULUTUKSEN_RAKENNE",
-                	"LOPPUKOEVAATIMUKSET", // leiskassa oli "lopputyön kuvaus"
-                	"KANSAINVALISTYMINEN",
-                	"YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
-                	"TUTKIMUKSEN_PAINOPISTEET",
-                	
-                	"ARVIOINTIKRITEERIT",
-                	"PAINOTUS",
-                	"KOULUTUSOHJELMAN_VALINTA",
-                	"KUVAILEVAT_TIEDOT"
-                	];
+                $scope.lisatiedot =
+                        [
+                            {type: "TAVOITTEET", isKomo: true},
+                            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
+                            {type: "PAAAINEEN_VALINTA", isKomo: false},
+                            {type: "MAKSULLISUUS", isKomo: false},
+                            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
+                            {type: "PATEVYYS", isKomo: true},
+                            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
+                            {type: "SISALTO", isKomo: false},
+                            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
+                            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
+                            {type: "KANSAINVALISTYMINEN", isKomo: false},
+                            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
+                            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
+                            {type: "ARVIOINTIKRITEERIT", isKomo: false},
+                            {type: "PAINOTUS", isKomo: false},
+                            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
+                            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
+                        ];
 
                 $scope.init = function() {
                     var uiModel = {};
@@ -224,15 +222,17 @@ app.controller('BaseEditController',
                 $scope.searchKoodi = function(apiModel, koodistouri, uri, locale) {
                     var promise = koodisto.getKoodi(koodistouri, uri, locale);
                     promise.then(function(data) {
-                        console.log("KOODI", data);
                         apiModel.koodi.kaannos = data.koodiNimi;
                         apiModel.koodi.versio = data.koodiVersio;
                     });
                 };
                 $scope.searchKoodisByKoodistoUri = function(uiModel, koodistouri, locale) {
                     var koodisPromise = koodisto.getAllKoodisWithKoodiUri(koodistouri, locale);
+                    uiModel.promise = koodisPromise;
                     koodisPromise.then(function(koodisParam) {
-                        uiModel.data = koodisParam;
+                        for (var i = 0; i < koodisParam.length; i++) {
+                            uiModel.data.push(koodisParam[i]); //add all koodis to data array
+                        }
                     });
                 };
                 //add factory functions to ui template
@@ -285,7 +285,14 @@ app.controller('BaseEditController',
                     }
                 };
 
-                $scope.getKuvausApiModelLanguageUri = function(kuvaus, key, kieliuri) {
+                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, key, kieliuri) {
+                    var kuvaus = null;
+                    if(boolIsKomo){
+                        kuvaus = $scope.model.kuvausKomo; 
+                    }else{
+                        kuvaus = $scope.model.kuvausKomoto;
+                    }
+                    
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus.tekstis)) {
                         converter.throwError("Description text object cannot be null.");
                     }
@@ -317,17 +324,25 @@ app.controller('BaseEditController',
                     });
                     return koodis;
                 };
-                
+
                 // TODO omaksi direktiivikseen tjsp..
                 $scope.kieliFromKoodi = function(koodi) {
-                	var kd = $scope.uiModel.opetuskielis.data;
-                	for (var i in kd) {
-                		if (koodi==kd[i].koodiUri) {
-                			return kd[i].koodiNimi;
-                		}
-                	}
-                	return koodi;
+                    var kd = $scope.uiModel.opetuskielis.data;
+                    for (var i in kd) {
+                        if (koodi === kd[i].koodiUri) {
+                            return kd[i].koodiNimi;
+                        }
+                    }
+                    return koodi;
                 }
+
+                $scope.uploadImage = function(event, kieliUri, image) {
+                    tarjontaService.saveImage($scope.model.oid, kieliUri, image, function() {
+                        console.log("Image succesfully saved.");
+                    }, function() {
+                        console.error("Image upload failed.");
+                    });
+                };
 
                 $scope.init();
             }]);

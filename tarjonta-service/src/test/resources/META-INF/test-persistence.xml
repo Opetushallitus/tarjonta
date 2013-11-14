@@ -27,7 +27,7 @@
         <class>fi.vm.sade.tarjonta.model.PainotettavaOppiaine</class>
         <class>fi.vm.sade.tarjonta.model.Pisteraja</class>
         <class>fi.vm.sade.tarjonta.model.Kielivalikoima</class>
-        
+        <class>fi.vm.sade.tarjonta.model.BinaryData</class>
 
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

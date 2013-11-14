@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusPerusopetuk
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmentavaJaKuntouttavaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -47,6 +48,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
 /**
  *
@@ -97,16 +100,19 @@ public interface KoulutusV1Resource {
     @GET
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
 
     @GET
     @Path("{oid}/komoto/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
@@ -131,15 +137,21 @@ public interface KoulutusV1Resource {
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Response deleteTeksti(@PathParam("oid") String oid, @PathParam("key") String key, @PathParam("uri") String uri);
 
+    @GET
+    @Path("{oid}/kuva/{kieliUri}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<KuvaV1RDTO> getKuva(String oid, String kieliUri);
+
     @POST
-    @Path("{oid}/kuva")
-    @Consumes({"image/jpeg", "image/png", "image/gif"})
-    public Response saveKuva(@PathParam("oid") String oid, InputStream in, @HeaderParam("Content-Type") String fileType, @HeaderParam("Content-Length") long fileSize, @PathParam("uri") String kieliUri) throws IOException;
+    @Path("{oid}/kuva/{kieliUri}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response saveKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("file") MultipartBody body);
 
     @DELETE
-    @Path("{oid}/kuva")
+    @Path("{oid}/kuva/{kieliUri}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response deleteKuva(@PathParam("oid") String oid, @PathParam("uri") String kieliUri);
+    public Response deleteKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     /**
      * Päivittää koulutuksen tilan (olettaen että kyseinen tilasiirtymä on

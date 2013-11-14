@@ -16,12 +16,14 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import java.util.Map;
 import javax.persistence.EntityManager;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,12 @@ public class TestData {
     private TarjontaFixtures fixtures;
     private EntityManager em;
 
+    private KoulutusmoduuliToteutus komoto;
+
+    public KoulutusmoduuliToteutus getPersistedKomoto() {
+        return komoto;
+    }
+
     public TestData() {
     }
 
@@ -59,10 +67,9 @@ public class TestData {
         Koulutusmoduuli komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         persist(komo);
 
-        KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus("123455");
+        komoto = fixtures.createTutkintoOhjelmaToteutus("123455");
         komoto.setKoulutusmoduuli(komo);
         komo.addKoulutusmoduuliToteutus(komoto);
-
         persist(komoto);
 
         haku1 = fixtures.createHaku();
@@ -76,7 +83,6 @@ public class TestData {
         /*
          * CREATE OBJECTS
          */
-
         kohde1 = fixtures.createHakukohde();
         kohde1.setHakukohdeKoodistoNimi(HUMAN_READABLE_NAME_1);
         kohde1.setHakukohdeNimi(KOODISTO_URI_1);
@@ -110,7 +116,6 @@ public class TestData {
         /* 
          * PERSIST ALL OBJECTS 
          */
-
         //hakukohde1 <- koe1, koe2, koe3
         kohde1.addValintakoe(koe1);
         kohde1.addValintakoe(koe2);
@@ -126,6 +131,7 @@ public class TestData {
         check(3, kohde1);
         check(1, kohde2);
         check(0, kohde3);
+
     }
 
     private void check(int items, Hakukohde kohde) {
@@ -136,7 +142,7 @@ public class TestData {
     protected void persist(Object o) {
         em.persist(o);
         em.flush();
-        
+
         //a quick check
         if (o instanceof Haku) {
             Haku haku = (Haku) o;
