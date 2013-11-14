@@ -1,0 +1,11 @@
+<div class="richTextArea" ng-cloack>
+
+<div ng-show="!edit" class="preview" ng-click="startEdit()" ng-cloack>
+	<div ng-bind-html="model"></div>
+</div>
+
+<div ng-show="edit" class="editor" ng-mouseleave="stopEdit()" ng-cloack>
+	<textarea ui-tinymce="tinymceOptions" ng-model="model"> </textarea>
+</div>
+
+</div>

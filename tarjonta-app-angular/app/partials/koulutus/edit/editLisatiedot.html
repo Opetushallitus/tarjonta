@@ -23,11 +23,19 @@
 	
 		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
 			
+			<h4>{{t('koulutus.edit.'+lisatieto.type+'.title')}}</h4>			
+			<p>{{t('koulutus.edit.'+lisatieto.type+'.help')}}</p>
+			
+			<rich-textarea model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto.type, kieliUri).arvo"></rich-textarea>
+			
+			<!--
+			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto, kieliUri).arvo"> </textarea>
 			<h4>{{t('koulutus.edit.'+lisatieto.type +'.title')}}</h4>			
 			<p>{{t('koulutus.edit.'+lisatieto.type +'.help')}}</p>
 			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri).arvo"> </textarea>
-			
 			<br/>
+			
+			 -->
 			
 		</div>
 
