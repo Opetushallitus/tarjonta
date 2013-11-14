@@ -175,7 +175,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             // Update in memory storage for local translations
             this.getTranslations().push(newEntry);
 
-            // Then create missing translation to the server side
+//            // Then create missing translation to the server side
             Localisations.save(newEntry,
                     function(data) {
                         $log.info("  created new translation to server side! data = ", data);
@@ -204,6 +204,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
      * @returns global APP_LOCALISATION_DATA, array of {key, locale, value} objects.
      */
     this.getTranslations = function() {
+        Config.env["tarjonta.localisations"] = Config.env["tarjonta.localisations"] || [];
         return Config.env["tarjonta.localisations"];
     };
 
