@@ -46,11 +46,16 @@
                                <th>{{ model.translations.valintakoeAjankohtaTauluSijainti }}</th>
                                <th>{{ model.translations.valintakoeAjankohtaTauluAjankohta }}</th>
                                <th>{{ model.translations.valintakoeAjankohtaTauluLisatiedot }}</th>
+                               <th></th>
                            </tr>
                           <tr data-ng-repeat="ajankohta in model.valintakoe.valintakoeAjankohtas">
                               <td>{{ ajankohta.osoite.osoiterivi1 }}, {{ajankohta.osoite.postinumeroArvo}}, {{ajankohta.osoite.postitoimipaikka}}</td>
                               <td>{{ ajankohta.alkaa | date: 'dd.MM.yyyy HH:mm'  }}</td>
                               <td>{{ ajankohta.lisatiedot }}</td>
+                              <td>
+                                <a href="" data-ng-click="model.muokkaaAjankohtaa(ajankohta)">Muokkaa</a>
+                              </td>
+                              <td> <a href="" data-ng-click="model.removeAjankohtaFromArray(ajankohta)">Poista</a> </td>
                           </tr>
                       </table>
 
