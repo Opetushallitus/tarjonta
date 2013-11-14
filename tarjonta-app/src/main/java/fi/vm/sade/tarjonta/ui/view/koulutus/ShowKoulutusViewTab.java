@@ -294,8 +294,18 @@ public class ShowKoulutusViewTab extends CustomComponent {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         Label lastUpdLbl = null;
         if (lastUpdatedBy != null) {
-            String lastUpdater =  uiHelper.findUserWithOid(lastUpdatedBy);
-            lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " +  lastUpdater +   " )");
+            String lastUpdater = null;
+            try {
+                lastUpdater = uiHelper.findUserWithOid(lastUpdatedBy);
+            } catch (Exception exp) {
+
+            }
+            if (lastUpdater != null) {
+                lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " +  lastUpdater +   " )");
+            } else {
+                lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+            }
+
         } else {
         lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
         }

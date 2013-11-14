@@ -577,8 +577,20 @@ public class ShowHakukohdeTab extends VerticalLayout {
 
     private Label buildTallennettuLabel(Date date, String viimPaivOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
-        String viimPaivittaja = uiHelper.findUserWithOid(viimPaivOid);
-        Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
+        String viimPaivittaja = null;
+        try {
+            viimPaivittaja =  uiHelper.findUserWithOid(viimPaivOid);
+        } catch (Exception ep) {
+
+
+        }
+        Label lastUpdLbl = null;
+        if (viimPaivittaja != null) {
+            lastUpdLbl  = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
+        } else {
+            lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ")");
+        }
+
         return lastUpdLbl;
     }
     
