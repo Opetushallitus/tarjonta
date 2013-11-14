@@ -159,8 +159,14 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 });
 
+/*
+ *
+ *
+ * Valintakoe modal controller
+ *
+ *
+ */
 
-//Valintakoe modal controller
 app.controller('ValintakoeModalInstanceController', function($scope, $modalInstance,LocalisationService,Koodisto,valintakoe) {
 
     $scope.model = {};
@@ -264,6 +270,18 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+
+    $scope.model.muokkaaAjankohtaa = function(valintakoeAjankohta) {
+          removeAjankohtaFromArray(valintakoeAjankohta);
+         $scope.model.selectedAjankohta = valintakoeAjankohta;
+    }
+
+    $scope.model.removeAjankohtaFromArray = function(valintakoeAjankohta) {
+
+        var index = $scope.model.valintakoe.valintakoeAjankohtas.indexOf(valintakoeAjankohta);
+        $scope.model.valintakoe.valintakoeAjankohtas.splice(index,1);
+
+    }
 
     $scope.lisaaTiedot = function() {
 
