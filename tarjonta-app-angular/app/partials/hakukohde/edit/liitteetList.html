@@ -2,27 +2,28 @@
     <button class="btn btn-primary" ng-click="model.uusiLiite()">{{t('tarjonta.hakukohde.liite.listaus.uusi.liite')}}</button>
     <br/>
  <br/>
-    <accordion-group heading="{{kieli}}" ng-repeat="kieli in model.liitteenkielet">
+    <tabset>
+        <tab heading="{{kieli}}" ng-repeat="kieli in model.liitteenkielet">
+             <table class="table table-hover">
+                <tr>
 
-        <table class="table table-hover">
-             <tr>
+                    <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.kuvaus')}}</th>
+                    <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.osoite')}}</th>
+                </tr>
+                <tr data-ng-repeat="liite in model.liitteet | filter:{kieliNimi:kieli}  ">
 
-                 <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.kuvaus')}}</th>
-                 <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.osoite')}}</th>
-             </tr>
-            <tr data-ng-repeat="liite in model.liitteet | filter:{kieliNimi:kieli}  ">
+                    <td>{{ liite.liitteenKuvaus.teksti }}</td>
+                    <td>{{ liite.toimitettavaMennessa | date: 'dd.MM.yyyy HH:mm'  }} <br/>
+                        {{ liite.liitteenToimitusOsoite.osoiterivi1 }} , {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
+                    </td>
+                    <td>
+                        <a href="" data-ng-click="model.muokkaaLiitetta(liite)">{{t('tarjonta.hakukohde.liite.listaus.muokkaa')}}</a>
+                        <a href="" data-ng-click="model.poistaLiite(liite)">{{t('tarjonta.hakukohde.liite.listaus.poista')}}</a>
+                    </td>
+                </tr>
+            </table>
+        </tab>
+    </tabset>
 
-               <td>{{ liite.liitteenKuvaus.teksti }}</td>
-                <td>{{ liite.toimitettavaMennessa | date: 'dd.MM.yyyy HH:mm'  }} <br/>
-                {{ liite.liitteenToimitusOsoite.osoiterivi1 }} , {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
-                </td>
-                <td>
-                    <a href="" data-ng-click="model.muokkaaLiitetta(liite)">{{t('tarjonta.hakukohde.liite.listaus.muokkaa')}}</a>
-                    <a href="" data-ng-click="model.poistaLiite(liite)">{{t('tarjonta.hakukohde.liite.listaus.poista')}}</a>
-                </td>
-            </tr>
-         </table>
-
-    </accordion-group>
 
 </div>
