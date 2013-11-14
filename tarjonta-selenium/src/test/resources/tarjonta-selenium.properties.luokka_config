@@ -1,9 +1,0 @@
-tarjonta-selenium.oph-url=https://itest-virkailija.oph.ware.fi
-tarjonta-selenium.oph-login-url=/cas/login
-tarjonta-selenium.tarjonta-url=/tarjonta-app/tarjontaapp
-tarjonta-selenium.tarjonta-versio-url=/tarjonta-app/buildversion.txt
-tarjonta-selenium.qa=false
-tarjonta-selenium.reppu=false
-tarjonta-selenium.luokka=true
-tarjonta-selenium.username=ophadmin
-tarjonta-selenium.password=password
