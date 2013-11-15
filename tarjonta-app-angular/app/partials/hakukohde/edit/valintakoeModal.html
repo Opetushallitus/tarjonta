@@ -53,9 +53,9 @@
                               <td>{{ ajankohta.alkaa | date: 'dd.MM.yyyy HH:mm'  }}</td>
                               <td>{{ ajankohta.lisatiedot }}</td>
                               <td>
-                                <a href="" data-ng-click="model.muokkaaAjankohtaa(ajankohta)">{{t('tarjonta.hakukohde.valintakoe.ajankohta.muokkaa')}}</a>
+                                <a href="" data-ng-click="model.muokkaaAjankohtaa(ajankohta)">{{ model.translations.valintakoeAjankohtaTauluMuokkaaBtn }}</a>
                               </td>
-                              <td> <a href="" data-ng-click="model.removeAjankohtaFromArray(ajankohta)">{{t('tarjonta.hakukohde.valintakoe.ajankohta.poista')}}</a> </td>
+                              <td> <a href="" data-ng-click="model.removeAjankohtaFromArray(ajankohta)">{{ model.translations.valintakoeAjankohtaTauluPoistaBtn }}</a> </td>
                           </tr>
                       </table>
 

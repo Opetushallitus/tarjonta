@@ -247,6 +247,8 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
         valintakoeAjankohtaTauluSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.sijaint'),
         valintakoeAjankohtaTauluAjankohta : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.aika'),
         valintakoeAjankohtaTauluLisatiedot : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.lisatietoja'),
+        valintakoeAjankohtaTauluMuokkaaBtn : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.muokkaa'),
+        valintakoeAjankohtaTauluPoistaBtn : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.poista'),
         ok : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ok'),
         cancel : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.cancel')
     }
@@ -272,7 +274,7 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
     };
 
     $scope.model.muokkaaAjankohtaa = function(valintakoeAjankohta) {
-          removeAjankohtaFromArray(valintakoeAjankohta);
+        $scope.model.removeAjankohtaFromArray(valintakoeAjankohta);
          $scope.model.selectedAjankohta = valintakoeAjankohta;
     }
 
