@@ -19,11 +19,12 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config','ui.tinymce']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','ui.tinymce']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location,$timeout) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout) {
 
+    $scope.model.userLang  =  AuthService.getLanguage();
 
     $scope.model.showSuccess = false;
 
@@ -54,7 +55,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
     //TODO: fix and retrieve language from somewhere
-    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta','fi');
+
+
+
+    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta',AuthService.getLanguage());
 
     $scope.model.postinumeroarvo = {
 
@@ -157,7 +161,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     orgPromise.then(function(data){
         if (data.postiosoite !== undefined) {
 
-            console.log('GOT OSOITE:', data.postiosoite);
+
             $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
             $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
             $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
