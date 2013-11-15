@@ -2,7 +2,7 @@ div.richTextArea {
 }
 
 div.richTextArea > div.editor, div.richTextArea > div.preview {
-	max-height:250px;
+	max-height:220px;
 	min-height:1em;
 }
 	
@@ -20,16 +20,23 @@ div.richTextArea > div.preview:hover {
 }
 
 div.richTextArea > div.editor {
-	border: 1px solid #000000;
 	overflow:hidden;
-	height:250px;
+	height:220px;
+	padding: 1px 0 1px 0;
 }
 
 div.richTextArea > div.editor > div.mce-tinymce {
-	height:100%;
-	margin-top:-2px;
+/*	height:100%;*/
 }
 
 div.richTextArea > div.editor > div.mce-tinymce > iframe {
 	height:auto;	
+}
+
+div.richTextArea > div.editor > p {
+	text-align:right;
+}
+
+div.richTextArea > div.editor > p.overflow {
+	color:#e0a020;
 }
