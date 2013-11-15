@@ -11,7 +11,9 @@
                     <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot')}}</th>
                 </tr>                                                                                            
                 <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
-                    <td>{{ valintakoe.valintakokeenKuvaus.teksti }}</td>
+                    <td>
+                        <div data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti "/>
+                       </td>
                     <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
                         {{  valintakoeaika.alkaa | date: 'dd.MM.yyyy HH:mm' }} - {{ valintakoeaika.loppuu | date: 'dd.MM.yyyy HH:mm' }}    <br/>
                         {{  valintakoeaika.osoite.osoiterivi1 }}  , {{ valintakoeaika.osoite.postitoimipaikka }}

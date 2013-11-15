@@ -182,7 +182,7 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
 
     $scope.model.liite = liite;
 
-
+    $scope.model.validationmessages = [];
 
 
     //Koodisto helper methods
@@ -236,6 +236,21 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
         selectedKieli = kieli;
     };
 
+    var validateLiite = function() {
+
+        $scope.model.validationmessages.splice(0,$scope.model.validationmessages.length);
+
+        if (selectedKieli === undefined) {
+            $scope.model.validationmessages.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.kieli.req.msg'));
+        }
+
+        if ($scope.model.validationmessages.length > 0) {
+            return false;
+        }
+
+        return true;
+    };
+
     $scope.model.onKieliTypeAheadChange = function() {
         var koodi = findKoodiWithArvo($scope.model.liite.liitteenToimitusOsoite.postinumeroArvo,$scope.model.koodis);
 
@@ -248,14 +263,15 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
     };
 
     $scope.model.save = function() {
-        if (selectedKieli !== undefined) {
-            $scope.model.liite.liitteenKuvaus.nimi =  selectedKieli.koodiNimi;
-            $scope.model.liite.liitteenKuvaus.arvo = selectedKieli.koodiArvo;
-            $scope.model.liite.liitteenKuvaus.versio = selectedKieli.koodiVersio;
-        }
 
-        $scope.model.liite.liitteenKuvaus.uri = $scope.model.liite.kieliUri;
-        $modalInstance.close($scope.model.liite);
+       if (validateLiite()) {
+           $scope.model.liite.liitteenKuvaus.nimi =  selectedKieli.koodiNimi;
+           $scope.model.liite.liitteenKuvaus.arvo = selectedKieli.koodiArvo;
+           $scope.model.liite.liitteenKuvaus.versio = selectedKieli.koodiVersio;
+           $scope.model.liite.liitteenKuvaus.uri = $scope.model.liite.kieliUri;
+           $modalInstance.close($scope.model.liite);
+       }
+
     };
 
     $scope.model.kaytaOrganisaationPostiOsoitetta = function() {

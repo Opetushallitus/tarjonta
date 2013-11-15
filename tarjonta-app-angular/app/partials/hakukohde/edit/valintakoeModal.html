@@ -2,6 +2,13 @@
         <div class="modal-header">
             <h3>{{ model.translations.title}}</h3>
         </div>
+        <div class="alert-error" data-ng-show="model.showAlert">
+              <ul>
+                  <li data-ng-repeat="validationmsg in model.validationmsgs">
+                     {{ validationmsg }}
+                  </li>
+              </ul>
+        </div>
         <div class="modal-body">
           <form name="ValintakoeModalForm">
               <div class="container-fluid ">
