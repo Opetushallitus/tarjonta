@@ -22,13 +22,21 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config','ui.tinymce']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location,$timeout) {
 
 
+    $scope.model.showSuccess = false;
 
     $scope.model.collapse.model = true;
 
+    var showSuccess = function() {
+        $scope.model.showSuccess = true;
+        $timeout(function(){
 
+
+            $scope.model.showSuccess = false;
+        },5000);
+    }
 
     //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
@@ -210,6 +218,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
             });
         }
+        showSuccess();
     };
 
 
@@ -232,6 +241,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
             });
         }
+       showSuccess();
     };
 
     $scope.model.takaisin = function() {
