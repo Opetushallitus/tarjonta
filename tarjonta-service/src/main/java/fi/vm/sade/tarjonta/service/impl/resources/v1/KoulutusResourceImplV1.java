@@ -75,12 +75,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -386,9 +381,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
         final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
-        KuvaV1RDTO dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), Base64.encodeBase64String(bin.getData()));
-        ResultV1RDTO<KuvaV1RDTO> v1 = new ResultV1RDTO<KuvaV1RDTO>(dto);
-        return v1;
+        KuvaV1RDTO dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), kieliUri, Base64.encodeBase64String(bin.getData()));
+        LOG.info("ResultV1RDTO : {} {}", dto, bin);
+        return new ResultV1RDTO<KuvaV1RDTO>(dto);
     }
 
     @Override

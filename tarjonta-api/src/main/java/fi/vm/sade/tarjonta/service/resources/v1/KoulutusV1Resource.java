@@ -110,38 +110,37 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
 
     @GET
-    @Path("{oid}/komoto/tekstis")
+    @Path("{oid}/tekstis/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/komoto/tekstis")
+    @Path("{oid}/tekstis/komoto")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomotoTeksti> dto);
 
     @GET
-    @Path("{oid}/komo/tekstis")
+    @Path("{oid}/tekstis/komo")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/komo/tekstis")
+    @Path("{oid}/tekstis/komo")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomoTeksti> dto);
 
     @DELETE
-    @Path("{oid}/teksti")
+    @Path("{oid}/teksti/{key}/{uri}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Response deleteTeksti(@PathParam("oid") String oid, @PathParam("key") String key, @PathParam("uri") String uri);
 
     @GET
     @Path("{oid}/kuva/{kieliUri}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KuvaV1RDTO> getKuva(String oid, String kieliUri);
+    public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     @POST
     @Path("{oid}/kuva/{kieliUri}")

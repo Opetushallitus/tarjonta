@@ -23,6 +23,7 @@ import java.io.Serializable;
  */
 public class KuvaV1RDTO implements Serializable {
 
+    private String kieliUri;
     private String filename;
     private String mimeType;
     private String base64data;
@@ -30,9 +31,10 @@ public class KuvaV1RDTO implements Serializable {
     public KuvaV1RDTO() {
     }
 
-    public KuvaV1RDTO(String filename, String mimeType, String base64data) {
+    public KuvaV1RDTO(String filename, String mimeType, String kieliUri, String base64data) {
         this.filename = filename;
         this.mimeType = mimeType;
+        this.kieliUri = kieliUri;
         this.base64data = base64data;
     }
 
@@ -76,5 +78,19 @@ public class KuvaV1RDTO implements Serializable {
      */
     public void setBase64data(String base64data) {
         this.base64data = base64data;
+    }
+
+    /**
+     * @return the kieliUri
+     */
+    public String getKieliUri() {
+        return kieliUri;
+    }
+
+    /**
+     * @param kieliUri the kieliUri to set
+     */
+    public void setKieliUri(String kieliUri) {
+        this.kieliUri = kieliUri;
     }
 }
