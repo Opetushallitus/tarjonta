@@ -52,7 +52,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         Koodisto.getAllKoodisWithKoodiUri("kieli", LocalisationService.getLocale()).then(function(v) {
             var nc = {};
             for (var i in v) {
-                nc[v[i].koodiUri] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi};
+                nc[v[i].koodiUri] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
             }
             $scope.codes = nc;
         });
@@ -90,23 +90,35 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         $scope.addLang = function() {
             var ps = $scope;
             var ns = $scope.$new();
-            ns.codes = {};
+            ns.codes = [];
+            ns.preselection = null;
 
             for (var i in $scope.codes) {
                 if ($scope.model[i] === undefined) {
-                    ns.codes[i] = $scope.codes[i];
+                    ns.codes.push($scope.codes[i]);
                 }
             }
+            
+            ns.codes.sort(function(a,b){
+            	return a.nimi.localeCompare(b.nimi);
+            });
 
             $modal.open({
                 controller: function($scope, $modalInstance) {
+                	$scope.ok = function() {
+                		$scope.select($scope.preselection);
+                	};
                     $scope.cancel = function() {
                         $modalInstance.dismiss();
                     };
                     $scope.select = function(lang) {
-                        $modalInstance.close();
-                        $scope.data.push({uri: lang, value: "", removable: true});
-                        $scope.updateModel();
+                    	if ($scope.preselection==lang) {
+                            $modalInstance.close();
+                            $scope.data.push({uri: lang, value: "", removable: true});
+                            $scope.updateModel();
+                    	} else {
+                    		$scope.preselection = lang;
+                    	}
                     };
                 },
                 templateUrl: "js/shared/directives/mkTextfield-addlang.html",
@@ -123,7 +135,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         controller: controller,
         scope: {
             type: "@", //Modelin suora convertointi tiettyyn objektiin. Jata tyhjaksi jos et tarvitse erikoiskasittelya.
-            init: "=", // lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
+            //init: "=", //lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
             model: "=", // map jossa kieliuri -> teksti
             //required: "@" // jos tosi, vähintään yksi arvo vaaditaan
         }
