@@ -441,6 +441,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         prepareHakuSelections(haut);
      
     }
+
+    public String getUserOid() {
+        return userContext.getUserOid();
+    }
     
     /*
      * Prepares the haku combobox selector in hakukohde form.
