@@ -61,7 +61,7 @@ angular.module('app',
             'OrderByNumFilter',
             'CommonDirectives',
             'MonikielinenTextField',
-            'RichTextArea'
+            'ImageDirective'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
