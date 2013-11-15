@@ -11,6 +11,7 @@
     "karma-junit-reporter": "*",
     "karma-jasmine": "*",
     "karma-ng-scenario": "*",
-    "karma-ng-html2js-preprocessor": "~0.1.0"
+    "karma-ng-html2js-preprocessor": "~0.1.0",
+    "express": "3.4.4"
   }
 }
