@@ -344,5 +344,18 @@ app.controller('BaseEditController',
                     });
                 };
 
+                $scope.loadImageByKieliuri = function(kieliUri) {
+
+                    if (angular.isUndefined($scope.model.oid)) {
+                        tarjontaService.loadImage($scope.model.oid, kieliUri, image, function() {
+                            console.log("Image succesfully saved.");
+                        }, function() {
+                            console.error("Image upload failed.");
+                        });
+                    }
+
+                    return "";
+                }
+
                 $scope.init();
             }]);
