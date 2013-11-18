@@ -178,6 +178,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             for (HakukohdeValidationMessages message: validationMessageses) {
                 errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
             }
+            errorResult.setResult(hakukohdeRDTO);
             return errorResult;
         }
         hakukohdeRDTO.setOid(null);
@@ -224,6 +225,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             for (HakukohdeValidationMessages message: validationMessagesList) {
                 errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
             }
+            errorResult.setResult(hakukohdeRDTO);
             return errorResult;
         }
 

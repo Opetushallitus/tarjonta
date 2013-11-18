@@ -26,6 +26,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
+    $scope.model.showError = false;
+
+    $scope.model.validationmsgs = [];
+
     $scope.model.showSuccess = false;
 
     $scope.model.collapse.model = true;
@@ -37,6 +41,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             $scope.model.showSuccess = false;
         },5000);
+    }
+
+    var showError = function(errorArray) {
+
+        angular.forEach(errorArray,function(error) {
+
+
+            $scope.model.validationmsgs.push(LocalisationService.t(error.errorMessageKey));
+
+
+        });
+        $scope.model.showError = true;
     }
 
     //Initialize all helper etc. variable in the beginning of the controller
@@ -206,14 +222,21 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     $scope.model.saveValmis = function() {
-
+        $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =   $scope.model.hakukohde.$save();
            returnResource.then(function(hakukohde){
+
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showError(hakukohde.errors);
+               }
            });
 
         } else {
@@ -221,24 +244,36 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource = $scope.model.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+                }
             });
         }
-        showSuccess();
+
     };
 
 
     $scope.model.saveLuonnos = function() {
-
+        $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
 
-            console.log('TILA : ', $scope.model.hakukohde.tila);
-            console.log('NIMI ' , $scope.model.hakukohde.hakukohteenNimet);
+
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
-               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                  showError(hakukohde.errors);
+               }
+
 
             });
 
@@ -246,10 +281,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource =  $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+
+                }
             });
         }
-       showSuccess();
+
     };
 
     $scope.model.takaisin = function() {
