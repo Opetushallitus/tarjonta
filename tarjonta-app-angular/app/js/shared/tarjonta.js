@@ -309,7 +309,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         var formData = new FormData();
-        formData.append('image', image.file, image.name);
+        var name = "";
+        if (!angular.isUndefined(image.file.name)) {
+            name = image.file.name;
+        } else {
+            console.warn("No image filename.");
+        }
+
+        formData.append('image', image.file, name)
+
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: angular.identity
@@ -325,19 +333,17 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             throw new Error('Language URI cannot be undefined or null.');
         }
 
-        var img = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/kuva/:uri', {'oid': komotoOid, 'uri': kieliuri}, {
+        var ResourceImge = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/kuva/:uri', {'oid': komotoOid, 'uri': kieliuri}, {
             get: {
                 method: 'GET',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }, delete: {
+                method: 'DELETE',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
         
-        var ret = $q.defer();
-        img.get({}, function(res){
-           ret.resolve(res); 
-        });
-   
-        return ret.promise;
+        return ResourceImge;
     };
 
     return dataFactory;

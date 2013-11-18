@@ -12,8 +12,7 @@ app.controller('BaseEditController',
                 $scope.uiModel = null;
                 $scope.model = null;
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot =
-                        [
+                $scope.lisatiedot = [
                             {type: "TAVOITTEET", isKomo: true},
                             {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
                             {type: "PAAAINEEN_VALINTA", isKomo: false},
@@ -336,26 +335,7 @@ app.controller('BaseEditController',
                     return koodi;
                 }
 
-                $scope.uploadImage = function(event, kieliUri, image) {
-                    tarjontaService.saveImage($scope.model.oid, kieliUri, image, function() {
-                        console.log("Image succesfully saved.");
-                    }, function() {
-                        console.error("Image upload failed.");
-                    });
-                };
-
-                $scope.loadImageByKieliuri = function(kieliUri) {
-
-                    if (angular.isUndefined($scope.model.oid)) {
-                        tarjontaService.loadImage($scope.model.oid, kieliUri, image, function() {
-                            console.log("Image succesfully saved.");
-                        }, function() {
-                            console.error("Image upload failed.");
-                        });
-                    }
-
-                    return "";
-                }
+                
 
                 $scope.init();
             }]);

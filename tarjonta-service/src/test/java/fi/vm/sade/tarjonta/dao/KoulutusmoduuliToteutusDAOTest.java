@@ -54,7 +54,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto1.setTarjoaja(TARJOAJA_OID + "xxx");
         komoto1.setKoulutusmoduuli(komo);
         komoto1 = this.koulutusmoduuliToteutusDAO.insert(komoto1);
-        komoto1.addKuva(URI_EN, fixtures.createBinaryData());
+        komoto1.setKuvaByUri(URI_EN, fixtures.createBinaryData());
         
         KoulutusmoduuliToteutus result = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(komo, TARJOAJA_OID, POHJAKOULUTUS).get(0);
         assertTrue(result.getOid().equals(KOMOTO_OID));        
