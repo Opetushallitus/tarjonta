@@ -23,29 +23,27 @@
 	
 		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
 			
+			<h4>{{t('koulutus.edit.'+lisatieto.type+'.title')}}</h4>			
+			<p>{{t('koulutus.edit.'+lisatieto.type+'.help')}}</p>
+			
+			<rich-textarea max="1500" model="getKuvausApiModelLanguageUri(model.kuvausKomo, lisatieto.type, kieliUri).arvo"></rich-textarea>
+			
+			<!--
+			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(model.isKomo, lisatieto, kieliUri).arvo"> </textarea>
 			<h4>{{t('koulutus.edit.'+lisatieto.type +'.title')}}</h4>			
 			<p>{{t('koulutus.edit.'+lisatieto.type +'.help')}}</p>
 			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri).arvo"> </textarea>
-			
 			<br/>
+			
+			 -->
 			
 		</div>
 
 		<h4 tt="koulutus.edit.kuva.title"></h4>
 
-		<input id="inputImage2" 
-                 url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
-                 type="file" 
-                 accept="image/*" 
-                 image="image2" 
-                 resize-max-height="300"
-                 resize-max-width="250"
-                 resize-quality="0.9" />
-           <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
-           	
-		<img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
+            <image-field btn-name-remove="{{t('poista')}}" btn-name-save="{{t('tallenna')}}" editable="true" oid="{{model.oid}}" uri="{{kieliUri}}"></image-field>
 
-		
+            
 	</tab>
 </tabset>
 </form>

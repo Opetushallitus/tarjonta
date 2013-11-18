@@ -19,16 +19,41 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config','ui.tinymce']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','ui.tinymce']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout) {
 
+    $scope.model.userLang  =  AuthService.getLanguage();
 
+    $scope.model.showError = false;
+
+    $scope.model.validationmsgs = [];
+
+    $scope.model.showSuccess = false;
 
     $scope.model.collapse.model = true;
 
+    var showSuccess = function() {
+        $scope.model.showSuccess = true;
+        $timeout(function(){
 
+
+            $scope.model.showSuccess = false;
+        },5000);
+    }
+
+    var showError = function(errorArray) {
+
+        angular.forEach(errorArray,function(error) {
+
+
+            $scope.model.validationmsgs.push(LocalisationService.t(error.errorMessageKey));
+
+
+        });
+        $scope.model.showError = true;
+    }
 
     //Initialize all helper etc. variable in the beginning of the controller
     var postinumero = undefined;
@@ -45,8 +70,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
-    //TODO: fix and retrieve language from somewhere
-    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta','fi');
+
+
+
+
+    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta',AuthService.getLanguage());
 
     $scope.model.postinumeroarvo = {
 
@@ -149,7 +177,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     orgPromise.then(function(data){
         if (data.postiosoite !== undefined) {
 
-            console.log('GOT OSOITE:', data.postiosoite);
+
             $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
             $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
             $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
@@ -191,15 +219,24 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
-    //TODO: Should tila come from constants ?
+
 
     $scope.model.saveValmis = function() {
+        $scope.model.showError = false;
+        $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =   $scope.model.hakukohde.$save();
            returnResource.then(function(hakukohde){
+
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showError(hakukohde.errors);
+               }
            });
 
         } else {
@@ -207,21 +244,36 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource = $scope.model.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+                }
             });
         }
+
     };
 
 
     $scope.model.saveLuonnos = function() {
-
+        $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
+
 
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
-               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                  showError(hakukohde.errors);
+               }
+
 
             });
 
@@ -229,9 +281,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource =  $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+
+                }
             });
         }
+
     };
 
     $scope.model.takaisin = function() {

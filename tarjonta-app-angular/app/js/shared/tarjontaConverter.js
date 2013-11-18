@@ -94,17 +94,17 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             koulutuskoodi: {'validate': true, 'required': true, nullable: false},
             koulutusaste: {'validate': true, 'required': true, nullable: false},
             koulutusala: {'validate': true, 'required': true, nullable: false},
-            opintoala: {'validate': true, 'required': true, nullable: false}
+            opintoala: {'validate': true, 'required': true, nullable: false},
+            eqf: {'validate': true, 'required': true, nullable: false},
+            tutkinto: {'validate': true, 'required': true, nullable: false},
+            tutkintonimike: {'validate': true, 'required': true, nullable: false}
         }, COMBO: {
             //in correct place
             suunniteltuKesto: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
+            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'}
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
-            tutkinto: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkinto'},
-            tutkintonimike: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.tutkintonimike'},
-            eqf: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.eqf-luokitus'},
         }, MCOMBO: {
-            pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus'},
+            pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
             opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuoto'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
             teemas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.teemat'},
@@ -261,6 +261,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         //single select nodels
         uiModel['contactPerson'] = {henkiloTyyppi: 'YHTEYSHENKILO'};
         uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
+        uiModel['tabs'] = {lisatiedot: true}; //lisatiedot tab disabled=true
+
         uiModel['tekstis'] = {
             TAVOITTEET: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
             KOULUTUKSEN_RAKENNE: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
@@ -273,6 +275,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
+
+
 
         return uiModel;
     };

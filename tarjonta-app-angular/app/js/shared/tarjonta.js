@@ -275,7 +275,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.resourceKomoKuvaus = function(komotoOid) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': komotoOid}, {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis/komo", {'oid': komotoOid}, {
             update: {
                 method: 'PUT',
                 //withCredentials: true,
@@ -309,11 +309,41 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         var formData = new FormData();
-        formData.append('image', image.file, image.name);
+        var name = "";
+        if (!angular.isUndefined(image.file.name)) {
+            name = image.file.name;
+        } else {
+            console.warn("No image filename.");
+        }
+
+        formData.append('image', image.file, name)
+
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: angular.identity
         }).success(fnSuccess).error(fnError);
+    };
+
+    dataFactory.resourceImage = function(komotoOid, kieliuri) {
+        if (angular.isUndefined(komotoOid) || komotoOid === null) {
+            throw new Error('Komoto OID cannot be undefined or null.');
+        }
+
+        if (angular.isUndefined(kieliuri) || kieliuri === null) {
+            throw new Error('Language URI cannot be undefined or null.');
+        }
+
+        var ResourceImge = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/kuva/:uri', {'oid': komotoOid, 'uri': kieliuri}, {
+            get: {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }, delete: {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
+        
+        return ResourceImge;
     };
 
     return dataFactory;

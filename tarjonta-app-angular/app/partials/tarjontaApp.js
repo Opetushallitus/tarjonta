@@ -60,7 +60,8 @@ angular.module('app',
             'MultiSelect',
             'OrderByNumFilter',
             'CommonDirectives',
-            'MonikielinenTextField'
+            'MonikielinenTextField',
+            'ImageDirective'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

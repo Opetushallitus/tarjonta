@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 
@@ -23,6 +24,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 @Transactional
 public class KoulutusmoduuliToteutusDAOTest {
     
+    private static final String URI_EN = "kieli_en";
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     
@@ -32,7 +35,6 @@ public class KoulutusmoduuliToteutusDAOTest {
     @Autowired
     private TarjontaFixtures fixtures;
 
-    
     @Test
     public void testFindKomotosByKomoTarjoajaPohjakoulutus() {
         String TARJOAJA_OID = "jokin.tarjoaja.oid";
@@ -52,10 +54,16 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto1.setTarjoaja(TARJOAJA_OID + "xxx");
         komoto1.setKoulutusmoduuli(komo);
         komoto1 = this.koulutusmoduuliToteutusDAO.insert(komoto1);
+        komoto1.setKuvaByUri(URI_EN, fixtures.createBinaryData());
         
         KoulutusmoduuliToteutus result = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(komo, TARJOAJA_OID, POHJAKOULUTUS).get(0);
         assertTrue(result.getOid().equals(KOMOTO_OID));        
         
+        BinaryData binaryData = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(komoto1.getOid(), "no__result_uri");
+        assertNull(binaryData);
+        binaryData = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(komoto1.getOid(), URI_EN);
+        assertNotNull(binaryData);
+        assertEquals(binaryData.getData()[0], 1);
     }
     
     @Test

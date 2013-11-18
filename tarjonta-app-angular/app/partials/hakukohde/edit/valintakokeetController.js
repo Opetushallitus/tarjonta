@@ -10,6 +10,8 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    $scope.model.valintakokees = [];
 
+   $scope.model.validationmsgs = [];
+
    var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohdeOid });
 
 
@@ -159,11 +161,21 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 });
 
+/*
+ *
+ *
+ * Valintakoe modal controller
+ *
+ *
+ */
 
-//Valintakoe modal controller
 app.controller('ValintakoeModalInstanceController', function($scope, $modalInstance,LocalisationService,Koodisto,valintakoe) {
 
     $scope.model = {};
+
+    $scope.model.validationmsgs = [];
+
+    $scope.model.showAlert = false;
 
     $scope.model.selectedAjankohta = {
         osoite : {}
@@ -241,6 +253,8 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
         valintakoeAjankohtaTauluSijainti : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.sijaint'),
         valintakoeAjankohtaTauluAjankohta : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.aika'),
         valintakoeAjankohtaTauluLisatiedot : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.lisatietoja'),
+        valintakoeAjankohtaTauluMuokkaaBtn : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.muokkaa'),
+        valintakoeAjankohtaTauluPoistaBtn : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ajankohta.table.poista'),
         ok : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.ok'),
         cancel : LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.cancel')
     }
@@ -265,6 +279,18 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
         $modalInstance.dismiss('cancel');
     };
 
+    $scope.model.muokkaaAjankohtaa = function(valintakoeAjankohta) {
+        $scope.model.removeAjankohtaFromArray(valintakoeAjankohta);
+         $scope.model.selectedAjankohta = valintakoeAjankohta;
+    }
+
+    $scope.model.removeAjankohtaFromArray = function(valintakoeAjankohta) {
+
+        var index = $scope.model.valintakoe.valintakoeAjankohtas.indexOf(valintakoeAjankohta);
+        $scope.model.valintakoe.valintakoeAjankohtas.splice(index,1);
+
+    }
+
     $scope.lisaaTiedot = function() {
 
         $scope.model.valintakoe.valintakoeAjankohtas.push($scope.model.selectedAjankohta);
@@ -275,17 +301,41 @@ app.controller('ValintakoeModalInstanceController', function($scope, $modalInsta
 
     };
 
+   var validateValintakoe = function(){
+       $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+       if (selectedKieli === undefined) {
+           $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.kieli.req.msg'));
+
+       }
+
+       if ($scope.model.valintakoe.valintakoeAjankohtas === undefined || $scope.model.valintakoe.valintakoeAjankohtas.length < 1) {
+           $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.valintakoe.modal.yksi.valintakoeaika.req.msg'));
+
+       }
+
+       if ($scope.model.validationmsgs.length > 0) {
+           return false;
+       }
+
+       return true;
+   };
+
 
     $scope.save = function() {
-        if (selectedKieli !== undefined) {
-            $scope.model.valintakoe.kieliNimi = selectedKieli.koodiNimi;
-            $scope.model.valintakoe.valintakokeenKuvaus.nimi = selectedKieli.koodiNimi;
-            $scope.model.valintakoe.valintakokeenKuvaus.arvo  = selectedKieli.koodiArvo;
-            $scope.model.valintakoe.valintakokeenKuvaus.versio = selectedKieli.koodiVersio;
-        }
+            if (validateValintakoe()) {
 
-        $scope.model.valintakoe.valintakokeenKuvaus.uri = $scope.model.valintakoe.kieliUri;
-        $modalInstance.close($scope.model.valintakoe);
+                $scope.model.valintakoe.kieliNimi = selectedKieli.koodiNimi;
+                $scope.model.valintakoe.valintakokeenKuvaus.nimi = selectedKieli.koodiNimi;
+                $scope.model.valintakoe.valintakokeenKuvaus.arvo  = selectedKieli.koodiArvo;
+                $scope.model.valintakoe.valintakokeenKuvaus.versio = selectedKieli.koodiVersio;
+
+
+                $scope.model.valintakoe.valintakokeenKuvaus.uri = $scope.model.valintakoe.kieliUri;
+                $modalInstance.close($scope.model.valintakoe);
+            } else {
+                $scope.model.showAlert = true;
+            }
+
     };
 
 

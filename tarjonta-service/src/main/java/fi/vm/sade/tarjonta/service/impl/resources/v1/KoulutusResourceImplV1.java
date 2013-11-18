@@ -76,11 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -293,16 +289,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
         KoulutusmoduuliRelationV1RDTO relation = null;
+        
+        /*
+        * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
+        */
+        
         if (koulutuskoodi.contains("_")) {
-            //simple paramter check if data is koodisto service koodi URI.
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
+            //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, true, new Locale("FI"));
         } else {
             SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
             List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
             if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                 throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
             }
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), true, new Locale("FI"));
         }
 
         ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();
@@ -378,17 +379,35 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     public Response deleteKuva(String oid, String kieliUri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
+        final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
+        if (bin != null) {
+            final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+            Map<String, BinaryData> kuvat = komoto.getKuvat();
+            kuvat.remove(kieliUri);
+            this.koulutusmoduuliToteutusDAO.update(komoto);
+        }
+
+        return Response.ok().build();
     }
 
     @Override
     public ResultV1RDTO<KuvaV1RDTO> getKuva(String oid, String kieliUri) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
+
+        KuvaV1RDTO dto = new KuvaV1RDTO();
+        ResultV1RDTO<KuvaV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvaV1RDTO>(dto);
+
         final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
-        KuvaV1RDTO dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), Base64.encodeBase64String(bin.getData()));
-        ResultV1RDTO<KuvaV1RDTO> v1 = new ResultV1RDTO<KuvaV1RDTO>(dto);
-        return v1;
+        if (bin != null) {
+            dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), kieliUri, Base64.encodeBase64String(bin.getData()));
+            resultV1RDTO.setResult(dto);
+        } else {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        }
+        return resultV1RDTO;
     }
 
     @Override
@@ -408,11 +427,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             try {
                 IOUtils.copy(in, outputStream);
-                BinaryData bin = new BinaryData();
+
+                BinaryData bin = null;
+                if (komoto.isKuva(kieliUri)) {
+                    bin = komoto.getKuvat().get(kieliUri);
+                } else {
+                    bin = new BinaryData();
+                }
+
                 bin.setData(outputStream.toByteArray());
                 bin.setFilename(att.getContentDisposition().getParameter("filename"));
                 bin.setMimeType(att.getDataHandler().getContentType());
-                komoto.addKuva(kieliUri, bin);
+                komoto.setKuvaByUri(kieliUri, bin);
                 this.koulutusmoduuliToteutusDAO.update(komoto);
             } catch (IOException ex) {
                 LOG.error("BinaryData save failed for komoto OID {}.", oid, ex);

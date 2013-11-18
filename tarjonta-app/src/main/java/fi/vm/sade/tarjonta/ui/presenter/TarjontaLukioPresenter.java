@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.ui.service.UserContext;
 import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,7 @@ public class TarjontaLukioPresenter {
     private KoulutusLukioConverter lukioKoulutusConverter;
     @Autowired(required = true)
     private KoulutusKoodistoConverter kolutusKoodistoConverter;
+
     private TarjontaPresenter presenter; //initialized in Spring xml configuration file.
     public EditLukioKoulutusPerustiedotView perustiedotView;
     private EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView;
@@ -110,11 +112,22 @@ public class TarjontaLukioPresenter {
 
         if (perustiedot.isLoaded()) {//update KOMOTO
             PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
+            try {
+                paivita.setViimeisinPaivittajaOid(presenter.getUserOid());
+            } catch (Exception ex) {
+
+            }
+
             tarjontaAdminService.paivitaKoulutus(paivita);
             koulutusOid = paivita.getOid();
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
                 LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), pair, tila);
+                try {
+                   lisaa.setViimeisinPaivittajaOid(presenter.getUserOid());
+                } catch (Exception exp ) {
+
+                }
                 checkKoulutusmoduuli();
                 if (checkExistingKomoto(lisaa)) {
                     tarjontaAdminService.lisaaKoulutus(lisaa);

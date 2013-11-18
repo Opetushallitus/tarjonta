@@ -106,25 +106,27 @@ public class KoodistoURI {
      */
     public static String KOODISTO_TEEMAT_URI;
     public static String KOODISTO_HAKUKELPOISUUSVAATIMUS_URI;
+    public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_KORKEAKOULU_URI;
+    public static String KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI;
     /*
      * For tutkinto dialog
      */
     public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
     public static String KOODI_LISAHAKU_URI;
-    
+
     public static String KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI;
     public static String KOODI_YHTEISHAKU_URI;
     public static String KOODI_ERILLISHAKU_URI;//koodisto-uris.erillishaku=hakutyyppi_02#1
     public static String KOODI_HAASTATTELU_URI;//koodisto-uris.valintakoeHaastattelu=valintakokeentyyppi_6#1
     public static String KOODI_TODISTUKSET_URI;
-    
+
     public static String KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI;
     public static String KOODI_KOHDEJOUKKO_VALMENTAVA_URI;
     public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI; //
     public static String KOODI_POHJAKOULUTUS_PERUSKOULU_URI;
     public static String KOODI_KOHDEJOUKKO_VALMISTAVA_URI;
     public static String KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI;
-    
+
     @Value("${koodisto-uris.vapaaSivistys:haunkohdejoukko_18#1}")
     public void setKoodiKohdejoukkoVapaaSivistysUri(String uri) {
         KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI = uri;
@@ -139,17 +141,17 @@ public class KoodistoURI {
     public void setKoodiPohjakoulutusperuskouluUri(String uri) {
         KOODI_POHJAKOULUTUS_PERUSKOULU_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.ammatillinenLukio:haunkohdejoukko_11#1}")
     public void setKoodiKohdejoukkoAmmatillinenLukioUri(String uri) {
         KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.kohdejoukkoErityisopetus:haunkohdejoukko_15#1}")
     public void setKoodiKohdejoukkoErityisopets(String uri) {
         KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.valmentavaKuntouttava:haunkohdejoukko_16#1}")
     public void setKoodiKohdejoukkoValmentavaUri(String uri) {
         KOODI_KOHDEJOUKKO_VALMENTAVA_URI = uri;
@@ -159,22 +161,22 @@ public class KoodistoURI {
     public void setKoodiTodistuksetUri(String uri) {
         KOODI_TODISTUKSET_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.valintakoeHaastattelu:valintakokeentyyppi_6#1}")
     public void setKoodiHaastatteluUri(String uri) {
         KOODI_HAASTATTELU_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.erillishaku:hakutapa_02#1}")
     public void setKoodiErillishakuUri(String uri) {
         KOODI_ERILLISHAKU_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.yhteishaku:hakutapa_01#1}")
     public void setKoodiYhteishakuUri(String uri) {
         KOODI_YHTEISHAKU_URI = uri;
     }
-    
+
     @Value("${kodisto-uris.yksilollistettyPerusopetus:pohjakoulutusvaatimustoinenaste_er}")
     public void setKoodiYksilollistettyPerusopetusUri(String uri) {
         KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI = uri;
@@ -382,5 +384,15 @@ public class KoodistoURI {
     @Value("${koodisto-uris.eqf-luokitus}")
     public void setKoodistoEqfLuokitus(String uri) {
         KOODISTO_EQF_LUOKITUS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.pohjakoulutusvaatimus_kk}")
+    public void setKoodistoPohjakoulutusvaatimuksetKk(String uri) {
+        KOODISTO_POHJAKOULUTUSVAATIMUKSET_KORKEAKOULU_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tutkintonimike_kk}")
+    public void setKoodistoTutkintonimikeKk(String uri) {
+        KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI = uri;
     }
 }

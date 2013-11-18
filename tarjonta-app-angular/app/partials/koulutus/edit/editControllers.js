@@ -12,8 +12,7 @@ app.controller('BaseEditController',
                 $scope.uiModel = null;
                 $scope.model = null;
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot =
-                        [
+                $scope.lisatiedot = [
                             {type: "TAVOITTEET", isKomo: true},
                             {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
                             {type: "PAAAINEEN_VALINTA", isKomo: false},
@@ -65,14 +64,14 @@ app.controller('BaseEditController',
                         });
 
                         $scope.updateMultiSelectKoodistoData(uiModel, model);
-
+                        uiModel.tabs.lisatiedot = false; //active lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
                         //CREATE NEW KOULUTUS
                         $scope.loadRelationKoodistoData();
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
                             converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-                        });
+                        });              
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
@@ -336,13 +335,7 @@ app.controller('BaseEditController',
                     return koodi;
                 }
 
-                $scope.uploadImage = function(event, kieliUri, image) {
-                    tarjontaService.saveImage($scope.model.oid, kieliUri, image, function() {
-                        console.log("Image succesfully saved.");
-                    }, function() {
-                        console.error("Image upload failed.");
-                    });
-                };
+                
 
                 $scope.init();
             }]);

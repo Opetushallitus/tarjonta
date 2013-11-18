@@ -2,6 +2,13 @@
         <div class="modal-header">
             <h3>{{ model.translations.title}}</h3>
         </div>
+        <div class="alert-error" data-ng-show="model.showAlert">
+              <ul>
+                  <li data-ng-repeat="validationmsg in model.validationmsgs">
+                     {{ validationmsg }}
+                  </li>
+              </ul>
+        </div>
         <div class="modal-body">
           <form name="ValintakoeModalForm">
               <div class="container-fluid ">
@@ -46,11 +53,16 @@
                                <th>{{ model.translations.valintakoeAjankohtaTauluSijainti }}</th>
                                <th>{{ model.translations.valintakoeAjankohtaTauluAjankohta }}</th>
                                <th>{{ model.translations.valintakoeAjankohtaTauluLisatiedot }}</th>
+                               <th></th>
                            </tr>
                           <tr data-ng-repeat="ajankohta in model.valintakoe.valintakoeAjankohtas">
                               <td>{{ ajankohta.osoite.osoiterivi1 }}, {{ajankohta.osoite.postinumeroArvo}}, {{ajankohta.osoite.postitoimipaikka}}</td>
                               <td>{{ ajankohta.alkaa | date: 'dd.MM.yyyy HH:mm'  }}</td>
                               <td>{{ ajankohta.lisatiedot }}</td>
+                              <td>
+                                <a href="" data-ng-click="model.muokkaaAjankohtaa(ajankohta)">{{ model.translations.valintakoeAjankohtaTauluMuokkaaBtn }}</a>
+                              </td>
+                              <td> <a href="" data-ng-click="model.removeAjankohtaFromArray(ajankohta)">{{ model.translations.valintakoeAjankohtaTauluPoistaBtn }}</a> </td>
                           </tr>
                       </table>
 

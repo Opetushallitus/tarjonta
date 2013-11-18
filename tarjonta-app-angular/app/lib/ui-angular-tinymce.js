@@ -6,16 +6,26 @@ angular.module('ui.tinymce', [])
   .directive('uiTinymce', ['uiTinymceConfig', function (uiTinymceConfig) {
     uiTinymceConfig = uiTinymceConfig || {};
     var generatedIds = 0;
+    
+    var interval = null;
+    
     return {
       require: 'ngModel',
       link: function (scope, elm, attrs, ngModel) {
         var expression, options, tinyInstance,
-          updateView = function () {
-            ngModel.$setViewValue(elm.val());
-            if (!scope.$root.$$phase) {
-              scope.$apply();
-            }
-          };
+
+    	updateView = function () {
+        	clearInterval(interval);
+        	interval = setTimeout(function(){
+        		ngModel.$setViewValue(elm.val());
+                if (!scope.$root.$$phase) {
+                	scope.$apply();
+                }
+        	}, 100);
+            
+        };
+          
+          
         // generate an ID if not present
         if (!attrs.id) {
           attrs.$set('id', 'uiTinymce' + generatedIds++);
