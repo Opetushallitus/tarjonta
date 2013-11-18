@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
@@ -42,6 +43,28 @@ public class HakukohdeValidator {
         }
 
         return validationMessages;
+    }
+
+    public static List<HakukohdeValidationMessages> validateLiites(List<HakukohdeLiiteRDTO> liites) {
+
+        Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();
+
+        if (liites != null && liites.size() > 0 ) {
+
+            for (HakukohdeLiiteRDTO liite : liites) {
+
+                 if (liite.getLiiteKieli() == null || liite.getLiiteKieli().length() < 1) {
+                     liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_KIELI_MISSING);
+                }
+
+
+
+            }
+
+        }
+
+        return new ArrayList<HakukohdeValidationMessages>(liiteValidationMsgs);
+
     }
 
     public static List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
