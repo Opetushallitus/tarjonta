@@ -69,9 +69,9 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
         //other data checks
         KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto();
 
-        persistedKomoto.addKuva(URI_FI, fixtures.createBinaryData());
-        persistedKomoto.addKuva("kieli_sv", fixtures.createBinaryData());
-        persistedKomoto.addKuva(URI_EN, fixtures.createBinaryData());
+        persistedKomoto.setKuvaByUri(URI_FI, fixtures.createBinaryData());
+        persistedKomoto.setKuvaByUri("kieli_sv", fixtures.createBinaryData());
+        persistedKomoto.setKuvaByUri(URI_EN, fixtures.createBinaryData());
 
         persist(persistedKomoto);
         checkBinaryData(persistedKomoto, 3, URI_EN, "filename", "mimetype");
@@ -100,7 +100,7 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
         KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto();
         KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus("777777");
         komoto1.setKoulutusmoduuli(persistedKomoto.getKoulutusmoduuli());
-        persistedKomoto.addKuva(URI_EN, fixtures.createBinaryData());
+        persistedKomoto.setKuvaByUri(URI_EN, fixtures.createBinaryData());
         persist(komoto1);
 
         checkBinaryData(persistedKomoto, 1, URI_EN, "filename", "mimetype");

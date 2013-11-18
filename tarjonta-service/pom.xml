@@ -21,15 +21,15 @@
 
     <dependencies>
 
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-<version>1.7.5</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
 
 
         <dependency>
@@ -42,16 +42,16 @@
             <groupId>fi.vm.sade.log</groupId>
             <artifactId>log-client</artifactId>
             <version>${log.version}</version>
-	    <exclusions>
-		<exclusion>
+            <exclusions>
+                <exclusion>
                     <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-log4j12</artifactId>
-		</exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-	    </exclusions>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -112,18 +112,19 @@
 
         </dependency>
 
-<!--        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-test-support</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    -->    <dependency>
+        <!--        <dependency>
+                <groupId>fi.vm.sade.generic</groupId>
+                <artifactId>generic-test-support</artifactId>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>slf4j-log4j12</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        -->    
+        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
             <version>${generic.version}</version>
@@ -179,8 +180,8 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>dbunit-support</artifactId>
             <scope>test</scope>
-<exclusions>
-              <exclusion>
+            <exclusions>
+                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
@@ -188,7 +189,7 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-jdk14</artifactId>
                 </exclusion>
-</exclusions>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
@@ -250,10 +251,10 @@
         </dependency>
 
         <dependency>
-    	    <groupId>org.apache.solr</groupId>
-    	    <artifactId>solr-core</artifactId>
-    	    <version>4.2.0</version>
-    	    <scope>test</scope>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>4.2.0</version>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -293,9 +294,9 @@
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
-    <version>3.1.0</version>
-<exclusions>
-      <exclusion>
+            <version>3.1.0</version>
+            <exclusions>
+                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
@@ -303,7 +304,7 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-jdk14</artifactId>
                 </exclusion>
-</exclusions>
+            </exclusions>
 
         </dependency>
         <dependency>
@@ -316,7 +317,7 @@
             <artifactId>querydsl-core</artifactId>
             <version>3.1.0</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-security-cors</artifactId>
             <version>2.6.1</version>
@@ -326,6 +327,16 @@
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
         </dependency>
+        
+        <!-- for image resize
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        -->
 
     </dependencies>
 
@@ -335,12 +346,12 @@
             <filter>src/main/filter/filter-${env}.properties</filter>
         </filters>-->
 
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>7.2.0.v20101020</version>
-      </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>7.2.0.v20101020</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -472,27 +483,27 @@
             </dependencies>
             <build>
                 <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>add-wsdl-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-</plugins>
-</build>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>add-wsdl-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.build.directory}/generated-sources/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
 
         </profile>
 

@@ -106,7 +106,6 @@ public interface KoulutusV1Resource {
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
 
     @GET

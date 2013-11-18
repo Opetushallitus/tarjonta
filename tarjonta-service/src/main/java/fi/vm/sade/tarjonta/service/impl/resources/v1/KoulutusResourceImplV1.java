@@ -75,6 +75,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -87,7 +88,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KoulutusResourceImplV1 implements KoulutusV1Resource {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -119,30 +120,30 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
-        
+
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
         if (komoto == null) {
             return resultRDTO;
         }
-        
+
         KoulutusasteTyyppi koulutusasteTyyppi = KoulutusasteTyyppi.fromValue(komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        
+
         switch (koulutusasteTyyppi) {
             case KORKEAKOULUTUS:
                 resultRDTO.setResult(conversionService.convert(komoto, KoulutusKorkeakouluV1RDTO.class));
                 break;
         }
-        
+
         return resultRDTO;
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         validateRestObjectKorkeakouluDTO(dto);
         String tarjoajaOid = dto.getOrganisaatio().getOid();
         KoulutusmoduuliToteutus toteutus = null;
-        
+
         if (dto.getOid() != null && dto.getOid().length() > 0) {
             ///   permissionChecker.checkCreateKoulutus(tarjoajaOid);
             //update korkeakoulu koulutus
@@ -152,53 +153,53 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             //create korkeakoulu koulutus
             toteutus = insertKoulutusKorkeakoulu(dto);
         }
-        
+
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         // publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         resultRDTO.setResult(conversionService.convert(toteutus, KoulutusKorkeakouluV1RDTO.class));
         return resultRDTO;
     }
-    
+
     private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
-        
+
         final KoulutusmoduuliToteutus newKomo = conversionService.convert(dto, KoulutusmoduuliToteutus.class);
         Preconditions.checkNotNull(newKomo, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomo.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
-        
+
         koulutusmoduuliDAO.insert(newKomo.getKoulutusmoduuli());
         return koulutusmoduuliToteutusDAO.insert(newKomo);
     }
-    
+
     private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getOid(), "KOMOTO OID cannot be null.");
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID : %s.", dto.getOid());
         return conversionService.convert(dto, KoulutusmoduuliToteutus.class);
     }
-    
+
     @Override
     public Response deleteByOid(String oid) {
         ///  permissionChecker.checkRemoveKoulutus(oid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
-        
+
         if (komoto.getHakukohdes().isEmpty()) {
             this.koulutusmoduuliToteutusDAO.remove(komoto);
             try {
                 solrIndexer.deleteKoulutus(Lists.newArrayList(oid));
-                
+
             } catch (IOException e) {
                 throw new TarjontaBusinessException("indexing.error", e);
             }
-            
+
         } else {
             throw new KoulutusUsedException();
         }
         return Response.ok().build();
     }
-    
+
     private void validateRestObjectKorkeakouluDTO(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
@@ -208,12 +209,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
         Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
     }
-    
+
     @Override
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(String oid) {
         HakukohteetKysely ks = new HakukohteetKysely();
         ks.getKoulutusOids().add(oid);
-        
+
         HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
         List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
         for (HakukohdePerustieto hk : vs.getHakukohteet()) {
@@ -221,13 +222,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
     }
-    
+
     @Override
     public TekstiV1RDTO loadTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
-        
+
         TekstiV1RDTO komotoTekstiDto = komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit());
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         TekstiV1RDTO<KomoTeksti> komoTekstiDto = komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit());
@@ -236,18 +237,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         //combine komo&komoto text data to the dto;
         return komotoTekstiDto;
     }
-    
+
     @Override
     public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
-        
+
         ResultV1RDTO<TekstiV1RDTO> resultRDTO = new ResultV1RDTO<TekstiV1RDTO>();
         resultRDTO.setResult(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()));
         return resultRDTO;
     }
-    
+
     @Override
     public Response saveKomotoTekstis(String oid, TekstiV1RDTO<KomotoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
@@ -259,18 +260,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         koulutusmoduuliToteutusDAO.update(komoto);
         return Response.ok().build();
     }
-    
+
     @Override
     public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
-        
+
         ResultV1RDTO<TekstiV1RDTO> resultRDTO = new ResultV1RDTO<TekstiV1RDTO>();
         resultRDTO.setResult(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getKoulutusmoduuli().getTekstit()));
         return resultRDTO;
     }
-    
+
     @Override
     public Response saveKomoTekstis(String oid, TekstiV1RDTO<KomoTeksti> dto) {
         ///   permissionChecker.checkUpdateKoulutusmoduuli();
@@ -280,10 +281,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         komoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto, komo.getTekstit());
         koulutusmoduuliDAO.update(komo);
-        
+
         return Response.ok().build();
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
@@ -299,17 +300,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
             relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
         }
-        
+
         ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();
         resultRDTO.setResult(relation);
         return resultRDTO;
     }
-    
+
     @Override
     public Response deleteTeksti(String oid, String key, String uri) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     @Transactional(readOnly = false)
     public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
@@ -323,7 +324,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
         return new ResultV1RDTO<String>(tila.toString());
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
@@ -332,68 +333,78 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String hakukohdeTila,
             String alkamisKausi,
             Integer alkamisVuosi) {
-        
+
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
-        
+
         KoulutuksetKysely q = new KoulutuksetKysely();
         q.setNimi(searchTerms);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
         q.setKoulutuksenTila(hakukohdeTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(hakukohdeTila).asDto());
-        
+
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
-        
+
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converter.fromKoulutuksetVastaus(r));
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus) {
         LOG.info("postLukiokoulutus({})", koulutus);
-        
+
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus) {
         LOG.info("postAmmatillinenPeruskoulutus({})", koulutus);
-        
+
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public Response deleteKuva(String oid, String kieliUri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
+        final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
+        if (bin != null) {
+            final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+            Map<String, BinaryData> kuvat = komoto.getKuvat();
+            kuvat.remove(kieliUri);
+            this.koulutusmoduuliToteutusDAO.update(komoto);
+        }
+
+        return Response.ok().build();
     }
-    
+
     @Override
     public ResultV1RDTO<KuvaV1RDTO> getKuva(String oid, String kieliUri) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
-        
+
         KuvaV1RDTO dto = new KuvaV1RDTO();
         ResultV1RDTO<KuvaV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvaV1RDTO>(dto);
-        
+
         final BinaryData bin = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(oid, kieliUri);
         if (bin != null) {
             dto = new KuvaV1RDTO(bin.getFilename(), bin.getMimeType(), kieliUri, Base64.encodeBase64String(bin.getData()));
             resultV1RDTO.setResult(dto);
-        } else {         
+        } else {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
         return resultV1RDTO;
     }
-    
+
     @Override
     public Response saveKuva(String oid, String kieliUri, MultipartBody body) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
@@ -401,21 +412,28 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
         LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
         LOG.info("Headers : {}", body.getRootAttachment().getHeaders());
-        
+
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
         Attachment att = body.getRootAttachment();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
         InputStream in = null;
         try {
             in = att.getDataHandler().getInputStream();
-            
+
             try {
                 IOUtils.copy(in, outputStream);
-                BinaryData bin = new BinaryData();
+
+                BinaryData bin = null;
+                if (komoto.isKuva(kieliUri)) {
+                    bin = komoto.getKuvat().get(kieliUri);
+                } else {
+                    bin = new BinaryData();
+                }
+
                 bin.setData(outputStream.toByteArray());
                 bin.setFilename(att.getContentDisposition().getParameter("filename"));
                 bin.setMimeType(att.getDataHandler().getContentType());
-                komoto.addKuva(kieliUri, bin);
+                komoto.setKuvaByUri(kieliUri, bin);
                 this.koulutusmoduuliToteutusDAO.update(komoto);
             } catch (IOException ex) {
                 LOG.error("BinaryData save failed for komoto OID {}.", oid, ex);
@@ -428,7 +446,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         } finally {
             IOUtils.closeQuietly(in);
         }
-        
+
         return Response.ok().build();
     }
 }

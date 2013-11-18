@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService) {
+app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto',
+    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto) {
         $log.info("BaseReviewController()");
 
         $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
@@ -16,26 +16,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 hakukohteet: false,
                 model: true
             },
-            // TODO default languages from somewhere?
-            languages: [
-                {
-                    name: "Suomi",
-                    locale: "fi",
-                    koodi_uri: "kieli_fi"
-                },
-                {
-                    name: "Ruotsi",
-                    locale: "sv",
-                    koodi_uri: "kieli_sv"
-                },
-                {
-                    name: "Englanti",
-                    locale: "en",
-                    koodi_uri: "kieli_en"
-                },
-            ],
-            koulutus: $scope.koulutusModel.result, // preloaded in route resolve, see
-            foo: "bar"
+            languages: [],
+            koulutus: $scope.koulutusModel.result // preloaded in route resolve, see
         };
 
         $scope.doEdit = function(event, targetPart) {
@@ -90,17 +72,34 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             dialogService.showNotImplementedDialog();
         };
 
-        $scope.load = function(oid) {
-            $log.info("load()...");
-
-            if (!oid) {
-                oid = $scope.model.routeParams.id;
-            }
-
-            tarjontaService.getKoulutus({oid: oid}, function(data) {
-                $scope.model.koulutus = data.result;
-                $log.info("  load got: ", $scope.model.koulutus);
+        $scope.searchKoodi = function(obj, koodistouri, uri, locale) {
+            var promise = koodisto.getKoodi(koodistouri, uri, locale);
+            promise.then(function(data) {
+                obj.name = data.koodiNimi;
+                obj.versio = data.koodiVersio;
+                obj.koodi_uri = data.koodiUri;
+                obj.locale = data.koodiArvo;
             });
         };
+
+
+        var map = {};
+        angular.forEach(window.CONFIG.app.userLanguages, function(val) {
+            map[val] = val;
+        });
+
+        angular.forEach($scope.model.koulutus.opetuskielis.meta, function(val, key) {
+            map[key] = key;
+        });
+
+        angular.forEach(map, function(val, key) {
+            var lang = {};
+            $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
+            $scope.model.languages.push(lang);
+        });
+
+
+
+
     }]);
 
