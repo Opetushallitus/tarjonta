@@ -289,16 +289,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
         KoulutusmoduuliRelationV1RDTO relation = null;
+        
+        /*
+        * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
+        */
+        
         if (koulutuskoodi.contains("_")) {
-            //simple paramter check if data is koodisto service koodi URI.
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, new Locale("FI"));
+            //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, true, new Locale("FI"));
         } else {
             SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
             List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
             if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                 throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
             }
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale("FI"));
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), true, new Locale("FI"));
         }
 
         ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();

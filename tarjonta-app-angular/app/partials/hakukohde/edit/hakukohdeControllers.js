@@ -54,7 +54,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
-    //TODO: fix and retrieve language from somewhere
+
 
 
 
@@ -203,9 +203,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
-    //TODO: Should tila come from constants ?
+
 
     $scope.model.saveValmis = function() {
+
+        $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
@@ -231,6 +233,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
 
+            console.log('TILA : ', $scope.model.hakukohde.tila);
+            console.log('NIMI ' , $scope.model.hakukohde.hakukohteenNimet);
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {

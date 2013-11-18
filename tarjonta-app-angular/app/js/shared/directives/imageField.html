@@ -14,8 +14,8 @@
                    resize-max-height="300"
                    resize-max-width="250"
                    resize-quality="0.9" />
-            <button type="submit" ng-click="uploadImage($event, uri, image)">{{t('koulutus.edit.lataaKuva')}}</button>
-            <button ng-show="filename" type="submit" ng-click="deleteImage($event, uri)">{{t('koulutus.edit.poistaKuva')}}</button>
+            <button class="btn" type="submit" ng-click="uploadImage($event, uri, image)">{{btnNameSave}}</button>
+            <button class="btn" ng-show="filename" type="submit" ng-click="deleteImage($event, uri)">{{btnNameRemove}}</button>
 
             <img ng-show="image" ng-src="{{image.resized.dataURL}}"/></td>
         </td>

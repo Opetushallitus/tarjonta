@@ -6,9 +6,9 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
 
     function defaultLangMapConverter(data) {
         var m = {};
-        for (var i in $scope.data) {
-            if ($scope.data[i].value.length > 0) {
-                m[$scope.data[i].uri] = $scope.data[i].value;
+        for (var i in data) {
+            if (data[i].value.length > 0) {
+                m[data[i].uri] = data[i].value;
             }
         }
         return m;
