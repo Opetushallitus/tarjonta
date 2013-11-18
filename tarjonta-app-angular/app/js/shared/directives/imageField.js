@@ -11,8 +11,16 @@ app.directive('imageField', function($log, TarjontaService) {
         $scope.base64 = {};
         $scope.mime = {};
         $scope.filename = "";
-        
-        if(angular.isUndefined($scope.editable)){
+
+        if (angular.isUndefined($scope.btnNameRemove)) {
+            $scope.btnNameRemove = "remove";
+        }
+
+        if (angular.isUndefined($scope.btnNameSave)) {
+            $scope.btnNameSave = "save";
+        }
+
+        if (angular.isUndefined($scope.editable)) {
             $scope.editable = true;
         }
 
@@ -92,7 +100,9 @@ app.directive('imageField', function($log, TarjontaService) {
             editable: "@", //disable upload
             uri: "@", //kieli URI     
             oid: "@", //komoto OID
-            model: "=" // map jossa arvo->nimi
+            model: "=", // map jossa arvo->nimi
+            btnNameSave: "@",
+            btnNameRemove: "@"
         }
     }
 

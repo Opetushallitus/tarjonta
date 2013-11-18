@@ -64,14 +64,14 @@ app.controller('BaseEditController',
                         });
 
                         $scope.updateMultiSelectKoodistoData(uiModel, model);
-
+                        uiModel.tabs.lisatiedot = false; //active lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
                         //CREATE NEW KOULUTUS
                         $scope.loadRelationKoodistoData();
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
                             converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-                        });
+                        });              
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
