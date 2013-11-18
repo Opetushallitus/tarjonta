@@ -34,7 +34,7 @@ public class HakukohdeValidator {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
 
-        if (hakukohdeRDTO.getTila() != null) {
+        if (hakukohdeRDTO.getTila() == null) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
         }
 
