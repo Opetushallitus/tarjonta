@@ -22,6 +22,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
     var nimiWithLocale = function(locale, metadata) {
         var metas = _.select(metadata, function(koodiMetaData) {
+            locale = locale || "fi"; // default locale is finnish
 
             if (koodiMetaData.kieli.toLowerCase() === locale.toLowerCase()) {
 
@@ -40,7 +41,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
     /*
      This JS-object is view representation of koodisto koodi.
      Example koodisto Koodi:
-     
+
      {
      koodiArvo :"",
      koodiUri  : "",
@@ -51,7 +52,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
      -> Koodinimi is localized with given locale
      koodiNimi : ""
      }
-     
+
      */
 
     var getKoodiViewModelFromKoodi = function(koodi, locale) {
