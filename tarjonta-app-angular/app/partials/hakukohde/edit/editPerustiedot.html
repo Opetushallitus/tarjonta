@@ -1,6 +1,13 @@
 <div class="alert-success" data-ng-show="model.showSuccess">
    <h2>{{t('tarjonta.hakukohde.tallennus.ok')}}</h2>
 </div>
+<div class="alert-error" data-ng-show="model.showError">
+    <ul>
+        <li data-ng-repeat="validationmsg in model.validationmsgs">
+            {{ validationmsg }}
+        </li>
+    </ul>
+</div>
 
 <table class="tarjontaForm">
 
@@ -9,6 +16,7 @@
 		<th tt="kk.hakukohde.hakukohdenimi"/>
 		<td>
 			<mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
+
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
