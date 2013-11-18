@@ -23,7 +23,10 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
@@ -162,11 +165,21 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return result;
     }
 
+
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
-        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+        List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+        if (validationMessageses.size() > 0) {
+            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+            for (HakukohdeValidationMessages message: validationMessageses) {
+                errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+            }
+            return errorResult;
+        }
         hakukohdeRDTO.setOid(null);
         Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
 
