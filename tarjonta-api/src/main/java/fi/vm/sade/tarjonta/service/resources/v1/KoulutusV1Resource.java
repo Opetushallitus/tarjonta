@@ -181,6 +181,7 @@ public interface KoulutusV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
+            @QueryParam("koulutusOid") List<String> koulutusOids,
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi

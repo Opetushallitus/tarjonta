@@ -22,13 +22,17 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','ui.tinymce']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,SharedStateService) {
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
+    if ($scope.model.userLang === undefined) {
+        $scope.model.userLang = "FI";
+    }
+
     $scope.model.showError = false;
 
-
+    $scope.model.koulutusnimet = [];
 
     $scope.model.validationmsgs = [];
 
@@ -105,8 +109,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var findKoodiWithArvo = function(koodi,koodis)  {
 
 
-        console.log('Trying to find with : ',koodi);
-        console.log('From :', koodis.length);
         var foundKoodi;
 
         angular.forEach(koodis,function(koodiLoop){
@@ -153,7 +155,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     //TODO: get locale from somewhere
-    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
+    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti',$scope.model.userLang);
 
     koodistoPromise.then(function(koodisParam){
       $scope.model.koodis = koodisParam;
@@ -322,7 +324,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             angular.forEach(haku.nimi,function(nimi){
                 //TODO: replace this with localization value
-               if (nimi.arvo === "FI") {
+               if (nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                    haku.lokalisoituNimi = nimi.teksti;
                }
             });
