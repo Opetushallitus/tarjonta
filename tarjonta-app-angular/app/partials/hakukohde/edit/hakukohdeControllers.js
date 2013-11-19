@@ -28,6 +28,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.showError = false;
 
+
+
     $scope.model.validationmsgs = [];
 
     $scope.model.showSuccess = false;
@@ -36,12 +38,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var showSuccess = function() {
         $scope.model.showSuccess = true;
+        $scope.model.hakukohdeTabsDisabled = false;
         $timeout(function(){
 
 
             $scope.model.showSuccess = false;
         },5000);
     }
+
 
     var showError = function(errorArray) {
 
@@ -172,6 +176,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
 
+
+    if ($scope.model.hakukohde !== undefined && $scope.model.hakukohde.oid !== undefined) {
+        $scope.model.hakukohdeTabsDisabled = false;
+    } else {
+        $scope.model.hakukohdeTabsDisabled = true;
+    }
+
+
     var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
     //When organisaatio is loaded set the liitteiden toimitusosoite on the model
     orgPromise.then(function(data){
@@ -232,6 +244,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+
                    showSuccess();
                } else {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
