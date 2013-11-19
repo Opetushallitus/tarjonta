@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 
@@ -42,7 +43,30 @@ public class HakukohdeValidator {
             validationMessages.addAll(validateValintakokees(hakukohdeRDTO.getValintakokeet()));
         }
 
+
+
         return validationMessages;
+    }
+
+    public static List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
+
+        Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();
+
+        if (liite.getKieliUri() == null || liite.getKieliUri().length() < 1) {
+            liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_KIELI_MISSING);
+        }
+
+        if (liite.getLiitteenNimi() == null || liite.getLiitteenNimi().length() < 1) {
+            liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_NIMI_MISSING);
+        }
+
+        if (liite.getToimitettavaMennessa() == null) {
+
+            liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_TOIMITETTAVA_MENNESSA_MISSING);
+
+        }
+
+        return new ArrayList<HakukohdeValidationMessages>(liiteValidationMsgs);
     }
 
     public static List<HakukohdeValidationMessages> validateLiites(List<HakukohdeLiiteRDTO> liites) {
@@ -66,6 +90,8 @@ public class HakukohdeValidator {
         return new ArrayList<HakukohdeValidationMessages>(liiteValidationMsgs);
 
     }
+
+    //public static List<HakukohdeValidationMessages> validateValintakoe()
 
     public static List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
         Set<HakukohdeValidationMessages> validationMessages = new HashSet<HakukohdeValidationMessages>();

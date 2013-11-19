@@ -244,7 +244,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-
+                   $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                    showSuccess();
                } else {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -281,6 +281,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             returnResource.then(function(hakukohde) {
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                    showSuccess();
                } else {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);

@@ -377,6 +377,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
 
+            List<ValintakoeV1RDTO> valintakokees = new ArrayList<ValintakoeV1RDTO>();
+            valintakokees.add(valintakoeV1RDTO);
+
+            List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateValintakokees(valintakokees);
+            if (validationMessageses.size() > 0) {
+                ResultV1RDTO<ValintakoeV1RDTO> errorResult = new ResultV1RDTO<ValintakoeV1RDTO>();
+                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+                for (HakukohdeValidationMessages message: validationMessageses) {
+                    errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+                }
+                errorResult.setResult(valintakoeV1RDTO);
+                return errorResult;
+            }
+
             LOG.debug("UPDATEVALINTAKOE SIZE: {} ", valintakoe.getAjankohtas().size());
 
             hakukohdeDao.updateSingleValintakoe(valintakoe,hakukohdeOid);
@@ -469,6 +483,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
          try {
 
+             List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
+             if (validationMessageses.size() > 0) {
+                 ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+                 errorResult.setResult(liiteV1RDTO);
+                 errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+                 for (HakukohdeValidationMessages msg : validationMessageses) {
+                     errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
+                 }
+                return errorResult;
+             }
+
              ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
              HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(liiteV1RDTO);
              List<HakukohdeLiite> liites = hakukohdeDao.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
@@ -497,6 +522,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
         try {
+
+            List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
+            if (validationMessageses.size() > 0) {
+                ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+                errorResult.setResult(liiteV1RDTO);
+                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+                for (HakukohdeValidationMessages msg : validationMessageses) {
+                    errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
+                }
+                return errorResult;
+            }
 
             ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
 

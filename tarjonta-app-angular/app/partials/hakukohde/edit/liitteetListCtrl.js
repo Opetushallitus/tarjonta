@@ -34,7 +34,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             kieliSet.add(liite.kieliNimi);
 
             $scope.model.liitteet.push(liite);
+            console.log('LIITTEET: ' , $scope.model.liitteet);
             $scope.model.liitteenkielet = kieliSet.toArray();
+            console.log('LIITTEEN KIELET: ' , $scope.model.liitteenkielet);
         }
 
     } ;
@@ -182,7 +184,9 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
 
     $scope.model.liite = liite;
 
-    $scope.model.validationmessages = [];
+    $scope.model.validationmsgs = [];
+
+    $scope.model.showAlert = false;
 
 
     //Koodisto helper methods
@@ -238,13 +242,18 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
 
     var validateLiite = function() {
 
-        $scope.model.validationmessages.splice(0,$scope.model.validationmessages.length);
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
 
         if (selectedKieli === undefined) {
-            $scope.model.validationmessages.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.kieli.req.msg'));
+            $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.kieli.req.msg'));
         }
 
-        if ($scope.model.validationmessages.length > 0) {
+        if ($scope.model.liite.toimitettavaMennessa === undefined ) {
+            $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.toimitettavaMennessa.req.msg'));
+        }
+
+        if ($scope.model.validationmsgs.length > 0) {
             return false;
         }
 
@@ -263,16 +272,25 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
     };
 
     $scope.model.save = function() {
-
+        $scope.model.showAlert = false;
        if (validateLiite()) {
            $scope.model.liite.liitteenKuvaus.nimi =  selectedKieli.koodiNimi;
            $scope.model.liite.liitteenKuvaus.arvo = selectedKieli.koodiArvo;
            $scope.model.liite.liitteenKuvaus.versio = selectedKieli.koodiVersio;
            $scope.model.liite.liitteenKuvaus.uri = $scope.model.liite.kieliUri;
+
+
            $modalInstance.close($scope.model.liite);
+
+
+       } else {
+
+           $scope.model.showAlert = true;
        }
 
     };
+
+
 
     $scope.model.kaytaOrganisaationPostiOsoitetta = function() {
 

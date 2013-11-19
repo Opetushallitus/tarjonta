@@ -6,6 +6,8 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
    var kieliSet = new buckets.Set();
    $scope.model.hakukohdeOid  =  $scope.model.hakukohde.oid;
 
+
+
    $scope.model.kielet = [];
 
    $scope.model.valintakokees = [];
