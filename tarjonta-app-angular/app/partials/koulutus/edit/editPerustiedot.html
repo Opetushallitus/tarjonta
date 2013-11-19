@@ -1,12 +1,5 @@
 <form name="perustiedotForm">
     <table class="tarjontaForm">
-        <!-- koulutuskoodi -->
-        <tr class="info">
-            <th tt="koulutus.edit.koulutuskoodi"/>
-            <td>{{model.koulutuskoodi.arvo}} <span class="float-right">{{model.koulutuskoodi.koodi.arvo}}</span></td>
-            <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
-        </tr>
-
         <!-- koulutusohjelma -->
         <tr class="required">
             <th tt="koulutus.edit.koulutusohjelma"/>
@@ -17,23 +10,6 @@
             <p class="error" ng-show="model.koulutusohjelma.meta.length == 0">(TODO virheilmo)</p> 
         </td>
         </tr>
-
-        <!--
-        <tr class="required">
-                <th tt="koulutus.edit.koulutusohjelma"/>
-                <td>			 
-                        <table>
-                                <tr data-ng-repeat="lang in config.app.userLanguages">
-                                        <th>{{model.koulutusohjelma.meta[lang].koodi.kaannos}}</th>
-                                        <td><input type="text" data-ng-model="model.koulutusohjelma.meta[lang].koodi.arvo" required /></td>
-                            </tr>
-                        </table>
-                </td>
-                <td>
-                        <a href="#" tt="koulutus.edit.lisaa-kieli"/>
-                </td>
-        </tr>
-        -->
 
         <tr>
             <th></th>
@@ -149,6 +125,7 @@
             <td>
 
         <multi-select
+            order-with="config.app.userLanguages"
             model="uiModel.opetuskielis.data"
             selection="uiModel.opetuskielis.uris"
             promise="uiModel.opetuskielis.promise"

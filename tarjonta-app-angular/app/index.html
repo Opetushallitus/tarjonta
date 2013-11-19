@@ -143,7 +143,7 @@ if(!(window.console && console.log)) {
     <body data-ng-controller="AppRoutingCtrl">
 
         <!-- kaikki tarjonta-roina tämän sisään!! -->
-        <div id="tarjonta-body">
+        <div id="tarjonta-body" class="ng-cloak">
             <div data-ng-controller="LocalisationCtrl">
 
                 <div data-ng-switch on="renderPath[0]">
@@ -197,6 +197,7 @@ if(!(window.console && console.log)) {
                     </div>
                 </div><!-- /renderPath[0] -->
 
+<!--
                 <div class="wsidebar-main">
                     <hr>
                     Footer, route counter = {{count}}<br>
@@ -215,6 +216,7 @@ if(!(window.console && console.log)) {
                     </div>
                 </div>
             </div>
+-->
 
         </div>
 

@@ -35,7 +35,7 @@
          data-node-label="nimi"
          data-node-children="children" >
     </div>
-    
+
 </div>
 
 <div class="wsidebar-main">
@@ -86,7 +86,7 @@
 	<div id="searchResults">
 	    <tabset>
 	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
-	        
+
 	        	<div class="controls">
 	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" ng-disabled="!koulutusActions.canMoveOrCopy"/>
 	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" data-ng-click="luoUusiHakukohde()" ng-disabled="!koulutusActions.canCreateHakukohde"/>
@@ -100,18 +100,18 @@
 	        		columns="koulutusColumns"
 	        		options="koulutusOptions"
 	        		selection="selection.koulutukset"/>
-	        		
-	        	<!-- 
+
+	        	<!--
 	        	<div class="controls">
 	        		<input type="checkbox" class="selectAll"/>
 			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
 				</div>
-				
+
 	        	<table id="koulutuksetResults"></table>
 		         -->
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
-	
+
 	        	<results-table
 	        		id="nhakukohteetResults"
 	        		prefix="hakukohde"
@@ -120,35 +120,38 @@
 	        		options="hakukohdeOptions"
 	        		selection="selection.hakukohteet"/>
 
-				<!--         
+				<!--
 	        	<div class="controls">
 	        		<input type="checkbox" class="selectAll"/>
 			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
 				</div>
-	
+
 	        	<table id="hakukohteetResults"></table>
 				 -->
-				 
+
 	        </tab>
-	
+
 	    </tabset>
-	    
-	    <!-- 
+
+	    <!--
 	    <ul id="dropdown" class="dropdown-menu">
 	    	<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
 	    </ul>
 	     -->
-    
+
     </div>
 
+<!--
+
     <a href="#/kk/review/12345/xxx">REVIEW?</a>
-    
+
     <div ng-controller="TutkintoOhjelmaSelectOpenerCtrl">
 
         <button class="btn" ng-click="open()">Avaa dialogi</button>
         <div ng-show="model.selected">Valittu tutkinto: {{model.selected.koodiNimi}}</div>
-    
+
     </div>
+-->
 
 </div>
 </div>
