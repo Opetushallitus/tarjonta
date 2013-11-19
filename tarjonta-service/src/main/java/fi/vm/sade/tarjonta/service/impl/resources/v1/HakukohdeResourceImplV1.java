@@ -178,6 +178,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             for (HakukohdeValidationMessages message: validationMessageses) {
                 errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
             }
+            errorResult.setResult(hakukohdeRDTO);
             return errorResult;
         }
         hakukohdeRDTO.setOid(null);
@@ -216,8 +217,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
-        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
-        Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
+
+        List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+        if (validationMessagesList.size() > 0 ) {
+            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+            for (HakukohdeValidationMessages message: validationMessagesList) {
+                errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+            }
+            errorResult.setResult(hakukohdeRDTO);
+            return errorResult;
+        }
 
         Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
 

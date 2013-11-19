@@ -82,10 +82,10 @@ window.CONFIG = {
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
 
-        //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
-       //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
@@ -96,9 +96,8 @@ window.CONFIG = {
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
         // Only for development, since production reads "/cas/myroles"
-        "casUrl": "cas_myroles_tiimi2.json",
-
-
+        // "casUrl": "cas_myroles_tiimi2.json",
+        "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
         "place": "holder"
 

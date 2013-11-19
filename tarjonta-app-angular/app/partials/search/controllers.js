@@ -16,6 +16,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		};
 	}
 	
+	if(SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"].scope!==$scope) {
+		console.log("scope has changed???");
+		SharedStateService.state.puut["organisaatio"].scope = $scope;
+	}
+	
 	setDefaultHakuehdot();
 
 	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
@@ -26,9 +31,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.oppilaitostyypit=koodit;
     });
 
-	$scope.hakukohdeResults = {};
-	$scope.koulutusResults = {};
-	
 	//valittu organisaatio populoidaan tänne
     $scope.organisaatio = {};
     
@@ -96,6 +98,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
     
     $scope.searchedOrgOid = OPH_ORG_OID;
+	$scope.hakukohdeResults = {};
+	$scope.koulutusResults = {};
     
     $scope.spec = {
     		terms: fromParams("terms",""),
@@ -133,7 +137,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     if (!$scope.selectedOrgName) {
-        OrganisaatioService.nimi($scope.selectedOrgOid).then(function(){$scope.selectedOrgName;});
+        OrganisaatioService.nimi($scope.selectedOrgOid).then(function(nimi){$scope.selectedOrgName=nimi});
     }
 
     function copyIfSet(dst, key, value, def) {

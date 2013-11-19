@@ -26,17 +26,37 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
+    $scope.model.showError = false;
+
+
+
+    $scope.model.validationmsgs = [];
+
     $scope.model.showSuccess = false;
 
     $scope.model.collapse.model = true;
 
     var showSuccess = function() {
         $scope.model.showSuccess = true;
+        $scope.model.hakukohdeTabsDisabled = false;
         $timeout(function(){
 
 
             $scope.model.showSuccess = false;
         },5000);
+    }
+
+
+    var showError = function(errorArray) {
+
+        angular.forEach(errorArray,function(error) {
+
+
+            $scope.model.validationmsgs.push(LocalisationService.t(error.errorMessageKey));
+
+
+        });
+        $scope.model.showError = true;
     }
 
     //Initialize all helper etc. variable in the beginning of the controller
@@ -54,7 +74,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
-    //TODO: fix and retrieve language from somewhere
+
 
 
 
@@ -156,6 +176,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
 
+
+    if ($scope.model.hakukohde !== undefined && $scope.model.hakukohde.oid !== undefined) {
+        $scope.model.hakukohdeTabsDisabled = false;
+    } else {
+        $scope.model.hakukohdeTabsDisabled = true;
+    }
+
+
     var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
     //When organisaatio is loaded set the liitteiden toimitusosoite on the model
     orgPromise.then(function(data){
@@ -203,15 +231,25 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
-    //TODO: Should tila come from constants ?
+
 
     $scope.model.saveValmis = function() {
+        $scope.model.showError = false;
+        $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =   $scope.model.hakukohde.$save();
            returnResource.then(function(hakukohde){
+
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showError(hakukohde.errors);
+               }
            });
 
         } else {
@@ -219,22 +257,36 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource = $scope.model.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+                }
             });
         }
-        showSuccess();
+
     };
 
 
     $scope.model.saveLuonnos = function() {
-
+        $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
+
 
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
-               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                  showError(hakukohde.errors);
+               }
+
 
             });
 
@@ -242,10 +294,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource =  $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+
+                }
             });
         }
-       showSuccess();
+
     };
 
     $scope.model.takaisin = function() {
