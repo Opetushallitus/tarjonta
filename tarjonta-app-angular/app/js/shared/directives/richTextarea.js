@@ -6,13 +6,13 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 	
 	function windowContainsElements(selector) {
 		var mc = $(selector);
-		console.log(selector+" mcs="+mc.size());
+		//console.log(selector+" mcs="+mc.size());
 		if (mc.size()==0) {
 			return false;
 		}
 		var ret = false;
 		mc.each(function(i, e){
-			console.log(selector+" e["+i+"] = ",e);
+			//console.log(selector+" e["+i+"] = ",e);
 			if ($(e).css("display") != "none") {
 				ret = true;
 			}
