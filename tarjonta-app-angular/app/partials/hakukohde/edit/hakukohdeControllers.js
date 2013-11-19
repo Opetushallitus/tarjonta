@@ -22,7 +22,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','ui.tinymce']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,SharedStateService) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
@@ -79,8 +79,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
 
-
-
+    //Load hakukohde koulutusnames
+    var spec = {
+        koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
+    };
+    TarjontaService.haeKoulutukset(spec).then(function(data){
+            angular.forEach(data.tulokset,function(tulos){
+                $scope.model.koulutusnimet.push(tulos.nimi);
+            });
+    });
 
     $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta',AuthService.getLanguage());
 
@@ -324,7 +331,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             angular.forEach(haku.nimi,function(nimi){
                 //TODO: replace this with localization value
-               if (nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+               if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                    haku.lokalisoituNimi = nimi.teksti;
                }
             });
