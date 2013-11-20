@@ -1,43 +1,41 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField']);
 app.controller('BaseEditController',
-        ['$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
+        ['$route', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-            function BaseEditController($scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
+            function BaseEditController($route, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
-                $scope.config = {env: cfg.env, app: cfg.app, 'locationPath': $location.path()};
                 $scope.uiModel = null;
                 $scope.model = null;
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
                 $scope.lisatiedot = [
-                            {type: "TAVOITTEET", isKomo: true},
-                            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-                            {type: "PAAAINEEN_VALINTA", isKomo: false},
-                            {type: "MAKSULLISUUS", isKomo: false},
-                            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-                            {type: "PATEVYYS", isKomo: true},
-                            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-                            {type: "SISALTO", isKomo: false},
-                            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-                            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-                            {type: "KANSAINVALISTYMINEN", isKomo: false},
-                            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-                            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-                            {type: "ARVIOINTIKRITEERIT", isKomo: false},
-                            {type: "PAINOTUS", isKomo: false},
-                            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-                            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-                        ];
+                    {type: "TAVOITTEET", isKomo: true},
+                    {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
+                    {type: "PAAAINEEN_VALINTA", isKomo: false},
+                    {type: "MAKSULLISUUS", isKomo: false},
+                    {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
+                    {type: "PATEVYYS", isKomo: true},
+                    {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
+                    {type: "SISALTO", isKomo: false},
+                    {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
+                    {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
+                    {type: "KANSAINVALISTYMINEN", isKomo: false},
+                    {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
+                    {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
+                    {type: "ARVIOINTIKRITEERIT", isKomo: false},
+                    {type: "PAINOTUS", isKomo: false},
+                    {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
+                    {type: "KUVAILEVAT_TIEDOT", isKomo: false}
+                ];
 
                 $scope.init = function() {
                     var uiModel = {};
                     var model = {};
 
                     converter.createUiModels(uiModel);
-                    converter.createAPIModel(model, cfg.app.userLanguages);
 
                     /*
                      * HANDLE ROUTING
@@ -55,23 +53,16 @@ app.controller('BaseEditController',
                                 converter.throwError('Undefined henkilotyyppi : ', value);
                             }
                         });
-
-                        converter.createMetaLanguages(model.koulutusohjelma, cfg.app.userLanguages);
-                        angular.forEach(model.koulutusohjelma.meta, function(val, key) {
-                            if (angular.isUndefined(val.koodi.kaannos)) {
-                                $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.koodistoLocale);
-                            }
-                        });
-
                         $scope.updateMultiSelectKoodistoData(uiModel, model);
-                        uiModel.tabs.lisatiedot = false; //active lisatiedot tab
+                        uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
                         //CREATE NEW KOULUTUS
+                        converter.createAPIModel(model, cfg.app.userLanguages);
                         $scope.loadRelationKoodistoData();
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
                             converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-                        });              
+                        });
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
@@ -79,17 +70,6 @@ app.controller('BaseEditController',
                     /*
                      * INITIALISE DATA MODELS
                      */
-
-
-
-                    /*
-                     * Init language texts, like 'suomi' 'englanti' etc.
-                     */
-                    angular.forEach(model.koulutusohjelma.meta, function(val, key) {
-                        if (angular.isUndefined(val.koodi.kaannos)) {
-                            $scope.searchKoodi(val, cfg.env['koodisto-uris.kieli'], key, $scope.koodistoLocale);
-                        }
-                    });
 
                     /*
                      * LOAD ALL KOODISTO KOODIS
@@ -100,7 +80,6 @@ app.controller('BaseEditController',
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                         $scope.searchKoodisByKoodistoUri(uiModel[key], cfg.env[value.koodisto], $scope.koodistoLocale);
                     });
-
 
                     /*
                      * INIT SCOPES FOR RENDERER
@@ -132,14 +111,14 @@ app.controller('BaseEditController',
                     }
 
                     var KoulutusRes = tarjontaService.koulutus();
-                    var apiModelReadyForSve = $scope.saveModelConverter(tila);
+                    var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
-                    KoulutusRes.save(apiModelReadyForSve, function(response) {
+                    KoulutusRes.save(apiModelReadyForSave, function(response) {
                         var model = response.result;
                         //Callback
                         console.log("Insert data response from POST: %j", response);
-                        $scope.model.oid = model.oid;
-                        $location.path('/koulutus/' + $scope.model.oid + '/edit/');
+                        $scope.model = model;
+                        //$location.path('/koulutus/' + $scope.model.oid + '/edit');
                     });
                 };
 
@@ -262,7 +241,8 @@ app.controller('BaseEditController',
                 };
                 $scope.goToReview = function(event) {
                     $log.info("goBack()...");
-                    $location.path("/koulutus/" + $scope.model.komotoOid);
+                    $route.current.locals.koulutusModel.result = $scope.model;
+                    $location.path("/koulutus/" + $scope.model.oid);
                 };
 
                 $scope.single = function(image) {
@@ -286,12 +266,16 @@ app.controller('BaseEditController',
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, key, kieliuri) {
                     var kuvaus = null;
-                    if(boolIsKomo){
-                        kuvaus = $scope.model.kuvausKomo; 
-                    }else{
+                    if (typeof boolIsKomo !== 'boolean') {
+                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+                    }
+
+                    if (boolIsKomo) {
+                        kuvaus = $scope.model.kuvausKomo;
+                    } else {
                         kuvaus = $scope.model.kuvausKomoto;
                     }
-                    
+
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus.tekstis)) {
                         converter.throwError("Description text object cannot be null.");
                     }
@@ -335,7 +319,17 @@ app.controller('BaseEditController',
                     return koodi;
                 }
 
-                
+                /*
+                 * WATCHES
+                 */
+
+                $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
+                    if (!valNew && valOld) {
+                        console.log('foo', valNew, valOld);
+                        //clear price data field
+                        $scope.model.hinta = '';
+                    }
+                });
 
                 $scope.init();
             }]);

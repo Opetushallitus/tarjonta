@@ -18,6 +18,8 @@ var app = angular.module('app.koulutus.ctrl', []);
 
 app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route',
     function KoulutusRoutingController($scope, $log, $routeParams, $route) {
+        $scope.resultPageUri;
+
         $log.info("KoulutusRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
@@ -25,21 +27,32 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.koulutusModel = $route.current.locals.koulutusModel;
         $log.info("  --> koulutusx == ", $scope.koulutusModel);
 
-        $scope.getKoulutusPartialName = function(actionType) {
-            var result;
-            var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
+        $scope.resolvePath = function(actionType, koulutus) {
+            if (!angular.isUndefined(koulutus.result)) {
+                var type = koulutus.result.koulutusasteTyyppi;
+                var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
 
-            var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
+                if (patt.test(type)) {
+                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                } else {
+                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
+                }
 
-            if (patt.test(type)) {
-                result = "partials/koulutus/" + actionType + "/" + type + ".html";
             } else {
-                result = "partials/koulutus/" + actionType + "/UNKNOWN.html";
+                console.error("Something went wrong?");
             }
-
-            $log.debug("getKoulutusPartialName() --> ", result);
-            return result;
         };
 
+        $scope.getKoulutusPartialName = function(actionType) {
+            if (!angular.isUndefined($scope.koulutusModel.$promise)) {
+                //load&review koulutus
+                $scope.koulutusModel.$promise.then(function(koulutus) {
+                    $scope.resolvePath(actionType, koulutus);
+                })
+            } else {
+                //create new koulutus
+                $scope.resolvePath(actionType, $scope.koulutusModel);
+            }
+        };
     }
 ]);

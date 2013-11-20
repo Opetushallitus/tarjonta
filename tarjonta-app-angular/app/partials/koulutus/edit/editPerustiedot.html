@@ -22,7 +22,7 @@
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
             <th tt="koulutus.edit.tutkinto-ohjelman-tunniste"/>
-            <td><input name="tutkintoOhjelmanTunniste" type="text" data-ng-model="model.tunniste" required /></td>
+            <td><input name="tutkintoOhjelmanTunniste" type="text" data-ng-model="model.tunniste" /></td>
             <td></td>
         </tr>
         <tr>
@@ -153,7 +153,7 @@
         <tr>
             <th tt="koulutus.edit.maksullisuus.hinta"></th>
             <td>
-                <input name="hinta" class="thin" type="text" data-ng-model="model.hinta" required ng-disabled="!model.opintojenMaksullisuus" />
+                <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" />
                 <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
             </td>
             <td>
