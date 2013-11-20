@@ -53,6 +53,8 @@ window.CONFIG = {
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",
         "koodisto-uris.valintakokeentyyppi": "valintakokeentyyppi",
         "koodisto-uris.valintaperustekuvausryhma": "valintaperustekuvausryhma",
+        "koodisto-uris.tutkintonimike_kk": "tutkintonimike_kk",
+        "koodisto-uris.pohjakoulutusvaatimus_kk": "pohjakoulutusvaatimuskorkeakoulut",
         "koodisto-uris.eqf-luokitus": "eqf",
         "koodisto-uris.yhteishaku": "hakutapa_01#1",
         "koodisto.lang.en.uri": "kieli_en",
@@ -82,10 +84,10 @@ window.CONFIG = {
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
 
-        //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+         //"tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
