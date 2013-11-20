@@ -293,7 +293,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
 
-
+        uiModel.showSuccess = false;
 
         return uiModel;
     };

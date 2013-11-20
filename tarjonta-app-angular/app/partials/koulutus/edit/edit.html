@@ -1,8 +1,19 @@
 <div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
+    <div class="alert-success" data-ng-show="uiModel.showSuccess">
+        <h2>{{t('tarjonta.tallennus.ok')}}</h2>
+    </div>
+    <div class="alert-error" data-ng-show="uiModel.showError">
+        <ul>
+            <li data-ng-repeat="validationmsg in model.validationmsgs">
+                {{ validationmsg }}
+            </li>
+        </ul>
+    </div>
+
     <form name="koulutusForm">
         <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
         <div class="body" ng-include="resultPageUri"></div>
-       
+
         <hr/>
         <div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
     </form>

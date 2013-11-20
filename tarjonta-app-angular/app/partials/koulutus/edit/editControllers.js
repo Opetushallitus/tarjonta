@@ -1,15 +1,24 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField']);
 app.controller('BaseEditController',
-        ['$route', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
+        ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-            function BaseEditController($route, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
+            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
                 $scope.uiModel = null;
                 $scope.model = null;
+
+                var showSuccess = function() {
+                    $scope.uiModel.showSuccess = true;
+                    $scope.uiModel.hakukohdeTabsDisabled = false;
+                    $timeout(function() {
+                        $scope.uiModel.showSuccess = false;
+                    }, 5000);
+                }
+
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
                 $scope.lisatiedot = [
                     {type: "TAVOITTEET", isKomo: true},
@@ -118,7 +127,7 @@ app.controller('BaseEditController',
                         //Callback
                         console.log("Insert data response from POST: %j", response);
                         $scope.model = model;
-                        //$location.path('/koulutus/' + $scope.model.oid + '/edit');
+                        showSuccess();
                     });
                 };
 
