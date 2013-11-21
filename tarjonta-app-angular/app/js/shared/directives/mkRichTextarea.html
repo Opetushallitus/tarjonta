@@ -1,0 +1,23 @@
+<div class="mkRichTextarea">
+	<tabset>
+
+        <tab ng-repeat="l in selectedLangs" heading="{{langs[l]}}" active="selectedTab[l]">
+            <rich-textarea model="model[l]" mode="false" max="{{max}}"></rich-textarea>
+        </tab>
+        
+        <tab heading="+" class="addLangTab">
+            <multi-select
+                order-with="userLangs"
+                model="langs"
+                selection="selectedLangs"
+                promise="langsPromise"
+                display="dualpane"></multi-select>
+
+        </tab>
+
+	</tabset>
+	<!--
+    <pre>{{selectedLangs|json}}</pre>
+    <pre>{{model|json}}</pre>
+	-->
+</div>

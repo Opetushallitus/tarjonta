@@ -35,8 +35,9 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
 		
-		$scope.edit = false;
-	
+		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
+		$scope.edit = $scope.mode()===false;
+
 		$scope.charCount = function() {
 			return $($scope.element).text().length;
 		}
@@ -46,11 +47,11 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		}
 		
 		$scope.stopEdit = function() {
-			if (canCloseEditor()) {
+			if (canCloseEditor() && ($scope.mode()==null || $scope.mode()==undefined)) {
 				$scope.edit = false;
 			}
 		}
-		
+
 	}
 
     return {
@@ -59,8 +60,12 @@ app.directive('richTextarea',function(LocalisationService, $log) {
         templateUrl : "js/shared/directives/richTextarea.html",
         controller: controller,
         scope: {
-        	model: "=", // teksti
-        	max: "@"
+        	model: "=",  // teksti
+        	mode: "&",   // boolean, jonka mukaan editorikäyttöliittymä näytetään
+        				 // - jos null tai undefined, editorin näytetään kun hiirikursori on kentän päällä
+        				 // - jos false, editori näytetään (aina)
+        				 // - jos true, editoria ei näytetä
+        	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
         },
 		link: function(scope, element, attrs, controller) {
 			scope.element = $(".previewBody", element);

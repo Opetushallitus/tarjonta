@@ -52,6 +52,7 @@ app.directive('multiSelect', function($log) {
                     $scope.selection.push(preselection[i]);
                 }
             }
+            // TODO orderWith -tuki
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
             });
@@ -85,7 +86,7 @@ app.directive('multiSelect', function($log) {
                     	w = cw.length;
                     }
                 }
-                console.log("cw="+cw+" -> w="+w);
+                //console.log("cw="+cw+" -> w="+w);
                 $scope.items.push({
                     selected: $scope.selection.indexOf(e[key]) !== -1,
                     key: e[key],
@@ -99,7 +100,7 @@ app.directive('multiSelect', function($log) {
                 return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
             
-            console.log("ITEMS", $scope.items);
+            //console.log("ITEMS", $scope.items);
 
             $scope.rows = columnize($scope.items, columns);
         }
