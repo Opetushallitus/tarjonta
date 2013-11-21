@@ -27,7 +27,7 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.haut"/>
 		<td>
-			<select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+			<select class="wide" ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -42,7 +42,7 @@
                     model="temp"
                     selection="model.hakukohde.hakukelpoisuusvaatimusUris"
                     promise="model.hakukelpoisuusVaatimusPromise"
-                    display="dualpane"/>
+                    display="checklist"/>
 			<!-- TODO multiselect -->
 			<!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
 		</td>
@@ -146,29 +146,19 @@
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
 		</td>
 	</tr>
-    <tr>
-        <th tt="kk.hakukohde.lisatietoja.hakemisesta"></th>
-        <td>
-            <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
-        </td>
-        <td>
 
-        </td>
-    </tr>
-    <tr>
-        <th></th>
-        <td>
-            <tabset>
-                <tab  heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
-                    <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                </tab>
-            </tabset>
-        </td>
-        <td>
-
-        </td>
-    </tr>
-		
 </table>
 
+<h4 tt="kk.hakukohde.lisatietoja.hakemisesta"></h4>
 
+<mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+
+<!-- 
+<koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
+
+<tabset>
+    <tab  heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
+        <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
+    </tab>
+</tabset>
+ -->

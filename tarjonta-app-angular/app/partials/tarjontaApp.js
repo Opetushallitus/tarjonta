@@ -62,7 +62,8 @@ angular.module('app',
             'CommonDirectives',
             'MonikielinenTextField',
             'ImageDirective',
-            'RichTextArea'
+            'RichTextArea',
+            'MonikielinenTextArea'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

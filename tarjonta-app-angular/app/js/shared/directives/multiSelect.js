@@ -52,6 +52,7 @@ app.directive('multiSelect', function($log) {
                     $scope.selection.push(preselection[i]);
                 }
             }
+            // TODO orderWith -tuki
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
             });

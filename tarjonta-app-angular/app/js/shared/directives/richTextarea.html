@@ -6,7 +6,7 @@
 
 <div ng-show="edit" class="editor" ng-cloack>
 	<textarea ui-tinymce="tinymceOptions" ng-model="model"> </textarea>
-	<p ng-class="charCount() > max ? 'overflow' : ''">{{charCount()}} / {{max}}</p>
+	<p ng-show="showMax" ng-class="charCount() > max ? 'overflow' : ''">{{charCount()}} / {{max}}</p>
 </div>
 
 
