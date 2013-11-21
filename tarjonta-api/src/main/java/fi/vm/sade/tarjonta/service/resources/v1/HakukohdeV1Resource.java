@@ -60,24 +60,27 @@ public interface HakukohdeV1Resource {
     public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     @GET
+    @ApiOperation(value = "Palauttaa kaikki hakukohteiden oid:t", notes = "Listaa kaikki hakukohteiden oidit", response = String.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<List<OidV1RDTO>> search();
 
     @GET
     @Path("{oid}")
-    @ApiOperation(value = "Palauttaan hakukohteen oid:lla", notes = "Operaatio palauttaa versio 1:sen mukaisen hakukohteen", response = HakukohdeV1RDTO.class)
+    @ApiOperation(value = "Palauttaa hakukohteen oid:lla", notes = "Operaatio palauttaa versio 1:sen mukaisen hakukohteen", response = HakukohdeV1RDTO.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Luo uuden hakukohteen", notes = "Operaatio luo uuden hakukohteen", response = HakukohdeV1RDTO.class)
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohde);
 
     @PUT
     @Path("/{oid}")
-@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Päivittää hakukohteen", notes = "Operaatio päivittää hakukohteen", response = HakukohdeV1RDTO.class)
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(@PathParam("oid") String hakukohdeOid,HakukohdeV1RDTO hakukohde);
 
     @DELETE
@@ -89,35 +92,41 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Listaa hakukohteen valintakokeet", notes = "Operaatio listaa hakukohteen valintakokeet, parametrina annetaan hakukohteen oid", response = ValintakoeV1RDTO.class)
     public ResultV1RDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Lisää hakukohteelle valintakokeen", notes = "Lisätään hakukohteelle valintakoe, parametrina annetaan hakukohteen oid ja payloadina valintakoe", response = ValintakoeV1RDTO.class)
     public ResultV1RDTO<ValintakoeV1RDTO> insertValintakoe(@PathParam("oid") String hakukohdeOid,ValintakoeV1RDTO valintakoeV1RDTO);
 
     @PUT
     @Path("/{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Päivittää hakukohteelle valintakokeen", notes = "Päivittää hakukohteen valintakokeen, parametrina annetaan hakukohteen oid ja payloadina valintakoe", response = ValintakoeV1RDTO.class)
     public ResultV1RDTO<ValintakoeV1RDTO> updateValintakoe(@PathParam("oid") String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO);
 
     @DELETE
     @Path("/{oid}/valintakoe/{valintakoeId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa hakukohteelta valintakokeen", notes = "Päivitetään hakukohteelle valintakoe, parametrina annetaan hakukohteen oid ja valintakokeen oid", response = ValintakoeV1RDTO.class)
     public ResultV1RDTO<Boolean> removeValintakoe(@PathParam("oid") String hakukohdeOid,@PathParam("valintakoeId") String valintakoeOid);
 
     @GET
     @Path("/{oid}/liite")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Listaa hakukohteen liitteet", notes = "Operaatio listaa hakukohteen liitteet, parametrinä annetaan hakukohteen oid", response = HakukohdeLiiteV1RDTO.class)
     public ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/liite")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Lisää hakukohteelle liitteen", notes = "Lisätään hakukohteelle liite, parametrina annetaan hakukohteen oid ja payloadina liite", response = HakukohdeLiiteV1RDTO.class)
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(@PathParam("oid") String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO);
 
     @PUT
@@ -131,18 +140,21 @@ public interface HakukohdeV1Resource {
     @Path("/{oid}/liite/{liiteId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Päivittää hakukohteen liitteen", notes = "Päivitetään hakukohteelle liite, parametrina annetaan hakukohteen oid ja payloadina liite", response = HakukohdeLiiteV1RDTO.class)
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid,@PathParam("liiteId") String liiteId);
 
 
     @GET
     @Path("/{oid}/valintaperustekuvaus")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakukohteen valintaperusteet", notes = "Listaa hakukohteen valintaperusteet, parametrinä annetaan hakukohteen oid", response = TekstiRDTO.class)
     public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/valintaperustekuvaus")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Lisää hakukohteelle valintaperusteet", notes = "Lisää hakukohteelle valintaperusteet, poistaa mahdolliset vanhat", response = TekstiRDTO.class)
     public ResultV1RDTO<List<TekstiRDTO>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> valintaPerusteet);
 
     @GET
