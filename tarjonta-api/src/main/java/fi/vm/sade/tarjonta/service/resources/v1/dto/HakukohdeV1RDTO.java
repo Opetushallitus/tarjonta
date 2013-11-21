@@ -63,6 +63,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
+
+
     private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
 
     private OsoiteRDTO liitteidenToimitusOsoite;
@@ -331,4 +333,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public void setHakukohteenNimet(HashMap<String, String> hakukohteenNimet) {
         this.hakukohteenNimet = hakukohteenNimet;
     }
+
+
 }

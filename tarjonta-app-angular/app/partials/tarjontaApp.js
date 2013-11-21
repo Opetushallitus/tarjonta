@@ -133,7 +133,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);
+                            $log.info("/koulutus/ID/edit", $route);        
                             return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
                         }
                     }
@@ -196,7 +196,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-
+                                 
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;

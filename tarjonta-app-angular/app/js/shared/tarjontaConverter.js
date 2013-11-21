@@ -31,6 +31,24 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         });
     };
 
+    factory.sortMetaLanguage = function(apiModel, languageUri) {
+        if (angular.isUndefined(apiModel) || angular.isUndefined(apiModel.meta)) {
+            factory.throwError('Tarjonta API model object cannot be undefined!');
+        }
+        var tempMeta = apiModel.meta;
+        apiModel.meta = {};
+
+        for (var i in languageUri) {
+            apiModel.meta[languageUri[i]] = tempMeta[languageUri[i]];
+        }
+
+        for (var i in tempMeta) {//add all other
+            if (angular.isUndefined(apiModel.meta[i])) {
+                apiModel.meta[i] = tempMeta[i];
+            }
+        }
+    }
+
     factory.addMetaLanguage = function(apiModel, languageUri) {
         if (angular.isUndefined(apiModel)) {
             factory.throwError('Tarjonta API model object cannot be undefined!');
@@ -41,7 +59,6 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             factory.throwError('Tarjonta API model meta object cannot be undefined!');
         }
 
-        //console.log('LANG', languageUri, metas, apiModel);
         if (factory.isNull(metas[languageUri])) {
             metas[languageUri] = {};
             factory.createLanguage(metas, languageUri);
@@ -276,7 +293,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
 
-
+        uiModel.showSuccess = false;
 
         return uiModel;
     };

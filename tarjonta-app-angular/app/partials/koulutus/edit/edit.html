@@ -1,41 +1,20 @@
-<div id="editKoulutus" ng-controller="BaseEditController">
-
-    <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
-    <div class="body" ng-include="getKoulutusPartialName('edit')"></div>
-
-    <hr/>
-	<div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
-    
-    <!-- 
-    <div ng-click="xmodel.collapse.model = !xmodel.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !xmodel.collapse.model}">Sivun data / malli:</div>
+<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
+    <div class="alert-success" data-ng-show="uiModel.showSuccess">
+        <h2>{{t('tarjonta.tallennus.ok')}}</h2>
+    </div>
+    <div class="alert-error" data-ng-show="uiModel.showError">
+        <ul>
+            <li data-ng-repeat="validationmsg in model.validationmsgs">
+                {{ validationmsg }}
+            </li>
+        </ul>
     </div>
 
-    <div ng-if="!model.collapse.model">
-     <div collapse="xmodel.collapse.model"">
-        TODO fiksaa mallit jotensakin mielekkääksi?
-        yksi "model" jonka alla kaikki on? "model.koulutus", "model.uimodel", "model.locale", "model.opetuskieli", etc.
+    <form name="koulutusForm">
+        <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
+        <div class="body" ng-include="resultPageUri"></div>
 
-        <pre>
-           XMODEL: {{ xmodel | json }}
-        </pre>
-        <pre>
-           MODEL: {{ model | json }}
-        </pre>
-        <pre>
-           UIMODEL: {{ uiModel | json }}
-        </pre>
-        <pre>
-            OPETUSKIELI: {{ opetuskieli | json }}
-        </pre>
-        <pre>
-            CONFIG: {{ config | json }}
-        </pre>
-        <pre>
-            LOCALE: {{ locale | json }}
-        </pre>
-    </div>
-    </div>
-     -->
-     
+        <hr/>
+        <div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
+    </form>
 </div>

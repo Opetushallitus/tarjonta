@@ -5,3 +5,7 @@
 
 <!-- TODO muokatessa joku muu teksti kuin "uusi hakukohde" -->
 <h3>{{t('hakukohde.edit.header.title')}}</h3>
+
+<div class="alert alert-success">
+    {{t('hakukohde.edit.header.koulutus.list.title')}} : <span data-ng-repeat="koulutus in model.koulutusnimet">{{koulutus}} </span>
+</div>

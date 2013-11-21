@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -60,6 +61,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -122,7 +124,65 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
-    
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid) {
+       Hakukohde hakukohde =  hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+
+       if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstis() != null && hakukohde.getValintaperusteKuvaus().getTekstis().size() > 0) {
+           ResultV1RDTO<List<TekstiRDTO>> result = new ResultV1RDTO<List<TekstiRDTO>>();
+
+           List<TekstiRDTO> tekstis = converter.convertSimpleMonikielinenTekstiDTO(hakukohde.getValintaperusteKuvaus());
+           result.setStatus(ResultV1RDTO.ResultStatus.OK);
+           result.setResult(tekstis);
+
+           return result;
+
+       }  else {
+           ResultV1RDTO<List<TekstiRDTO>> result = new ResultV1RDTO<List<TekstiRDTO>>();
+           result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+           return result;
+       }
+
+
+    }
+
+    @Override
+    @Transactional
+    public ResultV1RDTO<List<TekstiRDTO>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> valintaPerusteet) {
+        try {
+
+            Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            MonikielinenTeksti valintaPerusteetMonikielinen = converter.convertTekstiRDTOToMonikielinenTeksti(valintaPerusteet);
+
+            hakukohde.setValintaperusteKuvaus(valintaPerusteetMonikielinen);
+
+            hakukohdeDao.update(hakukohde);
+
+            ResultV1RDTO<List<TekstiRDTO>> result = new ResultV1RDTO<List<TekstiRDTO>>();
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            result.setResult(valintaPerusteet);
+            return  result;
+        } catch (Exception exp) {
+            ResultV1RDTO<List<TekstiRDTO>> errorResult = new ResultV1RDTO<List<TekstiRDTO>>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            return errorResult;
+        }
+
+    }
+
+    @Override
+    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public ResultV1RDTO<TekstiRDTO> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> sorat) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
         List<Hakukohde> hakukohdeList =  hakukohdeDao.findAll();

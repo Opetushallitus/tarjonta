@@ -265,7 +265,8 @@
             <div class="span9">
                 <div data-ng-bind-html="model.koulutus.kuvausKomo.KOULUTUKSEN_RAKENNE.meta[lang.koodi_uri].arvo"></div>
                 <p>
-                  <image-field editable="false" oid="{{ model.koulutus.oid }}" uri="{{lang.koodi_uri}}"></image-field>
+                    {{lang.koodi_uri}}
+                  <image-field editable="false" oid="{{model.koulutus.oid}}" uri="{{lang.koodi_uri}}"></image-field>
                 </p>
             </div>
         </div>

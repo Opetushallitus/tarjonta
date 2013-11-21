@@ -92,6 +92,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var params = {
             searchTerms: args.terms,
             organisationOid: args.oid,
+            koulutusOid : args.koulutusOid,
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year

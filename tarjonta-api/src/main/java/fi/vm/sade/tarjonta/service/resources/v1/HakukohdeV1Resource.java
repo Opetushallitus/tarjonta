@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1;
 
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
@@ -129,6 +130,27 @@ public interface HakukohdeV1Resource {
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(@PathParam("oid") String hakukohdeOid,@PathParam("liiteId") String liiteId);
 
 
+    @GET
+    @Path("/{oid}/valintaperustekuvaus")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid);
+
+    @POST
+    @Path("/{oid}/valintaperustekuvaus")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<List<TekstiRDTO>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> valintaPerusteet);
+
+    @GET
+    @Path("/{oid}/sora")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid);
+
+    @POST
+    @Path("/{oid}/sora")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<TekstiRDTO> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> sorat);
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
      *

@@ -335,6 +335,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
             String searchTerms,
             List<String> organisationOids,
+            List<String> koulutusOids,
             String hakukohdeTila,
             String alkamisKausi,
             Integer alkamisVuosi) {
@@ -342,10 +343,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
         KoulutuksetKysely q = new KoulutuksetKysely();
+
         q.setNimi(searchTerms);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
+        q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(hakukohdeTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(hakukohdeTila).asDto());
 
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);

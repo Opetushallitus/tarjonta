@@ -4,9 +4,6 @@ var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto',
     function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto) {
         $log.info("BaseReviewController()");
-
-        $scope.searchByOid = "1.2.246.562.5.2013091114080489552096";
-        $scope.opetuskieli = 'kieli_fi';
         $scope.model = {
             routeParams: $routeParams,
             collapse: {
@@ -82,24 +79,24 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             });
         };
 
+        if (!angular.isUndefined($scope.model.koulutus) && !angular.isUndefined($scope.model.koulutus.oid)) {
+            var map = {};
+            angular.forEach(window.CONFIG.app.userLanguages, function(val) {
+                map[val] = val;
+            });
 
-        var map = {};
-        angular.forEach(window.CONFIG.app.userLanguages, function(val) {
-            map[val] = val;
-        });
+            angular.forEach($scope.model.koulutus.opetuskielis.meta, function(val, key) {
+                map[key] = key;
+            });
 
-        angular.forEach($scope.model.koulutus.opetuskielis.meta, function(val, key) {
-            map[key] = key;
-        });
-
-        angular.forEach(map, function(val, key) {
-            var lang = {};
-            $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
-            $scope.model.languages.push(lang);
-        });
-
-
-
+            angular.forEach(map, function(val, key) {
+                var lang = {'koodi_uri': val};
+                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
+                $scope.model.languages.push(lang);
+            });
+        }else{
+            console.error("No koulutus found?");
+        }
 
     }]);
 

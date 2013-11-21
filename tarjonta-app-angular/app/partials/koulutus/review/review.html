@@ -1,5 +1,5 @@
-<div ng-controller="BaseReviewController">
-    <div ng-include="getKoulutusPartialName('review')"></div>
+<div ng-controller="BaseReviewController" ng-init="getKoulutusPartialName('review')">
+    <div ng-include="resultPageUri"></div>
 
     <hr>
     <div ng-click="model.collapse.model = !model.collapse.model">
