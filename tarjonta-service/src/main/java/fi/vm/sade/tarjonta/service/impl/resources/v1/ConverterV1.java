@@ -315,7 +315,7 @@ public class ConverterV1 {
         return valintakoeAjankohtas;
     }
 
-    private MonikielinenTeksti convertTekstiRDTOToMonikielinenTeksti(List<TekstiRDTO> tekstis) {
+    public MonikielinenTeksti convertTekstiRDTOToMonikielinenTeksti(List<TekstiRDTO> tekstis) {
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
         for (TekstiRDTO tekstiRDTO:tekstis){
@@ -385,6 +385,23 @@ public class ConverterV1 {
 
         return valintakoeAjankohtaRDTO;
 
+    }
+
+    public List<TekstiRDTO> convertSimpleMonikielinenTekstiDTO(MonikielinenTeksti monikielinenTeksti) {
+        if (monikielinenTeksti != null) {
+            List<TekstiRDTO> tekstis = new ArrayList<TekstiRDTO>();
+
+            for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getKaannoksetAsList())  {
+                TekstiRDTO tekstiRDTO = new TekstiRDTO();
+                tekstiRDTO.addKieliAndNimi(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+                tekstis.add(tekstiRDTO);
+
+            }
+
+            return tekstis;
+        } else {
+            return null;
+        }
     }
 
     private List<TekstiRDTO> convertMonikielinenTekstiToTekstiDTOs(MonikielinenTeksti monikielinenTeksti) {
