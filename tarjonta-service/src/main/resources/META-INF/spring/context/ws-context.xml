@@ -113,4 +113,51 @@
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaAdminService" implementor="#tarjontaAdminService" serviceName="tns:TarjontaAdminService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaPublicService" implementor="#tarjontaPublicService" serviceName="tns:TarjontaPublicService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
 
+
+
+    <!-- Swagger API listing resource -->
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+
+    <!-- Swagger writers -->
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+
+    <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">
+        <property name="address" value="/" />
+        <property name="serviceBeans">
+            <list>
+
+                <ref bean="tarjontaHakuResourceV1"/>
+                <ref bean="tarjontaHakukohdeResourceV1"/>
+                <!-- your resources go here -->
+                <!-- ... -->
+                <!-- ... -->
+                <!-- Swagger API Listing resource -->
+                <ref bean="swaggerResourceJSON" />
+            </list>
+        </property>
+        <property name="providers">
+            <list>
+                <!-- any other providers you need go here -->
+                <!-- ... -->
+                <!-- ... -->
+                <!-- required for writing swagger classes -->
+                <ref bean="resourceWriter" />
+                <ref bean="apiWriter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="resourcePackage" value="fi.vm.sade.tarjonta.service.resources.v1"/>
+        <property name="version" value="1.0.0"/>
+        <property name="basePath" value="http://localhost:9090"/>
+        <property name="title" value="Tarjonta resources"/>
+        <property name="description" value="Tarjonta offered resources"/>
+        <property name="contact" value=""/>
+        <property name="license" value="Apache 2.0 License"/>
+        <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+        <property name="scan" value="true"/>
+    </bean>
+
 </beans>

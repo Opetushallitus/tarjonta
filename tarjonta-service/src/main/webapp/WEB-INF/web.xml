@@ -33,9 +33,16 @@
     </servlet>
 
     <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/swagger/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>cxf</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
+
 
     <servlet-mapping>
         <servlet-name>healthcheck</servlet-name>

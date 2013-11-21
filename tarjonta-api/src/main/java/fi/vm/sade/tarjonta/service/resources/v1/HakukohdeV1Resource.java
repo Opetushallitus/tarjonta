@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
@@ -42,6 +44,7 @@ import javax.ws.rs.core.MediaType;
  * @author mlyly
  */
 @Path("/v1/hakukohde")
+@Api(value = "/v1/hakukohde", description = "Hakukohteen versio 1 operaatiot")
 public interface HakukohdeV1Resource {
 
     /**
@@ -62,6 +65,7 @@ public interface HakukohdeV1Resource {
 
     @GET
     @Path("{oid}")
+    @ApiOperation(value = "Palauttaan hakukohteen oid:lla", notes = "Operaatio palauttaa versio 1:sen mukaisen hakukohteen", response = HakukohdeV1RDTO.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(@PathParam("oid") String oid);
 
@@ -72,7 +76,7 @@ public interface HakukohdeV1Resource {
 
     @PUT
     @Path("/{oid}")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(@PathParam("oid") String hakukohdeOid,HakukohdeV1RDTO hakukohde);
 
