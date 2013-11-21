@@ -63,7 +63,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
-    private boolean kaksoisTutkinto;
+
 
     private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
 
@@ -334,11 +334,5 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakukohteenNimet = hakukohteenNimet;
     }
 
-    public boolean isKaksoisTutkinto() {
-        return kaksoisTutkinto;
-    }
 
-    public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
-        this.kaksoisTutkinto = kaksoisTutkinto;
-    }
 }

@@ -101,6 +101,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
         t.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
+        t.setKaksoisTutkinto(s.isKaksoisTutkinto());
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());
         t.setLiitteidenToimitusosoite(getConversionService().convert(s.getLiitteidenToimitusOsoite(), OsoiteRDTO.class));

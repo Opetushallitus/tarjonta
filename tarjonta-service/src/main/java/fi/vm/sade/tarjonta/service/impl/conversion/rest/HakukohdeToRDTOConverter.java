@@ -67,7 +67,7 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         if (hakukohde.getHakuaikaLoppuPvm() != null) {
             hakukohdeRDTO.setHakuaikaLoppuPvm(hakukohde.getHakuaikaLoppuPvm());
         }
-        hakukohdeRDTO.setKaksoisTutkinto(hakukohde.isKaksoisTutkinto());
+
         hakukohdeRDTO.setSahkoinenToimitusOsoite(hakukohde.getSahkoinenToimitusOsoite());
         hakukohdeRDTO.setSoraKuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getSoraKuvausKoodiUri()));
         hakukohdeRDTO.setTila(hakukohde.getTila().name());
