@@ -161,12 +161,14 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakukohteen sora-kuvaukset", notes = "Listaa hakukohteen sora-kuvaukset, parametrinä annetaan hakukohteen oid", response = HashMap.class)
     public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Lisää hakukohteelle sora-kuvaukset", notes = "Lisää hakukohteelle sora-kuvaukset, poistaa mahdolliset vanhat", response = HashMap.class)
     public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, HashMap<String,String> sorat);
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
