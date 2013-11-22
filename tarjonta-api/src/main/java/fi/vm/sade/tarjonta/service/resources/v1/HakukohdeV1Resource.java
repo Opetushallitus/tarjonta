@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -147,26 +148,26 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/{oid}/valintaperustekuvaus")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Hakukohteen valintaperusteet", notes = "Listaa hakukohteen valintaperusteet, parametrinä annetaan hakukohteen oid", response = TekstiRDTO.class)
-    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid);
+    @ApiOperation(value = "Hakukohteen valintaperusteet", notes = "Listaa hakukohteen valintaperusteet, parametrinä annetaan hakukohteen oid", response = HashMap.class)
+    public ResultV1RDTO<HashMap<String,String>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/valintaperustekuvaus")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Lisää hakukohteelle valintaperusteet", notes = "Lisää hakukohteelle valintaperusteet, poistaa mahdolliset vanhat", response = TekstiRDTO.class)
-    public ResultV1RDTO<List<TekstiRDTO>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> valintaPerusteet);
+    @ApiOperation(value = "Lisää hakukohteelle valintaperusteet", notes = "Lisää hakukohteelle valintaperusteet, poistaa mahdolliset vanhat", response = HashMap.class)
+    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, HashMap<String,String> valintaPerusteet);
 
     @GET
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<List<TekstiRDTO>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid);
+    public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<TekstiRDTO> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, List<TekstiRDTO> sorat);
+    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, HashMap<String,String> sorat);
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
      *

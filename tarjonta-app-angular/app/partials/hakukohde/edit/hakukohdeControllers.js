@@ -96,6 +96,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
+    console.log('GOT HAKUKOHDE: ', $scope.model.hakukohde);
+
     var removeLisatieto = function(koodi){
 
         var foundLisatieto;
