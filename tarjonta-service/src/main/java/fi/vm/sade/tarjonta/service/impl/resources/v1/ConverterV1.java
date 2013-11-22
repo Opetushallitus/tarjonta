@@ -387,6 +387,29 @@ public class ConverterV1 {
 
     }
 
+    public MonikielinenTeksti convertStringHashMapToMonikielinenTeksti(HashMap<String,String> tekstit) {
+        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+
+        for (String key : tekstit.keySet()) {
+            monikielinenTeksti.addTekstiKaannos(key,tekstit.get(key));
+        }
+
+
+        return monikielinenTeksti;
+    }
+
+    public HashMap<String,String> convertMonikielinenTekstiToStringHashMap(MonikielinenTeksti monikielinenTeksti) {
+
+        HashMap<String,String> resultMap = new HashMap<String,String>();
+
+        for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getKaannoksetAsList()) {
+            resultMap.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+        }
+
+        return resultMap;
+
+    }
+
     public List<TekstiRDTO> convertSimpleMonikielinenTekstiDTO(MonikielinenTeksti monikielinenTeksti) {
         if (monikielinenTeksti != null) {
             List<TekstiRDTO> tekstis = new ArrayList<TekstiRDTO>();
