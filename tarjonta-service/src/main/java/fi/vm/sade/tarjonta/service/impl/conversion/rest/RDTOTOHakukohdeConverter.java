@@ -67,7 +67,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         hakukohde.setYlinValintaPistemaara(hakukohdeRDTO.getYlinValintapistemaara());
 
         if (hakukohdeRDTO.getLisatiedot() != null){
-            hakukohde.setLisatiedot(convertTekstiRDTOToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
+            hakukohde.setLisatiedot(convertStringHashMapToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
         }
 
         if (hakukohdeRDTO.getHakukelpoisuusvaatimusUris() != null) {
@@ -144,6 +144,19 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
             monikielinenTeksti.addTekstiKaannos(tekstiKaannos);
         }
         return monikielinenTeksti;
+    }
+
+    private MonikielinenTeksti convertStringHashMapToMonikielinenTeksti(HashMap<String,String> tekstis) {
+
+        MonikielinenTeksti teksti = new MonikielinenTeksti();
+
+        for(String key : tekstis.keySet()) {
+
+            teksti.addTekstiKaannos(key,tekstis.get(key));
+
+        }
+
+        return teksti;
     }
 
     private MonikielinenTeksti convertTekstiRDTOToMonikielinenTeksti(List<TekstiRDTO> tekstis) {

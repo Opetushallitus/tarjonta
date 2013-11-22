@@ -53,9 +53,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private Date liitteidenToimitusPvm;
 
-    private List<TekstiRDTO> lisatiedot;
+    private HashMap<String,String> lisatiedot;
 
-    private List<TekstiRDTO> valintaperusteKuvaukset;
+    private HashMap<String,String> valintaperusteKuvaukset;
+
+    private HashMap<String,String> soraKuvaukset;
 
     private boolean kaytetaanJarjestelmanValintaPalvelua;
 
@@ -201,30 +203,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.liitteidenToimitusPvm = liitteidenToimitusPvm;
     }
 
-    public List<TekstiRDTO> getLisatiedot() {
-
-        if (lisatiedot == null) {
-            lisatiedot = new ArrayList<TekstiRDTO>();
-        }
-
-        return lisatiedot;
-    }
-
-    public void setLisatiedot(List<TekstiRDTO> lisatiedot) {
-        this.lisatiedot = lisatiedot;
-    }
-
-    public List<TekstiRDTO> getValintaperusteKuvaukset() {
-        if (valintaperusteKuvaukset == null){
-            valintaperusteKuvaukset = new ArrayList<TekstiRDTO>();
-        }
-        return valintaperusteKuvaukset;
-    }
-
-    public void setValintaperusteKuvaukset(List<TekstiRDTO> valintaperusteKuvaukset) {
-        this.valintaperusteKuvaukset = valintaperusteKuvaukset;
-    }
-
     public boolean isKaytetaanJarjestelmanValintaPalvelua() {
         return kaytetaanJarjestelmanValintaPalvelua;
     }
@@ -335,4 +313,27 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
 
+    public HashMap<String, String> getLisatiedot() {
+        return lisatiedot;
+    }
+
+    public void setLisatiedot(HashMap<String, String> lisatiedot) {
+        this.lisatiedot = lisatiedot;
+    }
+
+    public HashMap<String, String> getValintaperusteKuvaukset() {
+        return valintaperusteKuvaukset;
+    }
+
+    public void setValintaperusteKuvaukset(HashMap<String, String> valintaperusteKuvaukset) {
+        this.valintaperusteKuvaukset = valintaperusteKuvaukset;
+    }
+
+    public HashMap<String, String> getSoraKuvaukset() {
+        return soraKuvaukset;
+    }
+
+    public void setSoraKuvaukset(HashMap<String, String> soraKuvaukset) {
+        this.soraKuvaukset = soraKuvaukset;
+    }
 }
