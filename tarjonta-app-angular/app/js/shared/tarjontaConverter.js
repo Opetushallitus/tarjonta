@@ -48,7 +48,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
                 apiModel.meta[i] = tempMeta[i];
             }
         }
-    }
+    };
 
     factory.addTekstisLanguage = function(apiModel, languageUri) {
         if (factory.isNull(apiModel[languageUri])) {
@@ -239,12 +239,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
-
-        //store kuvaus
-        angular.forEach(factory.STRUCTURE.DESC, function(value, key) {
-            uiModel[key] = value.default; 
-        });
-
+        
         uiModel.showSuccess = false;
 
         return uiModel;

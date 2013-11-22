@@ -49,6 +49,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      * @return the koulutusohjelma
      */
     public NimiV1RDTO getKoulutusohjelma() {
+        if(koulutusohjelma == null){
+            koulutusohjelma = new NimiV1RDTO();
+        }
+        
         return koulutusohjelma;
     }
 

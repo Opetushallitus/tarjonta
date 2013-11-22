@@ -369,10 +369,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
-        kk.getKoulutusohjelma()
-                .getMeta()
-                .put("kieli_fi",
-                        new KoodiV1RDTO("kieli_fi", 1, "Otsikko suomeksi"));
+        kk.getKoulutusohjelma().getTekstis().put("kieli_fi","Otsikko suomeksi");
 
         kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
@@ -388,8 +385,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
         kk.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("suunniteltu-kesto-uri", 1, null));
-        kk.setKoulutuksenAlkamisPvm(new DateTime(2013, 1, 1, 1, 1).toDate());
-        
+        kk.setKoulutuksenAlkamisPvm(new DateTime(2013, 1, 1, 1, 1).toDate());   
         kk.setSuunniteltuKestoArvo("1");
 
         return kk;

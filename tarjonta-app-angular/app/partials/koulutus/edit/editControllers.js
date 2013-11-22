@@ -48,8 +48,6 @@ app.controller('BaseEditController',
 
                     converter.createUiModels(uiModel);
 
-                    model.kuvaus = {};
-
                     /*
                      * HANDLE ROUTING
                      */
@@ -182,6 +180,7 @@ app.controller('BaseEditController',
                         }
 
                     });
+
                     //multi-select models, add version to the koodi 
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                         apiModel[key] = {'uris': {}};
@@ -195,6 +194,7 @@ app.controller('BaseEditController',
                             apiModel[key].uris[uri] = map[uri];
                         });
                     });
+
                     console.log(JSON.stringify(apiModel));
                     return apiModel;
                 };
@@ -254,31 +254,21 @@ app.controller('BaseEditController',
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliuri) {
                     var kuvaus = null;
-                    var type = "";
-
                     if (typeof boolIsKomo !== 'boolean') {
                         converter.throwError('An invalid boolean variable : ' + boolIsKomo);
                     }
 
                     if (boolIsKomo) {
-
                         kuvaus = $scope.model.kuvausKomo;
-                        type = "komo";
                     } else {
                         kuvaus = $scope.model.kuvausKomoto;
-                        type = "komoto"
                     }
 
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
                         converter.throwError("Description text object cannot be null.");
                     }
 
-                    if (angular.isUndefined(kuvaus[textEnum].tekstis[kieliuri])) {
-                        kuvaus[textEnum].tekstis[kieliuri] = '';
-                    }
-
-                    $scope.model.kuvaus[type + "_" + textEnum + "_" + kieliuri] = kuvaus[textEnum].tekstis[kieliuri];
-                    return $scope.model.kuvaus[type + "_" + textEnum + "_" + kieliuri];
+                    return kuvaus[textEnum].tekstis;
                 };
 
                 // TODO omaksi direktiivikseen tjsp..

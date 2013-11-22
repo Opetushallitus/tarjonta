@@ -87,12 +87,14 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
 
         // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
         kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
-        kkDto.setOpintojenLaajuus(convertToKoodiDTO(komo.getLaajuusArvo(), DEMO_LOCALE, "laajuusarvo"));
-        kkDto.setKoulutuskoodi(convertToKoodiDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
 
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), showMeta));
         kkDto.setKuvausKomoto(komotoKuvaus);
+
+        KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
+        komoKuvaus.putAll(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
+        kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
@@ -110,7 +112,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
                 kkDto.setKoulutusohjelma(convertToNimiDTO(komo.getLukiolinja(), DEMO_LOCALE, koulutusasteTyyppi + "->lukiolinja", false));
                 break;
         }
-
+        kkDto.setKoulutuskoodi(convertToKoodiDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
         kkDto.setTutkinto(koodiData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, "tutkinto")); //correct data mapping?
         kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, "OpintojenLaajuus (arvo uri)"));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
@@ -119,10 +121,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         kkDto.setKoulutusaste(koodiData(komo.getKoulutusAste(), DEMO_LOCALE, "KoulutusAste"));
         kkDto.setKoulutusala(koodiData(komo.getKoulutusala(), DEMO_LOCALE, "Koulutusala"));
         kkDto.setOpintoala(koodiData(komo.getOpintoala(), DEMO_LOCALE, "Opintoala"));
-        //kkDto.setTutkinto(komoData(komo.getTutkinto(), DEMO_LOCALE, "Tutkinto"));
         kkDto.setTutkintonimike(koodiData(komo.getTutkintonimike(), DEMO_LOCALE, "Tutkintonimike"));
         kkDto.setEqf(komoData(komo.getEqfLuokitus(), DEMO_LOCALE, "EQF", true));
-
         kkDto.setTeemas(convertToKoodiDTO(komoto.getTeemas(), DEMO_LOCALE, "teemas"));
         kkDto.setOpetuskielis(convertToKoodiDTO(komoto.getOpetuskielis(), DEMO_LOCALE, "Opetuskielis"));
         final String maksullisuus = komoto.getMaksullisuus();
@@ -136,10 +136,6 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         if (komoto.getHinta() != null) {
             kkDto.setHinta(komoto.getHinta().doubleValue());
         }
-
-        KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
-        komoKuvaus.putAll(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
-        kkDto.setKuvausKomo(komoKuvaus);
 
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);

@@ -69,25 +69,22 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     public void convertTekstiDTOToMonikielinenTeksti(KuvausV1RDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
         Map<TYPE, NimiV1RDTO> tekstis = tekstiDto;
         for (Map.Entry<TYPE, NimiV1RDTO> e : tekstis.entrySet()) {
-            Map<String, KoodiV1RDTO> restMeta = e.getValue().getMeta();
+            Map<String, String> textMap = e.getValue().getTekstis();
 
-            MonikielinenTeksti merge = tekstit.get(e.getKey());
+            MonikielinenTeksti mkMerge = tekstit.get(e.getKey());
 
-            if (merge == null) {
-                merge = new MonikielinenTeksti();
-                tekstit.put(e.getKey(), merge);
+            if (mkMerge == null) {
+                mkMerge = new MonikielinenTeksti();
+                tekstit.put(e.getKey(), mkMerge);
             }
-            //  MonikielinenTeksti merged = MonikielinenTeksti.merge(oldMt, newMt);
-            for (Map.Entry<String, KoodiV1RDTO> restKaannos : restMeta.entrySet()) {
-                String newArvo = restKaannos.getValue().getArvo();
-                TekstiKaannos searchByKielikoodi = searchByKielikoodi(merge, restKaannos.getKey());
-                searchByKielikoodi.setArvo(newArvo);
-                if (newArvo != null && newArvo.length() > 0) {
-                    System.err.println("new arvo : " + newArvo);
-                }
-                merge.addTekstiKaannos(searchByKielikoodi);
+
+            for (Map.Entry<String, String> entry : textMap.entrySet()) {
+                String text = entry.getValue();//text
+                TekstiKaannos tekstiKaannos = searchByKielikoodi(mkMerge, entry.getKey());
+                tekstiKaannos.setArvo(text);
+                mkMerge.addTekstiKaannos(tekstiKaannos);
             }
-            tekstit.put(e.getKey(), merge);
+            tekstit.put(e.getKey(), mkMerge);
         }
     }
 
