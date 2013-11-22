@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,28 +22,28 @@ import java.util.Map;
  *
  * @author Jani Wilén
  */
-public class UiMetaV1RDTO extends UiV1RDTO {
+public class KoodiUrisV1RDTO extends MetaV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    private Map<String, UiV1RDTO> meta;
+    private Map<String, Integer> uris;
 
-    public UiMetaV1RDTO() {
+    public KoodiUrisV1RDTO() {
     }
 
     /**
-     * @return the tekstis
+     * @return the uris
      */
-    public Map<String, UiV1RDTO> getMeta() {
-        if (meta == null) {
-            meta = new HashMap<String, UiV1RDTO>();
+    public Map<String, Integer> getUris() {
+        if (uris == null) {
+            uris = new HashMap<String, Integer>();
         }
-        return meta;
+        return uris;
     }
 
     /**
-     * @param tekstis the tekstis to set
+     * @param uris the uris to set
      */
-    public void setMeta(Map<String, UiV1RDTO> meta) {
-        this.meta = meta;
+    public void seUris(Map<String, Integer> uris) {
+        this.uris = uris;
     }
 }

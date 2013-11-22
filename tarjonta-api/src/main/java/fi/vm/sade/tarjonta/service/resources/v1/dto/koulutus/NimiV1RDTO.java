@@ -15,40 +15,35 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
- * @param <TYPE>
  */
-public class TekstiV1RDTO<TYPE extends Enum> implements Serializable {
+public class NimiV1RDTO extends MetaV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    private Map<TYPE, UiMetaV1RDTO> tekstis;
+    private Map<String, String> tekstis;
 
-    public TekstiV1RDTO() {
+    public NimiV1RDTO() {
     }
 
     /**
      * @return the tekstis
      */
-    public Map<TYPE, UiMetaV1RDTO> getTekstis() {
+    public Map<String, String> getTekstis() {
         if (tekstis == null) {
-            tekstis = new HashMap<TYPE, UiMetaV1RDTO>();
+            tekstis = new HashMap<String, String>();
         }
-
         return tekstis;
     }
 
     /**
      * @param tekstis the tekstis to set
      */
-    public void setTekstis(Map<TYPE, UiMetaV1RDTO> tekstis) {
-        this.tekstis = tekstis;
+    public void setTekstis(Map<String, String> teksti) {
+        this.tekstis = teksti;
     }
-
 }

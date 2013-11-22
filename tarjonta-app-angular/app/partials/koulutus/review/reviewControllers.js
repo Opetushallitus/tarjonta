@@ -17,6 +17,41 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             koulutus: $scope.koulutusModel.result // preloaded in route resolve, see
         };
 
+        $scope.lisatiedot = [
+            {type: "TAVOITTEET", isKomo: true},
+            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
+            {type: "PAAAINEEN_VALINTA", isKomo: false},
+            {type: "MAKSULLISUUS", isKomo: false},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
+            {type: "PATEVYYS", isKomo: true},
+            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
+            {type: "SISALTO", isKomo: false},
+            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
+            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
+            {type: "KANSAINVALISTYMINEN", isKomo: false},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
+            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
+            {type: "ARVIOINTIKRITEERIT", isKomo: false},
+            {type: "PAINOTUS", isKomo: false},
+            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
+            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
+        ];
+
+        $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, key, kieliuri) {
+            var kuvaus = null;
+            if (typeof boolIsKomo !== 'boolean') {
+                converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+            }
+
+            if (boolIsKomo) {
+                kuvaus = $scope.model.koulutus.kuvausKomo;
+            } else {
+                kuvaus = $scope.model.koulutus.kuvausKomoto;
+            }
+
+            return kuvaus[key].tekstis[kieliuri];
+        };
+
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
             $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
@@ -94,7 +129,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
                 $scope.model.languages.push(lang);
             });
-        }else{
+        } else {
             console.error("No koulutus found?");
         }
 

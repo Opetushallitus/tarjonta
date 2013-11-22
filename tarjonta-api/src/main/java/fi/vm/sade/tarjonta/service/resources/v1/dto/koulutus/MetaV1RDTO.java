@@ -15,18 +15,36 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Jani Wilén
  */
-public class SuunniteltuKestoV1RDTO extends UiV1RDTO {
+public class MetaV1RDTO extends KoodiV1RDTO {
 
     private static final long serialVersionUID = 1L;
+    private Map<String, KoodiV1RDTO> meta;
 
-    public SuunniteltuKestoV1RDTO() {
+    public MetaV1RDTO() {
     }
-    
-    public SuunniteltuKestoV1RDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
-        super(arvo, koodiUri, koodiVersio, koodiArvo);
+
+    /**
+     * @return the tekstis
+     */
+    public Map<String, KoodiV1RDTO> getMeta() {
+        if (meta == null) {
+            meta = new HashMap<String, KoodiV1RDTO>();
+        }
+        return meta;
     }
+
+    /**
+     * @param meta
+     */
+    public void setMeta(Map<String, KoodiV1RDTO> meta) {
+        this.meta = meta;
+    }
+
 }

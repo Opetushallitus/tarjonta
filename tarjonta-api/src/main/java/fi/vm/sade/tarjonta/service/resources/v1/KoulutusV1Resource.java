@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -61,7 +61,7 @@ public interface KoulutusV1Resource {
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid);
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta);
 
     @POST
     @Path("/LUKIOKOULUTUS")
@@ -101,7 +101,7 @@ public interface KoulutusV1Resource {
     @Path("{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
+    public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
@@ -112,24 +112,24 @@ public interface KoulutusV1Resource {
     @Path("{oid}/tekstis/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<KuvausV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/tekstis/komoto")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomotoTeksti> dto);
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomotoTeksti> dto);
 
     @GET
     @Path("{oid}/tekstis/komo")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
+    public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
     @Path("{oid}/tekstis/komo")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomoTeksti> dto);
+    public Response saveKomoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomoTeksti> dto);
 
     @DELETE
     @Path("{oid}/teksti/{key}/{uri}")

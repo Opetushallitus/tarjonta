@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KoulutuskoodiRelations {
 
-    private static final KoulutusKoodiToUiDTOConverter<UiV1RDTO> koulutusKoodiToKoodiModel = new KoulutusKoodiToUiDTOConverter<UiV1RDTO>();
+    private static final KoulutusKoodiToUiDTOConverter<KoodiV1RDTO> koulutusKoodiToKoodiModel = new KoulutusKoodiToUiDTOConverter<KoodiV1RDTO>();
     private static final Logger LOG = LoggerFactory.getLogger(KoulutuskoodiRelations.class);
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -90,10 +90,10 @@ public class KoulutuskoodiRelations {
      * @param locale
      * @return
      */
-    private UiV1RDTO listaaKoodi(final String uri, final Locale locale) {
+    private KoodiV1RDTO listaaKoodi(final String uri, final Locale locale) {
         Preconditions.checkNotNull(uri, "Koodisto URI was null - an unknown URI data cannot be loaded.");
         KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(uri);
-        return koulutusKoodiToKoodiModel.convertKoodiTypeToUiDTO(UiV1RDTO.class, koodiByUri, locale);
+        return koulutusKoodiToKoodiModel.convertKoodiTypeToUiDTO(KoodiV1RDTO.class, koodiByUri, locale);
     }
 
     private String[] koodisByAste(final boolean korkeakoulu) {

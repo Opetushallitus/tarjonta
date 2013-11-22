@@ -201,6 +201,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
+    
+    private transient boolean showMeta = true;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusArvo;
@@ -876,5 +878,19 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
+    }
+
+    /**
+     * @return the showMeta
+     */
+    public boolean isShowMeta() {
+        return showMeta;
+    }
+
+    /**
+     * @param showMeta the showMeta to set
+     */
+    public void setShowMeta(boolean showMeta) {
+        this.showMeta = showMeta;
     }
 }

@@ -42,8 +42,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     private TarjontaTila tila;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private TekstiV1RDTO<KomoTeksti> kuvausKomo;
-    private TekstiV1RDTO<KomotoTeksti> kuvausKomoto;
+    private KuvausV1RDTO<KomoTeksti> kuvausKomo;
+    private KuvausV1RDTO<KomotoTeksti> kuvausKomoto;
+
+    private String suunniteltuKestoArvo;
+    private KoodiV1RDTO suunniteltuKestoTyyppi;
 
     public KoulutusV1RDTO() {
     }
@@ -170,9 +173,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @return the kuvausKomo
      */
-    public TekstiV1RDTO<KomoTeksti> getKuvausKomo() {
+    public KuvausV1RDTO<KomoTeksti> getKuvausKomo() {
         if (kuvausKomo == null) {
-            kuvausKomo = new TekstiV1RDTO<KomoTeksti>();
+            kuvausKomo = new KuvausV1RDTO<KomoTeksti>();
         }
 
         return kuvausKomo;
@@ -181,16 +184,16 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @param kuvausKomo the kuvausKomo to set
      */
-    public void setKuvausKomo(TekstiV1RDTO<KomoTeksti> kuvausKomo) {
+    public void setKuvausKomo(KuvausV1RDTO<KomoTeksti> kuvausKomo) {
         this.kuvausKomo = kuvausKomo;
     }
 
     /**
      * @return the kuvausKomoto
      */
-    public TekstiV1RDTO<KomotoTeksti> getKuvausKomoto() {
+    public KuvausV1RDTO<KomotoTeksti> getKuvausKomoto() {
         if (kuvausKomoto == null) {
-            kuvausKomoto = new TekstiV1RDTO<KomotoTeksti>();
+            kuvausKomoto = new KuvausV1RDTO<KomotoTeksti>();
         }
         return kuvausKomoto;
     }
@@ -198,8 +201,36 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @param kuvausKomoto the kuvausKomoto to set
      */
-    public void setKuvausKomoto(TekstiV1RDTO<KomotoTeksti> kuvausKomoto) {
+    public void setKuvausKomoto(KuvausV1RDTO<KomotoTeksti> kuvausKomoto) {
         this.kuvausKomoto = kuvausKomoto;
+    }
+
+    /**
+     * @return the suunniteltuKestoArvo
+     */
+    public String getSuunniteltuKestoArvo() {
+        return suunniteltuKestoArvo;
+    }
+
+    /**
+     * @param suunniteltuKestoArvo the suunniteltuKestoArvo to set
+     */
+    public void setSuunniteltuKestoArvo(String suunniteltuKestoArvo) {
+        this.suunniteltuKestoArvo = suunniteltuKestoArvo;
+    }
+
+    /**
+     * @return the suunniteltuKestoTyyppi
+     */
+    public KoodiV1RDTO getSuunniteltuKestoTyyppi() {
+        return suunniteltuKestoTyyppi;
+    }
+
+    /**
+     * @param suunniteltuKestoTyyppi the suunniteltuKestoTyyppi to set
+     */
+    public void setSuunniteltuKestoTyyppi(KoodiV1RDTO suunniteltuKestoTyyppi) {
+        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
 }

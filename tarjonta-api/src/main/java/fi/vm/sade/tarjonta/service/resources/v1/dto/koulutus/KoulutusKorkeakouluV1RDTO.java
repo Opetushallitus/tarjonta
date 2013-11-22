@@ -22,23 +22,24 @@ import java.util.Date;
  */
 public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
-    private UiMetaV1RDTO koulutusohjelma;
     private static final long serialVersionUID = 1L;
+    private NimiV1RDTO koulutusohjelma;
+
     private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
      */
-    private SuunniteltuKestoV1RDTO suunniteltuKesto;
-    private UiMetaV1RDTO opetuskielis;
-    private UiMetaV1RDTO opetusmuodos;
+
+    private KoodiUrisV1RDTO opetuskielis;
+    private KoodiUrisV1RDTO opetusmuodos;
     /*
      * KK
      */
     private Boolean opintojenMaksullisuus;
-    private UiMetaV1RDTO pohjakoulutusvaatimukset;
-    private UiMetaV1RDTO teemas;
+    private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
+    private KoodiUrisV1RDTO teemas;
     private Date koulutuksenAlkamisPvm;
-    private UiMetaV1RDTO ammattinimikkeet;
+    private KoodiUrisV1RDTO ammattinimikkeet;
     private Double hinta;
 
     public KoulutusKorkeakouluV1RDTO() {
@@ -47,104 +48,15 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @return the koulutusohjelma
      */
-    public UiMetaV1RDTO getKoulutusohjelma() {
-        if (koulutusohjelma == null) {
-            koulutusohjelma = new UiMetaV1RDTO();
-        }
+    public NimiV1RDTO getKoulutusohjelma() {
         return koulutusohjelma;
     }
 
     /**
      * @param koulutusohjelma the koulutusohjelma to set
      */
-    public void setKoulutusohjelma(UiMetaV1RDTO koulutusohjelma) {
+    public void setKoulutusohjelma(NimiV1RDTO koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
-    }
-
-    /**
-     * @return the opintojenMaksullisuus
-     */
-    public Boolean getOpintojenMaksullisuus() {
-        return opintojenMaksullisuus;
-    }
-
-    /**
-     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
-     */
-    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
-        this.opintojenMaksullisuus = opintojenMaksullisuus;
-    }
-
-    /**
-     * @return the opetuskielis
-     */
-    public UiMetaV1RDTO getOpetuskielis() {
-        if (opetuskielis == null) {
-            opetuskielis = new UiMetaV1RDTO();
-        }
-
-        return opetuskielis;
-    }
-
-    /**
-     * @param opetuskielis the opetuskielis to set
-     */
-    public void setOpetuskielis(UiMetaV1RDTO opetuskielis) {
-        this.opetuskielis = opetuskielis;
-    }
-
-    /**
-     * @return the opetusmuodos
-     */
-    public UiMetaV1RDTO getOpetusmuodos() {
-        if (opetusmuodos == null) {
-            opetusmuodos = new UiMetaV1RDTO();
-        }
-
-        return opetusmuodos;
-    }
-
-    /**
-     * @param opetusmuodos the opetusmuodos to set
-     */
-    public void setOpetusmuodos(UiMetaV1RDTO opetusmuodos) {
-        this.opetusmuodos = opetusmuodos;
-    }
-
-    /**
-     * @return the pohjakoulutusvaatimukset
-     */
-    public UiMetaV1RDTO getPohjakoulutusvaatimukset() {
-        if (pohjakoulutusvaatimukset == null) {
-            pohjakoulutusvaatimukset = new UiMetaV1RDTO();
-        }
-
-        return pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
-     */
-    public void setPohjakoulutusvaatimukset(UiMetaV1RDTO pohjakoulutusvaatimukset) {
-        this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * @return the teemas
-     */
-    public UiMetaV1RDTO getTeemas() {
-        if (teemas == null) {
-            teemas = new UiMetaV1RDTO();
-        }
-
-        return teemas;
-    }
-
-    /**
-     * @param teemas the teemas to set
-     */
-    public void setTeemas(UiMetaV1RDTO teemas) {
-        this.teemas = teemas;
     }
 
     /**
@@ -162,6 +74,92 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
+     * @return the opetuskielis
+     */
+    public KoodiUrisV1RDTO getOpetuskielis() {
+        if (opetuskielis == null) {
+            opetuskielis = new KoodiUrisV1RDTO();
+        }
+
+        return opetuskielis;
+    }
+
+    /**
+     * @param opetuskielis the opetuskielis to set
+     */
+    public void setOpetuskielis(KoodiUrisV1RDTO opetuskielis) {
+        this.opetuskielis = opetuskielis;
+    }
+
+    /**
+     * @return the opetusmuodos
+     */
+    public KoodiUrisV1RDTO getOpetusmuodos() {
+        if (opetusmuodos == null) {
+            opetusmuodos = new KoodiUrisV1RDTO();
+        }
+
+        return opetusmuodos;
+    }
+
+    /**
+     * @param opetusmuodos the opetusmuodos to set
+     */
+    public void setOpetusmuodos(KoodiUrisV1RDTO opetusmuodos) {
+        this.opetusmuodos = opetusmuodos;
+    }
+
+    /**
+     * @return the opintojenMaksullisuus
+     */
+    public Boolean getOpintojenMaksullisuus() {
+        return opintojenMaksullisuus;
+    }
+
+    /**
+     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
+     */
+    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
+        this.opintojenMaksullisuus = opintojenMaksullisuus;
+    }
+
+    /**
+     * @return the pohjakoulutusvaatimukset
+     */
+    public KoodiUrisV1RDTO getPohjakoulutusvaatimukset() {
+        if (pohjakoulutusvaatimukset == null) {
+            pohjakoulutusvaatimukset = new KoodiUrisV1RDTO();
+        }
+
+        return pohjakoulutusvaatimukset;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
+     */
+    public void setPohjakoulutusvaatimukset(KoodiUrisV1RDTO pohjakoulutusvaatimukset) {
+        this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
+    }
+
+    /**
+     * @return the teemas
+     */
+    public KoodiUrisV1RDTO getTeemas() {
+        if (teemas == null) {
+            teemas = new KoodiUrisV1RDTO();
+        }
+
+        return teemas;
+    }
+
+    /**
+     * @param teemas the teemas to set
+     */
+    public void setTeemas(KoodiUrisV1RDTO teemas) {
+        this.teemas = teemas;
+    }
+
+    /**
      * @return the koulutuksenAlkamisPvm
      */
     public Date getKoulutuksenAlkamisPvm() {
@@ -176,25 +174,11 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
-     * @return the suunniteltuKesto
-     */
-    public SuunniteltuKestoV1RDTO getSuunniteltuKesto() {
-        return suunniteltuKesto;
-    }
-
-    /**
-     * @param suunniteltuKesto the suunniteltuKesto to set
-     */
-    public void setSuunniteltuKesto(SuunniteltuKestoV1RDTO suunniteltuKesto) {
-        this.suunniteltuKesto = suunniteltuKesto;
-    }
-
-    /**
      * @return the ammattinimikkeet
      */
-    public UiMetaV1RDTO getAmmattinimikkeet() {
+    public KoodiUrisV1RDTO getAmmattinimikkeet() {
         if (ammattinimikkeet == null) {
-            ammattinimikkeet = new UiMetaV1RDTO();
+            ammattinimikkeet = new KoodiUrisV1RDTO();
         }
 
         return ammattinimikkeet;
@@ -203,7 +187,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     /**
      * @param ammattinimikkeet the ammattinimikkeet to set
      */
-    public void setAmmattinimikkeet(UiMetaV1RDTO ammattinimikkeet) {
+    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
     }
 
@@ -220,4 +204,5 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     public void setHinta(Double hinta) {
         this.hinta = hinta;
     }
+
 }

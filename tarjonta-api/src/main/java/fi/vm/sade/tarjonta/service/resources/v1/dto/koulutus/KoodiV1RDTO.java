@@ -21,23 +21,38 @@ import java.io.Serializable;
  *
  * @author Jani Wilén
  */
-public class KoodiUriV1DTO implements Serializable {
+public class KoodiV1RDTO extends KieliV1RDTO {
 
     private static final long serialVersionUID = 1L;
+
     private String uri;
-    private String versio;
+    private Integer versio;
     private String arvo;
     private String kaannos;
 
-    public KoodiUriV1DTO() {
+    public KoodiV1RDTO() {
     }
 
-    public KoodiUriV1DTO(String uri, String versio, String arvo) {
+    public KoodiV1RDTO(String uri, Integer versio, String arvo) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;
     }
-    
+
+    public KoodiV1RDTO(String uri, Integer versio, String arvo, String kaannos) {
+        this.uri = uri;
+        this.versio = versio;
+        this.arvo = arvo;
+        this.kaannos = kaannos;
+    }
+
+    public void setKoodi(String uri, Integer versio, String arvo, String kaannos) {
+        this.uri = uri;
+        this.versio = versio;
+        this.arvo = arvo;
+        this.kaannos = kaannos;
+    }
+
     /**
      * @return the uri
      */
@@ -55,14 +70,14 @@ public class KoodiUriV1DTO implements Serializable {
     /**
      * @return the versio
      */
-    public String getVersio() {
+    public Integer getVersio() {
         return versio;
     }
 
     /**
      * @param version the version to set
      */
-    public void setVersio(String versio) {
+    public void setVersio(Integer versio) {
         this.versio = versio;
     }
 
@@ -93,4 +108,5 @@ public class KoodiUriV1DTO implements Serializable {
     public void setKaannos(String kaannos) {
         this.kaannos = kaannos;
     }
+
 }
