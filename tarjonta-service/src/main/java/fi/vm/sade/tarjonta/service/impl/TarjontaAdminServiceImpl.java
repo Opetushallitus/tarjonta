@@ -231,7 +231,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                     break komotoLoop;
                 }
             }
-            return retVal;
+            return retVal;a
         }
     }
 
@@ -960,7 +960,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         //toteutus Ids
-        komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        if (hakukohdeOids != null && !hakukohdeOids.isEmpty()) {
+            komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        }
     }
 
     @Override
