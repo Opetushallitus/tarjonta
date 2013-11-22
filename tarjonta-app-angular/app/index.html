@@ -253,24 +253,6 @@ if(!(window.console && console.log)) {
                 }
             };
 
-
-/*             //
-            // Get current users authorisation info (/cas/myroles)
-            //
-            console.log("** Loading authentication info; from: ", window.CONFIG.env.casUrl);
-            init_counter++;
-            jQuery.ajax(window.CONFIG.env.casUrl, {
-                dataType: "json",
-                success: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = xhr;
-                    initFunction("AUTHENTICATION", xhr, status);
-                },
-                error: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = [];
-                    initFunction("AUTHENTICATION FAILED", xhr, status);
-                }
-            });
- */
             //
             // Get current users info (/cas/me)
             //
@@ -284,7 +266,6 @@ if(!(window.console && console.log)) {
                     initFunction("AUTHENTICATION", xhr, status);
                 },
                 error: function(xhr, status) {
-                	window.CONFIG.env.cas.userinfo = {lang:"fi"};
                     initFunction("AUTHENTICATION FAILED", xhr, status);
                 }
             });

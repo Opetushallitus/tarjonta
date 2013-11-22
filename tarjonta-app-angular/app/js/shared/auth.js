@@ -39,11 +39,13 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         var instance = {};
         instance.organisaatiot=[];
 
-        instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || {}:{lang:"fi", groups:[]};
-        instance.myroles = instance.userinfo.groups;
+        var defaultUserInfo = {lang:"fi", myroles:[]};
+        
+        instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || defaultUserInfo:defaultUserInfo;
+        instance.myroles = instance.userinfo.myroles;
         
         /**
-         * prosessoi roolilistan läpi ja poimii tietoja, esim kieli, organisaatiot
+         * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
          */
         var processRoleList=function(roolit) {
         	if(roolit!==undefined) {
@@ -61,12 +63,9 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         	}
         };
         
+        console.log("myroles:", instance.myroles);
+        
       	processRoleList(instance.myroles);
-
-//        instance.debug = function() {
-//            console.log("MyRolesModel.debug():");
-//            console.log("  roles: ", instance);
-//        };
 
         return instance;
     })();
@@ -107,13 +106,19 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
-        //$log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
+        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
+        
+        if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
+        	throw {goo:"bar"};
+        }
         var deferred = $q.defer();
-        //console.log("accessCheck().check()", service, orgOid, accessFunction);
+        console.log("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
-       	//console.log("getting url:", url);
+       	console.log("getting url:", url);
             	
-      	$http.get(url).then(function(result) {
+      	$http.get(url,{cache:true}).then(function(result) {
+           	console.log("got:", result);
+
         var ooids = result.data.split("/");
         
         for(var i=0;i<ooids.length;i++) {
@@ -124,6 +129,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         }
         deferred.reject(false);
         }, function(){ //failure func
+           	console.log("could not get url:", url);
             deferred.resolve(false);
         });
 
