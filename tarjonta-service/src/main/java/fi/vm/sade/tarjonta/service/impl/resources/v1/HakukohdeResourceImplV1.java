@@ -170,11 +170,35 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+
+            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String, String>>();
+
+            Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            if (hakukohde.getSoraKuvaus() != null && hakukohde.getSoraKuvaus().getKaannoksetAsList() != null) {
+
+                HashMap<String,String> resultHm = new HashMap<String, String>();
+                for (TekstiKaannos tekstiKaannos: hakukohde.getSoraKuvaus().getKaannoksetAsList()) {
+                    resultHm.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+                }
+               result.setResult(resultHm);
+            }
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            return result;
+
+        } catch (Exception exp) {
+            ResultV1RDTO<HashMap<String,String>> exceptionResult = new ResultV1RDTO<HashMap<String, String>>();
+            exceptionResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            exceptionResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            return exceptionResult;
+        }
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, HashMap<String,String> sorat){
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
