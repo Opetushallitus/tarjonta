@@ -98,13 +98,13 @@ public class Hakukohde extends TarjontaBaseEntity {
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> hakukelpoisuusVaatimukset = new HashSet<String>();
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hakukohde_monikielinen_nimi_id")
     private MonikielinenTeksti hakukohdeMonikielinenNimi;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
     @Column(name = "valintaperustekuvaus_koodi_uri")

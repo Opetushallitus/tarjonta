@@ -29,7 +29,10 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 collapse: {
                     model : true
                 },
-                hakukohde : {}
+                hakukohde : {
+                    valintaperusteKuvaukset : [],
+                    soraKuvaukset : []
+                }
             }
 
 
