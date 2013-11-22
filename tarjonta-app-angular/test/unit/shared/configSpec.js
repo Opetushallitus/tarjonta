@@ -17,7 +17,9 @@ describe('config', function() {
     var CONFIG_ENV_MOCK = {
         "env": {
             "key-env-1": "mock-value-env-1",
-            "key-env-2": "mock-value-env-2"
+            "key-env-2": "mock-value-env-2",
+            cas:{userinfo:{}}
+
         }, "app": {
             "key-app-1": "mock-value-app-1"
         }
