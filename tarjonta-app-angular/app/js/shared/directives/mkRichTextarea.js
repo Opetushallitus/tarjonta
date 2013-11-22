@@ -16,8 +16,6 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	$scope.langs = [];
     	$scope.userLangs = window.CONFIG.app.userLanguages;
     	$scope.selectedLangs = [];
-    	$scope.data = {};
-    	$scope.model = {};
     	
     	$scope.selectedTab = {"kieli_fi":true};
     	
@@ -51,7 +49,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         templateUrl: "js/shared/directives/mkRichTextarea.html",
         controller: controller,
         scope: {
-            model: "=", // map jossa kieliuri -> teksti
+            model: "=",  // map jossa kieliuri -> teksti, esim. {kieli_fi: "Suomeksi", kieli_sv: "På svenska"}
         	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
         }
     }
