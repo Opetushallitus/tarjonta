@@ -229,7 +229,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                     break komotoLoop;
                 }
             }
-            return retVal;a
+            return retVal;
         }
     }
 
