@@ -15,14 +15,14 @@
  */
 package fi.vm.sade.tarjonta.service.auth;
 
-import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import org.springframework.security.access.AccessDeniedException;
 
-public class NotAuthorizedException extends TarjontaBusinessException {
+public class NotAuthorizedException extends AccessDeniedException {
 
     private static final long serialVersionUID = 1L;
 
     public NotAuthorizedException(String message) {
-        super(message, message);
+        super(message);
     }
 
 }
