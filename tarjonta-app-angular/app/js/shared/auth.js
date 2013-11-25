@@ -39,10 +39,10 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         var instance = {};
         instance.organisaatiot=[];
 
-        var defaultUserInfo = {lang:"fi", myroles:[]};
+        var defaultUserInfo = {lang:"fi", groups:[]};
         
         instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || defaultUserInfo:defaultUserInfo;
-        instance.myroles = instance.userinfo.myroles;
+        instance.myroles = instance.userinfo.groups;
         
         /**
          * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
@@ -63,7 +63,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         	}
         };
         
-        console.log("myroles:", instance.myroles);
+//        console.log("myroles:", instance.myroles);
         
       	processRoleList(instance.myroles);
 
@@ -109,7 +109,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
         
         if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
-        	throw {goo:"bar"};
+        	throw {foo:"bar"};
         }
         var deferred = $q.defer();
         console.log("accessCheck().check()", service, orgOid, accessFunction);
@@ -117,7 +117,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
        	console.log("getting url:", url);
             	
       	$http.get(url,{cache:true}).then(function(result) {
-           	console.log("got:", result);
+        console.log("got:", result);
 
         var ooids = result.data.split("/");
         
@@ -127,8 +127,8 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                 return;
             }
         }
-        deferred.reject(false);
-        }, function(){ //failure func
+        deferred.resolve(false);
+        }, function(){ //failure funktio
            	console.log("could not get url:", url);
             deferred.resolve(false);
         });

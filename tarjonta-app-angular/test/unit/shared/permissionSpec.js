@@ -19,6 +19,13 @@ describe('TarjontaPermissions', function() {
         env: {
             "tarjonta.localisations": [],
             "organisaatio.api.rest.url":"/",
+            "tarjontaRestUrlPrefix": "/",
+            "tarjonta.localisations": [ {
+            	  "value" : "Organisations typ",
+            	  "key" : "tarjonta.tila.LUONNOS",
+            	  "locale" : "sv",
+            	  "category" : "tarjonta"
+            	}],
             cas:{userinfo:{
             	  uid:"tiimi2",
             	  oid:"1.2.246.562.24.67912964565",
@@ -32,9 +39,11 @@ describe('TarjontaPermissions', function() {
         }
     };
 
-    
-    
     beforeEach(module('auth'));
+    beforeEach(module('Tarjonta'));
+    beforeEach(module('localisation'));
+    beforeEach(module('Koodisto'));
+    beforeEach(module('TarjontaCache'));
 
     beforeEach(function(){
         module(function ($provide) {
@@ -55,16 +64,96 @@ describe('TarjontaPermissions', function() {
     	     |-1.2.4  (ru)
     	     |-1.2.5  (read)
     	*/
+    	
+    	var koulutushaku=function(oid){
+    		return {
+          	  "result" : {
+          		    "tulokset" : [ {
+          		      "oid" : oid,
+          		      "version" : 0,
+          		      "nimi" : {
+          		        "fi" : "Aalto-korkeakoulusäätiö"
+          		      },
+          		      "tulokset" : [ {
+          		        "oid" : "1.2.246.562.5.2013112010332461416361",
+          		        "nimi" : {
+          		          "fi" : "Finnish name",
+          		          "sv" : "swedish name",
+          		          "en" : "English name"
+          		        },
+          		        "kausi" : {
+          		          "fi" : "Syksy",
+          		          "sv" : "Höst",
+          		          "en" : "Autumn"
+          		        },
+          		        "vuosi" : 2013,
+          		        "tila" : "LUONNOS",
+          		        "koulutusasteTyyppi" : "KORKEAKOULUTUS",
+          		        "koulutuslaji" : {
+          		        }
+          		      } ]
+          		    } ],
+          		    "tuloksia" : 1
+          		  },
+          		  "status" : "OK"
+          		};
+    	};
+    	
+    	var hakukohdehaku=function(oid){
+    		return {
+    			  "result" : {
+    				    "tulokset" : [ {
+    				      "oid" : oid,
+    				      "version" : 0,
+    				      "nimi" : {
+    				        "fi" : "Optima, Jakobstad, Trädgårdsgatan",
+    				        "sv" : "Optima, Jakobstad, Trädgårdsgatan"
+    				      },
+    				      "tulokset" : [ {
+    				        "oid" : "1.2.246.562.5.2013092415391057849157",
+    				        "nimi" : {
+    				          "fi" : "Tuotteen suunnittelun ja valmistuksen koulutusohjelma, artesaani",
+    				          "sv" : "Utbildningsprogram för produktplanering och -tillverkning, artesan",
+    				          "en" : "Tuotteen suunnittelun ja valmistuksen koulutusohjelma, artesaani"
+    				        },
+    				        "kausi" : {
+    				          "fi" : "Syksy",
+    				          "sv" : "Höst",
+    				          "en" : "Autumn"
+    				        },
+    				        "vuosi" : 2014,
+              		        "tila" : "LUONNOS",
+    				        "koulutusasteTyyppi" : "AMMATILLINEN_PERUSKOULUTUS",
+    				        "pohjakoulutusvaatimus" : {
+    				          "fi" : "PK",
+    				          "sv" : "GR",
+    				          "en" : "PK"
+    				        },
+    				        "koulutuslaji" : {
+    				          "fi" : "Nuorten koulutus",
+    				          "sv" : "Utbildning för unga",
+    				          "en" : "Education and training for young"
+    				        }
+    				      } ]
+    				    } ],
+    				    "tuloksia" : 1
+    				  },
+    				  "status" : "OK"
+    				}
+    	}
     	     
         $httpBackend.whenGET('/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
         $httpBackend.whenGET('/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
         $httpBackend.whenGET('/organisaatio/1.2.5/parentoids').respond("1/1.2/1.2.5");
-        //console.log("$httpBackend:", $httpBackend);
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5').respond(koulutushaku('1.2.5'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4').respond(koulutushaku('1.2.4'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3').respond(koulutushaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5').respond(hakukohdehaku('1.2.5'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4').respond(hakukohdehaku('1.2.4'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3').respond(hakukohdehaku('1.2.3'));
+        
     };
     
-
-    
-        
     describe('Permission service shold answer ', function($injector) {
         
     	/** executes test, called by test() */
@@ -87,16 +176,15 @@ describe('TarjontaPermissions', function() {
          * specify test, expected = expected result, orgoid org to test with
          */
     	var test = function(expected, message, orgoid, testFn){
-            it(expected + message, inject(function(PermissionService, $httpBackend) {
+            iit(expected + message, inject(function(PermissionService, $httpBackend) {
             	mockHttp($httpBackend);
-//            	console.log("orgoid:", orgoid);
-            	//console.log("testFn:", testFn);
+            	console.log("parameter oid:", orgoid);
+            	console.log("testFn:", testFn);
             	result = doTest(testFn(PermissionService, orgoid), $httpBackend);
-//            	console.log("testing access to " + orgoid + " expected result:" + expected + " actual result:" + result)
+            	console.log("testing access to " + orgoid + " expected result:" + expected + " actual result:" + result)
             	expect(expected).toEqual(result);
             }));
         }
-
 
     	//create koulutus
     	var testFn=function(PermissionService, orgOid){
@@ -104,28 +192,27 @@ describe('TarjontaPermissions', function() {
     	};
     	
     	test(true, " for create when user has CRUD permission", "1.2.3", testFn);
-    	test(false, " for create when user has RU permission", "1.2.4", testFn);
+    	test(false, " for create when user has RU permission","1.2.4", testFn);
     	test(false, " for create when user has R permission", "1.2.5", testFn);
 
     	//edit koulutus
-    	testFn=function(PermissionService, orgOid){
-    		return PermissionService.koulutus.canEdit(orgOid);
+    	testFn=function(PermissionService, oid){
+    		return PermissionService.koulutus.canEdit(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "1.2.3", testFn);
-    	test(true, " for edit when user has RU permission", "1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "1.2.5", testFn);
+    	test(true, " for edit when user has CRUD permission", "koulutus.1.2.3", testFn);
+    	test(true, " for edit when user has RU permission", "koulutus.1.2.4", testFn);
+    	test(false, " for edit when user has R permission", "koulutus.1.2.5", testFn);
 
     	//delete koulutus
-    	testFn=function(PermissionService, orgOid){
-    		return PermissionService.koulutus.canDelete(orgOid);
+    	testFn=function(PermissionService, oid){
+    		return PermissionService.koulutus.canDelete(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "1.2.3", testFn);
-    	test(false, " for edit when user has RU permission", "1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "1.2.5", testFn);
+    	test(true, " for edit when user has CRUD permission", "koulutus.1.2.3", testFn);
+    	test(false, " for edit when user has RU permission", "koulutus.1.2.4", testFn);
+    	test(false, " for edit when user has R permission", "koulutus.1.2.5", testFn);
 
-    	
     	//create hakukohde
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.hakukohde.canCreate(orgOid);
@@ -136,22 +223,22 @@ describe('TarjontaPermissions', function() {
     	test(false, " for create when user has R permission", "1.2.5", testFn);
 
     	//edit hakukohde
-    	testFn=function(PermissionService, orgOid){
-    		return PermissionService.hakukohde.canEdit(orgOid);
+    	testFn=function(PermissionService, oid){
+    		return PermissionService.hakukohde.canEdit(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "1.2.3", testFn);
-    	test(true, " for edit when user has RU permission", "1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "1.2.5", testFn);
+    	test(true, " for edit when user has CRUD permission", "hakukohde.1.2.3", testFn);
+    	test(true, " for edit when user has RU permission", "hakukohde.1.2.4", testFn);
+    	test(false, " for edit when user has R permission", "hakukohde.1.2.5", testFn);
 
     	//delete hakukohde
-    	testFn=function(PermissionService, orgOid){
-    		return PermissionService.hakukohde.canDelete(orgOid);
+    	testFn=function(PermissionService, oid){
+    		return PermissionService.hakukohde.canDelete(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "1.2.3", testFn);
-    	test(false, " for edit when user has RU permission", "1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "1.2.5", testFn);
+    	test(true, " for edit when user has CRUD permission", "hakukohde.1.2.3", testFn);
+    	test(false, " for edit when user has RU permission", "hakukohde.1.2.4", testFn);
+    	test(false, " for edit when user has R permission", "hakukohde.1.2.5", testFn);
 
     });
 

@@ -59,6 +59,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             searchTerms: args.terms,
             organisationOid: args.oid,
             tila: args.state,
+            hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year
         };
