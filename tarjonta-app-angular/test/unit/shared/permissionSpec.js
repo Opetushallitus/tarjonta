@@ -176,7 +176,7 @@ describe('TarjontaPermissions', function() {
          * specify test, expected = expected result, orgoid org to test with
          */
     	var test = function(expected, message, orgoid, testFn){
-            iit(expected + message, inject(function(PermissionService, $httpBackend) {
+            it(expected + message, inject(function(PermissionService, $httpBackend) {
             	mockHttp($httpBackend);
             	console.log("parameter oid:", orgoid);
             	console.log("testFn:", testFn);
