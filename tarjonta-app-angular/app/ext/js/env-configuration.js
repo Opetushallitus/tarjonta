@@ -98,8 +98,8 @@ window.CONFIG = {
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
         // Only for development, since production reads "/cas/myroles"
-        // "casUrl": "cas_myroles_tiimi2.json",
-        "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
+         "casUrl": "cas_myroles_tiimi2.json",
+        //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
         "place": "holder"
 

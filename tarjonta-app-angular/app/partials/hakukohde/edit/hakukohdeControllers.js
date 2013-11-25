@@ -84,8 +84,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
     };
     TarjontaService.haeKoulutukset(spec).then(function(data){
+
             angular.forEach(data.tulokset,function(tulos){
-                $scope.model.koulutusnimet.push(tulos.nimi);
+                if (tulos !== undefined && tulos.tulokset !== undefined) {
+
+                    angular.forEach(tulos.tulokset,function(toinenTulos){
+                        $scope.model.koulutusnimet.push(toinenTulos.nimi);
+                    });
+
+                }
+
             });
     });
 
@@ -245,6 +253,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     $scope.model.saveValmis = function() {
+
+        if ($scope.model.canSaveHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
@@ -277,15 +287,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
             });
         }
-
+        }
     };
 
 
     $scope.model.saveLuonnos = function() {
+
+        if ($scope.model.canSaveHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
 
+            console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
 
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
@@ -316,7 +329,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
             });
         }
-
+        }
     };
 
     $scope.model.takaisin = function() {
