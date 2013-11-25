@@ -26,7 +26,7 @@ describe('localisation', function() {
             "key-env-2": "mock-value-env-2",
             "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: THE_OFFICIAL_TEST_VALUE_FI, locale: "fi"}],
             "casUrl" : "cas_myroles_tiimi2",
-            cas:{userinfo:{}}
+            cas:{userinfo:{lang:"fi"}}
         }, "app": {
             "key-app-1": "mock-value-app-1"
         },
