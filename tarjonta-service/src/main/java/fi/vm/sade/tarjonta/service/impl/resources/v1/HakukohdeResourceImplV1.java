@@ -98,7 +98,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
-            String alkamisKausi, Integer alkamisVuosi) {
+            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -110,6 +110,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
+        if(hakukohdeOid!=null) {
+            q.setHakukohdeOid(hakukohdeOid);
+        }
 
         for (String s : hakukohdeTilas) {
             q.getTilat().add(

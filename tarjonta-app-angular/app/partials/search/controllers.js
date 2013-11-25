@@ -191,10 +191,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	};
 
 	$scope.$watch( 'selection.koulutukset', function( newObj, oldObj ) {
-		
-	    $scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
-	    $scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate(newObj);
-	    $scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate(newObj);
+		if(newObj.length!==0) {
+			$scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
+			$scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate(newObj);
+			$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate(newObj);
+		}
 
 	}, true);
 

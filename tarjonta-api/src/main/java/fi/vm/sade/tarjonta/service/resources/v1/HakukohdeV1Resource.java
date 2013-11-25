@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
@@ -185,7 +184,8 @@ public interface HakukohdeV1Resource {
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") List<String> hakukohdeTilas,
             @QueryParam("alkamisKausi") String alkamisKausi,
-            @QueryParam("alkamisVuosi") Integer alkamisVuosi
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @QueryParam("hakukohdeOid") String hakukohdeOid
             );
 
     /**
