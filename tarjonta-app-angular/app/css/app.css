@@ -378,26 +378,36 @@ input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
 }
 
-/* ilmoitusviestit */
+/* tarjontaControlsLayout / ilmoitusviestit */
 
-.msgInfo, .msgError, .msgOk {
+div.tarjontaControlsLayout .msgInfo, div.tarjontaControlsLayout .msgError, div.tarjontaControlsLayout .msgOk {
 	border-radius: 4px;	
 	padding: 40px 40px 40px 86px;
 	margin:18px 0 18px 0;
 	box-shadow: 0 2px 3px rgba(0,0,0,0.275);
 }
 
-.msgOk {
+div.tarjontaControlsLayout .msgOk {
 	background: #e4f4f9 url('../img/icon28-ok.png') 36px 36px no-repeat;
 }
 
-.msgInfo {
+div.tarjontaControlsLayout .msgInfo {
 	background: #e4f4f9 url('../img/icon28-info.png') 36px 36px no-repeat;
 }
 
-.msgError {
-	background: #e4f4f9 url('../img/icon28-error.png') 36px 36px no-repeat;
+div.tarjontaControlsLayout .msgError {
+	background: #fef3d3 url('../img/icon28-error.png') 36px 36px no-repeat;
 }
 
+div.tarjontaControlsLayout p {
+    margin:0;
+}
 
+div.tarjontaControlsLayout ul {
+    margin-top:0;
+    margin-bottom:0;
+}
 
+div.tarjontaControlsLayout p > p, div.tarjontaControlsLayout p > ul {
+    margin-top:0.33em;   
+}

@@ -1,0 +1,31 @@
+<div class="tarjontaControlsLayout">
+
+<div class="msgInfo" ng-show="showMessage()">
+    <p ng-repeat="m in notifs.message" data-ng-bind-html="t(m.tt, m.tp())"  ng-show="showMessage(m)"></p>
+</div>
+
+<span ng-repeat="b in buttons">
+	<input
+	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
+	    type="button"
+	    data-ng-click="b.action()"
+	    value="{{t(b.tt)}}"
+	    ng-disabled="b.disabled()"
+	    />
+</span>
+
+<div class="msgOk" ng-show="showSuccess()">
+    <p ng-repeat="m in notifs.success" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showSuccess(m)"></p>
+</div>
+
+<div class="msgError" ng-show="showError()">
+    <p ng-repeat="m in notifs.error" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showError(m)"></p>
+    <ul ng-show="showErrorDetail()">
+        <li ng-repeat="e in notifs.errorDetail" ng-show="showErrorDetail(m)"></li>
+    </ul>
+</div>
+
+<!-- piilodiv: tarvitaan jotta angular transcludoi alitagit -->
+<div ng-transclude style="display:none"></div>
+
+</div>
