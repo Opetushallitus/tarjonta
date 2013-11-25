@@ -15,18 +15,19 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import java.util.HashMap;
+
 /**
  *
  * @author Jani Wilén
+ * @param <TYPE>
  */
-public class SuunniteltuKestoV1RDTO extends UiV1RDTO {
+@ApiModel(value = "Kuvastekstien syöttämiseen ja hakemiseen käytettävä rajapintaolio")
+public class KuvausV1RDTO<TYPE extends Enum> extends HashMap<TYPE, NimiV1RDTO> {
 
     private static final long serialVersionUID = 1L;
 
-    public SuunniteltuKestoV1RDTO() {
-    }
-    
-    public SuunniteltuKestoV1RDTO(String arvo, String koodiUri, String koodiVersio, String koodiArvo) {
-        super(arvo, koodiUri, koodiVersio, koodiArvo);
+    public KuvausV1RDTO() {
     }
 }

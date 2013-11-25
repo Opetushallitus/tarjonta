@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
@@ -161,12 +160,14 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakukohteen sora-kuvaukset", notes = "Listaa hakukohteen sora-kuvaukset, parametrinä annetaan hakukohteen oid", response = HashMap.class)
     public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid);
 
     @POST
     @Path("/{oid}/sora")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Lisää hakukohteelle sora-kuvaukset", notes = "Lisää hakukohteelle sora-kuvaukset, poistaa mahdolliset vanhat", response = HashMap.class)
     public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, HashMap<String,String> sorat);
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
@@ -183,7 +184,8 @@ public interface HakukohdeV1Resource {
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") List<String> hakukohdeTilas,
             @QueryParam("alkamisKausi") String alkamisKausi,
-            @QueryParam("alkamisVuosi") Integer alkamisVuosi
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @QueryParam("hakukohdeOid") String hakukohdeOid
             );
 
     /**

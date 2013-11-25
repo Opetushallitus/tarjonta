@@ -15,40 +15,39 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
-import java.io.Serializable;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  * @author Jani Wilén
- * @param <TYPE>
  */
-public class TekstiV1RDTO<TYPE extends Enum> implements Serializable {
+@ApiModel(value = "Monen koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
+public class KoodiUrisV1RDTO extends MetaV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    private Map<TYPE, UiMetaV1RDTO> tekstis;
+    @ApiModelProperty(value = "Avain-arvopari, jossa avain on koodisto koodi uri ja arvo on koodin versionumero", required = true)
+    private Map<String, Integer> uris;
 
-    public TekstiV1RDTO() {
+    public KoodiUrisV1RDTO() {
     }
 
     /**
-     * @return the tekstis
+     * @return the uris
      */
-    public Map<TYPE, UiMetaV1RDTO> getTekstis() {
-        if (tekstis == null) {
-            tekstis = new HashMap<TYPE, UiMetaV1RDTO>();
+    public Map<String, Integer> getUris() {
+        if (uris == null) {
+            uris = new HashMap<String, Integer>();
         }
-
-        return tekstis;
+        return uris;
     }
 
     /**
-     * @param tekstis the tekstis to set
+     * @param uris the uris to set
      */
-    public void setTekstis(Map<TYPE, UiMetaV1RDTO> tekstis) {
-        this.tekstis = tekstis;
+    public void seUris(Map<String, Integer> uris) {
+        this.uris = uris;
     }
-
 }

@@ -80,8 +80,12 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         hakukohdeRDTO.setValintaperustekuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getValintaperustekuvausKoodiUri()));
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
         hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToHashMap(hakukohde.getLisatiedot()));
-
-        //hakukohdeRDTO.setValintaperusteKuvaukset(CommonToDTOConverter.convertMonikielinenTekstiToTekstiRDOT(hakukohde.getValintaperusteKuvaus()));
+        if (hakukohde.getValintaperusteKuvaus() != null) {
+        hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getValintaperusteKuvaus()));
+        }
+        if (hakukohde.getSoraKuvaus() != null) {
+            hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getSoraKuvaus()));
+        }
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));

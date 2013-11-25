@@ -44,7 +44,6 @@ app.directive('imageField', function($log, TarjontaService) {
 
             ret.promise.then(function(response) {
                 if (response.status === 'OK') {
-                    console.log(response)
                     $scope.base64 = response.result.base64data;
                     $scope.mime = response.result.mimeType;
                     $scope.filename = response.result.filename;

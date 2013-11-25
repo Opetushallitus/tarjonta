@@ -30,9 +30,10 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUriV1DTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.MetaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -40,6 +41,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +135,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             komoto.setHinta(new BigDecimal(dto.getHinta().toString()));
         }
 
-        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKesto().getKoodi(), "SuunniteltuKesto"), dto.getSuunniteltuKesto().getArvo());
+        komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKestoTyyppi(), "SuunniteltuKesto"), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet(komoto.getYhteyshenkilos());
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
@@ -141,33 +143,30 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         return komoto;
     }
 
-    private String convertToUri(final KoodiUriV1DTO dto, final String msg) {
-        Preconditions.checkNotNull(dto, "KoodiUriDTO object cannot be null! Error in field : %s.", msg);
-        Preconditions.checkNotNull(dto.getUri(), "KoodiUriDTO's koodisto koodi URI cannot be null! Error in field : %s.", msg);
-        Preconditions.checkNotNull(dto.getVersio(), "KoodiUriDTO's koodisto koodi version for koodi '%s' cannot be null! Error in field : %s.", dto.getUri(), msg);
+    private String convertToUri(final KoodiV1RDTO dto, final String msg) {
+        Preconditions.checkNotNull(dto, "KoodiV1RDTO object cannot be null! Error in field : %s.", msg);
+        Preconditions.checkNotNull(dto.getUri(), "KoodiV1RDTO's koodisto koodi URI cannot be null! Error in field : %s.", msg);
+        Preconditions.checkNotNull(dto.getVersio(), "KoodiV1RDTO's koodisto koodi version for koodi '%s' cannot be null! Error in field : %s.", dto.getUri(), msg);
 
-        String trimmedKoodiVersion = dto.getVersio().trim();
+        return convertToKoodiUri(dto.getUri(), dto.getVersio(), msg);
+    }
 
+    private String convertToKoodiUri(final String uri, final Integer version, final String msg) {
         //check data
-        if (trimmedKoodiVersion.isEmpty() || trimmedKoodiVersion.equals("-1")) {
+        Integer checkVersion = version;
+        if (checkVersion == null || checkVersion == -1) {
             //search latest koodi version for the koodi uri.
-            final KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(dto.getUri());
+            final KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(uri);
             Preconditions.checkNotNull(koodi, "Koodisto koodi not found! Error in field : " + msg);
-            dto.setVersio(koodi.getVersio() + "");
+            checkVersion = koodi.getVersio();
         }
 
-        return new StringBuilder(dto.getUri())
+        return new StringBuilder(uri)
                 .append('#')
-                .append(dto.getVersio()).toString();
+                .append(checkVersion).toString();
     }
 
-    private String convertToUri(final UiV1RDTO dto, final String msg) {
-        Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error field : " + msg);
-        Preconditions.checkNotNull(dto.getKoodi(), "UiDTO's KoodiUriDTO object cannot be null! Error in field : " + msg);
-        return convertToUri(dto.getKoodi(), msg);
-    }
-
-    private Set<KoodistoUri> convertToUris(final UiMetaV1RDTO dto, Set<KoodistoUri> koodistoUris, final String msg) {
+    private Set<KoodistoUri> convertToUris(final KoodiUrisV1RDTO dto, Set<KoodistoUri> koodistoUris, final String msg) {
         Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error field : " + msg);
 
         Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
@@ -175,15 +174,14 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             modifiedUris = Sets.<KoodistoUri>newHashSet();
         }
 
-        for (UiV1RDTO uiDto : dto.getMeta().values()) {
-            Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
-            modifiedUris.add(new KoodistoUri(convertToUri(uiDto.getKoodi(), msg)));
+        for (Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
+            modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
         }
 
         return modifiedUris;
     }
 
-    private MonikielinenTeksti convertToTexts(final UiMetaV1RDTO dto, MonikielinenTeksti mt, final String msg) {
+    private MonikielinenTeksti convertToTexts(final NimiV1RDTO dto, MonikielinenTeksti mt, final String msg) {
         Preconditions.checkNotNull(dto, "UiListDTO object cannot be null! Error field : " + msg);
         Preconditions.checkNotNull(dto.getMeta(), "UiListDTO's map of UiDTO objects cannot be null! Error in field : " + msg);
 
@@ -191,19 +189,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             mt = new MonikielinenTeksti();
         }
 
-        for (UiV1RDTO uiDto : dto.getMeta().values()) {
-            Preconditions.checkNotNull(uiDto.getKoodi(), "UI text's KoodiUriDTO object cannot be null! Error in field : " + msg);
-            Preconditions.checkNotNull(uiDto.getKoodi().getArvo(), "UI text's KoodiUriDTO object value cannot be null! Error in field : " + msg);
-            mt.addTekstiKaannos(convertToUri(uiDto.getKoodi(), msg), uiDto.getKoodi().getArvo());
+        for (Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
+            mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());
         }
 
         return mt;
-    }
-
-    private static String convertToValue(final UiV1RDTO dto, final String msg) {
-        Preconditions.checkNotNull(dto, "UiDTO object cannot be null! Error in field : " + msg);
-        Preconditions.checkNotNull(dto.getArvo(), "UiDTO's value cannot be null! Error in field : " + msg);
-
-        return dto.getArvo();
     }
 }

@@ -254,24 +254,23 @@ if(!(window.console && console.log)) {
                 }
             };
 
-
             //
-            // Get current users authorisation info (/cas/myroles)
+            // Get current users info (/cas/me)
             //
-            console.log("** Loading authentication info; from: ", window.CONFIG.env.casUrl);
+            console.log("** Loading user info; from: ", window.CONFIG.env.casUrl);
+ 			window.CONFIG.env.cas={}
             init_counter++;
             jQuery.ajax(window.CONFIG.env.casUrl, {
                 dataType: "json",
                 success: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = xhr;
+                	window.CONFIG.env.cas.userinfo = xhr;
                     initFunction("AUTHENTICATION", xhr, status);
                 },
                 error: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = [];
                     initFunction("AUTHENTICATION FAILED", xhr, status);
                 }
             });
-
+            
             //
             // Preload "tarjonta.tila"???
             //

@@ -15,17 +15,24 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
  *
  * @author jani
  */
+@ApiModel(value = "Kuvan syöttämiseen ja hakemiseen käytettävä rajapintaolio")
 public class KuvaV1RDTO implements Serializable {
 
+    @ApiModelProperty(value = "Koodisto kieli uri", required = false)
     private String kieliUri;
+    @ApiModelProperty(value = "Tiedoston alkuperäinen nimi", required = false)
     private String filename;
+    @ApiModelProperty(value = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = false)
     private String mimeType;
+    @ApiModelProperty(value = "Kuvan binaari base64-enkoodauksella", required = false)
     private String base64data;
 
     public KuvaV1RDTO() {

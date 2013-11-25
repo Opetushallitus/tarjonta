@@ -59,6 +59,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             searchTerms: args.terms,
             organisationOid: args.oid,
             tila: args.state,
+            hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year
         };
@@ -265,6 +266,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutus = function(arg, func) {
         console.log("getKoulutus()");
+        //param meta=false filter all meta fields
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
         return koulutus.get(arg, func);
     };

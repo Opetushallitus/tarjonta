@@ -18,9 +18,8 @@
 
 /**
  * Authentication module.
- * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.myroles"]
+ * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.userinfo"]
  */
-
 
 var app = angular.module("auth", ['ngResource', 'config']);
 
@@ -32,18 +31,21 @@ var OPH_ORG = "xxx";
 
 app.factory('MyRolesModel', function($http, $log, Config) {
 
-    console.log("MyRolesModel()");
+    //console.log("MyRolesModel()");
     OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
-        console.log("MyRolesModel.factory()");
 
         var instance = {};
         instance.organisaatiot=[];
-        instance.myroles = Config.env["cas.myroles"] || [];
+
+        var defaultUserInfo = {lang:"fi", groups:[]};
+        
+        instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || defaultUserInfo:defaultUserInfo;
+        instance.myroles = instance.userinfo.groups;
         
         /**
-         * prosessoi roolilistan läpi ja poimii tietoja, esim kieli, organisaatiot
+         * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
          */
         var processRoleList=function(roolit) {
         	if(roolit!==undefined) {
@@ -53,46 +55,17 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         				//poimi tarjonta roolit
         				if(roolit[i].indexOf("APP_TARJONTA")==0) {
         					var org = oidList[0].substring(1);
-                			console.log("adding org:", org);
+                			//console.log("adding org:", org);
         					instance.organisaatiot.push(org);
         				}
         			}
-        			
-        			if(roolit[i].indexOf('LANG_')==0) {
-        				instance.lang = roolit[i].substring(5);
-        				console.log("setting lang:", instance.lang);
-        			}
         		}
         	}
-        
         };
+        
+//        console.log("myroles:", instance.myroles);
         
       	processRoleList(instance.myroles);
-
-        instance.refresh = function() {
-            // TODO some timeout for the cache?
-            if (instance.myroles.length == 0) {
-                $http.get(Config.env.casUrl)
-                        .success(function(roolit) {
-                    console.log("MyRolesModel.factory() - roles loaded successfully from: " + Config.env.casUrl);
-                    instance.myroles = roolit;
-                  	processRoleList(instance.myroles);
-
-                })
-                        .error(function(data, status, headers, config) {
-                    console.log("MyRolesModel.factory() - FAILED to load roles from: " + Config.env.casUrl);
-                    console.log("MyRolesModel.factory() - data: " + data);
-                    console.log("MyRolesModel.factory() - status: " + status);
-                    console.log("MyRolesModel.factory() - headers: " + headers);
-                    console.log("MyRolesModel.factory() - config: " + config);
-                });
-            }
-        };
-
-        instance.debug = function() {
-            console.log("MyRolesModel.debug():");
-            console.log("  roles: ", instance);
-        };
 
         return instance;
     })();
@@ -100,145 +73,137 @@ app.factory('MyRolesModel', function($http, $log, Config) {
     return factory;
 });
 
-app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel) {
+app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config) {
 
-    var _startsWith = function(str, startWith) {
-        return str.slice(0, startWith.length) === startWith;
-    };
+	var ORGANISAATIO_URL_BASE;
+	
+	if(undefined!==Config.env){
+		ORGANISAATIO_URL_BASE=Config.env["organisaatio.api.rest.url"];
+	}
 
-    var _restOf = function(str, startWith) {
-        if (_startsWith(str, startWith)) {
-            return str.slice(startWith.length);
-        } else {
-            return str;
-        }
-    };
+	//console.log("prefix:", ORGANISAATIO_URL_BASE);
 
-    var _endsWith = function(str, endsWith) {
-        return str.slice(-endsWith.length) === endsWith;
-    };
-
-    var _beginningOf = function(str, endsWith) {
-        if (_endsWith(str, endsWith)) {
-            return str.slice(0, str.length - endsWith.length);
-        } else {
-            return str;
-        }
-    };
-
-
-
-    var isLoggedIn = function() {
-        $log.info("isLoggedIn()");
-        if (MyRolesModel.myroles.length > 0) {
-            return true;
-        }
-    };
-
-    var getUsername = function() {
-        $log.info("username()");
-        var entry = _.find(MyRolesModel.myroles, function(x) {
-            return _startsWith(x, USER);
-        });
-
-        if (entry) {
-            return _restOf(entry, USER);
-        } else {
-            return undefined;
-        }
-    };
-
-
-    // organisation check
+    // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
-        $log.info("readAccess()", service, org);
-        if (MyRolesModel.myroles.indexOf(service + READ + "_" + org) > -1 ||
-                MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
-                MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
-            return true;
-        }
+        //$log.info("readAccess()", service, org);
+    	return MyRolesModel.myroles.indexOf(service + READ + "_" + org) > -1 ||
+               MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
+               MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
     };
 
+    // CRUD ||UPDATE
     var updateAccess = function(service, org) {
-        $log.info("updateAccess()", servcice, org);
-        if (MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
-                MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
-            return true;
-        }
+        //$log.info("updateAccess()", service, org, MyRolesModel);
+        return MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
+                MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
     };
 
+    // CRUD 
     var crudAccess = function(service, org) {
-        $log.info("crudAccess()", servcice, org);
-        if (MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1) {
-            return true;
-        }
+//        $log.info("crudAccess()", service, org);
+        return MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
     };
 
+    //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
-        $log.info("accessCheck()", service, orgOid, accessFunction);
+        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
+        
+        if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
+        	throw {foo:"bar"};
+        }
         var deferred = $q.defer();
-        var waitTime = 10;
+        console.log("accessCheck().check()", service, orgOid, accessFunction);
+      	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
+       	console.log("getting url:", url);
+            	
+      	$http.get(url,{cache:true}).then(function(result) {
+        console.log("got:", result);
 
-        var check = function() {
-            $log.info("accessCheck().check()", service, orgOid, accessFunction);
-            MyRolesModel.refresh();
-            waitTime = waitTime + 500;
-            if (!isLoggedIn()) {
-                $timeout(check, waitTime);
-            } else {
-                // OK, is logged in - check organisations
-                $http.get(ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids").success(function(result) {
-                    var found = false;
-                    result.split("/").forEach(function(org) {
-                        if (accessFunction(service, org)) {
-                            found = true;
-                        }
-                    });
-                    if (found) {
-                        deferred.resolve();
-                    } else {
-                        deferred.reject();
-                    }
-                });
+        var ooids = result.data.split("/");
+        
+        for(var i=0;i<ooids.length;i++) {
+            if (accessFunction(service, ooids[i])) {
+                deferred.resolve(true);
+                return;
             }
-        };
-
-        $timeout(check, waitTime);
+        }
+        deferred.resolve(false);
+        }, function(){ //failure funktio
+           	console.log("could not get url:", url);
+            deferred.resolve(false);
+        });
 
         return deferred.promise;
     };
 
     return {
         getUsername: function() {
-            return getUsername();
+        	return Config.env.cas.userinfo.uid;
         },
         isLoggedIn: function() {
-            return isLoggedIn();
+        	return Config.env.cas.userinfo.uid!==undefined;
         },
-        readOrg: function(service, orgOid) {
-            return accessCheck(service, orgOid, readAccess);
+        /**
+         * onko käyttäjällä lukuoikeus, palauttaa promisen
+         * @param service
+         * @param orgOid
+         * @returns
+         */
+        readOrg: function(orgOid, service) {
+            return accessCheck(service||'APP_TARJONTA', orgOid, readAccess);
         },
-        updateOrg: function(service, orgOid) {
-            return accessCheck(service, orgOid, updateAccess);
+        /**
+         * onko käyttäjällä päivitysoikeus, palauttaa promisen
+         * @param service
+         * @param orgOid
+         * @returns
+         */
+        updateOrg: function(orgOid, service) {
+            return accessCheck(service||'APP_TARJONTA', orgOid, updateAccess);
         },
-        crudOrg: function(service, orgOid) {
-            return accessCheck(service, orgOid, crudAccess);
+        /**
+         * onko käyttäjällä crud oikeus, palauttaa promisen
+         * @param orgOid
+         * @param service
+         * @returns
+         */
+        crudOrg: function(orgOid, service) {
+//        	console.log("crudorg", orgOid, service);
+            return accessCheck(service||'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
          * Palauttaa käyttäjän kielen
          */
         getLanguage: function(){
-        	//TODO palauta kopio?
-        	return MyRolesModel.lang;
+        	return MyRolesModel.userinfo.lang;
+        },
+        /**
+         * Palauttaa käyttäjän oidin
+         */
+        getUserOid: function(){
+        	return MyRolesModel.userinfo.oid;
         },
 
         /**
-         * Palauttaa käyttäjän organisaatiot (tarjonta-app)
+         * Palauttaa käyttäjän etunimen
+         */
+        getFirstName: function(){
+        	return MyRolesModel.userinfo.firstName;
+        },
+
+        /**
+         * Palauttaa käyttäjän etunimen
+         */
+        getLastName: function(){
+        	return MyRolesModel.userinfo.lastName;
+        },
+
+        /**
+         * Palauttaa käyttäjän organisaatiot ('TARJONTA-APP')
          */
         getOrganisations: function(){
         	//TODO palauta kopio?
         	return MyRolesModel.organisaatiot;
-        	
         }
 
     };

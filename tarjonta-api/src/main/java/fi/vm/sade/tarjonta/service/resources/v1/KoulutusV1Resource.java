@@ -14,10 +14,13 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -56,99 +59,121 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
  * @author mlyly
  */
 @Path("/v1/koulutus")
+@Api(value = "/v1/koulutus", description = "Koulutuksen versio 1 operaatiot")
 public interface KoulutusV1Resource {
 
     @GET
-    @Path("{oid}")
+    @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid);
+    @ApiOperation(
+            value = "Näyttää yhden koulutuksen annetulla koulutuksen oid:lla",
+            notes = "Operaatio näyttää yhden koulutuksen annetulla koulutuksen oid:lla."
+            + "Muut parametrit: meta=true lisää koodisto-palvelun metatietoa haettavaan koulutuksen dataan")
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta);
 
-    @POST
-    @Path("/LUKIOKOULUTUS")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus);
-
-    @POST
-    @Path("/AMMATILLINEN_PERUSKOULUTUS")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus);
+    @DELETE
+    @Path("/{oid}")
+    @ApiOperation(
+            value = "Poistaa koulutuksen annetulla koulutuksen oid:lla",
+            notes = "Operaatio poistaa koulutuksen annetulla koulutuksen oid:lla")
+    public Response deleteByOid(@PathParam("oid") String oid);
 
     @POST
     @Path("/KORKEAKOULUTUS")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Luo uuden korkeakoulu koulutuksen",
+            notes = "Operaatio luo uuden korkeakoulu koulutuksen",
+            response = KoulutusKorkeakouluV1RDTO.class)
     public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO koulutus);
 
-    @POST
-    @Path("/PERUSOPETUKSEN_LISAOPETUS")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus);
-
-    @POST
-    @Path("/VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus);
-
-    @DELETE
-    @Path("{oid}")
-    public Response deleteByOid(@PathParam("oid") String oid);
-
     @GET
-    @Path("{oid}/tekstis")
+    @Path("/{oid}/tekstis")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public TekstiV1RDTO loadTekstis(@PathParam("oid") String oid);
+    @ApiOperation(
+            value = "Näyttää kaikki koulutuksen monikieliset kuvaustekstit",
+            notes = "Operaatio näyttää kaikki koulutuksen monikieliset kuvaustekstit")
+    public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
     @Path("/koulutuskoodi/{koulutuskoodi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
+            notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
+            response = KoulutusmoduuliRelationV1RDTO.class)
     public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
 
     @GET
-    @Path("{oid}/tekstis/komoto")
+    @Path("/{oid}/tekstis/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<TekstiV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
+    @ApiOperation(
+            value = "Näyttää  koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit",
+            notes = "Operaatio näyttää kaikki koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit",
+            response = KuvausV1RDTO.class)
+    public ResultV1RDTO<KuvausV1RDTO> loadKomotoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/tekstis/komoto")
+    @Path("/{oid}/tekstis/komoto")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomotoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomotoTeksti> dto);
+    @ApiOperation(
+            value = "Lisää koulutusmoduulin toteutukseen monikielisen kuvaustekstin",
+            notes = "Operaatio lisää koulutusmoduulin toteutukseen monikielisen kuvaustekstin")
+    public Response saveKomotoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomotoTeksti> dto);
 
     @GET
-    @Path("{oid}/tekstis/komo")
+    @Path("/{oid}/tekstis/komo")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<TekstiV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
+    @ApiOperation(
+            value = "Näyttää kaikki koulutuksen koulutusmoduulin monikieliset kuvaustekstit",
+            notes = "Operaatio näyttää kaikki koulutuksen koulutusmoduulin monikieliset kuvaustekstit",
+            response = KuvausV1RDTO.class)
+    public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 
     @POST
     @PUT
-    @Path("{oid}/tekstis/komo")
+    @Path("/{oid}/tekstis/komo")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, TekstiV1RDTO<KomoTeksti> dto);
+    @ApiOperation(
+            value = "Lisää koulutusmoduuliin monikielisen kuvaustekstin",
+            notes = "Operaatio lisää koulutusmoduuliin monikielisen kuvaustekstin")
+    public Response saveKomoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomoTeksti> dto);
 
     @DELETE
-    @Path("{oid}/teksti/{key}/{uri}")
+    @Path("/{oid}/teksti/{key}/{kieliUri}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Response deleteTeksti(@PathParam("oid") String oid, @PathParam("key") String key, @PathParam("uri") String uri);
+    @ApiOperation(
+            value = "Poistaa yhden monikieliset kuvaustekstit annetuilla avain- ja koodi uri-parametreilla",
+            notes = "Operaatio poistaa yhden monikieliset kuvaustekstit annetuilla avain- ja koodi uri-parametreillä (avain on sovelluksen koodissa määritetty enum.)")
+    public Response deleteTeksti(@PathParam("oid") String oid, @PathParam("key") String key, @PathParam("kieliUri") String kieliUri);
 
     @GET
-    @Path("{oid}/kuva/{kieliUri}")
+    @Path("/{oid}/kuva/{kieliUri}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Hakee kuvatiedoton koulutusmoduulin totutuksesta annetulla koodi uri:lla",
+            notes = "Operaatio hakee kuvatiedoton koulutusmoduulin totutuksesta annetulla koodi uri:lla",
+            response = KuvaV1RDTO.class)
     public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     @POST
-    @Path("{oid}/kuva/{kieliUri}")
+    @Path("/{oid}/kuva/{kieliUri}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(
+            value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
+            notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
     public Response saveKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("file") MultipartBody body);
 
     @DELETE
-    @Path("{oid}/kuva/{kieliUri}")
+    @Path("/{oid}/kuva/{kieliUri}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Poistaa kuvatiedoton koulutusmoduulin toteutuksesta annetulla koodi uri:lla",
+            notes = "Operaatio poistaa kuvatiedoton koulutusmoduulin toteutuksesta annetulla koodi uri:lla")
     public Response deleteKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     /**
@@ -163,8 +188,11 @@ public interface KoulutusV1Resource {
      */
     @POST
     @PUT
-    @Path("{oid}/tila")
+    @Path("/{oid}/tila")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Päivittää koulutuksen tilan",
+            notes = "Operaatio päivittää koulutuksen tilan")
     public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
@@ -179,6 +207,10 @@ public interface KoulutusV1Resource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää listausivun tulosjoukon annetuilla parametreillä",
+            notes = "Operaatio näyttää listausivun tulosjoukon annetuilla parametreillä",
+            response = HakutuloksetV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("koulutusOid") List<String> koulutusOids,
@@ -194,8 +226,32 @@ public interface KoulutusV1Resource {
      * @return
      */
     @GET
-    @Path("{oid}/hakukohteet")
+    @Path("/{oid}/hakukohteet")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää koulutukseen liittyvien hakukohteiden nimen ja oid:n annetulla koulutuksen oid:lla",
+            notes = "Operaatio näyttää koulutukseen liittyvien hakukohteiden nimen ja oid:n annetulla koulutuksen oid:lla")
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(@PathParam("oid") String oid);
 
+    //    @POST
+//    @Path("/LUKIOKOULUTUS")
+//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus);
+//    @POST
+//    @Path("/AMMATILLINEN_PERUSKOULUTUS")
+//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    @ApiOperation(value = "Luo uuden ammattillisen koulutuksen", notes = "Ei ole vielä toteutettu", response = KoulutusAmmatillinenPeruskoulutusV1RDTO.class)
+//    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus);
+    //    @POST
+//    @Path("/PERUSOPETUKSEN_LISAOPETUS")
+//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus);
+//    @POST
+//    @Path("/VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
+//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+//    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus);
 }

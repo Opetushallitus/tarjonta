@@ -15,7 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,28 +24,30 @@ import java.util.Map;
  *
  * @author Jani Wilén
  */
-public class UiMetaV1RDTO extends UiV1RDTO {
+@ApiModel(value = "Monikielisen tekstin syötämiseen ja näyttämiseen käytettävä rajapintaolio")
+public class NimiV1RDTO extends MetaV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    private Map<String, UiV1RDTO> meta;
+    @ApiModelProperty(value = "Avain-arvopari, jossa avain on koodisto kieli uri ja arvo on kuvausteksti", required = true)
+    private Map<String, String> tekstis;
 
-    public UiMetaV1RDTO() {
+    public NimiV1RDTO() {
     }
 
     /**
      * @return the tekstis
      */
-    public Map<String, UiV1RDTO> getMeta() {
-        if (meta == null) {
-            meta = new HashMap<String, UiV1RDTO>();
+    public Map<String, String> getTekstis() {
+        if (tekstis == null) {
+            tekstis = new HashMap<String, String>();
         }
-        return meta;
+        return tekstis;
     }
 
     /**
      * @param tekstis the tekstis to set
      */
-    public void setMeta(Map<String, UiV1RDTO> meta) {
-        this.meta = meta;
+    public void setTekstis(Map<String, String> teksti) {
+        this.tekstis = teksti;
     }
 }

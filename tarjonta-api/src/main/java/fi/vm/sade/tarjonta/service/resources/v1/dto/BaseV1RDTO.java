@@ -14,20 +14,30 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Basic class for V! RDTO's
+ *
  * @author mlyly
  */
 public class BaseV1RDTO implements Serializable {
 
+    @ApiModelProperty(value = "Luontipäivä ja aika", required = true)
     private Date created;
+    @ApiModelProperty(value = "Luonnin suorittajan nimi", required = true)
     private String createdBy;
+    @ApiModelProperty(value = "Viimeinen muokkauspäivä ja aika", required = true)
     private Date modified;
+    @ApiModelProperty(value = "Muokkauksen suorittajan nimi", required = true)
     private String modifiedBy;
+
+    @ApiModelProperty(value = "Objektin yksilöivä tunniste", required = true)
     private String oid;
+
+    @ApiModelProperty(value = "Objektin versio numero", required = true)
     private Long version;
 
     public BaseV1RDTO() {

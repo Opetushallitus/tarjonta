@@ -14,20 +14,21 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         return {"arvo": arvo};
     };
 
-    factory.createBaseUiField = function(uri, versio, arvo) {
-        return {"arvo": arvo, "koodi": {"uri": uri, "versio": versio}};
+    factory.createLanguage = function(apiModel, langKoodiUri) {
+        apiModel[langKoodiUri] = factory.createKoodiUriBase(langKoodiUri, -1);
+    };
+    factory.createKoodiUriBase = function(uri, versio) {
+        return {'uri': uri, 'versio': versio};
     };
 
-    factory.createLanguage = function(apiModel, langKoodiUri) {
-        apiModel[langKoodiUri] = {'koodi': {'arvo': '', 'uri': langKoodiUri, 'versio': -1}};
-    };
 
     factory.createMetaLanguages = function(apiModel, languageUris) {
         if (angular.isUndefined(apiModel)) {
             factory.throwError('Tarjonta API model object cannot be undefined!');
         }
+
         angular.forEach(languageUris, function(langUri) {
-            factory.addMetaLanguage(apiModel, langUri);
+            factory.addTekstisLanguage(apiModel, langUri);
         });
     };
 
@@ -47,30 +48,12 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
                 apiModel.meta[i] = tempMeta[i];
             }
         }
-    }
-
-    factory.addMetaLanguage = function(apiModel, languageUri) {
-        if (angular.isUndefined(apiModel)) {
-            factory.throwError('Tarjonta API model object cannot be undefined!');
-        }
-        var metas = apiModel.meta;
-
-        if (angular.isUndefined(metas)) {
-            factory.throwError('Tarjonta API model meta object cannot be undefined!');
-        }
-
-        if (factory.isNull(metas[languageUri])) {
-            metas[languageUri] = {};
-            factory.createLanguage(metas, languageUri);
-        }
     };
 
-    factory.addMetaField = function(obj) {
-        if (factory.isNull(obj)) {
-            return {"meta": {}};
-        } else {
-            obj.meta = {};
-            return obj;
+    factory.addTekstisLanguage = function(apiModel, languageUri) {
+        if (factory.isNull(apiModel[languageUri])) {
+            apiModel[languageUri] = {};
+            factory.createLanguage(apiModel, languageUri);
         }
     };
 
@@ -78,34 +61,23 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         var base = {};
 
         angular.forEach(arrKeys, function(val) {
-            base[val] = factory.addMetaField(null);
-            factory.createMetaLanguages(base[val], []);
+            base[val] = {tekstis: {}};
         });
 
-        return {"tekstis": base};
+        return base;
     };
 
-    factory.addLangForDescUiField = function(apiModel, key, lang) {
-        if (angular.isUndefined(apiModel.tekstis)) {
-            factory.throwError('Tarjonta API model tekstis object cannot be undefined!');
-        }
-
-        if (angular.isUndefined(apiModel.tekstis[key])) {
-            apiModel.tekstis[key] = {meta: {}};
-        }
-
-        factory.addMetaLanguage(apiModel.tekstis[key], lang);
-    };
-
-    factory.addLangForDescUiFields = function(apiModel, lang) {
-        angular.forEach(apiModel.tekstis, function(val, key) {
-            factory.addLangForDescUiField(apiModel, key, lang);
+    factory.addLangForDescUiFields = function(apiModel, langs) {
+        angular.forEach(apiModel, function(val, kuvausKey) {
+            angular.forEach(langs, function(lang) {
+                val.tekstis[lang] = '';
+            });
         });
     };
 
     factory.STRUCTURE = {
         MLANG: {
-            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: factory.createBaseUiField(null, '-1', null)}
+            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: {tekstis: []}}
         },
         RELATION: {
             koulutuskoodi: {'validate': true, 'required': true, nullable: false},
@@ -117,7 +89,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             tutkintonimike: {'validate': true, 'required': true, nullable: false}
         }, COMBO: {
             //in correct place
-            suunniteltuKesto: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
+            suunniteltuKestoTyyppi: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
             opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'}
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
@@ -130,7 +102,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},
             koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'KORKEAKOULUTUS'},
             tila: {'validate': true, 'required': true, 'nullable': false, 'default': 'LUONNOS'},
-            tunniste: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''}
+            tunniste: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''},
+            suunniteltuKestoArvo: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''}
         }, DATE: {
             koulutuksenAlkamisPvm: {'type': 'DATE', 'validate': true, 'required': true, nullable: false, default: new Date()}
         }, BOOL: {
@@ -204,28 +177,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
     factory.convertKoodistoCombo = function(strValue, kbObj) {
         return {'arvo': strValue, 'koodi': factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio)};
     };
-    /**
-     * Convert multi select koodisto component data model to API (json map) meta model.
-     * 
-     * @param {type} koodisto component objects
-     */
-    factory.convertKoodistoMultiToKoodiUiDTOs = function(uiModel) {
-        var metaMap = {};
-        //uiModel.data; all option data items from a koodisto in 'Tarjonta KoodiType' objects. 
-        var koodiUris = uiModel.uris; //only the selected koodi URIs.
 
-        if (factory.isNull(koodiUris) || koodiUris.length === 0) {
-//no items selected, then skip the code block.
-            return metaMap;
-        }
-
-        var koodiIndex = 0;
-        for (; koodiIndex < koodiUris.length; koodiIndex++) {
-            factory.convertKoodistoComboToMetaDTO(metaMap, factory.searchKoodiByKoodiUri(koodiUris[koodiIndex], uiModel));
-        }
-
-        return metaMap;
-    };
     /**
      * @param string value 
      * @param {'data' : [koodisto koodis], 'uri : 'koodisto_uri'} uiModel 
@@ -280,11 +232,6 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
         uiModel['tabs'] = {lisatiedot: true}; //lisatiedot tab disabled=true
 
-        uiModel['tekstis'] = {
-            TAVOITTEET: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
-            KOULUTUKSEN_RAKENNE: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}},
-            JATKOOPINTO_MAHDOLLISUUDET: {meta: {kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: 1}}, kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: 1}}, kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: 1}}}}};
-
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoSingleModel();
         });
@@ -292,17 +239,17 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
-
+        
         uiModel.showSuccess = false;
 
         return uiModel;
     };
 
     factory.createUiKoodistoSingleModel = function() {
-        return {'arvo': '', 'data': [], 'uri': null};
+        return {'uri': null};
     };
     factory.createUiKoodistoMultiModel = function() {
-        return {'data': [], 'uris': []};
+        return {koodis: [], 'uris': []};
     };
     factory.throwError = function(msg) {
         throw new Error('Tarjonta application error - ' + msg);
@@ -348,20 +295,22 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }
 
         angular.forEach(factory.STRUCTURE.MLANG, function(value, key) {
-            apiModel[key] = factory.addMetaField(value.default);
-            factory.createMetaLanguages(apiModel[key], languages);
+            apiModel[key] = {'tekstis': {}};
+            angular.forEach(languages, function(lang) {
+                apiModel[key].tekstis[lang] = '';
+            });
         });
 
         angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
-            apiModel[ key] = factory.createBaseUiField(null, null, null);
+            apiModel[key] = factory.createKoodiUriBase('', -1);
         });
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
-            apiModel[key] = factory.createBaseUiField(null, null, null);
+            apiModel[key] = factory.createKoodiUriBase('', -1);
         });
 
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
-            apiModel[key] = factory.addMetaField(factory.createBaseUiField(null, null, null));
+            apiModel[key] = {'uris': {}};
         });
 
         angular.forEach(factory.STRUCTURE.DATE, function(value, key) {
@@ -382,7 +331,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
 
         angular.forEach(factory.STRUCTURE.DESC, function(value, key) {
             apiModel[key] = value.default;
-            factory.addLangForDescUiFields(apiModel[key], languages[0]);
+            // factory.addLangForDescUiFields(apiModel[key], languages);
         });
 
 

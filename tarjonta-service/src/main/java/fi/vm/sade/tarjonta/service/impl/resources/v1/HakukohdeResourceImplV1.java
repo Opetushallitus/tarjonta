@@ -98,7 +98,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
-            String alkamisKausi, Integer alkamisVuosi) {
+            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -110,6 +110,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
+        if(hakukohdeOid!=null) {
+            q.setHakukohdeOid(hakukohdeOid);
+        }
 
         for (String s : hakukohdeTilas) {
             q.getTilat().add(
@@ -123,7 +126,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional(readOnly = true)
-    public ResultV1RDTO<HashMap<String,String>> findHakukohdeValintaperusteet(@PathParam("oid") String hakukohdeOid){
+    public ResultV1RDTO<HashMap<String,String>> findHakukohdeValintaperusteet(String hakukohdeOid){
        Hakukohde hakukohde =  hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
 
        if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstis() != null && hakukohde.getValintaperusteKuvaus().getTekstis().size() > 0) {
@@ -146,7 +149,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeValintaPerusteet(@PathParam("oid") String hakukohdeOid, HashMap<String,String> valintaPerusteet) {
+    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeValintaPerusteet(String hakukohdeOid, HashMap<String,String> valintaPerusteet) {
         try {
 
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
@@ -169,15 +172,59 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
+
     @Override
-    public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(@PathParam("oid") String hakukohdeOid) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    @Transactional
+    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(String hakukohdeOid, HashMap<String,String> sorat){
+        try {
+
+            Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            MonikielinenTeksti soraKuvaukset = converter.convertStringHashMapToMonikielinenTeksti(sorat);
+            hakukohde.setSoraKuvaus(soraKuvaukset);
+            hakukohdeDao.update(hakukohde);
+
+            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            result.setResult(sorat);
+            return  result;
+
+        } catch (Exception exp) {
+            ResultV1RDTO<HashMap<String,String>> errorResult = new ResultV1RDTO<HashMap<String,String>>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            return errorResult;
+        }
     }
 
     @Override
-    public ResultV1RDTO<HashMap<String,String>> insertHakukohdeSora(@PathParam("oid") String hakukohdeOid, HashMap<String,String> sorat){
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<HashMap<String,String>> findHakukohdeSoraKuvaukset(String hakukohdeOid) {
+        try {
+
+            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String, String>>();
+
+            Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            if (hakukohde.getSoraKuvaus() != null && hakukohde.getSoraKuvaus().getKaannoksetAsList() != null) {
+
+                HashMap<String,String> resultHm = new HashMap<String, String>();
+                for (TekstiKaannos tekstiKaannos: hakukohde.getSoraKuvaus().getKaannoksetAsList()) {
+                    resultHm.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+                }
+               result.setResult(resultHm);
+            }
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            return result;
+
+        } catch (Exception exp) {
+            ResultV1RDTO<HashMap<String,String>> exceptionResult = new ResultV1RDTO<HashMap<String, String>>();
+            exceptionResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            exceptionResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            return exceptionResult;
+        }
     }
+
+
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
