@@ -5,7 +5,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 	
 	var resolveData = function(promise) {
 		if(promise===undefined) {
-			throw new {"error":"need a prtomise"};
+			throw "need a promise";
 		}
 		//fills promise.data with the actual value when it resolves.
 		promise.then(function(data){
@@ -25,7 +25,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 	return {
 		
 		/**
-		 * methods that take in orgOid are common to both!:
+		 * funktiot jotka ottavat organisaatio oidin ovat yhteisiä molemmille (hk + k)!:
 		 */
 
 		canDelete: function(orgOid) {
@@ -33,10 +33,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			resolveData(result);
 			return result;
 		},
-
+		
 		canCreate: function(orgOid) {
 			canCreate(orgOid);
 		},
+		
 		canEdit: function(orgOid) {
 			var result=AuthService.updateOrg(orgOid);
 			resolveData(result);
@@ -45,6 +46,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 		
 		koulutus: {
 
+			/**
+			 * Saako käyttäjä luoda koulutuksen
+			 * @param orgOid
+			 * @returns
+			 */
 			canCreate: function(orgOid) {
 				return canCreate(orgOid);
 			},
@@ -62,6 +68,12 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 				console.log("TODO koulutus.canPreview",orgOid);
 				return true;
 			},
+
+			/**
+			 * Saako käyttäjä muokata koulutusta
+			 * @param koulutusOid koulutuksen oid
+			 * @returns
+			 */
 			canEdit: function(koulutusOid) {
 				
 				var defer = $q.defer();
@@ -89,6 +101,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 				console.log("TODO koulutus.canTransition "+from+"->"+to, oid);
 				return true;
 			},
+			/**
+			 * Saako käyttäjä poistaa koulutuksen
+			 * @param koulutusOid
+			 * @returns
+			 */
 			canDelete: function(koulutusOid) {
 
 				var defer = $q.defer();
@@ -114,8 +131,12 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 		},
 		
 		hakukohde: {
+			/**
+			 * Saako käyttäjä luoda hakukohteen
+			 * @param orgOid organisaatio oid
+			 * @returns
+			 */
 			canCreate: function(orgOid) {
-				console.log("hk canCreate");
 				return canCreate(orgOid);
 			},
 			canPreview: function(orgOid) {
@@ -123,6 +144,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 				console.log("TODO hakukohde.canPreview",oid);
 				return true;
 			},
+			/**
+			 * Saako käyttäjä muokata hakukohdetta
+			 * @param hakukohdeOid
+			 * @returns
+			 */
 			canEdit: function(hakukohdeOid) {
 				var defer = $q.defer();
 				
@@ -142,7 +168,6 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 						defer.resolve(false);
 					}
 				});
-//				resolveData(result);
 				return defer.promise;
 			},
 			canTransition: function(oid, from, to) {
@@ -150,6 +175,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 				console.log("TODO hakukohde.canTransition "+from+"->"+to, oid);
 				return true;
 			},
+			/**
+			 * Saako käyttäjä poistaa hakukohteen
+			 * @param hakukohdeOid
+			 * @returns
+			 */
 			canDelete: function(hakukohdeOid) {
 				var defer = $q.defer();
 				
@@ -172,5 +202,5 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 				return defer.promise;
 			}
 		}
-	}
+	};
 });
