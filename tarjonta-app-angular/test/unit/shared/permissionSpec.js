@@ -209,9 +209,9 @@ describe('TarjontaPermissions', function() {
     		return PermissionService.koulutus.canDelete(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "koulutus.1.2.3", testFn);
-    	test(false, " for edit when user has RU permission", "koulutus.1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "koulutus.1.2.5", testFn);
+    	test(true, " for delete when user has CRUD permission", "koulutus.1.2.3", testFn);
+    	test(false, " for delete when user has RU permission", "koulutus.1.2.4", testFn);
+    	test(false, " for delete when user has R permission", "koulutus.1.2.5", testFn);
 
     	//create hakukohde
     	var testFn=function(PermissionService, orgOid){
@@ -236,9 +236,9 @@ describe('TarjontaPermissions', function() {
     		return PermissionService.hakukohde.canDelete(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "hakukohde.1.2.3", testFn);
-    	test(false, " for edit when user has RU permission", "hakukohde.1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "hakukohde.1.2.5", testFn);
+    	test(true, " for delete when user has CRUD permission", "hakukohde.1.2.3", testFn);
+    	test(false, " for delete when user has RU permission", "hakukohde.1.2.4", testFn);
+    	test(false, " for delete when user has R permission", "hakukohde.1.2.5", testFn);
 
     });
 
