@@ -14,32 +14,44 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
  *
  * @author mlyly
  */
+@ApiModel(value = "Korkeakoulutuksen luontiin ja tiedon hakemiseen käytettävä rajapintaolio")
 public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty", required = true)
     private NimiV1RDTO koulutusohjelma;
 
-    private String tunniste; //tutkinto-ohjelman tunniste
-    /*
-     * Other user selected form input data
-     */
+    @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = true)
+    private String tunniste;
 
+    @ApiModelProperty(value = "Koulutuksen opetuskielet, ainakin yksi kieli pitää olla syötetty (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO opetuskielis;
+
+    @ApiModelProperty(value = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO opetusmuodos;
-    /*
-     * KK
-     */
-    private Boolean opintojenMaksullisuus;
+
+    @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
+
+    @ApiModelProperty(value = "Koulutuksen teemat (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO teemas;
+    @ApiModelProperty(value = "Koulutuksen alkamispvm", required = true)
     private Date koulutuksenAlkamisPvm;
+    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
+
+    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
+    private Boolean opintojenMaksullisuus;
+    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
     private Double hinta;
 
     public KoulutusKorkeakouluV1RDTO() {
@@ -49,10 +61,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      * @return the koulutusohjelma
      */
     public NimiV1RDTO getKoulutusohjelma() {
-        if(koulutusohjelma == null){
+        if (koulutusohjelma == null) {
             koulutusohjelma = new NimiV1RDTO();
         }
-        
+
         return koulutusohjelma;
     }
 

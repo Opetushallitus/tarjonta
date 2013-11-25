@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -29,23 +31,37 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  *
  * @author mlyly
  */
+@ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
 
+    @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;
+    @ApiModelProperty(value = "Koulutusmoduulin totetuksen yksilöivä tunniste")
     private String komotoOid;
+    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduuliin")
     private String parentKomoOid;
+    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
     private String parentKomotoOid;
 
+    @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO organisaatio;
 
     //OTHER DATA
+    @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
     private TarjontaTila tila;
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    @ApiModelProperty(value = "Koulutuksen koulutusastetyyppi", required = true)
     private KoulutusasteTyyppi koulutusasteTyyppi;
+
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
     private KuvausV1RDTO<KomoTeksti> kuvausKomo;
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit")
     private KuvausV1RDTO<KomotoTeksti> kuvausKomoto;
 
+    @ApiModelProperty(value = "Koulutuksen suunntellun keston arvo", required = true)
     private String suunniteltuKestoArvo;
+    @ApiModelProperty(value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)", required = true)
     private KoodiV1RDTO suunniteltuKestoTyyppi;
 
     public KoulutusV1RDTO() {

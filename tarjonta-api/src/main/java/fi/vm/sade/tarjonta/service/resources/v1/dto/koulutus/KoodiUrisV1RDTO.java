@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,9 +24,11 @@ import java.util.Map;
  *
  * @author Jani Wilén
  */
+@ApiModel(value = "Monen koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class KoodiUrisV1RDTO extends MetaV1RDTO {
 
     private static final long serialVersionUID = 1L;
+    @ApiModelProperty(value = "Avain-arvopari, jossa avain on koodisto koodi uri ja arvo on koodin versionumero", required = true)
     private Map<String, Integer> uris;
 
     public KoodiUrisV1RDTO() {

@@ -14,22 +14,33 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
 
 /**
  *
  * @author jani
  */
+@ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
 
     //KOODISTO KOMO DATA OBJECTS:
+    @ApiModelProperty(value = "Kuusinumeroinen tilastokeskuksen koulutuskoodi", required = true)
     private KoodiV1RDTO koulutuskoodi;
+    @ApiModelProperty(value = "OPH2002 koulutusaste-koodi", required = true)
     private KoodiV1RDTO koulutusaste;
+    @ApiModelProperty(value = "OPH2002 koulutusala-koodi", required = true)
     private KoodiV1RDTO koulutusala;
+    @ApiModelProperty(value = "OPH2002 opintoala-koodi", required = true)
     private KoodiV1RDTO opintoala;
+    @ApiModelProperty(value = "OPH tutkinto-koodi", required = true)
     private KoodiV1RDTO tutkinto;
+    @ApiModelProperty(value = "OPH tutkintonimike-koodi (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
     private KoodiV1RDTO tutkintonimike;
+    @ApiModelProperty(value = "EQF-koodi", required = true)
     private KoodiV1RDTO eqf;
+    @ApiModelProperty(value = "Opintojen laajuuden numeraalinen arvo", required = true)
     private KoodiV1RDTO opintojenLaajuus;
 
     /**

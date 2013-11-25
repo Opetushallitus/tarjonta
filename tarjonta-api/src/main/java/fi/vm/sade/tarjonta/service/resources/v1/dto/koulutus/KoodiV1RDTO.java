@@ -15,19 +15,33 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoodiV1RDTO extends KieliV1RDTO {
+@ApiModel(value = "Koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
+public class KoodiV1RDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
+    private String kieliUri;
+    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
+    private String kieliVersio;
+    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
+    private String kieliArvo;
+    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
+    private String kieliKaannos;
+    @ApiModelProperty(value = "Koodisto koodin uri", required = true)
     private String uri;
+    @ApiModelProperty(value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto", required = true)
     private Integer versio;
+    @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
     private String arvo;
+    @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
     private String kaannos;
 
     public KoodiV1RDTO() {
@@ -107,6 +121,62 @@ public class KoodiV1RDTO extends KieliV1RDTO {
      */
     public void setKaannos(String kaannos) {
         this.kaannos = kaannos;
+    }
+
+    /**
+     * @return the kieliUri
+     */
+    public String getKieliUri() {
+        return kieliUri;
+    }
+
+    /**
+     * @param kieliUri the kieliUri to set
+     */
+    public void setKieliUri(String kieliUri) {
+        this.kieliUri = kieliUri;
+    }
+
+    /**
+     * @return the kieliVersio
+     */
+    public String getKieliVersio() {
+        return kieliVersio;
+    }
+
+    /**
+     * @param kieliVersio the kieliVersio to set
+     */
+    public void setKieliVersio(String kieliVersio) {
+        this.kieliVersio = kieliVersio;
+    }
+
+    /**
+     * @return the kieliArvo
+     */
+    public String getKieliArvo() {
+        return kieliArvo;
+    }
+
+    /**
+     * @param kieliArvo the kieliArvo to set
+     */
+    public void setKieliArvo(String kieliArvo) {
+        this.kieliArvo = kieliArvo;
+    }
+
+    /**
+     * @return the kieliKaannos
+     */
+    public String getKieliKaannos() {
+        return kieliKaannos;
+    }
+
+    /**
+     * @param kieliKaannos the kieliKaannos to set
+     */
+    public void setKieliKaannos(String kieliKaannos) {
+        this.kieliKaannos = kieliKaannos;
     }
 
 }
