@@ -136,16 +136,16 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return result;
     }
 
-    @Override
-    public HakukohdeV1RDTO findByOid(String oid) {
-
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
-
-        HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
-
-        return hakukohdeRDTO;
-
-    }
+//    @Override
+//    public HakukohdeV1RDTO findByOid(String oid) {
+//
+//        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+//
+//        HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
+//
+//        return hakukohdeRDTO;
+//
+//    }
 
     // /hakukohde/OID/komoto
     @Override
@@ -177,194 +177,135 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public String updateHakukohde(HakukohdeDTO hakukohdeDTO) {
-        try {
-            Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
+//    @Override
+//    public String updateHakukohde(HakukohdeDTO hakukohdeDTO) {
+//        try {
+//            Hakukohde hakukohde = conversionService.convert(hakukohdeDTO,Hakukohde.class);
+//
+//            Hakukohde tempHakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
+//            hakukohde.setId(tempHakukohde.getId());
+//            hakukohde.setVersion(tempHakukohde.getVersion());
+//
+//            Haku haku = hakuDAO.findByOid(hakukohdeDTO.getHakuOid());
+//            hakukohde.setHaku(haku);
+//            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(), hakukohde));
+//
+//
+//            List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
+//            if (valintakoes != null) {
+//
+//                hakukohde.getValintakoes().addAll(valintakoes);
+//
+//            }
+//            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet(),hakukohde);
+//
+//            if (hakukohdeLiites != null ) {
+//                hakukohde.getLiites().addAll(hakukohdeLiites);
+//            }
+//
+//            hakukohdeDAO.update(hakukohde);
+//
+//            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+//            publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
+//
+//            return hakukohde.getOid();
+//
+//        } catch (Exception exp) {
+//            exp.printStackTrace();
+//            LOG.warn("Exception updating hakukohde: {}" , exp.toString());
+//
+//            return null;
+//        }
+//    }
 
-            Hakukohde tempHakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
-            hakukohde.setId(tempHakukohde.getId());
-            hakukohde.setVersion(tempHakukohde.getVersion());
-
-            Haku haku = hakuDAO.findByOid(hakukohdeDTO.getHakuOid());
-            hakukohde.setHaku(haku);
-            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeDTO.getHakukohdeKoulutusOids(), hakukohde));
-
-
-            List<Valintakoe> valintakoes = getHakukohdeValintakoes(hakukohdeDTO.getValintakoes());
-            if (valintakoes != null) {
-
-                hakukohde.getValintakoes().addAll(valintakoes);
-
-            }
-            List<HakukohdeLiite> hakukohdeLiites = getHakukohdeLiites(hakukohdeDTO.getLiitteet(),hakukohde);
-
-            if (hakukohdeLiites != null ) {
-                hakukohde.getLiites().addAll(hakukohdeLiites);
-            }
-
-            hakukohdeDAO.update(hakukohde);
-
-            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-            publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
-
-            return hakukohde.getOid();
-
-        } catch (Exception exp) {
-            exp.printStackTrace();
-            LOG.warn("Exception updating hakukohde: {}" , exp.toString());
-
-            return null;
-        }
-    }
-
-    @Override
-    public void deleteHakukohde(String hakukohdeOid) {
-        try {
-            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-            if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
-                for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
-                    koulutus.removeHakukohde(hakukohde);
-                }
-            }
-
-            hakukohdeDAO.remove(hakukohde);
-            solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohde.getOid()));
-        } catch (Exception exp) {
-            LOG.warn("Exception occured when removing hakukohde {}, exception : {}" , hakukohdeOid,exp.toString());
-
-        }
-    }
-
-
-    @Override
-    public HakukohdeV1RDTO updateUiHakukohde(String oid,HakukohdeV1RDTO hakukohdeRDTO) {
-
-        String hakuOid = hakukohdeRDTO.getHakuOid();
-        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
-        Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
-
-        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
-
-        Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
-
-        hakukohde.setId(hakukohdeTemp.getId());
-        hakukohde.setVersion(hakukohdeTemp.getVersion());
-
-        Haku haku = hakuDAO.findByOid(hakuOid);
-
-        hakukohde.setHaku(haku);
-        //TODO: add sisaiset hakuajat
-
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-        //TODO: valintakoes and liites
-
-        hakukohdeDAO.update(hakukohde);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
-        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
-
-        return hakukohdeRDTO;
-    }
-
-    @Override
-    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
-
-        String hakuOid = hakukohdeRDTO.getHakuOid();
-        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
-        hakukohdeRDTO.setOid(null);
-        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
-
-        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
-
-        Haku haku = hakuDAO.findByOid(hakuOid);
-        hakukohde.setHaku(haku);
-
-        hakukohde = hakukohdeDAO.insert(hakukohde);
-
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-
-        //TODO, add valintakokees and liittees etc.
-
-        hakukohdeDAO.update(hakukohde);
-
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
-        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
-
-        hakukohdeRDTO.setOid(hakukohde.getOid());
-        return hakukohdeRDTO;
-    }
+//    @Override
+//    public void deleteHakukohde(String hakukohdeOid) {
+//        try {
+//            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
+//            if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
+//                for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
+//                    koulutus.removeHakukohde(hakukohde);
+//                }
+//            }
+//
+//            hakukohdeDAO.remove(hakukohde);
+//            solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohde.getOid()));
+//        } catch (Exception exp) {
+//            LOG.warn("Exception occured when removing hakukohde {}, exception : {}" , hakukohdeOid,exp.toString());
+//
+//        }
+//    }
 
 
-    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs, Hakukohde hakukohde) {
-        if (hakukohdeLiiteDTOs != null) {
+//    @Override
+//    public HakukohdeV1RDTO updateUiHakukohde(String oid,HakukohdeV1RDTO hakukohdeRDTO) {
+//
+//        String hakuOid = hakukohdeRDTO.getHakuOid();
+//        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+//        Preconditions.checkNotNull(hakukohdeRDTO.getOid(),"Hakukohteen oid cannot be null");
+//
+//        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+//
+//        Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
+//
+//        hakukohde.setId(hakukohdeTemp.getId());
+//        hakukohde.setVersion(hakukohdeTemp.getVersion());
+//
+//        Haku haku = hakuDAO.findByOid(hakuOid);
+//
+//        hakukohde.setHaku(haku);
+//        //TODO: add sisaiset hakuajat
+//
+//        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+//        //TODO: valintakoes and liites
+//
+//        hakukohdeDAO.update(hakukohde);
+//        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+//        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+//            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+//                return arg0.getId();
+//            }
+//        })));
+//        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+//
+//        return hakukohdeRDTO;
+//    }
 
-            List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
+//    @Override
+//    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+//
+//        String hakuOid = hakukohdeRDTO.getHakuOid();
+//        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
+//        hakukohdeRDTO.setOid(null);
+//        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+//
+//        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
+//
+//        Haku haku = hakuDAO.findByOid(hakuOid);
+//        hakukohde.setHaku(haku);
+//
+//        hakukohde = hakukohdeDAO.insert(hakukohde);
+//
+//        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+//
+//        //TODO, add valintakokees and liittees etc.
+//
+//        hakukohdeDAO.update(hakukohde);
+//
+//        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+//        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+//            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+//                return arg0.getId();
+//            }
+//        })));
+//        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+//
+//        hakukohdeRDTO.setOid(hakukohde.getOid());
+//        return hakukohdeRDTO;
+//    }
 
-            for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
-                HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
-                hakukohdeLiite.setHakukohde(hakukohde);
-                hakukohdeLiites.add(hakukohdeLiite);
-            }
-
-            return hakukohdeLiites;
-
-        } else {
-            return null;
-        }
-    }
-
-    private List<Valintakoe> getHakukohdeValintakoes(List<ValintakoeRDTO> valintakoeRDTOs) {
-        if (valintakoeRDTOs != null) {
-          List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
-
-            for (ValintakoeRDTO valintakoeRDTO:valintakoeRDTOs) {
-                Valintakoe valintakoe = conversionService.convert(valintakoeRDTO,Valintakoe.class);
-                valintakoes.add(valintakoe);
-            }
-
-          return valintakoes;
-        } else {
-            return null;
-        }
-    }
 
 
-    private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
-        if (hk.getHakuaikas().size() == 1) {
-            return hk.getHakuaikas().iterator().next();
-        }
-        if (ha != null && ha.getOid() != null) {
-            long id = Long.parseLong(ha.getOid());
-            for (Hakuaika hka : hk.getHakuaikas()) {
-                if (hka.getId() == id) {
-                    return hka;
-                }
-            }
-        }
-        return null;
-    }
-
-    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
-        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
-
-        for (String komotoOid : komotoOids) {
-            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
-            komoto.addHakukohde(hakukohde);
-            komotos.add(komoto);
-        }
-
-        return komotos;
-    }
 
     // GET /hakukohde/{oid}/nimi
     @Override
@@ -463,5 +404,67 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return cal.get(Calendar.YEAR);
     }
 
-	
+
+    private List<Valintakoe> getHakukohdeValintakoes(List<ValintakoeRDTO> valintakoeRDTOs) {
+        if (valintakoeRDTOs != null) {
+          List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+
+            for (ValintakoeRDTO valintakoeRDTO:valintakoeRDTOs) {
+                Valintakoe valintakoe = conversionService.convert(valintakoeRDTO,Valintakoe.class);
+                valintakoes.add(valintakoe);
+            }
+
+          return valintakoes;
+        } else {
+            return null;
+        }
+    }
+
+
+    private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
+        if (hk.getHakuaikas().size() == 1) {
+            return hk.getHakuaikas().iterator().next();
+        }
+        if (ha != null && ha.getOid() != null) {
+            long id = Long.parseLong(ha.getOid());
+            for (Hakuaika hka : hk.getHakuaikas()) {
+                if (hka.getId() == id) {
+                    return hka;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
+        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
+
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            komoto.addHakukohde(hakukohde);
+            komotos.add(komoto);
+        }
+
+        return komotos;
+    }
+
+    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs, Hakukohde hakukohde) {
+        if (hakukohdeLiiteDTOs != null) {
+
+            List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
+
+            for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
+                HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
+                hakukohdeLiite.setHakukohde(hakukohde);
+                hakukohdeLiites.add(hakukohdeLiite);
+            }
+
+            return hakukohdeLiites;
+
+        } else {
+            return null;
+        }
+    }
+
+
 }

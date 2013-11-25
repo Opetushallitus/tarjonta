@@ -342,29 +342,29 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertEquals(1, vastaus.getKoulutukset().size());
     }
 
-    @Test
-    public void testKKHakukohde() throws SolrServerException {
-        createTestDataInTransaction();
-
-        // tee kk koulutus ja hakukohde
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-                ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKorkeakouluKoulutus(kk);
-                HakukohdeV1RDTO hakukohde = getHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-                hakukohdeResource.insertHakukohde(hakukohde);
-            }
-
-        });
-
-        HakukohteetKysely kysely = new HakukohteetKysely();
-        kysely.setNimi("kkhakukohdenimi");
-        HakukohteetVastaus vastaus = tarjontaSearchService
-                .haeHakukohteet(kysely);
-        assertNotNull(vastaus);
-        assertEquals(1, vastaus.getHakukohteet().size());
-    }
+//    @Test
+//    public void testKKHakukohde() throws SolrServerException {
+//        createTestDataInTransaction();
+//
+//        // tee kk koulutus ja hakukohde
+//        executeInTransaction(new Runnable() {
+//            @Override
+//            public void run() {
+//                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
+//                ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKorkeakouluKoulutus(kk);
+//                HakukohdeV1RDTO hakukohde = getHakukohde(postKorkeakouluKoulutus.getResult().getOid());
+//                hakukohdeResource.insertHakukohde(hakukohde);
+//            }
+//
+//        });
+//
+//        HakukohteetKysely kysely = new HakukohteetKysely();
+//        kysely.setNimi("kkhakukohdenimi");
+//        HakukohteetVastaus vastaus = tarjontaSearchService
+//                .haeHakukohteet(kysely);
+//        assertNotNull(vastaus);
+//        assertEquals(1, vastaus.getHakukohteet().size());
+//    }
 
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
