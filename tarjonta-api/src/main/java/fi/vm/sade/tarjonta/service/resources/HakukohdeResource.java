@@ -20,8 +20,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
  *
  * /hakukohde/OID/paasykoe
  * /hakukohde/OID/valintakoe
+ * /hakukohde/OID/valintakoeFIX
  *
- *  REMOVED: /hakukohde/OID/liite
  * </pre>
  *
  * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
@@ -52,23 +52,6 @@ public interface HakukohdeResource {
             @QueryParam("lastModifiedSince") Date lastModifiedSince,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("hakukohdeTila") List<String> hakukohdeTilas);
-
-//    @POST
-//    @Path("/ui")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO);
-//
-//    @PUT
-//    @Path("/ui/{oid}")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public HakukohdeV1RDTO updateUiHakukohde(@PathParam("oid") String oid,HakukohdeV1RDTO hakukohdeRDTO);
-//
-//    @GET
-//    @Path("/ui/{oid}")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public HakukohdeV1RDTO findByOid(@PathParam("oid") String oid);
 
     /**
      * /hakukohde/{oid}
@@ -125,16 +108,20 @@ public interface HakukohdeResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
+    /**
+     * /hakukohde/{oid}/valintakoeFIX
+     *
+     * Gets valintakoes for fiven hakukohde.
+     * This fixes the Lukio valintakoes to be same as other "standard" valintakoes.
+     *
+     * @param oid
+     * @return loaded list Valintakoe's
+     */
+    @GET
+    @Path("{oid}/valintakoeFIX")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<ValintakoeRDTO> getValintakoeFixedByHakukohdeOID(@PathParam("oid") String oid);
 
-//    @PUT
-//    @Path("/")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.TEXT_PLAIN)
-//    public String updateHakukohde(HakukohdeDTO hakukohdeDTO);
-//
-//    @DELETE
-//    @Path("{oid}")
-//    public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
 
     /**
      * /hakukohde/OID/nimi
