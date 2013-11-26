@@ -182,8 +182,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     hakukohdeKoulutusOids: selectedKoulutusOids,
                                     hakukohteenLiitteet: [],
                                     valintakokeet: [],
-                                    lisatiedot: [
-                                    ]
+                                    lisatiedot: {},
+                                    valintaperusteKuvaukset : {},
+                                    soraKuvaukset : {}
                                 });
 
                                 //  SharedStateService.removeState('SelectedKoulutukses');
