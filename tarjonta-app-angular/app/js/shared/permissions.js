@@ -9,19 +9,241 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 		}
 		//fills promise.data with the actual value when it resolves.
 		promise.then(function(data){
+//			console.log("resolvedata", data);
 			promise.data = data;
-		}, function(){
+		}, function(){ //error function
 			promise.data = false;
 		});
 	};
 
-	var canCreate = function(orgOid) {
-		var result=AuthService.crudOrg(orgOid);
-		resolveData(result);
-		return result;
+	var _canCreate = function(orgOid) {
+//		console.log("can create:", orgOid);
+		var oidArray=angular.isArray(orgOid)?orgOid:[orgOid];
+
+		var deferred = $q.defer();
+		var promises = [];
+		for(var i=0; i< oidArray.length;i++){
+			var result=AuthService.crudOrg(oidArray[i]);
+			resolveData(result);
+			promises.push(result);
+		}
 		
+		$q.all(promises).then(function(){
+			var result = true;
+			for(var i=0;i<promises.length;i++) {
+//				console.log("processing promise", i, "result:", promises[i].data);
+
+				result = result && promises[i].data;
+			}
+			deferred.resolve(result);
+		});
+		
+		return deferred.promise;
 	};
 
+	
+	var _canEditKoulutusMulti = function(koulutusOid) {
+		var deferred = $q.defer();
+		
+		promises=[];
+		for(var i=0;i<koulutusOid.length;i++) {
+			var promise = _canEditKoulutus(koulutusOid[i]);
+			promises.push(promise);
+			resolveData(promise);
+		}
+
+		var result = true;
+		
+		$q.all(promises).then(function(){
+			for(var i=0;i<promises.length;i++) {
+//				console.log("processing list:", promises[i].data);
+				result = result && promises[i].data;
+			}
+//			console.log("final result:", result);
+			
+			deferred.resolve(result);
+		});
+		
+		return deferred.promise;
+	};
+
+	
+	var _canEditKoulutus = function(koulutusOid) {
+		
+		var defer = $q.defer();
+		
+		//hae koulutus
+		var result = TarjontaService.haeKoulutukset({koulutusOid:koulutusOid});
+		
+		//tarkista permissio tarjoajaoidilla
+		result = result.then(function(hakutulos){
+//			console.log("hakutulos:", hakutulos);
+			resolveData(defer.promise);
+
+			if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
+				AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result){
+//					console.log("resolving ", result);
+					defer.resolve(result);
+				}, function(){
+//					console.log("resolving false");
+					defer.resolve(false);
+					});
+			} else {
+//				console.log("resolving false");
+				defer.resolve(false);
+			}
+		});
+		return defer.promise;
+	};
+	
+	
+	var _canDeleteKoulutus = function(koulutusOid) {
+		
+		console.log("can delete");
+		
+		var defer = $q.defer();
+		
+		//hae koulutus
+		var result = TarjontaService.haeKoulutukset({koulutusOid:koulutusOid});
+		
+		//tarkista permissio tarjoajaoidilla
+		result = result.then(function(hakutulos){
+//			console.log("hakutulos:", hakutulos);
+			if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
+				AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result){
+					defer.resolve(result);
+				}, function(){
+					defer.resolve(false);
+					});
+			} else {
+				defer.resolve(false);
+			}
+		});
+		return defer.promise;
+	};
+	
+	
+	var _canDeleteKoulutusMulti = function(koulutusOids) {
+		var deferred = $q.defer();
+		
+		promises=[];
+		for(var i=0;i<koulutusOids.length;i++) {
+			var promise = _canDeleteKoulutus(koulutusOids[i]);
+			promises.push(promise);
+			resolveData(promise);
+		}
+
+		var result = true;
+		
+		$q.all(promises).then(function(){
+			for(var i=0;i<promises.length;i++) {
+//				console.log("processing list:", promises[i].data);
+				result = result && promises[i].data;
+			}
+//			console.log("final result:", result);
+			
+			deferred.resolve(result);
+		});
+		
+		return deferred.promise;
+	};
+
+	
+	var _canEditHakukohde = function(hakukohdeOid) {
+		var defer = $q.defer();
+		
+		//hae koulutus
+		var result = TarjontaService.haeHakukohteet({hakukohdeOid:hakukohdeOid});
+		
+		//tarkista permissio tarjoajaoidilla
+		result = result.then(function(hakutulos){
+//			console.log("hakutulos:", hakutulos);
+			if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
+				AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result){
+					defer.resolve(result);
+				}, function(){
+					defer.resolve(false);
+					});
+			} else {
+				defer.resolve(false);
+			}
+		});
+		return defer.promise;
+	};
+
+	var _canEditHakukohdeMulti = function(hakukohdeOids) {
+		var deferred = $q.defer();
+		
+		promises=[];
+		for(var i=0;i<hakukohdeOids.length;i++) {
+			var promise = _canEditHakukohde(hakukohdeOids[i]);
+			promises.push(promise);
+			resolveData(promise);
+		}
+
+		var result = true;
+		
+		$q.all(promises).then(function(){
+			for(var i=0;i<promises.length;i++) {
+//				console.log("processing list:", promises[i].data);
+				result = result && promises[i].data;
+			}
+//			console.log("final result:", result);
+			
+			deferred.resolve(result);
+		});
+		
+		return deferred.promise;
+	};
+	
+	var _canDeleteHakukohde = function(hakukohdeOid) {
+		var defer = $q.defer();
+		
+		//hae koulutus
+		var result = TarjontaService.haeHakukohteet({hakukohdeOid:hakukohdeOid});
+		
+		//tarkista permissio tarjoajaoidilla
+		result = result.then(function(hakutulos){
+//			console.log("hakutulos:", hakutulos);
+			if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
+				AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result){
+					defer.resolve(result);
+				}, function(){
+					defer.resolve(false);
+					});
+			} else {
+				defer.resolve(false);
+			}
+		});
+		return defer.promise;
+	};
+	
+	var _canDeleteHakukohdeMulti = function(hakukohdeOids) {
+		var deferred = $q.defer();
+		
+		promises=[];
+		for(var i=0;i<hakukohdeOids.length;i++) {
+			var promise = _canDeleteHakukohde(hakukohdeOids[i]);
+			promises.push(promise);
+			resolveData(promise);
+		}
+
+		var result = true;
+		
+		$q.all(promises).then(function(){
+			for(var i=0;i<promises.length;i++) {
+//				console.log("processing list:", promises[i].data);
+				result = result && promises[i].data;
+			}
+//			console.log("final result:", result);
+			
+			deferred.resolve(result);
+		});
+		
+		return deferred.promise;
+	};
+
+	
 	return {
 		
 		/**
@@ -29,13 +251,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 		 */
 
 		canDelete: function(orgOid) {
-			var result=AuthService.crudOrg(orgOid);
-			resolveData(result);
-			return result;
+			_canDelete(orgOid);
 		},
 		
 		canCreate: function(orgOid) {
-			canCreate(orgOid);
+			_canCreate(orgOid);
 		},
 		
 		canEdit: function(orgOid) {
@@ -48,11 +268,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 
 			/**
 			 * Saako käyttäjä luoda koulutuksen
-			 * @param orgOid
+			 * @param orgOid organisaation oidi tai lista oideja
 			 * @returns
 			 */
 			canCreate: function(orgOid) {
-				return canCreate(orgOid);
+				return _canCreate(orgOid);
 			},
 
 			canMoveOrCopy: function(orgOid) {
@@ -76,26 +296,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			 */
 			canEdit: function(koulutusOid) {
 				
-				var defer = $q.defer();
+				var koulutusoidit = angular.isArray(koulutusOid)?koulutusOid:[koulutusOid];
 				
-				//hae koulutus
-				var result = TarjontaService.haeKoulutukset({koulutusOid:koulutusOid});
-				
-				//tarkista permissio tarjoajaoidilla
-				result = result.then(function(hakutulos){
-					console.log("hakutulos:", hakutulos);
-					if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
-						AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result){
-							defer.resolve(result);
-						}, function(){
-							defer.resolve(false);
-							});
-					} else {
-						defer.resolve(false);
-					}
-				});
-				return defer.promise;
+				return _canEditKoulutusMulti(koulutusoidit);
 			},
+			
 			canTransition: function(oid, from, to) {
 				// TODO
 				console.log("TODO koulutus.canTransition "+from+"->"+to, oid);
@@ -107,37 +312,19 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			 * @returns
 			 */
 			canDelete: function(koulutusOid) {
-
-				var defer = $q.defer();
-				
-				//hae koulutus
-				var result = TarjontaService.haeKoulutukset({koulutusOid:koulutusOid});
-				
-				//tarkista permissio tarjoajaoidilla
-				result = result.then(function(hakutulos){
-					console.log("hakutulos:", hakutulos);
-					if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
-						AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result){
-							defer.resolve(result);
-						}, function(){
-							defer.resolve(false);
-							});
-					} else {
-						defer.resolve(false);
-					}
-				});
-				return defer.promise;
+				var koulutusoidit = angular.isArray(koulutusOid)?koulutusOid:[koulutusOid];
+				return _canDeleteKoulutusMulti(koulutusoidit);
 			}
 		},
 		
 		hakukohde: {
 			/**
 			 * Saako käyttäjä luoda hakukohteen
-			 * @param orgOid organisaatio oid
+			 * @param orgOid organisaatio oid tai array oideja
 			 * @returns
 			 */
 			canCreate: function(orgOid) {
-				return canCreate(orgOid);
+				return _canCreate(orgOid);
 			},
 			canPreview: function(orgOid) {
 				// TODO
@@ -150,25 +337,8 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			 * @returns
 			 */
 			canEdit: function(hakukohdeOid) {
-				var defer = $q.defer();
-				
-				//hae koulutus
-				var result = TarjontaService.haeHakukohteet({hakukohdeOid:hakukohdeOid});
-				
-				//tarkista permissio tarjoajaoidilla
-				result = result.then(function(hakutulos){
-					console.log("hakutulos:", hakutulos);
-					if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
-						AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result){
-							defer.resolve(result);
-						}, function(){
-							defer.resolve(false);
-							});
-					} else {
-						defer.resolve(false);
-					}
-				});
-				return defer.promise;
+				var hakukohdeoidit = angular.isArray(hakukohdeOid)?hakukohdeOid:[hakukohdeOid];
+				return _canEditHakukohdeMulti(hakukohdeoidit);
 			},
 			canTransition: function(oid, from, to) {
 				// TODO
@@ -181,25 +351,8 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			 * @returns
 			 */
 			canDelete: function(hakukohdeOid) {
-				var defer = $q.defer();
-				
-				//hae koulutus
-				var result = TarjontaService.haeHakukohteet({hakukohdeOid:hakukohdeOid});
-				
-				//tarkista permissio tarjoajaoidilla
-				result = result.then(function(hakutulos){
-					console.log("hakutulos:", hakutulos);
-					if(hakutulos.tulokset!=undefined && hakutulos.tulokset.length==1) {
-						AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result){
-							defer.resolve(result);
-						}, function(){
-							defer.resolve(false);
-							});
-					} else {
-						defer.resolve(false);
-					}
-				});
-				return defer.promise;
+				var hakukohdeoidit = angular.isArray(hakukohdeOid)?hakukohdeOid:[hakukohdeOid];
+				return _canDeleteHakukohdeMulti(hakukohdeoidit);
 			}
 		}
 	};

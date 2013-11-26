@@ -106,18 +106,18 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
-        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
+//        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
         
         if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
-        	throw {foo:"bar"};
+        	throw "missing org oid!";
         }
         var deferred = $q.defer();
-        console.log("accessCheck().check()", service, orgOid, accessFunction);
+//        console.log("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
-       	console.log("getting url:", url);
+//       	console.log("getting url:", url);
             	
       	$http.get(url,{cache:true}).then(function(result) {
-        console.log("got:", result);
+//        console.log("got:", result);
 
         var ooids = result.data.split("/");
         
@@ -129,7 +129,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         }
         deferred.resolve(false);
         }, function(){ //failure funktio
-           	console.log("could not get url:", url);
+//           	console.log("could not get url:", url);
             deferred.resolve(false);
         });
 
