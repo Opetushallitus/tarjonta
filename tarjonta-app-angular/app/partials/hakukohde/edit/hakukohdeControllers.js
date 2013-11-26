@@ -40,6 +40,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.collapse.model = true;
 
+    var koulutusSet = new buckets.Set();
+
     var showSuccess = function() {
         $scope.model.showSuccess = true;
         $scope.model.hakukohdeTabsDisabled = false;
@@ -83,18 +85,21 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var spec = {
         koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
     };
+    koulutusSet.clear();
     TarjontaService.haeKoulutukset(spec).then(function(data){
 
             angular.forEach(data.tulokset,function(tulos){
                 if (tulos !== undefined && tulos.tulokset !== undefined) {
 
                     angular.forEach(tulos.tulokset,function(toinenTulos){
-                        $scope.model.koulutusnimet.push(toinenTulos.nimi);
+                        koulutusSet.add(toinenTulos.nimi);
+
                     });
 
                 }
 
             });
+        $scope.model.koulutusnimet = koulutusSet.toArray();
     });
 
     $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta',AuthService.getLanguage());
@@ -271,12 +276,20 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    showError(hakukohde.errors);
                }
+               if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                   $scope.model.hakukohde.valintaperusteKuvaukset = {};
+               }
+               if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                   $scope.model.hakukohde.soraKuvaukset = {};
+               }
+
+
            });
 
         } else {
 
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
-            var returnResource = $scope.model.$update();
+            var returnResource = $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -285,7 +298,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                     showError(hakukohde.errors);
                 }
+
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                }
             });
+
         }
         }
     };
@@ -311,8 +332,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                   showError(hakukohde.errors);
                }
-
-
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                }
+                console.log('SAVED MODEL : ', $scope.model.hakukohde);
             });
 
         } else {
@@ -326,6 +352,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                     showError(hakukohde.errors);
 
+                }
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
                 }
             });
         }
@@ -345,7 +377,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         angular.forEach(hakuDatas,function(haku){
 
             angular.forEach(haku.nimi,function(nimi){
-                //TODO: replace this with localization value
+
                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                    haku.lokalisoituNimi = nimi.teksti;
                }

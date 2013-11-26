@@ -30,8 +30,9 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                     model : true
                 },
                 hakukohde : {
-                    valintaperusteKuvaukset : [],
-                    soraKuvaukset : []
+                    valintaperusteKuvaukset : {},
+                    soraKuvaukset : {}
+
                 }
             }
 

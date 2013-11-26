@@ -194,14 +194,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 
 	$scope.$watch( 'selection.koulutukset', function( newObj, oldObj ) {
 		$scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
-
 		$scope.koulutusActions.canCreateHakukohde=false;
-		var canCreate=[];
-		console.log("hakutulos:", $scope.koulutusResults);
-		for(var i=0;i<newObj.length;i++) {
-			console.log("checking hakukohde permission:", newObj[i]);
-			canCreate.push($scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate(newObj[i]));
-		}
+
+		PermissionService.ermissionService.hakukohde.canCreate(newObj).then(function(result){
+			$scope.koulutusActions.canCreateHakukohde = result;
+		});
 
 
 	}, true);

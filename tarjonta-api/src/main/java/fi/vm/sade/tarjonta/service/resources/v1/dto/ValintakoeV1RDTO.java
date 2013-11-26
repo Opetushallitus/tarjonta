@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -10,18 +12,20 @@ import java.util.List;
 /*
 * @author: Tuomas Katva 10/21/13
 */
+@ApiModel(value = "V1 Hakukohde's valintakoe REST-api model, used by KK-ui")
 public class ValintakoeV1RDTO extends BaseRDTO {
 
+    @ApiModelProperty(value = "Valintakoe's hakukohde oid", required=true)
     private String hakukohdeOid;
-
+    @ApiModelProperty(value = "Valintakoe's name language uri", required = true)
     private String kieliUri;
-
+    @ApiModelProperty(value = "Valintakoe's name's language's name, used for displaying the value", required = false)
     private String kieliNimi;
-
+    @ApiModelProperty(value = "Valintakoe's name ", required = true)
     private String valintakoeNimi;
 
     private TekstiRDTO valintakokeenKuvaus;
-
+    @ApiModelProperty(value = "Valintakoe's dates")
     private List<ValintakoeAjankohtaRDTO> valintakoeAjankohtas;
 
 

@@ -297,6 +297,9 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			canEdit: function(koulutusOid) {
 				
 				var koulutusoidit = angular.isArray(koulutusOid)?koulutusOid:[koulutusOid];
+				if(koulutusoidit.length==0) {
+					return {data:false};
+				}
 				
 				return _canEditKoulutusMulti(koulutusoidit);
 			},
@@ -328,7 +331,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config','Tarjonta']).facto
 			},
 			canPreview: function(orgOid) {
 				// TODO
-				console.log("TODO hakukohde.canPreview",oid);
+				console.log("TODO hakukohde.canPreview",orgOid);
 				return true;
 			},
 			/**

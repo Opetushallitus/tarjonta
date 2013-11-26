@@ -113,7 +113,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         // Default fallback
         if (this.locale === undefined) {
             $log.warn("  aha! undefined locale - using fi!");
-            this.locale = "en";
+            this.locale = "fi";
         }
         return this.locale;
     };
