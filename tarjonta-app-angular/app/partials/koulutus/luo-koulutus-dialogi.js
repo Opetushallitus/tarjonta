@@ -24,7 +24,10 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 
 	// hätäkorjaus KJOH-670	
-	if(SharedStateService.state.puut && SharedStateService.state.puut["lkorganisaatio"].scope!==$scope) {
+	if(SharedStateService.state.puut && SharedStateService.state.puut["lkorganisaatio"] && SharedStateService.state.puut["lkorganisaatio"].scope!==$scope) {
+		
+		console.log("puut:", SharedStateService.state.puut);
+		SharedStateService.state.puut["lkorganisaatio"]=SharedStateService.state.puut["lkorganisaatio"]||{};
 		SharedStateService.state.puut["lkorganisaatio"].scope = $scope;
 	}
 
