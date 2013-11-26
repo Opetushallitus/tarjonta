@@ -72,9 +72,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
-
-
-    private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
+    private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
 
     private OsoiteRDTO liitteidenToimitusOsoite;
 
@@ -234,14 +232,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.kaytetaanHakukohdekohtaistaHakuaikaa = kaytetaanHakukohdekohtaistaHakuaikaa;
     }
 
-    public List<HakukohdeLiiteRDTO> getHakukohteenLiitteet() {
+    public List<HakukohdeLiiteV1RDTO> getHakukohteenLiitteet() {
         if (hakukohteenLiitteet == null) {
-            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteRDTO>();
+            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteV1RDTO>();
         }
         return hakukohteenLiitteet;
     }
 
-    public void setHakukohteenLiitteet(List<HakukohdeLiiteRDTO> hakukohteenLiitteet) {
+    public void setHakukohteenLiitteet(List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet) {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 

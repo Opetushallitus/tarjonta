@@ -81,8 +81,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired
     private IndexerResource solrIndexer;
 
-    @Autowired
-    private ConversionService conversionService;
+
 
     @Autowired(required = true)
     private PublicationDataService publication;
@@ -259,7 +258,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
-        HakukohdeV1RDTO hakukohdeRDTO = conversionService.convert(hakukohde,HakukohdeV1RDTO.class);
+        HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
 
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
         result.setResult(hakukohdeRDTO);
@@ -285,7 +284,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return errorResult;
         }
         hakukohdeRDTO.setOid(null);
-        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
 
         LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
@@ -332,7 +331,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return errorResult;
         }
 
-        Hakukohde hakukohde = conversionService.convert(hakukohdeRDTO,Hakukohde.class);
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
 
         Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
 

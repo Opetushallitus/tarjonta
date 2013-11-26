@@ -90,10 +90,7 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
         LOG.debug("HAKUKOHDE LISATIEDOT : {} " , hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY" );
-        if (hakukohde.getLiites() != null) {
-            hakukohdeRDTO.setHakukohteenLiitteet(convertLiitteet(hakukohde.getLiites()));
 
-        }
 
         if (hakukohde.getValintakoes() != null) {
             hakukohdeRDTO.setValintakokeet(convertValintakokeet(hakukohde.getValintakoes()));
