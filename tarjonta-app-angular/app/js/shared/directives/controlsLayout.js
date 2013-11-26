@@ -1,5 +1,53 @@
 'use strict';
 
+/* Layout-komponentti/direktiivistö formien toimintonappeja, ilmoitustekstejä ja muita yleisiä asioita varten.
+ * 
+ * 1. Direktiivit kommunikoivat scopessa määritellyn olion välityksellä joka controllerin on alustettava tyhjäksi
+ *    olioksi:
+ * 
+ * 	 $scope.formControls = {};
+ * 
+ *   - Tämän olion sisältö ei ole osa direktiivistön julkista apia eli siihen ei pidä missään tapauksessa viitata
+ *     suoraan.
+ * 
+ * 2. Toiminnot ja ilmoitukset määritellään controls-model-tagilla (tämä ei vielä lisää mitään sisältöä sivulle vaan
+ *    kokoaa tiedot modeliin):
+ * 
+ *   <controls-model model="formControls">
+ *   
+ *   	<controls-button primary="true|false" tt="..." action="f()", disabled="f()"/>
+ *   	...
+ *   	<controls-message type="message|success|error|error-detail" type="" tt="..." tp="..." show="f()"/>
+ *   	...
+ *   
+ *   </controls-model>
+ *   
+ *   - Parametrien tarkempi dokumentaatio on alempana, direktiivimääritysten yhteydessä
+ *   
+ *   Ilmoitustyypit:
+ *   
+ *   message		Normaali ilmoitusviestityyli, näytetään vain headerissa. Esim. "Olet muokkaamassa..."
+ *   success		Ilmoitus onnistumisesta; tätä ei näytetä, jos yksikin error- tai error-detail -viesti on näkyvissä.
+ *   error			Päätason virheviesti, esim. "Tallennus epäonnistui"
+ *   error-detail   Virheviestin tarkennus, validointia ja muuta varten, esim. "Kenttä X on pakollinen"
+ *   
+ * 3. Määritelly napit ja ilmoitukset näytetään sivulla display-controls -tagilla:
+ * 
+ *   <display-controls model="formControls" display="header|footer"/>
+ *  
+ *   - Display-parametri määrittää kumpi variaatio näytetään; headerin ja footerin ero on käytännössä se, että footerissa
+ *     ei näytetä message-tyypin ilmoitustekstiä vaan vaakaviiva (riippumatta siitä onko kyseisentyyppistä viestiä
+ *     määritelty.
+ * 
+ * TODO
+ * 
+ *   - Sivun otsikon ja muokkaustietojen (kuka ja milloin) näyttäminen headerissa.
+ *   - X-nappi jolla virheviestin saa piilotettua
+ *   - Virheviestien tarkennusten piilotus niiden määrän ollessa suuri (esim. näytä lisää -linkki)
+ * 
+ * 
+ */
+
 var app = angular.module('ControlsLayout', ['localisation']);
 
 app.directive('displayControls',function($log, LocalisationService) {
