@@ -1,10 +1,15 @@
 <div class="tarjontaControlsLayout">
 
-<div class="msgInfo" ng-show="showMessage()">
-    <p ng-repeat="m in notifs.message" data-ng-bind-html="t(m.tt, m.tp())"  ng-show="showMessage(m)"></p>
+
+<div ng-switch="display">
+	<div class="msgInfo" ng-show="showMessage()" ng-switch-when="header">
+	    <p ng-repeat="m in model.notifs.message" data-ng-bind-html="t(m.tt, m.tp())"  ng-show="showMessage(m)"></p>
+	</div>
+	<hr ng-switch-when="footer"></hr>
+
 </div>
 
-<span ng-repeat="b in buttons">
+<span ng-repeat="b in model.buttons">
 	<input
 	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
 	    type="button"
@@ -15,17 +20,14 @@
 </span>
 
 <div class="msgOk" ng-show="showSuccess()">
-    <p ng-repeat="m in notifs.success" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showSuccess(m)"></p>
+    <p ng-repeat="m in model.notifs.success" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showSuccess(m)"></p>
 </div>
 
 <div class="msgError" ng-show="showError()">
-    <p ng-repeat="m in notifs.error" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showError(m)"></p>
+    <p ng-repeat="m in model.notifs.error" data-ng-bind-html="t(m.tt, m.tp())" ng-show="showError(m)"></p>
     <ul ng-show="showErrorDetail()">
         <li ng-repeat="e in notifs.errorDetail" ng-show="showErrorDetail(m)"></li>
     </ul>
 </div>
-
-<!-- piilodiv: tarvitaan jotta angular transcludoi alitagit -->
-<div ng-transclude style="display:none"></div>
 
 </div>

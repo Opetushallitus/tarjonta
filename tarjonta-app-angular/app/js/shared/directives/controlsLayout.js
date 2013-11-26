@@ -2,27 +2,30 @@
 
 var app = angular.module('ControlsLayout', ['localisation']);
 
-
-app.directive('controlsLayout',function($log, LocalisationService) {
+app.directive('displayControls',function($log, LocalisationService) {
 	
     return {
         restrict: 'E',
         templateUrl: "js/shared/directives/controlsLayout.html",
         replace: true,
-        transclude: true,
-        scope: {},
+        scope: {
+        	model: "=",	// model johon controls-model viittaa
+        	display: "@" // header|footer
+        },
         controller: function($scope) {
-        	$scope.t = function(v,a) {
-        		return LocalisationService.t(v,a);
+
+        	switch ($scope.display) {
+        	case "header":
+        	case "footer":
+        		break;
+    		default:
+    			throw new Error("Invalid display type: "+$scope.display);
         	}
-       		$scope.notifs = {
-       				message: [],
-       				success: [],
-       				error: [],
-       				errorDetail: []
-       		};
-       		$scope.buttons = [];
-       		
+        	
+        	$scope.t = function(k, a) {
+        		return LocalisationService.t(k, a);
+        	}
+        	
        		function showMessage(msgs, msg) {
        			if (msg==undefined) {
        				for (var i in msgs) {
@@ -40,24 +43,49 @@ app.directive('controlsLayout',function($log, LocalisationService) {
        		}
 
        		$scope.showErrorDetail = function(msg) {
-       			return showMessage($scope.notifs.errorDetail, msg);
+       			return showMessage($scope.model.notifs.errorDetail, msg);
        		};
 
        		$scope.showError = function(msg) {
        			if (msg==undefined) {
-           			return showMessage($scope.notifs.error) || showMessage($scope.notifs.errorDetail);
+           			return showMessage($scope.model.notifs.error) || showMessage($scope.model.notifs.errorDetail);
        			}
-       			return showMessage($scope.notifs.error, msg);
+       			return showMessage($scope.model.notifs.error, msg);
        		};
        		
        		$scope.showSuccess = function(msg) {
-       			return showMessage($scope.notifs.success, msg) && (msg!=null || !$scope.showError());
+       			return showMessage($scope.model.notifs.success, msg) && (msg!=null || !$scope.showError());
        		};
        		
        		$scope.showMessage = function(msg) {
-       			return showMessage($scope.notifs.message, msg);
+       			return showMessage($scope.model.notifs.message, msg);
        		};
        		
+       		return $scope;
+        }
+    }
+    
+});
+
+app.directive('controlsModel',function($log) {
+	
+    return {
+        restrict: 'E',
+        template: "<div style=\"display:none;\" ng-transclude></div>",
+        replace: true,
+        transclude: true,
+        scope: {
+        	model: "="
+        },
+        controller: function($scope) {
+        	$scope.model.notifs = {
+   				message: [],
+   				success: [],
+   				error: [],
+   				errorDetail: []
+       		}
+        	$scope.model.buttons = [];
+       		       		
        		return $scope;
         }
     }
@@ -69,9 +97,9 @@ app.directive('controlsButton',function($log) {
     return {
         restrict: 'E',
         //replace: true,
-        require: "^controlsLayout",
+        require: "^controlsModel",
         link: function (scope, element, attrs, controlsLayout) {
-        	controlsLayout.buttons.push({
+        	controlsLayout.model.buttons.push({
         		tt: scope.tt,
         		primary: scope.primary,
         		action: scope.action,
@@ -91,7 +119,7 @@ app.directive('controlsNotify',function($log) {
     return {
         restrict: 'E',
         ///replace: true,
-        require: "^controlsLayout",
+        require: "^controlsModel",
         link: function (scope, element, attrs, controlsLayout) {
         	
         	var notifs;
@@ -99,14 +127,13 @@ app.directive('controlsNotify',function($log) {
         	case "message":
         	case "success":
         	case "error":
-        		notifs = controlsLayout.notifs[scope.type];
+        		notifs = controlsLayout.model.notifs[scope.type];
     			break;
         	case "error-detail":
-        		notifs = controlsLayout.notifs.errorDetail;
+        		notifs = controlsLayout.model.notifs.errorDetail;
     			break;
     		default:
-    			console.log("INVALID NOTIF TYPE",scope.type);
-    			break;
+    			throw new Error("Invalid notification type: "+scope.type);
         	}
         	
         	notifs.push({

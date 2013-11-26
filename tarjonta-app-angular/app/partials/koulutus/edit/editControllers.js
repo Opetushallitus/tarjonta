@@ -12,6 +12,8 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
+                
+                $scope.formControls = {};
 
                 var showSuccess = function() {
                     $scope.uiModel.showSuccess = true;
