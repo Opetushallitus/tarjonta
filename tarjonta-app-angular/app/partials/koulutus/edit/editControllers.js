@@ -6,6 +6,7 @@ app.controller('BaseEditController',
             function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
+                $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
                 $scope.uiModel = null;
@@ -17,10 +18,8 @@ app.controller('BaseEditController',
 
                 var showSuccess = function() {
                     $scope.uiModel.showSuccess = true;
+                    $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
-                    $timeout(function() {
-                        $scope.uiModel.showSuccess = false;
-                    }, 5000);
                 }
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
@@ -49,6 +48,8 @@ app.controller('BaseEditController',
                     var model = {};
 
                     uiModel.showError = false;
+                    uiModel.showSuccess = false;
+                    
                     converter.createUiModels(uiModel);
 
                     /*
