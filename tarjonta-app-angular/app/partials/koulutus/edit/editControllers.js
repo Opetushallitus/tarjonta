@@ -18,10 +18,8 @@ app.controller('BaseEditController',
 
                 var showSuccess = function() {
                     $scope.uiModel.showSuccess = true;
+                    $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
-                    $timeout(function() {
-                        $scope.uiModel.showSuccess = false;
-                    }, 5000);
                 }
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
@@ -50,6 +48,8 @@ app.controller('BaseEditController',
                     var model = {};
 
                     uiModel.showError = false;
+                    uiModel.showSuccess = false;
+                    
                     converter.createUiModels(uiModel);
 
                     /*
