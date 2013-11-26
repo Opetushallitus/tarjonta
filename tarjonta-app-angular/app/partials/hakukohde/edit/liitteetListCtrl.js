@@ -55,7 +55,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     var removeLiiteFromList = function(liite) {
         var index = $scope.model.liitteet.indexOf(liite);
         $scope.model.liitteet.splice(index,1);
-        liite.hakukohdeOid = $scope.model.hakukohdeOid;
+        liite.hakukohdeOid = $scope.model.hakukohde.oid;
         liite.liiteId = liite.oid;
 
         var liiteResource = new Liite(liite);
@@ -122,7 +122,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         });
 
         modalInstance.result.then(function(selectedItem){
-             liite.hakukohdeOid = $scope.model.hakukohdeOid;
+             liite.hakukohdeOid = $scope.model.hakukohde.oid;
             console.log('GOT LIITE: ', selectedItem);
              var liiteResurssi  = new Liite(selectedItem);
              if (selectedItem.oid === undefined) {
