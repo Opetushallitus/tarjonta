@@ -139,18 +139,21 @@ describe('TarjontaPermissions', function() {
     				    "tuloksia" : 1
     				  },
     				  "status" : "OK"
-    				}
-    	}
+    				};
+    	};
     	     
         $httpBackend.whenGET('/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
+        $httpBackend.whenGET('/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
         $httpBackend.whenGET('/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
         $httpBackend.whenGET('/organisaatio/1.2.5/parentoids').respond("1/1.2/1.2.5");
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5').respond(koulutushaku('1.2.5'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4').respond(koulutushaku('1.2.4'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3').respond(koulutushaku('1.2.3'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3.4').respond(koulutushaku('1.2.3'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5').respond(hakukohdehaku('1.2.5'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4').respond(hakukohdehaku('1.2.4'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4').respond(hakukohdehaku('1.2.3'));
         
     };
     
@@ -158,7 +161,7 @@ describe('TarjontaPermissions', function() {
         
     	/** executes test, called by test() */
     	var doTest = function(promise, $httpBackend) {
-        	var result;
+        	var result = undefined;
         	
         	promise.then(function(data){
         		result=data;
@@ -178,67 +181,77 @@ describe('TarjontaPermissions', function() {
     	var test = function(expected, message, orgoid, testFn){
             it(expected + message, inject(function(PermissionService, $httpBackend) {
             	mockHttp($httpBackend);
-            	console.log("parameter oid:", orgoid);
-            	console.log("testFn:", testFn);
+//            	console.log("parameter oid:", orgoid);
+//            	console.log("testFn:", testFn);
             	result = doTest(testFn(PermissionService, orgoid), $httpBackend);
-            	console.log("testing access to " + orgoid + " expected result:" + expected + " actual result:" + result)
+//            	console.log("testing access to " + orgoid + " expected result:" + expected + " actual result:" + result);
             	expect(expected).toEqual(result);
             }));
-        }
+        };
 
     	//create koulutus
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.koulutus.canCreate(orgOid);
     	};
     	
-    	test(true, " for create when user has CRUD permission", "1.2.3", testFn);
-    	test(false, " for create when user has RU permission","1.2.4", testFn);
-    	test(false, " for create when user has R permission", "1.2.5", testFn);
+    	test(true, " for create koulutus when user has CRUD permission", "1.2.3", testFn);
+    	test(false, " for create koulutus when user has RU permission","1.2.4", testFn);
+    	test(false, " for create koulutus when user has R permission", "1.2.5", testFn);
+    	test(false, " for create koulutus when user has CRUD permission (multi)", ["1.2.3","1.2.4"], testFn);
+    	test(true, " for create koulutus when user has CRUD permission (multi)", ["1.2.3","1.2.3.4"], testFn);
 
     	//edit koulutus
     	testFn=function(PermissionService, oid){
     		return PermissionService.koulutus.canEdit(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "koulutus.1.2.3", testFn);
-    	test(true, " for edit when user has RU permission", "koulutus.1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "koulutus.1.2.5", testFn);
+    	test(true, " for edit koulutus when user has CRUD permission", "koulutus.1.2.3", testFn);
+    	test(true, " for edit koulutus when user has RU permission", "koulutus.1.2.4", testFn);
+    	test(false, " for edit koulutus when user has R permission", "koulutus.1.2.5", testFn);
+    	test(false, " for edit koulutus when user has R permission (multi)", ["koulutus.1.2.5", "koulutus.1.2.4"], testFn);
+    	test(true, " for edit koulutus when user has R permission (multi)", ["koulutus.1.2.3", "koulutus.1.2.4"], testFn);
 
     	//delete koulutus
     	testFn=function(PermissionService, oid){
     		return PermissionService.koulutus.canDelete(oid);
     	};
     	
-    	test(true, " for delete when user has CRUD permission", "koulutus.1.2.3", testFn);
-    	test(false, " for delete when user has RU permission", "koulutus.1.2.4", testFn);
-    	test(false, " for delete when user has R permission", "koulutus.1.2.5", testFn);
+    	test(true, " for delete koulutus when user has CRUD permission", "koulutus.1.2.3", testFn);
+    	test(false, " for delete koulutus when user has RU permission", "koulutus.1.2.4", testFn);
+    	test(false, " for delete koulutus when user has R permission", "koulutus.1.2.5", testFn);
+    	test(false, " for delete koulutus when user has R permission (multi)", ["koulutus.1.2.5","koulutus.1.2.4"], testFn);
+    	test(true, " for delete koulutus when user has R permission (multi)", ["koulutus.1.2.3","koulutus.1.2.3.4"], testFn);
 
     	//create hakukohde
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.hakukohde.canCreate(orgOid);
     	};
     	
-    	test(true, " for create when user has CRUD permission", "1.2.3", testFn);
-    	test(false, " for create when user has RU permission", "1.2.4", testFn);
-    	test(false, " for create when user has R permission", "1.2.5", testFn);
+    	test(true, " for create hakukohde when user has CRUD permission", "1.2.3", testFn);
+    	test(false, " for create hakukohde when user has RU permission", "1.2.4", testFn);
+    	test(false, " for create hakukohde when user has R permission", "1.2.5", testFn);
 
     	//edit hakukohde
     	testFn=function(PermissionService, oid){
     		return PermissionService.hakukohde.canEdit(oid);
     	};
     	
-    	test(true, " for edit when user has CRUD permission", "hakukohde.1.2.3", testFn);
-    	test(true, " for edit when user has RU permission", "hakukohde.1.2.4", testFn);
-    	test(false, " for edit when user has R permission", "hakukohde.1.2.5", testFn);
+    	test(true, " for edit hakukohde when user has CRUD permission", "hakukohde.1.2.3", testFn);
+    	test(true, " for edit hakukohde when user has RU permission", "hakukohde.1.2.4", testFn);
+    	test(false, " for edit hakukohde when user has R permission", "hakukohde.1.2.5", testFn);
+    	test(false, " for edit hakukohde when user has R permission (multi)", ["hakukohde.1.2.5","hakukohde.1.2.4"], testFn);
+    	test(true, " for edit hakukohde when user has R permission (multi)", ["hakukohde.1.2.3","hakukohde.1.2.3.4"], testFn);
 
     	//delete hakukohde
     	testFn=function(PermissionService, oid){
     		return PermissionService.hakukohde.canDelete(oid);
     	};
     	
-    	test(true, " for delete when user has CRUD permission", "hakukohde.1.2.3", testFn);
-    	test(false, " for delete when user has RU permission", "hakukohde.1.2.4", testFn);
-    	test(false, " for delete when user has R permission", "hakukohde.1.2.5", testFn);
+    	test(true, " for delete hakukohde when user has CRUD permission", "hakukohde.1.2.3", testFn);
+    	test(false, " for delete hakukohde when user has RU permission", "hakukohde.1.2.4", testFn);
+    	test(false, " for delete hakukohde when user has R permission", "hakukohde.1.2.5", testFn);
+    	test(false, " for delete hakukohde when user has R permission (multi)", ["hakukohde.1.2.5", "hakukohde.1.2.3"] , testFn);
+    	test(true, " for delete hakukohde when user has R permission (multi)", ["hakukohde.1.2.3.4", "hakukohde.1.2.3"] , testFn);
 
     });
 
