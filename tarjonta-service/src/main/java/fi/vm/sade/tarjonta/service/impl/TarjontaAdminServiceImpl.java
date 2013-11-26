@@ -126,8 +126,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
 
-
-
     @Override
     @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
@@ -470,11 +468,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
-        
+
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
-        
+
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-        
 
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
@@ -482,7 +479,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
                 curKoul.removeHakukohde(hakukohde);
             }
-            
+
             try {
                 log.info("Removing hakukohde from index...");
                 solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
@@ -491,10 +488,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 throw new TarjontaBusinessException("indexing.error", e);
             }
 
-            
-            hakukohdeDAO.remove(hakukohde);       
+            hakukohdeDAO.remove(hakukohde);
         }
-        
+
         return new HakukohdeTyyppi();
     }
 
@@ -591,10 +587,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return vastaus;
     }
-
-
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -926,7 +918,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        indexTilatToSolr(tarjontatiedonTila); 
+        indexTilatToSolr(tarjontatiedonTila);
         return new PaivitaTilaVastausTyyppi();
     }
 
@@ -960,7 +952,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         //toteutus Ids
-        komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        if (hakukohdeOids != null && !hakukohdeOids.isEmpty()) {
+            komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        }
     }
 
     @Override
