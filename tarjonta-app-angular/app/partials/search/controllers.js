@@ -196,7 +196,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		$scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
 		$scope.koulutusActions.canCreateHakukohde=false;
 
-		PermissionService.ermissionService.hakukohde.canCreate(newObj).then(function(result){
+		PermissionService.hakukohde.canCreate(newObj).then(function(result){
 			$scope.koulutusActions.canCreateHakukohde = result;
 		});
 
