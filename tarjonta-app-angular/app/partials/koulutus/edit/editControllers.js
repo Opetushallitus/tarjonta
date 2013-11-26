@@ -1,5 +1,5 @@
 
-var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField']);
+var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField','ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
@@ -12,6 +12,8 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
+                
+                $scope.formControls = {};
 
                 var showSuccess = function() {
                     $scope.uiModel.showSuccess = true;
@@ -46,6 +48,7 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.showError = false;
                     converter.createUiModels(uiModel);
 
                     /*

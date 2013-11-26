@@ -13,6 +13,11 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
 
     function controller($scope) {
 
+    	if ($scope.model instanceof Array || ((typeof $scope.model)!='object') || $scope.model==null || $scope.model==undefined) {
+        	console.log("MODEL FAIL",$scope.model);
+    		throw new Error("mkRichTextarea.model must be a non-array object");
+    	}
+
     	$scope.langs = [];
     	$scope.userLangs = window.CONFIG.app.userLanguages;
     	$scope.selectedLangs = [];

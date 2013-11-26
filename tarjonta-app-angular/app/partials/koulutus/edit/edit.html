@@ -1,20 +1,31 @@
 <div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
-    <div class="alert-success" data-ng-show="uiModel.showSuccess">
-        <h2>{{t('tarjonta.tallennus.ok')}}</h2>
-    </div>
-    <div class="alert-error" data-ng-show="uiModel.showError">
-        <ul>
-            <li data-ng-repeat="validationmsg in model.validationmsgs">
-                {{ validationmsg }}
-            </li>
-        </ul>
-    </div>
+
+    <controls-model model="formControls">
+        
+        <controls-button tt="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.valmis" action="saveValmis($event)" primary="true"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
+        
+        <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
+        <controls-notify type="message" tt="{{'koulutus.edit.header.'+model.koulutusasteTyyppi}}" tp="[ model.organisaatio.nimi ]"></controls-notify>
+        
+        <controls-notify type="success" tt="tarjonta.tallennus.ok" show="uiModel.showSuccess"></controls-notify>
+        <controls-notify type="error" tt="tarjonta.tallennus.virhe" show="uiModel.showError"></controls-notify>
+
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+
+    </controls-model>
+
+    <display-controls model="formControls" display="header"></display-controls>
+
+	<!-- TODO muokatessa joku muu teksti kuin "uusi koulutus" -->
+	<h3>{{t('koulutus.edit.header.title')}}</h3>
 
     <form name="koulutusForm">
-        <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
         <div class="body" ng-include="resultPageUri"></div>
-
-        <hr/>
-        <div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
     </form>
+
+    <display-controls model="formControls" display="footer"></display-controls>
+
 </div>

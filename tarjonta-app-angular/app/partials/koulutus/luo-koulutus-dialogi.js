@@ -23,6 +23,11 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	SharedStateService.state.luoKoulutusaDialogi.koulutustyypit=SharedStateService.state.luoKoulutusaDialogi.koulutustyypit || {};
 
 
+	// hätäkorjaus KJOH-670	
+	if(SharedStateService.state.puut && SharedStateService.state.puut["lkorganisaatio"].scope!==$scope) {
+		SharedStateService.state.puut["lkorganisaatio"].scope = $scope;
+	}
+
 	var promises =[];
 	
 	if(!SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit){

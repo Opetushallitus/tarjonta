@@ -130,7 +130,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-        -->    
+        -->
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
@@ -334,7 +334,7 @@
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
         </dependency>
-        
+
         <!-- for image resize
         <dependency>
             <groupId>org.imgscalr</groupId>
@@ -344,7 +344,11 @@
             <scope>compile</scope>
         </dependency>
         -->
-
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
     </dependencies>
 
     <build>
