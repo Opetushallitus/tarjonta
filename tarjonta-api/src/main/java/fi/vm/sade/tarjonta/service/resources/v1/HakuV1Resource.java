@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
@@ -47,50 +49,60 @@ import javax.ws.rs.core.MediaType;
  * @author mlyly
  */
 @Path("/v1/haku")
+@Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
 public interface HakuV1Resource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa kaikki hakujen oid:t", notes = "Listaa kaikki hakujen oidit", response = OidV1RDTO.class)
     public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params);
 
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa haun annetulla oid:lla", notes = "Palauttaa haun annetulla oid:lla", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> findByOid(@PathParam("oid") String oid);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Luo haun", notes = "Luo haun", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
 
     @GET
     @Path("/findAll")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa kaikki haut", notes = "Palauttaa kaikki haut", response = HakuV1RDTO.class)
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus();
 
     @DELETE
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa haun", notes = "Poistaa haun annettulla oid:lla", response = Boolean.class)
     public ResultV1RDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
 
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palautaa haun hakukohteeet", notes = "Palauttaa annetun haun oid:n perusteella haun hakukohteet", response = OidV1RDTO.class)
     public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(@PathParam("oid") String oid, @QueryParam("") GenericSearchParamsV1RDTO params);
 
-    // TODO: @POST OID/hakukohde - add hakukohde?
+
     @GET
     @Path("{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palautaa haun tilan", notes = "Palauttaa annetun haun oid:n perusteella haun tilan", response = String.class)
     public ResultV1RDTO<String> getHakuState(@PathParam("oid") String oid);
 
     @PUT
     @Path("{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Päivittää haun tilan", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = String.class)
     public ResultV1RDTO<String> setHakuState(@PathParam("oid") String oid, String state);
 }

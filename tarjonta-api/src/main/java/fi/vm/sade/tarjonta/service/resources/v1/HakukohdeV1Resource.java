@@ -180,6 +180,7 @@ public interface HakukohdeV1Resource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa listan hakukohteista annetuilla parametreilla", notes = "Palauttaa listan hakukohteista annetuilla parametreilla", response = HakukohdeHakutulosV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("tila") List<String> hakukohdeTilas,
