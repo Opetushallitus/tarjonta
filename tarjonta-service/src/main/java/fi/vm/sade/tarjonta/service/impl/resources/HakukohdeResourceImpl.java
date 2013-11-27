@@ -245,8 +245,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
                 //
                 // TODO / NOTE / ALERT: in Lukio the valintakoes were mistakenly compressed to
-                // single valintakoe, should have two instances...
+                // single valintakoe, should have one to two instances...
                 // Reeeally ugly, hardcoded fix here... sorry, sorry sorry.
+                //
+                // TODO Fix UI to create correct valintakoe models to backend/db and do some flyway magic later!
                 //
                 ValintakoeRDTO vk = null;
                 ValintakoeRDTO lt = null;
