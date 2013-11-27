@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmentavaJaKuntouttavaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -216,7 +217,8 @@ public interface KoulutusV1Resource {
             @QueryParam("koulutusOid") List<String> koulutusOids,
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
-            @QueryParam("alkamisVuosi") Integer alkamisVuosi
+            @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi
     );
 
     /**

@@ -94,6 +94,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
+        addKoulutusAsteTyyppi(hakukohdeDoc, koulutuses);
         
 
         addPohjakoulutusvaatimus(hakukohdeDoc, koulutuses);
@@ -117,6 +118,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
 
         return docs;
+    }
+
+    private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
+            List<KoulutusIndexEntity> koulutuses) {
+        if(koulutuses!=null && koulutuses.size()>0) {
+            String koulutusastetyyppi = koulutuses.get(0).getKoulutusTyyppi();
+            hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
+        }
     }
 
     private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc,

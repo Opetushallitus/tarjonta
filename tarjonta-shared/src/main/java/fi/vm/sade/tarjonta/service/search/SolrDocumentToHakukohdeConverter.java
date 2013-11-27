@@ -26,6 +26,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLA
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOODI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSASTETYYPPI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMET;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMIEN_KIELET;
 
@@ -39,6 +41,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 public class SolrDocumentToHakukohdeConverter {
     
@@ -69,6 +72,8 @@ public class SolrDocumentToHakukohdeConverter {
 
         hakukohde.setKoodistoNimi("" + hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_URI));
 
+        hakukohde.setKoulutusastetyyppi(createKoulutustyyppi(hakukohdeDoc));
+
         hakukohde.setKoulutuksenAlkamiskausi(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, hakukohdeDoc));
 
         if(hakukohdeDoc.getFieldValue(VUOSI_KOODI)!=null) {
@@ -86,6 +91,7 @@ public class SolrDocumentToHakukohdeConverter {
         if(hakukohde.getTarjoajaOid()==null) {
             return null;
         }
+        hakukohde.setKoulutusastetyyppi(createKoulutusastetyyppi(hakukohdeDoc));
         return hakukohde;
     }
     
@@ -124,6 +130,13 @@ public class SolrDocumentToHakukohdeConverter {
         }
     }
     
+    private KoulutusasteTyyppi createKoulutusastetyyppi(SolrDocument hakukohdeDoc) {
+        if(hakukohdeDoc.getFieldValue(KOULUTUSASTETYYPPI)!=null){
+            return KoulutusasteTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSASTETYYPPI));
+        } else return null;
+    }
+
+    
     /**
      * Asettaa yhden nimen
      * @param nimiMap
@@ -152,6 +165,12 @@ public class SolrDocumentToHakukohdeConverter {
         if (value != null) {
             nimiMap.put(targetLanguage, value);
         }
+    }
+
+    private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument hakukohdeDoc) {
+        if(hakukohdeDoc.getFieldValue(KOULUTUSTYYPPI)!=null){
+            return KoulutusasteTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSTYYPPI));
+        } else return null;
     }
 
 

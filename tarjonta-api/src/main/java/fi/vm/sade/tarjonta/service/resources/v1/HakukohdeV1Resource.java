@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.HashMap;
@@ -186,7 +187,8 @@ public interface HakukohdeV1Resource {
             @QueryParam("tila") List<String> hakukohdeTilas,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-            @QueryParam("hakukohdeOid") String hakukohdeOid
+            @QueryParam("hakukohdeOid") String hakukohdeOid,
+            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi
             );
 
     /**
