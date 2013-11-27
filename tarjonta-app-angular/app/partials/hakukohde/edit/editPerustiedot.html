@@ -130,7 +130,7 @@
 	<tr>
 		<th tt="kk.hakukohde.liitteidenToimitusPvm"/>
 		<td>
-			<input type="checkbox" ng-model="kaytetaanHaunPaattymisenAikaa"/>
+			<input type="checkbox" ng-change="model.checkboxChange()" ng-model="model.hakukohde.kaytetaanHaunPaattymisenAikaa"/>
 			<span tt="kk.hakukohde.kaytetaanHaunPaattymisenAikaa"></span><br/>
 		</td>
 		<td>
@@ -140,6 +140,7 @@
 	<tr>
 		<th></th>
 		<td>
+
 			<date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
 		</td>
 		<td>

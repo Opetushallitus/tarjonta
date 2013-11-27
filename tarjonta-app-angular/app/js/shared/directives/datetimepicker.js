@@ -16,6 +16,9 @@
 var app = angular.module('DateTimePicker', ['ngResource']);
 
 app.directive('dateTimePicker',function(){
+
+
+
     return {
         restrict:'E',
         replace:true,
@@ -41,6 +44,7 @@ app.directive('dateTimePicker',function(){
             }
 
             scope.valueToShow = initialDateObj;
+
 
             input.datetimepicker({
                 format: "dd.m.yyyy hh:ii",
