@@ -245,64 +245,80 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
                 //
                 // TODO / NOTE / ALERT: in Lukio the valintakoes were mistakenly compressed to
-                // single valintakoe, should have two instances...
+                // single valintakoe, should have one to two instances...
                 // Reeeally ugly, hardcoded fix here... sorry, sorry sorry.
                 //
-                ValintakoeRDTO vk = new ValintakoeRDTO();
-                ValintakoeRDTO lt = new ValintakoeRDTO();
-
+                // TODO Fix UI to create correct valintakoe models to backend/db and do some flyway magic later!
                 //
-                // Valintakoe / selection examination
-                //
-                vk.setCreated(tmp.getCreated());
-                vk.setCreatedBy(tmp.getCreatedBy());
-                vk.setKuvaus(tmp.getKuvaus());
-                vk.setModified(tmp.getModified());
-                vk.setModifiedBy(tmp.getModifiedBy());
-                vk.setOid(tmp.getOid() + ".1");
-                vk.setTyyppiUri("valintakokeentyyppi_1#1");
-                vk.setValintakoeAjankohtas(tmp.getValintakoeAjankohtas());
-                vk.setValintakoeId(tmp.getValintakoeId());
-                vk.setVersion(tmp.getVersion());
-
-                //
-                // Lisänäytöt / additional test?
-                //
-                lt.setCreated(tmp.getCreated());
-                lt.setCreatedBy(tmp.getCreatedBy());
-                lt.setKuvaus(tmp.getLisanaytot());
-                lt.setModified(tmp.getModified());
-                lt.setModifiedBy(tmp.getModifiedBy());
-                lt.setOid(tmp.getOid() + ".2");
-                lt.setTyyppiUri("valintakokeentyyppi_2#1");
-                lt.setVersion(tmp.getVersion());
+                ValintakoeRDTO vk = null;
+                ValintakoeRDTO lt = null;
 
                 //
                 // Points
                 //
+                List<ValintakoePisterajaRDTO> addToBothVKs = new ArrayList<ValintakoePisterajaRDTO>();
+
                 for (ValintakoePisterajaRDTO pisteraja : tmp.getValintakoePisterajas()) {
                     // TODO hardocded... :(
                     if ("Paasykoe".equals(pisteraja.getTyyppi())) {
+                        vk = (vk == null) ? new ValintakoeRDTO() : vk;
                         if (vk.getValintakoePisterajas() == null) {
                             vk.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
                         }
                         vk.getValintakoePisterajas().add(pisteraja);
-                    }
-                    if ("Lisapisteet".equals(pisteraja.getTyyppi())) {
+                    } else if ("Lisapisteet".equals(pisteraja.getTyyppi())) {
+                        lt = (lt == null) ? new ValintakoeRDTO() : lt;
                         if (lt.getValintakoePisterajas() == null) {
                             lt.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
                         }
                         lt.getValintakoePisterajas().add(pisteraja);
+                    } else {
+                        // Anything else, add to both ("Kokonaispisteet")
+                        addToBothVKs.add(pisteraja);
                     }
                 }
 
-                result.add(vk);
-                result.add(lt);
+                //
+                // Valintakoe / selection examination
+                //
+                if (vk != null) {
+                    vk.setCreated(tmp.getCreated());
+                    vk.setCreatedBy(tmp.getCreatedBy());
+                    vk.setKuvaus(tmp.getKuvaus());
+                    vk.setModified(tmp.getModified());
+                    vk.setModifiedBy(tmp.getModifiedBy());
+                    vk.setOid(tmp.getOid() + "_1");
+                    vk.setTyyppiUri("valintakokeentyyppi_1#1");
+                    vk.setValintakoeAjankohtas(tmp.getValintakoeAjankohtas());
+                    vk.setValintakoeId(tmp.getValintakoeId());
+                    vk.setVersion(tmp.getVersion());
 
-                // TODO remove me when this works!
-                // result.add(tmp);
+                    // Add "common" points if any
+                    vk.getValintakoePisterajas().addAll(addToBothVKs);
+
+                    result.add(vk);
+                }
+
+                //
+                // Lisänäytöt / additional test?
+                //
+                if (lt != null) {
+                    lt.setCreated(tmp.getCreated());
+                    lt.setCreatedBy(tmp.getCreatedBy());
+                    lt.setKuvaus(tmp.getLisanaytot());
+                    lt.setModified(tmp.getModified());
+                    lt.setModifiedBy(tmp.getModifiedBy());
+                    lt.setOid(tmp.getOid() + "_2");
+                    lt.setTyyppiUri("valintakokeentyyppi_2#1");
+                    lt.setVersion(tmp.getVersion());
+
+                    // Add "common" points if any
+                    lt.getValintakoePisterajas().addAll(addToBothVKs);
+
+                    result.add(lt);
+                }
             } else {
-                // Normal and default case.
+                // Normal and the default case.
                 result.add(tmp);
             }
         }
