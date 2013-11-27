@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdePerustieto implements Serializable
@@ -26,6 +27,15 @@ public class HakukohdePerustieto implements Serializable
     private KoodistoKoodi koulutuslaji;
     private String hakutyyppiUri;
     private KoodistoKoodi pohjakoulutusvaatimus; 
+    private KoulutusasteTyyppi koulutusastetyyppi;
+
+    public KoulutusasteTyyppi getKoulutusastetyyppi() {
+        return koulutusastetyyppi;
+    }
+
+    public void setKoulutusastetyyppi(KoulutusasteTyyppi koulutusastetyyppi) {
+        this.koulutusastetyyppi = koulutusastetyyppi;
+    }
 
     public KoodistoKoodi getPohjakoulutusvaatimus() {
         return pohjakoulutusvaatimus;

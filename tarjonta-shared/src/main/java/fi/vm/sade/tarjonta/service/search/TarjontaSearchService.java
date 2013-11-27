@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +44,7 @@ import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
@@ -202,6 +204,14 @@ public class TarjontaSearchService {
 
         addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
+        //restrict with koulutusastetyyppi
+        if (kysely.getKoulutusasteTyypit().size()>0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>(){
+                public String apply(KoulutusasteTyyppi src){ return src.value(); }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Hakukohde.KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
+        }
+
         q.setRows(Integer.MAX_VALUE);
         return q;
     }
@@ -341,6 +351,17 @@ public class TarjontaSearchService {
         //restrict with hakukohde oids
         if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
             addFilterForHakukohdes(hakukohdeOids, queryParts, q);
+        }
+
+        //restrict with koulutusastetyyppi
+        if (kysely.getKoulutusasteTyypit().size()>0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>(){
+                public String apply(KoulutusasteTyyppi src){
+                    return src.value();
+                    
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI, Joiner.on(" ").join(tyypit)));
         }
 
         //restrict by koulutus

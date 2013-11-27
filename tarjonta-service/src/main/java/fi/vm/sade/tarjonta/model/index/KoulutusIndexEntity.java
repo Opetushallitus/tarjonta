@@ -44,7 +44,6 @@ public class KoulutusIndexEntity {
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
         this.tila = tila;
-        this.koulutusTyyppi = koulutusTyyppi;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
         this.koulutusKoodi = koulutusKoodi;
         this.tutkintonimike = tutkintoNimike;
