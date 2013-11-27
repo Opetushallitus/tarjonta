@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
  *
  * /hakukohde/OID/paasykoe
  * /hakukohde/OID/valintakoe
- * /hakukohde/OID/valintakoeFIX
  *
  * </pre>
  *
@@ -100,28 +99,15 @@ public interface HakukohdeResource {
     /**
      * /hakukohde/{oid}/valintakoe
      *
+     * NOTE: fixes also Lukio's single valintakoes to two separate valintakoes: Pääsykoe and Lisänäytöt...
+     *
      * @param oid
      * @return loaded list Valintakoe's
      */
     @GET
     @Path("{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
-
-    /**
-     * /hakukohde/{oid}/valintakoeFIX
-     *
-     * Gets valintakoes for fiven hakukohde.
-     * This fixes the Lukio valintakoes to be same as other "standard" valintakoes.
-     *
-     * @param oid
-     * @return loaded list Valintakoe's
-     */
-    @GET
-    @Path("{oid}/valintakoeFIX")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<ValintakoeRDTO> getValintakoeFixedByHakukohdeOID(@PathParam("oid") String oid);
-
+    public List<ValintakoeRDTO> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
     /**
      * /hakukohde/OID/nimi

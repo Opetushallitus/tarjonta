@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -25,27 +22,22 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoePisterajaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import org.springframework.security.access.annotation.Secured;
 
 /**
  * REST API impl.
@@ -91,7 +83,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
 
-        LOG.info("/hakukohde -- search({}, {}, {}, {}, {}, {}, {})",
+        LOG.debug("/hakukohde -- search({}, {}, {}, {}, {}, {}, {})",
                 new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince, organisationOids, hakukohdeTilas});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
@@ -153,15 +145,15 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // GET /hakukohde/{oid}/valintakoe
     @Override
-    public List<String> getValintakoesByHakukohdeOID(String oid) {
+    public List<ValintakoeRDTO> getValintakoesByHakukohdeOID(String oid) {
         LOG.debug("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getValintakoeFixedByHakukohdeOID(oid);
     }
 
     // GET /hakukohde/{oid}/nimi
     @Override
     public HakukohdeNimiRDTO getHakukohdeNimi(String oid) {
-        LOG.info("getHakukohdeNimi({})", oid);
+        LOG.debug("getHakukohdeNimi({})", oid);
 
         HakukohdeNimiRDTO result = new HakukohdeNimiRDTO();
 
@@ -174,7 +166,6 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         //
         // Get hakukohde name
         //
-
         // Get multilingual name for koodisto "hakukohde" (application option?)
         result.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(hakukohde.getHakukohdeNimi()));
         result.setHakukohdeOid(oid);
@@ -223,15 +214,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             }
         }
 
-        LOG.info("  --> result = {}", result);
+        LOG.debug("  --> result = {}", result);
 
         return result;
     }
 
-    // {oid}/valintakoeFIX
-    @Override
-    public List<ValintakoeRDTO> getValintakoeFixedByHakukohdeOID(String oid) {
-        LOG.info("getValintakoeFixedByHakukohdeOID({})", oid);
+    // -----------------------------------------------------------------------
+    // Private helpers
+
+    // KJOH-669
+    private List<ValintakoeRDTO> getValintakoeFixedByHakukohdeOID(String oid) {
+        LOG.debug("getValintakoeFixedByHakukohdeOID({})", oid);
 
         List<ValintakoeRDTO> result = new ArrayList<ValintakoeRDTO>();
 
@@ -243,19 +236,18 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         Set<Valintakoe> valintakoes = hakukohde.getValintakoes();
         for (Valintakoe valintakoe : valintakoes) {
-            LOG.info("  process: vk.id = {}", valintakoe.getId());
+            LOG.debug("  process: vk.id = {}", valintakoe.getId());
 
             ValintakoeRDTO tmp = conversionService.convert(valintakoe, ValintakoeRDTO.class);
 
             if (isEmpty(valintakoe.getTyyppiUri())) {
-                LOG.debug("  EMPTY Type - ie. Lukio valintakoe, {}", tmp);
+                LOG.debug("  EMPTY getTyyppiUri - ie. Lukio valintakoe, {}", tmp);
 
                 //
                 // TODO / NOTE / ALERT: in Lukio the valintakoes were mistakenly compressed to
                 // single valintakoe, should have two instances...
                 // Reeeally ugly, hardcoded fix here... sorry, sorry sorry.
                 //
-
                 ValintakoeRDTO vk = new ValintakoeRDTO();
                 ValintakoeRDTO lt = new ValintakoeRDTO();
 
@@ -318,10 +310,6 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return result;
     }
 
-
-    // -----------------------------------------------------------------------
-    // Private helpers
-
     private String resolveDateToKausiUri(final Date d) {
         if (d == null) {
             return null;
@@ -348,67 +336,5 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         cal.setTime(d);
         return cal.get(Calendar.YEAR);
     }
-
-
-//    private List<Valintakoe> getHakukohdeValintakoes(List<ValintakoeRDTO> valintakoeRDTOs) {
-//        if (valintakoeRDTOs != null) {
-//          List<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
-//
-//            for (ValintakoeRDTO valintakoeRDTO:valintakoeRDTOs) {
-//                Valintakoe valintakoe = conversionService.convert(valintakoeRDTO,Valintakoe.class);
-//                valintakoes.add(valintakoe);
-//            }
-//
-//          return valintakoes;
-//        } else {
-//            return null;
-//        }
-//    }
-//
-//
-//    private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
-//        if (hk.getHakuaikas().size() == 1) {
-//            return hk.getHakuaikas().iterator().next();
-//        }
-//        if (ha != null && ha.getOid() != null) {
-//            long id = Long.parseLong(ha.getOid());
-//            for (Hakuaika hka : hk.getHakuaikas()) {
-//                if (hka.getId() == id) {
-//                    return hka;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
-//        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
-//
-//        for (String komotoOid : komotoOids) {
-//            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
-//            komoto.addHakukohde(hakukohde);
-//            komotos.add(komoto);
-//        }
-//
-//        return komotos;
-//    }
-//
-//    private List<HakukohdeLiite> getHakukohdeLiites(List<HakukohdeLiiteDTO> hakukohdeLiiteDTOs, Hakukohde hakukohde) {
-//        if (hakukohdeLiiteDTOs != null) {
-//
-//            List<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
-//
-//            for (HakukohdeLiiteDTO hakukohdeLiiteDTO:hakukohdeLiiteDTOs) {
-//                HakukohdeLiite hakukohdeLiite = conversionService.convert(hakukohdeLiiteDTO,HakukohdeLiite.class);
-//                hakukohdeLiite.setHakukohde(hakukohde);
-//                hakukohdeLiites.add(hakukohdeLiite);
-//            }
-//
-//            return hakukohdeLiites;
-//
-//        } else {
-//            return null;
-//        }
-//    }
 
 }
