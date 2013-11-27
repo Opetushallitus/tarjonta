@@ -13,7 +13,7 @@
  * 2. Toiminnot ja ilmoitukset määritellään controls-model-tagilla (tämä ei vielä lisää mitään sisältöä sivulle vaan
  *    kokoaa tiedot modeliin):
  * 
- *   <controls-model model="formControls">
+ *   <controls-model model="formControls" tt-create="..." tt-edit="..." title="..." dto="...">
  *   
  *   	<controls-button primary="true|false" tt="..." action="f()", disabled="f()"/>
  *   	...
@@ -23,6 +23,12 @@
  *   </controls-model>
  *   
  *   - Parametrien tarkempi dokumentaatio on alempana, direktiivimääritysten yhteydessä
+ *   - Otsikkona näytetään tt-create- (kun luodaan uutta) tai tt-edit (kun muokataan olemassaolevaa) -atribuuteillä
+ *     määritelty kielistysavain jolle annetaan parametriksi title -atribuutilla annettu yksi- tai monikielinenteksti
+ *     (jolloin näytetään valitun kielen mukainen sisältö), tai pelkkä title:n mukainen teksti jos em. avaimia ei ole
+ *     määritelty
+ *   - Se, luodaanko uutta vai muokataanko, päätellään dto-parametrin mukaan (olemassaolevasta oletetaan löytyvän created-
+ *     ja createdBy -arvot); em. oliosta tarkastetaan myös arvo 'tila', joka näytetään muiden metatietojen kanssa
  *   
  *   Ilmoitustyypit:
  *   
@@ -109,6 +115,54 @@ app.directive('displayControls',function($log, LocalisationService) {
        			return showMessage($scope.model.notifs.message, msg);
        		};
        		
+       		$scope.dto = $scope.model.dto();
+       		
+       		$scope.metadata = [];
+       		if ($scope.dto.tila) {
+       			$scope.metadata.push(LocalisationService.t("tarjonta.tila."+$scope.dto.tila));
+       		}
+       		if ($scope.dto.created) {
+       			$scope.metadata.push($scope.dto.created); // TODO pvm formatointi
+       		}
+       		if ($scope.dto.createdBy) {
+       			$scope.metadata.push($scope.dto.createdBy);
+       		}
+       		
+       		$scope.isNew = function() {
+       			return !$scope.dto.created && !$scope.dto.createdBy;
+       		}
+
+       		function titleText() {
+       			var title = $scope.model.title();
+       			if ((typeof title)=="object") {
+	       			if (title[LocalisationService.getLocale()]) {
+	       				// käyttäjän localen mukaan
+	       				return title[LocalisationService.getLocale()];
+	       			} else {
+	       				// vakiolocalejen mukaan
+	       				for (var i in window.CONFIG.app.userLanguages) {
+	       					var k = window.CONFIG.app.userLanguages[i];
+	       					if (title[k]) {
+	       	       				return title[k];
+	       	       			}
+	       				}
+	       				// 1. vaihtoehto
+	       				for (var i in title) {
+	       					var k = title[i];
+       	       				return title[window.CONFIG.app.userLanguages[i]];
+	       				}
+	       			}
+       			}
+       			return title;
+       		}
+       		
+       		$scope.getTitle = function() {
+       			var ttext = titleText();
+       			var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
+       			
+       			return tkey==null ? ttext : LocalisationService.t(tkey, [ ttext ]);
+       		}
+       		
        		return $scope;
         }
     }
@@ -123,7 +177,11 @@ app.directive('controlsModel',function($log) {
         replace: true,
         transclude: true,
         scope: {
-        	model: "="
+        	model: "=", // viittaus modeliin
+        	ttCreate: "@", // otsikkoavain, jota käytetään luotaessa uutta
+        	ttEdit: "@", // otsikkoavain, jota käytetään muokattaessa olemassaolevaa
+        	title: "&", // otsikkoteksti (string tai monikielinen teksti), joka annetaan ttEdit:lle / ttCreate:lle parametriksi
+        	dto: "&" // dto, josta haetaan muokkaustiedot (created, createdBy, ...); ttCreate/ttEdit valitaan näiden tietojen mukaan
         },
         controller: function($scope) {
         	$scope.model.notifs = {
@@ -133,7 +191,12 @@ app.directive('controlsModel',function($log) {
    				errorDetail: []
        		}
         	$scope.model.buttons = [];
-       		       		
+        	
+        	$scope.model.ttCreate = $scope.ttCreate;
+        	$scope.model.ttEdit = $scope.ttEdit;
+        	$scope.model.title = $scope.title;
+        	$scope.model.dto = $scope.dto;
+
        		return $scope;
         }
     }
