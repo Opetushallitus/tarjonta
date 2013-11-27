@@ -6,7 +6,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
-        if (txt == undefined || txt == null) {
+        if (txt == undefined || txt == null) {
             return txt;
         }
         var userLocale = LocalisationService.getLocale();
@@ -61,11 +61,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year
+            alkamisVuosi: args.year,
+            koulutusastetyyppi:["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
-            result = result.result // unwrap v1
+            result = result.result; // unwrap v1
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
@@ -96,7 +97,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             koulutusOid : args.koulutusOid,
             tila: args.state,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year
+            alkamisVuosi: args.year,
+            koulutusastetyyppi:["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
@@ -126,12 +128,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result.tulokset.sort(compareByName);
             return result;
         });
-    }
+    };
 
     dataFactory.evictHakutulokset = function() {
         CacheService.evict({pattern: "hakutulos/.*"});
         CacheService.evict({pattern: "koulutus/.*"});
-    }
+    };
 
     /**
      * Asettaa koulutuksen tai hakukohteen julkaisun tilan.
@@ -173,7 +175,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
-    }
+    };
 
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
@@ -181,7 +183,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
-    }
+    };
 
     /**
      * POST: Insert new KOMOTO + KOMO. API object must be valid.
@@ -229,7 +231,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         console.log('Inserting hakukohde : ', hakukohde);
 
         return ret.promise;
-    }
+    };
 
     dataFactory.saveKomoTekstis = function(oid) {
         var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': '@oid'});
@@ -319,7 +321,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             console.warn("No image filename.");
         }
 
-        formData.append('image', image.file, name)
+        formData.append('image', image.file, name);
 
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
             headers: {'Content-Type': 'multipart/form-data'},
@@ -340,7 +342,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             get: {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            }, delete: {
+            }, 
+            'delete': {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
