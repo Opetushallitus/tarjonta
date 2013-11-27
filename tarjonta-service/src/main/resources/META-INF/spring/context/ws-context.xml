@@ -49,7 +49,6 @@
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
     <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1" />
-    <bean id="tarjontaLocalisationResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LocalisationResourceImplV1" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -99,7 +98,6 @@
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
-            <ref bean="tarjontaLocalisationResourceV1"/>
             <ref bean="yhteyshenkiloResourceV1"/>
 
         </jaxrs:serviceBeans>
