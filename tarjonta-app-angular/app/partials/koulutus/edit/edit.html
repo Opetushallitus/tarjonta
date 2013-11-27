@@ -1,6 +1,10 @@
 <div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
 
-    <controls-model model="formControls">
+    <controls-model
+        model="formControls"
+        tt-create="koulutus.edit.header.title"
+        title="model.koulutusohjelma.tekstis"
+        dto="model">
         
         <controls-button tt="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
         <controls-button tt="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
@@ -18,9 +22,6 @@
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-
-	<!-- TODO muokatessa joku muu teksti kuin "uusi koulutus" -->
-	<h3>{{t('koulutus.edit.header.title')}}</h3>
 
     <form name="koulutusForm">
         <div class="body" ng-include="resultPageUri"></div>

@@ -30,4 +30,12 @@
     </ul>
 </div>
 
+<div ng-show="display=='header'">
+	<h3>{{getTitle()}}</h3>
+	
+	<p ng-show="!isNew()" class="float-right">
+	    <span ng-repeat="v in metadata"><span ng-show="!$first">, </span>{{v}}</span>
+	</p>
+</div>
+
 </div>
