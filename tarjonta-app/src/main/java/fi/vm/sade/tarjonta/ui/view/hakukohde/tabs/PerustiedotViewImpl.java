@@ -347,7 +347,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
             addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
+            if (koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS) {
             addItemToGrid("PerustiedotView.kaksoistutkinto",buildKaksoistutkintoField());
+            }
             checkCheckboxes();
 
             if (muuOsoite) {
