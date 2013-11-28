@@ -214,7 +214,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //$scope.model.koodiuriPromise = $q.defer();
 
 
-    //TODO: get locale from somewhere
+
     var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti',$scope.model.userLang);
 
     koodistoPromise.then(function(koodisParam){
@@ -348,6 +348,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
         }
     };
+
+    $scope.$watch('model.hakukohde.liitteidenToimitusPvm',function(newVal,oldVal){
+        console.log('LIITTEIDEN TOIMITUSPVM CHANGED');
+    });
 
     $scope.model.checkboxChange = function() {
 

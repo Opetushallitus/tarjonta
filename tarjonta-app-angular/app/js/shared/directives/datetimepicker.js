@@ -25,6 +25,21 @@ app.directive('dateTimePicker',function(){
         scope : {
             selecteddatetime : "="
         },
+        controller : function($scope){
+
+
+            var getTimeAsString = function(timeAsMilliSeconds) {
+                var momentDate = moment(timeAsMilliSeconds);
+                var formattedDateStr = momentDate.format("DD.M.YYYY HH:mm");
+                return formattedDateStr;
+            };
+
+            $scope.$watch('selecteddatetime',function(newVal,oldVal){
+
+                 $scope.valueToShow = getTimeAsString(newVal);
+
+            });
+        },
         template:
             '<div>' +
                 '<input type="text" ng-model="valueToShow" readonly data-date-format="yyyy-mm-dd hh:ii" name="recipientDateTime" data-date-time required>'+
@@ -40,6 +55,7 @@ app.directive('dateTimePicker',function(){
 
             if (initialDateObj === undefined){
                 var initialMomentDate = moment();
+                scope.selecteddatetime = initialMomentDate.valueOf();
                 initialDateObj = initialMomentDate.format("DD.M.YYYY HH:mm");
             }
 
@@ -53,7 +69,7 @@ app.directive('dateTimePicker',function(){
                 autoclose: true,
                 todayBtn: true,
                 todayHighlight: true,
-                initialDate : initialDateObj
+                initialDate : scope.valueToShow
 
             });
 
