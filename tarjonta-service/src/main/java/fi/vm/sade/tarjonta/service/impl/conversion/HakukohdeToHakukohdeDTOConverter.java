@@ -30,6 +30,14 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
@@ -162,6 +170,10 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
                         t.getValintaperustekuvausKoodiUri(), MetaCategory.VALINTAPERUSTEKUVAUS.name())));
             }
         }
+        
+        if(s.getValintaperusteKuvaus()!=null) {
+            t.setValintaperustekuvaus(getMap(s.getValintaperusteKuvaus()));
+        }
 
         // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data
         // from metadata)
@@ -268,5 +280,11 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
         return result.isEmpty() ? null : result;
     }
+    
+    private Map<String, String> getMap(MonikielinenTeksti valintaperusteKuvaus) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }

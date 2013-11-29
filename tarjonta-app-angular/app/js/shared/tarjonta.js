@@ -1,6 +1,6 @@
-var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
+var app = angular.module('Tarjonta', ['ngResource', 'config']);
 
-app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
+app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
@@ -352,5 +352,78 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return ResourceImge;
     };
 
+
+    /** 
+     * Linkityspalvelu -resurssi (palauttaa promisen)
+     * 
+     * -get: listaa lapset (vain oidit)
+     * -save: tee liitos
+     * -parents: listaa parentit (vain oidit)
+     * -delete: poista liitos
+     * 
+     * parametri:
+     * <pre>
+     * {
+     *   parent:"parent-oid" [, child:"childoid"] 
+     * }
+     * </pre>
+     */
+    dataFactory.resourceLink = 
+    	
+    	$resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
+   
+   		put: {
+   			headers: {'Content-Type': 'application/json; charset=UTF-8'},
+   		},
+   		parents: {
+   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:parent",
+   			isArray: false,
+   			method: 'GET',
+   		}
+   	});
+
+    
+    /** 
+     * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
+     * oidRetrieveFunction = funktio joka palauttaa promisen joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
+     */
+    dataFactory.getKoulutuksetPromise = function(oidRetrieveFunction){
+    	
+    	var deferred = $q.defer();
+    	oidRetrieveFunction().then(function(oids){
+    		var promises=[];
+    		var koulutukset=[];
+    		for(var i=0;i<parentoids.length;i++) {
+    			var promise = dataFactory.haeKoulutukset({koulutusOid:parentOids[i]}).then(function(result){
+    				if(result.result && result.result.tulokset && result.result.tulokset.length>0);
+    				koulutukset.push(result.result.tulokset[0]);
+    			});
+    			promises.push(promise);
+    		}
+    		$q.all(promises).then(function(){
+    			deferred.resolve(koulutukset); 
+    		});	
+    		
+    	}, function(){
+    		deferred.reject();
+    	});
+    	return deferred.promise;
+    }; 
+
+    /** 
+     * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+     */
+    dataFactory.getChildKoulutuksetPromise = function(koulutusoid){
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}));
+    }; 
+
+    /** 
+     * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+     */
+    dataFactory.getParentKoulutuksetPromise = function(koulutusoid){
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}));
+    }; 
+
+    
     return dataFactory;
 });
