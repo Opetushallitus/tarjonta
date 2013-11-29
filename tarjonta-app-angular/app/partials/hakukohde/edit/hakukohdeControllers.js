@@ -24,6 +24,8 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Or
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
 
+	$scope.formControls = {}; // controls-layouttia varten
+	
     $scope.model.userLang  =  AuthService.getLanguage();
 
     if ($scope.model.userLang === undefined) {
@@ -48,12 +50,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var showSuccess = function() {
         $scope.model.showSuccess = true;
+        $scope.model.showError = false;
+        $scope.model.validationmsgs = [];
         $scope.model.hakukohdeTabsDisabled = false;
-        $timeout(function(){
-
-
-            $scope.model.showSuccess = false;
-        },5000);
     }
 
 
@@ -96,15 +95,18 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
     var showError = function(errorArray) {
+    	
+    	$scope.model.validationmsgs = [];
 
         angular.forEach(errorArray,function(error) {
 
 
-            $scope.model.validationmsgs.push(LocalisationService.t(error.errorMessageKey));
+            $scope.model.validationmsgs.push(error.errorMessageKey);
 
 
         });
         $scope.model.showError = true;
+        $scope.model.showSuccess = false;
     }
 
     //Initialize all helper etc. variable in the beginning of the controller
@@ -465,86 +467,22 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     });
 
 
-    //Hakukohde nimi chooser dialog controller
-    /*
-    var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
+    $scope.getKoulutustenNimet = function() {
+    	var ret = "";
+    	var ja = LocalisationService.t("tarjonta.yleiset.ja");
+    	
+    	for (var i in $scope.model.koulutusnimet) {
+    		if (i>0) {
+    			ret = ret + ((i==$scope.model.koulutusnimet.length-1) ? " "+ja+" " : ", ");
+    		}
+    		ret = ret + "<b>" + $scope.model.koulutusnimet[i] + "</b>";
+    	}
+    	
+    	return ret;
+    }
 
-        $scope.model.hakukohdenimi = {};
-
-        $scope.model.selectedKieliKoodi;
-
-        $scope.model.kieliComboCallback = function(koodi) {
-
-            $scope.model.selectedKieliKoodi = koodi;
-
-        };
-
-
-        $scope.model.ok = function () {
-
-
-            console.log('OK :', $scope.model.selectedKieliKoodi);
-            $scope.model.hakukohdenimi.nimi  = $scope.model.selectedKieliKoodi.koodiNimi;
-
-            $modalInstance.close($scope.model.hakukohdenimi);
-        };
-
-        $scope.model.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    };
-
-    $scope.model.removeNimi = function(hakukohdeNimi){
-        if ($scope.model.hakukohde.hakukohteenNimet.length > 1) {
-
-            var nimiToRemove ;
-
-
-
-            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohteenNimi){
-                if (hakukohteenNimi.nimi === hakukohdeNimi.nimi && hakukohteenNimi.uri === hakukohdeNimi.uri) {
-                    nimiToRemove = hakukohteenNimi;
-                }
-            });
-
-           var index = $scope.model.hakukohde.hakukohteenNimet.indexOf(nimiToRemove);
-            $scope.model.hakukohde.hakukohteenNimet.splice(index,1);
-        }
-    };
-
-    $scope.model.openNimiDialog = function() {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/hakukohde/edit/hakukohdeNimiChooserDialog.html',
-            controller: NimiModalInstanceCtrl,
-            scope: $scope
-
-        });
-
-        modalInstance.result.then(function (selectedItem) {
-
-            console.log('SELECTED ITEM:',selectedItem);
-
-            var selectedItemExists = false;
-
-            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohdenimi){
-                 if (hakukohdenimi.uri === selectedItem.uri) {
-                     selectedItemExists = true;
-                 }
-            });
-
-            if (!selectedItemExists) {
-                $scope.model.hakukohde.hakukohteenNimet.push(selectedItem);
-            }
-
-
-
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-
-    };
-	*/
-
+    $scope.getKoulutustenNimetKey = function() {
+    	return $scope.model.koulutusnimet.length==1 ? 'hakukohde.edit.header.single' : 'hakukohde.edit.header.multi';
+    }
 
 });

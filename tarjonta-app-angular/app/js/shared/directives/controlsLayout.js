@@ -254,7 +254,7 @@ app.directive('controlsNotify',function($log) {
         		show: scope.show });
         },
         scope: {
-        	tt: "@",	   // viesti (lokalisaatioavain)
+        	tt: "&",	   // viesti (lokalisaatioavain); huom.: ei string vaan expr
         	tp: "&",	   // lokalisaatioavaimen parametrit
         	type: "@",     // ilmoituksen tyyli: message|success|error|error-detail
         	show: "&"      // funktio jonka perusteella viesti näytetään
