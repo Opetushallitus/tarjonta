@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,6 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
@@ -133,6 +127,23 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             }
         }
 
+        if (s.getSoraKuvaus() != null && s.getSoraKuvaus().getTekstis() != null) {
+            HashMap<String,String> soraKuvaukset = new HashMap<String,String>();
+            for (TekstiKaannos tekstiKaannos:s.getSoraKuvaus().getTekstis()) {
+                soraKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+            }
+            t.setSorakuvaus(soraKuvaukset);
+        }
+
+        if (s.getValintaperusteKuvaus() != null && s.getValintaperusteKuvaus().getTekstis() != null ) {
+
+            HashMap<String,String> valintaperusteKuvaukset = new HashMap<String,String>();
+            for (TekstiKaannos tekstiKaannos : s.getValintaperusteKuvaus().getTekstis()) {
+                valintaperusteKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+            }
+            t.setValintaperustekuvaus(valintaperusteKuvaukset);
+        }
+
         // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from
         // koodisto)
         {
@@ -188,6 +199,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
     }
 
     private List<String> convertKoulutusOids(Set<KoulutusmoduuliToteutus> komotos) {
+
         if (komotos != null)  {
              List<String> komotoOids = new ArrayList<String>();
             for (KoulutusmoduuliToteutus komoto:komotos) {
@@ -198,6 +210,9 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
             return null;
         }
+
+
+
     }
 
     /**
