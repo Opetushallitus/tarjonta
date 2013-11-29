@@ -16,6 +16,18 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             languages: [],
             koulutus: $scope.koulutusModel.result // preloaded in route resolve, see
         };
+        
+        var komoOid = $scope.koulutusModel.result.komoOid;
+        
+        tarjontaService.getChildKoulutuksetPromise(komoOid).then(function(children){
+        	$scope.children=children;
+        	console.log("children:", children);
+        });
+
+        tarjontaService.getParentKoulutuksetPromise(komoOid).then(function(parents){
+        	$scope.parents=parents;
+        	console.log("parents:", parents);
+        });
 
         $scope.lisatiedot = [
             {type: "TAVOITTEET", isKomo: true},
@@ -49,7 +61,9 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 kuvaus = $scope.model.koulutus.kuvausKomoto;
             }
 
-            return kuvaus[key].tekstis[kieliuri];
+            if(kuvaus[key] && kuvaus[key].tekstis && kuvaus[key].tekstis[kieliuri]) {  
+            	return kuvaus[key].tekstis[kieliuri];
+            }
         };
 
         $scope.doEdit = function(event, targetPart) {

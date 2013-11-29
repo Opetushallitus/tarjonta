@@ -227,7 +227,14 @@
     <div collapse="model.collapse.sisaltyvatOpintokokonaisuudet">
         <div class="row-fluid">
             <div class="span12">
-                TULOSSA...
+            todo stailaa
+            
+            <div ng-repeat="koulutus in children" class="row-fluid">
+            child koulutus: {{koulutus}}<br>
+            </div>
+            <div ng-repeat="koulutus in parents" class="row-fluid">
+            parent koulutus: {{koulutus}}<br>
+            </div>
             </div>
         </div>
     </div>

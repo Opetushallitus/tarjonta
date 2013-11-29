@@ -95,6 +95,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             searchTerms: args.terms,
             organisationOid: args.oid,
             koulutusOid : args.koulutusOid,
+            komoOid : args.komoOid,
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
@@ -385,18 +386,20 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     
     /** 
      * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
-     * oidRetrieveFunction = funktio joka palauttaa promisen joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
+     * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
      */
-    dataFactory.getKoulutuksetPromise = function(oidRetrieveFunction){
+    dataFactory.getKoulutuksetPromise = function(oidRetrievePromise){
     	
     	var deferred = $q.defer();
-    	oidRetrieveFunction().then(function(oids){
+    	oidRetrievePromise.then(function(parentOids){
     		var promises=[];
     		var koulutukset=[];
-    		for(var i=0;i<parentoids.length;i++) {
-    			var promise = dataFactory.haeKoulutukset({koulutusOid:parentOids[i]}).then(function(result){
-    				if(result.result && result.result.tulokset && result.result.tulokset.length>0);
-    				koulutukset.push(result.result.tulokset[0]);
+    		for(var i=0;i<parentOids.result.length;i++) {
+    			var promise = dataFactory.haeKoulutukset({komoOid:parentOids.result[i]}).then(function(result){
+    				if(result.tulokset && result.tulokset.length>0) {
+    					console.log("adding koulutus!");
+    					koulutukset.push(result.tulokset[0]);
+    				}
     			});
     			promises.push(promise);
     		}
@@ -414,14 +417,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getChildKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}));
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}).$promise);
     }; 
 
     /** 
      * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getParentKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}));
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}).$promise);
     }; 
 
     
