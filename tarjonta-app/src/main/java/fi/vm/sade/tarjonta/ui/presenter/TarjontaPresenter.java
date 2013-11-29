@@ -1418,6 +1418,21 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this._hakukohdeListView = hakukohdeListView;
     }
 
+    private void restrictHakukohdeKyselyByKoulutusaste(HakukohteetKysely kysely) {
+
+        //Restrict korkeakoulu hakukohdes because they cannot be shown on Vaadin-UI
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+
+
+    }
+
     public Map<String, List<HakukohdePerustieto>> getHakukohdeDataSource() {
         List<HakukohdePerustieto> hakukohdetulos = Lists.newArrayList();
         Map<String, List<HakukohdePerustieto>> map = new HashMap<String, List<HakukohdePerustieto>>();
@@ -1426,6 +1441,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             // selected organisaatio and written text in search box)
             HakukohteetKysely kysely = koulutusSearchSpecToDTOConverter
                     .convertViewModelToHakukohdeDTO(getModel().getSearchSpec());
+            restrictHakukohdeKyselyByKoulutusaste(kysely);
             hakukohdetulos.addAll(tarjontaSearchService.haeHakukohteet(kysely).getHakukohteet());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet ", ex);
@@ -1754,6 +1770,21 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this.searchResultsView.getKoulutusList().toggleCreateHakukohdeB(null, false);
     }
 
+
+    private void restrictKyselyWithKoulutusTyypit(KoulutuksetKysely kysely) {
+
+
+         //Restrict korkeakoulutus from these search results
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.LUKIOKOULUTUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+
+    }
     /**
      * Retrieves the koulutus objects for ListKoulutusView.
      *     
@@ -1766,7 +1797,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             // selected organisaatio and written text in search box)
             KoulutuksetKysely kysely = koulutusSearchSpecToDTOConverter
                     .convertViewModelToKoulutusDTO(getModel().getSearchSpec());
-
+            restrictKyselyWithKoulutusTyypit(kysely);
             getModel().setKoulutukset(tarjontaSearchService.haeKoulutukset(kysely).getKoulutukset());
 
         } catch (Exception ex) {
@@ -1829,7 +1860,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /**
      * Removal of a komoto object.
      *     
-* @param koulutus
+* @param koulutusOid
      */
     public boolean removeKoulutus(String koulutusOid) {
         boolean removeSuccess = false;
