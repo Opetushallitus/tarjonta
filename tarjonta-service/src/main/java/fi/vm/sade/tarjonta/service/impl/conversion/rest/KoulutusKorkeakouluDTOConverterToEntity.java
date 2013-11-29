@@ -92,6 +92,8 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
          * KOMO data fields:
          */
         final String organisationOId = dto.getOrganisaatio().getOid();
+       
+       
         komo.setTutkintoOhjelmanNimi(convertToUri(dto.getTutkinto(), "tutkinto")); //correct data mapping?
         komo.setLaajuus(null, convertToUri(dto.getOpintojenLaajuus(), "laajuus")); //TODO : missing type
         komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?

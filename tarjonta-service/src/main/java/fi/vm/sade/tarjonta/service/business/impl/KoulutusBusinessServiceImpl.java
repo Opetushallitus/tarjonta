@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.toKoodistoUriSet;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -129,7 +130,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
         EntityUtils.copyFields(koulutus, komotoModel);
-        
+
         komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
@@ -143,7 +144,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return IndexDataUtils.parseKausiKoodi(aloituspvm);
     }
 
-    private Integer getYearFromDate(Date aloitusPvm)  {
+    private Integer getYearFromDate(Date aloitusPvm) {
         return new Integer(IndexDataUtils.parseYear(aloitusPvm));
 
     }
@@ -282,6 +283,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
+            //parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -292,6 +294,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
             generateOidForKomoto(parentKomoto);
+           // parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);

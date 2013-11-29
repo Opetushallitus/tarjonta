@@ -83,6 +83,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         kkDto.setKomotoOid(komoto.getOid());
         kkDto.setKomoOid(komo.getOid());
         kkDto.setTila(komoto.getTila());
+        kkDto.setModified(komoto.getUpdated());
+        kkDto.setModifiedBy(komoto.getLastUpdatedByOid());
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
         // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
