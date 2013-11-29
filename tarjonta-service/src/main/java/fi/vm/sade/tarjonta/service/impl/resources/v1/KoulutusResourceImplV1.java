@@ -338,13 +338,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             List<String> koulutusOids,
             String hakukohdeTila,
             String alkamisKausi,
-            Integer alkamisVuosi, List<KoulutusasteTyyppi> koulutusastetyyppi) {
+            Integer alkamisVuosi, List<KoulutusasteTyyppi> koulutusastetyyppi, String komoOid) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
         KoulutuksetKysely q = new KoulutuksetKysely();
 
         q.setNimi(searchTerms);
+        q.setkomoOid(komoOid);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);

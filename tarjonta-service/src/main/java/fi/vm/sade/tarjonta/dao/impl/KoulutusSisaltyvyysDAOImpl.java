@@ -15,15 +15,61 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
+
+import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Predicate;
+
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import org.springframework.stereotype.Repository;
+import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
 
 /**
  *
  */
 @Repository
-public class KoulutusSisaltyvyysDAOImpl extends AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long> implements KoulutusSisaltyvyysDAO {
-}
+public class KoulutusSisaltyvyysDAOImpl extends
+        AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long> implements
+        KoulutusSisaltyvyysDAO {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private BooleanBuilder bb(Predicate initial) {
+        return new BooleanBuilder(initial);
+    }
+
+    private JPAQuery q(EntityPath<?> entityPath) {
+        return new JPAQuery(entityManager).from(entityPath);
+    }
+
+    /**
+     * Palauttaa koulutusmoduulin childrenit
+     * @param parentKomoOid
+     * @return
+     */
+    public List<String> getChildren(String parentKomoOid) {
+        final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
+        final Predicate where = bb(koulutusSisaltyvyys.ylamoduuli.oid.eq(parentKomoOid));
+        return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).join(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(child.oid);
+    }
+
+    public List<String> getParents(String childId) {
+        final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
+        final Predicate where = bb(child.oid.eq(childId));
+        return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).leftJoin(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(koulutusSisaltyvyys.ylamoduuli.oid);
+    }
+}

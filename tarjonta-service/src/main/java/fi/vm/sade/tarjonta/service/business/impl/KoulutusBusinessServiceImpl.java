@@ -29,7 +29,6 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
@@ -61,8 +60,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAO;
-    @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
 
