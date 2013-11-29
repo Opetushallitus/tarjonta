@@ -218,7 +218,8 @@ public interface KoulutusV1Resource {
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi
+            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, 
+            @QueryParam("komoOid") String komoOid
     );
 
     /**
