@@ -39,11 +39,21 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO opetusmuodos;
 
+    @ApiModelProperty(value = "Koulutuksen opetusajat (esim. Iltaopetus) (sisältää koodisto koodi uri:a)", required = true)
+    private KoodiUrisV1RDTO opetusAikas;
+
+    @ApiModelProperty(value = "Koulutuksen opetuspaikat (sisältää koodisto koodi uri:a)", required = true)
+    private KoodiUrisV1RDTO opetusPaikkas;
+
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
     @ApiModelProperty(value = "Koulutuksen teemat (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO teemas;
+
+    @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO aihees;
+
     @ApiModelProperty(value = "Koulutuksen alkamispvm", required = true)
     private Date koulutuksenAlkamisPvm;
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
@@ -221,4 +231,27 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
         this.hinta = hinta;
     }
 
+    public KoodiUrisV1RDTO getOpetusAikas() {
+        return opetusAikas;
+    }
+
+    public void setOpetusAikas(KoodiUrisV1RDTO opetusAikas) {
+        this.opetusAikas = opetusAikas;
+    }
+
+    public KoodiUrisV1RDTO getOpetusPaikkas() {
+        return opetusPaikkas;
+    }
+
+    public void setOpetusPaikkas(KoodiUrisV1RDTO opetusPaikkas) {
+        this.opetusPaikkas = opetusPaikkas;
+    }
+
+    public KoodiUrisV1RDTO getAihees() {
+        return aihees;
+    }
+
+    public void setAihees(KoodiUrisV1RDTO aihees) {
+        this.aihees = aihees;
+    }
 }
