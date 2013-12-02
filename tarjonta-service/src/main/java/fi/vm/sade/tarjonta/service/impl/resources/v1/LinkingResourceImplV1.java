@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 
@@ -42,8 +44,20 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findByOid(parent);
         Koulutusmoduuli childKomo = koulutusmoduuliDAO.findByOid(child);
         if (parentKomo == null || childKomo == null) {
+            System.out.println("child or parent is null");
+
+            List<ErrorV1RDTO> errors = new ArrayList<ErrorV1RDTO>();
+
+            if(parentKomo==null) {
+                errors.add(ErrorV1RDTO.createValidationError("parent", "not.found"));
+            }
+            if(childKomo==null) {
+                errors.add(ErrorV1RDTO.createValidationError("child", "not.found"));
+            }
+            
             ResultV1RDTO result = new ResultV1RDTO();
             result.setStatus(ResultStatus.ERROR);
+            result.setErrors(errors);
             return result;
         }
         
@@ -70,7 +84,6 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         return new ResultV1RDTO<Set<String>>(oids);
     }
 
-    //TODO ei toimi
     @Override
     public ResultV1RDTO<Set<String>> parents(String child) {
         Set<String> oids = Sets.newHashSet();
