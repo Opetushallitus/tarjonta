@@ -358,15 +358,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * Linkityspalvelu -resurssi (palauttaa promisen)
      * 
      * -get: listaa lapset (vain oidit)
+     *    param: {oid:"oid"}
      * -save: tee liitos
+     *    param: {parent:"oid", child:"oid"}
      * -parents: listaa parentit (vain oidit)
+     *    param: {oid:"oid"}
      * -delete: poista liitos
+     *    param: {parent:"oid", child:"oid"}
      * 
-     * parametri:
-     * <pre>
-     * {
-     *   parent:"parent-oid" [, child:"childoid"] 
-     * }
      * </pre>
      */
     dataFactory.resourceLink = 
