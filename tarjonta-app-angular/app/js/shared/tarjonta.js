@@ -368,7 +368,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * 
      * </pre>
      */
-    dataFactory.resourceLink = 
+    dataFactory.resourceLink =
+    	
     	
     	$resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
 
@@ -420,14 +421,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getChildKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}).$promise);
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({oid:koulutusoid}).$promise);
     }; 
 
     /** 
      * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getParentKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}).$promise);
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid:koulutusoid}).$promise);
     }; 
 
     
