@@ -372,12 +372,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.resourceLink = 
     	
     	$resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
-   
+
+   		get: {
+   			url: Config.env.tarjontaRestUrlPrefix + "link/:oid",
+   			method: 'GET',
+   		},
    		put: {
    			headers: {'Content-Type': 'application/json; charset=UTF-8'},
    		},
    		parents: {
-   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:parent",
+   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:oid",
    			isArray: false,
    			method: 'GET',
    		}
