@@ -75,8 +75,8 @@ describe('Tarjonta', function() {
         	var parentId = "parent-oid-1.2.3.4.5.6.7";
         	var childId = "child-oid-1.2.3.4.5.6.7";
         	var resourceLink = TarjontaService.resourceLink;
-        	resourceLink.get({parent:parentId});
-        	resourceLink.parents({parent:parentId});
+        	resourceLink.get({oid:parentId});
+        	resourceLink.parents({oid:parentId});
         	resourceLink.save({parent:parentId, child:childId});
         	resourceLink.remove({parent:parentId, child:childId});
         	$httpBackend.flush();

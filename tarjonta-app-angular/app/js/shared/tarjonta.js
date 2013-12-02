@@ -358,26 +358,30 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * Linkityspalvelu -resurssi (palauttaa promisen)
      * 
      * -get: listaa lapset (vain oidit)
+     *    param: {oid:"oid"}
      * -save: tee liitos
+     *    param: {parent:"oid", child:"oid"}
      * -parents: listaa parentit (vain oidit)
+     *    param: {oid:"oid"}
      * -delete: poista liitos
+     *    param: {parent:"oid", child:"oid"}
      * 
-     * parametri:
-     * <pre>
-     * {
-     *   parent:"parent-oid" [, child:"childoid"] 
-     * }
      * </pre>
      */
-    dataFactory.resourceLink = 
+    dataFactory.resourceLink =
+    	
     	
     	$resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
-   
+
+   		get: {
+   			url: Config.env.tarjontaRestUrlPrefix + "link/:oid",
+   			method: 'GET',
+   		},
    		put: {
    			headers: {'Content-Type': 'application/json; charset=UTF-8'},
    		},
    		parents: {
-   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:parent",
+   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:oid",
    			isArray: false,
    			method: 'GET',
    		}
@@ -417,14 +421,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getChildKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}).$promise);
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({oid:koulutusoid}).$promise);
     }; 
 
     /** 
      * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getParentKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}).$promise);
+    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid:koulutusoid}).$promise);
     }; 
 
     
