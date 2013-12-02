@@ -25,7 +25,7 @@
 (function ( angular ) {
 	'use strict';
 
-	angular.module( 'angularTreeview', [] ).directive( 'treeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
+	angular.module( 'orgAngularTreeview', [] ).directive( 'orgTreeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
 		return {
 			restrict: 'A',
 			link: function ( scope, element, attrs ) {
@@ -128,7 +128,7 @@
 //				console.log("treeid:", treeId);
 			
 				//tree model
-				var treeModel = attrs.treeModel;
+				var treeModel = attrs.orgTreeModel;
 
 				//node id
 //				var nodeId = attrs.nodeId || 'id';
