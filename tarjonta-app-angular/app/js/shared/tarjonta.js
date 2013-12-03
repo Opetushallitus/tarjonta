@@ -413,7 +413,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 var promise = dataFactory.haeKoulutukset({komoOid: parentOids.result[i]}).then(function(result) {
                     if (result.tulokset && result.tulokset.length > 0) {
                         console.log("adding koulutus!");
-                        koulutukset.push(result.tulokset[0]);
+                        if(koulutukset.indexOf(result.tulokset[0])==-1) {
+                        	koulutukset.push(result.tulokset[0]);
+                        }
                     }
                 });
                 promises.push(promise);
