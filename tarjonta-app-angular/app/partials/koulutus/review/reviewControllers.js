@@ -11,8 +11,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             collapse: {
                 perusTiedot: false,
                 kuvailevatTiedot: false,
-                sisaltyvatOpintokokonaisuudet: false,
-                hakukohteet: false,
+                sisaltyvatOpintokokonaisuudet: true,
+                hakukohteet: true,
                 model: true
             },
             languages: [],
