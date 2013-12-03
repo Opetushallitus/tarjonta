@@ -146,9 +146,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
-                        hakukohdex: function(TarjontaService, $log, $route) {
+                        hakukohdex: function(Hakukohde, $log, $route) {
                             $log.info("/hakukohde/ID", $route);
-                            return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                            //return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                            var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+
+                            return deferredHakukohde.$promise;
                         }
                     }
                 })
