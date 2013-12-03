@@ -62,7 +62,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi:["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
@@ -94,12 +94,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var params = {
             searchTerms: args.terms,
             organisationOid: args.oid,
-            koulutusOid : args.koulutusOid,
-            komoOid : args.komoOid,
+            koulutusOid: args.koulutusOid,
+            komoOid: args.komoOid,
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi:["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
@@ -343,90 +343,107 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             get: {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            }, 
+            },
             'delete': {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
-        
+
         return ResourceImge;
     };
 
+
+    dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
+
+        $http.post(Config.env.tarjontaRestUrlPrefix + "link/" + parent + "/" + child, {
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        }).success(fnSuccess).error(fnError);
+    };
 
     /** 
      * Linkityspalvelu -resurssi (palauttaa promisen)
      * 
      * -get: listaa lapset (vain oidit)
+     *    param: {oid:"oid"}
      * -save: tee liitos
+     *    param: {parent:"oid", child:"oid"}
      * -parents: listaa parentit (vain oidit)
+     *    param: {oid:"oid"}
      * -delete: poista liitos
+     *    param: {parent:"oid", child:"oid"}
      * 
-     * parametri:
-     * <pre>
-     * {
-     *   parent:"parent-oid" [, child:"childoid"] 
-     * }
      * </pre>
      */
-    dataFactory.resourceLink = 
-    	
-    	$resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
-   
-   		put: {
-   			headers: {'Content-Type': 'application/json; charset=UTF-8'},
-   		},
-   		parents: {
-   			url: Config.env.tarjontaRestUrlPrefix + "link/parents/:parent",
-   			isArray: false,
-   			method: 'GET',
-   		}
-   	});
+    dataFactory.resourceLink =
+            $resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
+                save: {
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
+                    method: 'POST',
+                    //  withCredentials: true,
+                    //isArray: true,
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
+                },
+                get: {
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:oid",
+                    method: 'GET',
+                },
+                put: {
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                },
+                parents: {
+                    url: Config.env.tarjontaRestUrlPrefix + "link/parents/:oid",
+                    isArray: false,
+                    method: 'GET',
+                }
+            });
 
-    
+
     /** 
      * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
      * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
      */
-    dataFactory.getKoulutuksetPromise = function(oidRetrievePromise){
-    	
-    	var deferred = $q.defer();
-    	oidRetrievePromise.then(function(parentOids){
-    		var promises=[];
-    		var koulutukset=[];
-    		for(var i=0;i<parentOids.result.length;i++) {
-    			var promise = dataFactory.haeKoulutukset({komoOid:parentOids.result[i]}).then(function(result){
-    				if(result.tulokset && result.tulokset.length>0) {
-    					console.log("adding koulutus!");
-    					koulutukset.push(result.tulokset[0]);
-    				}
-    			});
-    			promises.push(promise);
-    		}
-    		$q.all(promises).then(function(){
-    			deferred.resolve(koulutukset); 
-    		});	
-    		
-    	}, function(){
-    		deferred.reject();
-    	});
-    	return deferred.promise;
-    }; 
+    dataFactory.getKoulutuksetPromise = function(oidRetrievePromise) {
+
+        var deferred = $q.defer();
+        oidRetrievePromise.then(function(parentOids) {
+            var promises = [];
+            var koulutukset = [];
+            for (var i = 0; i < parentOids.result.length; i++) {
+                var promise = dataFactory.haeKoulutukset({komoOid: parentOids.result[i]}).then(function(result) {
+                    if (result.tulokset && result.tulokset.length > 0) {
+                        console.log("adding koulutus!");
+                        if(koulutukset.indexOf(result.tulokset[0])==-1) {
+                        	koulutukset.push(result.tulokset[0]);
+                        }
+                    }
+                });
+                promises.push(promise);
+            }
+            $q.all(promises).then(function() {
+                deferred.resolve(koulutukset);
+            });
+
+        }, function() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    };
 
     /** 
      * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
-    dataFactory.getChildKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({parent:koulutusoid}).$promise);
-    }; 
+    dataFactory.getChildKoulutuksetPromise = function(koulutusoid) {
+        return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({oid: koulutusoid}).$promise);
+    };
 
     /** 
      * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
-    dataFactory.getParentKoulutuksetPromise = function(koulutusoid){
-    	return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({parent:koulutusoid}).$promise);
-    }; 
+    dataFactory.getParentKoulutuksetPromise = function(koulutusoid) {
+        return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
+    };
 
-    
+
     return dataFactory;
 });

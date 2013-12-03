@@ -128,8 +128,17 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
         komoto.setKoulutuksenAlkamisPvm(dto.getKoulutuksenAlkamisPvm());
         komoto.setTeemas(convertToUris(dto.getTeemas(), komoto.getTeemas(), "teemas"));
+        if (dto.getAihees() != null) {
+            komoto.setAihees(convertToUris(dto.getAihees(),komoto.getAihees(),"aihees"));
+        }
         komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), "opetuskielis"));
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));
+        if (dto.getOpetusAikas() != null) {
+            komoto.setOpetusAikas(convertToUris(dto.getOpetusAikas(),komoto.getOpetusAikas(),"opetusaikas"));
+        }
+        if (dto.getOpetusPaikkas() != null) {
+            komoto.setOpetusPaikkas(convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(),"opetuspaikkas"));
+        }
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), "pohjakoulutusvaatimukset"));
         komoto.setAmmattinimikes(convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), "ammattinimikkeet"));
 

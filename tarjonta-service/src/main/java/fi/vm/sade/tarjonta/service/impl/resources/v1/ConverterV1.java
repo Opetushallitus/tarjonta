@@ -741,6 +741,7 @@ public class ConverterV1 {
         KoulutusHakutulosV1RDTO ret = new KoulutusHakutulosV1RDTO();
 
         ret.setOid(ht.getKomotoOid());
+        ret.setKomoOid(ht.getKoulutusmoduuli());
         ret.setNimi(ht.getNimi());
         ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
                 .getKoulutuksenAlkamiskausi().getNimi());
@@ -754,6 +755,7 @@ public class ConverterV1 {
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
         ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
+        ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
 
         return ret;
     }

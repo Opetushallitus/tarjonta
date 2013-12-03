@@ -1,0 +1,31 @@
+<div>
+    <input style="width: 300px" type="text" data-ng-model="model.selectedOid" /> 
+</div>
+
+<table>
+    <tr>
+        <td><div tt="sisaltyvyys.nayta-tutkintotyyppi"></div><td>
+        <td><div tt="sisaltyvyys.hae-koulutuksia"></div><td>   
+    </tr>
+    <tr>
+        <td><select required name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select><td>
+        <td><input type="text" data-ng-model="model.tutkinto.hakulause" /></td>    
+    </tr>
+</table>
+
+<div>
+    <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="sisaltyvyys.tyhjenna"></div></button>
+    <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
+</div>
+
+<div>
+    <div class="gridStyle" ng-grid="gridOptions"></div>
+</div>
+
+<select multiple required name="valitut" ng-model="model.valitut.oids" ng-options="obj.oid as obj.nimi for obj in model.valitut.data | orderByNum:'nimi'"></select>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
+    <button class="btn btn-primary" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+</div>
+s
