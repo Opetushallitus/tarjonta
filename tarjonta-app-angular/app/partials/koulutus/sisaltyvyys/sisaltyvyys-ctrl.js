@@ -150,6 +150,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html';
         };
 
+        var requests=0;
         /*
          * REVIEW FUNCTIONS
          * 
@@ -161,9 +162,13 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
          */
         $scope.reviewDialogi = function() {
             $scope.clearTreeData();
-            $scope.tree.activePromises.push($scope.getParentsByKomoOid($scope.model.selectedOid));
+            var deferred = $q.defer();
+            requests=0;
+            $scope.tree.activePromises.push(deferred.promise);
+            
+            $scope.getParentsByKomoOid($scope.model.selectedOid, deferred);
 
-            $timeout(function() {
+//            $timeout(function() {
                 //a hack timeout, remove when the promise problem have been resolved.
                 $q.all($scope.tree.activePromises).then(function() {
                     console.log("SUCCESS");
@@ -173,7 +178,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
                         $scope.getCreateChildren(key, $scope.tree.treedata, val);
                     });
                 });
-            }, 500);
+//            }, 500);
 
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-review.html';
         };
@@ -184,10 +189,14 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
          * @param {string} komoOid
          * @returns promise
          */
-        $scope.getParentsByKomoOid = function(komoOid) {
+        $scope.getParentsByKomoOid = function(komoOid, deferred) {
+            requests=requests+1;
             var resource = TarjontaService.resourceLink.parents({oid: komoOid});
 
             return resource.$promise.then(function(res) {
+            	requests=requests-1;
+
+
                 if (res.result.length === 0) {
                     /*
                      * PARENT(s) one recursive loop end
@@ -198,6 +207,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
                     }
                     $scope.tree.map['PARENT'].childs[komoOid] = {selected: $scope.model.selectedOid === komoOid};
                 } else {
+
                     /*
                      * go closer to root
                      */
@@ -206,8 +216,13 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
                             $scope.tree.map[result] = {childs: {}};
                         }
                         $scope.tree.map[result].childs[komoOid] = {selected: $scope.model.selectedOid === komoOid};
-                        $scope.tree.activePromises.push($scope.getParentsByKomoOid(result));
+                        $scope.getParentsByKomoOid(result, deferred);
                     });
+                }
+                
+                console.log("requests:" + requests);
+                if(requests==0) {
+                	deferred.resolve();
                 }
             });
         };

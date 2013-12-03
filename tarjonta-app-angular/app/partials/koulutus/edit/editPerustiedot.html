@@ -165,6 +165,21 @@
             <td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help"/>
         </tr>
 
+        <!-- opetusaikas -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusaikas"/>
+            <td>
+                <multi-select
+                        model="uiModel.tmp"
+                        selection="uiModel.opetusAikas.uris"
+                        promise="uiModel.opetusAikas.promise"
+                        columns="2"/>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.opetusAikas.uris.length == 0" tt="koulutus.edit.opetusAikas.required"/>
+            </td>
+        </tr>
+
         <!-- opetusmuodot -->
         <tr class="required">
             <th tt="koulutus.edit.opetusmuodot"/>
@@ -179,6 +194,22 @@
             <p class="error" ng-show="uiModel.opetusmuodos.uris.length == 0" tt="koulutus.edit.opetusmuodot.required"/>
         </td>
         </tr>
+
+        <!-- opetuspaikka -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusPaikkas"/>
+            <td>
+                <multi-select
+                        model="uiModel.tmp"
+                        selection="uiModel.opetusPaikkas.uris"
+                        promise="uiModel.opetusPaikkas.promise"
+                        columns="2"/>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.opetusPaikkas.uris.length == 0" tt="koulutus.edit.opetusPaikkas.required"/>
+            </td>
+        </tr>
+
 
         <!-- pohjakoulutusvaatimus -->
         <tr class="required">

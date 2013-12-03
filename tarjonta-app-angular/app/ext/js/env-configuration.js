@@ -36,7 +36,9 @@ window.CONFIG = {
         "koodisto-uris.lisahaku": "hakutyyppi_03#1",
         "koodisto-uris.lukiodiplomit": "lukiodiplomit",
         "koodisto-uris.lukiolinja": "lukiolinjat",
-        "koodisto-uris.opetusmuoto": "opetusmuoto",
+        "koodisto-uris.opetusmuoto": "opetusmuotokk",
+        "koodisto-uris.opetusaika": "opetusaikakk",
+        "koodisto-uris.opetuspaikka": "opetuspaikkakk",
         "koodisto-uris.opintoala": "opintoalaoph2002",
         "koodisto-uris.opintojenLaajuusarvo": "opintojenlaajuus",
         "koodisto-uris.opintojenLaajuusyksikko": "opintojenlaajuusyksikko",
@@ -86,8 +88,8 @@ window.CONFIG = {
 
         //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-         "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+         //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",

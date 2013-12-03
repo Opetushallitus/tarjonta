@@ -95,6 +95,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }, MCOMBO: {
             pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
             opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuoto'},
+            opetusAikas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
             teemas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.teemat'},
             ammattinimikkeet: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.ammattinimikkeet'}
