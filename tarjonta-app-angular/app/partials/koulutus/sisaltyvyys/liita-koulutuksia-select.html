@@ -18,9 +18,8 @@
     <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
 </div>
 
-<div ng-switch="stoModel.hakutulokset.length == 0 && stoModel.searched">
-    <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
-    <div ng-switch-default class="noResults"><div tt="sisaltyvyys.eihakutuloksia"></div></div>
+<div>
+    <div class="gridStyle" ng-grid="gridOptions"></div>
 </div>
 
 <select multiple required name="valitut" ng-model="model.valitut.oids" ng-options="obj.oid as obj.nimi for obj in model.valitut.data | orderByNum:'nimi'"></select>
@@ -29,3 +28,4 @@
     <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
     <button class="btn btn-primary" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
 </div>
+s
