@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +28,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoePisterajaRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -148,6 +143,17 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     public List<ValintakoeRDTO> getValintakoesByHakukohdeOID(String oid) {
         LOG.debug("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
         return getValintakoeFixedByHakukohdeOID(oid);
+    }
+
+    // /hakukohde/OID/valintaperusteet
+    @Override
+    public HakukohdeValintaperusteetDTO getHakukohdeValintaperusteet(String oid) {
+        LOG.debug("getHakukohdeValintaperusteet({})", oid);
+
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+        HakukohdeValintaperusteetDTO result = conversionService.convert(hakukohde, HakukohdeValintaperusteetDTO.class);
+        LOG.debug("  result={}", result);
+        return result;
     }
 
     // GET /hakukohde/{oid}/nimi

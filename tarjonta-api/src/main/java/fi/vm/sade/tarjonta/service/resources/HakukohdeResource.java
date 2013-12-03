@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
  *
  * /hakukohde/OID/paasykoe
  * /hakukohde/OID/valintakoe
+ * * /hakukohde/OID/nimi
+ * * /hakukohde/OID/valintaperusteet
  *
  * </pre>
  *
@@ -121,5 +123,18 @@ public interface HakukohdeResource {
     @Path("{oid}/nimi")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeNimiRDTO getHakukohdeNimi(@PathParam("oid") String oid);
+
+    /**
+     * /hakukohde/OID/valintaperusteet
+     *
+     * Hakukohteen vaaditut avaimet lukion valintaperusteisiin
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/valintaperusteet")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakukohdeValintaperusteetDTO getHakukohdeValintaperusteet(@PathParam("oid") String oid);
 
 }
