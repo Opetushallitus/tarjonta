@@ -17,6 +17,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private TarjontaTila tila;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private Map<String, String> pohjakoulutusvaatimus;
+    private String koulutuskoodi;
 
     private String komoOid;
 
@@ -88,8 +89,21 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
             Map<String, String> pohjakoulutusvaatimus) {
         this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
-
     public void setKomoOid(String koulutusmoduuliOid) {
         this.komoOid = koulutusmoduuliOid;
+    }
+
+    /**
+     * @return the koulutuskoodi
+     */
+    public String getKoulutuskoodi() {
+        return koulutuskoodi;
+    }
+
+    /**
+     * @param koulutuskoodi the koulutuskoodi to set
+     */
+    public void setKoulutuskoodi(String koulutuskoodi) {
+        this.koulutuskoodi = koulutuskoodi;
     }
 }

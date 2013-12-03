@@ -1,0 +1,19 @@
+<div class="modal-body">
+    <!--pre>
+    {{treedata | json}}
+</pre-->
+    
+    <div
+        data-angular-treeview="true"
+        data-tree-id="abc"
+        data-tree-model="tree.treedata"
+        data-node-id="oid"
+        data-node-label="nimi"
+        data-node-children="children" >
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="selectDialogi()"><div tt="sisaltyvyys.palaa"></div></button>
+    <button class="btn btn-primary" ng-click="ok()"><div tt="sisaltyvyys.tallenna"></div></button>
+</div>
