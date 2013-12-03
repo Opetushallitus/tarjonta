@@ -44,12 +44,9 @@ describe('Tarjonta', function() {
 
     var mockHttp = function($httpBackend){
     	var response = {status:true, data:["a","b","c","d"]};
-        $httpBackend.whenGET('/link/parent-oid-1.2.3.4.5.6.7').respond(response);
-        $httpBackend.whenGET('/link/parents/parent-oid-1.2.3.4.5.6.7').respond(response);
-        $httpBackend.whenPOST('/link', function(data){
-        	var jsonData = JSON.parse(data);
-        	return jsonData.parent=="parent-oid-1.2.3.4.5.6.7" && jsonData.child=="child-oid-1.2.3.4.5.6.7";
-        }).respond(response);
+        $httpBackend.whenGET('/link/parent-oid-1.2.3.4.5.6.7?').respond(response);
+        $httpBackend.whenGET('/link/parents/parent-oid-1.2.3.4.5.6.7?').respond(response);
+        $httpBackend.whenPOST('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
         $httpBackend.whenDELETE('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
     };    
 

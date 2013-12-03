@@ -376,12 +376,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * </pre>
      */
     dataFactory.resourceLink =
-            $resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {}, {
+            $resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {parent:"@parent",child:"@child"}, {
                 save: {
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
                     method: 'POST',
-                    //  withCredentials: true,
-                    //isArray: true,
                     headers: {'Content-Type': 'application/json; charset=UTF-8'}
                 },
                 get: {
