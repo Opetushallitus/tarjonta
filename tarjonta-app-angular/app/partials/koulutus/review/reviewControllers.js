@@ -4,6 +4,8 @@ var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto',
     function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto) {
         $log.info("BaseReviewController()");
+        
+        $scope.formControls = {};
         $scope.model = {
             routeParams: $routeParams,
             collapse: {
