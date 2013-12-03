@@ -255,6 +255,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
+
+        LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
+        if (oid != null && oid.length() > 0) {
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
         HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
@@ -264,6 +267,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         return result;
+        } else {
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return result;
+        }
     }
 
 
@@ -393,6 +402,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<List<ValintakoeV1RDTO>> findHakukohdeValintakoes(String hakukohdeOid) {
 
+        if (hakukohdeOid != null) {
+
+
+
         ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
 
         if (hakukohdeOid == null) {
@@ -426,6 +439,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         return resultRDTO;
 
+        }
+        } else {
+            ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return resultRDTO;
         }
 
     }
@@ -549,6 +567,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(String hakukohdeOid) {
+
+        if (hakukohdeOid != null) {
         try {
 
             ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
@@ -574,6 +594,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
             errorRDTO.setErrorTechnicalInformation(exp.toString());
             errorResult.addError(errorRDTO);
+            return errorResult;
+        }
+        } else {
+            ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return errorResult;
         }
     }

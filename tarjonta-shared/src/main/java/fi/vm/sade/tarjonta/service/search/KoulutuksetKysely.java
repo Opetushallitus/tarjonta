@@ -23,6 +23,15 @@ public class KoulutuksetKysely implements Serializable
     private List<String> hakukohdeOids = new ArrayList<String>();
     private String koulutusOid;
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
+    private String komoOid;
+
+    public String getKomoOid() {
+        return komoOid;
+    }
+
+    public void setKomoOid(String komoOid) {
+        this.komoOid = komoOid;
+    }
 
     public List<KoulutusasteTyyppi> getKoulutusasteTyypit() {
         return koulutusasteTyypit;
@@ -122,6 +131,10 @@ public class KoulutuksetKysely implements Serializable
 
     public void setKoulutusOid(String oid) {
         this.koulutusOid = oid;
+    }
+
+    public void setkomoOid(String komoOid) {
+        this.komoOid = komoOid;
     }
 
 }

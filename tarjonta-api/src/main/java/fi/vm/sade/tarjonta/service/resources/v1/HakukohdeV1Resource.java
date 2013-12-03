@@ -61,7 +61,7 @@ public interface HakukohdeV1Resource {
     public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     @GET
-    @ApiOperation(value = "Palauttaa kaikki hakukohteiden oid:t", notes = "Listaa kaikki hakukohteiden oidit", response = String.class)
+    @ApiOperation(value = "Palauttaa kaikki hakukohteiden oid:t", notes = "Listaa kaikki hakukohteiden oidit", response = OidV1RDTO.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<List<OidV1RDTO>> search();
 

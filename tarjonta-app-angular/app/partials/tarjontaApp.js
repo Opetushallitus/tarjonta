@@ -32,6 +32,7 @@ angular.module('app',
             'app.test.controllers',
             'app.kk',
             'app.koulutus.ctrl',
+            'app.koulutus.sisaltyvyys.ctrl',
             'app.dialog',
             'ngRoute',
             'ngResource',
@@ -53,7 +54,7 @@ angular.module('app',
             'Hakukohde',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
-            'angularTreeview',
+            'orgAngularTreeview',
             'TarjontaConverter',
             'ResultsTable',
             'imageupload',
@@ -64,7 +65,8 @@ angular.module('app',
             'ImageDirective',
             'RichTextArea',
             'MonikielinenTextArea',
-            'ControlsLayout'
+            'ControlsLayout',
+            'angularTreeview'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

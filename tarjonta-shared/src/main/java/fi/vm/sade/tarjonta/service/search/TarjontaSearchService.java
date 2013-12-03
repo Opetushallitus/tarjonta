@@ -341,6 +341,11 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:%s", Koulutus.OID, kysely.getKoulutusOid()));
         }
 
+        //komoOid
+        if (kysely.getKomoOid() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSMODUULI_OID, kysely.getKomoOid()));
+        }
+
         // vuosi & kausi
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
 
