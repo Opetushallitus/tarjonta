@@ -67,14 +67,55 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         return new ResultV1RDTO();
     }
 
-    //TODO ei toimi
     @Override
     public ResultV1RDTO unlink(String parent, String child) {
+        System.out.println("unlink!");
         Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findByOid(parent);
-        Koulutusmoduuli childKomo = koulutusmoduuliDAO.findByOid(child);
-        KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(parentKomo, childKomo, ValintaTyyppi.ALL_OFF);
-        koulutusSisaltyvyysDAO.remove(sisaltyvyys);
-        return new ResultV1RDTO();
+        List<ErrorV1RDTO> errors = new ArrayList<ErrorV1RDTO>();
+
+        if (parentKomo != null) {
+            Set<KoulutusSisaltyvyys> sisaltyvyydet = parentKomo
+                    .getSisaltyvyysList();
+
+            if (sisaltyvyydet.size() == 0) {
+                errors.add(ErrorV1RDTO.createInfo("ei sisaltyvyyksia!"));
+            } else {
+
+                for (KoulutusSisaltyvyys sisaltyvyys : sisaltyvyydet) {
+                    List<Koulutusmoduuli> remove = new ArrayList<Koulutusmoduuli>();
+                    for (Koulutusmoduuli sisaltyva : sisaltyvyys
+                            .getAlamoduuliList()) {
+                        if (sisaltyva.getOid().equals(child)) {
+                            remove.add(sisaltyva);
+                        }
+                    }
+                    if (sisaltyvyys.getAlamoduuliList().size() == remove.size()) {
+                        // poistetaan kokonaan!
+                        System.out.println("poistetaan kokonaan!");
+
+                        koulutusSisaltyvyysDAO.remove(sisaltyvyys);
+                        errors.add(ErrorV1RDTO.createInfo("linkki poistettu!"));
+                    } else {
+                        if(remove.size()!=0){
+                        for (Koulutusmoduuli moduuli : remove) {
+                            System.out.println("poistetaan " + parentKomo
+                                    + "->" + moduuli);
+                            sisaltyvyys.removeAlamoduuli(moduuli);
+                        }
+                        koulutusSisaltyvyysDAO.update(sisaltyvyys);
+                        errors.add(ErrorV1RDTO
+                                .createInfo("linkin osa poistettu!"));
+                    }
+                    }
+
+                }
+            }
+        } else {
+            errors.add(ErrorV1RDTO.createValidationError("parent", "not found"));
+        }
+        ResultV1RDTO result = new ResultV1RDTO();
+        result.setErrors(errors);
+        return result;
     }
 
     @Override

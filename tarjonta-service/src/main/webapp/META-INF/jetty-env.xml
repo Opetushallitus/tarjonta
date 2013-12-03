@@ -5,6 +5,7 @@
         <Arg></Arg>
         <Arg>jdbc/tarjonta</Arg>
         <Arg>
+<!--
             <New class="org.postgresql.ds.PGSimpleDataSource">
                 <Set name="User"><SystemProperty name="dbuser" default="oph"/></Set>
                 <Set name="Password"><SystemProperty name="dbpasswd" default="oph"/></Set>
@@ -12,7 +13,8 @@
                 <Set name="ServerName"><SystemProperty name="dbhost" default="localhost"/></Set>
                 <Set name="PortNumber"><SystemProperty name="dbport" default="5432"/></Set>
             </New>
-<!--
+-->
+
             <New class="org.postgresql.ds.PGSimpleDataSource">
                 <Set name="User"><SystemProperty name="dbuser" default="oph"/></Set>
                 <Set name="Password"><SystemProperty name="dbpasswd" default="oph"/></Set>
@@ -20,7 +22,7 @@
                 <Set name="ServerName"><SystemProperty name="dbhost" default="taulu.hard.ware.fi"/></Set>
                 <Set name="PortNumber"><SystemProperty name="dbport" default="5432"/></Set>
             </New>
--->
+
         </Arg>
     </New>
 </Configure>
