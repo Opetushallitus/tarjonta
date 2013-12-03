@@ -8,6 +8,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService) {
 	
 	 // Tähän populoidaan formin valinnat:
+	console.log("resetting form selections");
 	$scope.model={
 		koulutustyyppi:undefined,
 		organisaatiot:[]
@@ -24,6 +25,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 
 	// hätäkorjaus KJOH-670	
+	SharedStateService.state.puut["lkorganisaatio"]={};
 	if(SharedStateService.state.puut && SharedStateService.state.puut["lkorganisaatio"] && SharedStateService.state.puut["lkorganisaatio"].scope!==$scope) {
 		SharedStateService.state.puut["lkorganisaatio"].scope = $scope;
 	}
@@ -90,6 +92,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 //	console.log("organisaatio:", $scope.luoKoulutusDialogOrg);
 
+	$scope.lkorganisaatiot={};
 	// haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
 	OrganisaatioService.etsi({oidRestrictionList:$scope.luoKoulutusDialogOrg||AuthService.getOrganisations()}).then(function(vastaus) {
 		//console.log("asetetaan org hakutulos modeliin.");
