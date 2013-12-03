@@ -85,10 +85,10 @@
 			<condition>
 				<or>
 					<not>
-						<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-service" />
+						<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-service/rest/haku" />
 					</not>
 					<not>
-						<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-app" />
+						<http url="http://${tomcat-host}:${tomcat-port}/tarjonta-app/index.html" />
 					</not>
 				</or>
 			</condition>
