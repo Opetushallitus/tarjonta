@@ -159,7 +159,6 @@ public class LinkingResourceImplV1Test {
 
         vast = linkingResource.link(komo3.getOid(), Lists.newArrayList(komo1.getOid()));
         Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
-        System.out.println(vast.getErrors());
     }
 
 }
