@@ -63,6 +63,16 @@ public class HakukohdeValintaperusteetDTO extends BaseRDTO {
     private BigDecimal hylkaysMin;
     private BigDecimal hylkaysMax;
 
+    private String tila;
+
+    public String getTila() {
+        return tila;
+    }
+
+    public void setTila(String tila) {
+        this.tila = tila;
+    }
+
     public BigDecimal getPaasykoeMin() {
         return paasykoeMin;
     }

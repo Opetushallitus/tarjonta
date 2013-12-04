@@ -273,6 +273,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
 
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
+        t.setTila(s.getTila() != null ? s.getTila().name() : null);
 
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());
