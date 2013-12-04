@@ -10,6 +10,10 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
          * Create and clear tree data objects.
          */
         factoryScope.createTreeData = function(oid) {
+            if (angular.isUndefined(oid)) {
+                throw new Error("Start oid cannot be null.");
+            }
+
             factoryScope.requests = 0;
             factoryScope.tree = {
                 map: {}, //obj[oid].oids[]
@@ -19,12 +23,12 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
         };
 
         /*
-         * Find tree parents and store the items to a map.
+         * Find next node parents and store the items to a map.
          * 
          * @param {string} komoOid
          * @returns promise
          */
-        factoryScope.getParentsByKomoOid = function(komoOid, deferred) {
+        factoryScope.searchParentsByKomoOid = function(komoOid, deferred) {
             factoryScope.requests = factoryScope.requests + 1;
             var resource = TarjontaService.resourceLink.parents({oid: komoOid});
 
@@ -49,7 +53,7 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
                             factoryScope.tree.map[result] = {childs: {}};
                         }
                         factoryScope.tree.map[result].childs[komoOid] = {selected: factoryScope.isPreSelected(komoOid)};
-                        factoryScope.getParentsByKomoOid(result, deferred);
+                        factoryScope.searchParentsByKomoOid(result, deferred);
                     });
                 }
                 if (factoryScope.requests === 0) {
@@ -58,15 +62,43 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
             });
         };
 
+        /*
+         * Find next node childs and store the items to a map.
+         * 
+         * @param {string} komoOid
+         * @returns promise
+         */
+        factoryScope.searchChildsByKomoOid = function(komoOid) {
+            var deferred = $q.defer();
+            var resource = TarjontaService.resourceLink.get({oid: komoOid});
+            return resource.$promise.then(function(res) {
+                angular.forEach(res.result, function(resultOid) {
+                    if (angular.isUndefined(factoryScope.tree.map[resultOid])) {
+                        factoryScope.tree.map[komoOid] = {childs: {}};
+                    }
+                    factoryScope.tree.map[komoOid].childs[resultOid] = {selected: factoryScope.isPreSelected(resultOid)};
+
+                    deferred.resolve();
+                });
+            });
+
+            return deferred.promise;
+        };
+
         factoryScope.isPreSelected = function(komoOid) {
-            return factoryScope.oid === komoOid;
-        }
+            return factoryScope.tree.oid === komoOid;
+        };
 
         factoryScope.searchByKomoOid = function(oid) {
             factoryScope.createTreeData(oid);
             var deferred = $q.defer();
+
+            //find childs, only one level up
+            factoryScope.tree.activePromises.push(factoryScope.searchChildsByKomoOid(oid))
             factoryScope.tree.activePromises.push(deferred.promise);
-            factoryScope.getParentsByKomoOid(oid, deferred);
+
+            //find all parents to the root level
+            factoryScope.searchParentsByKomoOid(oid, deferred);
 
             var deferredOut = $q.defer();
             $q.all(factoryScope.tree.activePromises).then(function() {
@@ -74,7 +106,8 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
             });
 
             return deferredOut.promise;
-        }
+        };
+
 
         return factoryScope;
     };
@@ -83,6 +116,9 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
 app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
     function controller($scope, $q, $element, $compile) {
 
+        /*
+         * set default attribute values
+         */
         if (angular.isUndefined($scope.lang)) {
             $scope.lang = "fi";
         }
@@ -91,8 +127,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             $scope.styleParam = "";
         }
 
-        if (angular.isUndefined($scope.editMode)) {
-            $scope.editMode = false;
+        if (angular.isUndefined($scope.reviewMode)) {
+            $scope.reviewMode = false;
         }
 
         /*
@@ -108,13 +144,12 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             };
         };
 
-
         /*
-         * Create a tree item.
+         * Create data objects for a tree by recursive loop.
          */
         $scope.getCreateChildren = function(map, oid, tree, options) {
             var obj = {nimi: '---', oid: oid, children: [], selected: options.selected};
-            $scope.searcNameByOid(oid, obj);
+            $scope.searcNameByOid(oid, obj); //searc name for the undefined name '---'
             tree.push(obj);
 
             if (!angular.isUndefined(map[oid])) {
@@ -123,13 +158,22 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 });
             }
 
-            if (options.selected) {
+            if ($scope.reviewMode && options.selected) {
+                //edit mode need also review oids.
+                //the new oids are liked as child items
                 angular.forEach($scope.reviewOids, function(oid) {
                     $scope.getCreateChildren(map, oid, obj.children, {selected: null});
                 });
             }
         };
 
+        /*
+         * Search name for oid node
+         * 
+         * @param {string} komo oid
+         * @param {oid :'1', nimi : 'x' ...} node object 
+         * @returns -1 (nothing)
+         */
         $scope.searcNameByOid = function(oid, obj) {
             var array = $scope.names();
 
@@ -138,24 +182,42 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
              */
             for (var i = 0; i < array.length; i++) {
                 if (array[i].oid === oid) {
-                    obj.nimi = array[i].nimi + ' (' + array[i].oid + ')';
-                    return obj.nimi;
+                    obj.nimi = array[i].nimi; // + ' (' + array[i].oid + ')';
+                    return -1;
                 }
             }
 
             /*
              * solr data search 
              */
-            console.log("search: " + oid);
-            var id = oid;
-
             TarjontaService.haeKoulutukset({//search parameter object
                 komoOid: oid
             }).then(function(result) {
-                console.log(result);
-                console.log(result.tulokset[0].tulokset[0].komoOid);
-                obj.nimi = result.tulokset[0].tulokset[0].nimi + ' (' + id + ')';
+                obj.nimi = result.tulokset[0].tulokset[0].nimi; //+ ' (' + id + ')';
             });
+
+            return -1;
+        };
+
+        $scope.searchSinglePathToRootByOid = function(oid) {
+            var tfs = new TreeFieldSearch();
+            var promise = tfs.searchByKomoOid(oid);
+
+            promise.then(function(map) {
+                angular.forEach(map, function(val, parentKey) {
+                    if (_.has($scope.tree.map, parentKey)) {
+                        //data found by key oid, only add/override missing data 
+                        angular.forEach(map[parentKey].childs, function(val, key) {
+                            $scope.tree.map[parentKey].childs[key] = val;
+                        });
+                    } else {
+                        //no data data -> full  data copy, 
+                        $scope.tree.map[parentKey] = map[parentKey];
+                    }
+                });
+            });
+
+            $scope.tree.activePromises.push(promise);
         };
 
         /*
@@ -182,59 +244,15 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         }, false);
 
         /*
-         * HANDLE DATA CHANGES
+         * HANDLE SELECT DATA CHANGES
+         * - the search process starts and ends here.
          */
-        $scope.$watch('reviewOids', function(newValue, oldValue) {
-            if ($scope.editMode && newValue.length > 0) {
-                $scope.createTreeData();
-                var tfs = new TreeFieldSearch();
-                var promise = tfs.searchByKomoOid($scope.oids[0]);
-                promise.then(function(map) {
-                    angular.forEach(map, function(val, parentKey) {
-                        if (_.has($scope.tree.map, parentKey)) {
-                            //data found by key oid, only add/override missing data 
-                            angular.forEach(map[parentKey].childs, function(val, key) {
-                                $scope.tree.map[parentKey].childs[key] = val;
-                            });
-                        } else {
-                            //no data data -> full  data copy, 
-                            $scope.tree.map[parentKey] = map[parentKey];
-                        }
-                    });
-                });
-                $scope.tree.activePromises.push(promise);
-
-                $q.all($scope.tree.activePromises).then(function() {
-                    angular.forEach($scope.tree.map['ROOT'].childs, function(val, key) {
-                        $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val);
-                    });
-                });
-            }
-        });
-
         $scope.$watch('oids', function(newValue, oldValue) {
             if (newValue.length > 0) {
                 $scope.createTreeData();
 
                 for (var i = 0; i < $scope.oids.length; i++) {
-                    var tfs = new TreeFieldSearch();
-                    var promise = tfs.searchByKomoOid($scope.oids[i]);
-
-                    promise.then(function(map) {
-                        angular.forEach(map, function(val, parentKey) {
-                            if (_.has($scope.tree.map, parentKey)) {
-                                //data found by key oid, only add/override missing data 
-                                angular.forEach(map[parentKey].childs, function(val, key) {
-                                    $scope.tree.map[parentKey].childs[key] = val;
-                                });
-                            } else {
-                                //no data data -> full  data copy, 
-                                $scope.tree.map[parentKey] = map[parentKey];
-                            }
-                        });
-                    });
-
-                    $scope.tree.activePromises.push(promise);
+                    $scope.searchSinglePathToRootByOid($scope.oids[i]);
                 }
 
                 $q.all($scope.tree.activePromises).then(function() {
@@ -244,8 +262,6 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 });
             }
         });
-
-
     }
 
     return {
@@ -255,7 +271,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         controller: controller,
         scope: {
             lang: "@", //lang code like 'fi'     
-            editMode: "@", // delfaut : false, allow edit
+            reviewMode: "@", // delfaut : false, allow edit
             oids: "=", //komo OIDs
             reviewOids: "=", //joined komo OIDs
             fnClickHandler: "=", //function for click event

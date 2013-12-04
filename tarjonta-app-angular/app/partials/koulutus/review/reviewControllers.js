@@ -4,7 +4,7 @@ var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
     function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
         $log.info("BaseReviewController()");
-        
+
         $scope.formControls = {};
         $scope.model = {
             routeParams: $routeParams,
@@ -69,7 +69,25 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
 
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
-            $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
+
+            if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET') {
+                $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+                $scope.luoKoulutusDialog = $modal.open({
+                    templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
+                    controller: 'SisaltyvyysCtrl',
+                    resolve: {
+                        targetKomoOid: function() {
+                            return $scope.koulutusModel.result.komoOid;
+                        },
+                        organisaatioOid: function() {
+                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                        }
+                    }
+
+                });
+            } else {
+                $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
+            }
         };
 
         $scope.goBack = function(event) {
@@ -149,21 +167,11 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
         }
 
         $scope.treeClickHandler = function(obj, event) {
-            $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
-            $scope.luoKoulutusDialog = $modal.open({
-                templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
-                controller: 'SisaltyvyysCtrl',
-                resolve: {
-                    targetKomoOid: function() {
-                        return obj.oid;
-                    },
-                    organisaatioOid: function() {
-                        return  $scope.model.koulutus.organisaatio.oid
-                    }
-                }
-
-            });
-
+            tarjontaService.haeKoulutukset({//search parameter object
+                komoOid: obj.oid
+            }).then(function(result) {
+                 $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid + "/edit");
+            });        
         };
 
     }]);

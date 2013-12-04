@@ -15,16 +15,19 @@
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
 app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
-    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatioOid) {
+    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
+            text: {
+                hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
+                list: LocalisationService.t('sisaltyvyys.tab.lista')},
+            organisaatio: organisaatio,
             treeOids: [],
-            tmp: [],
-            selectedOid: [targetKomoOid], //directive need an array
+            selectedOid: [targetKomoOid], //directive needs an array
             searchKomoOids: [],
-            newOids: [],
+            newOids: [], // a parent (selectedOid) will have new childs (newOids)
             reviewOids: [],
             tutkinto: {
                 uri: '',
@@ -38,7 +41,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
                 data: [] //only row objects
             },
             spec: {//search parameter object
-                oid: organisaatioOid,
+                oid: organisaatio.oid,
                 terms: '', //search words
                 state: null,
                 year: null,
@@ -53,7 +56,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
                 config.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"], //kandi
                 config.app["koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto"] //maisteri
             ],
-            koulutusUris: {} //loaded koulutuskoodi uris in a map. do not show a row item, if it's not in the map. 
+            koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
         }
 
         $scope.koodistoLocale = LocalisationService.getLocale();
@@ -73,22 +76,18 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
             //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
             var promises = [];
             angular.forEach($scope.other.tutkintotyypit, function(value) {
-                console.log(value);
-                promises.push(koodisto.getYlapuolisetKoodit(value, $scope.koodistoLocale));
-            });
-            var koulutuskooditHaettu = $q.all(promises);
-            koulutuskooditHaettu.then(function(koodisParam) {
-                //laitetaan korkeakoulututkinnot koodiuri: koodi -mappiin
-                angular.forEach(koodisParam, function(koodis) {
-                    angular.forEach(koodis, function(koodi) {
-                        // console.log(koodi.koodiUri);
-
-                        if (koodi.koodiKoodisto === config.env["koodisto-uris.koulutus"]) {
-                            $scope.other.koulutusUris[koodi.koodiUri] = koodi;
+                var promise = koodisto.getYlapuolisetKoodit(value, $scope.koodistoLocale);
+                promises.push(promise);
+                promise.then(function(res) {
+                    for (var i = 0; i < res.length; i++) {
+                        if (res[i].koodiKoodisto === config.env["koodisto-uris.koulutus"]) {
+                            $scope.other.koulutuskoodiMap[res[i].koodiUri] = value;
                         }
-                    });
+                    }
                 });
-                //sitten aloitetaan varsinainen haku          
+            });
+
+            $q.all(promises).then(function(koodisParam) {
                 $scope.searchTutkinnot();
             });
         };
@@ -101,7 +100,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
-                {field: 'tarjoaja', displayName: '', width: "50%"},
+                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "50%"},
             ],
             showSelectionCheckbox: true,
             multiSelect: true}
@@ -112,15 +111,15 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
             $scope.model.tutkinto.hakulause = '';
         };
 
-        //dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
         $scope.ok = function() {
             angular.forEach($scope.model.newOids, function(val) {
-                TarjontaService.saveResourceLink($scope.model.selectedOid, val.komoOid, function(res) {
+                TarjontaService.saveResourceLink($scope.model.selectedOid, val.oid, function(res) {
                     console.log(res);
                 });
             });
 
             $modalInstance.close();
+            $location.path("/koulutus/" + $scope.model.koulutus.oid);
         };
 
         //dialogin sulkeminen peruuta-napista
@@ -147,18 +146,24 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
                 for (var i = 0; i < result.tulokset.length; i++) {
                     //tulokset is by organisation
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
-                        $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
+                        var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split("#")[0];
 
-                        arr.push({
-                            koulutuskoodi: result.tulokset[i].tulokset[c].koulutuskoodi,
-                            nimi: result.tulokset[i].tulokset[c].nimi,
-                            tarjoaja: result.tulokset[i].nimi,
-                            oid: result.tulokset[i].tulokset[c].komoOid});
+                        //console.log($scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri)
+                        //console.log($scope.other.koulutuskoodiMap[koulutuskoodiUri])
+                        if ($scope.model.tutkinto.uri.length === 0 || $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
+                            $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
+
+                            arr.push({
+                                koulutuskoodi: koulutuskoodiUri,
+                                nimi: result.tulokset[i].tulokset[c].nimi,
+                                tarjoaja: result.tulokset[i].nimi,
+                                oid: result.tulokset[i].tulokset[c].komoOid});
+                        }
                     }
                 }
 
                 angular.forEach(arr, function(value) {
-                    var koodisPromise = koodisto.getKoodi(config.env["koodisto-uris.koulutus"], value.koulutuskoodi.split("#")[0], $scope.koodistoLocale);
+                    var koodisPromise = koodisto.getKoodi(config.env["koodisto-uris.koulutus"], value.koulutuskoodi, $scope.koodistoLocale);
 
                     koodisPromise.then(function(koodi) {
                         value.koulutuskoodi = koodi.koodiArvo;
