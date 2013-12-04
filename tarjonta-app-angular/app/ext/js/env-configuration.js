@@ -36,7 +36,9 @@ window.CONFIG = {
         "koodisto-uris.lisahaku": "hakutyyppi_03#1",
         "koodisto-uris.lukiodiplomit": "lukiodiplomit",
         "koodisto-uris.lukiolinja": "lukiolinjat",
-        "koodisto-uris.opetusmuoto": "opetusmuoto",
+        "koodisto-uris.opetusmuoto": "opetusmuotokk",
+        "koodisto-uris.opetusaika": "opetusaikakk",
+        "koodisto-uris.opetuspaikka": "opetuspaikkakk",
         "koodisto-uris.opintoala": "opintoalaoph2002",
         "koodisto-uris.opintojenLaajuusarvo": "opintojenlaajuus",
         "koodisto-uris.opintojenLaajuusyksikko": "opintojenlaajuusyksikko",
@@ -53,6 +55,8 @@ window.CONFIG = {
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",
         "koodisto-uris.valintakokeentyyppi": "valintakokeentyyppi",
         "koodisto-uris.valintaperustekuvausryhma": "valintaperustekuvausryhma",
+        "koodisto-uris.tutkintonimike_kk": "tutkintonimike_kk",
+        "koodisto-uris.pohjakoulutusvaatimus_kk": "pohjakoulutusvaatimuskorkeakoulut",
         "koodisto-uris.eqf-luokitus": "eqf",
         "koodisto-uris.yhteishaku": "hakutapa_01#1",
         "koodisto.lang.en.uri": "kieli_en",
@@ -84,7 +88,7 @@ window.CONFIG = {
 
         "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
@@ -96,8 +100,8 @@ window.CONFIG = {
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
         // Only for development, since production reads "/cas/myroles"
-        // "casUrl": "cas_myroles_tiimi2.json",
-        "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
+         "casUrl": "cas_me_ophadmin.json",
+        //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
         "place": "holder"
 

@@ -101,10 +101,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String suunniteltuKestoArvo;
     @Column(name = "suunniteltu_kesto_yksikko")
     private String suunniteltuKestoYksikko;
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> teemas = new HashSet<KoodistoUri>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_aihe", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> aihees = new HashSet<KoodistoUri>();
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_avainsana", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -119,6 +123,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_opetusaika", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_opetuspaikka", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> opetusPaikkas = new HashSet<KoodistoUri>();
     /**
      * If non-null, this "koulutus" comes with a charge. This field defines the
      * amount of the charge. The actual content of this field is yet to be
@@ -201,6 +215,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
+    
+    private transient boolean showMeta = true;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusArvo;
@@ -876,5 +892,43 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
+    }
+
+    /**
+     * @return the showMeta
+     */
+    public boolean isShowMeta() {
+        return showMeta;
+    }
+
+    /**
+     * @param showMeta the showMeta to set
+     */
+    public void setShowMeta(boolean showMeta) {
+        this.showMeta = showMeta;
+    }
+
+    public Set<KoodistoUri> getAihees() {
+        return aihees;
+    }
+
+    public void setAihees(Set<KoodistoUri> aihees) {
+        this.aihees = aihees;
+    }
+
+    public Set<KoodistoUri> getOpetusAikas() {
+        return opetusAikas;
+    }
+
+    public void setOpetusAikas(Set<KoodistoUri> opetusAikas) {
+        this.opetusAikas = opetusAikas;
+    }
+
+    public Set<KoodistoUri> getOpetusPaikkas() {
+        return opetusPaikkas;
+    }
+
+    public void setOpetusPaikkas(Set<KoodistoUri> opetusPaikkas) {
+        this.opetusPaikkas = opetusPaikkas;
     }
 }

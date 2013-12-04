@@ -55,6 +55,7 @@ if(!(window.console && console.log)) {
         <script src="lib/ui-angular-tinymce.js"></script>
         <script src="lib/imageupload.js"></script>
         <script src="lib/buckets-minified.js"></script>
+        <script src="lib/treeview/angular.treeview.js"></script>
 
         <script src="js/shared/auth.js"></script>
         <script src="js/shared/permissions.js"></script>
@@ -83,8 +84,11 @@ if(!(window.console && console.log)) {
         <script src="js/shared/directives/multiSelect.js"></script>
         <script src="js/shared/directives/mkTextfield.js"></script>
         <script src="js/shared/directives/richTextarea.js"></script>
-        <script src="js/shared/filters/orderByNum.js"></script>
+        <script src="js/shared/directives/mkRichTextarea.js"></script>
         <script src="js/shared/directives/imageField.js"></script>
+        <script src="js/shared/directives/controlsLayout.js"></script>
+        <script src="js/shared/filters/orderByNum.js"></script>
+        <script src="js/shared/directives/treeField.js"></script>
 
         <script src="partials/controllers.js"></script>
         <script src="partials/directives.js"></script>
@@ -103,6 +107,7 @@ if(!(window.console && console.log)) {
 
         <script src="partials/koulutus/koulutusController.js"></script>
         <script src="partials/koulutus/luo-koulutus-dialogi.js"></script>
+        <script src="partials/koulutus/sisaltyvyys/sisaltyvyys-ctrl.js"></script>
 
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
@@ -126,6 +131,7 @@ if(!(window.console && console.log)) {
         <link href="lib/ngGrid/ng-grid.min.css" rel="stylesheet">
         <link href="css/tree.css" rel="stylesheet"/>
         <link href="css/datetimepicker.css" rel="stylesheet"/>
+        <link href="lib/treeview/css/angular.treeview.css" rel="stylesheet"/>
 
         <!-- 3. virkailija-teema -->
         <link href="css/virkailija.css" rel="stylesheet"/>
@@ -135,7 +141,9 @@ if(!(window.console && console.log)) {
         <link href="css/multiselect.css" rel="stylesheet"/>
         <link href="css/mktextfield.css" rel="stylesheet"/>
         <link href="css/richTextarea.css" rel="stylesheet"/>
+        <link href="css/mkRichTextarea.css" rel="stylesheet"/>
         <link href="css/tarjontaform.css" rel="stylesheet"/>
+      
 
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     </head>
@@ -143,7 +151,7 @@ if(!(window.console && console.log)) {
     <body data-ng-controller="AppRoutingCtrl">
 
         <!-- kaikki tarjonta-roina tämän sisään!! -->
-        <div id="tarjonta-body">
+        <div id="tarjonta-body" class="ng-cloak">
             <div data-ng-controller="LocalisationCtrl">
 
                 <div data-ng-switch on="renderPath[0]">
@@ -197,6 +205,7 @@ if(!(window.console && console.log)) {
                     </div>
                 </div><!-- /renderPath[0] -->
 
+<!--
                 <div class="wsidebar-main">
                     <hr>
                     Footer, route counter = {{count}}<br>
@@ -215,6 +224,7 @@ if(!(window.console && console.log)) {
                     </div>
                 </div>
             </div>
+-->
 
         </div>
 
@@ -249,24 +259,23 @@ if(!(window.console && console.log)) {
                 }
             };
 
-
             //
-            // Get current users authorisation info (/cas/myroles)
+            // Get current users info (/cas/me)
             //
-            console.log("** Loading authentication info; from: ", window.CONFIG.env.casUrl);
+            console.log("** Loading user info; from: ", window.CONFIG.env.casUrl);
+ 			window.CONFIG.env.cas={}
             init_counter++;
             jQuery.ajax(window.CONFIG.env.casUrl, {
                 dataType: "json",
                 success: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = xhr;
+                	window.CONFIG.env.cas.userinfo = xhr;
                     initFunction("AUTHENTICATION", xhr, status);
                 },
                 error: function(xhr, status) {
-                    window.CONFIG.env["cas.myroles"] = [];
                     initFunction("AUTHENTICATION FAILED", xhr, status);
                 }
             });
-
+            
             //
             // Preload "tarjonta.tila"???
             //

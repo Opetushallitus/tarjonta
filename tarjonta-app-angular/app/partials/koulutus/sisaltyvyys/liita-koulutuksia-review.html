@@ -1,0 +1,16 @@
+<div class="modal-body">
+    <!--pre>
+    {{treedata | json}}
+</pre-->
+
+    <tree-field 
+        names="model.hakutulos" 
+        oids="model.selectedOid" 
+        new-oids="model.valitut.oids" 
+        lang="koodistoLocale"></tree-field>        
+
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="selectDialogi()"><div tt="sisaltyvyys.palaa"></div></button>
+        <button class="btn btn-primary" ng-click="ok()"><div tt="sisaltyvyys.tallenna"></div></button>
+    </div>
+</div>

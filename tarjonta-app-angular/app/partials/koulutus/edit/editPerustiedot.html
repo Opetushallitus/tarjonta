@@ -1,39 +1,15 @@
 <form name="perustiedotForm">
     <table class="tarjontaForm">
-        <!-- koulutuskoodi -->
-        <tr class="info">
-            <th tt="koulutus.edit.koulutuskoodi"/>
-            <td>{{model.koulutuskoodi.arvo}} <span class="float-right">{{model.koulutuskoodi.koodi.arvo}}</span></td>
-            <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
-        </tr>
-
         <!-- koulutusohjelma -->
         <tr class="required">
             <th tt="koulutus.edit.koulutusohjelma"/>
             <td>
-        <mk-textfield type="koulutus" model="model.koulutusohjelma.meta"></mk-textfield>
+        <mk-textfield model="model.koulutusohjelma.tekstis"></mk-textfield>
         </td>
         <td>
-            <p class="error" ng-show="model.koulutusohjelma.meta.length == 0">(TODO virheilmo)</p> 
+            <p class="error" ng-show="model.koulutusohjelma.tekstis.length == 0">(TODO virheilmo)</p> 
         </td>
         </tr>
-
-        <!--
-        <tr class="required">
-                <th tt="koulutus.edit.koulutusohjelma"/>
-                <td>			 
-                        <table>
-                                <tr data-ng-repeat="lang in config.app.userLanguages">
-                                        <th>{{model.koulutusohjelma.meta[lang].koodi.kaannos}}</th>
-                                        <td><input type="text" data-ng-model="model.koulutusohjelma.meta[lang].koodi.arvo" required /></td>
-                            </tr>
-                        </table>
-                </td>
-                <td>
-                        <a href="#" tt="koulutus.edit.lisaa-kieli"/>
-                </td>
-        </tr>
-        -->
 
         <tr>
             <th></th>
@@ -46,7 +22,7 @@
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
             <th tt="koulutus.edit.tutkinto-ohjelman-tunniste"/>
-            <td><input name="tutkintoOhjelmanTunniste" type="text" data-ng-model="model.tunniste" required /></td>
+            <td><input name="tutkintoOhjelmanTunniste" type="text" data-ng-model="model.tunniste" /></td>
             <td></td>
         </tr>
         <tr>
@@ -57,48 +33,48 @@
         <!-- k. aste -->
         <tr>
             <th tt="koulutus.edit.koulutusaste"/>
-            <td>{{model.koulutusaste.arvo}}</td>
+            <td>{{model.koulutusaste.kaannos}}</td>
             <td></td>
         </tr>
 
         <!-- k. ala -->
         <tr>
             <th tt="koulutus.edit.koulutusala"/>
-            <td>{{model.koulutusala.arvo}}</td>
+            <td>{{model.koulutusala.kaannos}}</td>
             <td></td>
         </tr>
 
         <!-- o. ala -->
         <tr>
             <th tt="koulutus.edit.opintoala"/>
-            <td>{{model.opintoala.arvo}}</td>
+            <td>{{model.opintoala.kaannos}}</td>
             <td></td>
         </tr>
 
         <!-- tutkinto -->
         <tr>
             <th tt="koulutus.edit.tutkinto"/>
-            <td>{{model.tutkinto.arvo}}</td>
+            <td>{{model.tutkinto.kaannos}}</td>
             <td></td>
         </tr>
 
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.edit.tutkintonimike"/>
-            <td>{{model.tutkintonimike.arvo}}</td>
+            <td>{{model.tutkintonimike.kaannos}}</td>
             <td></td>
         </tr>
         <tr>
             <th tt="koulutus.edit.eqf-luokitus"/>
-            <td>{{model.eqf.arvo}}</td>
+            <td>{{model.eqf.kaannos}}</td>
             <td></td>
         </tr>
 
         <!-- opintojen laajuus -->
         <tr class="required">
-            <th tt="koulutus.edit.opintojen-laajuus"/>
+            <th tt="koulutus.edit.opintojen-laajuus"/> 
             <td>
-                <select required name="opintojenLaajuus" ng-model="uiModel.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.data | orderByNum:'koodiNimi'"></select>
+                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus | orderByNum:'koodiNimi'"></select>
             </td>
             <td>
                 <p class="error" ng-show="perustiedotForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
@@ -131,11 +107,11 @@
         <tr class="required">
             <th tt="koulutus.edit.suunniteltu-kesto"/>
             <td>
-                <input required name="suunniteltuKesto" class="thin" type="text" data-ng-model="model.suunniteltuKesto.arvo" required />
-                <select required name="suunniteltuKestoYksikko" class="thin" ng-model="uiModel.suunniteltuKesto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKesto.data | orderBy:'koodiNimi'"></select>
+                <input required name="suunniteltuKestoArvo" class="thin" type="text" data-ng-model="model.suunniteltuKestoArvo" required />
+                <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKestoTyyppi | orderBy:'koodiNimi'"></select>
             </td>
             <td>
-                <p class="error" ng-show="perustiedotForm.suunniteltuKesto.$error.required || perustiedotForm.suunniteltuKestoYksikko.$error.required"
+                <p class="error" ng-show="perustiedotForm.suunniteltuKestoArvo.$error.required || perustiedotForm.suunniteltuKestoTyyppi.$error.required"
                    tt="koulutus.edit.suunniteltu-kesto.required"/>
             </td>
         </tr>
@@ -149,7 +125,8 @@
             <td>
 
         <multi-select
-            model="uiModel.opetuskielis.data"
+            order-with="userLanguages"
+            model="uiModel.tmp"
             selection="uiModel.opetuskielis.uris"
             promise="uiModel.opetuskielis.promise"
             display="dualpane"/>
@@ -176,7 +153,7 @@
         <tr>
             <th tt="koulutus.edit.maksullisuus.hinta"></th>
             <td>
-                <input name="hinta" class="thin" type="text" data-ng-model="model.hinta" required ng-disabled="!model.opintojenMaksullisuus" />
+                <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" />
                 <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
             </td>
             <td>
@@ -188,12 +165,27 @@
             <td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help"/>
         </tr>
 
+        <!-- opetusaikas -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusaikas"/>
+            <td>
+                <multi-select
+                        model="uiModel.tmp"
+                        selection="uiModel.opetusAikas.uris"
+                        promise="uiModel.opetusAikas.promise"
+                        columns="2"/>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.opetusAikas.uris.length == 0" tt="koulutus.edit.opetusAikas.required"/>
+            </td>
+        </tr>
+
         <!-- opetusmuodot -->
         <tr class="required">
             <th tt="koulutus.edit.opetusmuodot"/>
             <td>
         <multi-select
-            model="uiModel.opetusmuodos.data"
+            model="uiModel.tmp"
             selection="uiModel.opetusmuodos.uris"
             promise="uiModel.opetusmuodos.promise"
             columns="2"/>
@@ -203,20 +195,19 @@
         </td>
         </tr>
 
-        <!-- pohjakoulutusvaatimus -->
+        <!-- opetuspaikka -->
         <tr class="required">
-            <th tt="koulutus.edit.pohjakoulutusvaatimus"/>
+            <th tt="koulutus.edit.opetusPaikkas"/>
             <td>
-        <multi-select
-            model="uiModel.pohjakoulutusvaatimukset.data"
-            selection="uiModel.pohjakoulutusvaatimukset.uris"
-            promise="uiModel.pohjakoulutusvaatimukset.promise"
-            display="dualpane"
-            />
-        </td>
-        <td>
-            <p class="error" ng-show="uiModel.pohjakoulutusvaatimukset.uris.length == 0" tt="koulutus.edit.pohjakoulutusvaatimus.required"/>
-        </td>
+                <multi-select
+                        model="uiModel.tmp"
+                        selection="uiModel.opetusPaikkas.uris"
+                        promise="uiModel.opetusPaikkas.promise"
+                        columns="2"/>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.opetusPaikkas.uris.length == 0" tt="koulutus.edit.opetusPaikkas.required"/>
+            </td>
         </tr>
 
         <!-- teemat -->
@@ -224,7 +215,7 @@
             <th tt="koulutus.edit.teemat"/>
             <td>
         <multi-select
-            model="uiModel.teemas.data"
+            model="uiModel.tmp"
             selection="uiModel.teemas.uris"
             promise="uiModel.teemas.promise"
             columns="2"/>

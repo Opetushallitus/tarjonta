@@ -55,6 +55,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private boolean _kaytetaanHaunPaattymisenAikaa;
     private boolean _kaytetaanHakukohdekohtaistaHakuaikaa;
     private boolean _kaytetaanJarjestelmanValintaPalvelua;
+    private boolean kaksoisTutkinto;
     private List<HakukohdeLiiteDTO> _liitteet;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
@@ -338,5 +339,13 @@ public class HakukohdeDTO extends BaseRDTO {
 
     public void setKaytetaanJarjestelmanValintaPalvelua(boolean _kaytetaanJarjestelmanValintaPalvelua) {
         this._kaytetaanJarjestelmanValintaPalvelua = _kaytetaanJarjestelmanValintaPalvelua;
+    }
+
+    public boolean isKaksoisTutkinto() {
+        return kaksoisTutkinto;
+    }
+
+    public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
+        this.kaksoisTutkinto = kaksoisTutkinto;
     }
 }

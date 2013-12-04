@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -29,21 +31,38 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  *
  * @author mlyly
  */
+@ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
 
+    @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;
+    @ApiModelProperty(value = "Koulutusmoduulin totetuksen yksilöivä tunniste")
     private String komotoOid;
+    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduuliin")
     private String parentKomoOid;
+    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
     private String parentKomotoOid;
 
+    @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO organisaatio;
 
     //OTHER DATA
+    @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
     private TarjontaTila tila;
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    @ApiModelProperty(value = "Koulutuksen koulutusastetyyppi", required = true)
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private TekstiV1RDTO<KomoTeksti> kuvausKomo;
-    private TekstiV1RDTO<KomotoTeksti> kuvausKomoto;
+
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
+    private KuvausV1RDTO<KomoTeksti> kuvausKomo;
+    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit")
+    private KuvausV1RDTO<KomotoTeksti> kuvausKomoto;
+
+    @ApiModelProperty(value = "Koulutuksen suunntellun keston arvo", required = true)
+    private String suunniteltuKestoArvo;
+    @ApiModelProperty(value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)", required = true)
+    private KoodiV1RDTO suunniteltuKestoTyyppi;
 
     public KoulutusV1RDTO() {
     }
@@ -170,9 +189,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @return the kuvausKomo
      */
-    public TekstiV1RDTO<KomoTeksti> getKuvausKomo() {
+    public KuvausV1RDTO<KomoTeksti> getKuvausKomo() {
         if (kuvausKomo == null) {
-            kuvausKomo = new TekstiV1RDTO<KomoTeksti>();
+            kuvausKomo = new KuvausV1RDTO<KomoTeksti>();
         }
 
         return kuvausKomo;
@@ -181,16 +200,16 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @param kuvausKomo the kuvausKomo to set
      */
-    public void setKuvausKomo(TekstiV1RDTO<KomoTeksti> kuvausKomo) {
+    public void setKuvausKomo(KuvausV1RDTO<KomoTeksti> kuvausKomo) {
         this.kuvausKomo = kuvausKomo;
     }
 
     /**
      * @return the kuvausKomoto
      */
-    public TekstiV1RDTO<KomotoTeksti> getKuvausKomoto() {
+    public KuvausV1RDTO<KomotoTeksti> getKuvausKomoto() {
         if (kuvausKomoto == null) {
-            kuvausKomoto = new TekstiV1RDTO<KomotoTeksti>();
+            kuvausKomoto = new KuvausV1RDTO<KomotoTeksti>();
         }
         return kuvausKomoto;
     }
@@ -198,8 +217,36 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
     /**
      * @param kuvausKomoto the kuvausKomoto to set
      */
-    public void setKuvausKomoto(TekstiV1RDTO<KomotoTeksti> kuvausKomoto) {
+    public void setKuvausKomoto(KuvausV1RDTO<KomotoTeksti> kuvausKomoto) {
         this.kuvausKomoto = kuvausKomoto;
+    }
+
+    /**
+     * @return the suunniteltuKestoArvo
+     */
+    public String getSuunniteltuKestoArvo() {
+        return suunniteltuKestoArvo;
+    }
+
+    /**
+     * @param suunniteltuKestoArvo the suunniteltuKestoArvo to set
+     */
+    public void setSuunniteltuKestoArvo(String suunniteltuKestoArvo) {
+        this.suunniteltuKestoArvo = suunniteltuKestoArvo;
+    }
+
+    /**
+     * @return the suunniteltuKestoTyyppi
+     */
+    public KoodiV1RDTO getSuunniteltuKestoTyyppi() {
+        return suunniteltuKestoTyyppi;
+    }
+
+    /**
+     * @param suunniteltuKestoTyyppi the suunniteltuKestoTyyppi to set
+     */
+    public void setSuunniteltuKestoTyyppi(KoodiV1RDTO suunniteltuKestoTyyppi) {
+        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
 }

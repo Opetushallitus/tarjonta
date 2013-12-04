@@ -36,7 +36,6 @@ import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +44,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.security.SadeUserDetailsWrapper;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -76,13 +73,6 @@ import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
-import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
-import java.util.Map.Entry;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author Tuomas Katva
@@ -125,8 +115,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private PermissionChecker permissionChecker;
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
-
-
 
     @Override
     @Transactional(readOnly = false)
@@ -470,11 +458,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
-        
+
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
-        
+
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-        
 
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
@@ -482,7 +469,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
                 curKoul.removeHakukohde(hakukohde);
             }
-            
+
             try {
                 log.info("Removing hakukohde from index...");
                 solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
@@ -491,10 +478,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 throw new TarjontaBusinessException("indexing.error", e);
             }
 
-            
-            hakukohdeDAO.remove(hakukohde);       
+            hakukohdeDAO.remove(hakukohde);
         }
-        
+
         return new HakukohdeTyyppi();
     }
 
@@ -591,10 +577,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return vastaus;
     }
-
-
-
-
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
@@ -926,7 +908,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        indexTilatToSolr(tarjontatiedonTila); 
+        indexTilatToSolr(tarjontatiedonTila);
         return new PaivitaTilaVastausTyyppi();
     }
 
@@ -960,7 +942,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         //toteutus Ids
-        komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        if (hakukohdeOids != null && !hakukohdeOids.isEmpty()) {
+            komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+        }
     }
 
     @Override

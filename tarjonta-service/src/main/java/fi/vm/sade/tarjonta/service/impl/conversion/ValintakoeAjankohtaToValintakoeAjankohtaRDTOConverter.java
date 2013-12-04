@@ -31,7 +31,7 @@ public class ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter extends BaseR
 
     @Override
     public ValintakoeAjankohtaRDTO convert(ValintakoeAjankohta s) {
-        LOG.info("convert({})", s);
+        LOG.debug("convert({})", s);
 
         if (s == null) {
             return null;

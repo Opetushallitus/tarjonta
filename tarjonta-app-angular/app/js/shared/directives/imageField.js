@@ -3,15 +3,14 @@
 var app = angular.module('ImageDirective', []);
 
 app.directive('imageField', function($log, TarjontaService) {
-    function controller($scope, $q, $element, $attrs, $compile) {
+    function controller($scope, $q, $element, $compile) {
         /*
          * DEFAULT VARIABLES:
          */
-
         $scope.base64 = {};
         $scope.mime = {};
         $scope.filename = "";
-
+        
         if (angular.isUndefined($scope.btnNameRemove)) {
             $scope.btnNameRemove = "remove";
         }
@@ -28,8 +27,16 @@ app.directive('imageField', function($log, TarjontaService) {
          * METHODS:
          */
 
-        $scope.loadImage = function() {
-            var ResourceImage = TarjontaService.resourceImage($scope.oid, $scope.uri);
+        $scope.loadImage = function(oid, uri) {
+            if (angular.isUndefined(uri) || uri.length === 0) {
+                throw new Error("Language uri cannot be undefined!");
+            }
+
+            if (angular.isUndefined(oid) || oid.length === 0) {
+                throw new Error("Koulutus OID cannot be undefined!");
+            }
+
+            var ResourceImage = TarjontaService.resourceImage(oid, uri);
             var ret = $q.defer();
             ResourceImage.get({}, function(response) {
                 ret.resolve(response);
@@ -37,7 +44,6 @@ app.directive('imageField', function($log, TarjontaService) {
 
             ret.promise.then(function(response) {
                 if (response.status === 'OK') {
-                    console.log(response)
                     $scope.base64 = response.result.base64data;
                     $scope.mime = response.result.mimeType;
                     $scope.filename = response.result.filename;
@@ -54,11 +60,11 @@ app.directive('imageField', function($log, TarjontaService) {
         };
 
         $scope.uploadImage = function(event, kieliUri, image) {
-            TarjontaService.saveImage($scope.oid, $scope.uri, image, function() {
+            TarjontaService.saveImage($scope.oid, kieliUri, image, function() {
                 console.log(image);
-                $scope.loadImage(); // load uploaded image to page     
-            }, function() {
-                console.error("Image upload failed.");
+                $scope.loadImage($scope.oid, kieliUri); // load uploaded image to page     
+            }, function(error) {
+                console.error("Image upload failed.", error);
             });
         };
 
@@ -81,9 +87,12 @@ app.directive('imageField', function($log, TarjontaService) {
          * INIT ACTIONS:
          */
 
-        if (!angular.isUndefined($scope.oid) && $scope.oid !== null) {
+        if (!angular.isUndefined($scope.oid) &&
+                $scope.oid.length > 0 &&
+                !angular.isUndefined($scope.uri) &&
+                $scope.uri.length > 0) {
             //when page loaded, try to load img
-            $scope.loadImage();
+            $scope.loadImage($scope.oid, $scope.uri);
         }
 
         $scope.crear = function() {
@@ -100,7 +109,6 @@ app.directive('imageField', function($log, TarjontaService) {
             editable: "@", //disable upload
             uri: "@", //kieli URI     
             oid: "@", //komoto OID
-            model: "=", // map jossa arvo->nimi
             btnNameSave: "@",
             btnNameRemove: "@"
         }

@@ -8,6 +8,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService) {
 	
 	 // Tähän populoidaan formin valinnat:
+	console.log("resetting form selections");
 	$scope.model={
 		koulutustyyppi:undefined,
 		organisaatiot:[]
@@ -22,6 +23,12 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit=SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit || {};
 	SharedStateService.state.luoKoulutusaDialogi.koulutustyypit=SharedStateService.state.luoKoulutusaDialogi.koulutustyypit || {};
 
+
+	// hätäkorjaus KJOH-670	
+	SharedStateService.state.puut["lkorganisaatio"]={};
+	if(SharedStateService.state.puut && SharedStateService.state.puut["lkorganisaatio"] && SharedStateService.state.puut["lkorganisaatio"].scope!==$scope) {
+		SharedStateService.state.puut["lkorganisaatio"].scope = $scope;
+	}
 
 	var promises =[];
 	
@@ -85,6 +92,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 //	console.log("organisaatio:", $scope.luoKoulutusDialogOrg);
 
+	$scope.lkorganisaatiot={};
 	// haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
 	OrganisaatioService.etsi({oidRestrictionList:$scope.luoKoulutusDialogOrg||AuthService.getOrganisations()}).then(function(vastaus) {
 		//console.log("asetetaan org hakutulos modeliin.");
@@ -103,14 +111,19 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
 		//hakee kaikki valittavissa olevat koulutustyypit
      	var oltUrit = [];
+     	
+     	var oltpromises = [];
 
 		for(var i=0;i<vastaus.organisaatiot.length;i++) {
 	    	var oppilaitostyypit = haeOppilaitostyypit(vastaus.organisaatiot[i]);
-	    	for(var i=0;i<oppilaitostyypit.length;i++) {
-	    		if(oltUrit.indexOf(oppilaitostyypit[i])==-1) {
-	    			oltUrit.push(oppilaitostyypit[i]);
-	    		}
-	    	}
+	    	promises.push(oppilaitostyypit);
+	    	oppilaitostyypit.then(function(tyypit){
+		    	for(var i=0;i<tyypit.length;i++) {
+		    		if(oltUrit.indexOf(tyypit[i])==-1) {
+		    			oltUrit.push(tyypit[i]);
+		    		}
+		    	}
+	    	});
 		}
 		
 		//console.log("oppilaitostyyppejä:", oltUrit.length);
@@ -118,11 +131,17 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 		//jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
 		//$scope.piilotaKoulutustyyppi=oltUrit.length<2;
 
+     	$q.all(oltpromises).then(function(){
+    		$q.all(promises).then(function(){
+    			paivitaKoulutustyypit(oltUrit);
+    		    //console.log("all done!");
+    		 });
+     	});
 		
-		$q.all(promises).then(function(){
-			paivitaKoulutustyypit(oltUrit);
-		    //console.log("all done!");
-		 });
+//		$q.all(promises).then(function(){
+//			paivitaKoulutustyypit(oltUrit);
+//		    //console.log("all done!");
+//		 });
 
 		/*
 		//allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
@@ -137,9 +156,12 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
     	$scope.model.organisaatiot.push(organisaatio);
     	console.log("lisaaOrganisaatio:", organisaatio);
     	var oppilaitostyypit = haeOppilaitostyypit(organisaatio);
-    	console.log("oppilaitostyypit:", oppilaitostyypit);
-		console.log("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
-		paivitaKoulutustyypit(oppilaitostyypit);
+    	
+    	oppilaitostyypit.then(function(data){
+    		paivitaKoulutustyypit(data);
+    	});
+    	//console.log("oppilaitostyypit:", oppilaitostyypit);
+		//console.log("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
 	};
 	
 	var paivitaKoulutustyypit = function(oppilaitostyypit) {
@@ -175,13 +197,15 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	 * TODO lisää testi
 	 */
 	var haeOppilaitostyypit=function(organisaatio) {
+		
+		var deferred = $q.defer();
 		var oppilaitostyypit=[];
 		
 		/*
 		 * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
 		 */
 		var addTyyppi=function(organisaatio){
-			if(organisaatio.oppilaitostyyppi!==undefined && oppilaitostyypit.indexOf(organisaatio)==-1){
+			if(organisaatio.oppilaitostyyppi!==undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi)==-1){
 				oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
 			}
 		};
@@ -191,23 +215,36 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 			for(var i=0;i<organisaatio.children.length;i++) {
 				addTyyppi(organisaatio.children[i]);
 			}
+			deferred.resolve(oppilaitostyypit);
 		}
 		
 		else if(organisaatio.organisaatiotyypit.indexOf("OPPILAITOS")!=-1 && organisaatio.oppilaitostyyppi!==undefined) {
 			//oppilaitos, kerää tyyppi
 			addTyyppi(organisaatio);
+			deferred.resolve(oppilaitostyypit);
 		}
     	
 		else if(organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE")!=-1) {
 			//opetuspiste, kerää parentin tyyppi
 			var parent = $scope.organisaatiomap[organisaatio.parentOid];
+			
 			if(undefined!== parent) {
 				addTyyppi(parent);
+				deferred.resolve(oppilaitostyypit);
+			} else {
+				//parentti ei ole saatavilla, kysytään organisaatioservicestä
+				console.log("organisaatio:", organisaatio);
+				OrganisaatioService.etsi({oidRestrictionList:organisaatio.parentOid}).then(function(vastaus) {
+					$scope.organisaatiomap[organisaatio.parentoid] = vastaus.organisaatiot[0].oppilaitostyyppi;
+					deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
+				}, function(){
+					deferred.resolve([]);
+				});
 			}
 		} else {
 			console.log( "Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit );
 		}
-		return oppilaitostyypit;
+		return deferred.promise;
 	};
 	
 	/**

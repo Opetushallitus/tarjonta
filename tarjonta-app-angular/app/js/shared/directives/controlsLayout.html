@@ -1,0 +1,41 @@
+<div class="tarjontaControlsLayout">
+
+
+<div ng-switch="display">
+	<div class="msgInfo" ng-show="showMessage()" ng-switch-when="header">
+	    <p ng-repeat="m in model.notifs.message" data-ng-bind-html="t(m.tt(), m.tp())"  ng-show="showMessage(m)"></p>
+	</div>
+	<hr ng-switch-when="footer"></hr>
+
+</div>
+
+<span ng-repeat="b in model.buttons">
+	<input
+	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
+	    type="button"
+	    data-ng-click="b.action()"
+	    value="{{t(b.tt)}}"
+	    ng-disabled="b.disabled()"
+	    />
+</span>
+
+<div class="msgOk" ng-show="showSuccess()">
+    <p ng-repeat="m in model.notifs.success" data-ng-bind-html="t(m.tt(), m.tp())" ng-show="showSuccess(m)"></p>
+</div>
+
+<div class="msgError" ng-show="showError()">
+    <p ng-repeat="m in model.notifs.error" data-ng-bind-html="t(m.tt(), m.tp())" ng-show="showError(m)"></p>
+    <ul ng-show="showErrorDetail()">
+        <li ng-repeat="e in model.notifs.errorDetail" ng-show="showErrorDetail(m)" data-ng-bind-html="t(e.tt(), e.tp())" ></li>
+    </ul>
+</div>
+
+<div ng-show="display=='header'">
+	<h3>{{getTitle()}}</h3>
+	
+	<p ng-show="!isNew()" class="float-right">
+	    <span ng-repeat="v in metadata"><span ng-show="!$first">, </span>{{v}}</span>
+	</p>
+</div>
+
+</div>

@@ -1,41 +1,32 @@
-<div id="editKoulutus" ng-controller="BaseEditController">
+<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
 
-    <div class="header" ng-include="'partials/koulutus/edit/header.html'"></div>
-    <div class="body" ng-include="getKoulutusPartialName('edit')"></div>
+    <controls-model
+        model="formControls"
+        tt-create="koulutus.edit.header.title"
+        title="model.koulutusohjelma.tekstis"
+        dto="model">
+        
+        <controls-button tt="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.valmis" action="saveValmis($event)" primary="true"></controls-button>
+        <controls-button tt="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
+        
+        <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
+        <controls-notify type="message" tt="'koulutus.edit.header.'+model.koulutusasteTyyppi" tp="[ model.organisaatio.nimi ]"></controls-notify>
+        
+        <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
+        <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
 
-    <hr/>
-	<div class="footer" ng-include="'partials/koulutus/edit/controls.html'"></div>
-    
-    <!-- 
-    <div ng-click="xmodel.collapse.model = !xmodel.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !xmodel.collapse.model}">Sivun data / malli:</div>
-    </div>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
 
-    <div ng-if="!model.collapse.model">
-     <div collapse="xmodel.collapse.model"">
-        TODO fiksaa mallit jotensakin mielekkääksi?
-        yksi "model" jonka alla kaikki on? "model.koulutus", "model.uimodel", "model.locale", "model.opetuskieli", etc.
+    </controls-model>
 
-        <pre>
-           XMODEL: {{ xmodel | json }}
-        </pre>
-        <pre>
-           MODEL: {{ model | json }}
-        </pre>
-        <pre>
-           UIMODEL: {{ uiModel | json }}
-        </pre>
-        <pre>
-            OPETUSKIELI: {{ opetuskieli | json }}
-        </pre>
-        <pre>
-            CONFIG: {{ config | json }}
-        </pre>
-        <pre>
-            LOCALE: {{ locale | json }}
-        </pre>
-    </div>
-    </div>
-     -->
-     
+    <display-controls model="formControls" display="header"></display-controls>
+
+    <form name="koulutusForm">
+        <div class="body" ng-include="resultPageUri"></div>
+    </form>
+
+    <display-controls model="formControls" display="footer"></display-controls>
+
 </div>

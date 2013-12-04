@@ -1,0 +1,26 @@
+div.mkRichTextarea {
+}
+
+div.mkRichTextarea div.multiselect div.dualpane select, div.mkRichTextarea div.multiselect div.dualpane ul {
+    height:190px;
+}
+
+div.mkRichTextarea div.multiselect div.dualpane {
+	margin-top:20px;
+}
+
+div.mkRichTextarea div.richTextArea div.editor {
+    height:220px;
+}
+
+div.mkRichTextarea div.richTextArea div.preview {
+    height:220px;
+}
+
+div.mkRichTextarea ul.nav-tabs {
+    margin-bottom:0;
+}
+
+div.mkRichTextarea li.addLangTab {
+    font-weight:bold;
+}

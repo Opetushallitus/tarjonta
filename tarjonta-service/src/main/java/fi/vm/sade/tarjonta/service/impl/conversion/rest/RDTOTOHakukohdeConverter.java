@@ -61,13 +61,18 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
-
+        if (hakukohdeRDTO.getValintaperusteKuvaukset() != null) {
+        hakukohde.setValintaperusteKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getValintaperusteKuvaukset()));
+        }
+        if (hakukohdeRDTO.getSoraKuvaukset() != null) {
+        hakukohde.setSoraKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getSoraKuvaukset()));
+        }
         hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo());
         hakukohde.setAlinValintaPistemaara(hakukohdeRDTO.getAlinValintaPistemaara());
         hakukohde.setYlinValintaPistemaara(hakukohdeRDTO.getYlinValintapistemaara());
 
         if (hakukohdeRDTO.getLisatiedot() != null){
-            hakukohde.setLisatiedot(convertTekstiRDTOToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
+            hakukohde.setLisatiedot(convertStringHashMapToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
         }
 
         if (hakukohdeRDTO.getHakukelpoisuusvaatimusUris() != null) {
@@ -144,6 +149,19 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
             monikielinenTeksti.addTekstiKaannos(tekstiKaannos);
         }
         return monikielinenTeksti;
+    }
+
+    private MonikielinenTeksti convertStringHashMapToMonikielinenTeksti(HashMap<String,String> tekstis) {
+
+        MonikielinenTeksti teksti = new MonikielinenTeksti();
+
+        for(String key : tekstis.keySet()) {
+
+            teksti.addTekstiKaannos(key,tekstis.get(key));
+
+        }
+
+        return teksti;
     }
 
     private MonikielinenTeksti convertTekstiRDTOToMonikielinenTeksti(List<TekstiRDTO> tekstis) {

@@ -157,3 +157,22 @@ table.tarjontaForm p.error:before {
 	position:relative;
 	vertical-align: baseline;
 }
+
+table.tarjontaForm tr.collapse th {
+    text-align: left;
+    cursor: pointer;
+    font-weight:bold;
+}
+
+table.tarjontaForm tr.collapse th:before {
+    display: inline;
+    content: '► ';
+}
+
+table.tarjontaForm tr.collapse.open th:before {
+    content: '▼ ';
+}
+
+table.tarjontaForm tr.collapse td {
+    text-align: right;
+}

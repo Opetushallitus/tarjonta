@@ -16,11 +16,29 @@
 var app = angular.module('DateTimePicker', ['ngResource']);
 
 app.directive('dateTimePicker',function(){
+
+
+
     return {
         restrict:'E',
         replace:true,
         scope : {
             selecteddatetime : "="
+        },
+        controller : function($scope){
+
+
+            var getTimeAsString = function(timeAsMilliSeconds) {
+                var momentDate = moment(timeAsMilliSeconds);
+                var formattedDateStr = momentDate.format("DD.M.YYYY HH:mm");
+                return formattedDateStr;
+            };
+
+            $scope.$watch('selecteddatetime',function(newVal,oldVal){
+
+                 $scope.valueToShow = getTimeAsString(newVal);
+
+            });
         },
         template:
             '<div>' +
@@ -37,10 +55,12 @@ app.directive('dateTimePicker',function(){
 
             if (initialDateObj === undefined){
                 var initialMomentDate = moment();
+                scope.selecteddatetime = initialMomentDate.valueOf();
                 initialDateObj = initialMomentDate.format("DD.M.YYYY HH:mm");
             }
 
             scope.valueToShow = initialDateObj;
+
 
             input.datetimepicker({
                 format: "dd.m.yyyy hh:ii",
@@ -49,7 +69,7 @@ app.directive('dateTimePicker',function(){
                 autoclose: true,
                 todayBtn: true,
                 todayHighlight: true,
-                initialDate : initialDateObj
+                initialDate : scope.valueToShow
 
             });
 

@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +23,10 @@ import java.util.List;
  *
  * @author mlyly
  */
+@ApiModel(value = "Organisaation/tarjoajan syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class OrganisaatioV1RDTO extends BaseV1RDTO {
 
+    @ApiModelProperty(value = "Organisaation yksilöivä tunniste", required = true)
     private String oid;
     private String nimi;
     private List<LokalisointiV1RDTO> _nimet;

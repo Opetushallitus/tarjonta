@@ -153,12 +153,12 @@ describe('Edit koulutus insert/edit/load', function() {
 
     }));
 
-    var EMPTY_UI_MODEL = {arvo: null, koodi: {uri: null, versio: null}};
-    var EMPTY_META_UI_MODEL = {arvo: null, koodi: {uri: null, versio: null}, meta: {}};
-    var EMPTY_META_UI_MODEL_KOULUTUOHJELMA = {arvo: null, koodi: {uri: null, versio: '-1'}, meta: {
-            kieli_fi: {koodi: {arvo: '', uri: 'kieli_fi', versio: -1}},
-            kieli_sv: {koodi: {arvo: '', uri: 'kieli_sv', versio: -1}},
-            kieli_en: {koodi: {arvo: '', uri: 'kieli_en', versio: -1}}}}
+    var EMPTY_UI_MODEL = {uri : '', versio : -1};
+    var EMPTY_META_UI_MODEL = {uris: {}};
+    var EMPTY_META_UI_MODEL_KOULUTUOHJELMA = {tekstis: {
+            kieli_fi: '',
+            kieli_sv: '',
+            kieli_en: ''}};
 
     it('Testing the BaseEditController.init', inject(function($controller) {
         $controller('BaseEditController', {
@@ -177,7 +177,8 @@ describe('Edit koulutus insert/edit/load', function() {
         expect(scope.model.tutkinto).toEqual(EMPTY_UI_MODEL);
         expect(scope.model.tutkintonimike).toEqual(EMPTY_UI_MODEL);
         expect(scope.model.eqf).toEqual(EMPTY_UI_MODEL);
-        expect(scope.model.suunniteltuKesto).toEqual(EMPTY_UI_MODEL); //arvo = 'kymmenen', koodi.uri = kesto_uri
+        expect(scope.model.suunniteltuKestoTyyppi).toEqual(EMPTY_UI_MODEL); //arvo = 'kymmenen', koodi.uri = kesto_uri
+        expect(scope.model.suunniteltuKestoArvo).toEqual('');
         expect(scope.model.tunniste).toEqual('');
 
         console.log(EMPTY_META_UI_MODEL_KOULUTUOHJELMA);

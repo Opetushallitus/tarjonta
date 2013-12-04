@@ -4,7 +4,9 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 
    var kieliSet = new buckets.Set();
-   $scope.model.hakukohdeOid  =  $scope.model.hakukohde.oid;
+
+
+
 
    $scope.model.kielet = [];
 
@@ -12,7 +14,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    $scope.model.validationmsgs = [];
 
-   var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohdeOid });
+   var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohde.oid });
 
 
     var valintaKokeetPromise  = valintaKokeetResource.$promise;
@@ -92,7 +94,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
             if ("ACTION" === data) {
                 var index =  $scope.model.valintakokees.indexOf(valintakoe);
                 $scope.model.valintakokees.splice(index,1);
-                valintakoe.hakukohdeOid = $scope.model.hakukohdeOid;
+                valintakoe.hakukohdeOid = $scope.model.hakukohde.oid;
                 valintakoe.valintakoeOid = valintakoe.oid;
                 console.log('REMOVING VALINTAKOE :',valintakoe);
                 var valintakoeResource = new Valintakoe(valintakoe);
@@ -102,7 +104,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
        /* var index =  $scope.model.valintakokees.indexOf(valintakoe);
         $scope.model.valintakokees.splice(index,1);
-        valintakoe.hakukohdeOid = $scope.model.hakukohdeOid;
+        valintakoe.hakukohdeOid = $scope.model.hakukohde.oid;
         valintakoe.valintakoeOid = valintakoe.oid;
         console.log('REMOVING VALINTAKOE :',valintakoe);
         var valintakoeResource = new Valintakoe(valintakoe);
@@ -126,7 +128,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
        modalInstance.result.then(function (selectedItem) {
 
-              selectedItem.hakukohdeOid =  $scope.model.hakukohdeOid;
+              selectedItem.hakukohdeOid =  $scope.model.hakukohde.oid;
               console.log('SELECTED VALINTAKOE : ', selectedItem);
               var valintakoeResource = new Valintakoe(selectedItem);
            if (selectedItem.oid === undefined) {

@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
@@ -9,22 +11,25 @@ import java.util.*;
 /*
 * @author: Tuomas Katva 10/11/13
 */
+@ApiModel(value = "V1 Hakukohde REST-api model, used by KK-ui")
 public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimi;
 
     private String hakukohteenNimiUri;
 
-    //private List<TekstiRDTO> hakukohteenNimet;
-
+    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=true)
     private HashMap<String,String> hakukohteenNimet;
+
 
     private Set<String> tarjoajaOids;
 
+    @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
     private String hakuOid;
 
     private List<String> hakukelpoisuusvaatimusUris;
 
+    @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
     private List<String> hakukohdeKoulutusOids;
 
     private Date hakuaikaAlkuPvm;
@@ -35,6 +40,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private int alinValintaPistemaara;
 
+    @ApiModelProperty(value = "Hakukohde's aloituspaikat amount", required = true)
     private int aloituspaikatLkm;
 
     private int edellisenVuodenHakijatLkm;
@@ -47,15 +53,18 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String soraKuvausKoodiUri;
 
+    @ApiModelProperty(value = "Hakukohde's state",required = true,allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
     private String tila;
 
     private String valintaperustekuvausKoodiUri;
 
     private Date liitteidenToimitusPvm;
 
-    private List<TekstiRDTO> lisatiedot;
+    private HashMap<String,String> lisatiedot;
 
-    private List<TekstiRDTO> valintaperusteKuvaukset;
+    private HashMap<String,String> valintaperusteKuvaukset;
+
+    private HashMap<String,String> soraKuvaukset;
 
     private boolean kaytetaanJarjestelmanValintaPalvelua;
 
@@ -63,7 +72,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
 
-    private List<HakukohdeLiiteRDTO> hakukohteenLiitteet;
+    private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
 
     private OsoiteRDTO liitteidenToimitusOsoite;
 
@@ -199,30 +208,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.liitteidenToimitusPvm = liitteidenToimitusPvm;
     }
 
-    public List<TekstiRDTO> getLisatiedot() {
-
-        if (lisatiedot == null) {
-            lisatiedot = new ArrayList<TekstiRDTO>();
-        }
-
-        return lisatiedot;
-    }
-
-    public void setLisatiedot(List<TekstiRDTO> lisatiedot) {
-        this.lisatiedot = lisatiedot;
-    }
-
-    public List<TekstiRDTO> getValintaperusteKuvaukset() {
-        if (valintaperusteKuvaukset == null){
-            valintaperusteKuvaukset = new ArrayList<TekstiRDTO>();
-        }
-        return valintaperusteKuvaukset;
-    }
-
-    public void setValintaperusteKuvaukset(List<TekstiRDTO> valintaperusteKuvaukset) {
-        this.valintaperusteKuvaukset = valintaperusteKuvaukset;
-    }
-
     public boolean isKaytetaanJarjestelmanValintaPalvelua() {
         return kaytetaanJarjestelmanValintaPalvelua;
     }
@@ -247,14 +232,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.kaytetaanHakukohdekohtaistaHakuaikaa = kaytetaanHakukohdekohtaistaHakuaikaa;
     }
 
-    public List<HakukohdeLiiteRDTO> getHakukohteenLiitteet() {
+    public List<HakukohdeLiiteV1RDTO> getHakukohteenLiitteet() {
         if (hakukohteenLiitteet == null) {
-            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteRDTO>();
+            hakukohteenLiitteet = new ArrayList<HakukohdeLiiteV1RDTO>();
         }
         return hakukohteenLiitteet;
     }
 
-    public void setHakukohteenLiitteet(List<HakukohdeLiiteRDTO> hakukohteenLiitteet) {
+    public void setHakukohteenLiitteet(List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet) {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 
@@ -330,5 +315,30 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakukohteenNimet(HashMap<String, String> hakukohteenNimet) {
         this.hakukohteenNimet = hakukohteenNimet;
+    }
+
+
+    public HashMap<String, String> getLisatiedot() {
+        return lisatiedot;
+    }
+
+    public void setLisatiedot(HashMap<String, String> lisatiedot) {
+        this.lisatiedot = lisatiedot;
+    }
+
+    public HashMap<String, String> getValintaperusteKuvaukset() {
+        return valintaperusteKuvaukset;
+    }
+
+    public void setValintaperusteKuvaukset(HashMap<String, String> valintaperusteKuvaukset) {
+        this.valintaperusteKuvaukset = valintaperusteKuvaukset;
+    }
+
+    public HashMap<String, String> getSoraKuvaukset() {
+        return soraKuvaukset;
+    }
+
+    public void setSoraKuvaukset(HashMap<String, String> soraKuvaukset) {
+        this.soraKuvaukset = soraKuvaukset;
     }
 }
