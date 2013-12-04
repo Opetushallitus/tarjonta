@@ -196,37 +196,30 @@
     
     </tbody>
 
-    <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
+    <!-- SISï¿½LTYVï¿½T OPINTOKOKONAISUUDET -->
+    
+       <!-- SISÃ„LTYVÃ„T OPINTOKOKONAISUUDET -->
         
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><!--input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")' value="{{t('koulutus.review.muokkaa')}}"/--></td>
     </tr>
 
     <tbody ng-show="!model.collapse.sisaltyvatOpintokokonaisuudet">
 
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span10" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">
-            <div class="collapseHeader" ng-class="{isOpen : !model.collapse.sisaltyvatOpintokokonaisuudet}" tt='koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko'></div>
-        </div>
-        <div class="span2 label-right">
-            <div class="btn" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")'><div tt='koulutus.review.muokkaa'></div></div>
-        </div>
-    </div>
-    <div collapse="model.collapse.sisaltyvatOpintokokonaisuudet">
-        <tree-field 
+    <tr>
+        <th></th>
+        <td colspan="2">
+            <tree-field 
             names="[]" 
             oids="model.selectedKomoOid" 
             fn-click-handler="treeClickHandler"
             lang="fi"></tree-field> <!-- TODO get real user's lang code -->
-    </div>
+        </td>
+    </tr>
 
-    </tbody>    
+    </tbody> 
+ 
 
     <!-- HAKUKOHTEET -->
             
