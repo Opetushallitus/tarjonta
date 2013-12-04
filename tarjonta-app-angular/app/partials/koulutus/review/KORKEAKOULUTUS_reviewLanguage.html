@@ -196,11 +196,13 @@
     
     </tbody>
 
-    <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
+    <!-- SIS�LTYV�T OPINTOKOKONAISUUDET -->
+    
+       <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
         
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><!--input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")' value="{{t('koulutus.review.muokkaa')}}"/--></td>
     </tr>
 
     <tbody ng-show="!model.collapse.sisaltyvatOpintokokonaisuudet">
@@ -208,19 +210,16 @@
     <tr>
         <th></th>
         <td colspan="2">
-            [TODO tyylit kun tässä on jotains sisältöä]
-            
-            <div ng-repeat="koulutus in children" class="row-fluid">
-            child koulutus: {{koulutus}}<br>
-            </div>
-            <div ng-repeat="koulutus in parents" class="row-fluid">
-            parent koulutus: {{koulutus}}<br>
-            </div>
-            
+            <tree-field 
+            names="[]" 
+            oids="model.selectedKomoOid" 
+            fn-click-handler="treeClickHandler"
+            lang="fi"></tree-field> <!-- TODO get real user's lang code -->
         </td>
     </tr>
 
-    </tbody>    
+    </tbody> 
+ 
 
     <!-- HAKUKOHTEET -->
             

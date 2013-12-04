@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto) {
+app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
+    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
         $log.info("BaseReviewController()");
         
         $scope.formControls = {};
@@ -16,19 +16,20 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 model: true
             },
             languages: [],
-            koulutus: $scope.koulutusModel.result // preloaded in route resolve, see
+            koulutus: $scope.koulutusModel.result, // preloaded in route resolve, see
+            selectedKomoOid: [$scope.koulutusModel.result.komoOid]
         };
-        
+
         var komoOid = $scope.koulutusModel.result.komoOid;
-        
-        tarjontaService.getChildKoulutuksetPromise(komoOid).then(function(children){
-        	$scope.children=children;
-        	console.log("children:", children);
+
+        tarjontaService.getChildKoulutuksetPromise(komoOid).then(function(children) {
+            $scope.children = children;
+            console.log("children:", children);
         });
 
-        tarjontaService.getParentKoulutuksetPromise(komoOid).then(function(parents){
-        	$scope.parents=parents;
-        	console.log("parents:", parents);
+        tarjontaService.getParentKoulutuksetPromise(komoOid).then(function(parents) {
+            $scope.parents = parents;
+            console.log("parents:", parents);
         });
 
         $scope.lisatiedot = [
@@ -63,8 +64,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 kuvaus = $scope.model.koulutus.kuvausKomoto;
             }
 
-            if(kuvaus[key] && kuvaus[key].tekstis && kuvaus[key].tekstis[kieliuri]) {  
-            	return kuvaus[key].tekstis[kieliuri];
+            if (kuvaus[key] && kuvaus[key].tekstis && kuvaus[key].tekstis[kieliuri]) {
+                return kuvaus[key].tekstis[kieliuri];
             }
         };
 
@@ -148,6 +149,24 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
         } else {
             console.error("No koulutus found?");
         }
+
+        $scope.treeClickHandler = function(obj, event) {
+            $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+            $scope.luoKoulutusDialog = $modal.open({
+                templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
+                controller: 'SisaltyvyysCtrl',
+                resolve: {
+                    targetKomoOid: function() {
+                        return obj.oid;
+                    },
+                    organisaatioOid: function() {
+                        return  $scope.model.koulutus.organisaatio.oid
+                    }
+                }
+
+            });
+
+        };
 
     }]);
 

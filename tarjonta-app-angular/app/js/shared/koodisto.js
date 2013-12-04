@@ -202,12 +202,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
             var returnKoodi = $q.defer();
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
-            console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
+            //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
 
             var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' },{cache:true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
                 returnKoodi.resolve(getKoodiViewModelFromKoodi(koodi, locale));
             });
-            console.log('Returning promise from getKoodistoWithKoodiUri');
+           // console.log('Returning promise from getKoodistoWithKoodiUri');
             return returnKoodi.promise;
         }
 

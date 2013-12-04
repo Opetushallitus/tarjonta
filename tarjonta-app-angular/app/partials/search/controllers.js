@@ -446,20 +446,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			controller: 'LuoKoulutusDialogiController',
 		});
 	};
-        
-        
-	/**
-	 * Avaa "openLiitaKoulutus dialogi"
-	 */
-	$scope.openLiitaKoulutusDialogi = function() {
-		//aseta esivalittu organisaatio
-		$scope.luoKoulutusDialogOrg=$scope.selectedOrgOid;
-		$scope.luoKoulutusDialog = $modal.open({
-			scope: $scope,
-			templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
-			controller: 'SisaltyvyysCtrl',
-		});
-	};
+ 
 	
 //	
 //    

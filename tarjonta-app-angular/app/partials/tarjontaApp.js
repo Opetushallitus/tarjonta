@@ -66,7 +66,8 @@ angular.module('app',
             'RichTextArea',
             'MonikielinenTextArea',
             'ControlsLayout',
-            'angularTreeview'
+            'angularTreeview',
+            'TreeFieldDirective'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

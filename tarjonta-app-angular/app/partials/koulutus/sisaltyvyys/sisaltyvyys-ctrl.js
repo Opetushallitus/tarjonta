@@ -14,26 +14,16 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$timeout', '$q',
-    function SisaltyvyysCtrl($scope, $log, $routeParams, $route, config, koodisto, LocalisationService, TarjontaService, $timeout, $q) {
-        /*
-         * 1.2.246.562.5.2013111913140576761720
-         */
-
-
-        /*
-         * Tree data objects.
-         */
-        $scope.tree = {
-            map: {}, //obj[oid].oids[]
-            activePromises: [],
-            treedata: [],
-        };
+app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', 'targetKomoOid', 'organisaatioOid',
+    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, targetKomoOid, organisaatioOid) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
-            selectedOid: '',
+            treeOids: [],
+            tmp: [],
+            selectedOid: [targetKomoOid], //directive need an array
+            searchKomoOids: [],
             tutkinto: {
                 uri: '',
                 koodis: [],
@@ -41,15 +31,13 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
             },
             hakutulos: [],
             search: {count: 0},
-            test: [],
             valitut: {//selected koulutus items
-                oids: [],
-                data: []
+                oids: [], //only row oids
+                data: [] //only row objects
             },
-            spec: {//search parameters
-                // oid: '1.2.246.562.10.56753942459', //selected org oid
-                oid: null,
-                terms: null,
+            spec: {//search parameter object
+                oid: organisaatioOid,
+                terms: '', //search words
                 state: null,
                 year: null,
                 season: null
@@ -57,16 +45,51 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
         };
 
+        $scope.other = {
+            tutkintotyypit: [
+                //tutkintotyyppi koodisto koodit
+                config.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"], //kandi
+                config.app["koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto"] //maisteri
+            ],
+            koulutusUris: {} //loaded koulutuskoodi uris in a map. do not show a row item, if it's not in the map. 
+        }
+
         $scope.koodistoLocale = LocalisationService.getLocale();
 
         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(config.app["koodisto-uris.tutkintotyyppi"], $scope.koodistoLocale);
         koodisPromise.then(function(koodis) {
-            for (var i = 0; i < koodis.length; i++)
-                if (koodis[i].koodiUri === config.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"] ||
-                        koodis[i].koodiUri === config.app["koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto"]) {
-                    $scope.model.tutkinto.koodis.push(koodis[i]);
+            for (var i = 0; i < koodis.length; i++) {
+                for (var c = 0; c < $scope.other.tutkintotyypit.length; c++) {
+                    if (koodis[i].koodiUri === $scope.other.tutkintotyypit[c]) {
+                        $scope.model.tutkinto.koodis.push(koodis[i]);
+                    }
                 }
+            }
         });
+
+        $scope.getKkTutkinnot = function() {
+            //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
+            var promises = [];
+            angular.forEach($scope.other.tutkintotyypit, function(value) {
+                console.log(value);
+                promises.push(koodisto.getYlapuolisetKoodit(value, $scope.koodistoLocale));
+            });
+            var koulutuskooditHaettu = $q.all(promises);
+            koulutuskooditHaettu.then(function(koodisParam) {
+                //laitetaan korkeakoulututkinnot koodiuri: koodi -mappiin
+                angular.forEach(koodisParam, function(koodis) {
+                    angular.forEach(koodis, function(koodi) {
+                        // console.log(koodi.koodiUri);
+
+                        if (koodi.koodiKoodisto === config.env["koodisto-uris.koulutus"]) {
+                            $scope.other.koulutusUris[koodi.koodiUri] = koodi;
+                        }
+                    });
+                });
+                //sitten aloitetaan varsinainen haku          
+                $scope.searchTutkinnot();
+            });
+        };
 
         //ng-grid malli
         $scope.gridOptions = {
@@ -113,6 +136,7 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
             // valinnat
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
                 $scope.model.hakutulos = [];
+                $scope.model.searchKomoOids = [];
                 if (angular.isUndefined(result.tulokset)) {
                     return -1;
                 }
@@ -122,11 +146,13 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
                 for (var i = 0; i < result.tulokset.length; i++) {
                     //tulokset is by organisation
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
+                        $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
+
                         arr.push({
                             koulutuskoodi: result.tulokset[i].tulokset[c].koulutuskoodi,
                             nimi: result.tulokset[i].tulokset[c].nimi,
                             tarjoaja: result.tulokset[i].nimi,
-                            komoOid: result.tulokset[i].tulokset[c].komoOid});
+                            oid: result.tulokset[i].tulokset[c].komoOid});
                     }
                 }
 
@@ -150,108 +176,33 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', '$routeParams', '$route', '
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html';
         };
 
-        var requests=0;
-        /*
-         * REVIEW FUNCTIONS
-         * 
-         */
-
         /*
          * Open a review dialog.
          * 
          */
         $scope.reviewDialogi = function() {
-            $scope.clearTreeData();
-            var deferred = $q.defer();
-            requests=0;
-            $scope.tree.activePromises.push(deferred.promise);
-            
-            $scope.getParentsByKomoOid($scope.model.selectedOid, deferred);
-
-//            $timeout(function() {
-                //a hack timeout, remove when the promise problem have been resolved.
-                $q.all($scope.tree.activePromises).then(function() {
-                    console.log("SUCCESS");
-                    var parent = $scope.tree.map['PARENT'];
-
-                    angular.forEach(parent.childs, function(val, key) {
-                        $scope.getCreateChildren(key, $scope.tree.treedata, val);
-                    });
-                });
-//            }, 500);
-
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-review.html';
         };
 
-        /*
-         * Find tree parents and store the items to a map.
-         * 
-         * @param {string} komoOid
-         * @returns promise
-         */
-        $scope.getParentsByKomoOid = function(komoOid, deferred) {
-            requests=requests+1;
-            var resource = TarjontaService.resourceLink.parents({oid: komoOid});
-
-            return resource.$promise.then(function(res) {
-            	requests=requests-1;
-
-
-                if (res.result.length === 0) {
-                    /*
-                     * PARENT(s) one recursive loop end
-                     * tree can have one or many parents...
-                     */
-                    if (angular.isUndefined($scope.tree.map['PARENT'])) {
-                        $scope.tree.map['PARENT'] = {childs: {}};
+        $scope.selectTreeHandler = function(obj, event) {
+            console.log("selected/deselected");
+            if (event === 'SELECTED') {
+                for (var i = 0; i < $scope.model.hakutulos.length; i++) {
+                    if ($scope.model.hakutulos[i].oid === obj.oid) {
+                        $scope.model.valitut.data.push($scope.model.hakutulos[i]);
+                        break;
                     }
-                    $scope.tree.map['PARENT'].childs[komoOid] = {selected: $scope.model.selectedOid === komoOid};
-                } else {
-
-                    /*
-                     * go closer to root
-                     */
-                    angular.forEach(res.result, function(result) {
-                        if (angular.isUndefined($scope.tree.map[result])) {
-                            $scope.tree.map[result] = {childs: {}};
-                        }
-                        $scope.tree.map[result].childs[komoOid] = {selected: $scope.model.selectedOid === komoOid};
-                        $scope.getParentsByKomoOid(result, deferred);
-                    });
                 }
-                
-                console.log("requests:" + requests);
-                if(requests==0) {
-                	deferred.resolve();
+            } else {
+                for (var i = 0; i < $scope.model.valitut.data.length; i++) {
+                    if ($scope.model.valitut.data[i].oid === obj.oid) {
+                        $scope.model.valitut.data.splice(i, 1);
+                        break;
+                    }
                 }
-            });
-        };
-
-        /*
-         * Create a tree item.
-         */
-        $scope.getCreateChildren = function(oid, tree, options) {
-            var obj = {nimi: oid, oid: oid, children: [], selected: options.selected};
-            tree.push(obj);
-
-            if (!angular.isUndefined($scope.tree.map[oid])) {
-                angular.forEach($scope.tree.map[oid].childs, function(val, key) {
-                    $scope.getCreateChildren(key, obj.children, val);
-                });
             }
 
-            if (options.selected) {
-                angular.forEach($scope.model.valitut.data, function(val) {
-                    $scope.getCreateChildren(val.komoOid, obj.children, {selected: null});
-                });
-            }
         };
 
-        $scope.clearTreeData = function() {
-            $scope.tree = {
-                map: {}, //obj[oid].oids[]
-                activePromises: [],
-                treedata: [],
-            };
-        };
+        $scope.getKkTutkinnot();
     }]);
