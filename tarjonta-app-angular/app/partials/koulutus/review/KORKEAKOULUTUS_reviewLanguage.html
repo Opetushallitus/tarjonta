@@ -2,7 +2,7 @@
   Kieliriippuva data review tabeissa.
 -->
 
-<table class="tarjontaForm">
+<table class="tarjontaForm">   
     <tr><th></th><td></td><td></td></tr>
     
     <!-- PERUSTIEDOT / TODO collapse -->
@@ -191,14 +191,12 @@
     
     <tr ng-repeat="lisatieto in lisatiedot">
         <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
-        <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri)"></td>
+        <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
     </tr>
     
     </tbody>
 
-    <!-- SIS�LTYV�T OPINTOKOKONAISUUDET -->
-    
-       <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
+    <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
         
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>

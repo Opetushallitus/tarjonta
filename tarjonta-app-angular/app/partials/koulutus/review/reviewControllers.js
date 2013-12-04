@@ -52,7 +52,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             {type: "KUVAILEVAT_TIEDOT", isKomo: false}
         ];
 
-        $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, key, kieliuri) {
+        $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
             if (typeof boolIsKomo !== 'boolean') {
                 converter.throwError('An invalid boolean variable : ' + boolIsKomo);
@@ -64,9 +64,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 kuvaus = $scope.model.koulutus.kuvausKomoto;
             }
 
-            if (kuvaus[key] && kuvaus[key].tekstis && kuvaus[key].tekstis[kieliuri]) {
-                return kuvaus[key].tekstis[kieliuri];
-            }
+            return kuvaus;
         };
 
         $scope.doEdit = function(event, targetPart) {
