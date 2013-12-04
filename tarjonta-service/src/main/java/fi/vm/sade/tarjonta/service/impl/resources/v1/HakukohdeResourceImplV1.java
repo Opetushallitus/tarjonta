@@ -276,6 +276,26 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
 
+    private Hakuaika getHakuAikaForHakukohde(HakukohdeV1RDTO hakukohdeRDTO,Haku haku) {
+        LOG.debug("HAKUAIKA ID : {}", hakukohdeRDTO.getHakuaikaId());
+        if (haku.getHakuaikas() != null) {
+            Hakuaika selectedHakuaika = null;
+            Long hakuaikaId = Long.decode(hakukohdeRDTO.getHakuaikaId());
+            LOG.debug("HAKUAIKAID LONG : {}" , hakuaikaId );
+            for (Hakuaika hakuaika : haku.getHakuaikas()) {
+
+                if (hakuaika.getId().equals(hakuaikaId)) {
+                    selectedHakuaika = hakuaika;
+                }
+            }
+           LOG.debug("SELECTED HAKUAIKA : {}",selectedHakuaika);
+           return selectedHakuaika;
+
+        } else {
+            LOG.warn("HAKU HAKUAIKAS IS NULL, IT SHOULD NOT BE!");
+            return null;
+        }
+    }
 
     @Override
     @Transactional
@@ -298,6 +318,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         Haku haku = hakuDao.findByOid(hakuOid);
         hakukohde.setHaku(haku);
+
+        if (hakukohdeRDTO.getHakuaikaId() != null) {
+
+          hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
+
+        }
 
         hakukohde = hakukohdeDao.insert(hakukohde);
 
@@ -349,7 +375,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Haku haku = hakuDao.findByOid(hakuOid);
 
         hakukohde.setHaku(haku);
-        //TODO: add sisaiset hakuajat
+
+        if (hakukohdeRDTO.getHakuaikaId() != null) {
+            hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
+        }
+
 
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
         //TODO: valintakoes and liites

@@ -155,7 +155,7 @@ public class ConverterV1 {
 
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
         HakuaikaV1RDTO hakuaikaV1RDTO = new HakuaikaV1RDTO();
-
+        hakuaikaV1RDTO.setHakuaikaId(hakuaika.getId().toString());
         hakuaikaV1RDTO.setAlkuPvm(hakuaika.getAlkamisPvm());
         hakuaikaV1RDTO.setLoppuPvm(hakuaika.getPaattymisPvm());
         hakuaikaV1RDTO.setNimi(hakuaika.getSisaisenHakuajanNimi());
@@ -210,6 +210,10 @@ public class ConverterV1 {
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
+        }
+
+        if (hakukohde.getHakuaika() != null) {
+            hakukohdeRDTO.setHakuaikaId(hakukohde.getHakuaika().getId().toString());
         }
 
         for (String hakukelpoisuusVaatimus:hakukohde.getHakukelpoisuusVaatimukset()) {
