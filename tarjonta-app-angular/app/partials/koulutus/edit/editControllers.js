@@ -1,5 +1,5 @@
 
-var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField','ControlsLayout']);
+var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
@@ -13,7 +13,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
-                
+
                 $scope.formControls = {};
 
                 var showSuccess = function() {
@@ -49,7 +49,7 @@ app.controller('BaseEditController',
 
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
-                    
+
                     converter.createUiModels(uiModel);
 
                     /*
@@ -256,7 +256,7 @@ app.controller('BaseEditController',
                     }
                 };
 
-                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliuri) {
+                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
                         converter.throwError('An invalid boolean variable : ' + boolIsKomo);
@@ -269,7 +269,8 @@ app.controller('BaseEditController',
                     }
 
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
-                        converter.throwError("Description text object cannot be null.");
+                        kuvaus[textEnum] = {tekstis: {}};
+                        kuvaus[textEnum].tekstis[kieliUri] = '';
                     }
 
                     return kuvaus[textEnum].tekstis;

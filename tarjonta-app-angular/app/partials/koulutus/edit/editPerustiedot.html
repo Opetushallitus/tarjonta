@@ -210,23 +210,6 @@
             </td>
         </tr>
 
-
-        <!-- pohjakoulutusvaatimus -->
-        <tr class="required">
-            <th tt="koulutus.edit.pohjakoulutusvaatimus"/>
-            <td>
-        <multi-select
-            model="uiModel.tmp"
-            selection="uiModel.pohjakoulutusvaatimukset.uris"
-            promise="uiModel.pohjakoulutusvaatimukset.promise"
-            display="dualpane"
-            />
-        </td>
-        <td>
-            <p class="error" ng-show="uiModel.pohjakoulutusvaatimukset.uris.length == 0" tt="koulutus.edit.pohjakoulutusvaatimus.required"/>
-        </td>
-        </tr>
-
         <!-- teemat -->
         <tr class="required">
             <th tt="koulutus.edit.teemat"/>
