@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.DELETE;
@@ -42,7 +43,7 @@ public interface LinkingV1Resource {
     @Path("/{" + PARENT + "}/{" + CHILD + "}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO link(@PathParam(PARENT) String parent,
-            @PathParam(CHILD) String child);
+            @PathParam(CHILD) List<String> child);
 
     /**
      * Poista linkki kahden koulutuksen väliltä

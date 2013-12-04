@@ -110,7 +110,7 @@ public class Haku extends TarjontaBaseEntity {
     @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY)
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku", fetch = FetchType.EAGER)
     private Set<Hakuaika> hakuaikas = new HashSet<Hakuaika>();
 
     @Column(name="viimPaivitysPvm")

@@ -7,6 +7,7 @@ import java.util.Date;
 */
 public class HakuaikaV1RDTO {
 
+    private String hakuaikaId;
     private String nimi;
     private Date alkuPvm;
     private Date loppuPvm;
@@ -36,4 +37,11 @@ public class HakuaikaV1RDTO {
         this.loppuPvm = loppuPvm;
     }
 
+    public String getHakuaikaId() {
+        return hakuaikaId;
+    }
+
+    public void setHakuaikaId(String hakuaikaId) {
+        this.hakuaikaId = hakuaikaId;
+    }
 }

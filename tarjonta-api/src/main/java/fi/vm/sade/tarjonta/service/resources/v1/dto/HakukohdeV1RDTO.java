@@ -27,6 +27,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
     private String hakuOid;
 
+    @ApiModelProperty(value = "Hakukohde's haku's inner application period",required = false)
+    private String hakuaikaId;
+
     private List<String> hakukelpoisuusvaatimusUris;
 
     @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
@@ -340,5 +343,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setSoraKuvaukset(HashMap<String, String> soraKuvaukset) {
         this.soraKuvaukset = soraKuvaukset;
+    }
+
+    public String getHakuaikaId() {
+        return hakuaikaId;
+    }
+
+    public void setHakuaikaId(String hakuaikaId) {
+        this.hakuaikaId = hakuaikaId;
     }
 }
