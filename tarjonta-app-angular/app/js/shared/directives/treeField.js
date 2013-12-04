@@ -81,11 +81,18 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
 });
 
 app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
-
     function controller($scope, $q, $element, $compile) {
 
         if (angular.isUndefined($scope.lang)) {
             $scope.lang = "fi";
+        }
+
+        if (angular.isUndefined($scope.styleParam)) {
+            $scope.styleParam = "";
+        }
+
+        if (angular.isUndefined($scope.editMode)) {
+            $scope.editMode = false;
         }
 
         /*
@@ -101,11 +108,11 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             };
         };
 
+
         /*
          * Create a tree item.
          */
         $scope.getCreateChildren = function(map, oid, tree, options) {
-
             var obj = {nimi: '---', oid: oid, children: [], selected: options.selected};
             $scope.searcNameByOid(oid, obj);
             tree.push(obj);
@@ -117,7 +124,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             }
 
             if (options.selected) {
-                angular.forEach(factoryScope.newOids, function(oid) {
+                angular.forEach($scope.reviewOids, function(oid) {
                     $scope.getCreateChildren(map, oid, obj.children, {selected: null});
                 });
             }
@@ -139,19 +146,17 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             /*
              * solr data search 
              */
-            console.log("search:");
-            console.log(oid);
+            console.log("search: " + oid);
             var id = oid;
-            
+
             TarjontaService.haeKoulutukset({//search parameter object
                 komoOid: oid
             }).then(function(result) {
-                console.log("result:");
+                console.log(result);
                 console.log(result.tulokset[0].tulokset[0].komoOid);
                 obj.nimi = result.tulokset[0].tulokset[0].nimi + ' (' + id + ')';
             });
         };
-
 
         /*
          * TODO : change 'treeid' to more dynamic.
@@ -160,29 +165,52 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             if ($scope.treeid && angular.isObject($scope.treeid.currentNode)) {
                 var oid = $scope.treeid.currentNode.oid;
 
+                var event = 'SELECTED';
                 if (_.has($scope.tree.selectedOids, oid)) {
                     delete $scope.tree.selectedOids[oid];
-                    if (!angular.isUndefined($scope.fnClickHandler)) {
-                        $scope.fnClickHandler($scope.treeid.currentNode, "DELETE");
-                    }
+                    event = 'DELETED';
                 } else {
                     $scope.tree.selectedOids[$scope.treeid.currentNode.oid] = $scope.treeid.currentNode;
-                    if (!angular.isUndefined($scope.fnClickHandler)) {
-
-                        $scope.fnClickHandler($scope.treeid.currentNode, "SELECTED");
-                    }
                 }
 
-                /*
-                 var arr = _.keys($scope.tree.selectedOids);
-                 
-                 for (var i = 0; i < arr.length; i++) {
-                 $scope.selectedOids.push(arr[i]) ; // to array of oids
-                 }*/
+                if (!angular.isUndefined($scope.fnClickHandler)) {
+                    $scope.fnClickHandler($scope.treeid.currentNode, event);
+                }
+
                 $scope.selectedOids = _.keys($scope.tree.selectedOids); // to array of oids
             }
         }, false);
 
+        /*
+         * HANDLE DATA CHANGES
+         */
+        $scope.$watch('reviewOids', function(newValue, oldValue) {
+            if ($scope.editMode && newValue.length > 0) {
+                $scope.createTreeData();
+                var tfs = new TreeFieldSearch();
+                var promise = tfs.searchByKomoOid($scope.oids[0]);
+                promise.then(function(map) {
+                    angular.forEach(map, function(val, parentKey) {
+                        if (_.has($scope.tree.map, parentKey)) {
+                            //data found by key oid, only add/override missing data 
+                            angular.forEach(map[parentKey].childs, function(val, key) {
+                                $scope.tree.map[parentKey].childs[key] = val;
+                            });
+                        } else {
+                            //no data data -> full  data copy, 
+                            $scope.tree.map[parentKey] = map[parentKey];
+                        }
+                    });
+                });
+                $scope.tree.activePromises.push(promise);
+
+                $q.all($scope.tree.activePromises).then(function() {
+                    angular.forEach($scope.tree.map['ROOT'].childs, function(val, key) {
+                        $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val);
+                    });
+                });
+            }
+        });
 
         $scope.$watch('oids', function(newValue, oldValue) {
             if (newValue.length > 0) {
@@ -210,15 +238,14 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 }
 
                 $q.all($scope.tree.activePromises).then(function() {
-                    console.log("DATA RENDERED");
-
                     angular.forEach($scope.tree.map['ROOT'].childs, function(val, key) {
                         $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val);
                     });
                 });
-
             }
         });
+
+
     }
 
     return {
@@ -228,10 +255,11 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         controller: controller,
         scope: {
             lang: "@", //lang code like 'fi'     
+            editMode: "@", // delfaut : false, allow edit
             oids: "=", //komo OIDs
-            newOids: "@", //joined komo OIDs
+            reviewOids: "=", //joined komo OIDs
             fnClickHandler: "=", //function for click event
-            names: "&" //names in a list of objects {oid : 'xx', nimi : 'abc'}
+            names: "&", //names in a list of objects {oid : 'xx', nimi : 'abc'}
         }
     };
 });

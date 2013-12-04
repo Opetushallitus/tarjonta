@@ -14,8 +14,8 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', 'targetKomoOid', 'organisaatioOid',
-    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, targetKomoOid, organisaatioOid) {
+app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
+    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatioOid) {
         /*
          * Select koulutus data objects.
          */
@@ -24,6 +24,8 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
             tmp: [],
             selectedOid: [targetKomoOid], //directive need an array
             searchKomoOids: [],
+            newOids: [],
+            reviewOids: [],
             tutkinto: {
                 uri: '',
                 koodis: [],
@@ -94,13 +96,14 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
         //ng-grid malli
         $scope.gridOptions = {
             data: 'model.hakutulos',
-            selectedItems: $scope.model.valitut.data,
+            selectedItems: $scope.model.newOids,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
                 {field: 'tarjoaja', displayName: '', width: "50%"},
             ],
+            showSelectionCheckbox: true,
             multiSelect: true}
 
         //Hakukriteerien tyhjennys
@@ -111,20 +114,18 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
 
         //dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
         $scope.ok = function() {
-            console.log("TRY TO SAVE");
-            var promises = [];
-            angular.forEach($scope.model.valitut.data, function(val) {
+            angular.forEach($scope.model.newOids, function(val) {
                 TarjontaService.saveResourceLink($scope.model.selectedOid, val.komoOid, function(res) {
                     console.log(res);
                 });
             });
 
-            //$modalInstance.close($scope.stoModel.active);
+            $modalInstance.close();
         };
 
         //dialogin sulkeminen peruuta-napista
         $scope.cancel = function() {
-            // $modalInstance.dismiss();
+            $modalInstance.dismiss();
         };
 
         /**
@@ -166,8 +167,6 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
                 });
 
                 $scope.model.hakutulos = arr;
-
-                console.log($scope.model.hakutulos);
             });
         };
 
@@ -181,27 +180,48 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'Loca
          * 
          */
         $scope.reviewDialogi = function() {
+            var oids = [];
+            for (var i = 0; i < $scope.model.newOids.length; i++) {
+                oids.push($scope.model.newOids[i].oid);
+            }
+            $scope.model.reviewOids = oids;
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-review.html';
         };
 
+        /*
+         * 2TAB tree click handler
+         */
         $scope.selectTreeHandler = function(obj, event) {
-            console.log("selected/deselected");
             if (event === 'SELECTED') {
                 for (var i = 0; i < $scope.model.hakutulos.length; i++) {
                     if ($scope.model.hakutulos[i].oid === obj.oid) {
-                        $scope.model.valitut.data.push($scope.model.hakutulos[i]);
+                        $scope.model.newOids.push($scope.model.hakutulos[i]);
                         break;
                     }
                 }
             } else {
-                for (var i = 0; i < $scope.model.valitut.data.length; i++) {
-                    if ($scope.model.valitut.data[i].oid === obj.oid) {
-                        $scope.model.valitut.data.splice(i, 1);
+                for (var i = 0; i < $scope.model.newOids.length; i++) {
+                    if ($scope.model.newOids[i].oid === obj.oid) {
+                        $scope.model.newOids.splice(i, 1);
                         break;
                     }
                 }
             }
+        };
 
+        $scope.removeItem = function(obj) {
+            var selected = null;
+            for (var i = 0; i < $scope.model.newOids.length; i++) {
+                if ($scope.model.newOids[i].oid === obj.oid) {
+                    selected = obj;
+                    $scope.model.newOids.splice(i, 1);
+                    break;
+                }
+            }
+
+            if (selected !== null) {
+                $scope.gridOptions.selectItem($scope.model.hakutulos.indexOf(selected), false);
+            }
         };
 
         $scope.getKkTutkinnot();

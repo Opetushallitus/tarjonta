@@ -22,15 +22,19 @@
     </tab>
     <tab heading="Hierarkia"> 
         <tree-field 
+            style="overflow: scroll; height:200px"
             names="model.hakutulos"
             oids="model.searchKomoOids" 
-            new-oids="model.tmp" 
+            review-oids="null" 
             fn-click-handler="selectTreeHandler" 
             lang="koodistoLocale"></tree-field>        
     </tab>
 </tabset>
 
-<select multiple required name="valitut" ng-model="model.valitut.oids" ng-options="obj.oid as obj.nimi for obj in model.valitut.data | orderByNum:'nimi'"></select>
+<div style="overflow: scroll; height:100px">
+    <div tt="sisaltyvyys.valitut-koulutukset"></div>   
+    <ul><li ng-repeat="obj in model.newOids" ng-click="removeItem(obj)">{{obj.nimi}} X</li></ul>
+</div>
 
 <div class="modal-footer">
     <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
