@@ -220,30 +220,42 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setPaasykoeHylkaysMin(nolla);
 
         for (Valintakoe koe : s.getValintakoes()) {
-            if (koe.getTyyppiUri().split("#")[0].equals(PAASY_JA_SOVELTUVUUSKOE)) {
+            if(koe.getTyyppiUri() == null) {
                 for (Pisteraja p : koe.getPisterajat()) {
                     if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
-                        t.setPaasykoeMax(p.getYlinPistemaara());
-                        t.setPaasykoeMin(p.getAlinPistemaara());
-                        t.setPaasykoeHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        koe.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
+                    }
+                    if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+                        koe.setTyyppiUri(LISANAYTTO);
                     }
                 }
             }
-            if (koe.getTyyppiUri().split("#")[0].equals(LISANAYTTO)) {
-                for (Pisteraja p : koe.getPisterajat()) {
-                    if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
-                        t.setLisanayttoMax(p.getYlinPistemaara());
-                        t.setLisanayttoMin(p.getAlinPistemaara());
-                        t.setLisanayttoHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+            if(koe.getTyyppiUri() != null) {
+                if (koe.getTyyppiUri().split("#")[0].equals(PAASY_JA_SOVELTUVUUSKOE)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
+                            t.setPaasykoeMax(p.getYlinPistemaara());
+                            t.setPaasykoeMin(p.getAlinPistemaara());
+                            t.setPaasykoeHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
                     }
                 }
-            }
-            if (koe.getTyyppiUri().split("#")[0].equals(LISAPISTE)) {
-                for (Pisteraja p : koe.getPisterajat()) {
-                    if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
-                        t.setLisapisteMax(p.getYlinPistemaara());
-                        t.setLisapisteMin(p.getAlinPistemaara());
-                        t.setLisapisteHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                if (koe.getTyyppiUri().split("#")[0].equals(LISANAYTTO)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+                            t.setLisanayttoMax(p.getYlinPistemaara());
+                            t.setLisanayttoMin(p.getAlinPistemaara());
+                            t.setLisanayttoHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
+                    }
+                }
+                if (koe.getTyyppiUri().split("#")[0].equals(LISAPISTE)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if(p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+                            t.setLisapisteMax(p.getYlinPistemaara());
+                            t.setLisapisteMin(p.getAlinPistemaara());
+                            t.setLisapisteHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
                     }
                 }
             }
@@ -261,6 +273,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
 
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
+        t.setTila(s.getTila() != null ? s.getTila().name() : null);
 
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());
