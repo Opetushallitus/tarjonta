@@ -1,7 +1,3 @@
-<div>
-    <input style="width: 300px" type="text" data-ng-model="model.selectedOid" /> 
-</div>
-
 <table>
     <tr>
         <td><div tt="sisaltyvyys.nayta-tutkintotyyppi"></div><td>
@@ -9,7 +5,7 @@
     </tr>
     <tr>
         <td><select required name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select><td>
-        <td><input type="text" data-ng-model="model.tutkinto.hakulause" /></td>    
+        <td><input type="text" data-ng-model="model.spec.terms" /></td>    
     </tr>
 </table>
 
@@ -18,9 +14,21 @@
     <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
 </div>
 
-<div>
-    <div class="gridStyle" ng-grid="gridOptions"></div>
-</div>
+<tabset>
+    <tab heading="Lista">   
+        <div>
+            <div class="gridStyle" ng-grid="gridOptions"></div>
+        </div>
+    </tab>
+    <tab heading="Hierarkia"> 
+        <tree-field 
+            names="model.hakutulos"
+            oids="model.searchKomoOids" 
+            new-oids="model.tmp" 
+            fn-click-handler="selectTreeHandler" 
+            lang="koodistoLocale"></tree-field>        
+    </tab>
+</tabset>
 
 <select multiple required name="valitut" ng-model="model.valitut.oids" ng-options="obj.oid as obj.nimi for obj in model.valitut.data | orderByNum:'nimi'"></select>
 
@@ -28,4 +36,3 @@
     <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
     <button class="btn btn-primary" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
 </div>
-s
