@@ -47,6 +47,7 @@ describe('Tarjonta', function() {
         $httpBackend.whenGET('/link/parent-oid-1.2.3.4.5.6.7?').respond(response);
         $httpBackend.whenGET('/link/parents/parent-oid-1.2.3.4.5.6.7?').respond(response);
         $httpBackend.whenPOST('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
+        $httpBackend.whenPOST('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7,child-oid-1.2.3.4.5.6.8').respond(response);
         $httpBackend.whenDELETE('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
     };    
 
@@ -71,10 +72,12 @@ describe('Tarjonta', function() {
         	mockHttp($httpBackend);
         	var parentId = "parent-oid-1.2.3.4.5.6.7";
         	var childId = "child-oid-1.2.3.4.5.6.7";
+        	var childId2 = "child-oid-1.2.3.4.5.6.8";
         	var resourceLink = TarjontaService.resourceLink;
         	resourceLink.get({oid:parentId});
         	resourceLink.parents({oid:parentId});
         	resourceLink.save({parent:parentId, child:childId});
+        	resourceLink.save({parent:parentId, child:[childId,childId2]});
         	resourceLink.remove({parent:parentId, child:childId});
         	$httpBackend.flush();
         }));
