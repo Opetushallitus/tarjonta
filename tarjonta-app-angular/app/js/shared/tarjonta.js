@@ -367,6 +367,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      *    param: {oid:"oid"}
      * -save: tee liitos
      *    param: {parent:"oid", children:["oid", "oid2"]}
+     * -test: testaa liitos
+     *    param: {parent:"oid", children:["oid", "oid2"]}
      * -parents: listaa parentit (vain oidit)
      *    param: {child:"oid"}
      * -delete: poista liitos
