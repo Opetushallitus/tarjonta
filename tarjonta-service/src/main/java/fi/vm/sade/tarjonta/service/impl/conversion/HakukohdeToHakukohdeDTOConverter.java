@@ -136,20 +136,27 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
         }
 
         if (s.getSoraKuvaus() != null && s.getSoraKuvaus().getTekstis() != null) {
+
             HashMap<String,String> soraKuvaukset = new HashMap<String,String>();
             for (TekstiKaannos tekstiKaannos:s.getSoraKuvaus().getTekstis()) {
-                soraKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+
+               soraKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             }
             t.setSorakuvaus(soraKuvaukset);
+        } else {
+            LOG.debug("Hakukohde sorakuvaus was null : {}",t.getOid()) ;
         }
 
         if (s.getValintaperusteKuvaus() != null && s.getValintaperusteKuvaus().getTekstis() != null ) {
 
             HashMap<String,String> valintaperusteKuvaukset = new HashMap<String,String>();
             for (TekstiKaannos tekstiKaannos : s.getValintaperusteKuvaus().getTekstis()) {
+
                 valintaperusteKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             }
             t.setValintaperustekuvaus(valintaperusteKuvaukset);
+        } else {
+            LOG.debug("HAKUKOHDE valintaperustekuvaus was null : {}", t.getOid());
         }
 
         // HAKUKELPOISUUSVAATIMUS DESCRIPTION (relation + description from
@@ -171,9 +178,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             }
         }
         
-        if(s.getValintaperusteKuvaus()!=null) {
-            t.setValintaperustekuvaus(getMap(s.getValintaperusteKuvaus()));
-        }
+
 
         // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data
         // from metadata)
