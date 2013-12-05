@@ -36,14 +36,21 @@ public interface LinkingV1Resource {
 
     /**
      * Linkkaa kaksi (tai useampi) koulutusta yhteen
-     * 
-     * @param oids
-     * @return
+     */
+    @POST
+    @Path("/test")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO link(KomoLink link);
+
+    
+    /**
+     * Testaa onko linkki mahdollinen (tekee sama tatrkistukset kuin link mutta ei linkkaa)
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO link(KomoLink link);
+    public ResultV1RDTO test(KomoLink link);
 
     /**
      * Poista linkki kahden koulutuksen väliltä

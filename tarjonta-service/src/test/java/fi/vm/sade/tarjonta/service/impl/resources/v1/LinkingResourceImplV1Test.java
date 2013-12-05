@@ -158,4 +158,29 @@ public class LinkingResourceImplV1Test {
         Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
     }
 
+    /**
+     * test api: Loopin tekeminen kielletty.
+     */
+    @Test
+    public void testTestLinkLoop() {
+
+        Koulutusmoduuli komo1 = tarjontaFixtures.createTutkintoOhjelma();
+        komo1 = koulutusmoduuliDAO.insert(komo1);
+
+        Koulutusmoduuli komo2 = tarjontaFixtures.createTutkintoOhjelma();
+        komo2 = koulutusmoduuliDAO.insert(komo2);
+
+        Koulutusmoduuli komo3 = tarjontaFixtures.createTutkintoOhjelma();
+        komo3 = koulutusmoduuliDAO.insert(komo3);
+
+        ResultV1RDTO<?> vast = linkingResource.link(new KomoLink(komo1.getOid(), komo2.getOid()));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        vast = linkingResource.link(new KomoLink(komo2.getOid(), komo3.getOid()));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        vast = linkingResource.test(new KomoLink(komo3.getOid(), komo1.getOid()));
+        Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
+    }
+
 }

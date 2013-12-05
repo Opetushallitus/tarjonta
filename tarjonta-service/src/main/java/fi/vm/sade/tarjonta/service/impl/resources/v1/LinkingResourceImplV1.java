@@ -47,6 +47,18 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
      */
     @Override
     public ResultV1RDTO link(KomoLink link) {
+        return doLinking(link, false);
+    }
+    
+    /**
+     * TODO: tekee aina uuden linkin!
+     */
+    @Override
+    public ResultV1RDTO test(KomoLink link) {
+        return doLinking(link, true);
+    }
+
+    private ResultV1RDTO doLinking(KomoLink link, boolean dryRun) {
 
         String parent = link.getParent();
         List<String> children = link.getChildren();
@@ -104,13 +116,17 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         }
         
         //TODO ValintaTyyppi??
-        for(Koulutusmoduuli komo: komoList) {
-            KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(parentKomo, komo, ValintaTyyppi.ALL_OFF);
-            koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+        if (!dryRun) {
+            for (Koulutusmoduuli komo : komoList) {
+                KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(
+                        parentKomo, komo, ValintaTyyppi.ALL_OFF);
+                koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+            }
         }
         return result;
     }
 
+    
     private Set<String> getLoopEdges(Koulutusmoduuli parent, Set<String> children) {
         DefaultDirectedGraph<String, DefaultEdge> komoGraph = new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
         
