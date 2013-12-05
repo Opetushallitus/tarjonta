@@ -170,7 +170,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             tarjontaService.haeKoulutukset({//search parameter object
                 komoOid: obj.oid
             }).then(function(result) {
-                 $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid + "/edit");
+                 $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
             });        
         };
 

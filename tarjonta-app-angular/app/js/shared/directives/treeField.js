@@ -148,55 +148,32 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
          * Create data objects for a tree by recursive loop.
          */
         $scope.getCreateChildren = function(map, oid, tree, options) {
-            var obj = {nimi: '---', oid: oid, children: [], selected: options.selected};
-            $scope.searcNameByOid(oid, obj); //searc name for the undefined name '---'
-            tree.push(obj);
-
-            if (!angular.isUndefined(map[oid])) {
-                angular.forEach(map[oid].childs, function(val, key) {
-                    $scope.getCreateChildren(map, key, obj.children, val);
-                });
-            }
-
-            if ($scope.reviewMode && options.selected) {
-                //edit mode need also review oids.
-                //the new oids are liked as child items
-                angular.forEach($scope.reviewOids, function(oid) {
-                    $scope.getCreateChildren(map, oid, obj.children, {selected: null});
-                });
-            }
-        };
-
-        /*
-         * Search name for oid node
-         * 
-         * @param {string} komo oid
-         * @param {oid :'1', nimi : 'x' ...} node object 
-         * @returns -1 (nothing)
-         */
-        $scope.searcNameByOid = function(oid, obj) {
-            var array = $scope.names();
-
-            /*
-             * Quick name search
-             */
-            for (var i = 0; i < array.length; i++) {
-                if (array[i].oid === oid) {
-                    obj.nimi = array[i].nimi; // + ' (' + array[i].oid + ')';
-                    return -1;
-                }
-            }
-
-            /*
-             * solr data search 
-             */
             TarjontaService.haeKoulutukset({//search parameter object
                 komoOid: oid
             }).then(function(result) {
-                obj.nimi = result.tulokset[0].tulokset[0].nimi; //+ ' (' + id + ')';
-            });
 
-            return -1;
+                var obj = {
+                    nimi:result.tulokset[0].tulokset[0].nimi, 
+                    oid: result.tulokset[0].tulokset[0].komoOid, 
+                    children: [], 
+                    selected: options.selected};
+                tree.push(obj);
+
+                if (!angular.isUndefined(map[oid])) {
+                    angular.forEach(map[oid].childs, function(val, keyParentOid) {
+                        $scope.getCreateChildren(map, keyParentOid, obj.children, val);
+                    });
+                }
+
+                if ($scope.reviewMode && options.selected) {
+                    //edit mode need also review oids.
+                    //the new oids are liked as child items
+                    angular.forEach($scope.reviewOids, function(oid) {
+                        $scope.getCreateChildren(map, oid, obj.children, {selected: null});
+                    });
+                }
+
+            });
         };
 
         $scope.searchSinglePathToRootByOid = function(oid) {

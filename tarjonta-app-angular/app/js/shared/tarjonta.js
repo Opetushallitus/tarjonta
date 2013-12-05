@@ -37,6 +37,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "terms=" + escape(args.terms) + "&" +
                     "state=" + escape(args.state) + "&" +
                     "season=" + escape(args.season) + "&" +
+                    "komoOid=" + escape(args.komoOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"
@@ -376,7 +377,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * </pre>
      */
     dataFactory.resourceLink =
-            $resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {parent:"@parent",child:"@child"}, {
+            $resource(Config.env.tarjontaRestUrlPrefix + "link/:parent/:child", {parent: "@parent", child: "@child"}, {
                 save: {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -410,8 +411,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 var promise = dataFactory.haeKoulutukset({komoOid: parentOids.result[i]}).then(function(result) {
                     if (result.tulokset && result.tulokset.length > 0) {
                         console.log("adding koulutus!");
-                        if(koulutukset.indexOf(result.tulokset[0])==-1) {
-                        	koulutukset.push(result.tulokset[0]);
+                        if (koulutukset.indexOf(result.tulokset[0]) == -1) {
+                            koulutukset.push(result.tulokset[0]);
                         }
                     }
                 });
