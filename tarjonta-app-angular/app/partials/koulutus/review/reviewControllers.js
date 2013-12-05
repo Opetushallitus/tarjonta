@@ -70,11 +70,25 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
 
-            if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET') {
+            if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_LIITA') {
                 $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
                 $scope.luoKoulutusDialog = $modal.open({
                     templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
-                    controller: 'SisaltyvyysCtrl',
+                    controller: 'LiitaSisaltyvyysCtrl',
+                    resolve: {
+                        targetKomoOid: function() {
+                            return $scope.koulutusModel.result.komoOid;
+                        },
+                        organisaatioOid: function() {
+                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                        }
+                    }
+                });
+            } else if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_POISTA') {
+                $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+                $scope.luoKoulutusDialog = $modal.open({
+                    templateUrl: 'partials/koulutus/sisaltyvyys/poista-koulutuksia.html',
+                    controller: 'PoistaSisaltyvyysCtrl',
                     resolve: {
                         targetKomoOid: function() {
                             return $scope.koulutusModel.result.komoOid;
@@ -85,6 +99,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     }
 
                 });
+
             } else {
                 $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
             }
@@ -167,11 +182,12 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
         }
 
         $scope.treeClickHandler = function(obj, event) {
-            tarjontaService.haeKoulutukset({//search parameter object
-                komoOid: obj.oid
-            }).then(function(result) {
-                $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
-            });
+//            tarjontaService.haeKoulutukset({//search parameter object
+//                komoOid: obj.oid
+//            }).then(function(result) {
+//                $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
+//                $route.reload();
+//            });
         };
 
     }]);

@@ -14,8 +14,8 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('SisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
-    function SisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
+    function LiitaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
         /*
          * Select koulutus data objects.
          */
@@ -100,10 +100,10 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koo
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
-                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "50%"},
+                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "50%"}
             ],
             showSelectionCheckbox: true,
-            multiSelect: true}
+            multiSelect: true};
 
         //Hakukriteerien tyhjennys
         $scope.clearCriteria = function() {
@@ -112,14 +112,16 @@ app.controller('SisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koo
         };
 
         $scope.ok = function() {
-            angular.forEach($scope.model.newOids, function(val) {
-                TarjontaService.saveResourceLink($scope.model.selectedOid, val.oid, function(res) {
-                    console.log(res);
-                });
+            TarjontaService.saveResourceLink($scope.model.newOids, function(res) {
+                console.log(res);
+                $modalInstance.close();
+//                TarjontaService.haeKoulutukset({//search parameter object
+//                    komoOid: obj.oid
+//                }).then(function(result) {
+//                    $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
+//                    $route.reload();
+//                });
             });
-
-            $modalInstance.close();
-            $location.path("/koulutus/" + $scope.model.koulutus.oid);
         };
 
         //dialogin sulkeminen peruuta-napista
