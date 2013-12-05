@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
         $log.info("BaseReviewController()");
 
         $scope.formControls = {};
@@ -170,8 +170,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             tarjontaService.haeKoulutukset({//search parameter object
                 komoOid: obj.oid
             }).then(function(result) {
-                 $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
-            });        
+                $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
+            });
         };
 
     }]);

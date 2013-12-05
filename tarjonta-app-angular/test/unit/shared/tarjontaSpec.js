@@ -50,6 +50,10 @@ describe('Tarjonta', function() {
             console.log(data);
             return response;
         });
+        $httpBackend.whenPOST('/link/test').respond(function(method, url, data) {
+            console.log(data);
+            return response;
+        });
         $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
     };    
 
@@ -65,6 +69,7 @@ describe('Tarjonta', function() {
         	var resourceLink = TarjontaService.resourceLink;
         	expect(resourceLink).toNotEqual(undefined);
         	expect(resourceLink.save).toNotEqual(undefined);
+        	expect(resourceLink.test).toNotEqual(undefined);
         	expect(resourceLink.remove).toNotEqual(undefined);
         	expect(resourceLink.get).toNotEqual(undefined);
         	expect(resourceLink.parents).toNotEqual(undefined);
@@ -78,6 +83,7 @@ describe('Tarjonta', function() {
         	resourceLink.get({oid:oid});
         	resourceLink.parents({oid:oid});
         	resourceLink.save({parent:parentOid, children:[oid]});
+        	resourceLink.test({parent:parentOid, children:[oid]});
         	resourceLink.remove({parent:parentOid, child:oid});
         	$httpBackend.flush();
         }));

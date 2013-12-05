@@ -357,7 +357,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
     	console.log("resourceLink called!");
-    	dataFactory.resourceLink({parent:parent, children:angular.isArray(child)?child:[child]},fnSuccess, fnError);
+    	dataFactory.resourceLink.save({parent:parent, children:angular.isArray(child)?child:[child]},fnSuccess, fnError);
     };
 
     /** 
@@ -366,6 +366,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * -get: listaa lapset (vain oidit)
      *    param: {oid:"oid"}
      * -save: tee liitos
+     *    param: {parent:"oid", children:["oid", "oid2"]}
+     * -test: testaa liitos
      *    param: {parent:"oid", children:["oid", "oid2"]}
      * -parents: listaa parentit (vain oidit)
      *    param: {child:"oid"}
@@ -376,8 +378,17 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      */
     dataFactory.resourceLink =
             $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid",{}, {
+                checkput: {
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                },
+
                 put: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                },
+                test: {
+                	url:Config.env.tarjontaRestUrlPrefix + "link/test",
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    method:'POST'
                 },
                 parents: {
                 	url:Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
