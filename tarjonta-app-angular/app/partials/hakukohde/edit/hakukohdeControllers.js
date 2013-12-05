@@ -143,7 +143,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     /*
 
-     Koodisto helper methods  ------>
+     ------>  Koodisto helper methods
 
      */
     var findKoodiWithArvo = function(koodi,koodis)  {
