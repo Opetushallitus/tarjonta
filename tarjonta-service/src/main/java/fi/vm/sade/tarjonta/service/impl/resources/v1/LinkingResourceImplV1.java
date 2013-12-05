@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
@@ -22,6 +23,7 @@ import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 
@@ -44,10 +46,12 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
      * TODO: tekee aina uuden linkin!
      */
     @Override
-    public ResultV1RDTO link(String parent, List<String>children) {
-        
-        final ResultV1RDTO result = new ResultV1RDTO();
+    public ResultV1RDTO link(KomoLink link) {
 
+        String parent = link.getParent();
+        List<String> children = link.getChildren();
+               
+        final ResultV1RDTO result = new ResultV1RDTO();
 
         logger.debug("linking (parent-child)" + parent + " -> " + children);
         
