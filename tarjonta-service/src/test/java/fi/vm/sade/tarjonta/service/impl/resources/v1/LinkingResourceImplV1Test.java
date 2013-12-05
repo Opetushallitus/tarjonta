@@ -15,13 +15,12 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 
@@ -57,8 +56,7 @@ public class LinkingResourceImplV1Test {
         child = koulutusmoduuliDAO.insert(child);
         String childOid = child.getOid();
 
-        ResultV1RDTO<?> vast = linkingResource.link(parent.getOid(),
-                Lists.newArrayList(child.getOid()));
+        ResultV1RDTO<?> vast = linkingResource.link(new KomoLink(parent.getOid(), child.getOid()));
         Assert.assertEquals(ResultStatus.OK, vast.getStatus());
 
         // childs for parent
@@ -125,7 +123,7 @@ public class LinkingResourceImplV1Test {
         komo = koulutusmoduuliDAO.insert(komo);
         String komoid = komo.getOid();
 
-        ResultV1RDTO<?> vast = linkingResource.link(komoid, Lists.newArrayList(komoid));
+        ResultV1RDTO<?> vast = linkingResource.link(new KomoLink(komoid, komoid));
         Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
 
         // childs for parent
@@ -150,14 +148,13 @@ public class LinkingResourceImplV1Test {
         Koulutusmoduuli komo3 = tarjontaFixtures.createTutkintoOhjelma();
         komo3 = koulutusmoduuliDAO.insert(komo3);
 
-        ResultV1RDTO<?> vast = linkingResource.link(komo1.getOid(),
-                Lists.newArrayList(komo2.getOid()));
+        ResultV1RDTO<?> vast = linkingResource.link(new KomoLink(komo1.getOid(), komo2.getOid()));
         Assert.assertEquals(ResultStatus.OK, vast.getStatus());
 
-        vast = linkingResource.link(komo2.getOid(), Lists.newArrayList(komo3.getOid()));
+        vast = linkingResource.link(new KomoLink(komo2.getOid(), komo3.getOid()));
         Assert.assertEquals(ResultStatus.OK, vast.getStatus());
 
-        vast = linkingResource.link(komo3.getOid(), Lists.newArrayList(komo1.getOid()));
+        vast = linkingResource.link(new KomoLink(komo3.getOid(), komo1.getOid()));
         Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
     }
 
