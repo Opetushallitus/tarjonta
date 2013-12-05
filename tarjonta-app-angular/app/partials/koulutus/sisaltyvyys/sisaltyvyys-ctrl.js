@@ -14,8 +14,8 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('SisaltyvyysCtrl', ['$scope', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
-    function SisaltyvyysCtrl($scope, $log, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
+app.controller('SisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
+    function SisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
         /*
          * Select koulutus data objects.
          */
