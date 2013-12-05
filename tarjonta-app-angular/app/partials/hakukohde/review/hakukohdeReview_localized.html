@@ -1,0 +1,38 @@
+<table class="tarjontaForm">
+    <tr><th></th><td></td><td></td></tr>
+
+    <!-- PERUSTIEDOT / TODO collapse -->
+
+    <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "PERUSTIEDOT")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+
+    <tbody ng-show="!model.collapse.perusTiedot">
+
+    <tr>
+        <th tt="hakukohde.review.perustiedot.haku"/>
+        <td colspan="2">
+            {{ model.hakukohde.hakuNimi }}
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+        <td colspan="2">
+            {{ model.hakukohde.aloituspaikatLkm }}
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
+        <td colspan="2">
+            <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
+                {{ hakukelpoisuusvaatimus }}
+            </span>
+        </td>
+    </tr>
+
+    </tbody>
+
+   </table>
