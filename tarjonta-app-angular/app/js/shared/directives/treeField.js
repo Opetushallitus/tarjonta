@@ -140,7 +140,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 map: {ROOT: {childs: {}}}, //obj[oid].oids[]
                 activePromises: [],
                 treedata: [],
-                selectedOids: {} //map
+                selectedOids: {}, //map
+                visibleOids: {} //map
             };
         };
 
@@ -148,14 +149,16 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
          * Create data objects for a tree by recursive loop.
          */
         $scope.getCreateChildren = function(map, oid, tree, options) {
+            $scope.tree.visibleOids[oid] = {};
+
             TarjontaService.haeKoulutukset({//search parameter object
                 komoOid: oid
             }).then(function(result) {
 
                 var obj = {
-                    nimi:result.tulokset[0].tulokset[0].nimi, 
-                    oid: result.tulokset[0].tulokset[0].komoOid, 
-                    children: [], 
+                    nimi: result.tulokset[0].tulokset[0].nimi,
+                    oid: result.tulokset[0].tulokset[0].komoOid,
+                    children: [],
                     selected: options.selected};
                 tree.push(obj);
 
@@ -168,8 +171,26 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 if ($scope.reviewMode && options.selected) {
                     //edit mode need also review oids.
                     //the new oids are liked as child items
-                    angular.forEach($scope.reviewOids, function(oid) {
-                        $scope.getCreateChildren(map, oid, obj.children, {selected: null});
+
+                    //check is infinity loop
+                    var resource = TarjontaService.resourceLink.test({parent: oid, children: $scope.reviewOids});
+                    resource.$promise.then(function(resp) {
+                        if (!angular.isUndefined(resp.errors)) {
+                            //exclude all infinity loop oids
+                            angular.forEach(resp.errors, function(objErrors) {
+                                angular.forEach(objErrors.errorMessageParameters, function(oid) {
+                                    for (var i = 0; i < $scope.reviewOids.length; i++) {
+                                        if ($scope.reviewOids[i] === oid) {
+                                            $scope.reviewOids.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                        angular.forEach($scope.reviewOids, function(oid) {
+                            $scope.getCreateChildren(map, oid, obj.children, {selected: null});
+                        });
                     });
                 }
 
@@ -179,6 +200,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         $scope.searchSinglePathToRootByOid = function(oid) {
             var tfs = new TreeFieldSearch();
             var promise = tfs.searchByKomoOid(oid);
+            $scope.tree.activePromises.push(promise);
 
             promise.then(function(map) {
                 angular.forEach(map, function(val, parentKey) {
@@ -194,7 +216,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 });
             });
 
-            $scope.tree.activePromises.push(promise);
+
         };
 
         /*
@@ -236,6 +258,10 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                     angular.forEach($scope.tree.map['ROOT'].childs, function(val, key) {
                         $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val);
                     });
+
+                    if (!angular.isUndefined($scope.fnLoadedHandler) && $scope.fnLoadedHandler != null) {
+                        $scope.fnLoadedHandler($scope.tree.visibleOids);
+                    }
                 });
             }
         });
@@ -252,7 +278,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             oids: "=", //komo OIDs
             reviewOids: "=", //joined komo OIDs
             fnClickHandler: "=", //function for click event
-            names: "&", //names in a list of objects {oid : 'xx', nimi : 'abc'}
+            fnLoadedHandler: "=", //function for click event
+            names: "&" //names in a list of objects {oid : 'xx', nimi : 'abc'}
         }
     };
 });
