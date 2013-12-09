@@ -14,18 +14,20 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
-    function LiitaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid',
+    function LiitaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
+            headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
+            errors: [],
             text: {
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
             organisaatio: organisaatio,
             treeOids: [],
-            selectedOid: [targetKomoOid], //directive needs an array
+            selectedOid: [targetKomo.oid], //directive needs an array
             searchKomoOids: [],
             newOids: [], // a parent (selectedOid) will have new childs (newOids)
             reviewOids: [],
@@ -112,11 +114,51 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
         };
 
         $scope.save = function() {
-            TarjontaService.saveResourceLink($scope.model.newOids, function(res) {
-                console.log(res);
-                $modalInstance.close();
+            $scope.clearErrors();
+            var oids = [];
+            angular.forEach($scope.model.newOids, function(val) {
+                oids.push(val.oid);
+            });
+
+            TarjontaService.saveResourceLink(targetKomo.oid, oids, function(response) {
+                if (response.status === 'OK') {
+                    console.log("success", response);
+                    $modalInstance.close();
+                } else {
+                    console.log("save cancelled", response);
+                    angular.forEach(response.errors, function(error) {
+                        //add additional information to the error data object
+                        var arr = [];
+
+                        if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
+                            arr = [targetKomo.nimi];
+                        } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
+                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
+                        } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
+                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
+                        } else if (error.errorMessageKey === 'LINKING_CANNOT_CREATE_LOOP') {
+                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
+                        }
+
+                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
+                        $scope.model.errors.push(error);
+                    });
+                }
             });
         };
+        
+         $scope.searchErrorNimi = function(errorParams, selected) {
+            var arr = [];
+            angular.forEach(errorParams, function(oid) {
+                angular.forEach(selected, function(row) {
+                    if (oid === row.oid) {
+                        arr.push(row.nimi);
+                    }
+                });
+            });
+
+            return arr;
+        }
 
         //dialogin sulkeminen peruuta-napista
         $scope.cancel = function() {
@@ -173,6 +215,7 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
 
         $scope.selectDialogi = function() {
             //aseta esivalittu organisaatio
+            $scope.clearErrors();
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html';
         };
 
@@ -181,6 +224,7 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
          * 
          */
         $scope.reviewDialogi = function() {
+            $scope.clearErrors();
             var oids = [];
             for (var i = 0; i < $scope.model.newOids.length; i++) {
                 oids.push($scope.model.newOids[i].oid);
@@ -226,4 +270,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
         };
 
         $scope.getKkTutkinnot();
+
+        $scope.clearErrors = function() {
+            $scope.model.errors = [];
+        };
     }]);

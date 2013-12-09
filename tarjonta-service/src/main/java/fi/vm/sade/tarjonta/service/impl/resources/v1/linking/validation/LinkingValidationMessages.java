@@ -16,7 +16,10 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation;
 
 public enum LinkingValidationMessages {
 
-    LINKING_MISSING_PARENT_OID,
-    LINKING_OID_NOT_FOUND,
+    LINKING_PARENT_HAS_NO_CHILDREN,
+    LINKING_PARENT_OID_NOT_FOUND,
+    LINKING_MISSING_CHILD_OIDS,
+    LINKING_CHILD_OID_NOT_FOUND,
     LINKING_OID_HAS_CHILDREN,
+    LINKING_CANNOT_CREATE_LOOP
 }

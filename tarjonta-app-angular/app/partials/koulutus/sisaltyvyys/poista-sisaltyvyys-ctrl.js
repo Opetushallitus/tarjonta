@@ -16,20 +16,21 @@
 //location of the base module : liita-sisaltyvyys-ctrl.js
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl');
 
-app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoOid', 'organisaatioOid',
-    function PoistaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoOid, organisaatio) {
+app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid',
+    function PoistaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
+            headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
             errors: [],
             text: {
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
             organisaatio: organisaatio,
             treeOids: [],
-            selectedOid: [targetKomoOid], //directive needs an array
-            searchKomoOids: [targetKomoOid],
+            selectedOid: [targetKomo.oid], //directive needs an array
+            searchKomoOids: [targetKomo.oid],
             newOids: [], // a parent (selectedOid) will have new childs (newOids)
             reviewOids: [],
             tutkinto: {
@@ -64,7 +65,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
-                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "45%"},
+                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
                 {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "30%"}
             ],
             showSelectionCheckbox: true,
@@ -76,7 +77,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
-                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "45%"},
+                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
                 {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "30%"}
             ],
             showSelectionCheckbox: false,
@@ -91,7 +92,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
 
             var res = TarjontaService.resourceLink;
             var remove = res.removeMany({
-                parent: targetKomoOid,
+                parent: targetKomo.oid,
                 childs: oids
             });
 
@@ -103,23 +104,35 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
                     console.log("save cancelled", response);
                     angular.forEach(response.errors, function(error) {
                         //add additional information to the error data object
-                        angular.forEach(error.errorMessageParameters, function(errorKomoOid) {
-                            angular.forEach($scope.model.newOids, function(row) {
-                                if (errorKomoOid === row.oid) {
-                                    error.data = row;
-                                }
-                            });
-                        });
+                        var arr = [];
 
-                        //add translation and paramters for the key
-                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, [error.data.nimi]);
-
+                        if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
+                            arr = [targetKomo.nimi];
+                        } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
+                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
+                        } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
+                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
+                        }
+                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
                         $scope.model.errors.push(error);
                     });
 
                 }
             });
         };
+
+        $scope.searchErrorNimi = function(errorParams, selected) {
+            var arr = [];
+            angular.forEach(errorParams, function(oid) {
+                angular.forEach(selected, function(row) {
+                    if (oid === row.oid) {
+                        arr.push(row.nimi);
+                    }
+                });
+            });
+
+            return arr;
+        }
 
         //dialogin sulkeminen peruuta-napista
         $scope.cancel = function() {
@@ -173,7 +186,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
         $scope.treeItemsLoaded = function(map) {
             var oids = {};
             angular.forEach(map, function(parentVal, keyOid) {
-                if (keyOid !== 'ROOT') {
+                if (keyOid !== 'ROOT' && keyOid !== targetKomo.oid) {
                     angular.forEach(parentVal.childs, function(val, keyOid) {
                         oids[keyOid] = {};
                     });
@@ -219,7 +232,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             }
 
             if (selected !== null) {
-                $scope.gridOptions.selectItem($scope.model.hakutulos.indexOf(selected), false);
+                $scope.selectGridOptions.selectItem($scope.model.hakutulos.indexOf(selected), false);
             }
         };
 
@@ -230,7 +243,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
          */
         $scope.searchTutkinnot = function() {
             var spec = {//search parameter object
-                komoOid: targetKomoOid,
+                komoOid: targetKomo.oid,
                 oid: null,
                 terms: null,
                 state: null,

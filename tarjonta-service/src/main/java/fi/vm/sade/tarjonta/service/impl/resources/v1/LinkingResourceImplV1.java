@@ -87,47 +87,59 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
 
     @Override
     public ResultV1RDTO multiUnlink(String parentKomoOid, String childOids) {
-        ResultV1RDTO result = new ResultV1RDTO();
-        List<String> komoChildOids = Arrays.asList(childOids.split(","));
-
         logger.debug("unlinking " + parentKomoOid + " from " + childOids);
+
+        ResultV1RDTO result = new ResultV1RDTO();
 
         Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findByOid(parentKomoOid);
         if (parentKomo != null) {
             logger.debug("parent komo found");
 
-            if (parentKomo.getSisaltyvyysList().isEmpty()) {
-                logger.warn("no childs found");
-                for (final String missingKomoOids : komoChildOids) {
-                    result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_OID_NOT_FOUND.name(), missingKomoOids));
-                }
-            } else {
-                for (final String childKomoOid : komoChildOids) {
-                    //validate data 
-                    final List<String> childKomosChidren = koulutusSisaltyvyysDAO.getChildren(childKomoOid);
-                    if (childKomosChidren.isEmpty()) {
-                        for (KoulutusSisaltyvyys sisaltyva : parentKomo.getSisaltyvyysList()) {
-                            boolean notFound = true;
+            List<String> paramChildOids = Lists.newArrayList();
+            if (childOids != null) {
+                paramChildOids = Arrays.asList(childOids.split(","));
+            }
 
+            if (parentKomo.getSisaltyvyysList().isEmpty()) {
+                logger.warn("no parent childs found");
+                result.addError(ErrorV1RDTO.createValidationError("parent", LinkingValidationMessages.LINKING_PARENT_HAS_NO_CHILDREN.name(), parentKomoOid));
+            } else if (paramChildOids.isEmpty()) {
+                logger.warn("no parameter childs");
+                result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_MISSING_CHILD_OIDS.name()));
+            } else {
+                for (final String childOid : paramChildOids) {
+                    //validate data 
+                    final List<String> childKomosChidren = koulutusSisaltyvyysDAO.getChildren(childOid);
+                    if (childKomosChidren.isEmpty()) {
+                        boolean notFound = true;
+
+                        for (KoulutusSisaltyvyys sisaltyva : parentKomo.getSisaltyvyysList()) {
                             for (Koulutusmoduuli komo : sisaltyva.getAlamoduuliList()) {
-                                if (childKomoOid.equals(komo.getOid())) {
+                                if (childOid.equals(komo.getOid())) {
                                     notFound = false;
+                                    break;
                                 }
                             }
 
-                            if (notFound) {
-                                logger.warn("link komo oid {} not found", childKomoOid);
-                                result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_OID_NOT_FOUND.name(), childKomoOid));
+                            if (!notFound) {
+                                //a link found, stop the loop
+                                break;
                             }
                         }
+
+                        if (notFound) {
+                            logger.warn("link komo oid {} not found", childOid);
+                            result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_CHILD_OID_NOT_FOUND.name(), childOid));
+                        }
+
                     } else {
-                        logger.warn("link komo oid {} has children {}", childKomoOid, childKomosChidren);
-                        result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_OID_HAS_CHILDREN.name(), childKomoOid));
+                        logger.warn("link komo oid {} has children {}", childOid, childKomosChidren);
+                        result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_OID_HAS_CHILDREN.name(), childOid));
                     }
                 }
 
-                if (result.getErrors().isEmpty()) {
-                    for (String childKomoOid : komoChildOids) {
+                if (result.getErrors() == null || result.getErrors().isEmpty()) {
+                    for (String childKomoOid : paramChildOids) {
                         logger.info("remove link by komo oid {}", childKomoOid);
                         removeAlamoduulitByKomoOid(childKomoOid, parentKomo.getSisaltyvyysList());
                     }
@@ -135,10 +147,10 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
             }
         } else {
             logger.info("parent not found");
-            result.addError(ErrorV1RDTO.createValidationError("parent", LinkingValidationMessages.LINKING_MISSING_PARENT_OID.name()));
+            result.addError(ErrorV1RDTO.createValidationError("parent", LinkingValidationMessages.LINKING_PARENT_OID_NOT_FOUND.name(), parentKomoOid));
         }
 
-        if (!result.getErrors().isEmpty()) {
+        if (result.getErrors() != null && !result.getErrors().isEmpty()) {
             result.setStatus(ResultStatus.VALIDATION);
         }
 
@@ -157,8 +169,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findByOid(parent);
         List<Koulutusmoduuli> komoList = new ArrayList<Koulutusmoduuli>();
 
-        if (children.size() == 0) {
-            result.addError(ErrorV1RDTO.createValidationError("child", "error.no.childs", parent));
+        if (children.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError("child", LinkingValidationMessages.LINKING_MISSING_CHILD_OIDS.name(), parent));
             result.setStatus(ResultStatus.ERROR);
             return result;
         }
@@ -166,7 +178,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         for (String child : children) {
             Koulutusmoduuli childKomo = koulutusmoduuliDAO.findByOid(child);
             if (childKomo == null) {
-                result.addError(ErrorV1RDTO.createValidationError("child", "error.child.not.found", child));
+                result.addError(ErrorV1RDTO.createValidationError("child", LinkingValidationMessages.LINKING_CHILD_OID_NOT_FOUND.name(), child));
             } else {
                 komoList.add(childKomo);
             }
@@ -177,14 +189,14 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
             return result;
         }
 
-        if (parentKomo == null || komoList.size() == 0) {
+        if (parentKomo == null || komoList.isEmpty()) {
             logger.info("child or parent is null");
 
             if (parentKomo == null) {
-                result.addError(ErrorV1RDTO.createValidationError("parent", "error.parent.not.found", parent));
+                result.addError(ErrorV1RDTO.createValidationError("parent", LinkingValidationMessages.LINKING_PARENT_OID_NOT_FOUND.name(), parent));
             }
-            if (komoList.size() == 0) {
-                result.addError(ErrorV1RDTO.createValidationError("child", "error.child.not.found"));
+            if (komoList.isEmpty()) {
+                result.addError(ErrorV1RDTO.createValidationError("child", LinkingValidationMessages.LINKING_CHILD_OID_NOT_FOUND.name()));
             }
 
             result.setStatus(ResultStatus.ERROR);
@@ -195,7 +207,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         if (loopEdges.size() > 0) {
             for (String oid : loopEdges) {
                 //TODO add oidit!!
-                result.addError(ErrorV1RDTO.createValidationError("loop", "error.cannot.create.loop", oid));
+                result.addError(ErrorV1RDTO.createValidationError("loop", LinkingValidationMessages.LINKING_CANNOT_CREATE_LOOP.name(), oid));
                 result.setStatus(ResultStatus.ERROR);
             }
             return result;
@@ -261,54 +273,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
     }
 
     @Override
-    public ResultV1RDTO unlink(String parent, String child) {
-        ResultV1RDTO result = new ResultV1RDTO();
-
-        logger.debug("unlinking " + parent + " from " + child);
-        Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findByOid(parent);
-
-        if (parentKomo != null) {
-            logger.debug("parent komo found");
-            Set<KoulutusSisaltyvyys> sisaltyvyydet = parentKomo
-                    .getSisaltyvyysList();
-
-            if (sisaltyvyydet.size() == 0) {
-                logger.debug("no childs found");
-
-                result.addError(ErrorV1RDTO.createInfo("ei sisaltyvyyksia!"));
-            } else {
-
-                for (KoulutusSisaltyvyys sisaltyvyys : sisaltyvyydet) {
-                    List<Koulutusmoduuli> remove = new ArrayList<Koulutusmoduuli>();
-                    for (Koulutusmoduuli sisaltyva : sisaltyvyys
-                            .getAlamoduuliList()) {
-                        if (sisaltyva.getOid().equals(child)) {
-
-                            remove.add(sisaltyva);
-                        }
-                    }
-                    if (sisaltyvyys.getAlamoduuliList().size() == remove.size()) {
-                        //logger.debug("poistetaan kokonaan!");
-                        koulutusSisaltyvyysDAO.remove(sisaltyvyys);
-                        result.addError(ErrorV1RDTO.createInfo("linkki poistettu!"));
-                    } else {
-                        if (remove.size() != 0) {
-                            for (Koulutusmoduuli moduuli : remove) {
-                                //logger.debug("poistetaan linkki " + parentKomo.getOid() + "->" + moduuli.getOid());
-                                sisaltyvyys.removeAlamoduuli(moduuli);
-                            }
-                            koulutusSisaltyvyysDAO.update(sisaltyvyys);
-                            result.addError(ErrorV1RDTO
-                                    .createInfo("linkin osa poistettu!"));
-                        }
-                    }
-                }
-            }
-        } else {
-            logger.info("parent not found");
-            result.addError(ErrorV1RDTO.createValidationError("parent", "not found"));
-        }
-        return result;
+    public ResultV1RDTO unlink(String parent, String child) {      
+        return multiUnlink(parent, child);
     }
 
     @Override
