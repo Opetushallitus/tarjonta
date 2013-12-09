@@ -27,6 +27,11 @@ import java.util.Map;
 @ApiModel(value = "Monen koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class KoodiUrisV1RDTO extends MetaV1RDTO {
 
+    @Override
+    public String toString() {
+        return "KoodiUrisV1RDTO [uris=" + uris + "]";
+    }
+
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "Avain-arvopari, jossa avain on koodisto koodi uri ja arvo on koodin versionumero", required = true)
     private Map<String, Integer> uris;
