@@ -185,7 +185,7 @@ describe('Edit koulutus insert/edit/load', function() {
         console.log(scope.model.koulutusohjelma);
 
         expect(scope.model.koulutusohjelma).toEqual(EMPTY_META_UI_MODEL_KOULUTUOHJELMA);
-        expect(scope.model.teemas).toEqual(EMPTY_META_UI_MODEL);
+        expect(scope.model.aihees).toEqual(EMPTY_META_UI_MODEL);
         expect(scope.model.opetuskielis).toEqual(EMPTY_META_UI_MODEL);
         expect(scope.model.pohjakoulutusvaatimukset).toEqual(EMPTY_META_UI_MODEL);
         expect(scope.model.opetusmuodos).toEqual(EMPTY_META_UI_MODEL);
