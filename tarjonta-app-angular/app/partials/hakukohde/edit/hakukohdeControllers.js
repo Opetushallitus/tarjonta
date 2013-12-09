@@ -184,6 +184,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.canSaveHakukohde = function() {
+
         if ($scope.editHakukohdeForm !== undefined) {
             return $scope.editHakukohdeForm.$valid;
         } else {
@@ -349,7 +350,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
-
+    if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
+        $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
+    }
 
 
     $scope.model.kieliCallback = function(kieliUri) {

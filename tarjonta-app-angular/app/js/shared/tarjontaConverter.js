@@ -98,7 +98,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             opetusAikas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
             opetusPaikkas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
-            teemas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.teemat'},
+            aihees: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.aiheet'},
             ammattinimikkeet: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
             koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},

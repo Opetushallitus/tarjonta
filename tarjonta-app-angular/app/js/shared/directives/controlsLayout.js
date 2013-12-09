@@ -117,19 +117,26 @@ app.directive('displayControls',function($log, LocalisationService) {
        		
        		$scope.dto = $scope.model.dto();
        		
+       		function appendMetadata(md, key, user, timestamp) {
+       			if (!user && !timestamp) {
+       				return;
+       			}
+       			if (!user || user.length==0) {
+       				user = LocalisationService.t("tarjonta.metadata.unknown");
+       			}
+       			md.push(LocalisationService.t(key, [ new Date(timestamp).toLocaleDateString(), new Date(timestamp).toLocaleTimeString(), user ]));
+       		}
+       		
        		$scope.metadata = [];
        		if ($scope.dto.tila) {
        			$scope.metadata.push(LocalisationService.t("tarjonta.tila."+$scope.dto.tila));
        		}
-       		if ($scope.dto.created) {
-       			$scope.metadata.push($scope.dto.created); // TODO pvm formatointi
-       		}
-       		if ($scope.dto.createdBy) {
-       			$scope.metadata.push($scope.dto.createdBy);
-       		}
+       		
+       		appendMetadata($scope.metadata, "tarjonta.metadata.modified", $scope.dto.modifiedBy, $scope.dto.modified)
+       		appendMetadata($scope.metadata, "tarjonta.metadata.created", $scope.dto.createdBy, $scope.dto.created)
        		
        		$scope.isNew = function() {
-       			return !$scope.dto.created && !$scope.dto.createdBy;
+       			return $scope.metadata.length==1;
        		}
 
        		function titleText() {

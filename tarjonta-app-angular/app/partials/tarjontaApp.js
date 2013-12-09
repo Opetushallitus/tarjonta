@@ -68,6 +68,7 @@ angular.module('app',
             'MonikielinenTextArea',
             'ControlsLayout',
             'angularTreeview',
+            'DateFormat',
             'TreeFieldDirective'
         ]);
 

@@ -228,6 +228,10 @@ public class ConverterV1 {
             hakukohdeRDTO.setAlinValintaPistemaara(hakukohde.getAlinValintaPistemaara());
         }
 
+        if (hakukohde.getHakukelpoisuusVaatimusKuvaus() != null) {
+            hakukohdeRDTO.setHakukelpoisuusVaatimusKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getHakukelpoisuusVaatimusKuvaus()));
+        }
+
         if (hakukohde.getValintojenAloituspaikatLkm() != null) {
             hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
         }
@@ -340,6 +344,10 @@ public class ConverterV1 {
             for (String hakukelpoisuusVaatimus : hakukohdeRDTO.getHakukelpoisuusvaatimusUris()) {
                 hakukohde.getHakukelpoisuusVaatimukset().add(hakukelpoisuusVaatimus);
             }
+        }
+
+        if (hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset() != null) {
+            hakukohde.setHakukelpoisuusVaatimusKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
         }
 
         hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));

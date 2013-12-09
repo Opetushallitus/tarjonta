@@ -58,6 +58,18 @@ app.directive('multiSelect', function($log) {
             });
         }
 
+        // salli valintojen muuttaminen "ulkopuolelta"
+        $scope.$watch('selection', function(newValue, oldValue){
+           	for(var i=0;i<$scope.items.length;i++) {
+            	var item = $scope.items[i];
+           		if(newValue.indexOf(item.key)==-1 && item.selected){
+       				item.selected = false;
+           		} else if(newValue.indexOf(item.key)!=-1 && !item.selected) {
+           			item.selected = true;
+           		}            		
+           	}
+        });
+        	
         // checkbox-valinta
         $scope.toggle = function(k) {
             var p = $scope.selection.indexOf(k);

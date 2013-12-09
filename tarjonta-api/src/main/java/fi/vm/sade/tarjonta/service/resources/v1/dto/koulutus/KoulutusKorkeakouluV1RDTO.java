@@ -48,6 +48,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
+    /**
+     * @deprecated not used!!
+     */
     @ApiModelProperty(value = "Koulutuksen teemat (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO teemas;
 
@@ -169,6 +172,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     /**
      * @return the teemas
+     * @deprecated not used!!
      */
     public KoodiUrisV1RDTO getTeemas() {
         if (teemas == null) {
@@ -180,6 +184,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     /**
      * @param teemas the teemas to set
+     * @deprecated not used!!
      */
     public void setTeemas(KoodiUrisV1RDTO teemas) {
         this.teemas = teemas;
