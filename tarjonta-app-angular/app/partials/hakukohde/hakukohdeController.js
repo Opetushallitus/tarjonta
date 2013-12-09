@@ -70,7 +70,7 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
             for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
                 allKieles.add(kieliUri);
             }
-
+            $scope.model.allkieles = allKieles.toArray();
             console.log('ALL KIELES : ' , allKieles.toArray());
         }
 

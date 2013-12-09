@@ -16,12 +16,22 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.haut"/>
 		<td>
-			<select class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+			<select class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
 		</td>
 	</tr>
+
+    <tr data-ng-show="model.showHakuaikas">
+        <th tt="kk.hakukohde.hakuaikas"/>
+        <td>
+            <select class="wide" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.nimi for hakuaika in model.hakuaikas"/>
+        </td>
+        <td>
+            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+        </td>
+    </tr>
 
 	<!-- hakukelpoisuusvaatimukset -->
 	<tr class="required">
@@ -142,6 +152,9 @@
 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta"></h4>
 
 <mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+
+<h4 tt="kk.hakukohde.hakukelpoisuusvaatimukset"></h4>
+<mk-rich-textarea model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
 
 <!-- 
 <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>

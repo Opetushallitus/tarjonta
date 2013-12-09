@@ -294,3 +294,49 @@ app.controller('BaseEditController',
 
                 $scope.init();
             }]);
+
+
+app.controller('AiheetTeematController',
+        ['$scope', 'Koodisto',
+            function AiheetTeematController($scope, koodisto) {
+        	
+        	
+        	console.log("AiheetTeematController()");
+
+            //hae aiheet/teemat koodistot/relaatiot
+            $scope.aiheNimi={};
+            koodisto.getAllKoodisWithKoodiUri('teemat', $scope.koodistoLocale).then(
+            		function(teemakoodit){
+            			$scope.teemat=[];
+            			for(var i=0;i<teemakoodit.length;i++) {
+            				var teema={koodi:teemakoodit[i]};
+            				$scope.teemat.push(teema);
+            				teema.promise=koodisto.getAlapuolisetKoodit(teemakoodit[i].koodiUri, $scope.koodistoLocale);
+            				
+            				var cb = function(teema) {
+            					console.log(teema);
+            					return function(data) {
+                					for(var i=0;i<data.length;i++){
+                						$scope.aiheNimi[data[i].koodiUri]=teema.koodi.koodiNimi + "," + data[i].koodiNimi;
+                					}
+            					}
+            				} 
+            				
+            				teema.promise.then(cb(teema));
+            			}
+            		}
+            );
+            
+            /**
+             * Poista aiheen valinta
+             * @param koodiuri
+             */
+            $scope.poista=function poista (koodiuri) {
+            	console.log("removing:", koodiuri);
+            	var newArray=angular.copy($scope.$parent.uiModel.aihees.uris);
+            	var index=newArray.indexOf(koodiuri);
+            	newArray.splice(index,1);
+            	$scope.$parent.uiModel.aihees.uris=angular.copy(newArray);
+            };
+        }]);
+        

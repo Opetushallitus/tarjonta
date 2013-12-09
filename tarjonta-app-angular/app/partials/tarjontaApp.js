@@ -8,6 +8,7 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
+            'app.kk.edit.hakukohde.review.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
             'app.review.ctrl',
@@ -67,6 +68,7 @@ angular.module('app',
             'MonikielinenTextArea',
             'ControlsLayout',
             'angularTreeview',
+            'DateFormat',
             'TreeFieldDirective'
         ]);
 

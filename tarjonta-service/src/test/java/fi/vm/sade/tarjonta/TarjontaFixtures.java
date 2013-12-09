@@ -381,11 +381,13 @@ public class TarjontaFixtures {
     /**
      * Creates structure like (not tree):
      *
-     * 0
+     *<pre>
+     *    0
      *   / \
-     * 1 2
-     * \ /
-     * 3
+     *   1 2
+     *   \ /
+     *    3
+     * </pre>
      *
      * @return
      */

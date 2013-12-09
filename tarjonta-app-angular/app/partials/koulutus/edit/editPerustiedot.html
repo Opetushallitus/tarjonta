@@ -211,16 +211,34 @@
         </tr>
 
         <!-- teemat -->
-        <tr class="required">
-            <th tt="koulutus.edit.teemat"/>
-            <td>
-        <multi-select
+        <tr class="required" ng-controller="AiheetTeematController">
+        <th tt="koulutus.edit.aiheet"/>
+        <td>
+        <accordion close-others="oneAtATime">
+          <div ng-repeat="t in teemat">
+          <accordion-group heading="{{t.koodi.koodiNimi}}" is-open="false">
+        
+          <multi-select
             model="uiModel.tmp"
-            selection="uiModel.teemas.uris"
-            promise="uiModel.teemas.promise"
+            selection="uiModel.aihees.uris"
+            promise="t.promise"
             columns="2"/>
-        </td>
-        <td></td>
+	      </accordion-group>
+            
+         </div>
+            </accordion>
+            <div tt="koulutus.edit.valitut-aiheet"/>
+            <ul ng-repeat="k in uiModel.aihees.uris">
+            <li><span class="btn btn-primary" ng-click="poista(k)">x</span>{{aiheNimi[k]}}</li>
+            </ul>
+            </td>
+            <td>
+            	<p class="error" ng-show="uiModel.aihees.uris.length == 0" tt="koulutus.edit.aihees.required"/>
+            </td>
+		</tr>
+		<tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help"/>
         </tr>
 
         <!-- väli -->

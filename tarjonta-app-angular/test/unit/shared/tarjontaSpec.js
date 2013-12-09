@@ -44,10 +44,17 @@ describe('Tarjonta', function() {
 
     var mockHttp = function($httpBackend){
     	var response = {status:true, data:["a","b","c","d"]};
-        $httpBackend.whenGET('/link/parent-oid-1.2.3.4.5.6.7?').respond(response);
-        $httpBackend.whenGET('/link/parents/parent-oid-1.2.3.4.5.6.7?').respond(response);
-        $httpBackend.whenPOST('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
-        $httpBackend.whenDELETE('/link/parent-oid-1.2.3.4.5.6.7/child-oid-1.2.3.4.5.6.7').respond(response);
+        $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7').respond(response);
+        $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7/parents').respond(response);
+        $httpBackend.whenPOST('/link').respond(function(method, url, data) {
+            console.log(data);
+            return response;
+        });
+        $httpBackend.whenPOST('/link/test').respond(function(method, url, data) {
+            console.log(data);
+            return response;
+        });
+        $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
     };    
 
     describe('TarjontaService', function($injector) {
@@ -62,6 +69,7 @@ describe('Tarjonta', function() {
         	var resourceLink = TarjontaService.resourceLink;
         	expect(resourceLink).toNotEqual(undefined);
         	expect(resourceLink.save).toNotEqual(undefined);
+        	expect(resourceLink.test).toNotEqual(undefined);
         	expect(resourceLink.remove).toNotEqual(undefined);
         	expect(resourceLink.get).toNotEqual(undefined);
         	expect(resourceLink.parents).toNotEqual(undefined);
@@ -69,13 +77,14 @@ describe('Tarjonta', function() {
         
         it('should call the known rest api', inject(function($httpBackend, TarjontaService) {
         	mockHttp($httpBackend);
-        	var parentId = "parent-oid-1.2.3.4.5.6.7";
-        	var childId = "child-oid-1.2.3.4.5.6.7";
+        	var oid = "oid-1.2.3.4.5.6.7";
+        	var parentOid = "p-oid-1.2.3.4.5.6.7";
         	var resourceLink = TarjontaService.resourceLink;
-        	resourceLink.get({oid:parentId});
-        	resourceLink.parents({oid:parentId});
-        	resourceLink.save({parent:parentId, child:childId});
-        	resourceLink.remove({parent:parentId, child:childId});
+        	resourceLink.get({oid:oid});
+        	resourceLink.parents({oid:oid});
+        	resourceLink.save({parent:parentOid, children:[oid]});
+        	resourceLink.test({parent:parentOid, children:[oid]});
+        	resourceLink.remove({parent:parentOid, child:oid});
         	$httpBackend.flush();
         }));
         

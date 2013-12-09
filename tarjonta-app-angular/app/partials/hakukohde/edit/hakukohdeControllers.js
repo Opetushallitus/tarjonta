@@ -42,6 +42,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.showError = false;
 
+    $scope.model.showHakuaikas = false;
+
     $scope.model.showSuccess = false;
 
     $scope.model.collapse.model = true;
@@ -51,6 +53,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.validationmsgs = [];
 
     $scope.model.hakus = [];
+
+    $scope.model.hakuaikas = [];
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
@@ -139,7 +143,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     /*
 
-     Koodisto helper methods  ------>
+     ------>  Koodisto helper methods
 
      */
     var findKoodiWithArvo = function(koodi,koodis)  {
@@ -180,6 +184,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.canSaveHakukohde = function() {
+
         if ($scope.editHakukohdeForm !== undefined) {
             return $scope.editHakukohdeForm.$valid;
         } else {
@@ -254,13 +259,48 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
 
 
+        if (data !== undefined) {
 
+            angular.forEach(data.tulokset,function(tulos){
+                if (tulos !== undefined && tulos.tulokset !== undefined) {
+
+                    tarjoajaOidsSet.add(tulos.oid);
+
+                    angular.forEach(tulos.tulokset,function(toinenTulos){
+                        koulutusSet.add(toinenTulos.nimi);
+
+                    });
+
+                }
+
+            });
+            $scope.model.koulutusnimet = koulutusSet.toArray();
+
+
+                $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+                var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
+                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
+                orgPromise.then(function(data){
+                    if (data.postiosoite !== undefined) {
+
+
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+                        postinumero = data.postiosoite.postinumeroUri;
+                    }
+                });
+
+
+
+        }
 
     });
 
 
 
-    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta',AuthService.getLanguage());
+    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
 
 
     /*
@@ -275,16 +315,21 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         console.log('GOT HAKUS ', hakuDatas.length);
         angular.forEach(hakuDatas,function(haku){
 
+
             angular.forEach(haku.nimi,function(nimi){
 
                 if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
+
             });
 
             $scope.model.hakus.push(haku);
         });
 
+        if ($scope.model.hakukohde.hakuOid !== undefined) {
+            $scope.model.hakuChanged();
+        }
     });
 
 
@@ -340,7 +385,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
-
+    if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
+        $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
+    }
 
 
     $scope.model.kieliCallback = function(kieliUri) {
@@ -412,6 +459,43 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
+
+
+    };
+
+
+    /*
+
+        ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
+
+     */
+
+
+    $scope.model.hakuChanged = function() {
+
+
+        if ($scope.model.hakukohde.hakuOid !== undefined) {
+
+            $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
+            var haku = getHakuWithOid($scope.model.hakukohde.hakuOid);
+
+            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
+
+                angular.forEach(haku.hakuaikas,function(hakuaika){
+                    $scope.model.hakuaikas.push(hakuaika);
+                });
+
+                console.log('HAKUAIKAS : '  ,$scope.model.hakuaikas);
+
+                $scope.model.showHakuaikas = true;
+
+            } else {
+
+                $scope.model.showHakuaikas = false;
+
+            }
+
+        }
 
 
     };

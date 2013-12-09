@@ -155,7 +155,7 @@ public class ConverterV1 {
 
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
         HakuaikaV1RDTO hakuaikaV1RDTO = new HakuaikaV1RDTO();
-
+        hakuaikaV1RDTO.setHakuaikaId(hakuaika.getId().toString());
         hakuaikaV1RDTO.setAlkuPvm(hakuaika.getAlkamisPvm());
         hakuaikaV1RDTO.setLoppuPvm(hakuaika.getPaattymisPvm());
         hakuaikaV1RDTO.setNimi(hakuaika.getSisaisenHakuajanNimi());
@@ -212,6 +212,10 @@ public class ConverterV1 {
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
+        if (hakukohde.getHakuaika() != null) {
+            hakukohdeRDTO.setHakuaikaId(hakukohde.getHakuaika().getId().toString());
+        }
+
         for (String hakukelpoisuusVaatimus:hakukohde.getHakukelpoisuusVaatimukset()) {
             hakukohdeRDTO.getHakukelpoisuusvaatimusUris().add(checkAndRemoveForEmbeddedVersionInUri(hakukelpoisuusVaatimus));
         }
@@ -222,6 +226,10 @@ public class ConverterV1 {
         }
         if (hakukohde.getAlinValintaPistemaara() != null) {
             hakukohdeRDTO.setAlinValintaPistemaara(hakukohde.getAlinValintaPistemaara());
+        }
+
+        if (hakukohde.getHakukelpoisuusVaatimusKuvaus() != null) {
+            hakukohdeRDTO.setHakukelpoisuusVaatimusKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getHakukelpoisuusVaatimusKuvaus()));
         }
 
         if (hakukohde.getValintojenAloituspaikatLkm() != null) {
@@ -336,6 +344,10 @@ public class ConverterV1 {
             for (String hakukelpoisuusVaatimus : hakukohdeRDTO.getHakukelpoisuusvaatimusUris()) {
                 hakukohde.getHakukelpoisuusVaatimukset().add(hakukelpoisuusVaatimus);
             }
+        }
+
+        if (hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset() != null) {
+            hakukohde.setHakukelpoisuusVaatimusKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
         }
 
         hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));

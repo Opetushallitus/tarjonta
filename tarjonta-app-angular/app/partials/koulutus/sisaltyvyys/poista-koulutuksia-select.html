@@ -1,21 +1,4 @@
-<b><div tt="sisaltyvyys.liitoksen-luonti-teksti"></div></b>
-
-<!--controls-notify type="message" tt="sisaltyvyys.uuden-luonti-teksti" tp="[ model.organisaatio.nimi ]"></controls-notify-->
-<table>
-    <tr>
-        <td><div tt="sisaltyvyys.nayta-tutkintotyyppi"></div><td>
-        <td><div tt="sisaltyvyys.hae-koulutuksia"></div><td>   
-    </tr>
-    <tr>
-        <td><select required name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select><td>
-        <td><input type="text" data-ng-model="model.spec.terms" /></td>    
-    </tr>
-</table>
-
-<div>
-    <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="sisaltyvyys.tyhjenna"></div></button>
-    <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
-</div>
+<b><div tt="sisaltyvyys.liitoksen-poisto-teksti"></div></b>
 
 <tabset>
     <tab heading="{{model.text.list}}">   
@@ -30,6 +13,7 @@
             oids="model.searchKomoOids" 
             review-oids="null" 
             fn-click-handler="selectTreeHandler" 
+            fn-loaded-handler="treeItemsLoaded"
             lang="koodistoLocale"></tree-field>        
     </tab>
 </tabset>

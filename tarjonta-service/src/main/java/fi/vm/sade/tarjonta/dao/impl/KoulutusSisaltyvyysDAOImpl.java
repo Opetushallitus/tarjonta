@@ -30,6 +30,7 @@ import com.mysema.query.types.Predicate;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
 
@@ -65,11 +66,44 @@ public class KoulutusSisaltyvyysDAOImpl extends
         return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).join(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(child.oid);
     }
 
+    /**
+     * Palauttaa koulutusmoduulin parentit
+     * @return
+     */
     public List<String> getParents(String childId) {
         final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate where = bb(child.oid.eq(childId));
         return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).leftJoin(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(koulutusSisaltyvyys.ylamoduuli.oid);
+    }
+    
+    @Override
+    public void update(KoulutusSisaltyvyys entity) {
+        super.update(entity);
+        entityManager.detach(entity.getYlamoduuli());
+        for(Koulutusmoduuli komo: entity.getAlamoduuliList()){
+            entityManager.detach(komo);
+        }
+    }
+    
+    @Override
+    public KoulutusSisaltyvyys insert(KoulutusSisaltyvyys entity) {
+        KoulutusSisaltyvyys ent = super.insert(entity);
+        entityManager.detach(ent.getYlamoduuli());
+        for(Koulutusmoduuli komo: ent.getAlamoduuliList()){
+            entityManager.detach(komo);
+        }
+        return ent;
+    }
+    
+    @Override
+    public void remove(KoulutusSisaltyvyys entity) {
+        super.remove(entity);
+        entityManager.detach(entity.getYlamoduuli());
+        for(Koulutusmoduuli komo: entity.getAlamoduuliList()){
+            entityManager.detach(komo);
+        }
+
     }
 }
