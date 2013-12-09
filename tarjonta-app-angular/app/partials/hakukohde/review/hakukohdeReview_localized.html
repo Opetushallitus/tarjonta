@@ -1,6 +1,7 @@
 <table class="tarjontaForm">
     <tr><th></th><td></td><td></td></tr>
 
+
     <!-- PERUSTIEDOT / TODO collapse -->
 
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
@@ -33,6 +34,82 @@
         </td>
     </tr>
 
+    <tr>
+        <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
+        <td colspan="2" data-ng-bind-html="getHakukelpoisuusVaatimusKuvaus(kieli.kieliUri)">
+
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="hakukohde.review.perustiedot.lisatiedot"/>
+        <td colspan="2" data-ng-bind-html="getLisatiedot(kieli.kieliUri)">
+
+        </td>
+    </tr>
+
     </tbody>
 
-   </table>
+    <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAKOKEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+
+    <tbody ng-show="!model.collapse.valintakokeet" data-ng-repeat="valintakoe in getLocalizedValintakoe(kieli.kieliUri)">
+
+    <tr>
+        <th tt="hakukohde.review.valintakokeet.nimi"/>
+        <td colspan="2">
+            {{valintakoe.valintakoeNimi}}
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="hakukohde.review.valintakokeet.kuvaus"/>
+        <td colspan="2" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti">
+
+        </td>
+    </tr>
+
+    <tr>
+       <th tt="hakukohde.review.valintakokeet.ajankohdat"></th>
+        <td >
+            <table>
+                <tr>
+                    <th>
+                        {{t('hakukohde.review.valintakokeet.aika')}}
+                    </th>
+                    <th>
+                        {{t('hakukohde.review.valintakokeet.paikka')}}
+                    </th>
+                    <th>
+                        {{t('hakukohde.review.valintakokeet.lisatiedot')}}
+                    </th>
+                </tr>
+                <tr data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                    <td>
+                        {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
+                    </td>
+                    <td>
+                        {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
+                    </td>
+                    <td>
+                        {{ valintakoeaika.lisatiedot }}
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+
+    <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAKOKEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+
+
+</table>
