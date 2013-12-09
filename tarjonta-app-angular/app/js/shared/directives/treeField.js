@@ -200,7 +200,9 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         $scope.searchSinglePathToRootByOid = function(oid) {
             var tfs = new TreeFieldSearch();
             var promise = tfs.searchByKomoOid(oid);
-            $scope.tree.activePromises.push(promise);
+
+            var deferred = $q.defer();
+            $scope.tree.activePromises.push(deferred.promise);
 
             promise.then(function(map) {
                 angular.forEach(map, function(val, parentKey) {
@@ -214,9 +216,9 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                         $scope.tree.map[parentKey] = map[parentKey];
                     }
                 });
+
+                deferred.resolve();
             });
-
-
         };
 
         /*
@@ -234,7 +236,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                     $scope.tree.selectedOids[$scope.treeid.currentNode.oid] = $scope.treeid.currentNode;
                 }
 
-                if (!angular.isUndefined($scope.fnClickHandler)) {
+                if (!angular.isUndefined($scope.fnClickHandler) && angular.isFunction($scope.fnClickHandler)) {
                     $scope.fnClickHandler($scope.treeid.currentNode, event);
                 }
 
@@ -247,7 +249,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
          * - the search process starts and ends here.
          */
         $scope.$watch('oids', function(newValue, oldValue) {
-            if (newValue.length > 0) {
+            if (newValue.length > 0 && (newValue !== oldValue || angular.isUndefined($scope.tree))) {
                 $scope.createTreeData();
 
                 for (var i = 0; i < $scope.oids.length; i++) {
@@ -255,14 +257,15 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 }
 
                 $q.all($scope.tree.activePromises).then(function() {
+                    console.log("CREATE TREE");
                     angular.forEach($scope.tree.map['ROOT'].childs, function(val, key) {
                         $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val);
                     });
 
-                    if (!angular.isUndefined($scope.fnLoadedHandler) && $scope.fnLoadedHandler != null) {
-                        $scope.fnLoadedHandler($scope.tree.visibleOids);
+                    if (!angular.isUndefined($scope.fnLoadedHandler) && $scope.fnLoadedHandler !== null) {
+                        $scope.fnLoadedHandler($scope.tree.map);
                     }
-                });
+                }, true);
             }
         });
     }
