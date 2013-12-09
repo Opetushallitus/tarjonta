@@ -107,9 +107,65 @@
 
 
     <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
-        <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAKOKEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "LIITTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+    <tbody ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(kieli.kieliUri)">
+    <tr>
+        <th tt="hakukohde.review.liitteet.nimi"/>
+        <td colspan="2">
+            {{ liite.liitteenNimi }}
+        </td>
     </tr>
 
+    <tr>
+        <th tt="hakukohde.review.liitteet.kuvaus"/>
+        <td colspan="2" data-ng-bind-html="getLiitteenKuvaus(liite,kieli.kieliUri)">
 
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="hakukohde.review.liitteet.toim.mennessa"/>
+        <td colspan="2">
+            {{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}
+        </td>
+    </tr>
+    <tr>
+        <th tt="hakukohde.review.liitteet.toim.osoite"/>
+        <td colspan="2">
+             {{ liite.liitteenToimitusOsoite.osoiterivi1 }}, {{ liite.liitteenToimitusOsoite.postinumeroArvo }}, {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
+        </td>
+    </tr>
+    </tbody>
+
+    <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAPERUSTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+
+    <tbody ng-show="!model.collapse.valintaperusteet">
+    <tr>
+        <th tt="hakukohde.review.liitteet.valintaperuste.kuvaus"/>
+        <td colspan="2" data-ng-bind-html="getValintaperusteKuvaus(kieli.kieliUri)">
+
+        </td>
+    </tr>
+    </tbody>
+
+    <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
+        <td><input class="btn" type="button" ng-click='doEdit($event, "SORA")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+    </tr>
+
+    <tbody ng-show="!model.collapse.sorakuvaukset">
+
+    <tr>
+        <th tt="hakukohde.review.liitteet.sora.kuvaus"/>
+        <td colspan="2" data-ng-bind-html="getSoraKuvaus(kieli.kieliUri)">
+
+        </td>
+    </tr>
+
+    </tbody>
 </table>
