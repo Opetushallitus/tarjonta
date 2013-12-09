@@ -332,10 +332,11 @@ app.controller('AiheetTeematController',
              * @param koodiuri
              */
             $scope.poista=function poista (koodiuri) {
-            	var newArray= angular.copy($scope.$parent.uiModel.aihees.uris);
-            	var index=newArray[koodiuri];
+            	console.log("removing:", koodiuri);
+            	var newArray=angular.copy($scope.$parent.uiModel.aihees.uris);
+            	var index=newArray.indexOf(koodiuri);
             	newArray.splice(index,1);
-            	$scope.$parent.uiModel.aihees.uris=newArray;
+            	$scope.$parent.uiModel.aihees.uris=angular.copy(newArray);
             };
         }]);
         
