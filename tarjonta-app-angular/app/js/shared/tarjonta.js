@@ -399,6 +399,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     method: 'DELETE',
                 	url:Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
                 	
+                },
+                removeMany: {
+                    method: 'DELETE',
+                	url:Config.env.tarjontaRestUrlPrefix + "link/:parent",
+                	
                 }
             });
 

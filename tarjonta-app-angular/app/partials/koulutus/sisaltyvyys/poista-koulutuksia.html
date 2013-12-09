@@ -4,6 +4,12 @@
     </div>
 
     <div class="modal-body">
+        <b><div tt="sisaltyvyys.liitoksen-poisto-teksti"></div></b>
+
+        <div ng-show="model.errors.length > 0"  >
+            <ul><li ng-repeat="error in model.errors">{{error.msg}}</li></ul>
+        </div>
+
         <div ng-include="model.html"></div>
     </div>
 </div>

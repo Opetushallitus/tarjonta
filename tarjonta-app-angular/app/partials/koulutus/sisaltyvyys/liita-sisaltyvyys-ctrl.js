@@ -111,16 +111,10 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
             $scope.model.tutkinto.hakulause = '';
         };
 
-        $scope.ok = function() {
+        $scope.save = function() {
             TarjontaService.saveResourceLink($scope.model.newOids, function(res) {
                 console.log(res);
                 $modalInstance.close();
-//                TarjontaService.haeKoulutukset({//search parameter object
-//                    komoOid: obj.oid
-//                }).then(function(result) {
-//                    $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
-//                    $route.reload();
-//                });
             });
         };
 

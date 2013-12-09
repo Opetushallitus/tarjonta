@@ -22,6 +22,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
          * Select koulutus data objects.
          */
         $scope.model = {
+            errors: [],
             text: {
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
@@ -56,27 +57,68 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
 
         $scope.koodistoLocale = LocalisationService.getLocale();
 
-        //ng-grid malli
-        $scope.gridOptions = {
+        //ng-grid for selecting nodes (with edit)
+        $scope.selectGridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.newOids,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
-                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
-                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "50%"}
+                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "45%"},
+                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "30%"}
             ],
             showSelectionCheckbox: true,
             multiSelect: true};
 
-        //Hakukriteerien tyhjennys
-        $scope.clearCriteria = function() {
-            $scope.model.tutkinto.uri = '';
-            $scope.model.tutkinto.hakulause = '';
-        };
+        //ng-grid for selected items (without edit)
+        $scope.reviewGridOptions = {
+            data: 'model.newOids',
+            // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
+            columnDefs: [
+                {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
+                {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "45%"},
+                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "30%"}
+            ],
+            showSelectionCheckbox: false,
+            multiSelect: false};
 
-        $scope.ok = function() {
+        $scope.save = function() {
+            $scope.clearErrors();
+            var oids = [];
+            angular.forEach($scope.model.newOids, function(val) {
+                oids.push(val.oid);
+            });
 
+            var res = TarjontaService.resourceLink;
+            var remove = res.removeMany({
+                parent: targetKomoOid,
+                childs: oids
+            });
+
+            remove.$promise.then(function(response) {
+                if (response.status === 'OK') {
+                    console.log("success", response);
+                    $modalInstance.close();
+                } else {
+                    console.log("save cancelled", response);
+                    angular.forEach(response.errors, function(error) {
+                        //add additional information to the error data object
+                        angular.forEach(error.errorMessageParameters, function(errorKomoOid) {
+                            angular.forEach($scope.model.newOids, function(row) {
+                                if (errorKomoOid === row.oid) {
+                                    error.data = row;
+                                }
+                            });
+                        });
+
+                        //add translation and paramters for the key
+                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, [error.data.nimi]);
+
+                        $scope.model.errors.push(error);
+                    });
+
+                }
+            });
         };
 
         //dialogin sulkeminen peruuta-napista
@@ -86,6 +128,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
 
         $scope.selectDialogi = function() {
             //aseta esivalittu organisaatio
+            $scope.clearErrors();
             $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-select.html';
         };
 
@@ -94,6 +137,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
          * 
          */
         $scope.reviewDialogi = function() {
+            $scope.clearErrors();
             var oids = [];
             for (var i = 0; i < $scope.model.newOids.length; i++) {
                 oids.push($scope.model.newOids[i].oid);
@@ -127,31 +171,39 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
          * 2TAB tree loaded handler
          */
         $scope.treeItemsLoaded = function(map) {
-            angular.forEach(map, function(val, keyOid) {
+            var oids = {};
+            angular.forEach(map, function(parentVal, keyOid) {
                 if (keyOid !== 'ROOT') {
-                    var add = true;
-                    for (var i = 0; i < $scope.model.hakutulos.length; i++) {
-                        if ($scope.model.hakutulos[i].oid === keyOid) {
-                            add = false;
-                            break;
-                        }
-                    }
+                    angular.forEach(parentVal.childs, function(val, keyOid) {
+                        oids[keyOid] = {};
+                    });
+                }
+            });
 
-                    if (add) {
-                        var promise = $scope.searchBySpec({//search parameter object
-                            komoOid: keyOid,
-                            oid: null,
-                            terms: null,
-                            state: null,
-                            year: null,
-                            season: null
-                        });
+            angular.forEach(oids, function(val, keyOid) {
 
-                        promise.then(function(arr) {
-                            console.log(arr);
-                            $scope.model.hakutulos.push(arr[0]);
-                        });
+                var add = true;
+                for (var i = 0; i < $scope.model.hakutulos.length; i++) {
+                    if ($scope.model.hakutulos[i].oid === keyOid) {
+                        add = false;
+                        break;
                     }
+                }
+
+                if (add) {
+                    var promise = $scope.searchBySpec({//search parameter object
+                        komoOid: keyOid,
+                        oid: null,
+                        terms: null,
+                        state: null,
+                        year: null,
+                        season: null
+                    });
+
+                    promise.then(function(arr) {
+                        console.log(arr);
+                        $scope.model.hakutulos.push(arr[0]);
+                    });
                 }
             });
         };
@@ -227,5 +279,9 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             });
 
             return deferred.promise;
+        };
+
+        $scope.clearErrors = function() {
+            $scope.model.errors = [];
         };
     }]);
