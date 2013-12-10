@@ -1,5 +1,12 @@
 <form name="perustiedotForm">
     <table class="tarjontaForm">
+        <!-- koulutuskoodi -->
+	    <tr class="info">
+	        <th tt="koulutus.edit.koulutuskoodi"/>
+	        <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
+	        <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
+	    </tr>
+	        
         <!-- koulutusohjelma -->
         <tr class="required">
             <th tt="koulutus.edit.koulutusohjelma"/>
