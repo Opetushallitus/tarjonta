@@ -11,7 +11,7 @@
 
 <div>
     <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="sisaltyvyys.tyhjenna"></div></button>
-    <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
+    <button class="btn btn-primary" ng-click="searchKomos()"><div tt="sisaltyvyys.hae"></div></button>
 </div>
 
 <tabset>
@@ -39,6 +39,6 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
-    <button class="btn btn-primary" ng-disabled="model.selectedRowData.length == 0" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+    <button class="btn btn-warning" ng-click="clickCancel()"><div tt="sisaltyvyys.peruuta"></div></button>
+    <button class="btn btn-primary" ng-disabled="model.selectedRowData.length == 0" ng-click="clickReviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
 </div>

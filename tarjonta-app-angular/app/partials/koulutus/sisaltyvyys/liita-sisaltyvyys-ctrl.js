@@ -64,8 +64,56 @@ app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, Localisatio
     };
 });
 
-app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil',
-    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil) {
+//singleton service
+app.service('TreeHandlers', function() {
+
+    var singleton = {scope: null};
+
+    singleton.setScope = function(scope) {
+        singleton.scope = scope;
+    };
+
+    /*
+     * 2TAB tree click handler
+     */
+    singleton.selectTreeHandler = function(obj, event) {
+        if (event === 'SELECTED') {
+            for (var i = 0; i < singleton.scope.model.hakutulos.length; i++) {
+                if (singleton.scope.model.hakutulos[i].oid === obj.oid) {
+                    singleton.scope.model.selectedRowData.push(singleton.scope.model.hakutulos[i]);
+                    break;
+                }
+            }
+        } else {
+            for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
+                if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
+                    singleton.scope.model.selectedRowData.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    };
+
+    singleton.removeItem = function(scope, obj) {
+        var selected = null;
+        for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
+            if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
+                selected = obj;
+                singleton.scope.model.selectedRowData.splice(i, 1);
+                break;
+            }
+        }
+
+        if (selected !== null) {
+            singleton.scope.gridOptions.selectItem(singleton.scope.model.hakutulos.indexOf(selected), false);
+        }
+    };
+
+    return singleton;
+});
+
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers',
+    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers) {
         /*
          * Select koulutus data objects.
          */
@@ -87,7 +135,6 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
                 hakulause: ''
             },
             hakutulos: [],
-            search: {count: 0},
             valitut: {//selected koulutus items
                 oids: [], //only row oids
                 data: [] //only row objects
@@ -111,6 +158,7 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
             koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
         }
 
+
         $scope.koodistoLocale = LocalisationService.getLocale();
 
         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(config.app["koodisto-uris.tutkintotyyppi"], $scope.koodistoLocale);
@@ -124,8 +172,10 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
             }
         });
 
-        $scope.getKkTutkinnot = function() {
-            //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
+        /*
+         * Filter all komos by selected tutkintotyyppi koodi.
+         */
+        $scope.updateTutkintotyyppiFilters = function() {
             var promises = [];
             angular.forEach($scope.other.tutkintotyypit, function(value) {
                 var promise = koodisto.getYlapuolisetKoodit(value, $scope.koodistoLocale);
@@ -140,11 +190,13 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
             });
 
             $q.all(promises).then(function(koodisParam) {
-                $scope.searchTutkinnot();
+                $scope.searchKomos();
             });
         };
 
-        //ng-grid malli
+        /*
+         * Ng-grid component
+         */
         $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
@@ -157,53 +209,26 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
             showSelectionCheckbox: true,
             multiSelect: true};
 
-        //Hakukriteerien tyhjennys
+        /*
+         * Clear selected data from the search fields.
+         */
         $scope.clearCriteria = function() {
             $scope.model.tutkinto.uri = '';
             $scope.model.tutkinto.hakulause = '';
         };
 
-        $scope.save = function() {
-            $scope.clearErrors();
-            var oids = [];
-            angular.forEach($scope.model.selectedRowData, function(val) {
-                oids.push(val.oid);
-            });
-
-            TarjontaService.saveResourceLink(targetKomo.oid, oids, function(response) {
-                var su = new SisaltyvyysUtil();
-                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
-            });
-        };
-
-        //dialogin sulkeminen peruuta-napista
-        $scope.cancel = function() {
-            $modalInstance.dismiss();
-        };
-
         /**
-         * Search koulutus data to dialog by given parameters.
-         * 
-         * @returns {undefined}
+         * Search komos.
          */
-        $scope.searchTutkinnot = function() {
-            // valinnat
+        $scope.searchKomos = function() {
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
                 $scope.model.hakutulos = [];
                 $scope.model.searchKomoOids = [];
-                if (angular.isUndefined(result.tulokset)) {
-                    return -1;
-                }
-
                 var arr = [];
 
                 for (var i = 0; i < result.tulokset.length; i++) {
-                    //tulokset is by organisation
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
                         var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split("#")[0];
-
-                        //console.log($scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri)
-                        //console.log($scope.other.koulutuskoodiMap[koulutuskoodiUri])
                         if ($scope.model.tutkinto.uri.length === 0 || $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
                             $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
 
@@ -218,7 +243,6 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
 
                 angular.forEach(arr, function(value) {
                     var koodisPromise = koodisto.getKoodi(config.env["koodisto-uris.koulutus"], value.koulutuskoodi, $scope.koodistoLocale);
-
                     koodisPromise.then(function(koodi) {
                         value.koulutuskoodi = koodi.koodiArvo;
 
@@ -229,7 +253,45 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
             });
         };
 
-        $scope.selectDialogi = function() {
+        $scope.clearErrors = function() {
+            $scope.model.errors = [];
+        };
+
+        /*
+         * 2TAB tree event handlers
+         */
+        TreeHandlers.setScope($scope);
+        $scope.selectTreeHandler = TreeHandlers.selectTreeHandler;
+        $scope.removeItem = TreeHandlers.removeItem;
+
+        /*
+         * Save and close the dialog.
+         */
+        $scope.clickSave = function() {
+            $scope.clearErrors();
+            var oids = [];
+            angular.forEach($scope.model.selectedRowData, function(val) {
+                oids.push(val.oid);
+            });
+
+            TarjontaService.saveResourceLink(targetKomo.oid, oids, function(response) {
+                var su = new SisaltyvyysUtil();
+                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
+            });
+        };
+
+        /*
+         * Cancel and close the dialog.
+         */
+        $scope.clickCancel = function() {
+            $modalInstance.dismiss();
+        };
+
+
+        /*
+         * go back to select dialog.
+         */
+        $scope.clickSelectDialogi = function() {
             //aseta esivalittu organisaatio
             $scope.clearErrors();
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html';
@@ -237,9 +299,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
 
         /*
          * Open a review dialog.
-         * 
          */
-        $scope.reviewDialogi = function() {
+        $scope.clickReviewDialogi = function() {
             $scope.clearErrors();
             var oids = [];
             for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
@@ -250,44 +311,7 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
         };
 
         /*
-         * 2TAB tree click handler
+         * INIT FILTERS
          */
-        $scope.selectTreeHandler = function(obj, event) {
-            if (event === 'SELECTED') {
-                for (var i = 0; i < $scope.model.hakutulos.length; i++) {
-                    if ($scope.model.hakutulos[i].oid === obj.oid) {
-                        $scope.model.selectedRowData.push($scope.model.hakutulos[i]);
-                        break;
-                    }
-                }
-            } else {
-                for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
-                    if ($scope.model.selectedRowData[i].oid === obj.oid) {
-                        $scope.model.selectedRowData.splice(i, 1);
-                        break;
-                    }
-                }
-            }
-        };
-
-        $scope.removeItem = function(obj) {
-            var selected = null;
-            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
-                if ($scope.model.selectedRowData[i].oid === obj.oid) {
-                    selected = obj;
-                    $scope.model.selectedRowData.splice(i, 1);
-                    break;
-                }
-            }
-
-            if (selected !== null) {
-                $scope.gridOptions.selectItem($scope.model.hakutulos.indexOf(selected), false);
-            }
-        };
-
-        $scope.getKkTutkinnot();
-
-        $scope.clearErrors = function() {
-            $scope.model.errors = [];
-        };
+        $scope.updateTutkintotyyppiFilters();
     }]);

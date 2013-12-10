@@ -16,15 +16,15 @@
 //location of the base module : liita-sisaltyvyys-ctrl.js
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl');
 
-app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil',
-    function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil) {
+app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers',
+    function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
             errors: [],
             text: {
-                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-poisto-teksti', [targetKomo.nimi, organisaatio.nimi]),
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
             organisaatio: organisaatio,
@@ -44,11 +44,12 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
 
         $scope.koodistoLocale = LocalisationService.getLocale();
 
-        //ng-grid for selecting nodes (with edit)
+        /*
+         * ng-grid for selecting nodes (with select/remove mode)
+         */
         $scope.selectGridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
-            // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
@@ -57,10 +58,11 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
             showSelectionCheckbox: true,
             multiSelect: true};
 
-        //ng-grid for selected items (without edit)
+        /*
+         * ng-grid for review tab (only selected items without select/remove mode)
+         */
         $scope.reviewGridOptions = {
             data: 'model.selectedRowData',
-            // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
@@ -68,30 +70,11 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
             ],
             showSelectionCheckbox: false,
             multiSelect: false};
-        /*
-         * 2TAB tree click handler
-         */
-        $scope.selectTreeHandler = function(obj, event) {
-            if (event === 'SELECTED') {
-                for (var i = 0; i < $scope.model.hakutulos.length; i++) {
-                    if ($scope.model.hakutulos[i].oid === obj.oid) {
-                        $scope.model.selectedRowData.push($scope.model.hakutulos[i]);
-                        break;
-                    }
-                }
-            } else {
-                for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
-                    if ($scope.model.selectedRowData[i].oid === obj.oid) {
-                        $scope.model.selectedRowData.splice(i, 1);
-                        break;
-                    }
-                }
-            }
-        };
 
         /*
-         * 2TAB tree loaded handler
+         * 2TAB tree event handlers (look more info from a file liita-sisaltyvyys-ctrl.js)
          */
+        TreeHandlers.setScope($scope);
         $scope.treeItemsLoaded = function(map) {
             var oids = {};
             angular.forEach(map, function(parentVal, keyOid) {
@@ -117,26 +100,12 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
                 });
 
                 promise.then(function(arr) {
-                    console.log(arr);
                     $scope.model.hakutulos.push(arr[0]);
                 });
             });
         };
-
-        $scope.removeItem = function(obj) {
-            var selected = null;
-            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
-                if ($scope.model.selectedRowData[i].oid === obj.oid) {
-                    selected = obj;
-                    $scope.model.selectedRowData.splice(i, 1);
-                    break;
-                }
-            }
-
-            if (selected !== null) {
-                $scope.selectGridOptions.selectItem($scope.model.hakutulos.indexOf(selected), false);
-            }
-        };
+        $scope.selectTreeHandler = TreeHandlers.selectTreeHandler;
+        $scope.removeItem = TreeHandlers.removeItem;
 
         /**
          * Search komos.
@@ -163,6 +132,9 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
             });
         };
 
+        /*
+         * Search komos by spec-object
+         */
         $scope.searchBySpec = function(spec) {
             var deferred = $q.defer();
             TarjontaService.haeKoulutukset(spec).then(function(result) {
@@ -247,5 +219,5 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
             $scope.model.reviewOids = oids;
             $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-review.html';
         };
-
-    }]);
+    }
+]);
