@@ -158,11 +158,27 @@
         </td>
     </tr>
     
+    <!-- opetusajat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetusajat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
     <!-- opetusmuodot -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetusmuodot"/>
         <td colspan="2">
-            <span data-ng-repeat='opetusmuoto in model.koulutus.opetusmuodos.meta'>{{ opetusmuoto.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
+    <!-- opetuspaikat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetuspaikat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
