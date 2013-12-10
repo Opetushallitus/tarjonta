@@ -348,7 +348,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
             if (koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS) {
-            addItemToGrid("PerustiedotView.kaksoistutkinto",buildKaksoistutkintoField());
+            addItemToGrid("", buildKaksoistutkintoField("PerustiedotView.kaksoistutkinto"));
             }
             checkCheckboxes();
 
@@ -367,13 +367,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return itemContainer;
     }
 
-    private AbstractComponent buildKaksoistutkintoField() {
+    private AbstractComponent buildKaksoistutkintoField(String captionKey) {
 
-        VerticalLayout verticalLayout = new VerticalLayout();
+        HorizontalLayout verticalLayout = new HorizontalLayout();
+
+        Label label = UiUtil.label(null, T(captionKey));
 
         kaksoistutkintoCheckbox = new CheckBox();
 
         verticalLayout.addComponent(kaksoistutkintoCheckbox);
+        verticalLayout.addComponent(label);
+
 
         return verticalLayout;
 
@@ -496,6 +500,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         return topErrorArea;
     }
+
 
     private Label addItemToGrid(String captionKey, AbstractComponent component) {
 

@@ -1,51 +1,33 @@
-<form name="lisatiedotForm">
 <table class="tarjontaForm">
 
-	<!-- ammattinimikkeet -->
-	<tr class="info">
-		<th tt="koulutus.edit.ammattinimikkeet.title"/>
-		<td>
-			<multi-select
-			 	model="uiModel.ammattinimikkeet.data"
-			 	selection="uiModel.ammattinimikkeet.uris"
-                                promise="uiModel.ammattinimikkeet.promise"
-			 	display="dualpane"/>
-		</td>
-		<td></td>
-	</tr>
-	
+    <!-- ammattinimikkeet -->
+    <tr class="info">
+        <th tt="koulutus.edit.ammattinimikkeet.title"/>
+        <td>
+    <multi-select
+        model="uiModel.tmp"
+        selection="uiModel.ammattinimikkeet.uris"
+        promise="uiModel.ammattinimikkeet.promise"
+        display="dualpane"/>
+</td>
+</tr>
 </table>
 
-<div ng-show="uiModel.opetuskielis.uris.length==0">(TODO i18n valitse ainakin yksi opetuskieli tähän..?)</div>
+<div ng-show="uiModel.opetuskielis.uris.length == 0">(TODO i18n valitse ainakin yksi opetuskieli tähän..?)</div>
 
 <tabset>
-	<tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}">
-	
-		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
-			
-			<h4>{{t('koulutus.edit.'+lisatieto.type +'.title')}}</h4>			
-			<p>{{t('koulutus.edit.'+lisatieto.type +'.help')}}</p>
-			<textarea ui-tinymce ng-model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri).arvo"> </textarea>
-			
-			<br/>
-			
-		</div>
+    <tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}">
 
-		<h4 tt="koulutus.edit.kuva.title"></h4>
+        <div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
 
-		<input id="inputImage2" 
-                 url="http://localhost:8585/tarjonta-service/rest/koulutus/kuva"
-                 type="file" 
-                 accept="image/*" 
-                 image="image2" 
-                 resize-max-height="300"
-                 resize-max-width="250"
-                 resize-quality="0.9" />
-           <button type="submit" ng-click="single(image2.resized)" disabled>Lisää</button>
-           	
-		<img ng-show="image2" ng-src="{{image2.resized.dataURL}}"/>
+            <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>			
+            <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
+            <div>
 
-		
-	</tab>
+                <rich-textarea max="1500" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri)[kieliUri]"></rich-textarea>	
+            </div>
+        </div>
+        <h4 tt="koulutus.edit.kuva.title"></h4>
+        <image-field btn-name-remove="{{t('poista')}}" btn-name-save="{{t('tallenna')}}" editable="true" oid="{{model.oid}}" uri="{{kieliUri}}"></image-field>            
+    </tab>
 </tabset>
-</form>

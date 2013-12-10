@@ -1,0 +1,31 @@
+<b><div tt="sisaltyvyys.liitoksen-poisto-teksti"></div></b>
+
+<tabset>
+    <tab heading="{{model.text.list}}">   
+        <div>
+            <div class="gridStyle" ng-grid="gridOptions"></div>
+        </div>
+    </tab>
+    <tab heading="{{model.text.hierarchy}}"> 
+        <tree-field 
+            style="overflow: scroll; height:200px"
+            names="model.hakutulos"
+            oids="model.searchKomoOids" 
+            review-oids="null" 
+            fn-click-handler="selectTreeHandler" 
+            fn-loaded-handler="treeItemsLoaded"
+            lang="koodistoLocale"></tree-field>        
+    </tab>
+</tabset>
+
+<div >
+    <div tt="sisaltyvyys.valitut-koulutukset"></div>   
+    <div style="overflow: scroll; height:100px">
+        <ul><li ng-repeat="obj in model.newOids" ng-click="removeItem(obj)">{{obj.nimi}} X</li></ul>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
+    <button class="btn btn-primary" ng-disabled="model.newOids.length == 0" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+</div>

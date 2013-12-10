@@ -20,8 +20,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
  *
  * /hakukohde/OID/paasykoe
  * /hakukohde/OID/valintakoe
+ * * /hakukohde/OID/nimi
+ * * /hakukohde/OID/valintaperusteet
  *
- *  REMOVED: /hakukohde/OID/liite
  * </pre>
  *
  * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
@@ -53,22 +54,6 @@ public interface HakukohdeResource {
             @QueryParam("organisationOid") List<String> organisationOids,
             @QueryParam("hakukohdeTila") List<String> hakukohdeTilas);
 
-    @POST
-    @Path("/ui")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeV1RDTO insertHakukohde(HakukohdeV1RDTO hakukohdeRDTO);
-
-    @PUT
-    @Path("/ui/{oid}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeV1RDTO updateUiHakukohde(@PathParam("oid") String oid,HakukohdeV1RDTO hakukohdeRDTO);
-
-    @GET
-    @Path("/ui/{oid}")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakukohdeV1RDTO findByOid(@PathParam("oid") String oid);
     /**
      * /hakukohde/{oid}
      *
@@ -116,25 +101,16 @@ public interface HakukohdeResource {
     /**
      * /hakukohde/{oid}/valintakoe
      *
+     * NOTE: fixes also Lukio's single valintakoes to two separate valintakoes: Pääsykoe and Lisänäytöt...
+     *
      * @param oid
      * @return loaded list Valintakoe's
      */
     @GET
     @Path("{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
+    public List<ValintakoeRDTO> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 
-
-    @PUT
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String updateHakukohde(HakukohdeDTO hakukohdeDTO);
-
-    @DELETE
-    @Path("{oid}")
-    public void deleteHakukohde(@PathParam("oid") String hakukohdeOid);
-    
     /**
      * /hakukohde/OID/nimi
      *
@@ -147,5 +123,18 @@ public interface HakukohdeResource {
     @Path("{oid}/nimi")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeNimiRDTO getHakukohdeNimi(@PathParam("oid") String oid);
+
+    /**
+     * /hakukohde/OID/valintaperusteet
+     *
+     * Hakukohteen vaaditut avaimet lukion valintaperusteisiin
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/valintaperusteet")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakukohdeValintaperusteetDTO getHakukohdeValintaperusteet(@PathParam("oid") String oid);
 
 }

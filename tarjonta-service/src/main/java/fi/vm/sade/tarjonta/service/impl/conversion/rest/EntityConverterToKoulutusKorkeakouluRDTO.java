@@ -31,14 +31,13 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUriV1DTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.SuunniteltuKestoV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.UiMetaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TekstiV1RDTO;
-import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.MetaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -67,6 +66,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
     @Autowired
     private OrganisaatioService organisaatioService;
 
+    private boolean showMeta;
+
     @Override
     public KoulutusKorkeakouluV1RDTO convert(KoulutusmoduuliToteutus komoto) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -75,21 +76,27 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
             return kkDto;
         }
 
+        showMeta = komoto.isShowMeta();
+
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         kkDto.setOid(komoto.getOid());
         kkDto.setKomotoOid(komoto.getOid());
         kkDto.setKomoOid(komo.getOid());
         kkDto.setTila(komoto.getTila());
+        kkDto.setModified(komoto.getUpdated());
+        kkDto.setModifiedBy(komoto.getLastUpdatedByOid());
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
         // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
         kkDto.setKoulutuksenAlkamisPvm(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
-        kkDto.setOpintojenLaajuus(simpleUiDTO("unavailable"));
-        kkDto.setKoulutuskoodi(convertToUiMetaDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
 
-        TekstiV1RDTO<KomotoTeksti> komotoKuvaus = new TekstiV1RDTO<KomotoTeksti>();
-        komotoKuvaus.setTekstis(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit()).getTekstis());
+        KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
+        komotoKuvaus.putAll(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), showMeta));
         kkDto.setKuvausKomoto(komotoKuvaus);
+
+        KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
+        komoKuvaus.putAll(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
+        kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
@@ -101,41 +108,45 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
                 kkDto.setKoulutusohjelma(koulutusohjelmaUiMetaDTO(komo.getNimi(), DEMO_LOCALE, koulutusasteTyyppi + "->koulutusohjelma"));
                 break;
             case AMMATILLINEN_PERUSKOULUTUS:
-                kkDto.setKoulutusohjelma(convertToUiMetaDTO(komo.getKoulutusohjelmaKoodi(), DEMO_LOCALE, koulutusasteTyyppi + "->koulutusohjelma"));
+                kkDto.setKoulutusohjelma(convertToNimiDTO(komo.getKoulutusohjelmaKoodi(), DEMO_LOCALE, koulutusasteTyyppi + "->koulutusohjelma", false));
                 break;
             case LUKIOKOULUTUS:
-                kkDto.setKoulutusohjelma(convertToUiMetaDTO(komo.getLukiolinja(), DEMO_LOCALE, koulutusasteTyyppi + "->lukiolinja"));
+                kkDto.setKoulutusohjelma(convertToNimiDTO(komo.getLukiolinja(), DEMO_LOCALE, koulutusasteTyyppi + "->lukiolinja", false));
                 break;
         }
-
-        kkDto.setTutkinto(komoData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, "tutkinto")); //correct data mapping?
-        kkDto.setOpintojenLaajuus(komoData(komo.getLaajuusArvo(), DEMO_LOCALE, "OpintojenLaajuus (arvo uri)"));
+        kkDto.setKoulutuskoodi(convertToKoodiDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, "koulutuskoodi"));
+        kkDto.setTutkinto(koodiData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, "tutkinto")); //correct data mapping?
+        kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, "OpintojenLaajuus (arvo uri)"));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
         kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
         kkDto.setOrganisaatio(searchOrganisaationNimi(komoto.getTarjoaja()));
-        kkDto.setKoulutusaste(komoData(komo.getKoulutusAste(), DEMO_LOCALE, "KoulutusAste"));
-        kkDto.setKoulutusala(komoData(komo.getKoulutusala(), DEMO_LOCALE, "Koulutusala"));
-        kkDto.setOpintoala(komoData(komo.getOpintoala(), DEMO_LOCALE, "Opintoala"));
-        //kkDto.setTutkinto(komoData(komo.getTutkinto(), DEMO_LOCALE, "Tutkinto"));
-        kkDto.setTutkintonimike(komoData(komo.getTutkintonimike(), DEMO_LOCALE, "Tutkintonimike"));
+        kkDto.setKoulutusaste(koodiData(komo.getKoulutusAste(), DEMO_LOCALE, "KoulutusAste"));
+        kkDto.setKoulutusala(koodiData(komo.getKoulutusala(), DEMO_LOCALE, "Koulutusala"));
+        kkDto.setOpintoala(koodiData(komo.getOpintoala(), DEMO_LOCALE, "Opintoala"));
+        kkDto.setTutkintonimike(koodiData(komo.getTutkintonimike(), DEMO_LOCALE, "Tutkintonimike"));
         kkDto.setEqf(komoData(komo.getEqfLuokitus(), DEMO_LOCALE, "EQF", true));
-
-        kkDto.setTeemas(convertToUiMetaDTO(komoto.getTeemas(), DEMO_LOCALE, "teemas"));
-        kkDto.setOpetuskielis(convertToUiMetaDTO(komoto.getOpetuskielis(), DEMO_LOCALE, "Opetuskielis"));
+        kkDto.setTeemas(convertToKoodiDTO(komoto.getTeemas(), DEMO_LOCALE, "teemas"));
+        if (komoto.getAihees() != null) {
+            kkDto.setAihees(convertToKoodiDTO(komoto.getAihees(),DEMO_LOCALE,"aihees"));
+        }
+        kkDto.setOpetuskielis(convertToKoodiDTO(komoto.getOpetuskielis(), DEMO_LOCALE, "Opetuskielis"));
         final String maksullisuus = komoto.getMaksullisuus();
         kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
-        kkDto.setOpetusmuodos(convertToUiMetaDTO(komoto.getOpetusmuotos(), DEMO_LOCALE, "opetusmuodos"));
-        kkDto.setPohjakoulutusvaatimukset(convertToUiMetaDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
-        kkDto.setSuunniteltuKesto(suunniteltuKestoDTO(komoto.getSuunniteltuKestoArvo(), komoto.getSuunniteltuKestoYksikko()));
-        kkDto.setAmmattinimikkeet(convertToUiMetaDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
+        kkDto.setOpetusmuodos(convertToKoodiDTO(komoto.getOpetusmuotos(), DEMO_LOCALE, "opetusmuodos"));
+        if (komoto.getOpetusAikas() != null) {
+            kkDto.setOpetusAikas(convertToKoodiDTO(komoto.getOpetusAikas(),DEMO_LOCALE,"opetusaikas"));
+        }
+        if (komoto.getOpetusPaikkas() != null) {
+            kkDto.setOpetusPaikkas(convertToKoodiDTO(komoto.getOpetusPaikkas(),DEMO_LOCALE,"opetuspaikkas"));
+        }
+        kkDto.setPohjakoulutusvaatimukset(convertToKoodiDTO(komoto.getKkPohjakoulutusvaatimus(), DEMO_LOCALE, "pohjakoulutusvaatimukset"));
+        kkDto.setSuunniteltuKestoTyyppi(koodiData(komoto.getSuunniteltuKestoYksikko(), DEMO_LOCALE, "kestotyyppi"));
+        kkDto.setSuunniteltuKestoArvo(komoto.getSuunniteltuKestoArvo());
+        kkDto.setAmmattinimikkeet(convertToKoodiDTO(komoto.getAmmattinimikes(), DEMO_LOCALE, "Ammattinimikeet"));
 
         if (komoto.getHinta() != null) {
             kkDto.setHinta(komoto.getHinta().doubleValue());
         }
-
-        TekstiV1RDTO<KomoTeksti> komoKuvaus = new TekstiV1RDTO<KomoTeksti>();
-        komoKuvaus.setTekstis(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit()).getTekstis());
-        kkDto.setKuvausKomo(komoKuvaus);
 
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
@@ -150,14 +161,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return "";
     }
 
-    private UiV1RDTO simpleUiDTO(final String arvo) {
-        UiV1RDTO dto = new UiV1RDTO();
-        dto.setArvo(nullStr(arvo));
-        return dto;
-    }
-
-    private static UiMetaV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final String langCode, final String msg) {
-        UiMetaV1RDTO meta = new UiMetaV1RDTO();
+    private NimiV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final String langCode, final String msg) {
+        NimiV1RDTO data = new NimiV1RDTO();
         final String code = langCode.toLowerCase();
 
         for (TekstiKaannos tk : mt.getTekstis()) {
@@ -165,138 +170,132 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(tk.getKieliKoodi());
             final String koodiUri = type.getKoodiUri();
             final String text = tk.getArvo();
-
-            LOG.debug("contains: {} {}", tk.getKieliKoodi(), type.getVersio());
-
-            if (koodiUri.contains(code)) {
-                meta.setArvo(text); //in user's language.
+            data.getTekstis().put(koodiUri, text);
+            if (showMeta) {
+                data.getMeta().put(koodiUri, convertToKoodiUriDTO(koodiUri, langCode, "koulutusohjelma"));
             }
-            meta.getMeta().put(koodiUri, new UiV1RDTO(null, koodiUri, type.getVersio() + "", text));
         }
-        return meta;
+        return data;
     }
 
-    private SuunniteltuKestoV1RDTO suunniteltuKestoDTO(final String kestoArvo, String kestoArvoKoodiUri) {
-        SuunniteltuKestoV1RDTO kesto = new SuunniteltuKestoV1RDTO();
-        SuunniteltuKestoV1RDTO dto = (SuunniteltuKestoV1RDTO) convertToKoodiUriDTO(kesto, kestoArvoKoodiUri, DEMO_LOCALE, "tutkinto-ohjelma->SuunniteltuKestoTyyppi", false);
-        dto.setArvo(nullStr(kestoArvo));
-        return dto;
+    private void convertKoodistoData(KoodiV1RDTO dto, String fromKoodiUri, final String arvo) {
+        if (fromKoodiUri != null && !fromKoodiUri.isEmpty()) {
+            final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(fromKoodiUri);
+            dto.setUri(type.getKoodiUri());
+            dto.setVersio(type.getVersio());
+            dto.setArvo(arvo);
+            dto.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(fromKoodiUri, new Locale("FI")));
+        }
     }
 
-    private KoodiUriV1DTO convertKoodiUri(final String koodistoKoodiUri, final String arvo) {
-        KoodiUriV1DTO koodiUri = new KoodiUriV1DTO();
+    private void convertKoodistoKieliData(KoodiV1RDTO dto, String koodiUri, String kieliUri, final String arvo, Locale locale) {
+        if (kieliUri != null && !kieliUri.isEmpty()) {
+            final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kieliUri);
+            dto.setKieliUri(type.getKoodiUri());
+            dto.setKieliVersio(type.getVersio() + "");
+            dto.setKieliArvo(arvo);
+            dto.setKieliKaannos(tarjontaKoodistoHelper.getKoodiNimi(kieliUri, locale));
+            dto.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(koodiUri, new Locale(arvo)));
+        }
+    }
+
+    private KoodiV1RDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName, boolean allowNullKoodi) {
         if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
-            final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodistoKoodiUri);
-            koodiUri.setUri(type.getKoodiUri());
-            koodiUri.setVersio(type.getVersio() + "");
+            return convertToKoodiDTO(koodistoKoodiUri, locale, fieldName, allowNullKoodi);
         }
-
-        koodiUri.setArvo(arvo);
-        koodiUri.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(koodiUri.getUri(), new Locale("FI")));
-
-        return koodiUri;
+        return new KoodiV1RDTO();
     }
 
-    private UiV1RDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName, boolean allowNullKoodi) {
-        if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
-            return convertToUiMetaDTO(koodistoKoodiUri, locale, fieldName, allowNullKoodi);
-        }
-        return simpleUiDTO(null);
-    }
-
-    private UiV1RDTO komoData(String koodistoKoodiUri, final String locale, final String fieldName) {
+    private KoodiV1RDTO koodiData(String koodistoKoodiUri, final String locale, final String fieldName) {
         return komoData(koodistoKoodiUri, locale, fieldName, false);
     }
 
-    private UiMetaV1RDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean allowNullKoodi) {
-        UiMetaV1RDTO koodiUriDto = new UiMetaV1RDTO();
-        convertKoodiUriToKoodiUriListDTO(fromKoodiUri, koodiUriDto, new Locale(langCode.toLowerCase()), fieldName, allowNullKoodi);
+    private MetaV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean allowNullKoodi) {
+        MetaV1RDTO koodiUriDto = new MetaV1RDTO();
+        convertKoodiUriToKoodiDTO(fromKoodiUri, koodiUriDto, new Locale(langCode.toLowerCase()), fieldName, allowNullKoodi);
         return koodiUriDto;
     }
 
-    private UiMetaV1RDTO convertToUiMetaDTO(final String fromKoodiUri, final String langCode, final String fieldName) {
-        return convertToUiMetaDTO(fromKoodiUri, langCode, fieldName, false);
+    private MetaV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final String fieldName) {
+        return convertToKoodiDTO(fromKoodiUri, langCode, fieldName, false);
     }
 
-    private UiMetaV1RDTO convertToUiMetaDTO(final Set<KoodistoUri> fromKoodiUris, final String langCode, final String fieldName) {
-        UiMetaV1RDTO koodiUriListDTO = new UiMetaV1RDTO();
+    private NimiV1RDTO convertToNimiDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean allowNullKoodi) {
+        NimiV1RDTO koodiUriDto = new NimiV1RDTO();
+        convertKoodiUriToKoodiDTO(fromKoodiUri, koodiUriDto, new Locale(langCode.toLowerCase()), fieldName, allowNullKoodi);
+        return koodiUriDto;
+    }
+
+    private KoodiUrisV1RDTO convertToKoodiDTO(final Set<KoodistoUri> fromKoodiUris, final String langCode, final String fieldName) {
+        KoodiUrisV1RDTO koodiMapDto = new KoodiUrisV1RDTO();
         for (KoodistoUri koodiUri : fromKoodiUris) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodiUri.getKoodiUri());
 
-            //Meta key koodi URI must not have the hashtag!
-            koodiUriListDTO.getMeta().put(type.getKoodiUri(), convertToKoodiUriDTO(koodiUri.getKoodiUri(), langCode, fieldName, false));
+            koodiMapDto.getUris().put(type.getKoodiUri(), type.getVersio());
+            if (showMeta) {
+                //Meta key koodi URI must not have the hashtag!
+                koodiMapDto.getMeta().put(type.getKoodiUri(), convertToKoodiUriDTO(type.getKoodiUri(), langCode, fieldName));
+            }
         }
 
-        return koodiUriListDTO;
+        return koodiMapDto;
     }
 
-    private UiV1RDTO convertToKoodiUriDTO(UiV1RDTO uiDto, final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
+    private KoodiV1RDTO convertToKoodiUriDTO(KoodiV1RDTO uiDto, final String fromKoodiUri, final String langCode, final String fieldName) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(langCode, "Locale object cannot be null. field in " + fieldName);
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 
         Preconditions.checkNotNull(koodiType, "No koodisto service koodi URI found by '" + fromKoodiUri + "'.");
-
-        KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodiType, new Locale(langCode.toLowerCase()));
-        if (convertKoodiLang) {
-            convertKoodiUri(fromKoodiUri, koodiType.getKoodiArvo());
-        } else {
-            uiDto.setKoodi(convertKoodiUri(fromKoodiUri, koodiType.getKoodiArvo()));
-        }
-
-        uiDto.setArvo(metadata.getNimi());
-
+        //KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodiType, new Locale(langCode.toLowerCase()));
+        convertKoodistoData(uiDto, fromKoodiUri, koodiType.getKoodiArvo());
         return uiDto;
     }
 
-    private UiV1RDTO convertToKoodiUriDTO(final String fromKoodiUri, final String langCode, final String fieldName, boolean convertKoodiLang) {
-        return convertToKoodiUriDTO(new UiV1RDTO(), fromKoodiUri, langCode, fieldName, convertKoodiLang);
+    private KoodiV1RDTO convertToKoodiUriDTO(final String fromKoodiUri, final String langCode, final String fieldName) {
+        return convertToKoodiUriDTO(new KoodiV1RDTO(), fromKoodiUri, langCode, fieldName);
     }
 
-    private void convertKoodiUriToKoodiUriListDTO(final String fromKoodiUri, final UiMetaV1RDTO koodiUriListDto, final Locale locale, final String fieldName, boolean allowNullKoodisto) {
+    private void convertKoodiUriToKoodiDTO(final String fromKoodiUri, final MetaV1RDTO koodiDto, final Locale locale, final String fieldName, boolean allowNullKoodisto) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(locale, "Locale object cannot be null in field in " + fieldName);
-        Preconditions.checkNotNull(koodiUriListDto, "UiListDTO object cannot be null in field " + fieldName);
+        Preconditions.checkNotNull(koodiDto, "KoodiV1RDTO object cannot be null in field " + fieldName);
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 
         if (koodiType == null && allowNullKoodisto) {
             //TODO: remove this code block when data is fixed
-            toKoodiUriDTO(koodiUriListDto, "", new KoodiType(), locale);
+            toKoodiUriDTO(koodiDto, "", new KoodiType(), locale);
         } else {
             Preconditions.checkNotNull(koodiType, "No result found by koodisto koodi URI '" + fromKoodiUri + "' in field " + fieldName);
-            toKoodiUriDTO(koodiUriListDto, fromKoodiUri, koodiType, locale);
-            addOtherLanguages(koodiUriListDto, koodiType.getMetadata(), locale);
+            toKoodiUriDTO(koodiDto, fromKoodiUri, koodiType, locale);
+            addOtherLanguages(koodiDto, koodiType.getMetadata(), locale);
         }
     }
 
-    private UiV1RDTO toKoodiUriDTO(UiV1RDTO uiDto, final String fromKoodiUri, final KoodiType koodiByUri, final Locale locale) {
+    private KoodiV1RDTO toKoodiUriDTO(KoodiV1RDTO dto, final String fromKoodiUri, final KoodiType koodiByUri, final Locale locale) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null.");
         Preconditions.checkNotNull(koodiByUri, "Locale object cannot be null.");
 
-        if (uiDto == null) {
-            uiDto = new UiV1RDTO();
+        if (dto == null) {
+            dto = new KoodiV1RDTO();
         }
-
-        uiDto.setKoodi(convertKoodiUri(fromKoodiUri, koodiByUri.getKoodiArvo()));
-
-        KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodiByUri, locale);
-        if (metadata != null) {
-            uiDto.setArvo(metadata.getNimi());
-        }
-        return uiDto;
+        convertKoodistoData(dto, fromKoodiUri, koodiByUri.getKoodiArvo());
+        return dto;
     }
 
-    private void addOtherLanguages(final UiMetaV1RDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
+    private void addOtherLanguages(final MetaV1RDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
         Preconditions.checkNotNull(koodiUriDto, "KoodiUriDTO object cannot be null.");
+
         for (KoodiMetadataType meta : metadata) {
             final String kieliUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(meta.getKieli().value());
 
-            UiV1RDTO dto = new UiV1RDTO();
-            dto.setKoodi(convertKoodiUri(kieliUri, meta.getKieli().value()));
-            dto.setArvo(meta.getNimi());
-            koodiUriDto.getMeta().put(kieliUri, dto);
+            KoodiV1RDTO dto = new KoodiV1RDTO();
+            convertKoodistoKieliData(dto, koodiUriDto.getUri(), kieliUri, meta.getKieli().value(), locale);
+            if (showMeta) {
+                koodiUriDto.getMeta().put(kieliUri, dto);
+            }
         }
     }
 

@@ -11,6 +11,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -19,9 +21,13 @@ import java.util.*;
 */
 public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,HakukohdeV1RDTO> {
 
+
+    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToRDTOConverter.class);
     @Override
     public HakukohdeV1RDTO convert(Hakukohde hakukohde)  {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
+
+
 
         hakukohdeRDTO.setHakukohteenNimiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getHakukohdeNimi()));
         hakukohdeRDTO.setVersion(hakukohde.getVersion());
@@ -38,7 +44,7 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
 
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
-           //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToTekstiDTOs(hakukohde.getHakukohdeMonikielinenNimi()));
+            //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
         for (String hakukelpoisuusVaatimus:hakukohde.getHakukelpoisuusVaatimukset()) {
@@ -73,16 +79,18 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         hakukohdeRDTO.setTila(hakukohde.getTila().name());
         hakukohdeRDTO.setValintaperustekuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getValintaperustekuvausKoodiUri()));
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
-        hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToTekstiDTOs(hakukohde.getLisatiedot()));
-        hakukohdeRDTO.setValintaperusteKuvaukset(CommonToDTOConverter.convertMonikielinenTekstiToTekstiRDOT(hakukohde.getValintaperusteKuvaus()));
+        hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToHashMap(hakukohde.getLisatiedot()));
+        if (hakukohde.getValintaperusteKuvaus() != null) {
+        hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getValintaperusteKuvaus()));
+        }
+        if (hakukohde.getSoraKuvaus() != null) {
+            hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToHashMap(hakukohde.getSoraKuvaus()));
+        }
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
+        LOG.debug("HAKUKOHDE LISATIEDOT : {} " , hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY" );
 
-        if (hakukohde.getLiites() != null) {
-            hakukohdeRDTO.setHakukohteenLiitteet(convertLiitteet(hakukohde.getLiites()));
-
-        }
 
         if (hakukohde.getValintakoes() != null) {
             hakukohdeRDTO.setValintakokeet(convertValintakokeet(hakukohde.getValintakoes()));
@@ -97,7 +105,7 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         HashMap<String,String> returnValue = new HashMap<String, String>();
 
         for (TekstiKaannos tekstiKaannos : teksti.getKaannoksetAsList()) {
-
+            LOG.debug("TEKSTIKAANNOS KIELI : {} ARVO : {} ", tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             returnValue.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
 
         }

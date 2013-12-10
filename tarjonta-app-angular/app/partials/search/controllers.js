@@ -16,6 +16,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 		};
 	}
 	
+	if(SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"].scope!==$scope) {
+		console.log("scope has changed???");
+		SharedStateService.state.puut["organisaatio"].scope = $scope;
+	}
+	
 	setDefaultHakuehdot();
 
 	$scope.oppilaitostyypit=Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
@@ -26,9 +31,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         $scope.oppilaitostyypit=koodit;
     });
 
-	$scope.hakukohdeResults = {};
-	$scope.koulutusResults = {};
-	
 	//valittu organisaatio populoidaan tänne
     $scope.organisaatio = {};
     
@@ -44,7 +46,10 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    	$scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
 
 	    	updateLocation();
-	    	$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.selectedOrgOid);
+	    	PermissionService.koulutus.canCreate($scope.organisaatio.currentNode.oid).then(function(data){
+	    		$scope.koulutusActions.canCreateKoulutus=data;
+	    	});
+	    	//$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.organisaatio.currentNode.oid);
 	    }
 	}, false);
 
@@ -96,6 +101,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
     
     $scope.searchedOrgOid = OPH_ORG_OID;
+	$scope.hakukohdeResults = {};
+	$scope.koulutusResults = {};
     
     $scope.spec = {
     		terms: fromParams("terms",""),
@@ -133,7 +140,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     }
 
     if (!$scope.selectedOrgName) {
-        OrganisaatioService.nimi($scope.selectedOrgOid).then(function(){$scope.selectedOrgName;});
+        OrganisaatioService.nimi($scope.selectedOrgOid).then(function(nimi){$scope.selectedOrgName=nimi});
     }
 
     function copyIfSet(dst, key, value, def) {
@@ -171,7 +178,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             $scope.selectedOrgName = n;
         });
         updateLocation();
-        updateSelection();
     }
 
     $scope.reset = function() {
@@ -187,10 +193,13 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	};
 
 	$scope.$watch( 'selection.koulutukset', function( newObj, oldObj ) {
-		
-	    $scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
-	    $scope.koulutusActions.canCreateHakukohde = PermissionService.hakukohde.canCreate(newObj);
-	    $scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate(newObj);
+		$scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
+		$scope.koulutusActions.canCreateHakukohde=false;
+
+		PermissionService.hakukohde.canCreate(newObj).then(function(result){
+			$scope.koulutusActions.canCreateHakukohde = result;
+		});
+
 
 	}, true);
 
@@ -207,14 +216,20 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     	var tt = TarjontaService.getTilat()[tila];
     	
     	var canRead = PermissionService[prefix].canPreview(oid);
+    	console.log("row actions can read",canRead);
     	
 		// tarkastele
 		if (canRead) {
 			ret.push({url:"#/"+prefix+"/"+oid, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
 		}
 		// muokkaa
-		if (tt.mutable && PermissionService[prefix].canEdit(oid)) {
-			ret.push({url:"#/"+prefix+"/"+oid+"/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
+		if (tt.mutable) {
+			 PermissionService[prefix].canEdit(oid).then(function(result){ 
+			 	console.log("row actions can edit", result);
+			 	if(result) {
+			 		ret.push({url:"#/"+prefix+"/"+oid+"/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
+			 	}
+			 });
 		}
 		// näytä hakukohteet
 		if (canRead) {
@@ -253,10 +268,14 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			break;
 		}
 		// poista
-		if (tt.removable && PermissionService[prefix].canDelete(oid)) {
-			ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
-				action: function(ev) {
-					$scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
+		if (tt.removable) {
+			PermissionService[prefix].canDelete(oid).then(function(result){
+				if(result){
+					ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
+						action: function(ev) {
+							$scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
+						}
+					});
 				}
 			});
 		}
@@ -427,6 +446,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 			controller: 'LuoKoulutusDialogiController',
 		});
 	};
+ 
 	
 //	
 //    

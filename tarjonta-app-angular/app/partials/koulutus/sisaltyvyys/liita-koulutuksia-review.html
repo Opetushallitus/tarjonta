@@ -1,0 +1,18 @@
+<div class="modal-body">
+    <!--pre>
+    {{treedata | json}}
+</pre-->
+
+    <tree-field 
+        style="overflow: scroll; height:300px"
+        review-mode="true"
+        names="model.hakutulos" 
+        oids="model.selectedOid" 
+        review-oids="model.reviewOids" 
+        lang="koodistoLocale"></tree-field>        
+
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="selectDialogi()"><div tt="sisaltyvyys.palaa"></div></button>
+        <button class="btn btn-primary" ng-click="ok()"><div tt="sisaltyvyys.tallenna"></div></button>
+    </div>
+</div>

@@ -20,7 +20,10 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
     function HakukohdeRoutingController($scope, $log, $routeParams, $route,Hakukohde) {
         $log.info("HakukohdeRoutingController()", $routeParams);
         $log.info("$route: ", $route);
+        $log.info("$route action: ", $route.current.$$route.action);
         $log.info("SCOPE: ", $scope);
+
+
 
         $log.info('HAKUKOHDE : ', $route.current.locals.hakukohdex.result);
         if ($route.current.locals.hakukohdex.result === undefined) {
@@ -29,11 +32,17 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 collapse: {
                     model : true
                 },
-                hakukohde : {}
+                hakukohde : {
+                    valintaperusteKuvaukset : {},
+                    soraKuvaukset : {}
+
+                }
             }
 
 
             $scope.model.hakukohde = $route.current.locals.hakukohdex;
+
+
 
         } else {
             var hakukohdeResource = new Hakukohde( $route.current.locals.hakukohdex.result);
@@ -47,7 +56,23 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
 
         }
 
+        if ($route.current.$$route.action === "hakukohde.review") {
+            console.log('Init languages');
 
+            //Get all kieles from hakukohdes names and additional informaty
+            var allKieles = new buckets.Set();
+
+            for (var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
+
+                allKieles.add(kieliUri);
+            }
+
+            for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
+                allKieles.add(kieliUri);
+            }
+            $scope.model.allkieles = allKieles.toArray();
+            console.log('ALL KIELES : ' , allKieles.toArray());
+        }
 
 
 

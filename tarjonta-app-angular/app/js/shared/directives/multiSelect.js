@@ -4,7 +4,6 @@ var app = angular.module('MultiSelect', ['pasvaz.bindonce']);
 
 app.directive('multiSelect', function($log) {
 
-
     function columnize(values, cols) {
         var ret = [];
         var row = [];
@@ -29,7 +28,7 @@ app.directive('multiSelect', function($log) {
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
-
+       
         if ($scope.columns == undefined) {
             $scope.columns = 1;
         }
@@ -53,11 +52,24 @@ app.directive('multiSelect', function($log) {
                     $scope.selection.push(preselection[i]);
                 }
             }
+            // TODO orderWith -tuki
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
             });
         }
 
+        // salli valintojen muuttaminen "ulkopuolelta"
+        $scope.$watch('selection', function(newValue, oldValue){
+           	for(var i=0;i<$scope.items.length;i++) {
+            	var item = $scope.items[i];
+           		if(newValue.indexOf(item.key)==-1 && item.selected){
+       				item.selected = false;
+           		} else if(newValue.indexOf(item.key)!=-1 && !item.selected) {
+           			item.selected = true;
+           		}            		
+           	}
+        });
+        	
         // checkbox-valinta
         $scope.toggle = function(k) {
             var p = $scope.selection.indexOf(k);
@@ -72,22 +84,35 @@ app.directive('multiSelect', function($log) {
         var key = $scope.key;
         var value = $scope.value;
         var columns = $scope.columns;
-
-
+    	var cw = $scope.orderWith();
+        
         var init = function(model) {
+
+
             for (var k in model) {
                 var e = model[k];
+                var w = 0;
+                if (cw) {
+                	w = cw.indexOf(e[key]);
+                    if (w==-1) {
+                    	w = cw.length;
+                    }
+                }
+                //console.log("cw="+cw+" -> w="+w);
                 $scope.items.push({
                     selected: $scope.selection.indexOf(e[key]) !== -1,
                     key: e[key],
-                    value: e[value]
+                    value: e[value],
+                    orderWith: w
                 });
                 $scope.names[e[key]] = e[value];
             }
 
             $scope.items.sort(function(a, b) {
-                return a.value.localeCompare(b.value);
+                return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
+            
+            //console.log("ITEMS", $scope.items);
 
             $scope.rows = columnize($scope.items, columns);
         }
@@ -111,8 +136,9 @@ app.directive('multiSelect', function($log) {
             columns: "@", // sarakkeiden määrä (vain checklist)
             key: "@", // arvo-avain (vakio: koodiUri)
             value: "@", // nimi-avain (vakio: koodiNimi)
+            orderWith: "&", // lista avaimista jotka järjestetään ensimmäisiksi
             model: "=", // map jossa arvo->nimi
-            promise: "=", // async
+            promise: "=", // async TODO yhdistä modeliin
             selection: "=" // lista jonne valinnat päivitetään
         }
     }

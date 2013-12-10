@@ -1,12 +1,12 @@
-var app = angular.module('Tarjonta', ['ngResource', 'config', 'auth']);
+var app = angular.module('Tarjonta', ['ngResource', 'config']);
 
-app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, AuthService, CacheService, $q) {
+app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, CacheService, $q) {
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
 
     function localize(txt) {
-        if (txt == undefined || txt == null) {
+        if (txt == undefined || txt == null) {
             return txt;
         }
         var userLocale = LocalisationService.getLocale();
@@ -37,6 +37,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "terms=" + escape(args.terms) + "&" +
                     "state=" + escape(args.state) + "&" +
                     "season=" + escape(args.season) + "&" +
+                    "komoOid=" + escape(args.komoOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"
@@ -59,12 +60,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             searchTerms: args.terms,
             organisationOid: args.oid,
             tila: args.state,
+            hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year
+            alkamisVuosi: args.year,
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
-            result = result.result // unwrap v1
+            result = result.result; // unwrap v1
             for (var i in result.tulokset) {
                 var t = result.tulokset[i];
                 t.nimi = localize(t.nimi);
@@ -92,9 +95,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var params = {
             searchTerms: args.terms,
             organisationOid: args.oid,
+            koulutusOid: args.koulutusOid,
+            komoOid: args.komoOid,
             tila: args.state,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year
+            alkamisVuosi: args.year,
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
@@ -124,12 +130,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result.tulokset.sort(compareByName);
             return result;
         });
-    }
+    };
 
     dataFactory.evictHakutulokset = function() {
         CacheService.evict({pattern: "hakutulos/.*"});
         CacheService.evict({pattern: "koulutus/.*"});
-    }
+    };
 
     /**
      * Asettaa koulutuksen tai hakukohteen julkaisun tilan.
@@ -171,7 +177,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
-    }
+    };
 
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
@@ -179,7 +185,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
-    }
+    };
 
     /**
      * POST: Insert new KOMOTO + KOMO. API object must be valid.
@@ -227,7 +233,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         console.log('Inserting hakukohde : ', hakukohde);
 
         return ret.promise;
-    }
+    };
 
     dataFactory.saveKomoTekstis = function(oid) {
         var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': '@oid'});
@@ -264,6 +270,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutus = function(arg, func) {
         console.log("getKoulutus()");
+        //param meta=false filter all meta fields
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
@@ -275,7 +282,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.resourceKomoKuvaus = function(komotoOid) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': komotoOid}, {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis/komo", {'oid': komotoOid}, {
             update: {
                 method: 'PUT',
                 //withCredentials: true,
@@ -309,12 +316,137 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         var formData = new FormData();
-        formData.append('image', image.file, image.name);
+        var name = "";
+        if (!angular.isUndefined(image.file.name)) {
+            name = image.file.name;
+        } else {
+            console.warn("No image filename.");
+        }
+
+        formData.append('image', image.file, name);
+
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: angular.identity
         }).success(fnSuccess).error(fnError);
     };
+
+    dataFactory.resourceImage = function(komotoOid, kieliuri) {
+        if (angular.isUndefined(komotoOid) || komotoOid === null) {
+            throw new Error('Komoto OID cannot be undefined or null.');
+        }
+
+        if (angular.isUndefined(kieliuri) || kieliuri === null) {
+            throw new Error('Language URI cannot be undefined or null.');
+        }
+
+        var ResourceImge = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/kuva/:uri', {'oid': komotoOid, 'uri': kieliuri}, {
+            get: {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            'delete': {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
+
+        return ResourceImge;
+    };
+
+
+    dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
+    	console.log("resourceLink called!");
+    	dataFactory.resourceLink.save({parent:parent, children:angular.isArray(child)?child:[child]},fnSuccess, fnError);
+    };
+
+    /** 
+     * Linkityspalvelu -resurssi (palauttaa promisen)
+     * 
+     * -get: listaa lapset (vain oidit)
+     *    param: {oid:"oid"}
+     * -save: tee liitos
+     *    param: {parent:"oid", children:["oid", "oid2"]}
+     * -test: testaa liitos
+     *    param: {parent:"oid", children:["oid", "oid2"]}
+     * -parents: listaa parentit (vain oidit)
+     *    param: {child:"oid"}
+     * -delete: poista liitos
+     *    param: {parent:"oid", child:"oid"}
+     * 
+     * </pre>
+     */
+    dataFactory.resourceLink =
+            $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid",{}, {
+                checkput: {
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                },
+
+                put: {
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                },
+                test: {
+                	url:Config.env.tarjontaRestUrlPrefix + "link/test",
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    method:'POST'
+                },
+                parents: {
+                	url:Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
+                    isArray: false,
+                    method: 'GET',
+                },
+                remove: {
+                    method: 'DELETE',
+                	url:Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
+                	
+                }
+            });
+
+
+    /** 
+     * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
+     * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
+     */
+    dataFactory.getKoulutuksetPromise = function(oidRetrievePromise) {
+
+        var deferred = $q.defer();
+        oidRetrievePromise.then(function(parentOids) {
+            var promises = [];
+            var koulutukset = [];
+            for (var i = 0; i < parentOids.result.length; i++) {
+                var promise = dataFactory.haeKoulutukset({komoOid: parentOids.result[i]}).then(function(result) {
+                    if (result.tulokset && result.tulokset.length > 0) {
+                        if(koulutukset.indexOf(result.tulokset[0])==-1) {
+                        	koulutukset.push(result.tulokset[0]);
+                        }
+                    }
+                });
+                promises.push(promise);
+            }
+            $q.all(promises).then(function() {
+                deferred.resolve(koulutukset);
+            });
+
+        }, function() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    };
+
+    /** 
+     * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+     */
+    dataFactory.getChildKoulutuksetPromise = function(koulutusoid) {
+        return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({oid: koulutusoid}).$promise);
+    };
+
+    /** 
+     * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+     */
+    dataFactory.getParentKoulutuksetPromise = function(koulutusoid) {
+        return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
+    };
+
 
     return dataFactory;
 });

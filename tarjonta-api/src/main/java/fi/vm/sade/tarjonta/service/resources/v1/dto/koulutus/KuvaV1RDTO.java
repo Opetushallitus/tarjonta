@@ -15,24 +15,33 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
  *
  * @author jani
  */
+@ApiModel(value = "Kuvan syöttämiseen ja hakemiseen käytettävä rajapintaolio")
 public class KuvaV1RDTO implements Serializable {
 
+    @ApiModelProperty(value = "Koodisto kieli uri", required = false)
+    private String kieliUri;
+    @ApiModelProperty(value = "Tiedoston alkuperäinen nimi", required = false)
     private String filename;
+    @ApiModelProperty(value = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = false)
     private String mimeType;
+    @ApiModelProperty(value = "Kuvan binaari base64-enkoodauksella", required = false)
     private String base64data;
 
     public KuvaV1RDTO() {
     }
 
-    public KuvaV1RDTO(String filename, String mimeType, String base64data) {
+    public KuvaV1RDTO(String filename, String mimeType, String kieliUri, String base64data) {
         this.filename = filename;
         this.mimeType = mimeType;
+        this.kieliUri = kieliUri;
         this.base64data = base64data;
     }
 
@@ -76,5 +85,19 @@ public class KuvaV1RDTO implements Serializable {
      */
     public void setBase64data(String base64data) {
         this.base64data = base64data;
+    }
+
+    /**
+     * @return the kieliUri
+     */
+    public String getKieliUri() {
+        return kieliUri;
+    }
+
+    /**
+     * @param kieliUri the kieliUri to set
+     */
+    public void setKieliUri(String kieliUri) {
+        this.kieliUri = kieliUri;
     }
 }

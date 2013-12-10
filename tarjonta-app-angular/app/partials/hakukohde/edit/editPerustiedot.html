@@ -1,4 +1,3 @@
-
 <table class="tarjontaForm">
 
 	<!-- hakukohteen nimi -->
@@ -6,6 +5,7 @@
 		<th tt="kk.hakukohde.hakukohdenimi"/>
 		<td>
 			<mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
+
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -16,12 +16,22 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.haut"/>
 		<td>
-			<select ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+			<select class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
 		</td>
 	</tr>
+
+    <tr data-ng-show="model.showHakuaikas">
+        <th tt="kk.hakukohde.hakuaikas"/>
+        <td>
+            <select class="wide" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.nimi for hakuaika in model.hakuaikas"/>
+        </td>
+        <td>
+            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+        </td>
+    </tr>
 
 	<!-- hakukelpoisuusvaatimukset -->
 	<tr class="required">
@@ -31,7 +41,7 @@
                     model="temp"
                     selection="model.hakukohde.hakukelpoisuusvaatimusUris"
                     promise="model.hakukelpoisuusVaatimusPromise"
-                    display="dualpane"/>
+                    display="checklist"/>
 			<!-- TODO multiselect -->
 			<!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
 		</td>
@@ -44,7 +54,7 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"/>
 		<td>
-			<input class="thin" type="text" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
+			<input class="thin" type="number" min="1" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -119,7 +129,7 @@
 	<tr>
 		<th tt="kk.hakukohde.liitteidenToimitusPvm"/>
 		<td>
-			<input type="checkbox" ng-model="kaytetaanHaunPaattymisenAikaa"/>
+			<input type="checkbox" ng-change="model.checkboxChange()" ng-model="model.hakukohde.kaytetaanHaunPaattymisenAikaa"/>
 			<span tt="kk.hakukohde.kaytetaanHaunPaattymisenAikaa"></span><br/>
 		</td>
 		<td>
@@ -129,34 +139,29 @@
 	<tr>
 		<th></th>
 		<td>
+
 			<date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
 		</td>
 	</tr>
-		
+
 </table>
 
-<!-- TODO mkTextarea -->
-<div class="container-fluid">
-    <div class="row-fluid">
-            <div class="span2 label-right"><div tt="kk.hakukohde.lisatietoja.hakemisesta"></div></div>
+<h4 tt="kk.hakukohde.lisatietoja.hakemisesta"></h4>
 
-        <div class="span4">
-            <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="'FI'"></koodistotypeahead>
-        </div>
-        <div class="span5">
-            <accordion close-others="oneAtATime">
-                <accordion-group heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
-                   <!-- <tiny-mce-rich-text text="lisatieto.teksti"></tiny-mce-rich-text> -->
-                    <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                </accordion-group>
+<mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
 
+<h4 tt="kk.hakukohde.hakukelpoisuusvaatimukset"></h4>
+<mk-rich-textarea model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
 
+<!-- 
+<koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
 
-            </accordion>
-        </div>
-
-    </div>
-</div>
+<tabset>
+    <tab  heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
+        <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
+    </tab>
+</tabset>
+ -->

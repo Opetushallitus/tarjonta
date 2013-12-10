@@ -34,7 +34,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             kieliSet.add(liite.kieliNimi);
 
             $scope.model.liitteet.push(liite);
+            console.log('LIITTEET: ' , $scope.model.liitteet);
             $scope.model.liitteenkielet = kieliSet.toArray();
+            console.log('LIITTEEN KIELET: ' , $scope.model.liitteenkielet);
         }
 
     } ;
@@ -53,7 +55,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     var removeLiiteFromList = function(liite) {
         var index = $scope.model.liitteet.indexOf(liite);
         $scope.model.liitteet.splice(index,1);
-        liite.hakukohdeOid = $scope.model.hakukohdeOid;
+        liite.hakukohdeOid = $scope.model.hakukohde.oid;
         liite.liiteId = liite.oid;
 
         var liiteResource = new Liite(liite);
@@ -120,7 +122,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         });
 
         modalInstance.result.then(function(selectedItem){
-             liite.hakukohdeOid = $scope.model.hakukohdeOid;
+             liite.hakukohdeOid = $scope.model.hakukohde.oid;
             console.log('GOT LIITE: ', selectedItem);
              var liiteResurssi  = new Liite(selectedItem);
              if (selectedItem.oid === undefined) {
@@ -182,7 +184,9 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
 
     $scope.model.liite = liite;
 
+    $scope.model.validationmsgs = [];
 
+    $scope.model.showAlert = false;
 
 
     //Koodisto helper methods
@@ -236,6 +240,26 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
         selectedKieli = kieli;
     };
 
+    var validateLiite = function() {
+
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+        if (selectedKieli === undefined) {
+            $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.kieli.req.msg'));
+        }
+
+        if ($scope.model.liite.toimitettavaMennessa === undefined ) {
+            $scope.model.validationmsgs.push(LocalisationService.t('tarjonta.hakukohde.liite.modal.toimitettavaMennessa.req.msg'));
+        }
+
+        if ($scope.model.validationmsgs.length > 0) {
+            return false;
+        }
+
+        return true;
+    };
+
     $scope.model.onKieliTypeAheadChange = function() {
         var koodi = findKoodiWithArvo($scope.model.liite.liitteenToimitusOsoite.postinumeroArvo,$scope.model.koodis);
 
@@ -248,15 +272,25 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
     };
 
     $scope.model.save = function() {
-        if (selectedKieli !== undefined) {
-            $scope.model.liite.liitteenKuvaus.nimi =  selectedKieli.koodiNimi;
-            $scope.model.liite.liitteenKuvaus.arvo = selectedKieli.koodiArvo;
-            $scope.model.liite.liitteenKuvaus.versio = selectedKieli.koodiVersio;
-        }
+        $scope.model.showAlert = false;
+       if (validateLiite()) {
+           $scope.model.liite.liitteenKuvaus.nimi =  selectedKieli.koodiNimi;
+           $scope.model.liite.liitteenKuvaus.arvo = selectedKieli.koodiArvo;
+           $scope.model.liite.liitteenKuvaus.versio = selectedKieli.koodiVersio;
+           $scope.model.liite.liitteenKuvaus.uri = $scope.model.liite.kieliUri;
 
-        $scope.model.liite.liitteenKuvaus.uri = $scope.model.liite.kieliUri;
-        $modalInstance.close($scope.model.liite);
+
+           $modalInstance.close($scope.model.liite);
+
+
+       } else {
+
+           $scope.model.showAlert = true;
+       }
+
     };
+
+
 
     $scope.model.kaytaOrganisaationPostiOsoitetta = function() {
 

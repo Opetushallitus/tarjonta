@@ -1,0 +1,42 @@
+div.richTextArea {
+}
+
+div.richTextArea > div.editor, div.richTextArea > div.preview {
+	max-height:220px;
+	min-height:1em;
+}
+	
+div.richTextArea > div.preview {
+	/*border: 1px dashed #f0f0f0;*/
+	padding:1px;
+	overflow:auto;
+	cursor:pointer;
+}
+
+div.richTextArea > div.preview:hover {
+	padding:0;
+	border: 1px dotted #000000;
+	overflow:auto;
+}
+
+div.richTextArea > div.editor {
+	overflow:hidden;
+	height:220px;
+	padding: 1px 0 1px 0;
+}
+
+div.richTextArea > div.editor > div.mce-tinymce {
+/*	height:100%;*/
+}
+
+div.richTextArea > div.editor > div.mce-tinymce > iframe {
+	height:auto;	
+}
+
+div.richTextArea > div.editor > p {
+	text-align:right;
+}
+
+div.richTextArea > div.editor > p.overflow {
+	color:#e0a020;
+}

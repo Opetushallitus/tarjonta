@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
@@ -9,14 +11,16 @@ import java.util.Date;
 /*
 * @author: Tuomas Katva 10/22/13
 */
+@ApiModel(value = "V1 Hakukohde's attachment(liite) REST-api model, used by KK-ui")
 public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
+    @ApiModelProperty(value = "Liite's hakukohde oid", required=true)
     private String hakukohdeOid;
-
+    @ApiModelProperty(value = "Liite's name language uri", required = true)
     private String kieliUri;
-
+    @ApiModelProperty(value = "Liite's name's language's name, used for displaying the value", required = false)
     private String kieliNimi;
-
+    @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
 
     private TekstiRDTO liitteenKuvaus;

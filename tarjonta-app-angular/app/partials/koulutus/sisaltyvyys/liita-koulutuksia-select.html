@@ -1,0 +1,47 @@
+<b><div tt="sisaltyvyys.liitoksen-luonti-teksti"></div></b>
+
+<!--controls-notify type="message" tt="sisaltyvyys.uuden-luonti-teksti" tp="[ model.organisaatio.nimi ]"></controls-notify-->
+<table>
+    <tr>
+        <td><div tt="sisaltyvyys.nayta-tutkintotyyppi"></div><td>
+        <td><div tt="sisaltyvyys.hae-koulutuksia"></div><td>   
+    </tr>
+    <tr>
+        <td><select required name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select><td>
+        <td><input type="text" data-ng-model="model.spec.terms" /></td>    
+    </tr>
+</table>
+
+<div>
+    <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="sisaltyvyys.tyhjenna"></div></button>
+    <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="sisaltyvyys.hae"></div></button>
+</div>
+
+<tabset>
+    <tab heading="{{model.text.list}}">   
+        <div>
+            <div class="gridStyle" ng-grid="gridOptions"></div>
+        </div>
+    </tab>
+    <tab heading="{{model.text.hierarchy}}"> 
+        <tree-field 
+            style="overflow: scroll; height:200px"
+            names="model.hakutulos"
+            oids="model.searchKomoOids" 
+            review-oids="null" 
+            fn-click-handler="selectTreeHandler" 
+            lang="koodistoLocale"></tree-field>        
+    </tab>
+</tabset>
+
+<div >
+    <div tt="sisaltyvyys.valitut-koulutukset"></div>   
+    <div style="overflow: scroll; height:100px">
+        <ul><li ng-repeat="obj in model.newOids" ng-click="removeItem(obj)">{{obj.nimi}} X</li></ul>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()"><div tt="sisaltyvyys.peruuta"></div></button>
+    <button class="btn btn-primary" ng-disabled="model.newOids.length == 0" ng-click="reviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+</div>

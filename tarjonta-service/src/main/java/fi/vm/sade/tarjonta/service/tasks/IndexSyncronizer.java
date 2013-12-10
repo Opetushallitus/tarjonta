@@ -24,9 +24,9 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 @EnableScheduling
 @Profile("default")
 public class IndexSyncronizer {
-    
+
     final Logger logger = LoggerFactory.getLogger(IndexSyncronizer.class);
-    
+
     @Autowired
     private IndexerDAO indexerDao;
 
@@ -36,27 +36,27 @@ public class IndexSyncronizer {
     @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
-        logger.debug("Etsitään indeksoimattomia hakukohteita");
+        logger.debug("Searching for unindexed hakukohdes...");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
         for (Long id : ids) {
             Date now = new Date();
-            logger.debug("indeksoidaan hakukohde " + id);
+            logger.debug("  index now: id = {}", id);
             indexerResource.indexHakukohteet(Lists.newArrayList(id));
             indexerDao.updateHakukohdeIndexed(id, now);
-        }            
+        }
     }
 
     @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateHakukohteet() {
-        logger.debug("Etsitään indeksoimattomia koulutuksia");
+        logger.debug("Searching for unindexed koulutukses...");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
         for (Long id : ids) {
-            logger.debug("indeksoidaan koulutus " + id);
+            logger.debug("  index now: id = {}", id);
             Date now = new Date();
             indexerResource.indexKoulutukset(Lists.newArrayList(id));
             indexerDao.updateKoulutusIndexed(id, now);
-        }            
+        }
     }
 
 }

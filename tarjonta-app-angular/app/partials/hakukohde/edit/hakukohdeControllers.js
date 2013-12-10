@@ -19,48 +19,120 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','config','ui.tinymce']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde, HakuService, $modal ,Config,$location) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
 
 
-
-    $scope.model.collapse.model = true;
-
-
-
-    //Initialize all helper etc. variable in the beginning of the controller
+    //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
+
+	$scope.formControls = {}; // controls-layouttia varten
+
     //All kieles is received from koodistomultiselect
     $scope.model.allkieles = [];
     $scope.model.selectedKieliUris = [];
+	
+    $scope.model.userLang  =  AuthService.getLanguage();
 
-    if ($scope.model.hakukohde.lisatiedot !== undefined) {
-        angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
-
-            $scope.model.selectedKieliUris.push(lisatieto.uri);
-        });
+    if ($scope.model.userLang === undefined) {
+        $scope.model.userLang = "FI";
     }
 
-    //Placeholder for multiselect remove when refactored
-    $scope.model.temp = {};
-    //TODO: fix and retrieve language from somewhere
-    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('hakukelpoisuusvaatimusta','fi');
+    $scope.model.showError = false;
 
-    $scope.model.postinumeroarvo = {
+    $scope.model.showHakuaikas = false;
 
-    };
+    $scope.model.showSuccess = false;
 
+    $scope.model.collapse.model = true;
+
+    $scope.model.koulutusnimet = [];
+
+    $scope.model.validationmsgs = [];
+
+    $scope.model.hakus = [];
+
+    $scope.model.hakuaikas = [];
+
+    $scope.model.liitteidenToimitusPvm = new Date();
+
+    var koulutusSet = new buckets.Set();
+
+    /*
+        ----->  Helper functions
+     */
+
+    var showSuccess = function() {
+        $scope.model.showSuccess = true;
+        $scope.model.showError = false;
+        $scope.model.validationmsgs = [];
+        $scope.model.hakukohdeTabsDisabled = false;
+    }
+
+
+    var validateHakukohde = function() {
+
+        var errors = [];
+
+        if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
+
+
+            var error = {};
+            error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
+            errors.push(error);
+
+
+        }
+
+        if (errors.length < 1 ) {
+            return true;
+        } else {
+            showError(errors);
+            return false;
+        }
+
+
+    }
+
+    var getHakuWithOid = function(hakuOid) {
+
+        var foundHaku;
+
+        angular.forEach($scope.model.hakus,function(haku){
+           if (haku.oid === hakuOid) {
+               foundHaku = haku;
+           }
+        });
+
+        return foundHaku;
+
+    }
+
+    var showError = function(errorArray) {
+    	
+    	$scope.model.validationmsgs = [];
+
+        angular.forEach(errorArray,function(error) {
+
+
+            $scope.model.validationmsgs.push(error.errorMessageKey);
+
+
+        });
+        $scope.model.showError = true;
+        $scope.model.showSuccess = false;
+    }
 
     var removeLisatieto = function(koodi){
 
         var foundLisatieto;
-         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto) {
-               if (lisatieto.uri === koodi) {
-                   foundLisatieto = lisatieto;
-               }
-         });
+        angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto) {
+            if (lisatieto.uri === koodi) {
+                foundLisatieto = lisatieto;
+            }
+        });
 
         if (foundLisatieto !== undefined) {
             var index = $scope.model.hakukohde.lisatiedot.indexOf(foundLisatieto);
@@ -69,12 +141,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
-    //Koodisto helper methods
+    /*
+
+     ------>  Koodisto helper methods
+
+     */
     var findKoodiWithArvo = function(koodi,koodis)  {
 
 
-        console.log('Trying to find with : ',koodi);
-        console.log('From :', koodis.length);
         var foundKoodi;
 
         angular.forEach(koodis,function(koodiLoop){
@@ -103,7 +177,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
 
+    /*
+
+        ----> Scope function to express whether hakukohde can be saved or not
+
+     */
+
     $scope.model.canSaveHakukohde = function() {
+
         if ($scope.editHakukohdeForm !== undefined) {
             return $scope.editHakukohdeForm.$valid;
         } else {
@@ -113,15 +194,156 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+
+    if ($scope.model.hakukohde.lisatiedot !== undefined) {
+        angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
+
+            $scope.model.selectedKieliUris.push(lisatieto.uri);
+        });
+    }
+
+    //Placeholder for multiselect remove when refactored
+    $scope.model.temp = {};
+
+
+    /*
+
+        ------>  Load hakukohde koulutusnames
+
+     */
+    var spec = {
+        koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
+    };
+    koulutusSet.clear();
+    TarjontaService.haeKoulutukset(spec).then(function(data){
+
+
+        var tarjoajaOidsSet = new buckets.Set();
+
+
+        if (data !== undefined) {
+
+            angular.forEach(data.tulokset,function(tulos){
+                if (tulos !== undefined && tulos.tulokset !== undefined) {
+
+                    tarjoajaOidsSet.add(tulos.oid);
+
+                    angular.forEach(tulos.tulokset,function(toinenTulos){
+                        koulutusSet.add(toinenTulos.nimi);
+
+                    });
+
+                }
+
+            });
+            $scope.model.koulutusnimet = koulutusSet.toArray();
+
+
+                $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+                var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
+                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
+                orgPromise.then(function(data){
+                    if (data.postiosoite !== undefined) {
+
+
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+                        postinumero = data.postiosoite.postinumeroUri;
+                    }
+                });
+
+
+
+        }
+
+
+        if (data !== undefined) {
+
+            angular.forEach(data.tulokset,function(tulos){
+                if (tulos !== undefined && tulos.tulokset !== undefined) {
+
+                    tarjoajaOidsSet.add(tulos.oid);
+
+                    angular.forEach(tulos.tulokset,function(toinenTulos){
+                        koulutusSet.add(toinenTulos.nimi);
+
+                    });
+
+                }
+
+            });
+            $scope.model.koulutusnimet = koulutusSet.toArray();
+
+
+                $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+                var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
+                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
+                orgPromise.then(function(data){
+                    if (data.postiosoite !== undefined) {
+
+
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+                        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+                        postinumero = data.postiosoite.postinumeroUri;
+                    }
+                });
+
+
+
+        }
+
+    });
+
+
+
+    $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
+
+
+    /*
+
+        -----> Retrieve all hakus
+
+     */
+
+    var hakuPromise = HakuService.getAllHakus();
+
+    hakuPromise.then(function(hakuDatas) {
+        console.log('GOT HAKUS ', hakuDatas.length);
+        angular.forEach(hakuDatas,function(haku){
+
+
+            angular.forEach(haku.nimi,function(nimi){
+
+                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+                    haku.lokalisoituNimi = nimi.teksti;
+                }
+
+            });
+
+            $scope.model.hakus.push(haku);
+        });
+
+        if ($scope.model.hakukohde.hakuOid !== undefined) {
+            $scope.model.hakuChanged();
+        }
+    });
+
+
     //$scope.model.koodiuriPromise = $q.defer();
 
-    $scope.model.hakus = [];
+    /*
+        ----> Retrieve all postinumeros
+     */
 
+    $scope.model.postinumeroarvo = {
 
+    };
 
-
-    //TODO: get locale from somewhere
-    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti','FI');
+    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti',$scope.model.userLang);
 
     koodistoPromise.then(function(koodisParam){
       $scope.model.koodis = koodisParam;
@@ -134,6 +356,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
       }
     });
 
+   /*
+
+        -----> Get selected postinumero from and set the nimi to postitoimipaikka text
+
+    */
+
     $scope.model.onKieliTypeAheadChange = function() {
        var koodi = findKoodiWithArvo($scope.model.postinumeroarvo.arvo,$scope.model.koodis);
 
@@ -142,20 +370,24 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
-    console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
 
-    var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
-    //When organisaatio is loaded set the liitteiden toimitusosoite on the model
-    orgPromise.then(function(data){
-        if (data.postiosoite !== undefined) {
+    /*
 
-            console.log('GOT OSOITE:', data.postiosoite);
-            $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
-            $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
-            $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
-            postinumero = data.postiosoite.postinumeroUri;
-        }
-    });
+        ---> If creating new hakukohde then tabs are disabled, when hakukohde has oid then
+        tabs are enabled
+
+     */
+
+    if ($scope.model.hakukohde !== undefined && $scope.model.hakukohde.oid !== undefined) {
+        $scope.model.hakukohdeTabsDisabled = false;
+    } else {
+        $scope.model.hakukohdeTabsDisabled = true;
+    }
+
+
+    if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
+        $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
+    }
 
 
     $scope.model.kieliCallback = function(kieliUri) {
@@ -191,154 +423,218 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
     };
 
-    //TODO: Should tila come from constants ?
+    /*
+
+        -----> Checkbox change listener to retrieve hakus end time if selected
+
+     */
+
+    $scope.model.checkboxChange = function() {
+
+
+
+        if ($scope.model.hakukohde.kaytetaanHaunPaattymisenAikaa) {
+            var haku = getHakuWithOid($scope.model.hakukohde.hakuOid);
+
+            var hakuPaattymisAika;
+
+            angular.forEach(haku.hakuaikas,function(hakuaika){
+                if (hakuPaattymisAika === undefined) {
+                    hakuPaattymisAika = hakuaika.loppuPvm;
+                } else {
+                    if (hakuPaattymisAika < hakuaika.loppuPvm) {
+                        hakuPaattymisAika = hakuaika.loppuPvm;
+                    }
+                }
+
+            });
+
+            if (hakuPaattymisAika !== undefined) {
+                $scope.model.hakukohde.liitteidenToimitusPvm = hakuPaattymisAika;
+
+            }
+
+
+        }
+
+
+
+
+
+    };
+
+
+    /*
+
+        ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
+
+     */
+
+
+    $scope.model.hakuChanged = function() {
+
+
+        if ($scope.model.hakukohde.hakuOid !== undefined) {
+
+            $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
+            var haku = getHakuWithOid($scope.model.hakukohde.hakuOid);
+
+            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
+
+                angular.forEach(haku.hakuaikas,function(hakuaika){
+                    $scope.model.hakuaikas.push(hakuaika);
+                });
+
+                console.log('HAKUAIKAS : '  ,$scope.model.hakuaikas);
+
+                $scope.model.showHakuaikas = true;
+
+            } else {
+
+                $scope.model.showHakuaikas = false;
+
+            }
+
+        }
+
+
+    };
+
+    /*
+
+        ------> Hakukohde save functions
+
+     */
 
     $scope.model.saveValmis = function() {
+
+        if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
+        $scope.model.showError = false;
+        $scope.model.hakukohde.tila = "VALMIS";
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =   $scope.model.hakukohde.$save();
            returnResource.then(function(hakukohde){
+
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   showError(hakukohde.errors);
+               }
+               if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                   $scope.model.hakukohde.valintaperusteKuvaukset = {};
+               }
+               if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                   $scope.model.hakukohde.soraKuvaukset = {};
+               }
+
+
            });
 
         } else {
 
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
-            var returnResource = $scope.model.$update();
+            var returnResource = $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+                }
+
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                }
             });
+
+        }
         }
     };
 
-
     $scope.model.saveLuonnos = function() {
 
+        if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
+        $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
         if ($scope.model.hakukohde.oid === undefined) {
+
+            console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
 
             console.log('MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
-               $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-
+               if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                   $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
+                   showSuccess();
+               } else {
+                   $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                  showError(hakukohde.errors);
+               }
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                }
+                console.log('SAVED MODEL : ', $scope.model.hakukohde);
             });
 
         } else {
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource =  $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
+                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                showSuccess();
+                } else {
+                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    showError(hakukohde.errors);
+
+                }
+                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                }
+                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                }
             });
         }
+        }
     };
+
+
 
     $scope.model.takaisin = function() {
         $location.path('/etusivu');
     };
 
-    var hakuPromise = HakuService.getAllHakus();
 
+    $scope.getKoulutustenNimet = function() {
+    	var ret = "";
+    	var ja = LocalisationService.t("tarjonta.yleiset.ja");
+    	
+    	for (var i in $scope.model.koulutusnimet) {
+    		if (i>0) {
+    			ret = ret + ((i==$scope.model.koulutusnimet.length-1) ? " "+ja+" " : ", ");
+    		}
+    		ret = ret + "<b>" + $scope.model.koulutusnimet[i] + "</b>";
+    	}
+    	
+    	return ret;
+    }
 
-
-    hakuPromise.then(function(hakuDatas) {
-        console.log('GOT HAKUS ', hakuDatas.length);
-        angular.forEach(hakuDatas,function(haku){
-
-            angular.forEach(haku.nimi,function(nimi){
-                //TODO: replace this with localization value
-               if (nimi.arvo === "FI") {
-                   haku.lokalisoituNimi = nimi.teksti;
-               }
-            });
-
-            $scope.model.hakus.push(haku);
-        });
-
-    });
-
-
-    //Hakukohde nimi chooser dialog controller
-    /*
-    var NimiModalInstanceCtrl = function ($scope, $modalInstance) {
-
-        $scope.model.hakukohdenimi = {};
-
-        $scope.model.selectedKieliKoodi;
-
-        $scope.model.kieliComboCallback = function(koodi) {
-
-            $scope.model.selectedKieliKoodi = koodi;
-
-        };
-
-
-        $scope.model.ok = function () {
-
-
-            console.log('OK :', $scope.model.selectedKieliKoodi);
-            $scope.model.hakukohdenimi.nimi  = $scope.model.selectedKieliKoodi.koodiNimi;
-
-            $modalInstance.close($scope.model.hakukohdenimi);
-        };
-
-        $scope.model.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    };
-
-    $scope.model.removeNimi = function(hakukohdeNimi){
-        if ($scope.model.hakukohde.hakukohteenNimet.length > 1) {
-
-            var nimiToRemove ;
-
-
-
-            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohteenNimi){
-                if (hakukohteenNimi.nimi === hakukohdeNimi.nimi && hakukohteenNimi.uri === hakukohdeNimi.uri) {
-                    nimiToRemove = hakukohteenNimi;
-                }
-            });
-
-           var index = $scope.model.hakukohde.hakukohteenNimet.indexOf(nimiToRemove);
-            $scope.model.hakukohde.hakukohteenNimet.splice(index,1);
-        }
-    };
-
-    $scope.model.openNimiDialog = function() {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/hakukohde/edit/hakukohdeNimiChooserDialog.html',
-            controller: NimiModalInstanceCtrl,
-            scope: $scope
-
-        });
-
-        modalInstance.result.then(function (selectedItem) {
-
-            console.log('SELECTED ITEM:',selectedItem);
-
-            var selectedItemExists = false;
-
-            angular.forEach($scope.model.hakukohde.hakukohteenNimet,function(hakukohdenimi){
-                 if (hakukohdenimi.uri === selectedItem.uri) {
-                     selectedItemExists = true;
-                 }
-            });
-
-            if (!selectedItemExists) {
-                $scope.model.hakukohde.hakukohteenNimet.push(selectedItem);
-            }
-
-
-
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-
-    };
-	*/
-
+    $scope.getKoulutustenNimetKey = function() {
+    	return $scope.model.koulutusnimet.length==1 ? 'hakukohde.edit.header.single' : 'hakukohde.edit.header.multi';
+    }
 
 });

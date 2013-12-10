@@ -186,4 +186,16 @@ public class ErrorV1RDTO implements Serializable {
     public void setErrorTechnicalInformation(String _errorTechnicalInformation) {
         this._errorTechnicalInformation = _errorTechnicalInformation;
     }
+
+    @Override
+    public String toString() {
+        return "ErrorV1RDTO [_errorCode=" + _errorCode + ", _errorTarget="
+                + _errorTarget + ", _errorField=" + _errorField
+                + ", _errorMessageKey=" + _errorMessageKey
+                + ", _errorMessageParameters=" + _errorMessageParameters
+                + ", _errorTechnicalInformation=" + _errorTechnicalInformation
+                + "]";
+    }
+    
+    
 }

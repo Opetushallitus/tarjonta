@@ -38,7 +38,7 @@
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
-    <beans:bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
+    <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
@@ -49,7 +49,7 @@
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
     <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1" />
-    <bean id="tarjontaLocalisationResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LocalisationResourceImplV1" />
+    <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -99,8 +99,8 @@
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
-            <ref bean="tarjontaLocalisationResourceV1"/>
             <ref bean="yhteyshenkiloResourceV1"/>
+            <ref bean="linkingResourceV1"/>
 
         </jaxrs:serviceBeans>
         <jaxrs:providers>
@@ -112,5 +112,52 @@
 
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaAdminService" implementor="#tarjontaAdminService" serviceName="tns:TarjontaAdminService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaPublicService" implementor="#tarjontaPublicService" serviceName="tns:TarjontaPublicService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
+
+
+
+    <!-- Swagger API listing resource -->
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+
+    <!-- Swagger writers -->
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+
+    <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">
+        <property name="address" value="/" />
+        <property name="serviceBeans">
+            <list>
+
+                <ref bean="tarjontaHakuResourceV1"/>
+                <ref bean="tarjontaHakukohdeResourceV1"/>
+                <!-- your resources go here -->
+                <!-- ... -->
+                <!-- ... -->
+                <!-- Swagger API Listing resource -->
+                <ref bean="swaggerResourceJSON" />
+            </list>
+        </property>
+        <property name="providers">
+            <list>
+                <!-- any other providers you need go here -->
+                <!-- ... -->
+                <!-- ... -->
+                <!-- required for writing swagger classes -->
+                <ref bean="resourceWriter" />
+                <ref bean="apiWriter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="resourcePackage" value="fi.vm.sade.tarjonta.service.resources.v1"/>
+        <property name="version" value="1.0.0"/>
+        <property name="basePath" value="https://${host.virkailija}/tarjonta-service/rest"/>
+        <property name="title" value="Tarjonta resources ${host.virkailija}"/>
+        <property name="description" value="Tarjonta offered resources"/>
+        <property name="contact" value=""/>
+        <property name="license" value="Apache 2.0 License"/>
+        <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+        <property name="scan" value="true"/>
+    </bean>
 
 </beans>

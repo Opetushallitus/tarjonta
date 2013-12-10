@@ -25,7 +25,7 @@
 (function ( angular ) {
 	'use strict';
 
-	angular.module( 'angularTreeview', [] ).directive( 'treeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
+	angular.module( 'orgAngularTreeview', [] ).directive( 'orgTreeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
 		return {
 			restrict: 'A',
 			link: function ( scope, element, attrs ) {
@@ -88,11 +88,13 @@
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
-	//				console.log("organisaatio valittu!", treeId);
+					console.log("selecting from puu "+treeId);
+
+					console.log("organisaatio valittu!", treeId);
 					var current = SharedStateService.state.puut[treeId].selected;
 					
 					
-//					console.log("vanha valinta", current);
+					console.log("vanha valinta", current);
 					if(current!==undefined) {
 //						console.log("etsitään vanhaa", current);
 						var org = getOrg(current, SharedStateService.state.puut[treeId].data);
@@ -103,6 +105,8 @@
 						}
 					}
 					var unselect = (oid===SharedStateService.state.puut[treeId].selected);
+					console.log("unselect:" + unselect);
+					console.log("scope check:", (scope == SharedStateService.state.puut[treeId].scope));
 					if (unselect) {
 						SharedStateService.state.puut[treeId].selected=undefined;
 						scope[treeId].currentNode=undefined;
@@ -128,7 +132,7 @@
 //				console.log("treeid:", treeId);
 			
 				//tree model
-				var treeModel = attrs.treeModel;
+				var treeModel = attrs.orgTreeModel;
 
 				//node id
 //				var nodeId = attrs.nodeId || 'id';
@@ -174,20 +178,20 @@
 				
 				
 				//alusta tietorakenne
+				console.log("org-puu.init()" + treeId);
 				SharedStateService.state.puut = SharedStateService.state.puut || {};
-				SharedStateService.state.puut[treeId] = SharedStateService.state.puut[treeId] || {};
-				SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
-				SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
-				SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;
+				SharedStateService.state.puut[treeId] = {scope:scope};
+				//SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
+				//SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
+				//SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;
 
 				/**
 				 * Watchi puun datalle
 				 */
 				console.log("adding watch to:" + treeModel);
 				scope.$watch(treeModel, function (newList, oldList) {
-					console.log("tila muuttunut!");
 					SharedStateService.state.puut[treeId].data = newList;
-					element.html('');
+					//element.html('');
 					var template = "<ul>" + drawChildren(newList) + "</ul>";
 					var dom = $compile( template );
 					element.html('').append( dom (scope) );

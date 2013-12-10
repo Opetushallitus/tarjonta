@@ -8,6 +8,7 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
+            'app.kk.edit.hakukohde.review.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
             'app.review.ctrl',
@@ -32,6 +33,7 @@ angular.module('app',
             'app.test.controllers',
             'app.kk',
             'app.koulutus.ctrl',
+            'app.koulutus.sisaltyvyys.ctrl',
             'app.dialog',
             'ngRoute',
             'ngResource',
@@ -53,14 +55,21 @@ angular.module('app',
             'Hakukohde',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
-            'angularTreeview',
+            'orgAngularTreeview',
             'TarjontaConverter',
             'ResultsTable',
             'imageupload',
             'MultiSelect',
             'OrderByNumFilter',
             'CommonDirectives',
-            'MonikielinenTextField'
+            'MonikielinenTextField',
+            'ImageDirective',
+            'RichTextArea',
+            'MonikielinenTextArea',
+            'ControlsLayout',
+            'angularTreeview',
+            'DateFormat',
+            'TreeFieldDirective'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -130,7 +139,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);
+                            $log.info("/koulutus/ID/edit", $route);        
                             return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
                         }
                     }
@@ -140,9 +149,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
-                        hakukohdex: function(TarjontaService, $log, $route) {
+                        hakukohdex: function(Hakukohde, $log, $route) {
                             $log.info("/hakukohde/ID", $route);
-                            return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                            //return TarjontaService.getHakukohde({oid: $route.current.params.id});
+                            var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+
+                            return deferredHakukohde.$promise;
                         }
                     }
                 })
@@ -179,8 +191,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     hakukohdeKoulutusOids: selectedKoulutusOids,
                                     hakukohteenLiitteet: [],
                                     valintakokeet: [],
-                                    lisatiedot: [
-                                    ]
+                                    lisatiedot: {},
+                                    valintaperusteKuvaukset : {},
+                                    soraKuvaukset : {}
                                 });
 
                                 //  SharedStateService.removeState('SelectedKoulutukses');
@@ -193,7 +206,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-
+                                 
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;

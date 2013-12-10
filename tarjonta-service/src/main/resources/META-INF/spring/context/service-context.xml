@@ -38,6 +38,7 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToHakuDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuaikaToHakuaikaRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToHakukohdeDTOConverter" />
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToHakukohdeValintaperusteetDTOConverter" />
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteToHakukohdeLiiteRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.OsoiteToOsoiteRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.PisterajaToValintakoePisterajaRDTOConverter"/>

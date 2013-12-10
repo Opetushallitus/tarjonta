@@ -22,6 +22,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
     var nimiWithLocale = function(locale, metadata) {
         var metas = _.select(metadata, function(koodiMetaData) {
+            locale = locale || "fi"; // default locale is finnish
 
             if (koodiMetaData.kieli.toLowerCase() === locale.toLowerCase()) {
 
@@ -40,7 +41,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
     /*
      This JS-object is view representation of koodisto koodi.
      Example koodisto Koodi:
-     
+
      {
      koodiArvo :"",
      koodiUri  : "",
@@ -51,7 +52,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
      -> Koodinimi is localized with given locale
      koodiNimi : ""
      }
-     
+
      */
 
     var getKoodiViewModelFromKoodi = function(koodi, locale) {
@@ -99,7 +100,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-ylakoodit/:koodiUri';
 
-            $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}).query({koodiUri: koodiUriParam}, function(koodis) {
+            $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}, {cache:true}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
 
                     returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
@@ -121,7 +122,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-alakoodit/:koodiUri';
 
-            $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}).query({koodiUri: koodiUriParam}, function(koodis) {
+            $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}, {cache:true}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
 
                     returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
@@ -151,7 +152,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
             var koodiUri = host + ':koodistoUri/koodi';
 
 
-            $resource(koodiUri, {koodistoUri: '@koodistoUri'}).query({koodistoUri: koodistoUriParam}, function(koodis) {
+            $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
 
 
 
@@ -181,7 +182,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
             console.log('Calling getKoodistoWithKoodiUri with : ' + koodiUriParam + ' ' + locale);
 
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri'}).query({koodistoUri: koodiUriParam}, function(data) {
+            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri'}, {cache:true}).query({koodistoUri: koodiUriParam}, function(data) {
                 var returnTarjontaKoodi = {
                     koodistoUri: data.koodistoUri,
                     tila: data.tila
@@ -201,12 +202,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
             var returnKoodi = $q.defer();
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
-            console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
+            //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
 
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' }).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
+            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' },{cache:true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
                 returnKoodi.resolve(getKoodiViewModelFromKoodi(koodi, locale));
             });
-            console.log('Returning promise from getKoodistoWithKoodiUri');
+           // console.log('Returning promise from getKoodistoWithKoodiUri');
             return returnKoodi.promise;
         }
 

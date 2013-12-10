@@ -1,0 +1,13 @@
+<div class="richTextArea" ng-mouseleave="stopEdit()" ng-cloack>
+
+<div ng-show="!edit" class="preview" ng-click="startEdit()" ng-cloack>
+	<div class="previewBody" ng-bind-html="model"></div>
+</div>
+
+<div ng-show="edit" class="editor" ng-cloack>
+	<textarea ui-tinymce="tinymceOptions" ng-model="model"> </textarea>
+	<p ng-show="showMax" ng-class="charCount() > max ? 'overflow' : ''">{{charCount()}} / {{max}}</p>
+</div>
+
+
+</div>
