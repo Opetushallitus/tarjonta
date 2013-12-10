@@ -355,12 +355,12 @@ public class PublicationDataServiceImplTest {
         checkLastUpdatedFields(false, true, false);
 
         /*
-         * The happy path - in this case the hakukohde will not be published
+         * The happy path - in this case the will be published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
         checkLastUpdatedFields(false, true, false);
-        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
 
         /*
          * The partial path - only toteutus is published
