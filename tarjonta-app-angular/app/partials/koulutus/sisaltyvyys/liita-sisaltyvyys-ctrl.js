@@ -14,22 +14,72 @@
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
-app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid',
-    function LiitaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio) {
+app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, LocalisationService) {
+    return function() {
+        var factoryScope = {};
+
+        factoryScope.searchErrorNimi = function(errorParams, selected) {
+            var arr = [];
+            angular.forEach(errorParams, function(oid) {
+                angular.forEach(selected, function(row) {
+                    if (oid === row.oid) {
+                        arr.push(row.nimi);
+                    }
+                });
+            });
+
+            return arr;
+        }
+
+        factoryScope.handleResult = function(targetKomo, response, selectedRowData, modalInstance) {
+            var arrErrors = [];
+
+            if (response.status === 'OK') {
+                console.log("success", response);
+                modalInstance.close();
+            } else {
+                console.log("save cancelled", response);
+                angular.forEach(response.errors, function(error) {
+                    //add additional information to the error data object
+                    var arr = [];
+
+                    if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
+                        arr = [targetKomo.nimi];
+                    } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
+                        arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
+                    } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
+                        arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
+                    } else if (error.errorMessageKey === 'LINKING_CANNOT_CREATE_LOOP') {
+                        arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
+                    }
+
+                    error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
+                    arrErrors.push(error);
+                });
+            }
+            return arrErrors;
+        };
+
+        return factoryScope;
+    };
+});
+
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil',
+    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
-            headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
             errors: [],
             text: {
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
             organisaatio: organisaatio,
             treeOids: [],
             selectedOid: [targetKomo.oid], //directive needs an array
             searchKomoOids: [],
-            newOids: [], // a parent (selectedOid) will have new childs (newOids)
+            selectedRowData: [], // a parent (selectedOid) will have new childs (selectedRowData)
             reviewOids: [],
             tutkinto: {
                 uri: '',
@@ -97,12 +147,12 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
         //ng-grid malli
         $scope.gridOptions = {
             data: 'model.hakutulos',
-            selectedItems: $scope.model.newOids,
+            selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
                 {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale), width: "50%"},
-                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "50%"}
+                {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "30%"}
             ],
             showSelectionCheckbox: true,
             multiSelect: true};
@@ -116,49 +166,15 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
         $scope.save = function() {
             $scope.clearErrors();
             var oids = [];
-            angular.forEach($scope.model.newOids, function(val) {
+            angular.forEach($scope.model.selectedRowData, function(val) {
                 oids.push(val.oid);
             });
 
             TarjontaService.saveResourceLink(targetKomo.oid, oids, function(response) {
-                if (response.status === 'OK') {
-                    console.log("success", response);
-                    $modalInstance.close();
-                } else {
-                    console.log("save cancelled", response);
-                    angular.forEach(response.errors, function(error) {
-                        //add additional information to the error data object
-                        var arr = [];
-
-                        if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
-                            arr = [targetKomo.nimi];
-                        } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
-                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
-                        } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
-                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
-                        } else if (error.errorMessageKey === 'LINKING_CANNOT_CREATE_LOOP') {
-                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
-                        }
-
-                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
-                        $scope.model.errors.push(error);
-                    });
-                }
+                var su = new SisaltyvyysUtil();
+                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
             });
         };
-        
-         $scope.searchErrorNimi = function(errorParams, selected) {
-            var arr = [];
-            angular.forEach(errorParams, function(oid) {
-                angular.forEach(selected, function(row) {
-                    if (oid === row.oid) {
-                        arr.push(row.nimi);
-                    }
-                });
-            });
-
-            return arr;
-        }
 
         //dialogin sulkeminen peruuta-napista
         $scope.cancel = function() {
@@ -226,8 +242,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
         $scope.reviewDialogi = function() {
             $scope.clearErrors();
             var oids = [];
-            for (var i = 0; i < $scope.model.newOids.length; i++) {
-                oids.push($scope.model.newOids[i].oid);
+            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                oids.push($scope.model.selectedRowData[i].oid);
             }
             $scope.model.reviewOids = oids;
             $scope.model.html = 'partials/koulutus/sisaltyvyys/liita-koulutuksia-review.html';
@@ -240,14 +256,14 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
             if (event === 'SELECTED') {
                 for (var i = 0; i < $scope.model.hakutulos.length; i++) {
                     if ($scope.model.hakutulos[i].oid === obj.oid) {
-                        $scope.model.newOids.push($scope.model.hakutulos[i]);
+                        $scope.model.selectedRowData.push($scope.model.hakutulos[i]);
                         break;
                     }
                 }
             } else {
-                for (var i = 0; i < $scope.model.newOids.length; i++) {
-                    if ($scope.model.newOids[i].oid === obj.oid) {
-                        $scope.model.newOids.splice(i, 1);
+                for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                    if ($scope.model.selectedRowData[i].oid === obj.oid) {
+                        $scope.model.selectedRowData.splice(i, 1);
                         break;
                     }
                 }
@@ -256,10 +272,10 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config',
 
         $scope.removeItem = function(obj) {
             var selected = null;
-            for (var i = 0; i < $scope.model.newOids.length; i++) {
-                if ($scope.model.newOids[i].oid === obj.oid) {
+            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                if ($scope.model.selectedRowData[i].oid === obj.oid) {
                     selected = obj;
-                    $scope.model.newOids.splice(i, 1);
+                    $scope.model.selectedRowData.splice(i, 1);
                     break;
                 }
             }

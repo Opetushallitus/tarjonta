@@ -16,28 +16,23 @@
 //location of the base module : liita-sisaltyvyys-ctrl.js
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl');
 
-app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid',
-    function PoistaSisaltyvyysCtrl($scope, $log, $location, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio) {
+app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil',
+    function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
-            headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
             errors: [],
             text: {
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [targetKomo.nimi, organisaatio.nimi]),
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
                 list: LocalisationService.t('sisaltyvyys.tab.lista')},
             organisaatio: organisaatio,
             treeOids: [],
             selectedOid: [targetKomo.oid], //directive needs an array
             searchKomoOids: [targetKomo.oid],
-            newOids: [], // a parent (selectedOid) will have new childs (newOids)
+            selectedRowData: [], // a parent (selectedOid) will have new childs (selectedRowData)
             reviewOids: [],
-            tutkinto: {
-                uri: '',
-                koodis: [],
-                hakulause: ''
-            },
             hakutulos: [],
             search: {count: 0},
             valitut: {//selected koulutus items
@@ -47,21 +42,12 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             html: 'partials/koulutus/sisaltyvyys/poista-koulutuksia-select.html'
         };
 
-        $scope.other = {
-            tutkintotyypit: [
-                //tutkintotyyppi koodisto koodit
-                config.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"], //kandi
-                config.app["koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto"] //maisteri
-            ],
-            koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
-        }
-
         $scope.koodistoLocale = LocalisationService.getLocale();
 
         //ng-grid for selecting nodes (with edit)
         $scope.selectGridOptions = {
             data: 'model.hakutulos',
-            selectedItems: $scope.model.newOids,
+            selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
@@ -73,7 +59,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
 
         //ng-grid for selected items (without edit)
         $scope.reviewGridOptions = {
-            data: 'model.newOids',
+            data: 'model.selectedRowData',
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
             columnDefs: [
                 {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
@@ -82,83 +68,6 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             ],
             showSelectionCheckbox: false,
             multiSelect: false};
-
-        $scope.save = function() {
-            $scope.clearErrors();
-            var oids = [];
-            angular.forEach($scope.model.newOids, function(val) {
-                oids.push(val.oid);
-            });
-
-            var res = TarjontaService.resourceLink;
-            var remove = res.removeMany({
-                parent: targetKomo.oid,
-                childs: oids
-            });
-
-            remove.$promise.then(function(response) {
-                if (response.status === 'OK') {
-                    console.log("success", response);
-                    $modalInstance.close();
-                } else {
-                    console.log("save cancelled", response);
-                    angular.forEach(response.errors, function(error) {
-                        //add additional information to the error data object
-                        var arr = [];
-
-                        if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
-                            arr = [targetKomo.nimi];
-                        } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
-                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
-                        } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
-                            arr = $scope.searchErrorNimi(error.errorMessageParameters, $scope.model.newOids);
-                        }
-                        error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
-                        $scope.model.errors.push(error);
-                    });
-
-                }
-            });
-        };
-
-        $scope.searchErrorNimi = function(errorParams, selected) {
-            var arr = [];
-            angular.forEach(errorParams, function(oid) {
-                angular.forEach(selected, function(row) {
-                    if (oid === row.oid) {
-                        arr.push(row.nimi);
-                    }
-                });
-            });
-
-            return arr;
-        }
-
-        //dialogin sulkeminen peruuta-napista
-        $scope.cancel = function() {
-            $modalInstance.dismiss();
-        };
-
-        $scope.selectDialogi = function() {
-            //aseta esivalittu organisaatio
-            $scope.clearErrors();
-            $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-select.html';
-        };
-
-        /*
-         * Open a review dialog.
-         * 
-         */
-        $scope.reviewDialogi = function() {
-            $scope.clearErrors();
-            var oids = [];
-            for (var i = 0; i < $scope.model.newOids.length; i++) {
-                oids.push($scope.model.newOids[i].oid);
-            }
-            $scope.model.reviewOids = oids;
-            $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-review.html';
-        };
-
         /*
          * 2TAB tree click handler
          */
@@ -166,14 +75,14 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             if (event === 'SELECTED') {
                 for (var i = 0; i < $scope.model.hakutulos.length; i++) {
                     if ($scope.model.hakutulos[i].oid === obj.oid) {
-                        $scope.model.newOids.push($scope.model.hakutulos[i]);
+                        $scope.model.selectedRowData.push($scope.model.hakutulos[i]);
                         break;
                     }
                 }
             } else {
-                for (var i = 0; i < $scope.model.newOids.length; i++) {
-                    if ($scope.model.newOids[i].oid === obj.oid) {
-                        $scope.model.newOids.splice(i, 1);
+                for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                    if ($scope.model.selectedRowData[i].oid === obj.oid) {
+                        $scope.model.selectedRowData.splice(i, 1);
                         break;
                     }
                 }
@@ -186,47 +95,40 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
         $scope.treeItemsLoaded = function(map) {
             var oids = {};
             angular.forEach(map, function(parentVal, keyOid) {
-                if (keyOid !== 'ROOT' && keyOid !== targetKomo.oid) {
+                if (keyOid !== 'ROOT' && keyOid === targetKomo.oid) {
+                    //we need only the children rows
                     angular.forEach(parentVal.childs, function(val, keyOid) {
                         oids[keyOid] = {};
                     });
                 }
             });
 
+            /*
+             * Load all selectable (childen)rows to the ng-grid component.
+             */
             angular.forEach(oids, function(val, keyOid) {
+                var promise = $scope.searchBySpec({//search parameter object
+                    komoOid: keyOid,
+                    oid: null,
+                    terms: null,
+                    state: null,
+                    year: null,
+                    season: null
+                });
 
-                var add = true;
-                for (var i = 0; i < $scope.model.hakutulos.length; i++) {
-                    if ($scope.model.hakutulos[i].oid === keyOid) {
-                        add = false;
-                        break;
-                    }
-                }
-
-                if (add) {
-                    var promise = $scope.searchBySpec({//search parameter object
-                        komoOid: keyOid,
-                        oid: null,
-                        terms: null,
-                        state: null,
-                        year: null,
-                        season: null
-                    });
-
-                    promise.then(function(arr) {
-                        console.log(arr);
-                        $scope.model.hakutulos.push(arr[0]);
-                    });
-                }
+                promise.then(function(arr) {
+                    console.log(arr);
+                    $scope.model.hakutulos.push(arr[0]);
+                });
             });
         };
 
         $scope.removeItem = function(obj) {
             var selected = null;
-            for (var i = 0; i < $scope.model.newOids.length; i++) {
-                if ($scope.model.newOids[i].oid === obj.oid) {
+            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                if ($scope.model.selectedRowData[i].oid === obj.oid) {
                     selected = obj;
-                    $scope.model.newOids.splice(i, 1);
+                    $scope.model.selectedRowData.splice(i, 1);
                     break;
                 }
             }
@@ -237,11 +139,11 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
         };
 
         /**
-         * Search koulutus data to dialog by given parameters.
+         * Search komos.
          * 
          * @returns {undefined}
          */
-        $scope.searchTutkinnot = function() {
+        $scope.searchKomos = function() {
             var spec = {//search parameter object
                 komoOid: targetKomo.oid,
                 oid: null,
@@ -254,7 +156,6 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
             var promise = $scope.searchBySpec(spec);
             promise.then(function(arr) {
                 var oids = [];
-                $scope.model.hakutulos = arr;
                 for (var i = 0; i < arr.length; i++) {
                     oids.push(arr[i].oid);
                 }
@@ -297,4 +198,54 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', '$location', '$log', 'Config'
         $scope.clearErrors = function() {
             $scope.model.errors = [];
         };
+
+        /*
+         * Save and close the dialog.
+         */
+        $scope.clickSave = function() {
+            $scope.clearErrors();
+            var oids = [];
+            angular.forEach($scope.model.selectedRowData, function(row) {
+                oids.push(row.oid);
+            });
+
+            var removeMany = TarjontaService.resourceLink.removeMany({
+                parent: targetKomo.oid,
+                childs: oids
+            });
+
+            removeMany.$promise.then(function(response) {
+                var su = new SisaltyvyysUtil(); //look more info from a file liita-sisaltyvyys-ctrl.js
+                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
+            });
+        };
+
+        /*
+         * Cancel and close the dialog.
+         */
+        $scope.clickCancel = function() {
+            $modalInstance.dismiss();
+        };
+
+        /*
+         * Go back to select rows dialog.
+         */
+        $scope.clickSelectDialogi = function() {
+            $scope.clearErrors();
+            $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-select.html';
+        };
+
+        /*
+         * Open a review dialog.
+         */
+        $scope.clickReviewDialogi = function() {
+            $scope.clearErrors();
+            var oids = [];
+            for (var i = 0; i < $scope.model.selectedRowData.length; i++) {
+                oids.push($scope.model.selectedRowData[i].oid);
+            }
+            $scope.model.reviewOids = oids;
+            $scope.model.html = 'partials/koulutus/sisaltyvyys/poista-koulutuksia-review.html';
+        };
+
     }]);
