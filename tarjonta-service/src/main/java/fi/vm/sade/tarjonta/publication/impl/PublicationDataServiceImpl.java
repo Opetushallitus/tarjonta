@@ -399,10 +399,10 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 komotoUpdate.execute();
 
                 switch (toStatus) {
-// 
-//                case JULKAISTU:
-//                    updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
-//                    break;
+ 
+                case JULKAISTU:
+                    updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+                    break;
                 case PERUTTU:
                     updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.cancellableValues());
                     break;
