@@ -265,7 +265,7 @@ public class ListHakukohdeView extends VerticalLayout {
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdePerustieto>> e) {
-        return e.getKey() + " (" + e.getValue().size() + ")";
+        return e.getKey().substring(0, e.getKey().lastIndexOf(",")) + " (" + e.getValue().size() + ")";
     }
 
     private String getAjankohta(HakukohdePerustieto curHakukohde) {

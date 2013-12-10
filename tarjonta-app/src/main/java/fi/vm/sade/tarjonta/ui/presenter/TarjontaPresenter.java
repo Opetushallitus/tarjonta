@@ -1449,7 +1449,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(hakukohdetulos.size());
         for (HakukohdePerustieto curHk : hakukohdetulos) {
-            String hkKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHk.getTarjoajaNimi());
+            String hkKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHk.getTarjoajaNimi()) + "," + curHk.getTarjoajaOid();
             if (!map.containsKey(hkKey)) {
                 List<HakukohdePerustieto> hakukohteetM = Lists.newArrayList();
                 hakukohteetM.add(curHk);
@@ -1809,7 +1809,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
         // Creating the datasource model
         for (KoulutusPerustieto curKoulutus : getModel().getKoulutukset()) {
-            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi());
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi()) + "," + curKoulutus.getTarjoaja().getOid();
             if (!map.containsKey(koulutusKey)) {
                 //LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
