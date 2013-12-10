@@ -1,5 +1,12 @@
 <form name="perustiedotForm">
     <table class="tarjontaForm">
+        <!-- koulutuskoodi -->
+	    <tr class="info">
+	        <th tt="koulutus.edit.koulutuskoodi"/>
+	        <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
+	        <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
+	    </tr>
+	        
         <!-- koulutusohjelma -->
         <tr class="required">
             <th tt="koulutus.edit.koulutusohjelma"/>
@@ -151,8 +158,9 @@
             <td></td>
         </tr>
         <tr>
-            <th tt="koulutus.edit.maksullisuus.hinta"></th>
+            <th></th>
             <td>
+                <span tt="koulutus.edit.maksullisuus.hinta"></span>
                 <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" />
                 <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
             </td>
@@ -214,6 +222,10 @@
         <tr class="required" ng-controller="AiheetTeematController">
         <th tt="koulutus.edit.aiheet"/>
         <td>
+        
+        <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>
+        
+        <!-- 
         <accordion close-others="oneAtATime">
           <div ng-repeat="t in teemat">
           <accordion-group heading="{{t.koodi.koodiNimi}}" is-open="false">
@@ -231,6 +243,8 @@
             <ul ng-repeat="k in uiModel.aihees.uris">
             <li><span class="btn btn-primary" ng-click="poista(k)">x</span>{{aiheNimi[k]}}</li>
             </ul>
+            
+             -->
             </td>
             <td>
             	<p class="error" ng-show="uiModel.aihees.uris.length == 0" tt="koulutus.edit.aihees.required"/>

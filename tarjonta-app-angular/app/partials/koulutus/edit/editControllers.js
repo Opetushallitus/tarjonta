@@ -60,9 +60,9 @@ app.controller('BaseEditController',
                         model = $scope.koulutusModel.result;
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
-                                $scope.uiModel.contactPerson = converter.converPersonObjectForUi(value);
+                                uiModel.contactPerson = converter.converPersonObjectForUi(value);
                             } else if (value.henkiloTyyppi === 'ECTS_KOORDINAATTORI') {
-                                $scope.uiModel.ectsCoordinator = converter.converPersonObjectForUi(value);
+                                uiModel.ectsCoordinator = converter.converPersonObjectForUi(value);
                             } else {
                                 converter.throwError('Undefined henkilotyyppi : ', value);
                             }

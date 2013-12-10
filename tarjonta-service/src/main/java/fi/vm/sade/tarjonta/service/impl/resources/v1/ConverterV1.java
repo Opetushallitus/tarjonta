@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -274,6 +275,13 @@ public class ConverterV1 {
 
         }
 
+        if (hakukohde.getLiites() != null) {
+            List<HakukohdeLiiteV1RDTO> liites = new ArrayList<HakukohdeLiiteV1RDTO>();
+            for (HakukohdeLiite liite : hakukohde.getLiites()) {
+               liites.add(convertLiiteToDto(liite));
+            }
+            hakukohdeRDTO.setHakukohteenLiitteet(liites);
+        }
 
         return hakukohdeRDTO;
     }
@@ -491,6 +499,42 @@ public class ConverterV1 {
 
         return monikielinenTeksti;
     }
+
+    private HakukohdeLiiteV1RDTO convertLiiteToDto(HakukohdeLiite liite) {
+        HakukohdeLiiteV1RDTO liiteDto = new HakukohdeLiiteV1RDTO();
+
+        liiteDto.setLiitteenToimitusOsoite(convertOsoiteToDto(liite.getToimitusosoite()));
+        liiteDto.setKieliUri(liite.getKieli());
+        liiteDto.setLiitteenNimi(liite.getHakukohdeLiiteNimi());
+        liiteDto.setToimitettavaMennessa(liite.getErapaiva());
+        liiteDto.setLiitteenKuvaukset(convertMonikielinenTekstiToHashMap(liite.getKuvaus()));
+
+
+
+        return liiteDto;
+    }
+
+
+
+
+
+    private OsoiteRDTO convertOsoiteToDto(Osoite osoite) {
+
+        OsoiteRDTO osoiteRDTO = new OsoiteRDTO();
+
+        osoiteRDTO.setOsoiterivi1(osoite.getOsoiterivi1());
+        osoiteRDTO.setOsoiterivi2(osoite.getOsoiterivi2());
+        osoiteRDTO.setPostinumero(osoite.getPostinumero());
+        if (osoite.getPostinumero() != null) {
+            KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(osoite.getPostinumero());
+            osoiteRDTO.setPostinumeroArvo(postinumeroKoodi != null ? postinumeroKoodi.getKoodiArvo() : null);
+        }
+
+        osoiteRDTO.setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+        return osoiteRDTO;
+
+    };
 
 
     private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {

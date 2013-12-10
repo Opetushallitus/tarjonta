@@ -297,7 +297,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusPerustieto>> e) {
-        return e.getKey() + " (" + e.getValue().size() + ")";
+        return e.getKey().substring(0, e.getKey().lastIndexOf(",")) + " (" + e.getValue().size() + ")";
     }
 
     private String getTilaStr(String tilaUri) {

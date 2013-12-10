@@ -150,7 +150,9 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         $scope.model.collapse = {
             perusTiedot: false ,
             valintakokeet : false,
-            liitteet : false
+            liitteet : false,
+            valintaperusteet : false,
+            sorakuvaukset : false
         };
     };
 
@@ -207,6 +209,36 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         });
 
         return localizedValintakokeet;
+
+    };
+
+    $scope.getLocalizedLiitteet = function(kieliUri) {
+
+        var localizedLiitteet = [];
+
+        angular.forEach($scope.model.hakukohde.hakukohteenLiitteet,function(liite){
+            if (liite.kieliUri === kieliUri) {
+                localizedLiitteet.push(liite);
+            }
+        });
+
+        return localizedLiitteet;
+
+    };
+
+    $scope.getLiitteenKuvaus = function(liite,kieliUri) {
+        return liite.liitteenKuvaukset[kieliUri];
+    };
+
+    $scope.getValintaperusteKuvaus = function(kieliUri) {
+
+        return $scope.model.hakukohde.valintaperusteKuvaukset[kieliUri];
+
+    };
+
+    $scope.getSoraKuvaus = function(kieliUri) {
+
+        return $scope.model.hakukohde.soraKuvaukset[kieliUri];
 
     };
 

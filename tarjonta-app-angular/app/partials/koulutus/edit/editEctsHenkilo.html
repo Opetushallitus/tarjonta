@@ -1,7 +1,7 @@
 <tr class="primary" ng-controller="EditYhteyshenkiloCtrl">
 	<th tt="koulutus.edit.ects-koordinaattori.name"/>
 	<td><input class="wide" type="text" ng-model="uiModel.ectsCoordinator.nimet" typeahead-on-select="editYhModel.selectEctsHenkilo()" typeahead="henkilo for henkilo in editYhModel.data | filter:$viewValue"/></td>
-	<td><a href="#" ng-click="editYhModel.clearEctsYh()"><span tt='koulutus.edit.tyhjenna'></a></td>
+	<td><a href ng-click="editYhModel.clearEctsYh()"><span tt='koulutus.edit.tyhjenna'></a></td>
 </tr>
 
 <tr>
