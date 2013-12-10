@@ -44,6 +44,7 @@ import fi.vm.sade.events.Event;
 import fi.vm.sade.events.EventSender;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
@@ -88,9 +89,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     @Autowired
     private KoulutusmoduuliDAO komoDAO;
     @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+    @Autowired
     private MonikielinenMetadataDAO metadataDAO;
     @PersistenceContext
     public EntityManager em;
+    
 
     @Override
     public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus() {
@@ -394,10 +398,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.lastUpdatedByOid, userOid);
                 komotoUpdate.execute();
 
-                if (TarjontaTila.JULKAISTU.equals(toStatus)) {
+                switch (toStatus) {
+ 
+                case JULKAISTU:
                     updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
-                } else if (TarjontaTila.PERUTTU.equals(toStatus)) {
+                    break;
+                case PERUTTU:
                     updateAllHakukohdeStatusesByKomotoOids(oids, toStatus, TarjontaTila.JULKAISTU, TarjontaTila.cancellableValues());
+                    break;
+                default:
+                    break;
                 }
                 break;
         }
@@ -475,6 +485,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         for (Hakukohde h : result) {
             h.setTila(toStatus);
+            h.setLastUpdateDate(new Date());
+            hakukohdeDAO.update(h);
         }
     }
 

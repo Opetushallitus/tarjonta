@@ -39,6 +39,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -47,6 +48,8 @@ import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -76,6 +79,9 @@ public class PublicationDataServiceImplTest {
     private TarjontaFixtures fixtures;
     @PersistenceContext
     public EntityManager em;
+    
+    @Autowired
+    private HakukohdeDAO hakukohdeDao;
 
     public PublicationDataServiceImplTest() {
     }
@@ -90,6 +96,7 @@ public class PublicationDataServiceImplTest {
         //test debug mode (at least in Netbean) fails.
         publicationDataService = new PublicationDataServiceImpl();
         Whitebox.setInternalState(publicationDataService, "em", em);
+        Whitebox.setInternalState(publicationDataService, "hakukohdeDAO", hakukohdeDao);
 
         fixtures = new TarjontaFixtures();
         fixtures.recreate();
@@ -348,12 +355,12 @@ public class PublicationDataServiceImplTest {
         checkLastUpdatedFields(false, true, false);
 
         /*
-         * The happy path - in this case also the hakukohde will be published
+         * The happy path - in this case the will be published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
         checkLastUpdatedFields(false, true, false);
-        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
 
         /*
          * The partial path - only toteutus is published

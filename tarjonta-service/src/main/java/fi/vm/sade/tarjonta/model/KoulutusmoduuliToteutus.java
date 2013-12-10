@@ -101,6 +101,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String suunniteltuKestoArvo;
     @Column(name = "suunniteltu_kesto_yksikko")
     private String suunniteltuKestoYksikko;
+    @Deprecated
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -349,15 +350,18 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      *
      * @return the teemaUris
+     * @deprecated not used!!
      */
     public Set<KoodistoUri> getTeemas() {
         return Collections.unmodifiableSet(teemas);
     }
 
+    @Deprecated
     public void removeTeema(KoodistoUri uri) {
         teemas.remove(uri);
     }
 
+    @Deprecated
     public void addTeema(KoodistoUri uri) {
         teemas.add(uri);
     }

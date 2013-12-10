@@ -17,6 +17,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
       $scope.model.hakukohteenKielet = [];
 
+
+
       $scope.model.hakukelpoisuusVaatimukses = [];
 
       //Try to get the user language and if for some reason it can't be retrieved, use FI as default
@@ -146,7 +148,11 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
         $scope.model.collapse = {
-            perusTiedot: false
+            perusTiedot: false ,
+            valintakokeet : false,
+            liitteet : false,
+            valintaperusteet : false,
+            sorakuvaukset : false
         };
     };
 
@@ -160,6 +166,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     loadHakuInformation();
     modelInit();
     loadHakukelpoisuusVaatimukses();
+
 
     /*
 
@@ -178,6 +185,60 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     $scope.doDelete = function(event) {
         $log.info("doDelete()...");
+
+    };
+
+    $scope.getHakukelpoisuusVaatimusKuvaus = function(kieliUri) {
+        return $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset[kieliUri];
+    };
+
+        $scope.getLisatiedot = function(kieliUri) {
+        return $scope.model.hakukohde.lisatiedot[kieliUri];
+    };
+
+    $scope.getLocalizedValintakoe = function(kieliUri) {
+
+        var localizedValintakokeet = [];
+
+        angular.forEach($scope.model.hakukohde.valintakokeet,function(valintakoe){
+
+            if (valintakoe.kieliUri === kieliUri) {
+                localizedValintakokeet.push(valintakoe);
+            }
+
+        });
+
+        return localizedValintakokeet;
+
+    };
+
+    $scope.getLocalizedLiitteet = function(kieliUri) {
+
+        var localizedLiitteet = [];
+
+        angular.forEach($scope.model.hakukohde.hakukohteenLiitteet,function(liite){
+            if (liite.kieliUri === kieliUri) {
+                localizedLiitteet.push(liite);
+            }
+        });
+
+        return localizedLiitteet;
+
+    };
+
+    $scope.getLiitteenKuvaus = function(liite,kieliUri) {
+        return liite.liitteenKuvaukset[kieliUri];
+    };
+
+    $scope.getValintaperusteKuvaus = function(kieliUri) {
+
+        return $scope.model.hakukohde.valintaperusteKuvaukset[kieliUri];
+
+    };
+
+    $scope.getSoraKuvaus = function(kieliUri) {
+
+        return $scope.model.hakukohde.soraKuvaukset[kieliUri];
 
     };
 

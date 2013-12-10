@@ -1,9 +1,15 @@
 <div class="tarjonta-dialog" id="select-koulutus">
     <div class="modal-header">
-        <h3><div tt="sisaltyvyys.dialogTitle"></div></h3>
+        <h3><div tt="sisaltyvyys.dialogTitle.poista"></div></h3>
     </div>
 
     <div class="modal-body">
+        <b>{{model.text.headLabel}}</b>
+
+        <div ng-show="model.errors.length > 0"  >
+            <ul><li ng-repeat="error in model.errors">{{error.msg}}</li></ul>
+        </div>
+
         <div ng-include="model.html"></div>
     </div>
 </div>

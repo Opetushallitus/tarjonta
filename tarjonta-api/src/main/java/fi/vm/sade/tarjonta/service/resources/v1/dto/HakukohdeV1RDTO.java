@@ -69,6 +69,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private HashMap<String,String> soraKuvaukset;
 
+    private HashMap<String,String> hakukelpoisuusVaatimusKuvaukset;
+
     private boolean kaytetaanJarjestelmanValintaPalvelua;
 
     private boolean kaytetaanHaunPaattymisenAikaa;
@@ -351,5 +353,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakuaikaId(String hakuaikaId) {
         this.hakuaikaId = hakuaikaId;
+    }
+
+    public HashMap<String, String> getHakukelpoisuusVaatimusKuvaukset() {
+        return hakukelpoisuusVaatimusKuvaukset;
+    }
+
+    public void setHakukelpoisuusVaatimusKuvaukset(HashMap<String, String> hakukelpoisuusVaatimusKuvaukset) {
+        this.hakukelpoisuusVaatimusKuvaukset = hakukelpoisuusVaatimusKuvaukset;
     }
 }

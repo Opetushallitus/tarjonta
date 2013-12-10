@@ -68,7 +68,9 @@ angular.module('app',
             'MonikielinenTextArea',
             'ControlsLayout',
             'angularTreeview',
-            'TreeFieldDirective'
+            'DateFormat',
+            'TreeFieldDirective',
+            'AiheetJaTeematChooser'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

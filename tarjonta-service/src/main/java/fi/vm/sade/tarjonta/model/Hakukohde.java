@@ -102,6 +102,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hakukelpoisuusvaatimuskuvaus_teksti_id")
+    private MonikielinenTeksti hakukelpoisuusVaatimusKuvaus;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hakukohde_monikielinen_nimi_id")
     private MonikielinenTeksti hakukohdeMonikielinenNimi;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -547,5 +550,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
+    }
+
+    public MonikielinenTeksti getHakukelpoisuusVaatimusKuvaus() {
+        return hakukelpoisuusVaatimusKuvaus;
+    }
+
+    public void setHakukelpoisuusVaatimusKuvaus(MonikielinenTeksti hakukelpoisuusVaatimusKuvaus) {
+        this.hakukelpoisuusVaatimusKuvaus = hakukelpoisuusVaatimusKuvaus;
     }
 }

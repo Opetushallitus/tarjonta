@@ -129,7 +129,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komoto.setKoulutuksenAlkamisPvm(dto.getKoulutuksenAlkamisPvm());
         komoto.setTeemas(convertToUris(dto.getTeemas(), komoto.getTeemas(), "teemas"));
         if (dto.getAihees() != null) {
-            komoto.setAihees(convertToUris(dto.getAihees(),komoto.getAihees(),"aihees"));
+//            System.out.println("aiheet:" + dto.getAihees());
+//            System.out.println("converted aiheet:" + convertToUris(dto.getAihees(),komoto.getAihees(),"aihees"));
+            komoto.getAihees().clear();
+            komoto.getAihees().addAll(convertToUris(dto.getAihees(),new HashSet(),"aihees"));
         }
         komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), "opetuskielis"));
         komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), "opetusmuodos"));

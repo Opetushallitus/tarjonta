@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -26,9 +27,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class })
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
@@ -91,7 +92,6 @@ public class LinkingResourceImplV1Test {
         // //unlink
         // vast = linkingResource.unlink(parentOid, childOid);
         // Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
-
         // childs for parent
         result = linkingResource.children(parent.getOid());
         Assert.assertEquals(ResultStatus.OK, result.getStatus());
@@ -183,4 +183,95 @@ public class LinkingResourceImplV1Test {
         Assert.assertEquals(ResultStatus.ERROR, vast.getStatus());
     }
 
+    @Test
+    public void testRemoveMultipleLinksActions() {
+        Koulutusmoduuli parent = tarjontaFixtures.createTutkintoOhjelma();
+        parent = koulutusmoduuliDAO.insert(parent);
+        String parentOid = parent.getOid();
+
+        Koulutusmoduuli child1 = tarjontaFixtures.createTutkintoOhjelma();
+        child1 = koulutusmoduuliDAO.insert(child1);
+        String childOid1 = child1.getOid();
+
+        Koulutusmoduuli child2 = tarjontaFixtures.createTutkintoOhjelma();
+        child2 = koulutusmoduuliDAO.insert(child2);
+        String childOid2 = child2.getOid();
+
+        Koulutusmoduuli leafChild1 = tarjontaFixtures.createTutkintoOhjelma();
+        leafChild1 = koulutusmoduuliDAO.insert(leafChild1);
+        String leafChildOid1 = leafChild1.getOid();
+
+        ResultV1RDTO<?> vast = linkingResource.link(new KomoLink(parentOid, childOid1));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        vast = linkingResource.link(new KomoLink(parentOid, childOid2));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        vast = linkingResource.link(new KomoLink(childOid2, leafChildOid1));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        final String COMMA_SEPARATED_OIDS = childOid1 + "," + childOid2;
+
+        //expect a validation error. 
+        vast = linkingResource.multiUnlink(parentOid, COMMA_SEPARATED_OIDS);
+        Assert.assertEquals(ResultStatus.VALIDATION, vast.getStatus());
+        Assert.assertEquals(1, vast.getErrors().size());
+        Assert.assertEquals(1, vast.getErrors().get(0).getErrorMessageParameters().size());
+        Assert.assertEquals(childOid2, vast.getErrors().get(0).getErrorMessageParameters().get(0));
+        Assert.assertEquals("childs", vast.getErrors().get(0).getErrorField());
+        Assert.assertEquals(LinkingValidationMessages.LINKING_OID_HAS_CHILDREN.name(), vast.getErrors().get(0).getErrorMessageKey());
+
+        //unlink the problem oid's children 
+        vast = linkingResource.multiUnlink(vast.getErrors().get(0).getErrorMessageParameters().get(0), leafChildOid1);
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        //try again to remove the oids -> success
+        vast = linkingResource.multiUnlink(parentOid, COMMA_SEPARATED_OIDS);
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+    }
+
+    @Test
+    public void testUnLinkErrors() {
+        Koulutusmoduuli parent = tarjontaFixtures.createTutkintoOhjelma();
+        parent = koulutusmoduuliDAO.insert(parent);
+        final String parentOid = parent.getOid();
+
+        Koulutusmoduuli child = tarjontaFixtures.createTutkintoOhjelma();
+        child = koulutusmoduuliDAO.insert(child);
+        final String childOid = child.getOid();
+
+        //an invalid parentd oid error
+        ResultV1RDTO<?> vast = linkingResource.multiUnlink("1234", "1234");
+        Assert.assertEquals(ResultStatus.VALIDATION, vast.getStatus());
+        Assert.assertEquals("parent", vast.getErrors().get(0).getErrorField());
+        Assert.assertEquals(LinkingValidationMessages.LINKING_PARENT_OID_NOT_FOUND.name(), vast.getErrors().get(0).getErrorMessageKey());
+        Assert.assertEquals(1, vast.getErrors().size());
+        Assert.assertEquals(1, vast.getErrors().get(0).getErrorMessageParameters().size());
+
+        //an invalid child oid
+        vast = linkingResource.multiUnlink(parentOid, null);
+        Assert.assertEquals(ResultStatus.VALIDATION, vast.getStatus());
+        Assert.assertEquals("parent", vast.getErrors().get(0).getErrorField());
+        Assert.assertEquals(LinkingValidationMessages.LINKING_PARENT_HAS_NO_CHILDREN.name(), vast.getErrors().get(0).getErrorMessageKey());
+        Assert.assertEquals(1, vast.getErrors().size());
+        Assert.assertEquals(1, vast.getErrors().get(0).getErrorMessageParameters().size());
+
+        vast = linkingResource.link(new KomoLink(parentOid, childOid));
+        Assert.assertEquals(ResultStatus.OK, vast.getStatus());
+
+        vast = linkingResource.multiUnlink(parentOid, null);
+        Assert.assertEquals(ResultStatus.VALIDATION, vast.getStatus());
+        Assert.assertEquals("childs", vast.getErrors().get(0).getErrorField());
+        Assert.assertEquals(LinkingValidationMessages.LINKING_MISSING_CHILD_OIDS.name(), vast.getErrors().get(0).getErrorMessageKey());
+        Assert.assertEquals(1, vast.getErrors().size());
+        Assert.assertEquals(0, vast.getErrors().get(0).getErrorMessageParameters().size());
+
+        //an invalid child oids error
+        vast = linkingResource.multiUnlink(parentOid, "1234,12345,12346");
+        Assert.assertEquals(ResultStatus.VALIDATION, vast.getStatus());
+        Assert.assertEquals("childs", vast.getErrors().get(0).getErrorField());
+        Assert.assertEquals(LinkingValidationMessages.LINKING_CHILD_OID_NOT_FOUND.name(), vast.getErrors().get(0).getErrorMessageKey());
+        Assert.assertEquals(3, vast.getErrors().size());
+        Assert.assertEquals(1, vast.getErrors().get(0).getErrorMessageParameters().size());
+    }
 }

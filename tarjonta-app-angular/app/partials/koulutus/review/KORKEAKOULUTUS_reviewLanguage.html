@@ -15,6 +15,7 @@
     <tbody ng-show="!model.collapse.perusTiedot">
     
     <!-- oid/tila/tyyppi -->
+    <!-- 
     <tr>
         <th tt="koulutus.review.perustiedot.oidTilaTyyppi"/>
         <td colspan="2">
@@ -23,6 +24,7 @@
             {{model.koulutus.koulutusmoduuliTyyppi}}
         </td>
     </tr>
+     -->
     
     <!-- organisaation nimi -->
     <tr>
@@ -123,18 +125,20 @@
     </tr>-->
     
     <!-- pohjakoulutusvaatimus -->
+    <!-- 
     <tr>
         <th tt="koulutus.review.perustiedot.pohjakoulutusvaatimus"/>
         <td colspan="2">
             <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.kaannos}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
+     -->
     
     <!-- alkamispvm -->
     <tr>
         <th tt="koulutus.review.perustiedot.alkamispvm"/>
         <td colspan="2">
-            {{ model.koulutus.koulutuksenAlkamisPvm}}
+            {{ model.koulutus.koulutuksenAlkamisPvm | ldate }}
         </td>
     </tr>
     
@@ -154,11 +158,27 @@
         </td>
     </tr>
     
+    <!-- opetusajat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetusajat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
     <!-- opetusmuodot -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetusmuodot"/>
         <td colspan="2">
-            <span data-ng-repeat='opetusmuoto in model.koulutus.opetusmuodos.meta'>{{ opetusmuoto.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
+    <!-- opetuspaikat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetuspaikat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -201,7 +221,7 @@
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>
         <td><input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET_LIITA")' value="{{t('koulutus.review.sisaltyvyys-liita')}}"></td>
-        <!--td><input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET_POISTA")' value="{{t('koulutus.review.sisaltyvyys-poista')}}"></td-->
+        <td><input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET_POISTA")' value="{{t('koulutus.review.sisaltyvyys-poista')}}"></td>
     </tr>
 
     <tbody ng-show="!model.collapse.sisaltyvatOpintokokonaisuudet">

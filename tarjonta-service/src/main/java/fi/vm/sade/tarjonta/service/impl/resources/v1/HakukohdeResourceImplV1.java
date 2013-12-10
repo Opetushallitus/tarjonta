@@ -369,6 +369,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
+        //These are updated in a separate resource
+        hakukohde.getValintakoes().clear();
+        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
+
+        hakukohde.getLiites().clear();
+        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+
         hakukohde.setId(hakukohdeTemp.getId());
         hakukohde.setVersion(hakukohdeTemp.getVersion());
 
