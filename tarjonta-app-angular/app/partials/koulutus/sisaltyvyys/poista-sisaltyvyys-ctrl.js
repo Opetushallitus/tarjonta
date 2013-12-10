@@ -90,18 +90,29 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
              * Load all selectable (childen)rows to the ng-grid component.
              */
             angular.forEach(oids, function(val, keyOid) {
-                var promise = $scope.searchBySpec({//search parameter object
-                    komoOid: keyOid,
-                    oid: null,
-                    terms: null,
-                    state: null,
-                    year: null,
-                    season: null
+                var addNew = true;
+                
+                //allow only one unique oid in the hakutulos list
+                angular.forEach($scope.model.hakutulos, function(parentVal) {
+                    if (parentVal.oid === keyOid) {
+                        addNew = false;
+                    }
                 });
 
-                promise.then(function(arr) {
-                    $scope.model.hakutulos.push(arr[0]);
-                });
+                if (addNew) {
+                    var promise = $scope.searchBySpec({//search parameter object
+                        komoOid: keyOid,
+                        oid: null,
+                        terms: null,
+                        state: null,
+                        year: null,
+                        season: null
+                    });
+
+                    promise.then(function(arr) {
+                        $scope.model.hakutulos.push(arr[0]);
+                    });
+                }
             });
         };
         $scope.selectTreeHandler = TreeHandlers.selectTreeHandler;
