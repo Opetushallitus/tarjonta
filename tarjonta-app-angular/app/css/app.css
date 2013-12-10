@@ -411,3 +411,37 @@ div.tarjontaControlsLayout ul {
 div.tarjontaControlsLayout p > p, div.tarjontaControlsLayout p > ul {
     margin-top:0.33em;   
 }
+
+div#aiheetJaTeemat > ul {
+    border: 1px solid #cccccc;
+    overflow:auto;
+    margin:0;
+}
+
+div#aiheetJaTeemat > ul.tree {
+    height:300px;
+}
+
+div#aiheetJaTeemat > ul.tree > li > a:hover {
+    text-decoration: none;	
+}
+
+div#aiheetJaTeemat > ul.tree > li > a:before {
+	color: #cccccc;
+    display: inline;
+    content: '▼ ';
+}
+
+div#aiheetJaTeemat > ul.tree > li.fold > a:before {
+    content: '► ';
+}
+
+div#aiheetJaTeemat > ul.tree li {
+	list-style:none;
+}
+
+
+div#aiheetJaTeemat > ul.selection {
+	margin-top:20px;
+    height:100px;
+}

@@ -214,6 +214,10 @@
         <tr class="required" ng-controller="AiheetTeematController">
         <th tt="koulutus.edit.aiheet"/>
         <td>
+        
+        <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>
+        
+        <!-- 
         <accordion close-others="oneAtATime">
           <div ng-repeat="t in teemat">
           <accordion-group heading="{{t.koodi.koodiNimi}}" is-open="false">
@@ -231,6 +235,8 @@
             <ul ng-repeat="k in uiModel.aihees.uris">
             <li><span class="btn btn-primary" ng-click="poista(k)">x</span>{{aiheNimi[k]}}</li>
             </ul>
+            
+             -->
             </td>
             <td>
             	<p class="error" ng-show="uiModel.aihees.uris.length == 0" tt="koulutus.edit.aihees.required"/>
