@@ -37,6 +37,10 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		
 		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
 		$scope.edit = $scope.mode()===false;
+		
+		$scope.isEmpty = function() {
+			return $scope.model.trim().length==0;
+		}
 
 		$scope.charCount = function() {
 			return $($scope.element).text().length;
