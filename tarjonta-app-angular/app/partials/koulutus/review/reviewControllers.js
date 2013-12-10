@@ -7,6 +7,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
         $scope.formControls = {};
         $scope.model = {
+            koodistoLocale: LocalisationService.getLocale(),
             routeParams: $routeParams,
             collapse: {
                 perusTiedot: false,
@@ -76,8 +77,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
                     controller: 'LiitaSisaltyvyysCtrl',
                     resolve: {
-                        targetKomoOid: function() {
-                            return $scope.koulutusModel.result.komoOid;
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
                             return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
@@ -90,8 +91,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     templateUrl: 'partials/koulutus/sisaltyvyys/poista-koulutuksia.html',
                     controller: 'PoistaSisaltyvyysCtrl',
                     resolve: {
-                        targetKomoOid: function() {
-                            return $scope.koulutusModel.result.komoOid;
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
                             return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
@@ -174,7 +175,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
             angular.forEach(map, function(val, key) {
                 var lang = {'koodi_uri': val};
-                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
+                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, $scope.model.koodistoLocale)
                 $scope.model.languages.push(lang);
             });
         } else {

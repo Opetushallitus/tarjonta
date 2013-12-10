@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 
 import java.util.Date;
+import java.util.HashMap;
 
 /*
 * @author: Tuomas Katva 10/22/13
@@ -22,8 +23,10 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
-
+    //TODO: remove this and use the much simpler HashMap implementation
     private TekstiRDTO liitteenKuvaus;
+
+    private HashMap<String,String> liitteenKuvaukset;
 
     private Date toimitettavaMennessa;
 
@@ -93,5 +96,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setHakukohdeOid(String hakukohdeOid) {
         this.hakukohdeOid = hakukohdeOid;
+    }
+
+    public HashMap<String, String> getLiitteenKuvaukset() {
+        return liitteenKuvaukset;
+    }
+
+    public void setLiitteenKuvaukset(HashMap<String, String> liitteenKuvaukset) {
+        this.liitteenKuvaukset = liitteenKuvaukset;
     }
 }
