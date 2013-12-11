@@ -39,7 +39,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     private static final long serialVersionUID = -3320464257959195992L;
     @Column(name = "oid", unique=true)
     private String oid;
-    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE}, fetch=FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hakukohde_id")

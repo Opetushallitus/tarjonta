@@ -231,4 +231,11 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Palauttaa hakukohteen koulutukset", notes = "Operaatio palauttaa listan hakukohteen koulutuksia.")
     public ResultV1RDTO<List<NimiJaOidRDTO>> getKoulutukset(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid);
 
+    @POST
+    @Path("{oid}/koulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes="Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid")  String hakukohdeOid,
+                                                                     @ApiParam(value = "Lista hakukohteelta poistettavista koulutus oideista") List<String> koulutukses);
+
 }
