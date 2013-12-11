@@ -641,6 +641,10 @@
         parameter = _ref1[_i];
         parameter.name = parameter.name || parameter.type || parameter.dataType;
         type = parameter.type || parameter.dataType;
+        if (type === undefined) {
+            type = 'spring';
+        }
+
         if (type.toLowerCase() === 'boolean') {
           parameter.allowableValues = {};
           parameter.allowableValues.values = ["true", "false"];
