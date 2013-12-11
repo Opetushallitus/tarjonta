@@ -829,12 +829,31 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                 LOG.debug("Removed {} koulutukses from hakukohde : {}",komotoToRemove.size(),hakukohde.getOid());
                 if (remainingKomotos.size() > 0)  {
-                    Set<KoulutusmoduuliToteutus> remainingKomotoSet = new HashSet<KoulutusmoduuliToteutus>(remainingKomotos);
 
-                    hakukohde.setKoulutusmoduuliToteutuses(remainingKomotoSet);
+                    for (KoulutusmoduuliToteutus komoto : komotoToRemove) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                        koulutusmoduuliToteutusDAO.update(komoto);
+
+                    }
+
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDao.update(hakukohde);
                 } else {
+
+                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
+
+                    for (KoulutusmoduuliToteutus komoto : komotos) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                    }
+
                     LOG.debug("Hakukohde does not have anymore koulutukses, removing it");
                     hakukohdeDao.remove(hakukohde);
                     try {

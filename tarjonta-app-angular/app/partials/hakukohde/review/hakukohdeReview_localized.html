@@ -175,12 +175,14 @@
     </tr>
     <tbody ng-show="!model.collapse.koulutukset">
 
-    <tr>
+    <tr data-ng-repeat="koulutus in  model.koulutukses">
 
         <td colspan="2">
-            <span data-ng-repeat="koulutus in  model.koulutukses ">
-            <a ng-href="#/koulutus/{{koulutus.oid}}/edit"> {{koulutus.nimi}}</a>
-            </span>
+           <a ng-href="#/koulutus/{{koulutus.oid}}/edit"> {{koulutus.nimi}}</a>
+
+        </td>
+        <td>
+            <a href="" data-ng-click="removeKoulutusFromHakukohde(koulutus)">  {{t('hakukohde.review.koulutus.poista')}}</a>
         </td>
     </tr>
 

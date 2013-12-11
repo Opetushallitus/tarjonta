@@ -1,7 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
+app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses) {
 
       console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
@@ -260,6 +260,10 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
         return localizedLiitteet;
 
+    };
+
+    $scope.removeKoulutusFromHakukohde = function(koulutus){
+          console.log('Removing koulutus from hakukohde : ', koulutus);
     };
 
     $scope.getLiitteenKuvaus = function(liite,kieliUri) {
