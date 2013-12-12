@@ -1,7 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses) {
+app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService) {
 
       console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
@@ -262,8 +262,47 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     };
 
+    var reallyRemoveKoulutusFromHakukohde = function(koulutus){
+
+        var koulutuksesArray = [];
+
+        koulutuksesArray.push(koulutus.oid);
+
+        HakukohdeKoulutukses.removeKoulutuksesFromHakukohde($scope.model.hakukohde.oid,koulutuksesArray);
+
+        if ($scope.model.koulutukses.length > 1) {
+
+            angular.forEach($scope.model.koulutukses,function(koulutusIndex){
+                if (koulutusIndex.oid === koulutus.oid) {
+                    var index = $scope.model.koulutukses.indexOf(koulutusIndex);
+                    $scope.model.koulutukses.splice(index,1);
+                }
+            });
+
+        } else {
+
+            $location.path("/etusivu");
+
+        }
+
+    };
+
     $scope.removeKoulutusFromHakukohde = function(koulutus){
-          console.log('Removing koulutus from hakukohde : ', koulutus);
+
+        var texts = {
+            title: LocalisationService.t("hakukohde.review.remove.koulutus.title"),
+            description: LocalisationService.t("hakukohde.review.remove.koulutus.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
+
+        var d = dialogService.showDialog(texts);
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+                reallyRemoveKoulutusFromHakukohde(koulutus);
+            }
+        });
+
     };
 
     $scope.getLiitteenKuvaus = function(liite,kieliUri) {
