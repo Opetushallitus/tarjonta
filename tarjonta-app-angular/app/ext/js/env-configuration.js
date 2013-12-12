@@ -75,6 +75,7 @@ window.CONFIG = {
         "host.base-uri": "https://itest-virkailija.oph.ware.fi",
         "haku.uri": "/tarjonta-service/rest/haku",
         "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
+        "haku.kohdejoukko.kk.uri": "haunkohdejoukko_12#1",
         //käsin lisätyt:
 
         //
