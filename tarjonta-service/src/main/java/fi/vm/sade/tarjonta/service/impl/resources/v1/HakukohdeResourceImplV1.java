@@ -18,6 +18,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -45,7 +46,7 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.*;
-
+import org.apache.commons.collections.CollectionUtils;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -798,5 +799,84 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<String> koulutukses) {
+
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+
+        if (hakukohde != null) {
+
+            List<KoulutusmoduuliToteutus> komotoToRemove = new ArrayList<KoulutusmoduuliToteutus>();
+
+
+            for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+                LOG.debug("Looping hakukohde komoto : {}",komoto.getOid());
+                for (String komotoOid : koulutukses) {
+                    if (komoto.getOid().trim().equals(komotoOid)) {
+                        komotoToRemove.add(komoto);
+                    }
+                }
+
+            }
+
+            if (komotoToRemove.size() > 0) {
+                Collection<KoulutusmoduuliToteutus> remainingKomotos =  CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(),komotoToRemove);
+
+
+                LOG.debug("Removed {} koulutukses from hakukohde : {}",komotoToRemove.size(),hakukohde.getOid());
+                if (remainingKomotos.size() > 0)  {
+
+                    for (KoulutusmoduuliToteutus komoto : komotoToRemove) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                        koulutusmoduuliToteutusDAO.update(komoto);
+
+                    }
+
+                    LOG.debug("Hakukohde has more koulutukses, updating it");
+                    hakukohdeDao.update(hakukohde);
+                } else {
+
+                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
+
+                    for (KoulutusmoduuliToteutus komoto : komotos) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                    }
+
+                    LOG.debug("Hakukohde does not have anymore koulutukses, removing it");
+                    hakukohdeDao.remove(hakukohde);
+                    try {
+                    solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                    } catch (Exception exp) {
+                        LOG.warn("EXCEPTION REMOVING HAKUKOHDE: {} FROM INDEX : {}",hakukohdeOid,exp.toString());
+                    }
+                }
+
+            }
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            resultV1RDTO.setResult(koulutukses);
+
+
+        } else {
+
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+           resultV1RDTO.setResult(koulutukses);
+
+        }
+
+        return resultV1RDTO;
+
     }
 }
