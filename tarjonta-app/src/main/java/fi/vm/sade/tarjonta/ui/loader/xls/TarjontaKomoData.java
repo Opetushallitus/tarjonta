@@ -447,8 +447,6 @@ public class TarjontaKomoData {
                                 dbParentOid = parentKomosReadyForInsertAndUpdate.get(koulutuskoodiUri).getOid();
                             }
 
-                            log.error("{} {}", dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri + "/" + lukiolinjaUri);
-
                             Preconditions.checkNotNull(dbParentOid, "Parent OID cannot be null.");
                             //update childrend
                             switch (excelChildKomo.getKoulutustyyppi()) {
@@ -464,8 +462,6 @@ public class TarjontaKomoData {
                                         updateRelations(excelChildKomo, dbChildKomos.get(koulutusohjelmakoodiUri).getOid(), dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri);
                                         tarjontaAdminService.paivitaKoulutusmoduuli(excelChildKomo);
                                     } else if (dbParentOid != null) {
-                                        log.error("{} {}", koulutusohjelmakoodiUri, dbChildKomos.containsKey(koulutusohjelmakoodiUri));
-
                                         updateRelations(excelChildKomo, excelChildKomo.getOid(), dbParentOid, koulutuskoodiUri + "/" + koulutusohjelmakoodiUri);
                                         tarjontaAdminService.lisaaKoulutusmoduuli(excelChildKomo);
                                         newKomoOids.add(excelChildKomo.getOid());
@@ -545,9 +541,8 @@ public class TarjontaKomoData {
 
         //filter all korkeakoulu komos
         for (KoulutusmoduuliTulos tulos : allKomos.getKoulutusmoduuliTulos()) {
-            
+           
             if (allowedTypes.contains(tulos.getKoulutusmoduuli().getKoulutustyyppi())) {
-               log.error("found {}", tulos.getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
                 allModules.addAll(allKomos.getKoulutusmoduuliTulos());
             }
         }
