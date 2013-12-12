@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.service;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.slf4j.Logger;
@@ -41,9 +42,9 @@ private static final Logger LOG = LoggerFactory.getLogger(PublishingService.clas
      *
      * @param oid
      * @param sisalto
-     * @return true when no errors
+     * @return null when not done
      */
-    public boolean changeState(final String oid, final TarjontaTila toTila, final SisaltoTyyppi sisalto) {
+    public PaivitaTilaVastausTyyppi changeState(final String oid, final TarjontaTila toTila, final SisaltoTyyppi sisalto) {
         GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
         tyyppi.setOid(oid);
         tyyppi.setSisalto(sisalto);
@@ -51,10 +52,9 @@ private static final Logger LOG = LoggerFactory.getLogger(PublishingService.clas
         if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
             PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
             tila.getTilaOids().add(tyyppi);
-            tarjontaAdminService.paivitaTilat(tila);
-            return true;
+            return tarjontaAdminService.paivitaTilat(tila);
         } 
-        return false;
+        return null;
     }
 
 

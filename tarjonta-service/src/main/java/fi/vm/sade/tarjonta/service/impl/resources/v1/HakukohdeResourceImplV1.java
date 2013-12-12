@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -799,6 +800,39 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<String> koulutukses) {
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+
+        List<KoulutusmoduuliToteutus> liitettavatKomotot = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses);
+
+        if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
+
+            for (KoulutusmoduuliToteutus komoto : liitettavatKomotot) {
+
+                hakukohde.addKoulutusmoduuliToteutus(komoto);
+
+                komoto.addHakukohde(hakukohde);
+
+                koulutusmoduuliToteutusDAO.update(komoto);
+
+            }
+
+            hakukohdeDao.update(hakukohde);
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        } else {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+
+        }
+
+        return resultV1RDTO;
     }
 
     @Override

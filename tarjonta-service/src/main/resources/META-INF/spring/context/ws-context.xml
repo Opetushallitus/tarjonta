@@ -50,6 +50,7 @@
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
     <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1" />
     <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1" />
+    <bean id="permissionResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.PermissionResourceImplV1" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -104,11 +105,12 @@
             <ref bean="tarjontaKoulutusResourceV1"/>
             <ref bean="yhteyshenkiloResourceV1"/>
             <ref bean="linkingResourceV1"/>
+            <ref bean="permissionResourceV1"/>
 
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-<!--             <ref bean="cors-filter" /> -->
-<!--             <ref bean="tarjontaExceptionMapper"/> -->
+            <!--             <ref bean="cors-filter" /> -->
+            <!--             <ref bean="tarjontaExceptionMapper"/> -->
             <ref bean="tarjontaJacksonJsonProvider" />
         </jaxrs:providers>
     </jaxrs:server>

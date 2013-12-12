@@ -907,9 +907,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
-        publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
+        Tilamuutokset tm = publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
         indexTilatToSolr(tarjontatiedonTila);
-        return new PaivitaTilaVastausTyyppi();
+        
+        return new PaivitaTilaVastausTyyppi(Lists.newArrayList(tm.getMuutetutHakukohteet()), Lists.newArrayList(tm.getMuutetutKomotot()));
     }
 
     private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila) {
@@ -939,11 +940,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuOids.add(hakuOid);
 
         //Hakukohde IDs
-        List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
+        List<Long> hakukohdeOids = hakukohdeDAO.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         //toteutus Ids
         if (hakukohdeOids != null && !hakukohdeOids.isEmpty()) {
-            komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+            komotoIds.addAll(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
         }
     }
 

@@ -58,6 +58,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
@@ -133,6 +134,7 @@ public class KoulutusResourceImplV1Test {
     private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
     private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
+    private PermissionChecker permissionChecker;
 
     @Before
     public void setUp() {
@@ -150,6 +152,7 @@ public class KoulutusResourceImplV1Test {
         oidServiceMock = createMock(OIDService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
+        permissionChecker = createMock(PermissionChecker.class);
 
         //INIT DATA CONVERTERS
         convertToDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
@@ -167,6 +170,7 @@ public class KoulutusResourceImplV1Test {
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
+        Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
 
         //no need for replay or verify:
         Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
@@ -228,6 +232,9 @@ public class KoulutusResourceImplV1Test {
         //the calls of the OidServices must be in correct order!
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
+
+        permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
 
         //KOODISTO DATA CALLS IN CORRECT CALL ORDER
         expectMetaUri(KOULUTUSKOODI);

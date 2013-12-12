@@ -75,8 +75,7 @@ angular.module('app',
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
-angular.module('app').config(['$routeProvider', function($routeProvider)
-    {
+angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         $routeProvider
                 .when("/etusivu", {
@@ -140,7 +139,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);        
+                            $log.info("/koulutus/ID/edit", $route);
                             return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
                         }
                     }
@@ -193,8 +192,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     hakukohteenLiitteet: [],
                                     valintakokeet: [],
                                     lisatiedot: {},
-                                    valintaperusteKuvaukset : {},
-                                    soraKuvaukset : {}
+                                    valintaperusteKuvaukset: {},
+                                    soraKuvaukset: {}
                                 });
 
                                 //  SharedStateService.removeState('SelectedKoulutukses');
@@ -225,11 +224,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     }]);
 
 
-angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams, $log) {
+angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
+    function($scope, $route, $routeParams, $log, PermissionService) {
 
     $log.debug("app.AppRoutingCtrl()");
 
     $scope.count = 0;
+
+
+    PermissionService.permissionResource().authorize({}, function(response) {
+        console.log("Authorization check : %j", response);
+    });
+
 
     var render = function() {
         $log.debug("app.AppRoutingCtrl.render()");
@@ -257,7 +263,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
             }
     );
 
-});
+}]);
 
 
 
