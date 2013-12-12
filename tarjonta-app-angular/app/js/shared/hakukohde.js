@@ -113,6 +113,22 @@ app.factory('HakukohdeKoulutukses',function($http,Config){
             }
 
 
+        },
+
+        addKoulutuksesToHakukohde : function(hakukohdeOid, koulutusOids) {
+
+            if (hakukohdeOid !== undefined && koulutusOids !== koulutusOids) {
+
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
+
+                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                    return true;
+                }).error(function(data){
+                    return false;
+                    });
+
+            }
+
         }
 
     };
