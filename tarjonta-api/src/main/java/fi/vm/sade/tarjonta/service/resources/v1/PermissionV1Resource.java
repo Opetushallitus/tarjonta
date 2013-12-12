@@ -20,6 +20,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * Permission checker - causes session to created and authorized.
  *
  * @author jani
  */
