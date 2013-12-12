@@ -30,7 +30,19 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 
 	function controller($scope) {
 		
+		$scope.errors = {
+        		required:false,
+        		pristine:true,
+        		dirty:false
+        }
+
 		$scope.teemat = [];
+		
+		function updateErrors() {
+			$scope.errors.required = $scope.model.length==0;
+			$scope.errors.dirty = true;
+			$scope.errors.pristine = false;
+		}
 		
 		$scope.toggle = function(auri, turi) {
 			var i = $scope.model.indexOf(auri);
@@ -54,6 +66,7 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 					break;
 				}
 			}
+			updateErrors();
 		}
 		
 		$scope.unselect = function(uri) {
@@ -71,11 +84,12 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 					if (a.uri==uri) {
 						a.selected = false;
 						t.size += i==-1 ? 1 : -1;
+						updateErrors();
 						return;
 					}
 				}
 			}
-			
+			updateErrors();
 		}
 
 		Koodisto.getAllKoodisWithKoodiUri('teemat', locale).then(
@@ -102,8 +116,14 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 		templateUrl: 'partials/koulutus/edit/aiheet-teemat.html',
 		replace:true,
 		controller: controller,
+		require: '^form',
+        link: function(scope, element, attrs, controller) {
+            scope.errors.required = true;
+        	controller.$addControl({"$name": "aiheetJaTeemat", "$error": scope.errors});
+        },
 		scope: {
-			model: "="
+			model: "=",
+			name: "@"
 		}		
 	};
 	

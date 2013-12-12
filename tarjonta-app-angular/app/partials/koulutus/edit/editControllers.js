@@ -17,6 +17,7 @@ app.controller('BaseEditController',
                 $scope.formControls = {};
 
                 var showSuccess = function() {
+                    $scope.uiModel.showValidationErrors = false;
                     $scope.uiModel.showSuccess = true;
                     $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
@@ -47,6 +48,7 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
 
@@ -141,6 +143,11 @@ app.controller('BaseEditController',
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
+                    
+                    if ($scope.koulutusForm.$invalid) {
+                    	$scope.uiModel.showError = true;
+                    	return;
+                    }                    
 
                     var KoulutusRes = tarjontaService.koulutus();
                     var apiModelReadyForSave = $scope.saveModelConverter(tila);
