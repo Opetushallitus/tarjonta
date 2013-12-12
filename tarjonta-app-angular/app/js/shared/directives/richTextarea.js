@@ -39,7 +39,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		$scope.edit = $scope.mode()===false;
 		
 		$scope.isEmpty = function() {
-			return $scope.model.trim().length==0;
+			return !$scope.model || $scope.model.trim().length==0;
 		}
 
 		$scope.charCount = function() {
