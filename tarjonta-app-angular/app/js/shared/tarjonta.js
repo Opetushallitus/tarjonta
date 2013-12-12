@@ -198,14 +198,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/KORKEAKOULUTUS/", {}, {
             update: {
                 method: 'POST',
-                //  withCredentials: true,
-                //isArray: true,
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             save: {
                 method: 'POST',
-                //  withCredentials: true,
-                // isArray: true,
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
@@ -285,13 +283,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis/komo", {'oid': komotoOid}, {
             update: {
                 method: 'PUT',
-                //withCredentials: true,
+                withCredentials: true,
                 isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             save: {
                 method: 'POST',
-                // withCredentials: true,
+                withCredentials: true,
                 isArray: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
@@ -356,8 +354,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
 
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
-    	console.log("resourceLink called!");
-    	dataFactory.resourceLink.save({parent:parent, children:angular.isArray(child)?child:[child]},fnSuccess, fnError);
+        console.log("resourceLink called!");
+        dataFactory.resourceLink.save({parent: parent, children: angular.isArray(child) ? child : [child]}, fnSuccess, fnError);
     };
 
     /** 
@@ -377,33 +375,30 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * </pre>
      */
     dataFactory.resourceLink =
-            $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid",{}, {
+            $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid", {}, {
                 checkput: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
                 },
-
                 put: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
                 },
                 test: {
-                	url:Config.env.tarjontaRestUrlPrefix + "link/test",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/test",
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
-                    method:'POST'
+                    method: 'POST'
                 },
                 parents: {
-                	url:Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
                     isArray: false,
                     method: 'GET',
                 },
                 remove: {
                     method: 'DELETE',
-                	url:Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
-                	
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
                 },
                 removeMany: {
                     method: 'DELETE',
-                	url:Config.env.tarjontaRestUrlPrefix + "link/:parent",
-                	
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent",
                 }
             });
 
@@ -421,8 +416,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             for (var i = 0; i < parentOids.result.length; i++) {
                 var promise = dataFactory.haeKoulutukset({komoOid: parentOids.result[i]}).then(function(result) {
                     if (result.tulokset && result.tulokset.length > 0) {
-                        if(koulutukset.indexOf(result.tulokset[0])==-1) {
-                        	koulutukset.push(result.tulokset[0]);
+                        if (koulutukset.indexOf(result.tulokset[0]) == -1) {
+                            koulutukset.push(result.tulokset[0]);
                         }
                     }
                 });
