@@ -24,10 +24,22 @@ app.directive('multiSelect', function($log) {
 
     function controller($scope) {
 
+        $scope.errors = {
+        		required:false,
+        		pristine:true,
+        		dirty:false,
+        		$name:$scope.name
+        }
 
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
+        
+        function updateErrors() {
+            $scope.errors.dirty = true;
+            $scope.errors.pristine = false;
+        	$scope.errors.required = $scope.isrequired && $scope.selection.length==0;
+        }
        
         if ($scope.columns == undefined) {
             $scope.columns = 1;
@@ -56,6 +68,7 @@ app.directive('multiSelect', function($log) {
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
             });
+            updateErrors();
         }
 
         // salli valintojen muuttaminen "ulkopuolelta"
@@ -68,6 +81,7 @@ app.directive('multiSelect', function($log) {
            			item.selected = true;
            		}            		
            	}
+            updateErrors();
         });
         	
         // checkbox-valinta
@@ -78,7 +92,8 @@ app.directive('multiSelect', function($log) {
             } else {
                 $scope.selection.splice(p, 1);
             }
-        }
+            updateErrors();
+       }
 
         //a hack: scope is missing in promise function?
         var key = $scope.key;
@@ -115,6 +130,7 @@ app.directive('multiSelect', function($log) {
             //console.log("ITEMS", $scope.items);
 
             $scope.rows = columnize($scope.items, columns);
+            updateErrors();
         }
 
         if (!angular.isUndefined($scope.promise)) {
@@ -131,6 +147,14 @@ app.directive('multiSelect', function($log) {
         replace: true,
         templateUrl: "js/shared/directives/multiSelect.html",
         controller: controller,
+        require: '^form',
+        link: function(scope, element, attrs, controller) {
+        	if (scope.name) {
+            	scope.isrequired = (attrs.required !== undefined);
+            	scope.errors.required = scope.isrequired;
+            	controller.$addControl({"$name": scope.name, "$error": scope.errors});
+        	}
+        },
         scope: {
             display: "@", // checklist | dualpane
             columns: "@", // sarakkeiden määrä (vain checklist)
@@ -139,7 +163,11 @@ app.directive('multiSelect', function($log) {
             orderWith: "&", // lista avaimista jotka järjestetään ensimmäisiksi
             model: "=", // map jossa arvo->nimi
             promise: "=", // async TODO yhdistä modeliin
-            selection: "=" // lista jonne valinnat päivitetään
+            selection: "=", // lista jonne valinnat päivitetään
+                
+	        // angular-form-logiikkaa varten
+	        name: "@", // nimi formissa
+	        required: "@" // jos tosi, vähintään yksi arvo vaaditaan
         }
     }
 
