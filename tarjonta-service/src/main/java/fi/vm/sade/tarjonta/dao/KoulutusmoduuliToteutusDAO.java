@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -93,4 +94,22 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @return
      */
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
-    }
+    
+    /**
+     * Find komoto ids by hakukohdeids
+     * @param hakukohdeIds
+     * @param requiredStatus
+     * @return
+     */
+    List<Long> searchKomotoIdsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
+
+    
+    /**
+     * Find komoto oids by hakukohdeids
+     * @param hakukohdeIds
+     * @param requiredStatus
+     * @return
+     */
+    List<String> searchKomotoOIDsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
+
+}
