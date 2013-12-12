@@ -94,7 +94,7 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
             pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
-            opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuoto'},
+            opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuotokk'},
             opetusAikas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
             opetusPaikkas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
