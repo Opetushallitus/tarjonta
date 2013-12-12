@@ -119,16 +119,6 @@ public class ValintaperustekuvausPresenter extends CommonPresenter<ValintaModel>
         getRootView();
     }
 
-    @Override
-    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
-        //Not needed, Leave method body empty.
-    }
-
-    @Override
-    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
-        //Not needed, Leave method body empty.
-    }
-
     /**
      * @return the model
      */

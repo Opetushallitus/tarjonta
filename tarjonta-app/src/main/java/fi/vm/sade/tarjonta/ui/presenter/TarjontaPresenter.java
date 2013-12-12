@@ -2346,37 +2346,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
     }
 
-    /**
-     * Cancel single tarjonta model by OID and data model type.
-     *     
-* @param oid
-     * @param sisalto
-     */
-    @Override
-    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.PERUTTU, sisalto);
-    }
-
-    @Override
-    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.JULKAISTU, sisalto);
-    }
-
-    /**
-     * Palauttaa true jos tilamuutos meni ok.
-     * @param oid
-     * @param toState
-     * @param sisalto
-     * @return
-     */
-    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
-        if (publishingService.changeState(oid, toState, sisalto)) {
-            showNotification(UserNotification.GENERIC_SUCCESS);
-        } else {
-            showNotification(UserNotification.GENERIC_ERROR);
-        }
-    }
-
     public void setLisatiedotView(
             EditKoulutusLisatiedotToinenAsteView lisatiedotView) {
         this.lisatiedotView = lisatiedotView;

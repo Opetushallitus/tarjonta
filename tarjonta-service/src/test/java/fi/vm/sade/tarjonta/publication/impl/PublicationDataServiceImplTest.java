@@ -44,10 +44,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.impl.Tilamuutokset;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -87,6 +89,9 @@ public class PublicationDataServiceImplTest {
     @Autowired
     private HakukohdeDAO hakukohdeDao;
 
+    @Autowired
+    private KoulutusmoduuliToteutusDAO komotoDao;
+
     public PublicationDataServiceImplTest() {
     }
 
@@ -101,6 +106,7 @@ public class PublicationDataServiceImplTest {
         publicationDataService = new PublicationDataServiceImpl();
         Whitebox.setInternalState(publicationDataService, "em", em);
         Whitebox.setInternalState(publicationDataService, "hakukohdeDAO", hakukohdeDao);
+        Whitebox.setInternalState(publicationDataService, "komotoDAO", komotoDao);
 
         fixtures = new TarjontaFixtures();
         fixtures.recreate();
@@ -288,11 +294,11 @@ public class PublicationDataServiceImplTest {
         ArrayList<String> hakuOids = new ArrayList<String>();
         hakuOids.add(haku1.getOid());
 
-        List<Long> hakukohteetIds = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.JULKAISTU);
+        List<Long> hakukohteetIds = hakukohdeDao.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.JULKAISTU);
         assertEquals(1, hakukohteetIds.size());
         //assertEquals(komoto1.getOid(), hakukohteetIds.get(0).getKoulutusmoduuliToteutuses().iterator().next().getOid());
 
-        hakukohteetIds = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
+        hakukohteetIds = hakukohdeDao.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
         assertEquals(0, hakukohteetIds.size());
     }
 
@@ -358,8 +364,10 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
         Date compareDate = getCompareDate();
 
-        publicationDataService.updatePublicationStatus(list);
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        Assert.assertSame(0,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
         checkLastUpdatedFields(false, true, false, compareDate);
 
         /*
@@ -367,18 +375,22 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(list);
         checkLastUpdatedFields(false, true, true, compareDate);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
 
         /*
          * The partial path - only toteutus is published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.LUONNOS);
         compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        tilamuutokset =  publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
         checkLastUpdatedFields(false, true, false, compareDate);
+        Assert.assertSame(0,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
     }
 
     @Test
@@ -396,27 +408,33 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
         Date compareDate = getCompareDate();
 
-        publicationDataService.updatePublicationStatus(list);
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.VALMIS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, false, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(0,tilamuutokset.getMuutetutKomotot().size());
 
         /*
          * The happy path - in this case the koulutus will be published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, true, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
 
         /*
          * The partial path - only hakukohdeis published
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.LUONNOS);
         compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, false, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(0,tilamuutokset.getMuutetutKomotot().size());
     }
 
     private Date getCompareDate() {

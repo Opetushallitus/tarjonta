@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -99,5 +101,13 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      */
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 
+    /**
+     * Search application option entities by application system OIDs.
+     *
+     * @param hakuOids
+     * @param requiredStatus
+     * @return List<hakukohdeOid>
+     */
+    List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final fi.vm.sade.tarjonta.shared.types.TarjontaTila... requiredStatus);
 }
 

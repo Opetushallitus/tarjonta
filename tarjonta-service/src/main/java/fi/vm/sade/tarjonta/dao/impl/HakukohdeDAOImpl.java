@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.base.Preconditions;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -43,6 +45,8 @@ import fi.vm.sade.tarjonta.model.QHakukohdeLiite;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -447,5 +451,24 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
+    }
+    
+    
+    public void updateTilat(TarjontaTila toTila, List<String> oidit, Date updateDate, String userOid) {
+        final BooleanExpression qHakukohde = QHakukohde.hakukohde.oid.in(oidit);
+
+        JPAUpdateClause hakukohdeUpdate = new JPAUpdateClause(getEntityManager(), QHakukohde.hakukohde);
+        hakukohdeUpdate.where(qHakukohde)
+                .set(QHakukohde.hakukohde.tila, toTila)
+                .set(QHakukohde.hakukohde.lastUpdateDate, updateDate)
+                .set(QHakukohde.hakukohde.lastUpdatedByOid, userOid);
+        hakukohdeUpdate.execute();
+    }
+    
+    public List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final BooleanExpression criteria = hakukohde.haku.oid.in(hakuOids).and(hakukohde.tila.in(requiredStatus));
+
+        return from(hakukohde).where(criteria).distinct().list(QHakukohde.hakukohde.id);
     }
 }
