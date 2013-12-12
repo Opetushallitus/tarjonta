@@ -141,7 +141,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustied
 import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
-import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
@@ -194,8 +193,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private EditKoulutusView editKoulutusView;
     private SearchResultsView searchResultsView;
     private EditHakukohdeView editHakukohdeView;
-    @Autowired(required = true)
-    private PublishingService publishingService;
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
