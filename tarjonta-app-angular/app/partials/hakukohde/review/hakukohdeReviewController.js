@@ -322,3 +322,15 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     };
 
 });
+
+app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,LocalisationService,Config,TarjontaService,organisaatioOid){
+
+    $scope.model.spec =  {//search parameter object
+        oid: organisaatioOid,
+            terms: '', //search words
+            state: null,
+            year: null,
+            season: null
+    };
+
+});

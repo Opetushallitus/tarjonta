@@ -1,0 +1,14 @@
+<div>
+    <div class="modal-header">
+        <h3>{{t('hakukohde.review.liita.koulutus.title')}}</h3>
+    </div>
+    <div class="modal-body">
+        <tree-field
+                style="overflow: scroll; height:200px"
+                names="model.hakutulos"
+                oids="model.searchKomoOids"
+                review-oids="null"
+                fn-click-handler="selectTreeHandler"
+                lang="koodistoLocale"></tree-field>
+    </div>
+</div>
