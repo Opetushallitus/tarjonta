@@ -230,7 +230,7 @@ public class TarjontaKomoDataTest {
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
         RelaatioMap excelDataMap = new RelaatioMap(result, true);
 
-        assertEquals("count of excel rows", 87, result.size());
+        assertEquals("count of excel rows", 88, result.size());
         GenericRow next = excelDataMap.get("0000");
 
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, next.getKoulutusasteTyyppiEnum());
@@ -247,6 +247,9 @@ public class TarjontaKomoDataTest {
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
 
         next = excelDataMap.get("0089");
+        assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
+
+        next = excelDataMap.get("0090");
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
     }
 

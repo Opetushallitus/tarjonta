@@ -36,7 +36,7 @@ window.CONFIG = {
         "koodisto-uris.lisahaku": "hakutyyppi_03#1",
         "koodisto-uris.lukiodiplomit": "lukiodiplomit",
         "koodisto-uris.lukiolinja": "lukiolinjat",
-        "koodisto-uris.opetusmuoto": "opetusmuotokk",
+        "koodisto-uris.opetusmuotokk": "opetusmuotokk",
         "koodisto-uris.opetusaika": "opetusaikakk",
         "koodisto-uris.opetuspaikka": "opetuspaikkakk",
         "koodisto-uris.opintoala": "opintoalaoph2002",
