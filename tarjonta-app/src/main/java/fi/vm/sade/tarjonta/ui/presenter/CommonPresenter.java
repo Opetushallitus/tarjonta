@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.Window;
@@ -45,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusContainerEvent;
  *
  * @author jani
  */
+@Component
 public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
     
     private static Logger LOG = LoggerFactory.getLogger(CommonPresenter.class);
