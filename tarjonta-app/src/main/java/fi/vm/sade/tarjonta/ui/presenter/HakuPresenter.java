@@ -461,24 +461,6 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
     }
 
     @Override
-    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.PERUTTU, sisalto);
-    }
-
-    @Override
-    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.JULKAISTU, sisalto);
-    }
-
-    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
-        if (publishingService.changeState(oid, toState, sisalto)) {
-            showNotification(UserNotification.GENERIC_SUCCESS);
-        } else {
-            showNotification(UserNotification.GENERIC_ERROR);
-        }
-    }
-
-    @Override
     public HakuViewModel getModel() {
         return hakuModel;
     }
