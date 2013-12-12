@@ -359,7 +359,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
         $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
     }
-
+    
+    if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua === undefined) {
+    	$scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
+    }
 
     $scope.model.kieliCallback = function(kieliUri) {
         if ($scope.model.allkieles !== undefined) {

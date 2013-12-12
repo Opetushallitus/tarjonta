@@ -65,8 +65,19 @@
 	<tr>
 		<th tt="kk.hakukohde.valintapalvelu"/>
 		<td>
+            <p tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></p>
+            
+            <input type="radio" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="true"/>
+            <span tt="yes"></span>
+            
+            <input type="radio" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="false"/>
+            <span tt="no"></span>
+		
+		    <pre>{{model.hakukohde.kaytetaanJarjestelmanValintaPalvelua}}</pre>
+		
+		  <!-- 
 			<input type="checkbox" data-ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua"  />
-			<span tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua"></span>
+			 -->
 		</td>
 		<td>
 			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
@@ -79,11 +90,11 @@
 		<td>
 		
 			<!-- TODO osoitedirektiivi -->
-			<input type="radio" ng-model="osoiteType" >
+			<input type="radio" ng-model="osoiteType"/>
             <span tt="tarjonta.hakukohde.label.oletus.postisoite"></span>
             <br/>
 
-			<input type="radio" ng-model="osoiteType"  value="false">
+			<input type="radio" ng-model="osoiteType"  value="false"/>
             <span tt="tarjonta.hakukohde.label.muu.osoite"></span>           
             <br/>
 
