@@ -168,4 +168,23 @@
     </tr>
 
     </tbody>
+
+    <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
+
+    </tr>
+    <tbody ng-show="!model.collapse.koulutukset">
+
+    <tr data-ng-repeat="koulutus in  model.koulutukses">
+
+        <td colspan="2">
+           <a ng-href="#/koulutus/{{koulutus.oid}}/edit"> {{koulutus.nimi}}</a>
+
+        </td>
+        <td>
+            <a href="" data-ng-click="removeKoulutusFromHakukohde(koulutus)">  {{t('hakukohde.review.koulutus.poista')}}</a>
+        </td>
+    </tr>
+
+    </tbody>
 </table>

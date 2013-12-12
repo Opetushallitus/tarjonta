@@ -1,13 +1,13 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
+app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService) {
 
       console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
       /*
 
-        ---------> Internal variable declarations and scope "helper" variable declarations
+        ---------> Internal variable declarations and scope "helper" variable declarations  <--------------
 
       */
 
@@ -17,7 +17,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
       $scope.model.hakukohteenKielet = [];
 
-
+      $scope.model.koulutukses = [];
 
       $scope.model.hakukelpoisuusVaatimukses = [];
 
@@ -47,8 +47,6 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
           if ($scope.model.allkieles!== undefined) {
 
-          console.log('HAKUKOHDE KIELES : ', $scope.model.allkieles);
-
           angular.forEach($scope.model.allkieles,function(hakukohdeKieli) {
 
                var koodi = Koodisto.getKoodi(kieliKoodistoUri,hakukohdeKieli,$scope.model.userLang);
@@ -62,7 +60,6 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
                       kieliUri : koodi.koodiUri,
                       kieliNimi : koodi.koodiNimi
                   };
-                  console.log('HAKUKOHTEEN KIELI : ', hakukohteenKieli);
                   $scope.model.hakukohteenKielet.push(hakukohteenKieli);
               });
           });
@@ -152,13 +149,52 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
             valintakokeet : false,
             liitteet : false,
             valintaperusteet : false,
-            sorakuvaukset : false
+            sorakuvaukset : false,
+            koulutukset : false
         };
     };
 
+    /*
+
+        ---------> Load koulutukses to show hakukohde related koulutukses
+
+     */
+
+    var loadKoulutukses = function() {
+
+          if ($scope.model.hakukohde.hakukohdeKoulutusOids !== undefined) {
+
+              var spec = {
+                  koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
+              };
+
+              TarjontaService.haeKoulutukset(spec).then(function(data){
+
+                  if(data.tulokset !== undefined) {
+                      angular.forEach(data.tulokset,function(tulos){
+
+                          if (tulos.tulokset !== undefined) {
+                              angular.forEach(tulos.tulokset,function(lopullinenTulos){
+                                  var koulutus = {
+                                      nimi : lopullinenTulos.nimi,
+                                      oid : lopullinenTulos.oid
+                                  };
+                                  $scope.model.koulutukses.push(koulutus);
+                              });
+                          }
+
+                      });
+                  }
+
+              });
+
+          }
+
+    }
+
      /*
 
-        -----------> Controller "initialization" part where initialization methods are run
+        -----------> Controller "initialization" part where initialization functions are run  <--------------
 
       */
 
@@ -166,11 +202,11 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     loadHakuInformation();
     modelInit();
     loadHakukelpoisuusVaatimukses();
-
+    loadKoulutukses();
 
     /*
 
-        -----------> Controller event/click handlers etc.
+        -----------> Controller event/click handlers etc. <------------------
 
      */
 
@@ -223,6 +259,49 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         });
 
         return localizedLiitteet;
+
+    };
+
+    var reallyRemoveKoulutusFromHakukohde = function(koulutus){
+
+        var koulutuksesArray = [];
+
+        koulutuksesArray.push(koulutus.oid);
+
+        HakukohdeKoulutukses.removeKoulutuksesFromHakukohde($scope.model.hakukohde.oid,koulutuksesArray);
+
+        if ($scope.model.koulutukses.length > 1) {
+
+            angular.forEach($scope.model.koulutukses,function(koulutusIndex){
+                if (koulutusIndex.oid === koulutus.oid) {
+                    var index = $scope.model.koulutukses.indexOf(koulutusIndex);
+                    $scope.model.koulutukses.splice(index,1);
+                }
+            });
+
+        } else {
+
+            $location.path("/etusivu");
+
+        }
+
+    };
+
+    $scope.removeKoulutusFromHakukohde = function(koulutus){
+
+        var texts = {
+            title: LocalisationService.t("hakukohde.review.remove.koulutus.title"),
+            description: LocalisationService.t("hakukohde.review.remove.koulutus.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
+
+        var d = dialogService.showDialog(texts);
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+                reallyRemoveKoulutusFromHakukohde(koulutus);
+            }
+        });
 
     };
 
