@@ -35,16 +35,35 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         if (!$scope.model) {
             $scope.model = {};
         }
-
+        
         $scope.init = window.CONFIG.app.userLanguages;
-
         $scope.data = [];
+        
+        $scope.errors = {
+        		required:false,
+        		pristine:true,
+        		dirty:false,
+        		$name:$scope.name
+        }
 
         $scope.updateModel = function() {
             if ($scope.type === 'koulutus') {
                 directiveModelTokoulutusApiModelConverter($scope.data, $scope.model, $scope.codes);
             } else {
                 $scope.model = defaultLangMapConverter($scope.data);
+            }
+        
+            $scope.errors.dirty = true;
+            $scope.errors.pristine = false;
+
+            if ($scope.isrequired) {
+            	$scope.errors.required = true;
+            	for (var i in $scope.model) {
+            		if ($scope.model[i].trim().length>0) {
+                    	$scope.errors.required = false;
+            			break;
+            		}
+            	}
             }
         };
 
@@ -130,14 +149,26 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
 
     return {
         restrict: 'E',
+        require: '^form',
         replace: true,
         templateUrl: "js/shared/directives/mkTextfield.html",
         controller: controller,
+        link: function(scope, element, attrs, controller) {
+        	
+        	if (scope.name) {
+            	scope.isrequired = (attrs.required !== undefined);
+            	scope.errors.required = scope.isrequired;
+            	controller.$addControl({"$name": scope.name, "$error": scope.errors});
+        	}
+        },
         scope: {
             type: "@", //Modelin suora convertointi tiettyyn objektiin. Jata tyhjaksi jos et tarvitse erikoiskasittelya.
             //init: "=", //lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
             model: "=", // map jossa kieliuri -> teksti
-            //required: "@" // jos tosi, vähintään yksi arvo vaaditaan
+            
+            // angular-form-logiikkaa varten
+            name: "@", // nimi formissa
+            required: "@" // jos tosi, vähintään yksi arvo vaaditaan
         }
     }
 
