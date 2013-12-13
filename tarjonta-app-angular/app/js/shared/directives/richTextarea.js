@@ -35,6 +35,8 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
 		
+		$scope.model = $scope.model ? $scope.model : "";
+		
 		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
 		$scope.edit = $scope.mode()===false;
 		

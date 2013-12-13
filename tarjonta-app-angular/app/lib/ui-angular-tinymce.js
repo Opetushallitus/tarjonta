@@ -7,23 +7,21 @@ angular.module('ui.tinymce', [])
     uiTinymceConfig = uiTinymceConfig || {};
     var generatedIds = 0;
     
-    var interval = null;
-    
     return {
       require: 'ngModel',
       link: function (scope, elm, attrs, ngModel) {
-        var expression, options, tinyInstance,
+        var expression, options, tinyInstance, interval;
 
-    	updateView = function () {
+    	function updateView() {
         	clearInterval(interval);
         	interval = setTimeout(function(){
         		ngModel.$setViewValue(elm.val());
                 if (!scope.$root.$$phase) {
                 	scope.$apply();
                 }
+                interval = null;
         	}, 100);
-            
-        };
+        }
           
           
         // generate an ID if not present
@@ -75,14 +73,28 @@ angular.module('ui.tinymce', [])
         });
 
 
+        function updateContent(content) {
+        	if (content == undefined) {
+				content = "";
+			}
+			if (!tinyInstance) {
+				tinyInstance = tinymce.get(attrs.id);
+			}
+			if (tinyInstance && tinyInstance.getContent() != content) {
+				tinyInstance.setContent(content);
+			}
+        }
+        
         ngModel.$render = function() {
-          if (!tinyInstance) {
-            tinyInstance = tinymce.get(attrs.id);
-          }
-          if (tinyInstance) {
-            tinyInstance.setContent(ngModel.$viewValue || '');
-          }
+        	updateContent(ngModel.$viewValue || '');
         };
+
+        scope.$watch(attrs.ngModel, function(nv, ov) {
+        	if (interval==null) {
+                updateContent(nv);
+        	}
+        });
+        
       }
     };
   }]);
