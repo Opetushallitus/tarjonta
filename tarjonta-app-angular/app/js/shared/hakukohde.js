@@ -117,18 +117,20 @@ app.factory('HakukohdeKoulutukses',function($http,Config){
 
         addKoulutuksesToHakukohde : function(hakukohdeOid, koulutusOids) {
 
+            var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== koulutusOids) {
 
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
 
                 $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
-                    return true;
+                    promise.resolve(true);
                 }).error(function(data){
-                    return false;
+                    promise.resolve(false);
                     });
 
             }
 
+           return promise.promise;
         }
 
     };

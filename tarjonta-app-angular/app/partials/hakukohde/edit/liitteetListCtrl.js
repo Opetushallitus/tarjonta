@@ -175,7 +175,15 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
 });
 
-//Hakukohdeliite modal controller
+/*
+
+
+    ---------> Hakukohde liite modal controller  <-------------
+
+
+ */
+
+
 app.controller('LiiteModalController', function($scope,$modalInstance,LocalisationService,Koodisto,liite,organisaationOsoite) {
 
     $scope.model = {};
