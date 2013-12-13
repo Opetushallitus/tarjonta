@@ -225,12 +225,10 @@
         </tr>
 
         <!-- teemat -->
-        <tr class="required" ng-controller="AiheetTeematController">
+        <tr class="required">
         <th tt="koulutus.edit.aiheet"/>
-        <td>
-        
-            <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>
-        
+            <td>        
+                <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>        
             </td>
             <td>
             	<p class="error" ng-show="uiModel.showError && perustiedotForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
