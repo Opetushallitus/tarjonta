@@ -92,7 +92,7 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
 
 });
 
-app.factory('HakukohdeKoulutukses',function($http,Config){
+app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
     return {
 
@@ -117,11 +117,12 @@ app.factory('HakukohdeKoulutukses',function($http,Config){
 
         addKoulutuksesToHakukohde : function(hakukohdeOid, koulutusOids) {
 
+
+
             var promise = $q.defer();
-            if (hakukohdeOid !== undefined && koulutusOids !== koulutusOids) {
+            if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
 
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
-
                 $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
                     promise.resolve(true);
                 }).error(function(data){
@@ -131,7 +132,34 @@ app.factory('HakukohdeKoulutukses',function($http,Config){
             }
 
            return promise.promise;
+        } ,
+
+        getKoulutusHakukohdes : function(koulutusOid) {
+
+            var promise = $q.defer();
+
+            if (koulutusOid !== undefined) {
+
+                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix+"koulutus/"+koulutusOid+"/hakukohteet";
+
+                $http.get(getKoulutusHakukohdesUri)
+                    .success(function(data){
+                        promise.resolve(data);
+                    })
+                    .error(function(data){
+                        promise.resolve(data);
+                    });
+
+            } else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
         }
+
+
 
     };
 

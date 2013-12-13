@@ -67,6 +67,40 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
       };
 
+    var filterNewKoulutukses = function(koulutukses) {
+
+        var newKoulutukses = [];
+
+        angular.forEach(koulutukses,function(koulutusOid){
+            var wasFound = false;
+
+
+            angular.forEach($scope.model.koulutukses,function(koulutus){
+                if (koulutus.oid === koulutusOid) {
+                    wasFound = true;
+                }
+            });
+
+            if (!wasFound) {
+                newKoulutukses.push(koulutusOid);
+            }
+        });
+       return newKoulutukses;
+    };
+
+    var filterRemovedKoulutusFromHakukohde = function(koulutusOid) {
+
+      angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids,function(hakukohdeKoulutusOid){
+
+          if (hakukohdeKoulutusOid === koulutusOid) {
+              var index = $scope.model.hakukohde.hakukohdeKoulutusOids.indexOf(hakukohdeKoulutusOid);
+              $scope.model.hakukohde.hakukohdeKoulutusOids.splice(index,1);
+          }
+
+      });
+
+    };
+
     /*
 
         ------------> Function to get koodisto koodis and call resultHandler to process those results
@@ -171,6 +205,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
               TarjontaService.haeKoulutukset(spec).then(function(data){
 
                   if(data.tulokset !== undefined) {
+                      $scope.model.koulutukses.splice(0,$scope.model.koulutukses.length);
                       angular.forEach(data.tulokset,function(tulos){
 
                           if (tulos.tulokset !== undefined) {
@@ -263,16 +298,20 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     };
 
     var removeKoulutusRelationsFromHakukohde = function(koulutuksesArray) {
+
         HakukohdeKoulutukses.removeKoulutuksesFromHakukohde($scope.model.hakukohde.oid,koulutuksesArray);
 
-        if ($scope.model.koulutukses.length > 1) {
+        if ($scope.model.koulutukses.length > 0) {
 
             angular.forEach($scope.model.koulutukses,function(koulutusIndex){
-                if (koulutusIndex.oid === koulutus.oid) {
-                    var index = $scope.model.koulutukses.indexOf(koulutusIndex);
-                    $scope.model.koulutukses.splice(index,1);
-                }
-            });
+                angular.forEach(koulutuksesArray,function(koulutus){
+                    if (koulutusIndex.oid === koulutus) {
+                        var index = $scope.model.koulutukses.indexOf(koulutusIndex);
+                        $scope.model.koulutukses.splice(index,1);
+                    }
+                });
+                });
+
 
         } else {
 
@@ -287,7 +326,37 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
         koulutuksesArray.push(koulutus.oid);
 
+        filterRemovedKoulutusFromHakukohde(koulutus.oid);
+
         removeKoulutusRelationsFromHakukohde(koulutuksesArray);
+
+    };
+
+    $scope.showKoulutusHakukohtees = function(koulutus){
+
+
+        var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes(koulutus.oid);
+
+
+        hakukohdePromise.then(function(hakukohteet){
+
+
+            var modalInstance = $modal.open({
+                templateUrl: 'partials/hakukohde/review/showKoulutusHakukohtees.html',
+                controller: 'ShowKoulutusHakukohtees',
+                windowClass: 'liita-koulutus-modal',
+                resolve: {
+                    hakukohtees: function () {
+                        return hakukohteet.result;
+                    } ,
+
+                    selectedLocale : function() {
+                        return $scope.model.userLang;
+                    }
+
+                }
+            });
+        });
 
     };
 
@@ -350,18 +419,24 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
         //First remove all existing relations and then add selected relations
         modalInstance.result.then(function(liitettavatKoulutukset){
-            //TODO: add to hakukohde
+            //TODO: figure out which koulutukses to remove and which to add
              var koulutuksesToRemove = [];
-
+            /*
             angular.forEach($scope.model.koulutukses,function(koulutus){
                 koulutuksesToRemove.push(koulutus.oid);
             });
 
-             removeKoulutusRelationsFromHakukohde(koulutuksesToRemove);
+             removeKoulutusRelationsFromHakukohde(koulutuksesToRemove);   */
+            var koulutuksesToAdd =  filterNewKoulutukses(liitettavatKoulutukset);
 
-             var liitaPromise = HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid,liitettavatKoulutukset);
+            angular.forEach(koulutuksesToAdd,function(koulutusOidToAdd){
+                $scope.model.hakukohde.hakukohdeKoulutusOids.push(koulutusOidToAdd);
+            });
+
+             var liitaPromise = HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid,koulutuksesToAdd);
              liitaPromise.then(function(data){
                  if (data) {
+                     console.log('RETURN DATA : ', data);
                      loadKoulutukses();
                  } else{
                    console.log('UNSUCCESFUL : ',data);
@@ -373,6 +448,35 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 });
 
+
+/*
+
+    ----------------> Show koulutus hakukohdes modal controller definition <-----------------
+
+ */
+
+
+app.controller('ShowKoulutusHakukohtees',function($scope,$modalInstance,LocalisationService,hakukohtees,selectedLocale) {
+
+    $scope.model = {};
+
+    $scope.model.locale = selectedLocale;
+
+    $scope.model.hakukohteet = hakukohtees;
+
+    $scope.model.translations = {
+
+        title : LocalisationService.t('hakukohde.review.koulutus.hakukohteet.title'),
+        okBtn : LocalisationService.t('hakukohde.review.koulutus.hakukohteet.ok.btn')
+
+    };
+
+
+    $scope.model.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+});
 
 /*
 

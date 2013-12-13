@@ -245,4 +245,6 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään",required = true)  @PathParam("oid") String hakukohdeOid,
                                                                   @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
+
+
 }
