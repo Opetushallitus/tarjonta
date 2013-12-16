@@ -101,6 +101,28 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     };
 
+    var filterKoulutuksesToBeRemoved = function(newKoulutusOidArray) {
+
+        var koulutuksesToRemove = [];
+
+        angular.forEach($scope.model.koulutukses,function(koulutus){
+             var koulutusFound = false;
+            angular.forEach(newKoulutusOidArray,function(newKoulutusOid){
+                if (koulutus.oid === newKoulutusOid) {
+                    koulutusFound = true;
+                }
+            });
+
+            if (!koulutusFound) {
+                koulutuksesToRemove.push(koulutus.oid);
+            }
+        });
+
+
+        return koulutuksesToRemove;
+
+    };
+
     /*
 
         ------------> Function to get koodisto koodis and call resultHandler to process those results
@@ -322,11 +344,24 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     var reallyRemoveKoulutusFromHakukohde = function(koulutus){
 
+
         var koulutuksesArray = [];
 
-        koulutuksesArray.push(koulutus.oid);
+        if (angular.isArray(koulutus)) {
 
-        filterRemovedKoulutusFromHakukohde(koulutus.oid);
+            koulutuksesArray = koulutus;
+
+            angular.forEach(koulutus,function(koulutusOid){
+                filterRemovedKoulutusFromHakukohde(koulutusOid);
+            });
+
+        } else {
+
+            koulutuksesArray.push(koulutus.oid);
+
+            filterRemovedKoulutusFromHakukohde(koulutus.oid);
+
+        }
 
         removeKoulutusRelationsFromHakukohde(koulutuksesArray);
 
@@ -420,13 +455,12 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         //First remove all existing relations and then add selected relations
         modalInstance.result.then(function(liitettavatKoulutukset){
             //TODO: figure out which koulutukses to remove and which to add
-             var koulutuksesToRemove = [];
-            /*
-            angular.forEach($scope.model.koulutukses,function(koulutus){
-                koulutuksesToRemove.push(koulutus.oid);
-            });
+             var koulutuksesToRemove =  filterKoulutuksesToBeRemoved(liitettavatKoulutukset);
 
-             removeKoulutusRelationsFromHakukohde(koulutuksesToRemove);   */
+            if (koulutuksesToRemove.length > 0) {
+                 reallyRemoveKoulutusFromHakukohde(koulutuksesToRemove);
+            }
+
             var koulutuksesToAdd =  filterNewKoulutukses(liitettavatKoulutukset);
 
             angular.forEach(koulutuksesToAdd,function(koulutusOidToAdd){
@@ -642,23 +676,6 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,$modalInstance,
 
     loadKomotos();
 
-    $scope.model.cancel = function() {
-        $modalInstance.dismiss('cancel');
-    };
-
-
-    $scope.model.save = function() {
-
-        var selectedKoulutusOids = [];
-
-        angular.forEach($scope.model.selectedKoulutukses,function(koulutus){
-
-            selectedKoulutusOids.push(koulutus.komotoOid);
-
-        });
-
-       $modalInstance.close(selectedKoulutusOids);
-    };
 
     /*
 
@@ -685,4 +702,24 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,$modalInstance,
         $scope.model.selectedKoulutukses.splice(index,1);
 
     };
+
+    $scope.model.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+
+    $scope.model.save = function() {
+
+        var selectedKoulutusOids = [];
+
+        angular.forEach($scope.model.selectedKoulutukses,function(koulutus){
+
+            selectedKoulutusOids.push(koulutus.komotoOid);
+
+        });
+
+        $modalInstance.close(selectedKoulutusOids);
+    };
+
+
 });
