@@ -202,11 +202,12 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
         $scope.model.collapse = {
             perusTiedot: false ,
-            valintakokeet : false,
-            liitteet : false,
-            valintaperusteet : false,
-            sorakuvaukset : false,
-            koulutukset : false
+            valintakokeet : true,
+            liitteet : true,
+            valintaperusteet : true,
+            sorakuvaukset : true,
+            koulutukset : false,
+            model : true
         };
     };
 
@@ -268,7 +269,9 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
      */
 
     $scope.doEdit = function(event, targetPart) {
-        $log.info("doEdit()...", event, targetPart);
+        console.log("doEdit()...", event, targetPart);
+        var navigationUri = "/hakukohde/"+$scope.model.hakukohde.oid+"/edit";
+        $location.path(navigationUri);
     };
 
 
