@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.service.resources.v1.PermissionV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,11 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
 
     @Secured({ROLE_READ})
     @Override
-    public String authorize() {
+    public ResultV1RDTO<String> authorize() {
         LOG.info("authorize()");
-        return getCurrentUserName();
+        ResultV1RDTO dto = new ResultV1RDTO();
+        dto.setResult(getCurrentUserName());
+        return dto;
     }
 
     private String getCurrentUserName() {
