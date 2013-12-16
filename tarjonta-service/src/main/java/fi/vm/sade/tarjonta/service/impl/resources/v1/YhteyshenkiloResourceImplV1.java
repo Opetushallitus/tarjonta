@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
@@ -76,7 +77,7 @@ public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
                 yhtHenkilot.add(curYht);
             }
         } catch (Exception ex) {
-            LOG.error("Problem fetching henkilos: {}", ex.getMessage());
+            LOG.error("Problem fetching henkilos:", ex);
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
 
