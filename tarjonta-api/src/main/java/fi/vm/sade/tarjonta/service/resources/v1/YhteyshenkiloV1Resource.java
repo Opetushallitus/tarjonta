@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
 /**
  * Koulutuksen yhteyshenkilöiden hallinta.
@@ -44,6 +45,6 @@ public interface YhteyshenkiloV1Resource {
     @Path("/{tarjoajaOid}/{searchTerm}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakee yhteyshenkilöt annetulle tarjoajalle.", notes = "Hakee yhteyshenkilöt annetulle tarjoajalle.")
-    public List<YhteyshenkiloRDTO> getByOID(@PathParam("tarjoajaOid") String tarjoajaOid, @PathParam("searchTerm") String searchTerm);
+    public ResultV1RDTO<List<YhteyshenkiloRDTO>> getByOID(@PathParam("tarjoajaOid") String tarjoajaOid, @PathParam("searchTerm") String searchTerm);
 
 }
