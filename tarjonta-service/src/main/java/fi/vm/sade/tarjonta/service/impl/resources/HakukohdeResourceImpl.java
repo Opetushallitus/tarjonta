@@ -19,17 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -47,23 +42,13 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImpl.class);
 
     @Autowired
-    private HakuDAO hakuDAO;
-    @Autowired
     private HakukohdeDAO hakukohdeDAO;
-    @Autowired(required = true)
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private ConversionService conversionService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
-    @Autowired
-    private TarjontaSearchService tarjontaSearchService;
-    @Autowired(required = true)
-    private PublicationDataService publication;
-    @Autowired
-    private IndexerResource solrIndexer;
 
     // /hakukohde?...
     @Override
@@ -83,9 +68,12 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
-        if (count <= 0) {
+        if (count < 0) {
+            LOG.debug("  negative parameter for count, using Integer.MAX_VALUE");
+            count = Integer.MAX_VALUE;
+        } else if (count == 0) {
             count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
+            LOG.debug("  count not specified, autolimit search to {} entries!", count);
         }
 
         List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince));
@@ -227,7 +215,6 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // -----------------------------------------------------------------------
     // Private helpers
-
     // KJOH-669
     private List<ValintakoeRDTO> getValintakoeFixedByHakukohdeOID(String oid) {
         LOG.debug("getValintakoeFixedByHakukohdeOID({})", oid);

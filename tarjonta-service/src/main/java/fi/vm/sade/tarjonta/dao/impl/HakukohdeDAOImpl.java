@@ -47,8 +47,6 @@ import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  */
 @Repository
@@ -86,7 +84,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getValintakoes().addAll(valintakoes);
 
-
         getEntityManager().flush();
     }
 
@@ -95,7 +92,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
 
         //hakukohde.getLiites().clear();
-
         for (HakukohdeLiite liite : liites) {
             liite.setHakukohde(hakukohde);
         }
@@ -108,7 +104,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public void updateSingleValintakoe(Valintakoe valintakoe, String hakukohdeOid) {
 
-        Valintakoe managedValintakoe  = findValintaKoeById(valintakoe.getId().toString());
+        Valintakoe managedValintakoe = findValintaKoeById(valintakoe.getId().toString());
 
         if (valintakoe.getKuvaus() != null) {
             managedValintakoe.setKuvaus(valintakoe.getKuvaus());
@@ -124,27 +120,23 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         managedValintakoe.setValintakoeNimi(valintakoe.getValintakoeNimi());
         managedValintakoe.setTyyppiUri(valintakoe.getTyyppiUri());
 
-
     }
 
     @Override
     public void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid) {
 
-       HakukohdeLiite managedLiite = findHakuKohdeLiiteById(hakukohdeLiite.getId().toString());
-
-
+        HakukohdeLiite managedLiite = findHakuKohdeLiiteById(hakukohdeLiite.getId().toString());
 
         //Ugly, but so is Hibernate
-       managedLiite.setErapaiva(hakukohdeLiite.getErapaiva());
-       managedLiite.setKieli(hakukohdeLiite.getKieli());
-       managedLiite.setHakukohdeLiiteNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
-       managedLiite.setKuvaus(hakukohdeLiite.getKuvaus());
-       managedLiite.setLiitetyyppi(hakukohdeLiite.getLiitetyyppi());
-       managedLiite.setSahkoinenToimitusosoite(hakukohdeLiite.getSahkoinenToimitusosoite());
-       managedLiite.setToimitusosoite(hakukohdeLiite.getToimitusosoite());
+        managedLiite.setErapaiva(hakukohdeLiite.getErapaiva());
+        managedLiite.setKieli(hakukohdeLiite.getKieli());
+        managedLiite.setHakukohdeLiiteNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
+        managedLiite.setKuvaus(hakukohdeLiite.getKuvaus());
+        managedLiite.setLiitetyyppi(hakukohdeLiite.getLiitetyyppi());
+        managedLiite.setSahkoinenToimitusosoite(hakukohdeLiite.getSahkoinenToimitusosoite());
+        managedLiite.setToimitusosoite(hakukohdeLiite.getToimitusosoite());
 
-
-       getEntityManager().flush();
+        getEntityManager().flush();
 
     }
 
@@ -162,7 +154,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QHakukohdeLiite qHakukohdeLiite = QHakukohdeLiite.hakukohdeLiite;
 
-        return from(qHakukohde,qHakukohdeLiite)
+        return from(qHakukohde, qHakukohdeLiite)
                 .where(qHakukohde.oid.eq(oid).and(qHakukohdeLiite.hakukohde.eq(qHakukohde)))
                 .list(qHakukohdeLiite);
     }
@@ -185,7 +177,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
         if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
-            getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class,hakukohdeLiite.getId()));
+            getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class, hakukohdeLiite.getId()));
             getEntityManager().flush();
         }
     }
@@ -216,107 +208,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public Hakukohde findHakukohdeWithDepenciesByOid(String oid) {
         return findHakukohdeByOid(oid);
     }
-
-//    @Override
-//    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
-//        BooleanExpression criteriaExpr = null;
-//        QHakukohde qHakukohde = QHakukohde.hakukohde;
-//        if (kysely.getNimiKoodiUri() != null) {
-//            //search by koodisto koodi uri (hakukohde combobox uri)
-//            criteriaExpr = qHakukohde.hakukohdeNimi.eq(kysely.getNimiKoodiUri());
-//        } else {
-//            //search by concatenated text (result list name)
-//            String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
-//            criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
-//        }
-//
-//        List<Hakukohde> hakukohdes = from(qHakukohde)
-//                .where(criteriaExpr).
-//                list(qHakukohde);
-//
-//        //Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
-//        hakukohdes = createGrouping(hakukohdes, kysely);
-//
-//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-//        //If a list of organisaatio oids is provided only hakukohdes that match
-//        //the list are returned
-//        if (!kysely.getTarjoajaOids().isEmpty()) {
-//            for (Hakukohde curHk : hakukohdes) {
-//                if (kysely.getTarjoajaOids().contains(CollectionUtils.singleItem(curHk.getKoulutusmoduuliToteutuses()).getTarjoaja())) {
-//                    vastaus.add(curHk);
-//                }
-//            }
-//        } else {
-//            vastaus = hakukohdes;
-//        }
-//        return vastaus;
-//    }
-//
-//    /*
-//     * Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
-//     */
-//    private List<Hakukohde> createGrouping(List<Hakukohde> hakukohdes, HaeHakukohteetKyselyTyyppi kysely) {
-//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-//        for (Hakukohde curHakukohde : hakukohdes) {
-//            List<String> tarjoajat = new ArrayList<String>();
-//            if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
-//                vastaus.addAll(handleKomotos(curHakukohde, kysely, tarjoajat));
-//            } else if (isHakukohdeMatch(curHakukohde, kysely, tarjoajat)) {
-//                vastaus.add(curHakukohde);
-//                tarjoajat.add(curHakukohde.getKoulutusmoduuliToteutuses().iterator().next().getTarjoaja());
-//            }
-//        }
-//        return vastaus;
-//    }
-//
-//    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
-//        List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
-//        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-//            if (isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja())) {
-//                Hakukohde newHakukohde = new Hakukohde();
-//                newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
-//                newHakukohde.setTila(hakukohde.getTila());
-//                newHakukohde.setOid(hakukohde.getOid());
-//                newHakukohde.addKoulutusmoduuliToteutus(komoto);
-//                newHakukohde.setHaku(hakukohde.getHaku());
-//                vastaus.add(newHakukohde);
-//                tarjoajat.add(komoto.getTarjoaja());
-//            }
-//        }
-//        return vastaus;
-//    }
-//
-//    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
-//        KoulutusmoduuliToteutus komoto = !hakukohde.getKoulutusmoduuliToteutuses().isEmpty() ? hakukohde.getKoulutusmoduuliToteutuses().iterator().next() : null;
-//        return isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja());
-//    }
-//
-//    private boolean isKomotoMatch(KoulutusmoduuliToteutus komoto, HaeHakukohteetKyselyTyyppi kysely) {
-//        if (komoto == null) {
-//            return false;
-//        }
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(komoto.getKoulutuksenAlkamisPvm());
-//        return isYearMatch(cal, kysely) && isKausiMatch(cal, kysely);
-//    }
-//
-//    private boolean isYearMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-//        if (kysely.getKoulutuksenAlkamisvuosi() == null || kysely.getKoulutuksenAlkamisvuosi() <= 0) {
-//            return true;
-//        }
-//        return cal.get(Calendar.YEAR) == kysely.getKoulutuksenAlkamisvuosi().intValue();
-//    }
-//
-//    private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-//        log.debug("ALKAMISKAUSI URI : " + this.tarjontaAlkamiskausiSyksyUri);
-//        if (kysely.getKoulutuksenAlkamiskausi() == null || kysely.getKoulutuksenAlkamiskausi().isEmpty()) {
-//            return true;
-//        }
-//        if (kysely.getKoulutuksenAlkamiskausi().contains(this.tarjontaAlkamiskausiSyksyUri)) {
-//            return cal.get(Calendar.MONTH) >= 6;
-//        }
-//        return cal.get(Calendar.MONTH) < 6;
-//    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
@@ -452,8 +343,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
     }
-    
-    
+
     public void updateTilat(TarjontaTila toTila, List<String> oidit, Date updateDate, String userOid) {
         final BooleanExpression qHakukohde = QHakukohde.hakukohde.oid.in(oidit);
 
@@ -464,7 +354,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .set(QHakukohde.hakukohde.lastUpdatedByOid, userOid);
         hakukohdeUpdate.execute();
     }
-    
+
     public List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         final BooleanExpression criteria = hakukohde.haku.oid.in(hakuOids).and(hakukohde.tila.in(requiredStatus));

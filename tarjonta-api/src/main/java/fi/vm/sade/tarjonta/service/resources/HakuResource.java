@@ -59,7 +59,7 @@ public interface HakuResource {
      * lastModifiedSince=XX
      *
      * @param searchTerms
-     * @param count
+     * @param count default value 100 used if count == 0, if count < 0 value is Integer.MAX_VALUE
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
@@ -93,7 +93,7 @@ public interface HakuResource {
      *
      * @param oid
      * @param searchTerms
-     * @param count
+     * @param count default value 100 used if count == 0, if count < 0 value is Integer.MAX_VALUE
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
@@ -117,7 +117,7 @@ public interface HakuResource {
      *
      * @param oid
      * @param searchTerms
-     * @param count
+     * @param count default value 100 used if count == 0, if count < 0 value is Integer.MAX_VALUE
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
@@ -145,7 +145,7 @@ public interface HakuResource {
      *
      * @param oid
      * @param searchTerms
-     * @param count
+     * @param count default value 100 used if count == 0, if count < 0 value is Integer.MAX_VALUE
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
