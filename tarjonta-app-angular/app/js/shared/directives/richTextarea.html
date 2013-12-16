@@ -1,6 +1,6 @@
-<div class="richTextArea" ng-mouseleave="stopEdit()" ng-cloack>
+<div class="richTextArea" ng-cloack>
 
-<div ng-show="!edit" class="preview" ng-class="isEmpty() ? 'empty' : ''" ng-click="startEdit()" ng-cloack>
+<div ng-show="!edit" class="preview" ng-class="isEmpty() ? 'empty' : ''" ng-click="startEdit($event)" ng-cloack>
     <p ng-show="isEmpty()" tt="tarjonta.richtextarea.empty"></p>
 	<div class="previewBody" ng-bind-html="model" ng-show="!isEmpty()"></div>
 </div>

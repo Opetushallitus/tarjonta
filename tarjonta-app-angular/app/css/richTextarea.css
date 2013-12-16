@@ -2,14 +2,14 @@ div.richTextArea {
 }
 
 div.richTextArea > div.editor, div.richTextArea > div.preview {
-	max-height:220px;
 	min-height:1em;
 }
 	
 div.richTextArea > div.preview {
-    border: 1px solid #cccccc;
+    max-height:190px;
+	border: 1px solid #cccccc;
     border-radius:4px;
-	padding:10px 1px 1px 1px;
+	padding:20px 10px 10px 10px;
 	overflow:auto;
 	cursor:pointer;
 }

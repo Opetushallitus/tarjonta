@@ -4,28 +4,7 @@ var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bi
 
 app.directive('richTextarea',function(LocalisationService, $log) {
 	
-	function windowContainsElements(selector) {
-		var mc = $(selector);
-		//console.log(selector+" mcs="+mc.size());
-		if (mc.size()==0) {
-			return false;
-		}
-		var ret = false;
-		mc.each(function(i, e){
-			//console.log(selector+" e["+i+"] = ",e);
-			if ($(e).css("display") != "none") {
-				ret = true;
-			}
-		});
-		return ret;
-	}
-	
-	function canCloseEditor() {
-		return !windowContainsElements(".mce-menu")
-			&& !windowContainsElements(".mce-tooltip");
-	}
-		
-	function controller($scope) {
+	function RichTextareaController($scope) {
 		
 		$scope.tinymceOptions = {
 			height:"100%",
@@ -48,12 +27,16 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			return $($scope.element).text().length;
 		}
 		
-		$scope.startEdit = function() {
+		$scope.startEdit = function($event) {
+			$event.stopPropagation();
 			$scope.edit = true;
+			if ($scope.container) {
+				$scope.container.stopExcept($scope);
+			}
 		}
 		
 		$scope.stopEdit = function() {
-			if (canCloseEditor() && ($scope.mode()==null || $scope.mode()==undefined)) {
+			if ($scope.mode()==null || $scope.mode()==undefined) {
 				$scope.edit = false;
 			}
 		}
@@ -64,7 +47,8 @@ app.directive('richTextarea',function(LocalisationService, $log) {
         restrict:'E',
         replace:true,
         templateUrl : "js/shared/directives/richTextarea.html",
-        controller: controller,
+        require:"^?richTextareaContainer",
+        controller: RichTextareaController,
         scope: {
         	model: "=",  // teksti
         	mode: "&",   // boolean, jonka mukaan editorikäyttöliittymä näytetään
@@ -73,9 +57,61 @@ app.directive('richTextarea',function(LocalisationService, $log) {
         				 // - jos true, editoria ei näytetä
         	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
         },
-		link: function(scope, element, attrs, controller) {
+		link: function(scope, element, attrs, richTextareaContainer) {
+			if (richTextareaContainer) {
+				scope.container = richTextareaContainer;
+				richTextareaContainer.areas.push(scope);
+			}
 			scope.element = $(".previewBody", element);
 		}
     }
     
+});
+
+app.directive('richTextareaContainer',function($log) {
+	
+	function isInsideEditor($event) {
+		var em = $event.originalEvent.originalTarget;
+		while (em && em.getAttribute) {
+			var cc = em.getAttribute("class");
+			if (cc && cc.indexOf("mce-")!=-1) {
+				return true;
+			}
+			em = em.parentNode;
+		}
+		
+		return false;
+	}
+
+    return {
+        restrict:'E',
+        replace:true,
+        template: "<div ng-transclude ng-click=\"stopAll($event)\"></div>",
+        transclude: true,
+        scope: {},
+        controller: function RichTextareaContainerController($scope) {
+        	$scope.areas = [];
+
+        	$scope.stopExcept = function(src) {
+        		for (var i in $scope.areas) {
+        			var a = $scope.areas[i];
+        			if (a!=src) {
+        				a.stopEdit();
+        			}
+        		}
+        	}
+        	
+        	$scope.stopAll = function($event) {
+        		if (isInsideEditor($event)) {
+        			return;
+        		}
+        		for (var i in $scope.areas) {
+        			$scope.areas[i].stopEdit();
+        		}
+        	}
+        	
+        	return $scope;
+        }
+    }
+
 });
