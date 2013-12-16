@@ -18,12 +18,16 @@ import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.YhteyshenkiloV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
 
+    private static final Logger LOG = LoggerFactory.getLogger(YhteyshenkiloV1Resource.class);
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
@@ -41,7 +45,7 @@ public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
 
         if (searchTerm == null || searchTerm.isEmpty()) {
             dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-            return  dto;
+            return dto;
         }
         List<YhteyshenkiloRDTO> yhtHenkilot = new ArrayList<YhteyshenkiloRDTO>();
         //Doing the search to UserService
@@ -72,8 +76,7 @@ public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
                 yhtHenkilot.add(curYht);
             }
         } catch (Exception ex) {
-            //LOG.error("Problem fetching henkilos: {}", ex.getMessage());
-            ex.printStackTrace();
+            LOG.error("Problem fetching henkilos: {}", ex.getMessage());
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
 
