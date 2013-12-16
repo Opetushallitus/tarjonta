@@ -17,14 +17,6 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 
     public  static final  String VALINTAPERUSTEKUVAUSORA_TABLE_NAME = "valintaperuste_sora_kuvaus";
 
-    public Tyyppi getTyyppi() {
-        return tyyppi;
-    }
-
-    public void setTyyppi(Tyyppi tyyppi) {
-        this.tyyppi = tyyppi;
-    }
-
     public static enum Tyyppi { VALINTAPERUSTEKUVAUS, SORA };
 
     @NotNull
@@ -65,5 +57,13 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 
     public void setTekstis(List<MonikielinenMetadata> tekstis) {
         this.tekstis = tekstis;
+    }
+
+    public Tyyppi getTyyppi() {
+        return tyyppi;
+    }
+
+    public void setTyyppi(Tyyppi tyyppi) {
+        this.tyyppi = tyyppi;
     }
 }
