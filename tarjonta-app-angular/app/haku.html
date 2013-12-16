@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="fi">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Tarjonta, hakujen hallinta">
+        <meta name="author" content="Opetushallitus">
+        <title>Tarjonta, hakujen hallinta</title>
+        <script>
+            if (!(window.console && console.log)) {
+                console = {
+                    log: function() {
+                    },
+                    debug: function() {
+                    },
+                    info: function() {
+                    },
+                    warn: function() {
+                    },
+                    error: function() {
+                    }
+                };
+            }
+        </script>
+
+        <script src="lib/jquery-1.10.2.min.js"></script>
+        <script src="lib/jquery-ui.min.js"></script>
+
+        <!--
+          Environment configuration file(s):
+          Do not add angular application data to 'ext/*' (or 'ext/js/*' etc.)
+          data in the directory will be overridden by tarjontaapp service filter.
+        -->
+        <script src="ext/js/env-configuration.js"></script>
+        <!--
+        Application configuration file(s):
+        -->
+        <script src="js/app-configuration.js"></script>
+        <!--
+         Developer configuration file(s):
+        -->
+        <script src="dev/dev-configuration.js"></script>
+
+        <!--
+        Angular, see version.txt for version.
+        -->
+        <script src="lib/angular/angular.js"></script>
+        <script src="lib/angular/angular-resource.js"></script>
+        <script src="lib/angular/angular-route.js"></script>
+        <script src="lib/angular/angular-sanitize.js"></script>
+        <script src="lib/angular/angular-animate.js"></script>
+
+        <script src="lib/ngGrid/ng-grid-2.0.7.debug.js"></script>
+        <script src="lib/moment-with-langs.min.js"></script>
+        <script src="lib/bootstrap-datetimepicker.min.js"></script>
+        <script src="lib/bootstrap-datetimepicker.fi.js"></script>
+        <script src="lib/bootstrap-datetimepicker.sv.js"></script>
+        <script src="lib/underscore/underscore.js"></script>
+        <script src="lib/tinymce/tinymce.min.js"></script>
+        <script src="lib/ui-angular-tinymce.js"></script>
+        <script src="lib/imageupload.js"></script>
+        <script src="lib/buckets-minified.js"></script>
+        <script src="lib/treeview/angular.treeview.js"></script>
+
+        <script src="js/shared/auth.js"></script>
+        <script src="js/shared/permissions.js"></script>
+        <script src="js/shared/cache.js"></script>
+        <script src="js/shared/koodisto.js"></script>
+        <script src="js/shared/organisaatio.js"></script>
+        <script src="js/shared/tarjonta.js"></script>
+        <script src="js/shared/yhteyshenkilo.js"></script>
+        <script src="js/shared/directives/koodistoNimiCombo.js"></script>
+        <script src="js/shared/directives/koodistoArvoCombo.js"></script>
+        <script src="js/shared/directives/koodistoMultiSelect.js"></script>
+        <script src="js/shared/directives/common.js"></script>
+
+        <script src="js/shared/loading.js"></script>
+        <script src="js/shared/localisation.js"></script>
+        <script src="js/shared/config.js"></script>
+        <script src="js/shared/directives/zippy.js"></script>
+        <script src="js/shared/haku.js"></script>
+        <script src="js/shared/hakukohde.js"></script>
+        <script src="js/shared/tarjontaConverter.js"></script>
+        <script src="js/shared/directives/datetimepicker.js"></script>
+        <script src="js/shared/sharedStateService.js"></script>
+        <script src="js/shared/directives/koodistoTypeAhead.js"></script>
+        <script src="js/shared/directives/org-puu.js"></script>
+        <script src="js/shared/directives/bindonce.js"></script>
+        <script src="js/shared/directives/multiSelect.js"></script>
+        <script src="js/shared/directives/mkTextfield.js"></script>
+        <script src="js/shared/directives/richTextarea.js"></script>
+        <script src="js/shared/directives/mkRichTextarea.js"></script>
+        <script src="js/shared/directives/imageField.js"></script>
+        <script src="js/shared/directives/controlsLayout.js"></script>
+        <script src="js/shared/directives/treeField.js"></script>
+        <script src="js/shared/filters/orderByNum.js"></script>
+        <script src="js/shared/filters/dateFormat.js"></script>
+
+        <script src="partials/haku/controllers.js"></script>
+        <script src="partials/haku/directives.js"></script>
+        <script src="partials/haku/filters.js"></script>
+        <script src="partials/haku/services.js"></script>
+
+        <script src="partials/haku/edit/hakuEditControllers.js"></script>
+        <script src="partials/haku/review/hakuReviewControllers.js"></script>
+
+        <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
+
+        <script src="partials/common/dialogService.js"></script>
+
+        <script src="partials/haku/hakuApp.js"></script>
+
+        <!-- TYYLIT - huomaa järjestys kun lisäilet -->
+        <!-- 1. bootstrap pohjalle -->
+        <link href="lib/bootstrap-combined.min.css" rel="stylesheet">
+
+        <!-- 2. erillisten komponenttien omat tyylit -->
+        <link href="js/shared/directives/zippy.css" rel="stylesheet">
+
+        <!-- 3. virkailija-teema -->
+        <!--
+        <link href="css/virkailija.css" rel="stylesheet"/>
+        -->
+
+        <!-- 4. omat määritykset ja toiminnaliset tyylit -->
+        <!--
+        <link href="css/app.css" rel="stylesheet"/>
+        <link href="css/multiselect.css" rel="stylesheet"/>
+        <link href="css/mktextfield.css" rel="stylesheet"/>
+        <link href="css/richTextarea.css" rel="stylesheet"/>
+        <link href="css/mkRichTextarea.css" rel="stylesheet"/>
+        <link href="css/tarjontaform.css" rel="stylesheet"/>
+        -->
+
+        <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
+    </head>
+
+    <body data-ng-controller="HakuRoutingCtrl">
+
+        <!-- kaikki tarjonta-roina tämän sisään!! -->
+        <div id="tarjonta-body" class="ng-cloak">
+            <div data-ng-controller="LocalisationCtrl">
+
+                <div data-ng-switch on="renderPath[0]">
+
+                    <div data-ng-switch-when="home">
+                        <div data-ng-include="'partials/haku/haku.html'"></div>
+                    </div><!-- 0:/home -->
+
+                    <div data-ng-switch-when="haku">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakuRoutingCtrl">
+                            <div data-ng-switch-when="review">
+                                <div data-ng-include="'partials/haku/review/hakuReview.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/haku/edit/hakuEdit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="create">
+                                HAKU.CREATE?
+                            </div>
+                            <div data-ng-switch-default>
+                                UNKNOWN ACTION! {{ renderPath | json }}
+                            </div>
+                        </div>
+                    </div><!-- 0:/haku -->
+
+                </div><!-- /renderPath[0] -->
+
+            </div>
+
+            <div data-ng-controller="LoadingCtrl"
+                 data-ng-show="loading"
+                 id="ajax-loader"
+                 class="{{ isModal() ? 'max' : 'min'}}">
+                <div>
+                    <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+                    <span>{{ t("loading")}}</span>
+                </div>
+            </div>
+
+            <script>
+                    var init_counter = 0;
+                    var initFunction = function(id, xhr, status) {
+                        init_counter--;
+
+                        console.log("Got ready signal from: " + id);
+                        console.log("  status = ", status);
+                        console.log("  xhr = ", xhr);
+
+                        if (init_counter > 0) {
+                            console.log("Got ready signal from: '" + id + "' -- still waiting for " + init_counter + " requests.");
+                        } else {
+                            console.log("OK! That was the last request, init the app!");
+
+                            angular.element(document).ready(function() {
+                                angular.module('myApp', ['app']);
+                                angular.bootstrap(document, ['myApp']);
+                            });
+                        }
+                    };
+
+                    //
+                    // Get current users info (/cas/me)
+                    //
+                    console.log("** Loading user info; from: ", window.CONFIG.env.casUrl);
+                    window.CONFIG.env.cas = {}
+                    init_counter++;
+                    jQuery.ajax(window.CONFIG.env.casUrl, {
+                        dataType: "json",
+                        success: function(xhr, status) {
+                            window.CONFIG.env.cas.userinfo = xhr;
+                            initFunction("AUTHENTICATION", xhr, status);
+                        },
+                        error: function(xhr, status) {
+                            initFunction("AUTHENTICATION FAILED", xhr, status);
+                        }
+                    });
+
+                    //
+                    // Preload application localisations for haku
+                    //
+                    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=haku";
+                    console.log("** Loading localisation info; from: ", localisationUrl);
+                    init_counter++;
+                    jQuery.ajax(localisationUrl, {
+                        dataType: "json",
+                        complete: function(xhr, status) {
+                            window.CONFIG.env["tarjonta.localisations"] = xhr.responseJSON;
+                            initFunction("localisations", xhr, status);
+                        },
+                        error: function(xhr, status) {
+                            window.CONFIG.env["tarjonta.localisations"] = [];
+                            initFunction("localisations FAILED", xhr, status);
+                        }
+                    });
+            </script>
+        </div>
+    </body>
+</html>
