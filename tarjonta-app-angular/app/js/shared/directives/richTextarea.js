@@ -9,10 +9,25 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		$scope.tinymceOptions = {
 			height:"100%",
 			statusbar:false,
-			menubar:false,
-			resize:false
+			menubar:"format table insert",
+			resize:false,
+			schema:"html5",
+			language:LocalisationService.getLocale(),
+			plugins:"link image table media",
+			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
+				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
+			tools:"inserttable"
+			//toolbar_items_size:"small"
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
+		
+		/*
+		 * formats
+		 * bold
+		 * italic
+		 * align l|c|r|j
+		 * ul ol indent r|l		 * 
+		 */
 		
 		$scope.model = $scope.model ? $scope.model : "";
 		
@@ -28,7 +43,9 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		}
 		
 		$scope.startEdit = function($event) {
-			$event.stopPropagation();
+			if ($event) {
+				$event.stopPropagation();
+			}
 			$scope.edit = true;
 			if ($scope.container) {
 				$scope.container.stopExcept($scope);
@@ -72,6 +89,10 @@ app.directive('richTextareaContainer',function($log) {
 	
 	function isInsideEditor($event) {
 		var em = $event.originalEvent.originalTarget;
+		if (!em) {
+			// chrome
+			em = $event.originalEvent.srcElement;
+		}
 		while (em && em.getAttribute) {
 			var cc = em.getAttribute("class");
 			if (cc && cc.indexOf("mce-")!=-1) {
