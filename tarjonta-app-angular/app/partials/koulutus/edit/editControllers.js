@@ -2,8 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
+            '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal', 'PermissionService',
+            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
+                    $window, converter, koodisto, $modal, PermissionService) {
                 $log.info("BaseEditController()");
                 // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
@@ -143,21 +144,38 @@ app.controller('BaseEditController',
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
-                    
-                    if ($scope.koulutusForm.$invalid) {
-                    	$scope.uiModel.showError = true;
-                    	return;
-                    }                    
 
-                    var KoulutusRes = tarjontaService.koulutus();
-                    var apiModelReadyForSave = $scope.saveModelConverter(tila);
-                    
-                    KoulutusRes.save(apiModelReadyForSave, function(response) {
-                        var model = response.result;
-                        //Callback
-                        console.log("Insert data response from POST: %j", response);
-                        $scope.model = model;
-                        showSuccess();
+                    if ($scope.koulutusForm.$invalid) {
+                        //invalid form data
+                        $scope.uiModel.showError = true;
+                        return;
+                    }
+
+                    PermissionService.permissionResource().authorize({}, function(authResponse) {
+                        console.log("Authorization check : " + authResponse.result);
+
+                        if (authResponse.status !== 'OK') {
+                            //not authenticated
+                            $scope.uiModel.showError = true;
+                            return;
+                        }
+
+                        var KoulutusRes = tarjontaService.koulutus();
+                        var apiModelReadyForSave = $scope.saveModelConverter(tila);
+
+                        KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
+                            var model = saveResponse.result;
+
+                            if (saveResponse.status === 'OK') {
+                                $scope.model = model;
+                                showSuccess();
+                                $scope.uiModel.tabs.lisatiedot = false;
+                            } else {
+                                //save failed
+                                $scope.uiModel.showError = true;
+                            }
+                        });
+
                     });
                 };
 
@@ -263,26 +281,6 @@ app.controller('BaseEditController',
                     }
                 };
 
-                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
-                    var kuvaus = null;
-                    if (typeof boolIsKomo !== 'boolean') {
-                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
-                    }
-
-                    if (boolIsKomo) {
-                        kuvaus = $scope.model.kuvausKomo;
-                    } else {
-                        kuvaus = $scope.model.kuvausKomoto;
-                    }
-
-                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
-                        kuvaus[textEnum] = {tekstis: {}};
-                        kuvaus[textEnum].tekstis[kieliUri] = '';
-                    }
-
-                    return kuvaus[textEnum].tekstis;
-                };
-                
                 $scope.selectKieli = function(kieliUri) {
                     $scope.selectedKieliUri = kieliUri;
                 }

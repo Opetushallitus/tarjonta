@@ -233,7 +233,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
             ValintakoeRDTO tmp = conversionService.convert(valintakoe, ValintakoeRDTO.class);
 
-            if (isEmpty(valintakoe.getTyyppiUri())) {
+            // This is now applied to ALL valintakoes, not only lukios... lets see how this goes
+            if (true || isEmpty(valintakoe.getTyyppiUri())) {
                 LOG.debug("  EMPTY getTyyppiUri - ie. Lukio valintakoe, {}", tmp);
 
                 //
@@ -252,14 +253,18 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                 List<ValintakoePisterajaRDTO> addToBothVKs = new ArrayList<ValintakoePisterajaRDTO>();
 
                 for (ValintakoePisterajaRDTO pisteraja : tmp.getValintakoePisterajas()) {
+                    LOG.debug("  vk - pisteraja: '{}'", pisteraja.getTyyppi());
+
                     // TODO hardocded... :(
                     if ("Paasykoe".equals(pisteraja.getTyyppi())) {
+                        LOG.debug("    pisteraja: pääsykoe");
                         vk = (vk == null) ? new ValintakoeRDTO() : vk;
                         if (vk.getValintakoePisterajas() == null) {
                             vk.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
                         }
                         vk.getValintakoePisterajas().add(pisteraja);
                     } else if ("Lisapisteet".equals(pisteraja.getTyyppi())) {
+                        LOG.debug("    pisteraja: lisäpisteet");
                         lt = (lt == null) ? new ValintakoeRDTO() : lt;
                         if (lt.getValintakoePisterajas() == null) {
                             lt.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
@@ -267,6 +272,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                         lt.getValintakoePisterajas().add(pisteraja);
                     } else {
                         // Anything else, add to both ("Kokonaispisteet")
+                        LOG.debug("    pisteraja: default case, add pisteraja to both");
                         addToBothVKs.add(pisteraja);
                     }
                 }
@@ -275,13 +281,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                 // Valintakoe / selection examination
                 //
                 if (vk != null) {
+                    LOG.debug("  vk != null, update data");
                     vk.setCreated(tmp.getCreated());
                     vk.setCreatedBy(tmp.getCreatedBy());
                     vk.setKuvaus(tmp.getKuvaus());
                     vk.setModified(tmp.getModified());
                     vk.setModifiedBy(tmp.getModifiedBy());
                     vk.setOid(tmp.getOid() + "_1");
-                    vk.setTyyppiUri("valintakokeentyyppi_1#1");
+                    vk.setTyyppiUri("valintakokeentyyppi_1#1"); // TODO hardcoded
                     vk.setValintakoeAjankohtas(tmp.getValintakoeAjankohtas());
                     vk.setValintakoeId(tmp.getValintakoeId());
                     vk.setVersion(tmp.getVersion());
@@ -296,13 +303,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                 // Lisänäytöt / additional test?
                 //
                 if (lt != null) {
+                    LOG.debug("  lt (lisänäytöt) != null, update data");
                     lt.setCreated(tmp.getCreated());
                     lt.setCreatedBy(tmp.getCreatedBy());
                     lt.setKuvaus(tmp.getLisanaytot());
                     lt.setModified(tmp.getModified());
                     lt.setModifiedBy(tmp.getModifiedBy());
                     lt.setOid(tmp.getOid() + "_2");
-                    lt.setTyyppiUri("valintakokeentyyppi_2#1");
+                    lt.setTyyppiUri("valintakokeentyyppi_2#1"); // TODO hardcoded
                     lt.setVersion(tmp.getVersion());
 
                     // Add "common" points if any
@@ -311,7 +319,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                     result.add(lt);
                 }
             } else {
-                // Normal and the default case.
+                // Normal and the default case. NOT REACHED at the moment
+                LOG.debug("  Normal case, vk has a type {}", tmp.getTyyppiUri());
                 result.add(tmp);
             }
         }
