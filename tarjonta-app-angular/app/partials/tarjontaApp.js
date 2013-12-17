@@ -70,7 +70,8 @@ angular.module('app',
             'angularTreeview',
             'DateFormat',
             'TreeFieldDirective',
-            'AiheetJaTeematChooser'
+            'AiheetJaTeematChooser',
+            'debounce'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -233,7 +234,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
 
 
     PermissionService.permissionResource().authorize({}, function(response) {
-        console.log("Authorization check : %j", response);
+        console.log("Authorization check : " + response.result);
     });
 
 

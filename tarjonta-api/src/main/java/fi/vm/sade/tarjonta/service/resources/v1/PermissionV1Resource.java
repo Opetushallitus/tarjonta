@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,5 +31,5 @@ public interface PermissionV1Resource {
     @GET
     @Path("/authorize")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public String authorize();
+    public ResultV1RDTO<String> authorize();
 }

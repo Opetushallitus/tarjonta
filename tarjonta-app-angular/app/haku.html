@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Tarjonta">
+        <meta name="description" content="Tarjonta, hakujen hallinta">
         <meta name="author" content="Opetushallitus">
-        <title>Tarjonta</title>
+        <title>Tarjonta, hakujen hallinta</title>
         <script>
             if (!(window.console && console.log)) {
                 console = {
@@ -73,7 +73,6 @@
         <script src="js/shared/directives/koodistoArvoCombo.js"></script>
         <script src="js/shared/directives/koodistoMultiSelect.js"></script>
         <script src="js/shared/directives/common.js"></script>
-        <script src="js/shared/debounce.js"></script>
 
         <script src="js/shared/loading.js"></script>
         <script src="js/shared/localisation.js"></script>
@@ -97,40 +96,19 @@
         <script src="js/shared/filters/orderByNum.js"></script>
         <script src="js/shared/filters/dateFormat.js"></script>
 
-        <script src="partials/controllers.js"></script>
-        <script src="partials/directives.js"></script>
-        <script src="partials/filters.js"></script>
-        <script src="partials/services.js"></script>
+        <script src="partials/haku/controllers.js"></script>
+        <script src="partials/haku/directives.js"></script>
+        <script src="partials/haku/filters.js"></script>
+        <script src="partials/haku/services.js"></script>
 
-        <script src="partials/search/results-table.js"></script>
-        <script src="partials/search/controllers.js"></script>
-
-        <script src="partials/kk/directives.js"></script>
-        <script src="partials/kk/filters.js"></script>
-        <script src="partials/kk/services.js"></script>
-        <script src="partials/hakukohde/edit/hakukohdeControllers.js"></script>
-        <script src="partials/hakukohde/edit/valintakokeetController.js"></script>
-        <script src="partials/hakukohde/edit/liitteetListCtrl.js"></script>
-        <script src="partials/hakukohde/review/hakukohdeReviewController.js"></script>
-
-        <script src="partials/koulutus/koulutusController.js"></script>
-        <script src="partials/koulutus/luo-koulutus-dialogi.js"></script>
-        <script src="partials/koulutus/sisaltyvyys/liita-sisaltyvyys-ctrl.js"></script>
-        <script src="partials/koulutus/sisaltyvyys/poista-sisaltyvyys-ctrl.js"></script>
-
-        <script src="partials/koulutus/edit/editControllers.js"></script>
-        <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
-        <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
-        <script src="partials/koulutus/edit/aiheet-teemat.js"></script>
-        <script src="partials/koulutus/review/reviewControllers.js"></script>
-
-        <script src="partials/hakukohde/hakukohdeController.js"></script>
+        <script src="partials/haku/edit/hakuEditControllers.js"></script>
+        <script src="partials/haku/review/hakuReviewControllers.js"></script>
 
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
 
         <script src="partials/common/dialogService.js"></script>
 
-        <script src="partials/tarjontaApp.js"></script>
+        <script src="partials/haku/hakuApp.js"></script>
 
         <!-- TYYLIT - huomaa järjestys kun lisäilet -->
         <!-- 1. bootstrap pohjalle -->
@@ -138,103 +116,55 @@
 
         <!-- 2. erillisten komponenttien omat tyylit -->
         <link href="js/shared/directives/zippy.css" rel="stylesheet">
-        <link href="lib/ngGrid/ng-grid.min.css" rel="stylesheet">
-        <link href="css/tree.css" rel="stylesheet"/>
-        <link href="css/datetimepicker.css" rel="stylesheet"/>
-        <link href="lib/treeview/css/angular.treeview.css" rel="stylesheet"/>
 
         <!-- 3. virkailija-teema -->
+        <!--
         <link href="css/virkailija.css" rel="stylesheet"/>
+        -->
 
         <!-- 4. omat määritykset ja toiminnaliset tyylit -->
+        <!--
         <link href="css/app.css" rel="stylesheet"/>
         <link href="css/multiselect.css" rel="stylesheet"/>
         <link href="css/mktextfield.css" rel="stylesheet"/>
         <link href="css/richTextarea.css" rel="stylesheet"/>
         <link href="css/mkRichTextarea.css" rel="stylesheet"/>
         <link href="css/tarjontaform.css" rel="stylesheet"/>
-
+        -->
 
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     </head>
 
-    <body data-ng-controller="AppRoutingCtrl">
+    <body data-ng-controller="HakuRoutingCtrl">
 
         <!-- kaikki tarjonta-roina tämän sisään!! -->
         <div id="tarjonta-body" class="ng-cloak">
             <div data-ng-controller="LocalisationCtrl">
 
                 <div data-ng-switch on="renderPath[0]">
-                    <div data-ng-switch-when="foo">
-                        <div data-ng-include="'partials/koulutus/index.html'"></div>
-                    </div>
+
                     <div data-ng-switch-when="home">
-                        <div data-ng-include="'partials/search/search.html'"></div>
-                    </div>
-                    <div data-ng-switch-when="kk">
-                        <div data-ng-switch on="renderPath[1]">
-                            <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
-                            </div>
-                            <div data-ng-switch-when="review">
-                                <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
-                            </div>
-                        </div><!-- /renderPath[1] -->
-                    </div><!-- 0:/kk -->
+                        <div data-ng-include="'partials/haku/haku.html'"></div>
+                    </div><!-- 0:/home -->
 
-                    <div data-ng-switch-when="koulutus">
-                        <div data-ng-switch on="renderPath[1]" data-ng-controller="KoulutusRoutingController">
+                    <div data-ng-switch-when="haku">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakuRoutingCtrl">
                             <div data-ng-switch-when="review">
-                                <div data-ng-include="'partials/koulutus/review/review.html'"></div>
+                                <div data-ng-include="'partials/haku/review/hakuReview.html'"></div>
                             </div>
                             <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
+                                <div data-ng-include="'partials/haku/edit/hakuEdit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="create">
+                                HAKU.CREATE?
                             </div>
                             <div data-ng-switch-default>
                                 UNKNOWN ACTION! {{ renderPath | json }}
                             </div>
                         </div>
-                    </div><!-- 0:/koulutus -->
+                    </div><!-- 0:/haku -->
 
-                    <div data-ng-switch-when="hakukohde">
-                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakukohdeRoutingController">
-                            <div data-ng-switch-when="review">
-                                <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
-                            </div>
-                            <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
-                            </div>
-                            <div data-ng-switch-default>
-                                UNKNOWN ACTION! {{ renderPath | json }}
-                            </div>
-                        </div>
-                    </div><!-- 0:/hakukohde -->
-
-                    <div data-ng-switch-when="koodistoTest">
-                        <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
-                    </div>
                 </div><!-- /renderPath[0] -->
-
-                <!--
-                                <div class="wsidebar-main">
-                                    <hr>
-                                    Footer, route counter = {{count}}<br>
-                                    <a href="#/etusivu">Etusivulle</a>
-                                    <a href="/lokalisointi">Käännösten hallinta</a>
-                
-                                    <div>
-                                        <span data-ng-click="showTheSheisse = !showTheSheisse"
-                                              class="collapseHeader"
-                                              data-ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
-                                        <div collapse="!showTheSheisse">
-                                            <pre>
-                                        {{ CONFIG | json }}
-                                            </pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                -->
 
             </div>
 
@@ -287,26 +217,9 @@
                     });
 
                     //
-                    // Preload "tarjonta.tila"???
+                    // Preload application localisations for haku
                     //
-                    console.log("** Loading tarjonta.tila info; from: " + window.CONFIG.env.tarjontaRestUrlPrefix + "tila");
-                    init_counter++;
-                    jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
-                        dataType: "json",
-                        success: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = xhr.result;
-                            initFunction("tarjonta.tila", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = {};
-                            initFunction("tarjonta.tila FAILED", xhr, status);
-                        }
-                    });
-
-                    //
-                    // Preload application localisations for tarjonta
-                    //
-                    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta";
+                    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=haku";
                     console.log("** Loading localisation info; from: ", localisationUrl);
                     init_counter++;
                     jQuery.ajax(localisationUrl, {

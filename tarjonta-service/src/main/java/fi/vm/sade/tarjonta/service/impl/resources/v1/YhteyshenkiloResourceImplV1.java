@@ -18,27 +18,35 @@ import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.YhteyshenkiloV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(YhteyshenkiloV1Resource.class);
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
     private UserService userService;
-    
-    
+
     @Override
-    public List<YhteyshenkiloRDTO> getByOID(String tarjoajaOid, String searchTerm) {
+    public ResultV1RDTO<List<YhteyshenkiloRDTO>> getByOID(String tarjoajaOid, String searchTerm) {
+        ResultV1RDTO<List<YhteyshenkiloRDTO>> dto = new ResultV1RDTO<List<YhteyshenkiloRDTO>>();
+
         List<String> organisaatioOids = new ArrayList<String>();//getTarjoaja().getOrganisaatioOidTree();
-        organisaatioOids.add(tarjoajaOid); 
+        organisaatioOids.add(tarjoajaOid);
 
         //If given string is null or empty returning an empty list, i.e. not doing an empty search.
         Preconditions.checkNotNull(organisaatioOids, "A list of organisaatio OIDs cannot be null.");
 
         if (searchTerm == null || searchTerm.isEmpty()) {
-            return new ArrayList<YhteyshenkiloRDTO>();//new ArrayList<HenkiloType>();
+            dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return dto;
         }
         List<YhteyshenkiloRDTO> yhtHenkilot = new ArrayList<YhteyshenkiloRDTO>();
         //Doing the search to UserService
@@ -69,13 +77,15 @@ public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {
                 yhtHenkilot.add(curYht);
             }
         } catch (Exception ex) {
-            //LOG.error("Problem fetching henkilos: {}", ex.getMessage());
-            ex.printStackTrace();
+            LOG.error("Problem fetching henkilos:", ex);
+            dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
 
+        dto.setResult(yhtHenkilot);
+
         //Returning the list of found henkilos.
-        return yhtHenkilot;
-        
+        return dto;
+
         //return null;
     }
 

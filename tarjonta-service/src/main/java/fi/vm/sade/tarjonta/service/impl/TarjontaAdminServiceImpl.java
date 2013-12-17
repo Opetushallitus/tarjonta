@@ -964,7 +964,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.info("  entity = {}", md);
 
         if (md == null) {
-            //Metadata was removed.
+            //KuvausV1RDTO was removed.
             return null;
         }
 
