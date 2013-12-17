@@ -17,6 +17,7 @@
 //});
 
 
+
 describe('Edit koulutus testeja', function() {
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
@@ -137,6 +138,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('TarjontaConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('TarjontaPermissions'));
 
     var scope, localisationService, routeParams, tarjontaService, cfg, organisaatioService;
 
