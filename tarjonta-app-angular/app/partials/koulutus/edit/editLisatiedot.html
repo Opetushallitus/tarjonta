@@ -1,32 +1,35 @@
 <table class="tarjontaForm">
 
-    <!-- ammattinimikkeet -->
-    <tr class="info">
-        <th tt="koulutus.edit.ammattinimikkeet.title"/>
-        <td>
-    <multi-select
-        model="uiModel.tmp"
-        selection="uiModel.ammattinimikkeet.uris"
-        promise="uiModel.ammattinimikkeet.promise"
-        display="dualpane"/>
-</td>
-</tr>
+	<!-- ammattinimikkeet -->
+	<tr class="info">
+		<th tt="koulutus.edit.ammattinimikkeet.title" />
+		<td><multi-select model="uiModel.tmp"
+				selection="uiModel.ammattinimikkeet.uris"
+				promise="uiModel.ammattinimikkeet.promise" display="dualpane" /></td>
+		<!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
+		<td></td>
+	</tr>
 </table>
 
 <div ng-show="uiModel.opetuskielis.uris.length>0">
 
-	<tabset>
-	    <tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}" select="selectKieli(kieliUri)">
-	    </tab>
-	</tabset>
-	
-	<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
-	
-	    <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>            
-	    <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
-	
-	    <rich-textarea max="1500" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, selectedKieliUri)[selectedKieliUri]"></rich-textarea>
-	</div>
+
+    <rich-textarea-container>
+
+		<tabset>
+		    <tab ng-repeat="kieliUri in uiModel.opetuskielis.uris" heading="{{kieliFromKoodi(kieliUri)}}" select="selectKieli(kieliUri)">
+		    </tab>
+		</tabset>
+				
+		<div ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+		
+		    <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>            
+		    <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
+		
+		    <rich-textarea max="1500" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, selectedKieliUri)[selectedKieliUri]"></rich-textarea>
+		</div>
+
+    </rich-textarea-container>
 	    
 	<h4 tt="koulutus.edit.kuva.title"></h4>
 	<image-field btn-name-remove="{{t('poista')}}" btn-name-save="{{t('tallenna')}}" editable="true" oid="{{model.oid}}" uri="{{selectedKieliUri}}"></image-field>
