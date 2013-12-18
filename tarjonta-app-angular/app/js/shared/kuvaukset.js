@@ -77,6 +77,55 @@ app.factory('Kuvaus',function($http,Config,$q){
 
             return promise.promise;
 
+        } ,
+
+        findKuvausWithTyyppiNimiOppilaitos : function(tyyppi, nimi, oppilaitosTyyppi) {
+
+            var promise = $q.defer();
+
+            if (tyyppi !== undefined && nimi !== undefined && oppilaitosTyyppi !== undefined) {
+
+                var kuvausQueriUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi
+                +oppilaitosTyyppi+nimi;
+
+                $http.get(kuvausQueriUri)
+                    .success(function(data){
+                       promise.resolve(data);
+                    })
+                    .error(function(data){
+                        promise.resolve(data);
+                });
+
+            } else {
+
+                promise.resolve();
+
+            }
+
+            return promise.promise;
+
+        },
+
+        findAllNimesWithTyyppi : function(tyyppi) {
+
+            var promise = $q.defer();
+
+            if (tyyppi !== undefined )  {
+
+                var nimiQueryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi+"/nimet";
+
+                $http.get(nimiQueryUri)
+                    .success(function(data){
+                       promise.resolve(data);
+                    })
+                    .error(function(data){
+                       promise.resolve(data);
+                    });
+
+            }
+
+            return promise.promise;
+
         }
 
     };
