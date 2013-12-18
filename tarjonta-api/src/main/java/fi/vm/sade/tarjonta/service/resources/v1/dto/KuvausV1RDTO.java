@@ -9,6 +9,9 @@ import java.util.HashMap;
 */
 public class KuvausV1RDTO {
 
+    @ApiModelProperty(value = "Unique id of the description")
+    private String kuvauksenTunniste;
+
     @ApiModelProperty(value = "HashMap containing description names and description name language", required=true)
     private HashMap<String,String> kuvauksenNimet;
 
@@ -51,5 +54,13 @@ public class KuvausV1RDTO {
 
     public void setKuvaukset(HashMap<String, String> kuvaukset) {
         this.kuvaukset = kuvaukset;
+    }
+
+    public String getKuvauksenTunniste() {
+        return kuvauksenTunniste;
+    }
+
+    public void setKuvauksenTunniste(String kuvauksenTunniste) {
+        this.kuvauksenTunniste = kuvauksenTunniste;
     }
 }

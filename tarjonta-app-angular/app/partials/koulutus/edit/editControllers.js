@@ -284,6 +284,26 @@ app.controller('BaseEditController',
                 $scope.selectKieli = function(kieliUri) {
                     $scope.selectedKieliUri = kieliUri;
                 }
+                
+                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
+                    var kuvaus = null;
+                    if (typeof boolIsKomo !== 'boolean') {
+                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+                    }
+
+                    if (boolIsKomo) {
+                        kuvaus = $scope.model.kuvausKomo;
+                    } else {
+                        kuvaus = $scope.model.kuvausKomoto;
+                    }
+
+                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
+                        kuvaus[textEnum] = {tekstis: {}};
+                        kuvaus[textEnum].tekstis[kieliUri] = '';
+                    }
+                    
+                    return kuvaus[textEnum].tekstis;
+                };
 
                 // TODO omaksi direktiivikseen tjsp..
                 $scope.kieliFromKoodi = function(koodi) {
