@@ -1,44 +1,190 @@
 <div>
 
 
-    <form name="hakuForm">
 
-        <form class="form-horizontal" role="form">
-            <fieldset>
+    <form class="form-horizontal" id='hakuForm'>
+        <fieldset>
 
-                <!-- Form Name -->
-                <legend>Haun aikataulut</legend>
+            <!-- Form Name -->
+            <legend>Tarjonnan julkaisu ja hakuaika</legend>
 
-                <!-- Text input-->
-                <div class="control-group">
-                    <label class="control-label" for="textinput">Tarjonnan julkaisun takaraja</label>
-                    <div class="controls">
-                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge" required="">
-                        <p class="help-block">Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.</p>
-                    </div>
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Tarjonnan julkaisun takaraja</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge" required="">
+                    <p class="help-block">Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.</p>
                 </div>
+            </div>
 
-                <!-- Text input-->
-                <div class="control-group">
-                    <label class="control-label" for="textinput">Valintatulokset siirrettävä sijoitteluun viimeistään</label>
-                    <div class="controls">
-                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                        <p class="help-block">help</p>
-                    </div>
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Aloituspaikkojen muokkauksen takaraja</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">Hakuajan jälkeen hakukohteen aloituspaikkojen muokkaaminen on sallittu annettuun päivämäärään asti</p>
                 </div>
+            </div>
 
-                <!-- Multiple Checkboxes (inline) -->
-                <div class="control-group">
-                    <label class="control-label" for="checkboxes">Sijoittelun suorittaminen aina valintatietojen muuttuessa</label>
-                    <div class="controls">
-                        <label class="checkbox inline" for="checkboxes-0">
-                            <input type="checkbox" name="checkboxes" id="checkboxes-0" value="1">
-                            1
-                        </label>
-                    </div>
+            <div class="control-group">
+                Hakuaika 1.1.2011 klo 08:00 - 31.12.2017 23:59
+            </div>
+
+        </fieldset>
+
+
+
+        <fieldset>
+
+            <!-- Form Name -->
+            <legend>Valinnat ja sijoittelu</legend>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Koekutsujen muodostaminen</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">-</p>
                 </div>
+            </div>
 
-            </fieldset>
-        </form>
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Harkinnanvaraisen valinnan päätösten tallennus päättyy</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Koetulosten tallentaminen</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Oppilaitosten virkailijoiden valintapalvelun käyttäminen estetty</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Valintalaskennan suorittaminen</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Sijoittelun suorittaminen</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Multiple Checkboxes (inline) -->
+            <div class="control-group">
+                <label class="control-label" for="checkboxes">Sijoittelun suorittaminen</label>
+                <div class="controls">
+                    <label class="checkbox inline" for="checkboxes-0">
+                        <input type="checkbox" name="checkboxes" id="checkboxes-0" value="Aina valintatietojen muuttuessa">
+                        Aina valintatietojen muuttuessa
+                    </label>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Sijoittelun suorittamistiheys</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <p class="help-block">Tiheys määritellään kokonaisina tunteina välillä 1 - 336 tuntia (14 vrk)</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Sijoittelun suorittamisen vuorokaudessa klo</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
+                    <p class="help-block">Kellonaika, HH:mm formaatissa, esim: 23:45</p>
+                </div>
+            </div>
+
+        </fieldset>
+
+
+
+
+
+        <fieldset>
+
+            <!-- Form Name -->
+            <legend>Tulokset ja paikan vastaanotto</legend>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Jälkiohjauskirjeen aineiston lähettäminen iPostiin</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Hakukierros päättyy</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+        </fieldset>
+
+
+
+        <fieldset>
+
+            <!-- Form Name -->
+            <legend>Lisähaun tiedot</legend>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Hakukohteiden tallennus alkaa</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">Hakuaika 1.1.1234 klo 12:34 - 1.1.4321 klo 12:34</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Hakukierros päättyy</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+        </fieldset>
+
+    </form>
 
 </div>
