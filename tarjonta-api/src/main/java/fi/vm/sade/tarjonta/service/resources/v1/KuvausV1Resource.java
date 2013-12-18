@@ -51,7 +51,7 @@ public interface KuvausV1Resource {
     @GET
     @Path("/{tyyppi}/{tunniste}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Palauttaa kuvauksen annetulla tunnisteella")
+    @ApiOperation(value = "Palauttaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> findById(
             @ApiParam(value = "kuvauksen tyyppi",required = true, allowableValues = "valintaperustekuvaus,SORA")
             @PathParam("tyyppi") String tyyppi,
@@ -62,7 +62,7 @@ public interface KuvausV1Resource {
     @Path("/{tyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen")
+    @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
             @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
 
@@ -71,7 +71,7 @@ public interface KuvausV1Resource {
     @Path("/{tyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen")
+    @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> updateKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
                                                @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
 }

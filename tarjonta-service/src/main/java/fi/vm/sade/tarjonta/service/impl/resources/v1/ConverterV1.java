@@ -219,6 +219,7 @@ public class ConverterV1 {
             for(MonikielinenMetadata monikielinenMetadata:kuvaus.getTekstis()) {
                 tekstis.put(monikielinenMetadata.getKieli(),monikielinenMetadata.getArvo());
             }
+            kuvausV1RDTO.setKuvaukset(tekstis);
         }
 
         return kuvausV1RDTO;

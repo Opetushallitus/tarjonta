@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import  fi.vm.sade.tarjonta.dao.KuvausDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -30,6 +31,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     private ConverterV1 converter;
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi(String tyyppi) {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         try {
@@ -60,6 +62,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimet(String tyyppi) {
        ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
 
@@ -97,6 +100,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimetWithOrganizationType(String tyyppi, String orgType) {
         ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
 
@@ -134,6 +138,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<KuvausV1RDTO> findById(String tyyppi,String tunniste) {
       ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
@@ -155,13 +160,43 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional (readOnly = false)
     public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
+        try {
+
+            ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
+            valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
+            KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus);
+
+            resultV1RDTO.setResult(kuvaus);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        } catch (Exception exp) {
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+           resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+        }
+        return  resultV1RDTO;
     }
 
     @Override
+    @Transactional (readOnly = false)
     public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
+        try {
+
+            ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
+            kuvausDAO.update(valintaperusteSoraKuvaus);
+
+
+            resultV1RDTO.setResult(kuvausRDTO);
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        } catch (Exception exp) {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+        }
+        return  resultV1RDTO;
     }
 
 
