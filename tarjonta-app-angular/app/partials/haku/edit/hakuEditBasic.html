@@ -1,5 +1,160 @@
 <div>
 
-    HAUN LOMAKE
+    <form class="form-horizontal">
+        <fieldset>
+
+            <!-- Form Name -->
+            <legend>Haun tiedot</legend>
+
+            <!-- Select Basic -->
+            <div class="control-group">
+                <label class="control-label" for="selectbasic">Hakutyyppi</label>
+                <div class="controls">
+                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
+                        <option>Varsinainen haku</option>
+                        <option>Lisähaku</option>
+                        <option>Täydennyshaku</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Select Basic -->
+            <div class="control-group">
+                <label class="control-label" for="selectbasic">Hakukausi ja vuosi</label>
+                <div class="controls">
+                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
+                        <option>Kevät</option>
+                        <option>Syksy</option>
+                    </select>
+                    <input id="textinput" name="textinput" type="text" placeholder="vuosi" class="input-xlarge">
+                </div>
+            </div>
+
+            <!-- Select Basic -->
+            <div class="control-group">
+                <label class="control-label" for="selectbasic">Koulutuksen alkamiskaus</label>
+                <div class="controls">
+                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
+                        <option>Kevät</option>
+                        <option>Syksy</option>
+                    </select>
+                    <input id="textinput" name="textinput" type="text" placeholder="vuosi" class="input-xlarge">
+                </div>
+            </div>
+
+            <!-- Select Basic -->
+            <div class="control-group">
+                <label class="control-label" for="selectbasic">Haun kohdejoukko</label>
+                <div class="controls">
+                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
+                        <option>Ammatillinen koulutus</option>
+                        <option>Ammatillinen peruskoulutus erityisopetuksena</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Select Basic -->
+            <div class="control-group">
+                <label class="control-label" for="selectbasic">Hakutapa</label>
+                <div class="controls">
+                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
+                        <option>Yhteishaku</option>
+                        <option>Erillishaku</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Haun nimi</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi suomeksi" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi ruotsiksi" class="input-xlarge">
+                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi englanniksi" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">Haun tunniste</label>
+                <div class="controls">
+                    <strong>jfhjkh sdkfjh asfjkh fdjksfd</strong>
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+            <!-- Multiple Radios -->
+            <div class="control-group">
+                <label class="control-label" for="radios">Hakuaika</label>
+                <div class="controls">
+                    <label class="radio" for="radios-0">
+                        <input type="radio" name="radios" id="radios-0" value="Yksi hakuaika" checked="checked">
+                        Yksi hakuaika
+                    </label>
+                    <label class="radio" for="radios-1">
+                        <input type="radio" name="radios" id="radios-1" value="Käytä sisäisiä hakuaikoja">
+                        Käytä sisäisiä hakuaikoja
+                    </label>
+                </div>
+
+                <div class="controls">
+                    <label class="control-label" for="textinput">-</label>
+                    <div class="controls">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <p class="help-block">help</p>
+                    </div>
+                    <div class="controls">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <p class="help-block">help</p>
+                    </div>
+                    <div class="controls">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
+                        <p class="help-block">help</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Multiple Checkboxes (inline) -->
+            <div class="control-group">
+                <label class="control-label" for="checkboxes">Sijoittelu</label>
+                <div class="controls">
+                    <label class="checkbox inline" for="checkboxes-0">
+                        <input type="checkbox" name="checkboxes" id="checkboxes-0" value="Haussa käytetään sijoittelua">
+                        Haussa käytetään sijoittelua
+                    </label>
+                </div>
+            </div>
+
+            <!-- Multiple Radios -->
+            <div class="control-group">
+                <label class="control-label" for="radios">Hakulomake</label>
+                <div class="controls">
+                    <label class="radio" for="radios-0">
+                        <input type="radio" name="radios" id="radios-0" value="Käytetään järjestelmän hakulomaketta" checked="checked">
+                        Käytetään järjestelmän hakulomaketta
+                    </label>
+                    <label class="radio" for="radios-1">
+                        <input type="radio" name="radios" id="radios-1" value="Käytetään muuta hakulomaketta">
+                        Käytetään muuta hakulomaketta
+                    </label>
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="control-group">
+                <label class="control-label" for="textinput">-</label>
+                <div class="controls">
+                    <input id="textinput" name="textinput" type="text" placeholder="http://" class="input-xlarge">
+                    <p class="help-block">help</p>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
 
 </div>
