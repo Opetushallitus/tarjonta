@@ -15,4 +15,6 @@ public interface KuvausDAO extends JpaDAO<ValintaperusteSoraKuvaus, Long> {
 
    List<ValintaperusteSoraKuvaus> findByTyyppiAndOrganizationType(ValintaperusteSoraKuvaus.Tyyppi tyyppi, String orgType);
 
+    List<ValintaperusteSoraKuvaus> findByOppilaitosTyyppiTyyppiAndNimi(ValintaperusteSoraKuvaus.Tyyppi tyyppi, String nimi, String oppilaitosTyyppi);
+
 }

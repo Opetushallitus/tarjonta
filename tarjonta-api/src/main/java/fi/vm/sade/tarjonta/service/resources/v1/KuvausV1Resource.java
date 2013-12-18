@@ -19,13 +19,11 @@ import java.util.List;
 public interface KuvausV1Resource {
 
     @GET
-    @Path("/{tyyppi}")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa listan kaikkien kuvausten tunnisteista.",
-            notes = "Palauttaa listan kaikkien kuvausten tunnisteista annetulla tyypillä. Esim. SORA tai Valintaperustekuvaus")
-    ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi(
-            @ApiParam(value = "kuvauksen tyyppi",required = true, allowableValues = "valintaperustekuvaus,SORA")
-            @PathParam("tyyppi") String tyyppi);
+            notes = "Palauttaa listan kaikkien kuvausten tunnisteista annetulla")
+    ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi();
 
     @GET
     @Path("/{tyyppi}/nimet")
@@ -49,14 +47,25 @@ public interface KuvausV1Resource {
             @PathParam("organisaatioTyyppi")String orgType);
 
     @GET
-    @Path("/{tyyppi}/{tunniste}")
+    @Path("/{tunniste}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> findById(
-            @ApiParam(value = "kuvauksen tyyppi",required = true, allowableValues = "valintaperustekuvaus,SORA")
-            @PathParam("tyyppi") String tyyppi,
             @ApiParam(value ="kuvauksen tunniste", required =  true)
             @PathParam("tunniste") String tunniste);
+
+    @GET
+    @Path("/{tyyppi}/{oppilaitostyyppi}/{nimi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakee tietyn tyyppiset kuvaukset oppilaitostyypillä ja nimellä ",response = KuvausV1RDTO.class)
+    ResultV1RDTO<KuvausV1RDTO> findByNimiAndOppilaitosTyyppi(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "oppilaitos tyyppi", required = true)
+            @PathParam("oppilaitostyyppi")String oppilaitosTyyppi,
+            @ApiParam(value = "kuvauksen nimi", required = true)
+            @PathParam("nimi")String nimi
+    );
 
     @POST
     @Path("/{tyyppi}")

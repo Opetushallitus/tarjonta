@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 
 
+import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QValintaperusteSoraKuvaus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,21 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
         return from(qValintaperusteSoraKuvaus)
                 .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType)))
                 .list(qValintaperusteSoraKuvaus);
+
+
+    }
+
+
+    @Override
+    public List<ValintaperusteSoraKuvaus> findByOppilaitosTyyppiTyyppiAndNimi(ValintaperusteSoraKuvaus.Tyyppi tyyppi, String nimi, String oppilaitosTyyppi) {
+
+        QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;
+        QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
+
+
+        return from(qValintaperusteSoraKuvaus)
+                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(oppilaitosTyyppi.trim()))).list(qValintaperusteSoraKuvaus);
+                //TODO: how to query "IN" monikielinentekstis ?
 
 
     }
