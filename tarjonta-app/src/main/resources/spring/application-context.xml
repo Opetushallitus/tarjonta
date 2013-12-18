@@ -81,7 +81,9 @@
         <aop:scoped-proxy/>
     </bean>
     
-    <bean id="eventbus" class="com.google.common.eventbus.EventBus" scope="session"/>
+    <bean id="eventbus" class="com.google.common.eventbus.EventBus" scope="session">
+    	<aop:scoped-proxy/>
+    </bean>
 
 
 
