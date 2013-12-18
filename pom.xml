@@ -19,7 +19,7 @@
       <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
       <organisaatio.api.version>8.0</organisaatio.api.version>
       <authentication.api.version>8.0</authentication.api.version>
-      <generic.version>8.0-SNAPSHOT</generic.version>
+      <generic.version>9.0-SNAPSHOT</generic.version>
       <vaadin.theme.version>6.2</vaadin.theme.version>
       <koodisto.api.version>8.0</koodisto.api.version>
       <koodisto.widget.version>8.0</koodisto.widget.version>
