@@ -15,26 +15,12 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-    <!--bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor"/-->
-   
-    <bean id="ticketInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-        <property name="webCasUrl" value="${web.url.cas}"/>
-        <property name="targetService" value="${cas.service.authentication-service}/j_spring_cas_security_check"/>
-        <property name="appClientUsername" value="ophadmin"/>
-        <property name="appClientPassword" value="ilonkautta!"/>
-    </bean>
-
     <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
 
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                  address="${organisaatio.webservice.url.backend}">
-        <!--jaxws:outInterceptors>
-            <ref bean="organisaatioCasInterceptor" />
-            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-        </jaxws:outInterceptors-->
-    </jaxws:client>
-    
+                  address="${organisaatio.webservice.url.backend}"/>
+
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                   address="${koodi.public.webservice.url.backend}"/>
@@ -43,12 +29,8 @@
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${koodisto.public.webservice.url.backend}"/>
     <jaxws:client id="userService"
-                  serviceClass="fi.vm.sade.authentication.service.UserService"             
-                  address="${user.webservice.url.backend}">
-        <jaxws:outInterceptors>
-            <ref bean="ticketInterceptor" />
-        </jaxws:outInterceptors>
-    </jaxws:client>
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${user.webservice.url.backend}"/>
 
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
