@@ -355,4 +355,12 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
         return list;
     }
+    
+    @Override
+    public List<Long> findIdsByoids(Collection<String> oids) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final BooleanExpression criteria = komoto.oid.in(oids);
+        return from(komoto).where(criteria).distinct().list(komoto.id);
+    }
+
 }

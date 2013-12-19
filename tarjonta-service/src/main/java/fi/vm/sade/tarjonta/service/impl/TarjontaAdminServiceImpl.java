@@ -908,31 +908,36 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
         Tilamuutokset tm = publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        indexTilatToSolr(tarjontatiedonTila);
-        
+        indexTilatToSolr(tarjontatiedonTila, tm);
         return new PaivitaTilaVastausTyyppi(Lists.newArrayList(tm.getMuutetutHakukohteet()), Lists.newArrayList(tm.getMuutetutKomotot()));
     }
 
-    private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila) {
-        List<Long> komotot = Lists.newArrayList();
-        List<Long> hakukohteet = Lists.newArrayList();
+    private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila, Tilamuutokset tm) {
+        Set<String> hakukohdeOidit = new HashSet<String>(tm.getMuutetutHakukohteet());
+        Set<String> koulutusOidit = new HashSet<String>(tm.getMuutetutKomotot());
         for (GeneerinenTilaTyyppi curTilaT : tarjontatiedonTila.getTilaOids()) {
             if (SisaltoTyyppi.KOMOTO.equals(curTilaT.getSisalto())) {
-                KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(curTilaT.getOid());
-                if (komoto != null) {
-                    komotot.add(komoto.getId());
-                }
+                koulutusOidit.add(curTilaT.getOid());
             } else if (SisaltoTyyppi.HAKUKOHDE.equals(curTilaT.getSisalto())) {
-                Hakukohde hakukohde = this.hakukohdeDAO.findHakukohdeWithKomotosByOid(curTilaT.getOid());
-                if (hakukohde != null) {
-                    hakukohteet.add(hakukohde.getId());
-                }
-            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto()) && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
-                addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot, hakukohteet);
+                hakukohdeOidit.add(curTilaT.getOid());
+            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto())
+                    && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
+                //älä indeksoi välittömästi jos haku julkaistiin, indeksointi tapahtuu taustalla asynkronisesti 
+//                addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot,
+//                        hakukohteet);
             }
+            
         }
-        solrIndexer.indexKoulutukset(komotot);
-        solrIndexer.indexHakukohteet(hakukohteet);
+        if (koulutusOidit.size() > 0) {
+            log.debug("indexing koulutukset:", koulutusOidit);
+            solrIndexer.indexKoulutukset(koulutusmoduuliToteutusDAO
+                    .findIdsByoids(koulutusOidit));
+        }
+        if (hakukohdeOidit.size() > 0) {
+            log.debug("indexing hakukohteet:", hakukohdeOidit);
+            solrIndexer.indexHakukohteet(hakukohdeDAO
+                    .findIdsByoids(hakukohdeOidit));
+        }
     }
 
     private void addRelatedHakukohteetAndKoulutukset(String hakuOid, List<Long> komotoIds, List<Long> hakukohdeIds) {
@@ -1013,5 +1018,5 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return result;
     }
-
+    
 }

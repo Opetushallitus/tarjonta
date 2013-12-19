@@ -361,4 +361,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return from(hakukohde).where(criteria).distinct().list(QHakukohde.hakukohde.id);
     }
+
+    @Override
+    public List<Long> findIdsByoids(Collection<String> oids) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final BooleanExpression criteria = hakukohde.oid.in(oids);
+        return from(hakukohde).where(criteria).distinct().list(QHakukohde.hakukohde.id);
+    }
 }
