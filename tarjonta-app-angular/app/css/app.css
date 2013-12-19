@@ -28,16 +28,24 @@
 }
 
 .float-left {
-	float:left;
+    float:left;
+}
+
+.float-right {
+    float:right;
+}
+
+.align-left {
+    text-align:left;
+}
+
+.align-right {
+    text-align:right;
 }
 
 .valintakoe-modal {
     width:900px;
     margin-left:-450px
-}
-
-.float-right {
-	float:right;
 }
 
 .display-block {
