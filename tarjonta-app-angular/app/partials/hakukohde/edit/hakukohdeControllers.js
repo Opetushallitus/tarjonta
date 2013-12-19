@@ -292,7 +292,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
-            if (haku.kohdejoukkoUri==window.CONFIG.env['haku.kohdejoukko.kk.uri']) {
+            if (haku.kohdejoukkoUri==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
                 $scope.model.hakus.push(haku);
             }
 
