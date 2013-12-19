@@ -1,18 +1,18 @@
 <div class="tarjonta-dialog" id="select-tutkinto-ohjelma">
     <div class="modal-header">
-        <h3><div tt="selectTutkintoOhjelma.dialogTitle"></div></h3>
+        <h3 tt="selectTutkintoOhjelma.dialogTitle"></h3>
     </div>
 
     <div class="modal-body">
 
-        <p><div tt="selectTutkintoOhjelma.kuvaus"></div></p>
+        <p tt="selectTutkintoOhjelma.kuvaus"></p>
 
-        <h4><div tt="selectTutkintoOhjelma.koulutusala"></div></h4>
+        <h4 tt="selectTutkintoOhjelma.koulutusala"></h4>
 
         <koodistocombo koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
 
-        <h4><div tt="selectTutkintoOhjelma.tekstihaku"></div></h4>
-        <div>
+        <h4 tt="selectTutkintoOhjelma.tekstihaku"></h4>
+        <div class="modal-form">
             <input type="text" data-ng-model="stoModel.hakulause" />
             <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="selectTutkintoOhjelma.tyhjenna"></div></button>
             <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="selectTutkintoOhjelma.hae"></div></button>
@@ -22,7 +22,7 @@
 
         <div ng-switch="stoModel.hakutulokset.length==0 && stoModel.searched">
             <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
-            <div ng-switch-default class="noResults"><div tt="selectTutkintoOhjelma.eihakutuloksia"></div></div>
+            <div ng-switch-default class="noResults" tt="selectTutkintoOhjelma.eihakutuloksia"></div>
         </div>
 
 
