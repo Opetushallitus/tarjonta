@@ -402,7 +402,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                     muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.VALMIS));
                     break;
                 case PERUTTU:
-                    muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.cancellableValues()));
+                    muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.JULKAISTU));
                     break;
                 default:
                     break;

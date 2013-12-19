@@ -32,12 +32,11 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Override
     @Transactional(readOnly = true)
-    public ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi(String tyyppi) {
+    public ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi() {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         try {
-        ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
-        Preconditions.checkNotNull(vpsTyyppi);
-        List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByTyyppi(vpsTyyppi);
+
+        List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findAll();
         if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
 
             List<String> tunnisteet = new ArrayList<String>();
@@ -138,8 +137,52 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    public ResultV1RDTO<KuvausV1RDTO> findByNimiAndOppilaitosTyyppi(String tyyppi,
+                                                                    String oppilaitosTyyppi,
+                                                                    String nimi) {
+        ResultV1RDTO<KuvausV1RDTO> result = new ResultV1RDTO<KuvausV1RDTO>();
+        try {
+        //TODO: query from monikielinen teksti nimi (WHERE NIMI IN MONIKIELINEN TEKSTI)
+        List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByOppilaitosTyyppiTyyppiAndNimi(ConverterV1.getTyyppiFromString(tyyppi),oppilaitosTyyppi,nimi);
+        if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
+           //TODO: move this logic in to the query
+           ValintaperusteSoraKuvaus foundKuvaus = null;
+
+            for (ValintaperusteSoraKuvaus loopValintaSora:valintaperusteSoraKuvauses)   {
+
+                for (TekstiKaannos kuvausNimi : loopValintaSora.getMonikielinenNimi().getKaannoksetAsList()) {
+
+                    if (kuvausNimi.getArvo().trim().equalsIgnoreCase(nimi.trim())) {
+                        foundKuvaus = loopValintaSora;
+                    }
+
+                }
+
+            }
+
+            if (foundKuvaus != null) {
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+                result.setResult(converter.toKuvausRDTO(foundKuvaus));
+            } else {
+                result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+
+        } else {
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        }
+
+        } catch (Exception exp ){
+
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.addError(ErrorV1RDTO.createSystemError(exp,null,null));
+        }
+        return result;
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public ResultV1RDTO<KuvausV1RDTO> findById(String tyyppi,String tunniste) {
+    public ResultV1RDTO<KuvausV1RDTO> findById(String tunniste) {
       ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
             Long id = new Long(tunniste);

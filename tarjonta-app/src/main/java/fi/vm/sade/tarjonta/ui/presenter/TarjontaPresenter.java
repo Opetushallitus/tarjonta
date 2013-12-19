@@ -141,6 +141,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustied
 import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
+import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
@@ -200,6 +201,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private TarjontaKorkeakouluPresenter korkeakouluPresenter;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
+    @Autowired(required = true)
+    protected PublishingService publishingService;
+
 
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
@@ -2615,6 +2619,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     
     public void setTarjontaSearchService(TarjontaSearchService tarjontaSearchService) {
         this.tarjontaSearchService = tarjontaSearchService;
+    }
+
+    @Override
+    PublishingService getPublishingService() {
+        return publishingService;
     }
 
 }

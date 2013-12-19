@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
+import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuForm;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuContainerEvent;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
@@ -55,6 +56,8 @@ import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuView;
 import fi.vm.sade.vaadin.util.UiUtil;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -64,6 +67,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  */
 public class HakuPresenter extends CommonPresenter<HakuViewModel> {
+
+    @Autowired(required = true)
+    protected PublishingService publishingService;
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
@@ -455,14 +461,21 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
         refreshHakulist();
     }
 
+    //TODO move to common?
     @Override
     public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
-        return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
+        return getPublishingService().isStateStepAllowed(oid, sisalto, requiredState);
     }
 
     @Override
     public HakuViewModel getModel() {
         return hakuModel;
     }
+    
+    @Override
+    PublishingService getPublishingService() {
+        return publishingService;
+    }
+
     
 }

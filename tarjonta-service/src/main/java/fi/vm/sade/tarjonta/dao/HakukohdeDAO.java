@@ -109,5 +109,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @return List<hakukohdeOid>
      */
     List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final fi.vm.sade.tarjonta.shared.types.TarjontaTila... requiredStatus);
+    
+    
+    List<Long> findIdsByoids(Collection<String> oids);
 }
 

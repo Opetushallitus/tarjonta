@@ -86,8 +86,6 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
     @Autowired(required = true)
     protected TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
-    protected PublishingService publishingService;
-    @Autowired(required = true)
     protected TarjontaPermissionServiceImpl tarjontaPermissionService;
     @Autowired(required = true)
     protected OrganisaatioSearchService organisaatioSearchService;
@@ -144,6 +142,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * @return
      */
     private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
+        PublishingService publishingService = getPublishingService();
         PaivitaTilaVastausTyyppi vastaus = publishingService.changeState(oid, toState, sisalto);
         if (vastaus!=null) {
             for(String hakukohdeOid:vastaus.getHakukohdeOidit()){
@@ -158,6 +157,8 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
             showNotification(UserNotification.GENERIC_ERROR);
         }
     }
+
+    abstract PublishingService getPublishingService();
 
     /**
      * Cancel single tarjonta model by OID and data model type.

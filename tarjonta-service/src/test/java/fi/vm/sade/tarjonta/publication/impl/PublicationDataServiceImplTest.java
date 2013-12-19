@@ -437,6 +437,51 @@ public class PublicationDataServiceImplTest {
         Assert.assertSame(0,tilamuutokset.getMuutetutKomotot().size());
     }
 
+    
+    @Test
+    public void testiHakukohdeCancel() {
+        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
+        g2.setOid(hakukohde1.getOid());
+        g2.setSisalto(SisaltoTyyppi.HAKUKOHDE);
+        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
+        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
+        list.add(g2);
+
+        /*
+         * Haku not yet ready => no status change for koulutus.
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU); //set the base state
+        Date compareDate = getCompareDate();
+
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU);
+        checkLastUpdatedFields(false, false, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(0,tilamuutokset.getMuutetutKomotot().size());
+
+        /*
+         * The happy path - in this case the koulutus will be cancelled
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU); //set the base state
+        compareDate = getCompareDate();
+        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+        checkLastUpdatedFields(false, true, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
+
+        /*
+         * The partial path - only hakukohdeis published
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU); //set the base state
+        compareDate = getCompareDate();
+        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.PERUTTU);
+        checkLastUpdatedFields(false, false, true, compareDate);
+        Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
+        Assert.assertSame(0,tilamuutokset.getMuutetutKomotot().size());
+    }
+
     private Date getCompareDate() {
         Date r = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         try {
@@ -462,7 +507,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         publicationDataService.updatePublicationStatus(list);
-        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS);
 
         /*
          * Cancel tutkinto(published -> cancelled) and hakukohde(published -> cancelled).
@@ -470,6 +515,10 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         publicationDataService.updatePublicationStatus(list);
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+        
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS);
     }
 
     private void insertMergeDetach(final boolean persist) {
