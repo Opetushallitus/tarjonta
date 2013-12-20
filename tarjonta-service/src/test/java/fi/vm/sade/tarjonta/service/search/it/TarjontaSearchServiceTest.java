@@ -55,7 +55,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -365,11 +364,10 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 //        assertNotNull(vastaus);
 //        assertEquals(1, vastaus.getHakukohteet().size());
 //    }
-
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
-        kk.getKoulutusohjelma().getTekstis().put("kieli_fi","Otsikko suomeksi");
+        kk.getKoulutusohjelma().getTekstis().put("kieli_fi", "Otsikko suomeksi");
 
         kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
@@ -385,7 +383,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
         kk.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("suunniteltu-kesto-uri", 1, null));
-        kk.setKoulutuksenAlkamisPvm(new DateTime(2013, 1, 1, 1, 1).toDate());   
+        kk.getKoulutuksenAlkamisPvms().add(new DateTime(2013, 1, 1, 1, 1).toDate());
+        kk.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("uri_kausi", 1, null));
         kk.setSuunniteltuKestoArvo("1");
 
         return kk;

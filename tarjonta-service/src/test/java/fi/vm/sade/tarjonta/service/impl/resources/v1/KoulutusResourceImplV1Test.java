@@ -64,7 +64,6 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutu
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.MetaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -91,6 +90,7 @@ import org.springframework.core.convert.TypeDescriptor;
 @Transactional()
 public class KoulutusResourceImplV1Test {
 
+    private static final String KAUSI = "kausi";
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
@@ -101,7 +101,7 @@ public class KoulutusResourceImplV1Test {
     private static final String OPINTOALA = "opintoala";
     private static final String TUTKINTO = "tutkinto";
     private static final String TUTKINTONIMIKE = "tutkintonimike";
-    private static final String TEEMA = "teema";
+    private static final String AIHEES = "aihees";
     private static final String OPETUSKIELI = "opetuskieli";
     private static final String POHJAKOULUTUS = "pohjakoulutus";
     private static final String OPETUMUOTO = "opetusmuto";
@@ -205,15 +205,16 @@ public class KoulutusResourceImplV1Test {
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
-        dto.setKoulutuksenAlkamisPvm(DATE.toDate());
+        dto.setKoulutuksenAlkamiskausi(toKoodiUri(KAUSI));
+        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
-        dto.getTeemas().getMeta().put(URI_KIELI_FI, toKoodiUri(TEEMA));
+        dto.getAihees().getMeta().put(URI_KIELI_FI, toKoodiUri(AIHEES));
         dto.getOpetuskielis().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
         dto.getOpetusmuodos().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
         dto.getAmmattinimikkeet().getMeta().put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
         dto.getPohjakoulutusvaatimukset().getMeta().put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
 
-        dto.getTeemas().getUris().put(toKoodiUriStr(TEEMA), 1);
+        dto.getAihees().getUris().put(toKoodiUriStr(AIHEES), 1);
         dto.getOpetuskielis().getUris().put(toKoodiUriStr(OPETUSKIELI), 1);
         dto.getOpetusmuodos().getUris().put(toKoodiUriStr(OPETUMUOTO), 1);
         dto.getAmmattinimikkeet().getUris().put(toKoodiUriStr(AMMATTINIMIKE), 1);
@@ -236,7 +237,8 @@ public class KoulutusResourceImplV1Test {
         permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
 
-        //KOODISTO DATA CALLS IN CORRECT CALL ORDER
+        //KOODISTO DATA CALLS IN CORRECT CALL ORDER (1st)
+        expectMetaUri(KAUSI);
         expectMetaUri(KOULUTUSKOODI);
         expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
         expectMetaUri(TUTKINTO);
@@ -248,6 +250,8 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(EQF);
         expectMetaUri(SUUNNITELTU_KESTO);
 
+        //2nd calls
+        expectMetaUri(KAUSI);
         expectMetaUri(KOULUTUSKOODI);
         expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
         expectMetaUri(TUTKINTO);
@@ -259,18 +263,19 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(EQF);
         expectMetaUri(SUUNNITELTU_KESTO);
 
-        expectMeta2Uri(TEEMA);
+        //1st map data calls
+        expectMeta2Uri(AIHEES);
         expectMeta2Uri(OPETUSKIELI);
         expectMeta2Uri(OPETUMUOTO);
         expectMeta2Uri(AMMATTINIMIKE);
         expectMeta2Uri(POHJAKOULUTUS);
 
-        expectMeta2Uri(TEEMA);
+        //2nd map data calls
+        expectMeta2Uri(AIHEES);
         expectMeta2Uri(OPETUSKIELI);
         expectMeta2Uri(OPETUMUOTO);
         expectMeta2Uri(AMMATTINIMIKE);
         expectMeta2Uri(POHJAKOULUTUS);
-
         //REPLAY
         replay(oidServiceMock);
         replay(organisaatioServiceMock);
@@ -325,9 +330,10 @@ public class KoulutusResourceImplV1Test {
         assertEquals(TUNNISTE, result.getTunniste());
         assertEquals(new Double(1.11), result.getHinta());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
-        assertEquals(DATE.toDate(), result.getKoulutuksenAlkamisPvm());
+        assertEquals(DATE.toDate(), result.getKoulutuksenAlkamisPvms().iterator().next());
+        assertEqualDtoKoodi(KAUSI, result.getKoulutuksenAlkamiskausi());
 
-        assertEqualMetaDto(TEEMA, result.getTeemas());
+        assertEqualMetaDto(AIHEES, result.getAihees());
         assertEqualMetaDto(OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(OPETUMUOTO, result.getOpetusmuodos());
         assertEqualMetaDto(POHJAKOULUTUS, result.getPohjakoulutusvaatimukset());

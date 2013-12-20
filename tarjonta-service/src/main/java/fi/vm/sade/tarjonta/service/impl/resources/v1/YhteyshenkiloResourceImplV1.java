@@ -18,12 +18,12 @@ import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.YhteyshenkiloV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 
+@PreAuthorize("isAuthenticated()")
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class YhteyshenkiloResourceImplV1 implements YhteyshenkiloV1Resource {

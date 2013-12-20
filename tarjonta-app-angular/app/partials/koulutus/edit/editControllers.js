@@ -2,11 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal', 'PermissionService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService',
             function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService) {
-                $log.info("BaseEditController()");
-                // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -25,25 +23,7 @@ app.controller('BaseEditController',
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = [
-                    {type: "TAVOITTEET", isKomo: true},
-                    {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-                    {type: "PAAAINEEN_VALINTA", isKomo: false},
-                    {type: "MAKSULLISUUS", isKomo: false},
-                    {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-                    {type: "PATEVYYS", isKomo: true},
-                    {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-                    {type: "SISALTO", isKomo: false},
-                    {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-                    {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-                    {type: "KANSAINVALISTYMINEN", isKomo: false},
-                    {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-                    {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-                    {type: "ARVIOINTIKRITEERIT", isKomo: false},
-                    {type: "PAINOTUS", isKomo: false},
-                    {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-                    {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-                ];
+                $scope.lisatiedot = converter.KUVAUS_ORDER;
 
                 $scope.init = function() {
                     var uiModel = {};
@@ -56,7 +36,7 @@ app.controller('BaseEditController',
                     converter.createUiModels(uiModel);
 
                     /*
-                     * HANDLE ROUTING
+                     * HANDLE EDIT / CREATE NEW ROUTING
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         //DATA WAS LOADED BY KOMOTO OID
@@ -72,7 +52,7 @@ app.controller('BaseEditController',
                         });
 
                         /*
-                         * remove version data from the list data 
+                         * remove version data from the list 
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                             uiModel[key].uris = _.keys(model[key].uris);
@@ -101,6 +81,10 @@ app.controller('BaseEditController',
                         });
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                        if (angular.isUndefined(cfg.env[value.koodisto])) {
+                            throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
+                        }
+
                         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
                         uiModel[key].promise = koodisPromise;
 
@@ -284,7 +268,7 @@ app.controller('BaseEditController',
                 $scope.selectKieli = function(kieliUri) {
                     $scope.selectedKieliUri = kieliUri;
                 }
-                
+
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
@@ -301,7 +285,7 @@ app.controller('BaseEditController',
                         kuvaus[textEnum] = {tekstis: {}};
                         kuvaus[textEnum].tekstis[kieliUri] = '';
                     }
-                    
+
                     return kuvaus[textEnum].tekstis;
                 };
 
@@ -313,7 +297,6 @@ app.controller('BaseEditController',
                 /*
                  * WATCHES
                  */
-
                 $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
                     if (!valNew && valOld) {
                         //clear price data field
@@ -323,4 +306,3 @@ app.controller('BaseEditController',
 
                 $scope.init();
             }]);
-

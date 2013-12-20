@@ -141,7 +141,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return IndexDataUtils.parseKausiKoodi(aloituspvm);
     }
 
-    private Integer getYearFromDate(Date aloitusPvm) {
+    public static Integer getYearFromDate(Date aloitusPvm) {
         return new Integer(IndexDataUtils.parseYear(aloitusPvm));
 
     }

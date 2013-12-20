@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
         $log.info("BaseReviewController()");
 
         $scope.formControls = {};
@@ -33,25 +33,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             console.log("parents:", parents);
         });
 
-        $scope.lisatiedot = [
-            {type: "TAVOITTEET", isKomo: true},
-            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-            {type: "PAAAINEEN_VALINTA", isKomo: false},
-            {type: "MAKSULLISUUS", isKomo: false},
-            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-            {type: "PATEVYYS", isKomo: true},
-            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-            {type: "SISALTO", isKomo: false},
-            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-            {type: "KANSAINVALISTYMINEN", isKomo: false},
-            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-            {type: "ARVIOINTIKRITEERIT", isKomo: false},
-            {type: "PAINOTUS", isKomo: false},
-            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-        ];
+        $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;

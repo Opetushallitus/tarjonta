@@ -2,18 +2,18 @@
 
     <table class="tarjontaForm">
         <!-- koulutuskoodi -->
-	    <tr class="info">
-	        <th tt="koulutus.edit.koulutuskoodi"/>
-	        <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
-	        <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
-	    </tr>
-	        
+        <tr class="info">
+            <th tt="koulutus.edit.koulutuskoodi"/>
+            <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
+            <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
+        </tr>
+
         <!-- koulutusohjelma -->
         <tr class="required">
             <th tt="koulutus.edit.koulutusohjelma"/>
             <td>
         <mk-textfield model="model.koulutusohjelma.tekstis"
-                        name="koulutusohjelma" required></mk-textfield>
+                      name="koulutusohjelma" required></mk-textfield>
         </td>
         <td>
             <p class="error" ng-show="uiModel.showError && perustiedotForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p> 
@@ -101,15 +101,15 @@
         <tr class="required">
             <th tt="koulutus.edit.koulutuksen-alkamispvm"/>
             <td>
-                <input type="text"
-                       name="alkamisPvm"
-                       data-datepicker-popup="dd.MM.yyyy"
-                       data-ng-model="model.koulutuksenAlkamisPvm"
-                       data-ng-required="true" />
-            </td>
-            <td>
-                <p class="error" ng-show="uiModel.showError && perustiedotForm.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>
-            </td>
+                <alkamispaiva-ja-kausi 
+                    pvms="uiModel.koulutuksenAlkamisPvms"           
+                    kausi-model="model.koulutuksenAlkamiskausi"
+                    kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
+                </alkamispaiva-ja-kausi> 
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showError && perustiedotForm.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>
+        </td>
         </tr>
 
         <!-- suunniteltu kesto -->
@@ -180,16 +180,16 @@
         <tr class="required">
             <th tt="koulutus.edit.opetusaikas"/>
             <td>
-                <multi-select
-                        model="uiModel.tmp"
-                        selection="uiModel.opetusAikas.uris"
-                        promise="uiModel.opetusAikas.promise"
-                        columns="2"
-                        name="opetusAikas" required/>
-            </td>
-            <td>
-                <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required"/>
-            </td>
+        <multi-select
+            model="uiModel.tmp"
+            selection="uiModel.opetusAikas.uris"
+            promise="uiModel.opetusAikas.promise"
+            columns="2"
+            name="opetusAikas" required/>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required"/>
+        </td>
         </tr>
 
         <!-- opetusmuodot -->
@@ -212,29 +212,29 @@
         <tr class="required">
             <th tt="koulutus.edit.opetusPaikkas"/>
             <td>
-                <multi-select
-                        model="uiModel.tmp"
-                        selection="uiModel.opetusPaikkas.uris"
-                        promise="uiModel.opetusPaikkas.promise"
-                        columns="2"
-                        name="opetusPaikkas" required/>
-            </td>
-            <td>
-                <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required"/>
-            </td>
+        <multi-select
+            model="uiModel.tmp"
+            selection="uiModel.opetusPaikkas.uris"
+            promise="uiModel.opetusPaikkas.promise"
+            columns="2"
+            name="opetusPaikkas" required/>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required"/>
+        </td>
         </tr>
 
         <!-- teemat -->
         <tr class="required">
-        <th tt="koulutus.edit.aiheet"/>
+            <th tt="koulutus.edit.aiheet"/>
             <td>        
-                <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>        
-            </td>
-            <td>
-            	<p class="error" ng-show="uiModel.showError && perustiedotForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
-            </td>
-		</tr>
-		<tr>
+        <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>        
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showError && perustiedotForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
+        </td>
+        </tr>
+        <tr>
             <th></th>
             <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help"/>
         </tr>
