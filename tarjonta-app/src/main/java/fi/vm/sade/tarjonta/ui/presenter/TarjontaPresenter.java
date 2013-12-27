@@ -1662,7 +1662,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
-        if (checkExistingKomoto(lisaa)) {
+        //OVT-6477 valmentava ja kuntouttava saa olla useita
+        if (Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
