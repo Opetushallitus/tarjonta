@@ -32,7 +32,8 @@ app.directive('koodistocombo',function(Koodisto,$log){
     return {
 
         restrict:'E',
-        replace:true,
+        require: '^form',
+        replace: true,
         templateUrl : "js/shared/directives/koodistoNimiCombo.html",
         scope: {
             koodistouri : "=",

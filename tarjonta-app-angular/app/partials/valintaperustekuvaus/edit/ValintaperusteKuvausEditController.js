@@ -9,7 +9,14 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
 
      */
 
+
+  var soraType = "SORA";
+
+  var vpkType = "valintaperustekuvaus";
+
   $scope.model = {};
+
+  $scope.model.vpks = {};
 
   $scope.model.valintaperustekuvaus = {};
 
@@ -26,13 +33,29 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
 
       {
        title : "valintaperustekuvaus.type.title",
-       type : "valintaperustekuvaus"
+       type : vpkType
       },
       {
           title : "sora.type.title",
-          type : "SORA"
+          type : soraType
       }
   ];
+
+  /*
+
+        -----------------> Helper functions etc.
+
+     */
+
+  var getStringFromType = function(type){
+
+       if (type.type === soraType) {
+         return soraType;
+       }  else if (type.type === vpkType) {
+         return vpkType;
+       }
+
+  };
 
   /*
 
@@ -49,10 +72,43 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
     $scope.model.canSaveVpk = function() {
       return true;
     };
-    //TODO: Find out why you can in the template refer variable vpkType.type but in controller if you refer to it as $scope.vpkType.type it does not work
-    //if this can be solved then following workaround function can be removed
-    $scope.model.setType = function(type) {
-        $scope.model.valintaperustekuvaus.kuvauksenTyyppi = type;
+
+
+    $scope.model.typeChange = function(type) {
+
+       var newType = getStringFromType(type);
+
+       var currentModel =  $scope.model.vpks[newType];
+
+
+
+       if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi !== undefined) {
+
+
+
+          if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi === soraType) {
+
+             $scope.model.vpks[soraType] = $scope.model.valintaperustekuvaus;
+          } else if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi === vpkType) {
+
+              $scope.model.vpks[vpkType] = $scope.model.valintaperustekuvaus;
+          }
+
+
+
+       }
+
+       if (currentModel === undefined) {
+
+           currentModel = {};
+           currentModel.kuvaukset = {};
+           $scope.model.valintaperustekuvaus = currentModel;
+           $scope.model.valintaperustekuvaus.kuvauksenTyyppi = type.type;
+
+       } else {
+           $scope.model.valintaperustekuvaus = currentModel;
+       }
+
 
     }
 

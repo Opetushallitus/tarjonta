@@ -20,9 +20,9 @@
 
     <display-controls model="formControls" display="header"></display-controls>
     <tabset>
-        <tab heading="{{t(vpkType.title)}}" ng-repeat="vpkType in model.types">
+        <tab heading="{{t(vpkType.title)}}" select="model.typeChange(vpkType)" ng-repeat="vpkType in model.types">
             <form name="valintaPerusteForm">
-            <div ng-mouseenter="model.setType(vpkType.type)"  data-ng-include="'partials/valintaperustekuvaus/edit/vpkEdit.html'"></div>
+            <div data-ng-include="'partials/valintaperustekuvaus/edit/vpkEdit.html'"></div>
             </form>
         </tab>
     </tabset>
