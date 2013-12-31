@@ -9,6 +9,7 @@ angular.module('app.kk',
             'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.edit.hakukohde.review.ctrl',
+            'app.kk.edit.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
             'app.edit.ctrl.alkamispaiva',
@@ -145,7 +146,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
+                .when('/valintaPerusteKuvaus',{
 
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController'
+
+
+                })
                 .when('/hakukohde/:id', {
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',

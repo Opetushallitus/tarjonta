@@ -108,6 +108,7 @@
         <script src="partials/kk/directives.js"></script>
         <script src="partials/kk/filters.js"></script>
         <script src="partials/kk/services.js"></script>
+        <script src="partials/valintaperustekuvaus/edit/ValintaperusteKuvausEditController.js"></script>
         <script src="partials/hakukohde/edit/hakukohdeControllers.js"></script>
         <script src="partials/hakukohde/edit/valintakokeetController.js"></script>
         <script src="partials/hakukohde/edit/liitteetListCtrl.js"></script>
@@ -207,13 +208,24 @@
                                 <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
                             </div>
                             <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
+                                <div data-ng-include="'partials/valintaperustekuvaus/edit/valintaperustekuvaus.html'"></div>
                             </div>
                             <div data-ng-switch-default>
                                 UNKNOWN ACTION! {{ renderPath | json }}
                             </div>
                         </div>
                     </div><!-- 0:/hakukohde -->
+
+                    <div data-ng-switch-when="valintaPerusteKuvaus">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="ValintaperusteEditController">
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/valintaperustekuvaus/edit/valintaperustekuvaus.html'"></div>
+                            </div>
+                            <div data-ng-switch-default>
+                                UNKNOWN ACTION! {{ renderPath | json }}
+                            </div>
+                        </div>
+                    </div>
 
                     <div data-ng-switch-when="koodistoTest">
                         <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
