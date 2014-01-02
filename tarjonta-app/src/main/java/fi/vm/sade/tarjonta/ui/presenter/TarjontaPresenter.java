@@ -591,20 +591,30 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<String> returnVal = new ArrayList<String>();
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
+        Set<String> tarjoajaOids = new HashSet<String>();
 
         Set<String> koulutusAlkamiskaudes = new HashSet<String>();
         Set<Integer> koulutusAlkamisVuodes = new HashSet<Integer>();
-        for (KoulutusPerustieto koulutusModel : koulutukses) {
-            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
-            koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
-            koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
-            pohjakoulutukses.add(koulutusModel.getPohjakoulutusvaatimus().getUri());
+        for (KoulutusPerustieto koulutus : koulutukses) {
+            koulutusAlkamiskaudes.add(koulutus.getKoulutuksenAlkamiskausi().getUri());
+            koulutusAlkamisVuodes.add(koulutus.getKoulutuksenAlkamisVuosi());
+            koulutusKoodis.add(koulutus.getKoulutuskoodi().getUri());
+            pohjakoulutukses.add(koulutus.getPohjakoulutusvaatimus().getUri());
+            tarjoajaOids.add(koulutus.getTarjoaja().getOid());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi"));
         }
         if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (tarjoajaOids.size()>1) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.tarjoajaDoesNotMatch"));
         }
 
         if (koulutusAlkamiskaudes.size() > 1 || koulutusAlkamisVuodes.size() > 1) {
