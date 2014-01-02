@@ -7,7 +7,7 @@
             dto="model.valintaperustekuvaus">
 
         <controls-button tt="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
+
         <controls-button tt="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
 
 
@@ -19,13 +19,30 @@
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-    <tabset>
-        <tab heading="{{t(vpkType.title)}}" select="model.typeChange(vpkType)" ng-repeat="vpkType in model.types">
+
+    <hr/>
+
             <form name="valintaPerusteForm">
-            <div data-ng-include="'partials/valintaperustekuvaus/edit/vpkEdit.html'"></div>
+
+                <table class="valintaPerusteFormTable">
+
+
+
+                    <tr class="required">
+                        <th tt="kk.valintaperustekuvaus.ryhma"/>
+                        <td>
+                            <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet"></mk-textfield>
+                        </td>
+                        <td>
+                            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+                        </td>
+                    </tr>
+
+                </table>
+
+                <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
+
             </form>
-        </tab>
-    </tabset>
 
 
     <display-controls model="formControls" display="footer"></display-controls>

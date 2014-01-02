@@ -69,6 +69,7 @@
         <script src="js/shared/organisaatio.js"></script>
         <script src="js/shared/tarjonta.js"></script>
         <script src="js/shared/yhteyshenkilo.js"></script>
+        <script src="js/shared/kuvaukset.js"></script>
         <script src="js/shared/directives/koodistoNimiCombo.js"></script>
         <script src="js/shared/directives/koodistoArvoCombo.js"></script>
         <script src="js/shared/directives/koodistoMultiSelect.js"></script>
@@ -208,7 +209,7 @@
                                 <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
                             </div>
                             <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/valintaperustekuvaus/edit/valintaperustekuvaus.html'"></div>
+                                <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
                             </div>
                             <div data-ng-switch-default>
                                 UNKNOWN ACTION! {{ renderPath | json }}

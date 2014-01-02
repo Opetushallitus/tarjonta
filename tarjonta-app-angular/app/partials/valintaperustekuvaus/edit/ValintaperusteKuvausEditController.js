@@ -1,7 +1,7 @@
-var app = angular.module('app.kk.edit.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
+var app = angular.module('app.kk.edit.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','MonikielinenTextArea']);
 
 
-app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService) {
+app.controller('ValintaperusteEditController', function($scope,$rootScope,$route,$q, LocalisationService, OrganisaatioService ,Koodisto,Kuvaus,AuthService, $modal ,Config,$location,$timeout) {
 
   /*
 
@@ -10,15 +10,17 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
      */
 
 
-  var soraType = "SORA";
 
-  var vpkType = "valintaperustekuvaus";
 
   $scope.model = {};
 
-  $scope.model.vpks = {};
+
 
   $scope.model.valintaperustekuvaus = {};
+
+  $scope.model.valintaperustekuvaus.kuvauksenTyyppi = $route.current.params.kuvausTyyppi;
+
+  $scope.model.valintaperustekuvaus.organisaatioTyyppi  = $route.current.params.oppilaitosTyyppi;
 
   $scope.model.valintaperustekuvaus.kuvaukset = {};
 
@@ -29,17 +31,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
 
   $scope.model.showSuccess = false;
 
-  $scope.model.types = [
 
-      {
-       title : "valintaperustekuvaus.type.title",
-       type : vpkType
-      },
-      {
-          title : "sora.type.title",
-          type : soraType
-      }
-  ];
 
   /*
 
@@ -47,15 +39,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
 
      */
 
-  var getStringFromType = function(type){
 
-       if (type.type === soraType) {
-         return soraType;
-       }  else if (type.type === vpkType) {
-         return vpkType;
-       }
-
-  };
 
   /*
 
@@ -63,54 +47,26 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$q, Lo
 
      */
 
-    $scope.model.saveLuonnos = function(){
+    $scope.model.saveValmis = function(){
 
-        //$scope.model.valintaperustekuvaus.organisaatioTyyppi = $scope.parent.type.type;
-        console.log('DATA TO SAVE : ', $scope.model.valintaperustekuvaus);
+        var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+        resultPromise.then(function(data){
+          if (data.status === "OK") {
+              $scope.model.showSuccess = true;
+          } else {
+              //TODO: Do what ?
+          }
+        });
+
     };
+
+
 
     $scope.model.canSaveVpk = function() {
       return true;
     };
 
 
-    $scope.model.typeChange = function(type) {
-
-       var newType = getStringFromType(type);
-
-       var currentModel =  $scope.model.vpks[newType];
-
-
-
-       if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi !== undefined) {
-
-
-
-          if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi === soraType) {
-
-             $scope.model.vpks[soraType] = $scope.model.valintaperustekuvaus;
-          } else if ($scope.model.valintaperustekuvaus.kuvauksenTyyppi === vpkType) {
-
-              $scope.model.vpks[vpkType] = $scope.model.valintaperustekuvaus;
-          }
-
-
-
-       }
-
-       if (currentModel === undefined) {
-
-           currentModel = {};
-           currentModel.kuvaukset = {};
-           $scope.model.valintaperustekuvaus = currentModel;
-           $scope.model.valintaperustekuvaus.kuvauksenTyyppi = type.type;
-
-       } else {
-           $scope.model.valintaperustekuvaus = currentModel;
-       }
-
-
-    }
 
 
 

@@ -205,7 +205,7 @@ public class ConverterV1 {
 
             for (TekstiKaannos tekstiKaannos:kuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
 
-                nimet.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getKieliKoodi());
+                nimet.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
 
             }
             kuvausV1RDTO.setKuvauksenNimet(nimet);

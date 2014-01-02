@@ -55,6 +55,7 @@ angular.module('app',
             'SharedStateService',
             'DateTimePicker',
             'Hakukohde',
+            'Kuvaus',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
             'orgAngularTreeview',
@@ -146,7 +147,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/valintaPerusteKuvaus',{
+                .when('/valintaPerusteKuvaus/:oppilaitosTyyppi/:kuvausTyyppi',{
 
                     action : "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'
