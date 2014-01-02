@@ -22,7 +22,7 @@ public interface KuvausV1Resource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa listan kaikkien kuvausten tunnisteista.",
-            notes = "Palauttaa listan kaikkien kuvausten tunnisteista annetulla")
+            notes = "Palauttaa listan kaikkien kuvausten tunnisteista")
     ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi();
 
     @GET
@@ -45,6 +45,19 @@ public interface KuvausV1Resource {
             @PathParam("tyyppi") String tyyppi,
             @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
             @PathParam("organisaatioTyyppi")String orgType);
+
+
+    @GET
+    @Path("/{tyyppi}/{organisaatioTyyppi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa listan kaikista tietyn organisaatiotyypin kuvauksista.",
+            notes = "Palauttaa listan kaikista tietyn organisaatiotyypin kuvauksista")
+    ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
+            @PathParam("organisaatioTyyppi")String orgType
+    );
 
     @GET
     @Path("/{tunniste}")

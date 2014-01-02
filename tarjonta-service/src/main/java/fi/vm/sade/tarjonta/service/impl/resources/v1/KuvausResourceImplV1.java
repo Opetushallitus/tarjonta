@@ -137,6 +137,38 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(@ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi, @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true) @PathParam("organisaatioTyyppi") String orgType) {
+        ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
+        try {
+
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi,orgType);
+            if (kuvaukses != null && kuvaukses.size() > 0) {
+
+                List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora));
+                }
+
+                kuvaukset.setResult(foundKuvaukses);
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            } else {
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+
+        } catch (Exception exp) {
+
+            kuvaukset.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            kuvaukset.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+        }
+
+        return kuvaukset;
+    }
+
+    @Override
     public ResultV1RDTO<KuvausV1RDTO> findByNimiAndOppilaitosTyyppi(String tyyppi,
                                                                     String oppilaitosTyyppi,
                                                                     String nimi) {
