@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
@@ -99,6 +100,15 @@ public interface KuvausV1Resource {
     @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
             @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
+
+    @POST
+    @Path("/{tyyppi}/search")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(
+            @ApiParam(value="Haun parametrit" , required = true)
+            KuvausSearchV1RDTO searchParam
+    );
 
 
     @PUT

@@ -2,8 +2,10 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 
 
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QValintaperusteSoraKuvaus;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -64,6 +66,25 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
                 //TODO: how to query "IN" monikielinentekstis ?
 
 
+    }
+
+    @Override
+    public List<ValintaperusteSoraKuvaus> findBySearchSpec(KuvausSearchV1RDTO searchSpec) {
+        QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;
+        QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
+
+        BooleanExpression whereExpr = null;
+
+
+
+        if (searchSpec.getOppilaitosTyyppi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(searchSpec.getOppilaitosTyyppi().trim()));
+        }
+        //TODO: add search for nimi
+
+        JPAQuery query = from(qValintaperusteSoraKuvaus);
+        query.where(whereExpr);
+        return query.list(qValintaperusteSoraKuvaus);
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

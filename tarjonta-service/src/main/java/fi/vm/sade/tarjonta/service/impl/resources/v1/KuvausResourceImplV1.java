@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.resources.v1.KuvausV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
@@ -307,4 +308,8 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
 
+    @Override
+    public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(KuvausSearchV1RDTO searchParam) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
