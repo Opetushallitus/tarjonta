@@ -37,7 +37,21 @@
                             <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
                         </td>
                     </tr>
+                    <tr class="required">
+                        <th tt="kk.valintaperustekuvaus.kausivuosi"/>
+                        <td>
+                            <span tt="kk.valintaperustekuvaus.kausi.title"></span>
+                            <koodistocombo koodistouri="'kausi'" koodiuri="model.valintaperustekuvaus.kausi" locale="'fi'"/>
+                        </td>
+                        <td>
+                            <span tt="kk.valintaperustekuvaus.vuosi.title"></span>
+                            <select data-ng-model="model.valintaperustekuvaus.vuosi" data-ng-options="year for year in model.years"></select>
+                        </td>
 
+                        <td>
+                            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+                        </td>
+                    </tr>
                 </table>
 
                 <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>

@@ -30,6 +30,12 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     @Column( name =  "tyyppi")
     private Tyyppi tyyppi;
 
+    @Column ( name = "kausi")
+    private String kausi;
+
+    @Column ( name =  "vuosi" )
+    private Integer vuosi;
+
     @Column( name = "tekstis")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MonikielinenMetadata> tekstis;
@@ -65,5 +71,21 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 
     public void setTyyppi(Tyyppi tyyppi) {
         this.tyyppi = tyyppi;
+    }
+
+    public String getKausi() {
+        return kausi;
+    }
+
+    public void setKausi(String kausi) {
+        this.kausi = kausi;
+    }
+
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
     }
 }

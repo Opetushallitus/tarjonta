@@ -21,6 +21,12 @@ public class KuvausV1RDTO {
     @ApiModelProperty(value = "Type of the description", required = true,allowableValues = "valintaperustekuvaus,SORA")
     private String kuvauksenTyyppi;
 
+    @ApiModelProperty(value = "Period-Uri of the description", required = true)
+    private String kausi;
+
+    @ApiModelProperty(value = "Year of the description", required = true)
+    private Integer vuosi;
+
     @ApiModelProperty(value = "HashMap containing descriptions and description languages")
     private HashMap<String,String> kuvaukset;
 
@@ -62,5 +68,21 @@ public class KuvausV1RDTO {
 
     public void setKuvauksenTunniste(String kuvauksenTunniste) {
         this.kuvauksenTunniste = kuvauksenTunniste;
+    }
+
+    public String getKausi() {
+        return kausi;
+    }
+
+    public void setKausi(String kausi) {
+        this.kausi = kausi;
+    }
+
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
     }
 }

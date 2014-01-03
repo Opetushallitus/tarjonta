@@ -9,12 +9,9 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
      */
 
-
-
-
   $scope.model = {};
 
-
+  $scope.model.years = [];
 
   $scope.model.valintaperustekuvaus = {};
 
@@ -35,10 +32,48 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   /*
 
-        -----------------> Helper functions etc.
+        -----------------> Helper and initialization functions etc.
 
      */
 
+  var getYears = function() {
+
+      var today = new Date();
+
+      var currentYear = today.getFullYear();
+
+      $scope.model.years.push(currentYear);
+
+      var incrementYear = currentYear;
+
+      var decrementYear = currentYear;
+
+      for (var i = 0; i < 10;i++) {
+
+
+          incrementYear++;
+
+          decrementYear--;
+
+
+          $scope.model.years.push(incrementYear);
+
+          $scope.model.years.push(decrementYear);
+
+      }
+
+      if ($scope.model.valintaperustekuvaus.vuosi === undefined) {
+          $scope.model.valintaperustekuvaus.vuosi = currentYear;
+      }
+      $scope.model.years.sort();
+
+  };
+
+  /*
+        ------------------> Run initialization functions
+  */
+
+  getYears();
 
 
   /*
@@ -49,6 +84,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     $scope.model.saveValmis = function(){
 
+
+       // console.log('MODEL : ', $scope.model.valintaperustekuvaus);
         var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
         resultPromise.then(function(data){
           if (data.status === "OK") {

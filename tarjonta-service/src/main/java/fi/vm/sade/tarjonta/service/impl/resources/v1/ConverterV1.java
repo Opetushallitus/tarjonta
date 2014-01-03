@@ -210,8 +210,17 @@ public class ConverterV1 {
             }
             kuvausV1RDTO.setKuvauksenNimet(nimet);
         }
+        if (kuvaus.getKausi() != null) {
+            kuvausV1RDTO.setKausi(kuvaus.getKausi());
+        }
+        if (kuvaus.getVuosi() != null) {
+            kuvausV1RDTO.setVuosi(kuvaus.getVuosi());
+        }
 
         kuvausV1RDTO.setKuvauksenTyyppi(getStringFromKuvausTyyppi(kuvaus.getTyyppi()));
+        if (kuvaus.getId() != null) {
+            kuvausV1RDTO.setKuvauksenTunniste(kuvaus.getId().toString());
+        }
 
         kuvausV1RDTO.setOrganisaatioTyyppi(kuvaus.getOrganisaatioTyyppi());
         if (kuvaus.getTekstis() != null) {
@@ -240,6 +249,12 @@ public class ConverterV1 {
                 nimet.addTekstiKaannos(kieli,kuvausV1RDTO.getKuvauksenNimet().get(kieli));
             }
             valintaperusteSoraKuvaus.setMonikielinenNimi(nimet);
+        }
+        if (kuvausV1RDTO.getVuosi() != null) {
+            valintaperusteSoraKuvaus.setVuosi(kuvausV1RDTO.getVuosi());
+        }
+        if (kuvausV1RDTO.getKausi() != null) {
+            valintaperusteSoraKuvaus.setKausi(kuvausV1RDTO.getKausi());
         }
 
         valintaperusteSoraKuvaus.setOrganisaatioTyyppi(kuvausV1RDTO.getOrganisaatioTyyppi());
