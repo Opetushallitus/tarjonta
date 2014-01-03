@@ -2,14 +2,13 @@
 
     <div id="searchSpec">
 
-        <div class="search">
-            <input type="text" ng-model="spec.terms" ng-enter="search()"/>
-        </div>
+
 
         <table class="spec">
 
             <!-- otsikkorivi -->
             <tr>
+                <th>{{t('tarjonta.valintaperustekuvaus.haenimella')}}</th>
                 <th>{{t('tarjonta.valintaperustekuvaus.oppilaitostyyppi')}}</th>
 
                 <th colspan="2">&nbsp;</th>
@@ -17,13 +16,21 @@
 
             <!-- kontrollit -->
             <tr>
-                <koodistocombo koodistouri="'oppilaitostyyppi'" koodiuri="model.spec.oppilaitostyyppi" locale="'fi'"/>
+                <td>
+                    <div class="search">
+                        <input type="text" ng-model="spec.terms" ng-enter="search()"/>
+                    </div>
+                </td>
+                <td>
+                    <koodistocombo koodistouri="'oppilaitostyyppi'" koodiuri="model.spec.oppilaitostyyppi" locale="'fi'"/>
+                </td>
+                <td class="controls">
+                    <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.tyhjenna')}}" ng-click="reset()"/>
+                    <input class="btn btn-primary" type="button" value="{{t('tarjonta.valintaperustekuvaus.hae')}}" ng-click="search()"/>
+                </td>
             </tr>
 
-            <td class="controls">
-                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.tyhjenna')}}" ng-click="reset()"/>
-                <input class="btn btn-primary" type="button" value="{{t('tarjonta.valintaperustekuvaus.hae')}}" ng-click="search()"/>
-            </td>
+
 
         </table>
 

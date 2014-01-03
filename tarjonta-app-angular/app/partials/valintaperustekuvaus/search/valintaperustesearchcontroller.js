@@ -8,7 +8,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.valintaperusteColumns =['kuvauksenNimet','organisaatioTyyppi','vuosikausi'];
 
-    $scope.model.test = "HELLO FROM CONTROLLER";
+
 
 
 });
