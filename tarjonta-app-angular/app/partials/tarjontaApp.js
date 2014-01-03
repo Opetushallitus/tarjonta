@@ -10,6 +10,7 @@ angular.module('app.kk',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.edit.hakukohde.review.ctrl',
             'app.kk.edit.valintaperustekuvaus.ctrl',
+            'app.kk.search.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
             'app.edit.ctrl.alkamispaiva',
@@ -147,11 +148,17 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/valintaPerusteKuvaus/:oppilaitosTyyppi/:kuvausTyyppi',{
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi',{
 
                     action : "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'
 
+
+                })
+                .when('/valintaPerusteKuvaus/search',{
+
+                    action : "valintaPerusteKuvaus.search",
+                    controller: 'ValintaperusteSearchController'
 
                 })
                 .when('/hakukohde/:id', {

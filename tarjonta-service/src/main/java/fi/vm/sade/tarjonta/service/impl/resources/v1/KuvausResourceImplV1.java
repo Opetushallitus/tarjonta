@@ -61,6 +61,38 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedot(String tyyppi, String orgType) {
+        ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
+        try {
+
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi,orgType);
+            if (kuvaukses != null && kuvaukses.size() > 0) {
+
+                List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,false));
+                }
+
+                kuvaukset.setResult(foundKuvaukses);
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            } else {
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+
+        } catch (Exception exp) {
+
+            kuvaukset.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            kuvaukset.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+        }
+
+        return kuvaukset;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimet(String tyyppi) {
        ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
@@ -137,7 +169,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(@ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi, @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true) @PathParam("organisaatioTyyppi") String orgType) {
+    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(String tyyppi, String orgType) {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
 
@@ -147,7 +179,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                 List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
                 for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
-                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora));
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,true));
                 }
 
                 kuvaukset.setResult(foundKuvaukses);
@@ -194,7 +226,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             if (foundKuvaus != null) {
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
-                result.setResult(converter.toKuvausRDTO(foundKuvaus));
+                result.setResult(converter.toKuvausRDTO(foundKuvaus,true));
             } else {
                 result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             }
@@ -222,7 +254,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             if (valintaperusteSoraKuvaus != null) {
 
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-                resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus));
+                resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
 
             } else {
               resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
@@ -242,7 +274,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
             valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
-            KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus);
+            KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
 
             resultV1RDTO.setResult(kuvaus);
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);

@@ -1,0 +1,38 @@
+<div class="wsidebar-main">
+
+    <div id="searchSpec">
+
+        <div class="search">
+            <input type="text" ng-model="spec.terms" ng-enter="search()"/>
+        </div>
+
+        <table class="spec">
+
+            <!-- otsikkorivi -->
+            <tr>
+                <th>{{t('tarjonta.valintaperustekuvaus.oppilaitostyyppi')}}</th>
+
+                <th colspan="2">&nbsp;</th>
+            </tr>
+
+            <!-- kontrollit -->
+            <tr>
+                <koodistocombo koodistouri="'oppilaitostyyppi'" koodiuri="model.spec.oppilaitostyyppi" locale="'fi'"/>
+            </tr>
+
+            <td class="controls">
+                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.tyhjenna')}}" ng-click="reset()"/>
+                <input class="btn btn-primary" type="button" value="{{t('tarjonta.valintaperustekuvaus.hae')}}" ng-click="search()"/>
+            </td>
+
+        </table>
+
+    </div>
+
+    <div id="searchResults">
+
+        <h1>{{model.test}}</h1>
+
+    </div>
+
+</div>

@@ -196,7 +196,7 @@ public class ConverterV1 {
      * @return
      */
 
-    public KuvausV1RDTO toKuvausRDTO(ValintaperusteSoraKuvaus kuvaus) {
+    public KuvausV1RDTO toKuvausRDTO(ValintaperusteSoraKuvaus kuvaus,boolean convertTeksti) {
 
         KuvausV1RDTO kuvausV1RDTO = new KuvausV1RDTO();
 
@@ -223,7 +223,7 @@ public class ConverterV1 {
         }
 
         kuvausV1RDTO.setOrganisaatioTyyppi(kuvaus.getOrganisaatioTyyppi());
-        if (kuvaus.getTekstis() != null) {
+        if (kuvaus.getTekstis() != null && convertTeksti) {
             HashMap<String,String> tekstis = new HashMap<String, String>();
             for(MonikielinenMetadata monikielinenMetadata:kuvaus.getTekstis()) {
                 tekstis.put(monikielinenMetadata.getKieli(),monikielinenMetadata.getArvo());
