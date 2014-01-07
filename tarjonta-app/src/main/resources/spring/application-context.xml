@@ -32,6 +32,7 @@
     <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <util:properties local-override="true">
+                <prop key="cas_callback_url">${cas.callback.tarjonta-app}</prop>
                 <prop key="cas_mode">front</prop>
                 <prop key="cas_key">tarjonta-app</prop>
                 <prop key="cas_service">${cas.service.tarjonta-app}</prop>
