@@ -1,4 +1,4 @@
-<div class="wsidebar-main">
+<div data-ng-controller="ValintaperusteSearchController">
 
     <div id="searchSpec">
 
@@ -24,10 +24,12 @@
                 <td>
                     <koodistocombo koodistouri="'oppilaitostyyppi'" koodiuri="model.spec.oppilaitostyyppi" locale="'fi'"/>
                 </td>
+
                 <td class="controls">
                     <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.tyhjenna')}}" ng-click="reset()"/>
                     <input class="btn btn-primary" type="button" value="{{t('tarjonta.valintaperustekuvaus.hae')}}" ng-click="search()"/>
                 </td>
+
             </tr>
 
 
@@ -37,9 +39,57 @@
     </div>
 
     <div id="searchResults">
+        <tabset>
+            <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
 
-        <h1>{{model.test}}</h1>
+                <table>
+                    <tr>
+                        <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi"></th>
+                    </tr>
+                    <tr data-ng-repeat="valintaperuste in model.valintaperusteet">
+                        <a href="" data-ng-click="">
+                            <td data-ng-bind-html="valintaperuste.kuvauksenNimi"></td>
+                            <td data-ng-bind-html="valintaperuste.organisaatioTyyppi"></td>
+                            <td data-ng-bind-html="valintaperuste.vuosikausi"></td>
+                        </a>
+                    </tr>
+                </table>
+
+            </tab>
+            <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
+
+                <table>
+                    <tr>
+                        <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi"></th>
+                    </tr>
+                    <tr data-ng-repeat="sora in model.sorat" >
+                            <td ><a href="" data-ng-click="selectKuvaus(sora)">{{sora.kuvauksenNimi}}</a> </td>
+
+                            <td data-ng-bind-html="sora.organisaatioTyyppi"></td>
+                            <td data-ng-bind-html="sora.vuosikausi"></td>
+
+                    </tr>
+                </table>
+
+            </tab>
+
+        </tabset>
+        <!--   TODO : This does not work replace current table with this "results-table"
+        <results-table
+                id="valintaperusteetResults"
+                prefix="valintaperuste"
+                content="model.valintaperusteet"
+                columns="valintaperusteColumns"
+                options="valintaPerusteOptions"
+                selection="model"/>     -->
+
+
 
     </div>
+
 
 </div>

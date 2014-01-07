@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import  fi.vm.sade.tarjonta.dao.KuvausDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 */
 public class KuvausResourceImplV1 implements KuvausV1Resource {
 
-
+    private static final Logger LOG = LoggerFactory.getLogger(KuvausResourceImplV1.class);
 
     @Autowired
     private KuvausDAO kuvausDAO;
@@ -272,7 +274,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-
+            LOG.debug("CREATING NEW KUVAUS ");
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
             valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
             KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
@@ -292,9 +294,18 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
-            kuvausDAO.update(valintaperusteSoraKuvaus);
+
+            ValintaperusteSoraKuvaus oldVps = kuvausDAO.read(valintaperusteSoraKuvaus.getId());
+
+            oldVps.setKausi(valintaperusteSoraKuvaus.getKausi());
+            oldVps.setMonikielinenNimi(valintaperusteSoraKuvaus.getMonikielinenNimi());
+            oldVps.setOrganisaatioTyyppi(valintaperusteSoraKuvaus.getOrganisaatioTyyppi());
+            oldVps.setTyyppi(valintaperusteSoraKuvaus.getTyyppi());
+            oldVps.setVuosi(valintaperusteSoraKuvaus.getVuosi());
+            oldVps.setTekstis(valintaperusteSoraKuvaus.getTekstis());
+
+            kuvausDAO.update(oldVps);
 
 
             resultV1RDTO.setResult(kuvausRDTO);

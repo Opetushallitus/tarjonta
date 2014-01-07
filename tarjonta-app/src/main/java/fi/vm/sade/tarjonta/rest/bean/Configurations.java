@@ -30,7 +30,8 @@ import org.springframework.core.env.Environment;
     "classpath:tarjonta-app.properties",
     "classpath:tarjonta-rest.properties",
     "file:///${user.home:''}/oph-configuration/common.properties",
-    "file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
+    "file:///${user.home:''}/oph-configuration/tarjonta-app.properties",
+    "file:///${user.home:''}/oph-configuration/override.properties"
 })
 public class Configurations {
 
