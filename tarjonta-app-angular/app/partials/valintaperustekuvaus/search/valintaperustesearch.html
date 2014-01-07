@@ -41,7 +41,7 @@
     <div id="searchResults">
         <tabset>
             <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
-
+                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.luouusi')}}" ng-click="createNew('valintaperustekuvaus')"/>
                 <table>
                     <tr>
                         <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>
@@ -50,7 +50,7 @@
                     </tr>
                     <tr data-ng-repeat="valintaperuste in model.valintaperusteet">
                         <a href="" data-ng-click="">
-                            <td data-ng-bind-html="valintaperuste.kuvauksenNimi"></td>
+                            <td ><a href="" data-ng-click="selectKuvaus(valintaperuste)">{{valintaperuste.kuvauksenNimi}}</a> </td>
                             <td data-ng-bind-html="valintaperuste.organisaatioTyyppi"></td>
                             <td data-ng-bind-html="valintaperuste.vuosikausi"></td>
                         </a>
@@ -59,7 +59,7 @@
 
             </tab>
             <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
-
+                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.luouusi')}}" ng-click="createNew('SORA')"/>
                 <table>
                     <tr>
                         <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>

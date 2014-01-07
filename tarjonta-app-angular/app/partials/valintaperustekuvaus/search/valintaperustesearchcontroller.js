@@ -1,6 +1,6 @@
 var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','ResultsTable']);
 
-app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService) {
+app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location) {
 
 
 
@@ -13,7 +13,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.model = {};
 
-    $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
+        $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
 
     $scope.model.valintaperusteet = [];
 
@@ -40,6 +40,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 var vpkObj = {};
 
                 vpkObj.tyyppi = kuvausTyyppi;
+                vpkObj.tunniste = resultObj.kuvauksenTunniste;
 
                 for (var prop in resultObj.kuvauksenNimet) {
                     if (resultObj.kuvauksenNimet.hasOwnProperty(prop)) {
@@ -97,8 +98,14 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     $scope.selectKuvaus = function(kuvaus) {
-        console.log("KUVAUS SELECTED  : ", kuvaus);
 
+        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +oppilaitosTyyppi + "/"+kuvaus.tyyppi+"/"+kuvaus.tunniste;
+        $location.path(kuvausEditUri);
+    };
+
+    $scope.createNew = function(kuvausTyyppi) {
+        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +oppilaitosTyyppi + "/"+kuvausTyyppi +"/NEW";
+        $location.path(kuvausEditUri);
     };
 
     $scope.valintaPerusteOptions = function() {

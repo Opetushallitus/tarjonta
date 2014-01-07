@@ -158,7 +158,19 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId',{
 
                     action : "valintaPerusteKuvaus.edit",
-                    controller: 'ValintaperusteEditController'
+                    controller: 'ValintaperusteEditController',
+                    resolve : {
+                        resolvedValintaPerusteKuvaus : function($route,Kuvaus) {
+                            console.log('RESOLVING VALINTAPERUSTE KUVAUS : ', $route.current.params.kuvausId);
+                            if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
+                                console.log('FINDING KUVAUS : ', $route.current.params.kuvausId);
+                                var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
+
+                                return kuvausPromise;
+                            }
+
+                        }
+                    }
 
                 })
                 .when('/valintaPerusteKuvaus/search',{

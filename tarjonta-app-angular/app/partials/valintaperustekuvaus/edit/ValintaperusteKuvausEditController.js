@@ -19,7 +19,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.model.valintaperustekuvaus.organisaatioTyyppi  = $route.current.params.oppilaitosTyyppi;
 
-  var kuvausId = $route.current.params.kuvausId;
+  //var kuvausId = $route.current.params.kuvausId;
 
   $scope.model.valintaperustekuvaus.kuvaukset = {};
 
@@ -77,7 +77,14 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   var initialializeForm = function() {
 
-      if (kuvausId !== undefined && kuvausId !== "NEW") {
+      if ($route.current.locals.resolvedValintaPerusteKuvaus !== undefined ) {
+
+         $scope.model.valintaperustekuvaus =  $route.current.locals.resolvedValintaPerusteKuvaus.result;
+      }  else {
+          console.log('DID NOT GET VALINTAPERUSTEKUVAUS');
+      }
+
+     /* if (kuvausId !== undefined && kuvausId !== "NEW") {
           var kuvausPromise = Kuvaus.findKuvausWithId(kuvausId);
           kuvausPromise.then(function(kuvausResult){
               if (kuvausResult.status === "OK" ){
@@ -87,7 +94,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
 
           });
-      }
+      }  */
 
   };
 
@@ -109,7 +116,6 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
        if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
 
-           console.log('KUVAUKSEN TUNNISTE WAS UNDEFINED : ', $scope.model.valintaperustekuvaus.kuvauksenTunniste);
            var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
            resultPromise.then(function(data){
                if (data.status === "OK") {
@@ -119,7 +125,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                }
            });
        } else {
-           console.log('KUVAUKSEN TUNNISTE WAS NOT UNDEFINED : ', $scope.model.valintaperustekuvaus.kuvauksenTunniste);
+
            var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
            resultPromise.then(function(data){
                if (data.status === "OK") {

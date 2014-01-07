@@ -318,6 +318,27 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         return  resultV1RDTO;
     }
 
+    @Override
+    public ResultV1RDTO<KuvausV1RDTO> removeById(String tunniste) {
+        ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
+
+        try {
+
+            ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.getLong(tunniste));
+
+            kuvausDAO.remove(valintaperusteSoraKuvaus);
+
+            resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        } catch (Exception exp ){
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+        }
+
+
+        return  resultV1RDTO;
+    }
 
     @Override
     public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(KuvausSearchV1RDTO searchParam) {
