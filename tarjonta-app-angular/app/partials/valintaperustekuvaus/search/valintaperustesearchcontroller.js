@@ -98,6 +98,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.selectKuvaus = function(kuvaus) {
         console.log("KUVAUS SELECTED  : ", kuvaus);
+
     };
 
     $scope.valintaPerusteOptions = function() {

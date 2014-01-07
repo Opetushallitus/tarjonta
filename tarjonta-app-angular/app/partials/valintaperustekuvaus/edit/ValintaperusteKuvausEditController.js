@@ -108,6 +108,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
 
        if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
+
+           console.log('KUVAUKSEN TUNNISTE WAS UNDEFINED : ', $scope.model.valintaperustekuvaus.kuvauksenTunniste);
            var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
            resultPromise.then(function(data){
                if (data.status === "OK") {
@@ -117,7 +119,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                }
            });
        } else {
-
+           console.log('KUVAUKSEN TUNNISTE WAS NOT UNDEFINED : ', $scope.model.valintaperustekuvaus.kuvauksenTunniste);
            var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
            resultPromise.then(function(data){
                if (data.status === "OK") {
