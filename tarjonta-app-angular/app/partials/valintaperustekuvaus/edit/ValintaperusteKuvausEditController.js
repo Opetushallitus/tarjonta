@@ -19,6 +19,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.model.valintaperustekuvaus.organisaatioTyyppi  = $route.current.params.oppilaitosTyyppi;
 
+  var kuvausId = $route.current.params.kuvausId;
+
   $scope.model.valintaperustekuvaus.kuvaukset = {};
 
   $scope.formControls = {}; // controls-layouttia varten
@@ -53,12 +55,16 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
           incrementYear++;
 
-          decrementYear--;
+          if (i < 2) {
+              decrementYear--;
+              $scope.model.years.push(decrementYear);
+          }
+
 
 
           $scope.model.years.push(incrementYear);
 
-          $scope.model.years.push(decrementYear);
+
 
       }
 
@@ -69,12 +75,28 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   };
 
+  var initialializeForm = function() {
+
+      if (kuvausId !== undefined && kuvausId !== "NEW") {
+          var kuvausPromise = Kuvaus.findKuvausWithId(kuvausId);
+          kuvausPromise.then(function(kuvausResult){
+              if (kuvausResult.status === "OK" ){
+                  console.log("FOUND KUVAUS : ", kuvausResult.result);
+                  $scope.model.valintaperustekuvaus = kuvausResult.result;
+              }
+
+
+          });
+      }
+
+  };
+
   /*
         ------------------> Run initialization functions
   */
 
   getYears();
-
+  initialializeForm();
 
   /*
 
@@ -85,15 +107,29 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     $scope.model.saveValmis = function(){
 
 
-       // console.log('MODEL : ', $scope.model.valintaperustekuvaus);
-        var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
-        resultPromise.then(function(data){
-          if (data.status === "OK") {
-              $scope.model.showSuccess = true;
-          } else {
-              //TODO: Do what ?
-          }
-        });
+       if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
+           var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+           resultPromise.then(function(data){
+               if (data.status === "OK") {
+                   $scope.model.showSuccess = true;
+               } else {
+                   //TODO: Do what ?
+               }
+           });
+       } else {
+
+           var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+           resultPromise.then(function(data){
+               if (data.status === "OK") {
+                   $scope.model.showSuccess = true;
+               } else {
+                   //TODO: Do what ?
+               }
+           });
+
+       }
+
+
 
     };
 

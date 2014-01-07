@@ -3,47 +3,102 @@ var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.service
 app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService) {
 
 
-    var tyyppi = "SORA";
 
-    var oppilaitosTyyppi = "Oppilaitos";
+
+    var oppilaitosTyyppi = "oppilaitostyyppi_41";
+
+    var oppilaitosKoodistoUri = "oppilaitostyyppi";
+
+    var kausiKoodistoUri = "kausi";
 
     $scope.model = {};
 
+    $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
+
     $scope.model.valintaperusteet = [];
+
+    $scope.model.sorat = [];
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
-    console.log('LANG : ', $scope.model.userLang);
-
-
     $scope.valintaperusteColumns =['kuvauksenNimi','organisaatioTyyppi','vuosikausi'];
 
-    var kuvausPromise = Kuvaus.findKuvausBasicInformation(tyyppi,oppilaitosTyyppi);
+    /*
 
-    kuvausPromise.then(function(data){
-        console.log('GOT FOLLOWING DATA : ', data);
+        -------------> "Inner" functions and "Helper" function declarations
 
-        angular.forEach(data.result,function(resultObj){
+     */
 
-            var vpkObj = {};
+    var findKuvausInformation = function(kuvausTyyppi) {
+        var kuvausPromise = Kuvaus.findKuvausBasicInformation( kuvausTyyppi,oppilaitosTyyppi);
 
-            for (var prop in resultObj.kuvauksenNimet) {
-                if (resultObj.kuvauksenNimet.hasOwnProperty(prop)) {
+        kuvausPromise.then(function(data){
 
-                    if (prop.indexOf($scope.model.userLang)) {
-                        vpkObj.kuvauksenNimi = resultObj.kuvauksenNimet[prop];
+
+            angular.forEach(data.result,function(resultObj){
+
+                var vpkObj = {};
+
+                vpkObj.tyyppi = kuvausTyyppi;
+
+                for (var prop in resultObj.kuvauksenNimet) {
+                    if (resultObj.kuvauksenNimet.hasOwnProperty(prop)) {
+
+                        if (prop.indexOf($scope.model.userLang)) {
+                            vpkObj.kuvauksenNimi = resultObj.kuvauksenNimet[prop];
+                        }
+
                     }
-
                 }
-            }
+                var oppilaitosTyyppiKoodiPromise = Koodisto.getKoodi(oppilaitosKoodistoUri,resultObj.organisaatioTyyppi,$scope.model.userLang);
 
-            vpkObj.organisaatioTyyppi = resultObj.organisaatioTyyppi;
-            vpkObj.vuosikausi =  resultObj.vuosi + " " + resultObj.kausi;
-            $scope.model.valintaperusteet.push(vpkObj);
+                oppilaitosTyyppiKoodiPromise.then(function(oppilaitosTyyppiKoodi){
+                    vpkObj.organisaatioTyyppi = oppilaitosTyyppiKoodi.koodiNimi;
+                });
+
+
+
+                var kausiKoodiPromise = Koodisto.getKoodi(kausiKoodistoUri,resultObj.kausi,$scope.model.userLang);
+                kausiKoodiPromise.then(function(kausiKoodi){
+                    vpkObj.vuosikausi =  resultObj.vuosi + " " + kausiKoodi.koodiNimi;
+                });
+                if (kuvausTyyppi === $scope.model.kuvaustyyppis[0]) {
+                    $scope.model.valintaperusteet.push(vpkObj);
+                } else if (kuvausTyyppi === $scope.model.kuvaustyyppis[1]) {
+                    $scope.model.sorat.push(vpkObj);
+                }
+
+
+            });
 
         });
+    }
 
-    });
+    var getKuvaukses = function() {
+
+        angular.forEach($scope.model.kuvaustyyppis,function(kuvaustyyppi){
+           findKuvausInformation(kuvaustyyppi);
+        });
+
+    };
+
+    /*
+
+        ----------> Controller "initialization functions"
+
+     */
+
+     getKuvaukses();
+
+    /*
+
+        ----------> Controller "event handlers and listeners" a
+
+     */
+
+    $scope.selectKuvaus = function(kuvaus) {
+        console.log("KUVAUS SELECTED  : ", kuvaus);
+    };
 
     $scope.valintaPerusteOptions = function() {
         var ret = [];

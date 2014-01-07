@@ -148,11 +148,17 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi',{
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW',{
 
                     action : "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'
 
+
+                })
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId',{
+
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController'
 
                 })
                 .when('/valintaPerusteKuvaus/search',{
