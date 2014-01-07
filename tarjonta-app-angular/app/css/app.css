@@ -43,11 +43,6 @@
     text-align:right;
 }
 
-.valintakoe-modal {
-    width:900px;
-    margin-left:-450px
-}
-
 .display-block {
 	display:block;
 }
@@ -375,9 +370,17 @@ div#luo-koulutus-dialogi select {
 }
 
 div#luo-koulutus-dialogi div.modal-body {
-	height:180px;
+	height:340px;
 }
 
+div#luo-koulutus-dialogi td {
+	vertical-align:top;
+}
+
+div#luo-koulutus-dialogi ul {
+    list-style: none;
+    margin:0;
+}
 
 /* koulutuksen muokkaus/luonti */
 
@@ -388,6 +391,11 @@ div#tarjonta-body {
 /* firefox-bootstrap-glow-korjaus */
 input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
+}
+
+/* boostrap-korjaus */
+a.btn span {
+	text-decoration: none;
 }
 
 /* tarjontaControlsLayout / ilmoitusviestit */
@@ -506,5 +514,12 @@ div#select-koulutus div.koulutus-list, div#select-koulutus div.koulutus-tree {
 
 div#select-koulutus div.koulutus-tree > ul > li {
 	padding-left:2px;
+}
+
+/* valintakoe-dialogi */
+
+.valintakoe-modal {
+    width:900px;
+    margin-left:-450px
 }
 
