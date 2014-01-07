@@ -106,7 +106,31 @@ app.factory('Kuvaus',function($http,Config,$q){
 
         },
 
-        findAllNimesWithTyyppi : function(tyyppi) {
+        findKuvausBasicInformation : function(tyyppi,oppilaitosTyyppi) {
+
+            var promise = $q.defer();
+
+            if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi+"/"+oppilaitosTyyppi+"/kuvaustenTiedot";
+                $http.get(queryUri)
+                    .success(function(data){
+                      promise.resolve(data);
+                    })
+                    .error(function(data){
+                      promise.resolve();
+                    });
+
+            }  else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
+        },
+
+        findAllNimesWithType : function(tyyppi) {
 
             var promise = $q.defer();
 
