@@ -14,7 +14,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
       var kieliKoodistoUri = "kieli";
-
+      
       $scope.model.hakukohteenKielet = [];
 
       $scope.model.koulutukses = [];
@@ -28,12 +28,33 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
             $scope.model.userLang = "FI";
       }
 
+      // form controls
+      $scope.formControls = {};
+
+      $scope.goBack = function(event) {
+          window.history.back();
+      };
+      
+      $scope.getHakukohteenNimi = function() {
+    	  if ($scope.model==undefined || $scope.model.hakukohde==undefined || $scope.model.hakukohde.hakukohteenNimet==undefined) {
+    		  return null;
+    	  }
+    	  var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri+"_"+$scope.model.userLang.toLowerCase()];
+    	  if (lc) {
+    		  return lc;
+    	  }
+    	  
+    	 for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+    		 return $scope.model.hakukohde.hakukohteenNimet[i];
+    	 }
+    	  return null;
+      }
+
+
 
       /*
         ----------------------------> Helper functions  < ----------------------------
        */
-
-
      /*
 
       ----------> This functions loops through hakukohde names and lisätiedot to get hakukohdes languages
