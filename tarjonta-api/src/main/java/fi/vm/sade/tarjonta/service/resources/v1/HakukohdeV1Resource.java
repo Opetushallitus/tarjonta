@@ -44,7 +44,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
- * 
+ *
  * @author mlyly
  */
 @Path("/v1/hakukohde")
@@ -54,7 +54,7 @@ public interface HakukohdeV1Resource {
     /**
      * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on
      * sallittu).
-     * 
+     *
      * @param oid
      *            Hakukohteen oid.
      * @param tila
@@ -64,7 +64,7 @@ public interface HakukohdeV1Resource {
      *         siirtymä ei ollut sallittu).
      */
     @POST
-    @Path("{oid}/tila")
+    @Path("/{oid}/tila")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää hakukohteen tilan", notes = "Operaatio päivittää hakukohteen tilan, mikäli kyseinen tilasiirtymä on sallittu.")
     public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
@@ -75,7 +75,7 @@ public interface HakukohdeV1Resource {
     public ResultV1RDTO<List<OidV1RDTO>> search();
 
     @GET
-    @Path("{oid}")
+    @Path("/{oid}")
     @ApiOperation(value = "Palauttaa hakukohteen oid:lla", notes = "Operaatio palauttaa versio 1 mukaisen hakukohteen", response = HakukohdeV1RDTO.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid);
@@ -96,7 +96,7 @@ public interface HakukohdeV1Resource {
             @ApiParam(value = "Päivitetty hakukohde", required = true) HakukohdeV1RDTO hakukohde);
 
     @DELETE
-    @Path("{oid}")
+    @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Poistaa hakukohteen", notes = "Operaatio poistaa hakukohteen")
     public ResultV1RDTO<Boolean> deleteHakukohde(@ApiParam(value = "Poistettavan hakukohteen oid", required = true) @PathParam("oid") String oid);
@@ -128,7 +128,7 @@ public interface HakukohdeV1Resource {
     @Path("/{oid}/valintakoe/{valintakoeId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Poistaa hakukohteelta valintakokeen", notes = "Päivitetään hakukohteelle valintakoe, parametrina annetaan hakukohteen oid ja valintakokeen oid", response = ValintakoeV1RDTO.class)
+    @ApiOperation(value = "Poistaa hakukohteelta valintakokeen", notes = "Poistaa valintakokeen annetulta hakukohteelta.", response = ValintakoeV1RDTO.class)
     public ResultV1RDTO<Boolean> removeValintakoe(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
             @ApiParam(value = "Poistettavan valintakokeen oid", required = true) @PathParam("valintakoeId") String valintakoeOid);
 
@@ -197,7 +197,7 @@ public interface HakukohdeV1Resource {
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
-     * 
+     *
      * @param searchTerms
      * @param organisationOids
      *            filter result to be in or "under" given organisations
@@ -221,14 +221,30 @@ public interface HakukohdeV1Resource {
     /**
      * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search
      * rajapinnasta /hakukohde/OID/koulutukset
-     * 
+     *
      * @param oid
      * @return
      */
     @GET
-    @Path("{oid}/koulutukset")
+    @Path("/{oid}/koulutukset")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakukohteen koulutukset", notes = "Operaatio palauttaa listan hakukohteen koulutuksia.")
     public ResultV1RDTO<List<NimiJaOidRDTO>> getKoulutukset(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid);
+
+    @POST
+    @Path("/{oid}/koulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes="Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid")  String hakukohdeOid,
+                                                                     @ApiParam(value = "Lista hakukohteelta poistettavista koulutus oideista") List<String> koulutukses);
+
+
+    @POST
+    @Path("/{oid}/koulutukset/lisaa")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
+    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään",required = true)  @PathParam("oid") String hakukohdeOid,
+                                                                  @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
+
 
 }

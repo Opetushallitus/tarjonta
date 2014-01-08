@@ -6,7 +6,7 @@
 
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "PERUSTIEDOT")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
     <tbody ng-show="!model.collapse.perusTiedot">
@@ -52,41 +52,24 @@
 
     <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAKOKEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
-
-    <tbody ng-show="!model.collapse.valintakokeet" data-ng-repeat="valintakoe in getLocalizedValintakoe(kieli.kieliUri)">
-
-    <tr>
-        <th tt="hakukohde.review.valintakokeet.nimi"/>
+    <tr ng-show="!model.collapse.valintakokeet">
+        <th></th>
         <td colspan="2">
-            {{valintakoe.valintakoeNimi}}
-        </td>
-    </tr>
-
-    <tr>
-        <th tt="hakukohde.review.valintakokeet.kuvaus"/>
-        <td colspan="2" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti">
-
-        </td>
-    </tr>
-
-    <tr>
-       <th tt="hakukohde.review.valintakokeet.ajankohdat"></th>
-        <td >
-            <table>
+            <table class="table">
                 <tr>
-                    <th>
-                        {{t('hakukohde.review.valintakokeet.aika')}}
-                    </th>
-                    <th>
-                        {{t('hakukohde.review.valintakokeet.paikka')}}
-                    </th>
-                    <th>
-                        {{t('hakukohde.review.valintakokeet.lisatiedot')}}
-                    </th>
+                    <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
+                    <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
+                    <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
+                    <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
+                    <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
                 </tr>
+                <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(kieli.kieliUri)">
                 <tr data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                    <td ng-show="!$first" colspan="2"></td>
+                    <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
+                    <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
                     <td>
                         {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
                     </td>
@@ -97,75 +80,77 @@
                         {{ valintakoeaika.lisatiedot }}
                     </td>
                 </tr>
+                </tbody>
             </table>
         </td>
-
     </tr>
-
-
-    </tbody>
-
 
     <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "LIITTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
-    <tbody ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(kieli.kieliUri)">
-    <tr>
-        <th tt="hakukohde.review.liitteet.nimi"/>
+    <tr ng-show="!model.collapse.liitteet">
+        <th></th>
         <td colspan="2">
-            {{ liite.liitteenNimi }}
+	        <table class="table">
+	            <tr>
+	                <th tt="hakukohde.review.liitteet.nimi"/>
+	                <th tt="hakukohde.review.liitteet.kuvaus"/>
+	                <th tt="hakukohde.review.liitteet.toim.mennessa"/>
+	                <th tt="hakukohde.review.liitteet.toim.osoite"/>
+	            </tr>
+	            <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(kieli.kieliUri)">
+			        <td>{{ liite.liitteenNimi }}</td>
+			        <td data-ng-bind-html="getLiitteenKuvaus(liite,kieli.kieliUri)"/>
+			        <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
+			        <td>{{ liite.liitteenToimitusOsoite.osoiterivi1 }}, {{ liite.liitteenToimitusOsoite.postinumeroArvo }}, {{ liite.liitteenToimitusOsoite.postitoimipaikka }}</td>
+	            </tr>
+	        </table>
         </td>
     </tr>
-
-    <tr>
-        <th tt="hakukohde.review.liitteet.kuvaus"/>
-        <td colspan="2" data-ng-bind-html="getLiitteenKuvaus(liite,kieli.kieliUri)">
-
-        </td>
-    </tr>
-
-    <tr>
-        <th tt="hakukohde.review.liitteet.toim.mennessa"/>
-        <td colspan="2">
-            {{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}
-        </td>
-    </tr>
-    <tr>
-        <th tt="hakukohde.review.liitteet.toim.osoite"/>
-        <td colspan="2">
-             {{ liite.liitteenToimitusOsoite.osoiterivi1 }}, {{ liite.liitteenToimitusOsoite.postinumeroArvo }}, {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
-        </td>
-    </tr>
-    </tbody>
 
     <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAPERUSTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
-    <tbody ng-show="!model.collapse.valintaperusteet">
-    <tr>
-        <th tt="hakukohde.review.liitteet.valintaperuste.kuvaus"/>
-        <td colspan="2" data-ng-bind-html="getValintaperusteKuvaus(kieli.kieliUri)">
-
-        </td>
+    <tr ng-show="!model.collapse.valintaperusteet">
+        <th></th>
+        <td colspan="2" data-ng-bind-html="getValintaperusteKuvaus(kieli.kieliUri)"></td>
     </tr>
-    </tbody>
 
     <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "SORA")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
-    <tbody ng-show="!model.collapse.sorakuvaukset">
+    <tr ng-show="!model.collapse.sorakuvaukset">
+        <th></th>
+        <td colspan="2" data-ng-bind-html="getSoraKuvaus(kieli.kieliUri)"></td>
+    </tr>
 
-    <tr>
-        <th tt="hakukohde.review.liitteet.sora.kuvaus"/>
-        <td colspan="2" data-ng-bind-html="getSoraKuvaus(kieli.kieliUri)">
-
+    <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
+        <td><a class="btn" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a>
+    </tr>
+    
+    <tr ng-show="!model.collapse.koulutukset">
+        <th></th>
+        <td colspan="2">
+            <table class="table">
+                <tr data-ng-repeat="koulutus in  model.koulutukses">
+                    <td>
+                        <a ng-href="#/koulutus/{{koulutus.oid}}/edit">{{koulutus.nimi}}</a>
+                    </td>
+                    <td>
+                        <div class="align-right">
+                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
+                            <a class="btn" href ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
-
-    </tbody>
+    
 </table>

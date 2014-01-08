@@ -273,9 +273,14 @@
     </xs:complexType>
 
 
-
+<!-- XXXX!!!!XXXX -->
     <xs:complexType name="PaivitaTilaVastausTyyppi">
-        <xs:sequence/>
+        <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="hakukohdeOidit"
+                        type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="komotoOidit"
+                        type="xs:string"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="PoistaValintaKoeTyyppi">

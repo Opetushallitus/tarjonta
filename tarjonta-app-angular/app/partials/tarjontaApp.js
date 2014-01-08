@@ -9,15 +9,18 @@ angular.module('app.kk',
             'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.edit.hakukohde.review.ctrl',
+            'app.kk.edit.valintaperustekuvaus.ctrl',
+            'app.kk.search.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
+            'app.edit.ctrl.alkamispaiva',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
             'ui.bootstrap',
             'ngRoute',
             'config',
             'auth',
-            'TarjontaConverter',
+            'KoulutusConverter',
             'imageupload'
         ]);
 
@@ -53,10 +56,10 @@ angular.module('app',
             'SharedStateService',
             'DateTimePicker',
             'Hakukohde',
+            'Kuvaus',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
             'orgAngularTreeview',
-            'TarjontaConverter',
             'ResultsTable',
             'imageupload',
             'MultiSelect',
@@ -70,13 +73,13 @@ angular.module('app',
             'angularTreeview',
             'DateFormat',
             'TreeFieldDirective',
-            'AiheetJaTeematChooser'
+            'AiheetJaTeematChooser',
+            'debounce'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
-angular.module('app').config(['$routeProvider', function($routeProvider)
-    {
+angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         $routeProvider
                 .when("/etusivu", {
@@ -140,12 +143,42 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);        
+                            $log.info("/koulutus/ID/edit", $route);
                             return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
                         }
                     }
                 })
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW',{
 
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController'
+
+
+                })
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId',{
+
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController',
+                    resolve : {
+                        resolvedValintaPerusteKuvaus : function($route,Kuvaus) {
+                            console.log('RESOLVING VALINTAPERUSTE KUVAUS : ', $route.current.params.kuvausId);
+                            if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
+                                console.log('FINDING KUVAUS : ', $route.current.params.kuvausId);
+                                var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
+
+                                return kuvausPromise;
+                            }
+
+                        }
+                    }
+
+                })
+                .when('/valintaPerusteKuvaus/search',{
+
+                    action : "valintaPerusteKuvaus.search",
+                    controller: 'ValintaperusteSearchController'
+
+                })
                 .when('/hakukohde/:id', {
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',
@@ -193,8 +226,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     hakukohteenLiitteet: [],
                                     valintakokeet: [],
                                     lisatiedot: {},
-                                    valintaperusteKuvaukset : {},
-                                    soraKuvaukset : {}
+                                    valintaperusteKuvaukset: {},
+                                    soraKuvaukset: {}
                                 });
 
                                 //  SharedStateService.removeState('SelectedKoulutukses');
@@ -225,11 +258,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     }]);
 
 
-angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams, $log) {
+angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
+    function($scope, $route, $routeParams, $log, PermissionService) {
 
     $log.debug("app.AppRoutingCtrl()");
 
     $scope.count = 0;
+
+
+    PermissionService.permissionResource().authorize({}, function(response) {
+        console.log("Authorization check : " + response.result);
+    });
+
 
     var render = function() {
         $log.debug("app.AppRoutingCtrl.render()");
@@ -257,7 +297,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
             }
     );
 
-});
+}]);
 
 
 

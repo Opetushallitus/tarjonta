@@ -17,6 +17,7 @@
 //});
 
 
+
 describe('Edit koulutus testeja', function() {
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
@@ -34,10 +35,11 @@ describe('Edit koulutus testeja', function() {
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
-    beforeEach(module('TarjontaConverter'));
+    beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('debounce'));
     beforeEach(module('config'));
     var $scope, $modalInstance;
     beforeEach(inject(function($rootScope) {
@@ -121,7 +123,28 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(function() {
         module(function($provide) {
             $provide.value('globalConfig', {
-                env: {},
+                env: {
+                    "koodisto-uris.pohjakoulutusvaatimus": "",
+                    "koodisto-uris.postinumero": "",
+                    "koodisto-uris.suunniteltuKesto": "",
+                    "koodisto-uris.tarjontakoulutustyyppi": "",
+                    "koodisto-uris.teemat": "",
+                    "koodisto-uris.tutkinto": "",
+                    "koodisto-uris.koulutus": "",
+                    "koodisto-uris.tutkintonimike": "",
+                    "koodisto-uris.valintakokeentyyppi": "",
+                    "koodisto-uris.valintaperustekuvausryhma": "",
+                    "koodisto-uris.tutkintonimike_kk": "",
+                    "koodisto-uris.pohjakoulutusvaatimus_kk": "",
+                    "koodisto-uris.eqf-luokitus": "",
+                    "koodisto-uris.aiheet": "",
+                    "koodisto-uris.opetusmuotokk" : "",
+                    "koodisto-uris.opetusaika" : "",
+                    "koodisto-uris.opetuspaikka" : "",
+                    "koodisto-uris.kieli" : "",
+                    "koodisto-uris.ammattinimikkeet" : ""
+                            
+                },
                 app: {"userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']}});
         });
     });
@@ -134,9 +157,10 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('TarjontaCache'));
 
     beforeEach(module('Tarjonta'));
-    beforeEach(module('TarjontaConverter'));
+    beforeEach(module('KoulutusConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('TarjontaPermissions'));
 
     var scope, localisationService, routeParams, tarjontaService, cfg, organisaatioService;
 
@@ -153,7 +177,7 @@ describe('Edit koulutus insert/edit/load', function() {
 
     }));
 
-    var EMPTY_UI_MODEL = {uri : '', versio : -1};
+    var EMPTY_UI_MODEL = {uri: '', versio: -1};
     var EMPTY_META_UI_MODEL = {uris: {}};
     var EMPTY_META_UI_MODEL_KOULUTUOHJELMA = {tekstis: {
             kieli_fi: '',

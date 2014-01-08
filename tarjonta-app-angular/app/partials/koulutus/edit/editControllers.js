@@ -2,10 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'TarjontaConverterFactory', 'Koodisto', '$modal',
-            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal) {
-                $log.info("BaseEditController()");
-                // TODO maybe fix this, model, xmodel, uiModel, ... all to "model", "model.uimodel", "model.locale", model.xxx ?
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService',
+            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
+                    $window, converter, koodisto, $modal, PermissionService) {
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -17,43 +16,27 @@ app.controller('BaseEditController',
                 $scope.formControls = {};
 
                 var showSuccess = function() {
+                    $scope.uiModel.showValidationErrors = false;
                     $scope.uiModel.showSuccess = true;
                     $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
-                }
+                };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = [
-                    {type: "TAVOITTEET", isKomo: true},
-                    {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-                    {type: "PAAAINEEN_VALINTA", isKomo: false},
-                    {type: "MAKSULLISUUS", isKomo: false},
-                    {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-                    {type: "PATEVYYS", isKomo: true},
-                    {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-                    {type: "SISALTO", isKomo: false},
-                    {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-                    {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-                    {type: "KANSAINVALISTYMINEN", isKomo: false},
-                    {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-                    {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-                    {type: "ARVIOINTIKRITEERIT", isKomo: false},
-                    {type: "PAINOTUS", isKomo: false},
-                    {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-                    {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-                ];
+                $scope.lisatiedot = converter.KUVAUS_ORDER;
 
                 $scope.init = function() {
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
 
                     converter.createUiModels(uiModel);
 
                     /*
-                     * HANDLE ROUTING
+                     * HANDLE EDIT / CREATE NEW ROUTING
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         //DATA WAS LOADED BY KOMOTO OID
@@ -69,7 +52,7 @@ app.controller('BaseEditController',
                         });
 
                         /*
-                         * remove version data from the list data 
+                         * remove version data from the list 
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                             uiModel[key].uris = _.keys(model[key].uris);
@@ -98,6 +81,10 @@ app.controller('BaseEditController',
                         });
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                        if (angular.isUndefined(cfg.env[value.koodisto])) {
+                            throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
+                        }
+
                         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
                         uiModel[key].promise = koodisPromise;
 
@@ -142,15 +129,37 @@ app.controller('BaseEditController',
                         converter.throwError('Undefined tila');
                     }
 
-                    var KoulutusRes = tarjontaService.koulutus();
-                    var apiModelReadyForSave = $scope.saveModelConverter(tila);
+                    if ($scope.koulutusForm.$invalid) {
+                        //invalid form data
+                        $scope.uiModel.showError = true;
+                        return;
+                    }
 
-                    KoulutusRes.save(apiModelReadyForSave, function(response) {
-                        var model = response.result;
-                        //Callback
-                        console.log("Insert data response from POST: %j", response);
-                        $scope.model = model;
-                        showSuccess();
+                    PermissionService.permissionResource().authorize({}, function(authResponse) {
+                        console.log("Authorization check : " + authResponse.result);
+
+                        if (authResponse.status !== 'OK') {
+                            //not authenticated
+                            $scope.uiModel.showError = true;
+                            return;
+                        }
+
+                        var KoulutusRes = tarjontaService.koulutus();
+                        var apiModelReadyForSave = $scope.saveModelConverter(tila);
+
+                        KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
+                            var model = saveResponse.result;
+
+                            if (saveResponse.status === 'OK') {
+                                $scope.model = model;
+                                showSuccess();
+                                $scope.uiModel.tabs.lisatiedot = false;
+                            } else {
+                                //save failed
+                                $scope.uiModel.showError = true;
+                            }
+                        });
+
                     });
                 };
 
@@ -256,6 +265,10 @@ app.controller('BaseEditController',
                     }
                 };
 
+                $scope.selectKieli = function(kieliUri) {
+                    $scope.selectedKieliUri = kieliUri;
+                }
+
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
@@ -284,7 +297,6 @@ app.controller('BaseEditController',
                 /*
                  * WATCHES
                  */
-
                 $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
                     if (!valNew && valOld) {
                         //clear price data field

@@ -313,6 +313,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     hakuPromise.then(function(hakuDatas) {
         console.log('GOT HAKUS ', hakuDatas.length);
+        $scope.model.hakus = [];
         angular.forEach(hakuDatas,function(haku){
 
 
@@ -323,8 +324,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
 
             });
+            
+            // rajaus kk-hakukohteisiin; ks. OVT-6452
+            // TODO selvitä uri valitun koulutuksen perusteella
+            if (haku.kohdejoukkoUri==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
+                $scope.model.hakus.push(haku);
+            }
 
-            $scope.model.hakus.push(haku);
         });
 
         if ($scope.model.hakukohde.hakuOid !== undefined) {
@@ -388,7 +394,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
         $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
     }
-
+    
+    if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua === undefined) {
+    	$scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
+    }
 
     $scope.model.kieliCallback = function(kieliUri) {
         if ($scope.model.allkieles !== undefined) {

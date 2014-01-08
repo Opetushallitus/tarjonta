@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS;
@@ -50,6 +51,7 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -444,6 +446,7 @@ public class TarjontaKomoData {
                             if (dbParentOid == null) {
                                 dbParentOid = parentKomosReadyForInsertAndUpdate.get(koulutuskoodiUri).getOid();
                             }
+
                             Preconditions.checkNotNull(dbParentOid, "Parent OID cannot be null.");
                             //update childrend
                             switch (excelChildKomo.getKoulutustyyppi()) {
@@ -464,7 +467,7 @@ public class TarjontaKomoData {
                                         newKomoOids.add(excelChildKomo.getOid());
                                     }
                                     break;
-                               
+
                                 case LUKIOKOULUTUS:
                                     //log.debug("LUKIOKOULUTUS {}", lukiolinjaUri);
 
@@ -522,9 +525,29 @@ public class TarjontaKomoData {
     private void separateDbKomos() {
         int count = 1;
 
-        HaeKoulutusmoduulitVastausTyyppi allKomos = tarjontaPublicService.haeKoulutusmoduulit(new HaeKoulutusmoduulitKyselyTyyppi());
-        if (allKomos != null && !allKomos.getKoulutusmoduuliTulos().isEmpty()) {
-            List<KoulutusmoduuliTulos> allModules = allKomos.getKoulutusmoduuliTulos();
+        HaeKoulutusmoduulitKyselyTyyppi hae = new HaeKoulutusmoduulitKyselyTyyppi();
+        HaeKoulutusmoduulitVastausTyyppi allKomos = tarjontaPublicService.haeKoulutusmoduulit(hae);
+        List<KoulutusmoduuliTulos> allModules = Lists.newArrayList();
+
+        final Set<KoulutusasteTyyppi> allowedTypes = new HashSet<KoulutusasteTyyppi>();
+        allowedTypes.add(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        allowedTypes.add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+        allowedTypes.add(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        allowedTypes.add(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
+        allowedTypes.add(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
+        allowedTypes.add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
+        allowedTypes.add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        allowedTypes.add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+
+        //filter all korkeakoulu komos
+        for (KoulutusmoduuliTulos tulos : allKomos.getKoulutusmoduuliTulos()) {
+           
+            if (allowedTypes.contains(tulos.getKoulutusmoduuli().getKoulutustyyppi())) {
+                allModules.addAll(allKomos.getKoulutusmoduuliTulos());
+            }
+        }
+
+        if (allModules != null && !allModules.isEmpty()) {
             for (KoulutusmoduuliTulos t : allModules) {
                 if (count % 10 == 1) {
                     log.info("Processing DB KOMOs... {}", count);

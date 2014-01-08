@@ -13,7 +13,7 @@
 	background-color: rgba(112,112,112,1)
 }
 
-.table-active{
+.table-active {
     background-color: rgba(255,0,0,1);
 }
 
@@ -23,17 +23,24 @@
     height: 200px;
 }
 
-.float-left {
-	float:left;
+.wide {
+	width:100%;
 }
 
-.valintakoe-modal {
-    width:900px;
-    margin-left:-450px
+.float-left {
+    float:left;
 }
 
 .float-right {
-	float:right;
+    float:right;
+}
+
+.align-left {
+    text-align:left;
+}
+
+.align-right {
+    text-align:right;
 }
 
 .display-block {
@@ -344,7 +351,7 @@ div#select-tutkinto-ohjelma .gridStyle, div#select-tutkinto-ohjelma select {
 	width:100%;
 }
 
-div#select-tutkinto-ohjelma .modal-body input[type=text] {
+div .modal-body .modal-form input[type=text] {
 	position:relative;
 	top: 5px;
 }
@@ -363,9 +370,17 @@ div#luo-koulutus-dialogi select {
 }
 
 div#luo-koulutus-dialogi div.modal-body {
-	height:180px;
+	height:340px;
 }
 
+div#luo-koulutus-dialogi td {
+	vertical-align:top;
+}
+
+div#luo-koulutus-dialogi ul {
+    list-style: none;
+    margin:0;
+}
 
 /* koulutuksen muokkaus/luonti */
 
@@ -376,6 +391,11 @@ div#tarjonta-body {
 /* firefox-bootstrap-glow-korjaus */
 input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
+}
+
+/* boostrap-korjaus */
+a.btn span {
+	text-decoration: none;
 }
 
 /* tarjontaControlsLayout / ilmoitusviestit */
@@ -412,11 +432,7 @@ div.tarjontaControlsLayout p > p, div.tarjontaControlsLayout p > ul {
     margin-top:0.33em;   
 }
 
-div#aiheetJaTeemat > ul {
-    border: 1px solid #cccccc;
-    overflow:auto;
-    margin:0;
-}
+/* aiheet ja teemat */
 
 div#aiheetJaTeemat > ul.tree {
     height:300px;
@@ -445,3 +461,65 @@ div#aiheetJaTeemat > ul.selection {
 	margin-top:20px;
     height:100px;
 }
+
+/* listview (eli lista asioita ja x:t niiden edessä) */
+ul.listView {
+    border: 1px solid #cccccc;
+    border-radius:4px;
+    overflow:auto;
+    margin:0;
+    padding: 2px 7px 2px 7px;
+}
+
+/* dialogi / yleiset */
+
+.modal-form {
+	margin-bottom:10px;
+}
+
+.modal-body h4 {
+    margin-bottom:2px;
+    font-size:14px;
+}
+
+
+.modal-body .errors {
+    border-radius: 4px; 
+    padding: 20px 20px 20px 66px;
+    margin:18px 0 18px 0;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.275);
+    background: #fef3d3 url('../img/icon28-error.png') 16px 16px no-repeat;
+}
+
+.modal-body ul.errors li {
+	list-style:none;
+	padding:0;
+}
+
+/* lisää/poista koulutuksia (dialogi) */
+
+div#select-koulutus ul.listView {
+    height:100px;
+}
+
+div#select-koulutus div.koulutus-list, div#select-koulutus div.koulutus-tree {
+    height:140px;
+    border:1px solid #cccccc;
+    overflow:auto;
+}
+
+ div#select-koulutus .koulutus-preview {
+    height:300px;
+ }
+
+div#select-koulutus div.koulutus-tree > ul > li {
+	padding-left:2px;
+}
+
+/* valintakoe-dialogi */
+
+.valintakoe-modal {
+    width:900px;
+    margin-left:-450px
+}
+

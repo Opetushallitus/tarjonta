@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.activity.InvalidActivityException;
-import javax.naming.directory.InvalidAttributeValueException;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -40,12 +37,10 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import com.google.common.collect.Sets;
 import com.vaadin.data.Property;
-import com.vaadin.data.Validator;
-import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.data.validator.IntegerValidator;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -64,7 +59,6 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -225,10 +219,24 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusohjelmanTavoitteet;
     private TarjontaDialogWindow noKoulutusDialog;
     private transient UiBuilder uiBuilder;
-    private boolean isValmentavaOpetus = false;
-
-    public EditKoulutusPerustiedotFormView() {
-    }
+    private boolean isPervako = false;
+    private boolean isToinenasteValmentava = false;
+    
+    private final Set<String> valmentavatTyypit = Sets
+            .newHashSet(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS
+                    .getKoulutustyyppiUri(),
+                    Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS
+                            .getKoulutustyyppiUri(),
+                    Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS
+                            .getKoulutustyyppiUri(),
+                    Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
+                            .getKoulutustyyppiUri(),
+                    Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
+                            .getKoulutustyyppiUri(),
+                    Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS
+                            .getKoulutustyyppiUri(),
+                    Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS
+                            .getKoulutustyyppiUri());
 
     public EditKoulutusPerustiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder, final KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
@@ -243,9 +251,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             model.setOpintojenLaajuusyksikkoTot("");
         }
         
-        isValmentavaOpetus = koulutusModel.getKoulutuksenTyyppi() != null 
-                && koulutusModel.getKoulutuksenTyyppi().getKoodi().contains(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
+        isPervako = koulutusModel.getKoulutuksenTyyppi() != null 
+                && valmentavatTyypit.contains(koulutusModel.getKoulutuksenTyyppi().getKoodi());
         
+        isToinenasteValmentava = koulutusModel.getKoulutuksenTyyppi() != null 
+                && Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodi());
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
         initializeDataContainers();
@@ -294,7 +304,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     presenter.loadKoulutusohjelmat();
                     Collections.sort(koulutusModel.getKoulutusohjelmat());
                     bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
-                    if(koulutusModel.getKoulutusohjelmat().size()==1 && isValmentavaOpetus) {
+                    if(koulutusModel.getKoulutusohjelmat().size()==1 && isPervako) {
                         //automatically select if only one selection!
                         koulutusModel.setKoulutusohjelmaModel(koulutusModel.getKoulutusohjelmat().get(0));
                     }
@@ -320,7 +330,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
 
         
-        if(koulutusModel.getKoulutuskoodit().size()==1 && isValmentavaOpetus){
+        if(koulutusModel.getKoulutuskoodit().size()==1 && isPervako){
             KoulutuskoodiModel km = koulutusModel.getKoulutuskoodit().get(0);
             //ainoa valinta, valitse suoraan
             koulutusModel.setKoulutuskoodiModel(km);
@@ -344,7 +354,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutusala = buildLabel(this, "koulutusala");
         opintoala = buildLabel(this, "opintoala");
         tutkintonimike = buildLabel(this, "tutkintonimike");
-        if (!isValmentavaOpetus) {
+        if (!isPervako) {
             opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
         } else {
             opintojenLaajuus = new Label();
@@ -352,12 +362,17 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         }
         buildEmptyGridRow(this);
         tavoitteet = buildLabel(this, "tavoitteet");
-        koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
+        if (!isPervako) {
+            koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
+        } else {
+            koulutusohjelmanTavoitteet = new Label();
+            koulutusohjelmanTavoitteet.setVisible(false);
+        }
         buildEmptyGridRow(this);
         koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
 
-        if (isValmentavaOpetus) {
+        if (isPervako) {
             buildGridOpintojenLaajuusRow(this, "opintojenLaajuus");
         }
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
@@ -552,7 +567,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         koulutuksenNimi = UiUtil.textField(null, null, null, null, null);
 
-        if (isValmentavaOpetus) {
+        if (isToinenasteValmentava) {
             grid.addComponent(koulutuksenNimi);
             koulutuksenNimi.setWidth(300, UNITS_PIXELS);
             koulutuksenNimi.setRequired(true);

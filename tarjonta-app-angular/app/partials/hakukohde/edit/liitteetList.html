@@ -1,28 +1,29 @@
 <div>
-    <button class="btn btn-primary" ng-click="model.uusiLiite()">{{t('tarjonta.hakukohde.liite.listaus.uusi.liite')}}</button>
-    <br/>
- <br/>
+
+    <p class="float-right">
+        <button class="btn btn-primary" ng-click="model.uusiLiite()">{{t('tarjonta.hakukohde.liite.listaus.uusi.liite')}} <span class="icon-plus-sign"></span></button>
+    </p>
+
     <tabset>
         <tab heading="{{kieli}}" ng-repeat="kieli in model.liitteenkielet">
              <table class="table table-hover">
                 <tr>
 
-                    <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.kuvaus')}}</th>
-                    <th>{{t('tarjonta.hakukohde.liite.listaus.liitteen.osoite')}}</th>
+                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.kuvaus"></th>
+                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.osoite"></th>
                     <th></th>
 
                 </tr>
                 <tr data-ng-repeat="liite in model.liitteet | filter:{kieliNimi:kieli}  ">
-
-                    <td>
-                        <div data-ng-bind-html="liite.liitteenKuvaus.teksti"/>
-                        </td>
+                    <td data-ng-bind-html="liite.liitteenKuvaus.teksti"></td>
                     <td>{{ liite.toimitettavaMennessa | date: 'dd.MM.yyyy HH:mm'  }} <br/>
                         {{ liite.liitteenToimitusOsoite.osoiterivi1 }} , {{ liite.liitteenToimitusOsoite.postitoimipaikka }}
                     </td>
                     <td>
-                        <a href="" data-ng-click="model.muokkaaLiitetta(liite)">{{t('tarjonta.hakukohde.liite.listaus.muokkaa')}}</a>
-                        <a href="" data-ng-click="model.poistaLiite(liite)">{{t('tarjonta.hakukohde.liite.listaus.poista')}}</a>
+                        <div class="align-right">
+	                        <a class="btn" href data-ng-click="model.muokkaaLiitetta(liite)"><span tt="tarjonta.hakukohde.liite.listaus.muokkaa"/> <span class="icon-edit"></span></a>
+	                        <a class="btn" href data-ng-click="model.poistaLiite(liite)"><span tt="tarjonta.hakukohde.liite.listaus.poista"/> <span class="icon-remove"></span></a>
+                        </div>
                     </td>
                 </tr>
             </table>

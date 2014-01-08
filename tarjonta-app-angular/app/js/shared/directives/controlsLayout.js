@@ -221,13 +221,16 @@ app.directive('controlsButton',function($log) {
         		tt: scope.tt,
         		primary: scope.primary,
         		action: scope.action,
-        		disabled: scope.disabled });
+        		disabled: scope.disabled,
+        		icon: scope.icon });
         },
         scope: {
         	tt: "@",	   // otsikko (lokalisaatioavain)
         	primary:"@",   // boolean; jos tosi, nappi on ensisijainen (vaikuttaa vain ulkoasuun)
         	action: "&",   // funktio jota klikatessa kutsutaan
-        	disabled: "&"  // funktio jonka perusteella nappi disabloidaan palauttaessa true
+        	disabled: "&", // funktio jonka perusteella nappi disabloidaan palauttaessa true
+        	icon: "@"	   // napin ikoni (viittaus bootstrapin icon-x -luokkaan)
+        		
         }
     }    
 });

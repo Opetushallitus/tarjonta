@@ -1,12 +1,15 @@
+<div>
+<div class="modal-body">
+
+<p ng-bind-html="model.text.headLabel"></p>
+
 <tabset>
     <tab heading="{{model.text.list}}">   
-        <div>
-            <div class="gridStyle" ng-grid="selectGridOptions"></div>
-        </div>
+        <div class="koulutus-list" ng-grid="selectGridOptions"></div>
     </tab>
     <tab heading="{{model.text.hierarchy}}"> 
         <tree-field 
-            style="overflow: scroll; height:200px"
+            class="koulutus-tree"
             names="model.hakutulos"
             oids="model.searchKomoOids" 
             review-oids="null" 
@@ -16,14 +19,12 @@
     </tab>
 </tabset>
 
-<div >
-    <div tt="sisaltyvyys.valitut-koulutukset"></div>   
-    <div style="overflow: scroll; height:100px">
-        <ul><li ng-repeat="obj in model.selectedRowData" ng-click="removeItem(obj)">{{obj.nimi}} X</li></ul>
-    </div>
-</div>
+<h4 tt="sisaltyvyys.valitut-koulutukset"></h4>
+<ul class="listView"><li ng-repeat="obj in model.selectedRowData"><a href ng-click="removeItem(obj)">[x]</a> {{obj.nimi}}</li></ul>
 
+</div>
 <div class="modal-footer">
     <button class="btn btn-warning" ng-click="clickCancel()"><div tt="sisaltyvyys.peruuta"></div></button>
     <button class="btn btn-primary" ng-disabled="model.selectedRowData.length == 0" ng-click="clickReviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+</div>
 </div>

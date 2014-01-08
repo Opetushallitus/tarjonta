@@ -2,19 +2,26 @@ div.richTextArea {
 }
 
 div.richTextArea > div.editor, div.richTextArea > div.preview {
-	max-height:220px;
 	min-height:1em;
 }
 	
 div.richTextArea > div.preview {
-	/*border: 1px dashed #f0f0f0;*/
-	padding:1px;
+    max-height:190px;
+	border: 1px solid #cccccc;
+    border-radius:4px;
+	padding:20px 10px 10px 10px;
 	overflow:auto;
 	cursor:pointer;
 }
 
+div.richTextArea > div.preview.empty {
+	background-color: #cccccc;
+	text-align:center;
+	font-style: italic;
+}
+
 div.richTextArea > div.preview:hover {
-	padding:0;
+/*	padding:0;*/
 	border: 1px dotted #000000;
 	overflow:auto;
 }

@@ -1,18 +1,26 @@
+<div>
+
 <div class="modal-body">
-    <!--pre>
-    {{treedata | json}}
-</pre-->
+
+    <p ng-bind-html="model.text.headLabel"></p>
+
+    <ul ng-show="model.errors.length > 0" class="errors">
+        <li ng-repeat="error in model.errors">{{error.msg}}</li>
+    </ul>
 
     <tree-field 
-        style="overflow: scroll; height:300px"
+        class="koulutus-tree koulutus-preview"
         review-mode="true"
         names="model.hakutulos" 
         oids="model.selectedOid" 
         review-oids="model.reviewOids" 
         lang="koodistoLocale"></tree-field>        
 
-    <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="clickSelectDialogi()"><div tt="sisaltyvyys.palaa"></div></button>
-        <button class="btn btn-primary" ng-click="clickSave()"><div tt="sisaltyvyys.tallenna"></div></button>
-    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="clickSelectDialogi()"><div tt="sisaltyvyys.palaa"></div></button>
+    <button class="btn btn-primary" ng-click="clickSave()"><div tt="sisaltyvyys.tallenna"></div></button>
+</div>
+
 </div>

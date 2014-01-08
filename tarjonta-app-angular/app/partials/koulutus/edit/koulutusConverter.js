@@ -1,5 +1,5 @@
-var app = angular.module('TarjontaConverter', ['ngResource', 'config', 'auth']);
-app.factory('TarjontaConverterFactory', function(Koodisto) {
+var app = angular.module('KoulutusConverter', ['ngResource', 'config', 'auth']);
+app.factory('KoulutusConverterFactory', function(Koodisto) {
     var factory = {};
 
     factory.isNull = function(obj) {
@@ -75,6 +75,26 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         });
     };
 
+    factory.KUVAUS_ORDER = [
+        {type: "TAVOITTEET", isKomo: true},
+        {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
+        {type: "PAAAINEEN_VALINTA", isKomo: false},
+        {type: "MAKSULLISUUS", isKomo: false},
+        {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
+        {type: "PATEVYYS", isKomo: true},
+        {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
+        {type: "SISALTO", isKomo: false},
+        {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
+        {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
+        {type: "KANSAINVALISTYMINEN", isKomo: false},
+        {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
+        {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
+        {type: "ARVIOINTIKRITEERIT", isKomo: false},
+        {type: "PAINOTUS", isKomo: false},
+        {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
+        {type: "KUVAILEVAT_TIEDOT", isKomo: false}
+    ];
+
     factory.STRUCTURE = {
         MLANG: {
             koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: {tekstis: []}}
@@ -90,13 +110,14 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         }, COMBO: {
             //in correct place
             suunniteltuKestoTyyppi: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'}
+            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
+            koulutuksenAlkamiskausi: {'validate': true, 'required': true, nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
             pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
             opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuotokk'},
-            opetusAikas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
-            opetusPaikkas : {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
+            opetusAikas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
             aihees: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.aiheet'},
             ammattinimikkeet: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.ammattinimikkeet'}
@@ -104,12 +125,12 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},
             koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'KORKEAKOULUTUS'},
             tila: {'validate': true, 'required': true, 'nullable': false, 'default': 'LUONNOS'},
-            tunniste: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''},
-            suunniteltuKestoArvo: {'type': 'STR', 'validate': true, 'required': true, nullable: true, default: ''}
-        }, DATE: {
-            koulutuksenAlkamisPvm: {'type': 'DATE', 'validate': true, 'required': true, nullable: false, default: new Date()}
+            tunniste: {'validate': true, 'required': true, nullable: true, default: ''},
+            suunniteltuKestoArvo: {'validate': true, 'required': true, nullable: true, default: ''}
+        }, DATES: {
+            koulutuksenAlkamisPvms: {'validate': true, 'required': true, nullable: false, default: new Date()}
         }, BOOL: {
-            opintojenMaksullisuus: {'type': 'BOOL', 'validate': true, 'required': true, nullable: false, default: false}
+            opintojenMaksullisuus: {'validate': true, 'required': true, nullable: false, default: false}
         }, DESC: {
             kuvausKomo: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
                     'KOULUTUKSEN_RAKENNE',
@@ -241,7 +262,13 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoMultiModel();
         });
-        
+
+        angular.forEach(factory.STRUCTURE.DATES, function(value, key) {
+            if (!angular.isUndefined(uiModel[key])) {
+                uiModel[key] = [];
+            }
+        });
+
         uiModel.showSuccess = false;
 
         return uiModel;
@@ -315,12 +342,8 @@ app.factory('TarjontaConverterFactory', function(Koodisto) {
             apiModel[key] = {'uris': {}};
         });
 
-        angular.forEach(factory.STRUCTURE.DATE, function(value, key) {
-            if (!angular.isUndefined(apiModel[key])) {
-                apiModel[key] = new Date(apiModel[key]); //example convert long to date koulutuksenAlkamisPvm
-            } else {
-                apiModel[key] = value.default;
-            }
+        angular.forEach(factory.STRUCTURE.DATES, function(value, key) {
+            apiModel[key] = [];
         });
 
         angular.forEach(factory.STRUCTURE.STR, function(value, key) {
