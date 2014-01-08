@@ -51,6 +51,15 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "home.default",
                     reloadOnSearch: false
                 })
+                .when("/haku/create", {
+                    action: "haku.create",
+                    resolve: {
+                        hakux: function($log, $route) {
+                            $log.info("/haku/create", $route);
+                            return {oid: "NEW", name: "create, load NOT IMPLEMENTED!"};
+                        }
+                    }
+                })
                 .when("/haku/:oid", {
                     action: "haku.review",
                     reloadOnSearch: false,
@@ -72,9 +81,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             return {oid: $route.current.params.oid, name: "edit, load NOT IMPLEMENTED!"};
                         }
                     }
-                })
-                .when("/haku/create", {
-                    action: "haku.create"
                 })
                 .otherwise({redirectTo: "/etusivu"});
     }]);
