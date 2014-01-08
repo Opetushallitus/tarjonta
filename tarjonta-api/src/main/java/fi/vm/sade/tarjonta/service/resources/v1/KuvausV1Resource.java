@@ -80,6 +80,15 @@ public interface KuvausV1Resource {
             @ApiParam(value ="kuvauksen tunniste", required =  true)
             @PathParam("tunniste") String tunniste);
 
+
+    @DELETE
+    @Path("/{tunniste}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
+    ResultV1RDTO<KuvausV1RDTO> removeById(
+            @ApiParam(value ="kuvauksen tunniste", required =  true)
+            @PathParam("tunniste") String tunniste);
+
     @GET
     @Path("/{tyyppi}/{oppilaitostyyppi}/{nimi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

@@ -6,6 +6,31 @@ app.factory('Kuvaus',function($http,Config,$q){
 
     return {
 
+        removeKuvausWithId : function(kuvausTunniste) {
+
+            var promise = $q.defer();
+
+            if (kuvausTunniste !== undefined) {
+
+                var kuvausGetUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+kuvausTunniste;
+
+                $http.delete(kuvausGetUri)
+                    .success(function(data){
+                        promise.resolve(data);
+                    })
+                    .error(function(data){
+                        promise.resolve(data);
+                    });
+
+            } else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
+        },
+
         findKuvausWithId : function(kuvausTunniste) {
 
 

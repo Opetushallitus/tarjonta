@@ -19,7 +19,7 @@ var app = angular.module('app.haku.review.ctrl', []);
 
 app.controller('BaseHakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$modal',
     function BaseReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $modal) {
-        $log.info("BaseHakuReviewController()");
+        $log.info("BaseHakuReviewController()", $scope, $route, $routeParams);
 
         $scope.model = {
             routeParams: $routeParams,
@@ -27,7 +27,9 @@ app.controller('BaseHakuReviewController', ['$scope', '$location', '$route', '$l
                 model: true
             },
             languages: [],
-            haku : {todo : "TODO LAOD ME"}
+            haku : {todo : "TODO LOAD ME 1"},
+            hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
+            place : "holder"
         };
 
         $scope.init = function() {
