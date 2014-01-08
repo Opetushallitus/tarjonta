@@ -64,6 +64,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedot(String tyyppi, String orgType) {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
@@ -319,12 +320,14 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<KuvausV1RDTO> removeById(String tunniste) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
 
         try {
 
-            ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.getLong(tunniste));
+
+            ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.parseLong(tunniste));
 
             kuvausDAO.remove(valintaperusteSoraKuvaus);
 
@@ -332,6 +335,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp ){
+            LOG.warn("EXCEPTION REMOVING KUVAUS : " + tunniste + " " + exp.toString());
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
