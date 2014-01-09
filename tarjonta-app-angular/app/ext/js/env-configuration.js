@@ -77,6 +77,7 @@ window.CONFIG = {
         "haku.uri": "/tarjonta-service/rest/haku",
         "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
         "haku.kohdejoukko.kk.uri": "haunkohdejoukko_12#1",
+        "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         //käsin lisätyt:
 
         //
@@ -102,7 +103,8 @@ window.CONFIG = {
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
         // Only for development, since production reads "/cas/myroles"
-         "casUrl": "cas_me_ophadmin.json",
+        "casUrl": "cas_me_ophadmin.json",
+        //"casUrl": "cas_me_tiimi2.json",
         //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
         "place": "holder"

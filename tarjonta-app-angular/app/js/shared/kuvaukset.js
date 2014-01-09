@@ -138,6 +138,7 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
 
                 var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi+"/"+oppilaitosTyyppi+"/kuvaustenTiedot";
+
                 $http.get(queryUri)
                     .success(function(data){
                       promise.resolve(data);
@@ -150,6 +151,30 @@ app.factory('Kuvaus',function($http,Config,$q){
                 promise.resolve();
             }
 
+
+            return promise.promise;
+
+        },
+
+        findKuvauksesWithSearchSpec : function(searchSpec, tyyppi) {
+
+            var promise = $q.defer();
+
+            if (searchSpec !== undefined && tyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix +kuvausUriPrefix +tyyppi+"/search";
+
+
+                 $http.post(queryUri,searchSpec)
+                     .success(function(data){
+                          promise.resolve(data);
+                     }).error(function(errorData) {
+                         promise.resolve(errorData);
+                     });
+
+            }  else {
+                promise.resolve(null);
+            }
 
             return promise.promise;
 
