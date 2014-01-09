@@ -49,11 +49,11 @@
                         <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi"></th>
                     </tr>
                     <tr data-ng-repeat="valintaperuste in model.valintaperusteet">
-                        <a href="" data-ng-click="">
                             <td ><a href="" data-ng-click="selectKuvaus(valintaperuste)">{{valintaperuste.kuvauksenNimi}}</a> </td>
                             <td data-ng-bind-html="valintaperuste.organisaatioTyyppi"></td>
                             <td data-ng-bind-html="valintaperuste.vuosikausi"></td>
-                        </a>
+                            <td><a href="" data-ng-click="removeKuvaus(valintaperuste)">{{t('tarjonta.valintaperustekuvaus.poista.link')}}</a> </td>
+
                     </tr>
                 </table>
 
@@ -71,6 +71,7 @@
 
                             <td data-ng-bind-html="sora.organisaatioTyyppi"></td>
                             <td data-ng-bind-html="sora.vuosikausi"></td>
+                        <td><a href="" data-ng-click="removeKuvaus(sora)">{{t('tarjonta.valintaperustekuvaus.poista.link')}}</a> </td>
 
                     </tr>
                 </table>

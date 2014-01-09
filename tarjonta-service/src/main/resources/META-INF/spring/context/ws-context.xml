@@ -44,7 +44,6 @@
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
 
     <!-- API V1 -->
-    <bean id="yhteyshenkiloResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.YhteyshenkiloResourceImplV1" />
     <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1" />
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
@@ -104,7 +103,6 @@
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
-            <ref bean="yhteyshenkiloResourceV1"/>
             <ref bean="linkingResourceV1"/>
             <ref bean="permissionResourceV1"/>
             <ref bean="kuvausResourceV1"/>

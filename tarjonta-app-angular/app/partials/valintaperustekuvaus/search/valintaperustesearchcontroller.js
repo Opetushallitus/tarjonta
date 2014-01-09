@@ -5,7 +5,9 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
 
-    var oppilaitosTyyppi = "oppilaitostyyppi_41";
+    var oppilaitosTyyppi = $route.current.params.oppilaitosTyyppi;
+
+    console.log('GOT OPPILAITOSTYYPPI : ', oppilaitosTyyppi);
 
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
 
@@ -13,7 +15,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.model = {};
 
-        $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
+    $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
 
     $scope.model.valintaperusteet = [];
 
@@ -33,8 +35,6 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         var kuvausPromise = Kuvaus.findKuvausBasicInformation( kuvausTyyppi,oppilaitosTyyppi);
 
         kuvausPromise.then(function(data){
-
-
             angular.forEach(data.result,function(resultObj){
 
                 var vpkObj = {};
@@ -83,6 +83,35 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
+    var removeKuvausFromArray = function(kuvaus) {
+
+
+
+
+        if (kuvaus.tyyppi === $scope.model.kuvaustyyppis[1])  {
+            var index = $scope.model.sorat.indexOf(kuvaus);
+            $scope.model.sorat.splice(index,1);
+        } else if (kuvaus.tyyppi === $scope.model.kuvaustyyppis[0]) {
+            var index = $scope.model.valintaperusteet.indexOf(kuvaus);
+            $scope.model.valintaperusteet.splice(index,1);
+        }
+
+
+    };
+
+    var removeKuvaus = function(kuvaus) {
+
+
+        var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.tunniste);
+        removedKuvausPromise.then(function(removedKuvaus){
+            if (removedKuvaus.status === "OK")  {
+
+                removeKuvausFromArray(kuvaus);
+            }
+
+        });
+    };
+
     /*
 
         ----------> Controller "initialization functions"
@@ -107,6 +136,26 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +oppilaitosTyyppi + "/"+kuvausTyyppi +"/NEW";
         $location.path(kuvausEditUri);
     };
+
+    $scope.removeKuvaus = function(kuvaus) {
+
+        var texts = {
+            title: LocalisationService.t("valintaperuste.list.remove.title"),
+            description: LocalisationService.t("valintaperuste.list.remove.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
+        var d = dialogService.showDialog(texts);
+
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+                removeKuvaus(kuvaus);
+            }
+        });
+
+
+
+    }
 
     $scope.valintaPerusteOptions = function() {
         var ret = [];
