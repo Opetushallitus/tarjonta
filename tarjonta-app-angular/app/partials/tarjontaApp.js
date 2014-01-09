@@ -16,12 +16,7 @@ angular.module('app.kk',
             'app.edit.ctrl.alkamispaiva',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
-
             'app.haku.ctrl',
-            'app.haku.list.ctrl',
-            'app.haku.edit.ctrl',
-            'app.haku.review.ctrl',
-
             'ui.bootstrap',
             'ngRoute',
             'config',
