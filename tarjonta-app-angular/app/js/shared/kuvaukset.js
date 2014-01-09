@@ -156,6 +156,30 @@ app.factory('Kuvaus',function($http,Config,$q){
 
         },
 
+        findKuvauksesWithSearchSpec : function(searchSpec, tyyppi) {
+
+            var promise = $q.defer();
+
+            if (searchSpec !== undefined && tyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix +kuvausUriPrefix +tyyppi+"/search";
+
+
+                 $http.post(queryUri,searchSpec)
+                     .success(function(data){
+                          promise.resolve(data);
+                     }).error(function(errorData) {
+                         promise.resolve(errorData);
+                     });
+
+            }  else {
+                promise.resolve(null);
+            }
+
+            return promise.promise;
+
+        },
+
         findAllNimesWithType : function(tyyppi) {
 
             var promise = $q.defer();

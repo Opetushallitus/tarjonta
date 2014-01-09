@@ -69,17 +69,28 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
     }
 
     @Override
-    public List<ValintaperusteSoraKuvaus> findBySearchSpec(KuvausSearchV1RDTO searchSpec) {
+    public List<ValintaperusteSoraKuvaus> findBySearchSpec(KuvausSearchV1RDTO searchSpec, ValintaperusteSoraKuvaus.Tyyppi tyyppi) {
         QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;
         QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
 
         BooleanExpression whereExpr = null;
 
-
+        if (tyyppi != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi));
+        }
 
         if (searchSpec.getOppilaitosTyyppi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(searchSpec.getOppilaitosTyyppi().trim()));
         }
+
+        if (searchSpec.getVuosi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.vuosi.eq(searchSpec.getVuosi()));
+        }
+
+        if (searchSpec.getKausiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.kausi.eq(searchSpec.getKausiUri()));
+        }
+
         //TODO: add search for nimi
 
         JPAQuery query = from(qValintaperusteSoraKuvaus);

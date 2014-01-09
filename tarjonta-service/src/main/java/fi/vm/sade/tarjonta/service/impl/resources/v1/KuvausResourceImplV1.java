@@ -345,7 +345,37 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(KuvausSearchV1RDTO searchParam) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(String tyyppi, KuvausSearchV1RDTO searchParam) {
+        ResultV1RDTO<List<KuvausV1RDTO>> result = new ResultV1RDTO<List<KuvausV1RDTO>>();
+
+        try {
+
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
+
+            LOG.debug("SEARCHING WITH TYYPPI : " + tyyppi);
+
+            LOG.debug("SEARCHING WITH SEARCH SPEC KAUSI : "  + searchParam.getKausiUri());
+
+            List<ValintaperusteSoraKuvaus> resultList = kuvausDAO.findBySearchSpec(searchParam,vpsTyyppi);
+
+            if (resultList != null && resultList.size() > 0) {
+                List<KuvausV1RDTO>  kuvauksesList = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpk:resultList) {
+                    kuvauksesList.add(converter.toKuvausRDTO(vpk,false));
+                }
+               result.setResult(kuvauksesList);
+               result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            } else {
+                result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+        } catch (Exception exp) {
+            LOG.warn("EXCEPTION RETRIEVING KUVAUKSES : {}", exp.toString() );
+            result.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+        }
+
+        return result;
     }
 }

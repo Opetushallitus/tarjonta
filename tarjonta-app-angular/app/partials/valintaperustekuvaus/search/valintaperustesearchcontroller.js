@@ -15,6 +15,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.model = {};
 
+    $scope.model.searchSpec = {};
+
     $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
 
     $scope.model.valintaperusteet = [];
@@ -155,6 +157,16 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
 
+    }
+
+    $scope.search = function() {
+        console.log('SEARCH SPEC : ' ,$scope.model.searchSpec);
+
+        var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,$scope.model.kuvaustyyppis[1]);
+
+        searchPromise.then(function(data) {
+           console.log('GOT DATA : ', data);
+        });
     }
 
     $scope.valintaPerusteOptions = function() {
