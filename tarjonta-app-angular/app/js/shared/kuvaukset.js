@@ -138,6 +138,7 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
 
                 var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi+"/"+oppilaitosTyyppi+"/kuvaustenTiedot";
+
                 $http.get(queryUri)
                     .success(function(data){
                       promise.resolve(data);

@@ -159,8 +159,12 @@ div#orgSearch {
 	margin-bottom:20px;
 }
 
-div#orgSearchResults > ul > li {
-	padding-left:0;
+div#orgSearchResults span {
+	margin-left:20px;
+	margin-bottom:-20px;
+    display:block;
+    position:relative;
+    top:-20px;
 }
 
 /* tarjonnan hakunäkymä */
