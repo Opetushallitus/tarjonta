@@ -43,6 +43,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
             filterwithkoodistouri : "=",
             usearvocombo : "=",
             parentkoodiuri : "=",
+            filteruris : "=",
             prompt : "=",
             isalakoodi : "=",
             onchangecallback : "="
@@ -92,6 +93,25 @@ app.directive('koodistocombo',function(Koodisto,$log){
                    $scope.koodis = koodisParam;
                });
            }
+
+            //If filter uris is changed then query only those and show those koodis
+            $scope.$watch('filteruris',function(){
+                var filteredKoodis = [];
+
+                if ($scope.filteruris !== undefined && $scope.filteruris.length > 0) {
+                    angular.forEach($scope.koodis,function(koodi){
+
+                        angular.forEach($scope.filteruris,function(filterUri){
+                            if (koodi.koodiUri === filterUri) {
+                                filteredKoodis.push(koodi);
+                            };
+                        });
+
+                    });
+                }
+
+                $scope.koodis = filteredKoodis;
+            });
 
             $scope.$watch('parentkoodiuri',function(){
                 $log.info('Parent koodi uri changed');
