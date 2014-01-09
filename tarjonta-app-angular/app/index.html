@@ -134,6 +134,11 @@
 
         <script src="partials/hakukohde/hakukohdeController.js"></script>
 
+        <script src="partials/haku/hakuControllers.js"></script>
+        <script src="partials/haku/list/hakuListControllers.js"></script>
+        <script src="partials/haku/edit/hakuEditControllers.js"></script>
+        <script src="partials/haku/review/hakuReviewControllers.js"></script>
+
         <script src="lib/ui-bootstrap-tpls-0.6.0.js"></script>
 
         <script src="partials/common/dialogService.js"></script>
@@ -218,6 +223,23 @@
                         </div>
                     </div><!-- 0:/hakukohde -->
 
+                    <div data-ng-switch-when="haku">
+                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakuRoutingController">
+                            <div data-ng-switch-when="list">
+                                <div data-ng-include="'partials/haku/list/list.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="review">
+                                <div data-ng-include="'partials/haku/review/review.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit">
+                                <div data-ng-include="'partials/haku/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-default>
+                                UNKNOWN ACTION! {{ renderPath | json }}
+                            </div>
+                        </div>
+                    </div><!-- 0:/haku -->
+
                     <div data-ng-switch-when="valintaPerusteKuvaus">
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="ValintaperusteEditController">
                             <div data-ng-switch-when="edit">
@@ -243,7 +265,7 @@
                                     Footer, route counter = {{count}}<br>
                                     <a href="#/etusivu">Etusivulle</a>
                                     <a href="/lokalisointi">Käännösten hallinta</a>
-                
+
                                     <div>
                                         <span data-ng-click="showTheSheisse = !showTheSheisse"
                                               class="collapseHeader"
