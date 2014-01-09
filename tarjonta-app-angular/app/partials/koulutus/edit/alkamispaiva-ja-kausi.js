@@ -11,6 +11,7 @@ app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($l
             };
 
             //add default option
+            $scope.kausiUiModel=$scope.kausiUiModel||[];
             $scope.kausiUiModel.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
 
             $scope.$watch("kausiModel.uri", function(valNew, valOld) {
