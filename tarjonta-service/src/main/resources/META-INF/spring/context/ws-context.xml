@@ -103,7 +103,6 @@
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
-            <ref bean="yhteyshenkiloResourceV1"/>
             <ref bean="linkingResourceV1"/>
             <ref bean="permissionResourceV1"/>
             <ref bean="kuvausResourceV1"/>
