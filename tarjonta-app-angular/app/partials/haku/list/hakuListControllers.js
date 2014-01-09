@@ -13,12 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-var app = angular.module('app.haku.edit.ctrl', []);
 
-app.controller('HakuEditController',
+var app = angular.module('app.haku.list.ctrl', []);
+
+app.controller('HakuListController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
-            function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
-                $log.info("HakuEditController()");
+            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
+                $log.info("HakuListController()");
 
                 // TODO preloaded / resolved haku is where?
 
@@ -39,4 +40,3 @@ app.controller('HakuEditController',
 
                 $scope.init();
             }]);
-

@@ -13,28 +13,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-
-
 var app = angular.module('app.haku.review.ctrl', []);
 
-app.controller('BaseHakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$modal',
-    function BaseReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $modal) {
-        $log.info("BaseHakuReviewController()", $scope, $route, $routeParams);
+app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$modal',
+    function HakuReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $modal) {
+        $log.info("HakuReviewController()", $scope, $route, $routeParams);
+
+        // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
 
         $scope.model = {
-            routeParams: $routeParams,
             collapse: {
                 model: true
             },
-            languages: [],
             haku : {todo : "TODO LOAD ME 1"},
-            hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
             place : "holder"
         };
 
         $scope.init = function() {
-            $log.info("init()...");
-            $log.info("init()... done.");
+            $log.info("HakuReviewController.init()...");
+            $log.info("HakuReviewController.init()... done.");
         };
 
         $scope.init();

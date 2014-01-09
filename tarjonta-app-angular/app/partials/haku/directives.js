@@ -13,14 +13,13 @@ app.directive('ttt', ['$log', 'LocalisationService', function($log, Localisation
             compile: function(tElement, tAttrs, transclude) {
                 $log.info("ttt compile", tElement, tAttrs, transclude);
 
-                // Grab the text in the template
+                // Grab the original / placeholder text in the template
                 var originalText = "";
 
                 var localName = tElement[0].localName;
                 if (localName === "input") {
                     originalText = tAttrs["value"];
                 } else {
-                    // originalText = $(tElement).html();
                     originalText = tElement.html();
                 }
 
