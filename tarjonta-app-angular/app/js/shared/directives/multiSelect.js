@@ -31,6 +31,7 @@ app.directive('multiSelect', function($log) {
         		$name:$scope.name
         }
 
+        $scope.titles = [];
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
@@ -55,6 +56,20 @@ app.directive('multiSelect', function($log) {
 
         if ($scope.value == undefined) {
             $scope.value = "koodiNimi";
+        }
+        
+        $scope.combo = {selection: ""};
+        
+        $scope.onComboSelect = function(v) {
+        	
+        	for (var i in $scope.names) {
+        		if ($scope.names[i] == $scope.combo.selection) {
+                	$scope.onPreselection([i]);
+        			break;
+        		}
+        	}
+        	
+        	$scope.combo.selection = "";
         }
 
         // (multi)select-valinta
@@ -103,7 +118,6 @@ app.directive('multiSelect', function($log) {
         
         var init = function(model) {
 
-
             for (var k in model) {
                 var e = model[k];
                 var w = 0;
@@ -114,6 +128,9 @@ app.directive('multiSelect', function($log) {
                     }
                 }
                 //console.log("cw="+cw+" -> w="+w);
+                
+                $scope.titles.push(e[value]);
+                
                 $scope.items.push({
                     selected: $scope.selection.indexOf(e[key]) !== -1,
                     key: e[key],
@@ -123,12 +140,12 @@ app.directive('multiSelect', function($log) {
                 $scope.names[e[key]] = e[value];
             }
 
+            $scope.titles.sort();
+            
             $scope.items.sort(function(a, b) {
                 return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
             
-            //console.log("ITEMS", $scope.items);
-
             $scope.rows = columnize($scope.items, columns);
             updateErrors();
         }
