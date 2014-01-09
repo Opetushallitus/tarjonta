@@ -97,6 +97,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
+    var showCreateNewDialog = function() {
+         //TODO: add dialog to show user learning institution types
+    };
+
     var resolveKausi = function(kuvaukset) {
 
         var resolvedKuvaukset = [];
@@ -225,9 +229,16 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
-    $scope.createNew = function(kuvausTyyppi,oppilaitosTyyppi) {
-        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +oppilaitosTyyppi + "/"+kuvausTyyppi +"/NEW";
-        $location.path(kuvausEditUri);
+    $scope.createNew = function(kuvausTyyppi) {
+
+        if ($scope.model.userOrgTypes.length > 0 && $scope.model.userOrgTypes.length < 2) {
+            var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+kuvausTyyppi +"/NEW";
+            $location.path(kuvausEditUri);
+        } else {
+            showCreateNewDialog();
+        }
+
+
     };
 
     $scope.removeKuvaus = function(kuvaus) {
