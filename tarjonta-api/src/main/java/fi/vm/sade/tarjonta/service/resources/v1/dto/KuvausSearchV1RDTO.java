@@ -12,6 +12,12 @@ public class KuvausSearchV1RDTO {
     @ApiModelProperty(value = "Learning institution type")
     private String oppilaitosTyyppi;
 
+    @ApiModelProperty(value = "Uri of the season")
+    private String kausiUri;
+
+    @ApiModelProperty(value = "Year")
+    private Integer vuosi;
+
 
     public String getHakusana() {
         return hakusana;
@@ -27,5 +33,21 @@ public class KuvausSearchV1RDTO {
 
     public void setOppilaitosTyyppi(String oppilaitosTyyppi) {
         this.oppilaitosTyyppi = oppilaitosTyyppi;
+    }
+
+    public String getKausiUri() {
+        return kausiUri;
+    }
+
+    public void setKausiUri(String kausiUri) {
+        this.kausiUri = kausiUri;
+    }
+
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
     }
 }

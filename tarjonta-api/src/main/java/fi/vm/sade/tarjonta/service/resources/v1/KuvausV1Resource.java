@@ -115,6 +115,7 @@ public interface KuvausV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(
+            @ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
             @ApiParam(value="Haun parametrit" , required = true)
             KuvausSearchV1RDTO searchParam
     );

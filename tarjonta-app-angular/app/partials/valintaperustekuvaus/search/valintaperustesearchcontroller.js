@@ -15,6 +15,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     $scope.model = {};
 
+    $scope.model.searchSpec = {};
+
     $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
 
     $scope.model.valintaperusteet = [];
@@ -83,6 +85,24 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
+    var localizeKuvausNames = function(kuvaukses) {
+
+        angular.forEach(kuvaukses,function(kuvaus){
+
+            for (var prop in kuvaus.kuvauksenNimet) {
+                if (kuvaus.kuvauksenNimet.hasOwnProperty(prop)) {
+
+                    if (prop.indexOf($scope.model.userLang)) {
+                        kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
+                    }
+
+                }
+            }
+
+        });
+
+    };
+
     var removeKuvausFromArray = function(kuvaus) {
 
 
@@ -118,7 +138,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
      */
 
-     getKuvaukses();
+     //getKuvaukses();
 
     /*
 
@@ -152,6 +172,43 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 removeKuvaus(kuvaus);
             }
         });
+
+
+
+    }
+
+    $scope.search = function() {
+
+        angular.forEach($scope.model.kuvaustyyppis,function(tyyppi){
+
+            var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,tyyppi);
+
+            searchPromise.then(function(resultData){
+
+                if (resultData.status === "OK") {
+                    if (tyyppi === $scope.model.kuvaustyyppis[0]) {
+
+                        $scope.model.valintaperusteet = [];
+
+                        $scope.model.valintaperusteet.push.apply($scope.model.valintaperusteet,resultData.result);
+
+                        localizeKuvausNames($scope.model.valintaperusteet);
+
+                    } else if (tyyppi === $scope.model.kuvaustyyppis[1]) {
+
+                        $scope.model.sorat = [];
+
+                        $scope.model.sorat.push.apply($scope.model.sorat,resultData.result);
+
+                        localizeKuvausNames($scope.model.sorat);
+
+                    }
+                };
+
+            });
+
+        });
+
 
 
 
