@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +53,8 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import java.util.Calendar;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -91,12 +94,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
-    /**
-     * todo: can we set this attribute to "required"?
-     */
-    @Temporal(TemporalType.DATE)
-    @Column(name = "koulutuksen_alkamis_pvm")
-    private Date koulutuksenAlkamisPvm;
     @Column(name = "suunniteltu_kesto_arvo")
     private String suunniteltuKestoArvo;
     @Column(name = "suunniteltu_kesto_yksikko")
@@ -216,7 +213,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
-    
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_alkamispvm",
+            joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    @Column(name = "alkamispvm")
+    private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
+
     private transient boolean showMeta = true;
 
     public String getOpintojenLaajuusArvo() {
@@ -329,22 +332,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setKoulutuslajis(Set<KoodistoUri> uris) {
         this.koulutuslajis = uris;
-    }
-
-    /**
-     * The date this KoulutusmoduuliToteutus is scheduled to start.
-     *
-     * @return the koulutuksenAlkamisPvm
-     */
-    public Date getKoulutuksenAlkamisPvm() {
-        return koulutuksenAlkamisPvm;
-    }
-
-    /**
-     * @param koulutuksenAlkamisPvm the koulutuksenAlkamisPvm to set
-     */
-    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
-        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
     }
 
     /**
@@ -934,5 +921,59 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOpetusPaikkas(Set<KoodistoUri> opetusPaikkas) {
         this.opetusPaikkas = opetusPaikkas;
+    }
+
+    /**
+     * Korkeakouluilla voi olla monta aloituspaivanmaaraa.
+     *
+     * @return the koulutuksenAlkamisPvms
+     */
+    public Set<Date> getKoulutuksenAlkamisPvms() {
+        return koulutuksenAlkamisPvms;
+    }
+
+    /**
+     * Korkeakouluilla voi olla monta aloituspaivanmaaraa.
+     *
+     * @param koulutuksenAlkamisPvms the koulutuksenAlkamisPvms to set
+     */
+    public void setKoulutuksenAlkamisPvms(Set<Date> koulutuksenAlkamisPvms) {
+        this.koulutuksenAlkamisPvms = koulutuksenAlkamisPvms;
+    }
+
+    public void addKoulutuksenAlkamisPvms(Date koulutuksenAlkamisPvm) {
+        Preconditions.checkNotNull(koulutuksenAlkamisPvm, "koulutuksenAlkamisPvm date object cannot be null.");
+        this.koulutuksenAlkamisPvms.add(DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE));
+    }
+
+    public void clearKoulutuksenAlkamisPvms() {
+        this.koulutuksenAlkamisPvms.clear();
+    }
+
+    /**
+     * Amattillisella- ja lukiokoulutuksella on vain yksi aloituspvm.
+     *
+     * @param koulutuksenAlkamisPvm
+     */
+    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
+        Preconditions.checkNotNull(koulutuksenAlkamisPvm, "koulutuksenAlkamisPvm date object cannot be null.");
+        this.koulutuksenAlkamisPvms.clear();
+        this.koulutuksenAlkamisPvms.add(DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE));
+    }
+
+    /**
+     * Amattillisella- ja lukiokoulutuksella on vain yksi aloituspvm.
+     *
+     * @return
+     */
+    public Date getKoulutuksenAlkamisPvm() {
+        if (this.koulutuksenAlkamisPvms.size() > 1) {
+            throw new RuntimeException("Not allowed error - Too many starting dates, maybe you are using a wrong method?");
+        } else if (koulutuksenAlkamisPvms.isEmpty()) {
+            //at least parent komoto's date can be null. 
+            return null;
+        }
+
+        return this.koulutuksenAlkamisPvms.iterator().next();
     }
 }

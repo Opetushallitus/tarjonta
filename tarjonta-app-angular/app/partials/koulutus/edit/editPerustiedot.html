@@ -97,12 +97,13 @@
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>
 
-        <!-- koulutuksen alkamispvm -->
+        <!-- koulutuksen alkamispvm -->   
         <tr class="required">
             <th tt="koulutus.edit.koulutuksen-alkamispvm"/>
             <td>
                 <alkamispaiva-ja-kausi 
-                    pvms="uiModel.koulutuksenAlkamisPvms"           
+                    pvms="model.koulutuksenAlkamisPvms"       
+                    vuosi="model.koulutuksenAlkamisvuosi"
                     kausi-model="model.koulutuksenAlkamiskausi"
                     kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
                 </alkamispaiva-ja-kausi> 

@@ -36,6 +36,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -45,6 +46,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,14 +129,39 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komoto.setTarjoaja(organisationOId);
         Preconditions.checkNotNull(dto.getOpintojenMaksullisuus(), "OpintojenMaksullisuus boolean cannot be null.");
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
-        Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
-        if (koulutuksenAlkamisPvms != null && koulutuksenAlkamisPvms.size() == 1) {
-            final Date next = koulutuksenAlkamisPvms.iterator().next();
-            komoto.setKoulutuksenAlkamisPvm(next);
-            komoto.setAlkamisVuosi(KoulutusBusinessServiceImpl.getYearFromDate(next));
-        }
+        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
 
-        if (dto.getKoulutuksenAlkamiskausi() != null) {
+        //clear all old date objects
+        if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
+            //one or many dates   
+
+            final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
+            final String baseKausi = IndexDataUtils.parseKausiKoodi(firstDate);
+            final Integer baseVuosi = IndexDataUtils.parseYearInt(firstDate);
+            Preconditions.checkNotNull(baseKausi, "Parsed alkamiskausi cannot be null!");
+            Preconditions.checkNotNull(baseVuosi, "Parsed alkamisvuosi cannot be null!");
+
+            //pre-check if the dates are within same date range of kausi + vuosi
+            for (Date pvm : koulutuksenAlkamisPvms) {
+                if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
+                    throw new RuntimeException("Not within correct date range - found an invalid kausi!");
+                }
+
+                if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
+                    throw new RuntimeException("Not within correct date range - found an invalid year!");
+                }
+                komoto.addKoulutuksenAlkamisPvms(pvm);
+            }
+
+            komoto.setAlkamisVuosi(baseVuosi);
+            komoto.setAlkamiskausi(baseKausi);
+        } else {
+            //allowed only one kausi and year
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
+            komoto.clearKoulutuksenAlkamisPvms();
+            //only kausi + year, no date objects   
+            komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
             komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
         }
 
