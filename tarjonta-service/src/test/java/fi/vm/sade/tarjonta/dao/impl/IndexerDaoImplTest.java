@@ -64,11 +64,11 @@ public class IndexerDaoImplTest extends TestData {
         super.initializeData(em, fixtures);
     }
 
-    @Test
-    public void testFindAllKoulutukset() {
-        List<KoulutusIndexEntity> result = indexerDao.findAllKoulutukset();
-        assertEquals(4, result.size());
-    }
+//    @Test
+//    public void testFindAllKoulutukset() {
+//        List<KoulutusIndexEntity> result = indexerDao.findAllKoulutukset();
+//        assertEquals(4, result.size());
+//    }
 
     @Test
     public void testFindKoulutusById() {
