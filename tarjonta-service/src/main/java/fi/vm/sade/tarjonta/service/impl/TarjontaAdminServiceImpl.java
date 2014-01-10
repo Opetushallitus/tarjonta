@@ -36,6 +36,7 @@ import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +119,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(readOnly = false)
+    @Secured({"APP_TARJONTA_READ_UPDATE","APP_TARJONTA_CRUD"})
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
         permissionChecker.checkHakuUpdate();
 
@@ -142,6 +144,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_READ_UPDATE","APP_TARJONTA_CRUD"})
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid);
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
@@ -157,6 +160,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_READ_UPDATE","APP_TARJONTA_CRUD"})
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid);
 
@@ -180,6 +184,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_CRUD"})
     public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
         permissionChecker.checkUpdateHakukohdeByHakukohdeliiteTunniste(hakukohdeLiiteTunniste);
         HakukohdeLiite liite = hakukohdeDAO.findHakuKohdeLiiteById(hakukohdeLiiteTunniste);
@@ -190,6 +195,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_CRUD"})
     public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
         permissionChecker.checkUpdateHakukohdeByValintakoeTunniste(valintakoeTunniste);
 
@@ -563,6 +569,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_CRUD"})
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
@@ -580,6 +587,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_READ_UPDATE","APP_TARJONTA_CRUD"})
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
@@ -616,6 +624,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Secured({"APP_TARJONTA_CRUD"})
     public void poistaKoulutus(String koulutusOid) {
         permissionChecker.checkRemoveKoulutus(koulutusOid);
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
