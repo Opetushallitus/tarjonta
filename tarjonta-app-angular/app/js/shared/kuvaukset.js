@@ -13,7 +13,6 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (kuvausTunniste !== undefined) {
 
                 var kuvausGetUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+kuvausTunniste;
-
                 $http.delete(kuvausGetUri)
                     .success(function(data){
                         promise.resolve(data);

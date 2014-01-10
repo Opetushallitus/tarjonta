@@ -175,7 +175,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
 
                 })
-                .when('/valintaPerusteKuvaus/search/:oppilaitosTyyppi',{
+                .when('/valintaPerusteKuvaus/search',{
 
                     action : "valintaPerusteKuvaus.search",
                     controller: 'ValintaperusteSearchController'

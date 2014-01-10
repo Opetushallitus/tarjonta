@@ -1,6 +1,6 @@
 var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','ResultsTable']);
 
-app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService) {
+app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal) {
 
 
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
@@ -31,58 +31,6 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
      */
 
-    var findKuvausInformation = function(kuvausTyyppi,oppilaitosTyyppi) {
-        var kuvausPromise = Kuvaus.findKuvausBasicInformation( kuvausTyyppi,oppilaitosTyyppi);
-
-        kuvausPromise.then(function(data){
-            angular.forEach(data.result,function(resultObj){
-
-                var vpkObj = {};
-
-                vpkObj.tyyppi = kuvausTyyppi;
-                vpkObj.tunniste = resultObj.kuvauksenTunniste;
-
-                for (var prop in resultObj.kuvauksenNimet) {
-                    if (resultObj.kuvauksenNimet.hasOwnProperty(prop)) {
-
-                        if (prop.indexOf($scope.model.userLang)) {
-                            vpkObj.kuvauksenNimi = resultObj.kuvauksenNimet[prop];
-                        }
-
-                    }
-                }
-                var oppilaitosTyyppiKoodiPromise = Koodisto.getKoodi(oppilaitosKoodistoUri,resultObj.organisaatioTyyppi,$scope.model.userLang);
-
-                oppilaitosTyyppiKoodiPromise.then(function(oppilaitosTyyppiKoodi){
-                    vpkObj.organisaatioTyyppi = oppilaitosTyyppiKoodi.koodiNimi;
-                });
-
-
-
-                var kausiKoodiPromise = Koodisto.getKoodi(kausiKoodistoUri,resultObj.kausi,$scope.model.userLang);
-                kausiKoodiPromise.then(function(kausiKoodi){
-                    vpkObj.vuosikausi =  resultObj.vuosi + " " + kausiKoodi.koodiNimi;
-                });
-                if (kuvausTyyppi === $scope.model.kuvaustyyppis[0]) {
-                    $scope.model.valintaperusteet.push(vpkObj);
-                } else if (kuvausTyyppi === $scope.model.kuvaustyyppis[1]) {
-                    $scope.model.sorat.push(vpkObj);
-                }
-
-
-            });
-
-        });
-    }
-
-    var getKuvaukses = function() {
-
-        angular.forEach($scope.model.kuvaustyyppis,function(kuvaustyyppi){
-           findKuvausInformation(kuvaustyyppi,$scope.model.searchSpec.oppilaitosTyyppi);
-        });
-
-    };
-
     var getUserOrgs = function() {
 
         if (!AuthService.isUserOph())   {
@@ -97,8 +45,28 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
-    var showCreateNewDialog = function() {
-         //TODO: add dialog to show user learning institution types
+    var showCreateNewDialog = function(vpkTyyppiParam) {
+
+          var modalInstance = $modal.open({
+            templateUrl: 'partials/valintaperustekuvaus/search/uusi-valintaperuste-dialog.html',
+            controller: 'LuoUusiValintaPerusteDialog',
+            windowClass: 'valintakoe-modal',
+            resolve: {
+                filterUris : function() {
+                    return $scope.model.userOrgTypes;
+                },
+                selectedUri : function() {
+                    return $scope.model.searchSpec.oppilaitosTyyppi;
+                }
+            }
+        });
+
+        modalInstance.result.then(function(selectedOrgType){
+             if (selectedOrgType !== undefined) {
+                 var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +selectedOrgType + "/"+vpkTyyppiParam +"/NEW";
+                 $location.path(kuvausEditUri);
+             }
+        });
     };
 
     var resolveKausi = function(kuvaukset) {
@@ -180,10 +148,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
 
-        if (kuvaus.tyyppi === $scope.model.kuvaustyyppis[1])  {
+        if (kuvaus.kuvauksenTyyppi === $scope.model.kuvaustyyppis[1])  {
             var index = $scope.model.sorat.indexOf(kuvaus);
             $scope.model.sorat.splice(index,1);
-        } else if (kuvaus.tyyppi === $scope.model.kuvaustyyppis[0]) {
+        } else if (kuvaus.kuvauksenTyyppi === $scope.model.kuvaustyyppis[0]) {
             var index = $scope.model.valintaperusteet.indexOf(kuvaus);
             $scope.model.valintaperusteet.splice(index,1);
         }
@@ -194,8 +162,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     var removeKuvaus = function(kuvaus) {
 
 
-        var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.tunniste);
+        var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.kuvauksenTunniste);
         removedKuvausPromise.then(function(removedKuvaus){
+            console.log('REMOVED KUVAUS: ' , removedKuvaus);
+
             if (removedKuvaus.status === "OK")  {
 
                 removeKuvausFromArray(kuvaus);
@@ -235,7 +205,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
             var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+kuvausTyyppi +"/NEW";
             $location.path(kuvausEditUri);
         } else {
-            showCreateNewDialog();
+            showCreateNewDialog(kuvausTyyppi);
         }
 
 
@@ -314,5 +284,74 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
         return ret;
     }
+
+});
+
+app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,LocalisationService,Koodisto,filterUris, selectedUri){
+
+    /*
+
+        ------> Variable declaration etc.
+
+     */
+
+
+
+
+    $scope.dialog = {};
+
+    $scope.dialog.userOrgTypes = [];
+
+    $scope.dialog.title = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.title');
+
+    $scope.dialog.description = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.instruction');
+
+    $scope.dialog.koodistocombotitle = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.oppilaitostyyppi.title');
+
+    $scope.dialog.ok = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.ok');
+
+    $scope.dialog.cancel = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.cancel');
+
+    /*
+
+        ------> Private functions
+
+     */
+
+    var initializeDialog = function() {
+
+           if (filterUris !== undefined && filterUris.length > 0) {
+
+               $scope.dialog.userOrgTypes = filterUris;
+
+           }
+
+           if (selectedUri !== undefined) {
+
+               $scope.dialog.selectedType = selectedUri;
+
+           }
+    };
+
+    /*
+
+     ----------> Controller "event handlers and listeners"
+
+     */
+
+    $scope.onCancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.onOk = function() {
+        $modalInstance.close($scope.dialog.selectedType);
+    };
+
+    /*
+
+        -----> Controller initialization functions
+
+     */
+    initializeDialog();
 
 });
