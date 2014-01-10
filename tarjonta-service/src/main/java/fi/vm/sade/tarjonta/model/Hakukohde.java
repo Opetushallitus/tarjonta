@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -136,6 +137,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name="hakuaikaLoppuPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date hakuaikaLoppuPvm;
+
+    @Column(name = "valintaPerusteKuvausTunniste")
+    private Long valintaPerusteKuvausTunniste;
+
+    @Column(name = "soraKuvausTunniste")
+    private Long soraKuvausTunniste;
+
+
 
     public Hakuaika getHakuaika() {
 		return hakuaika;
@@ -558,5 +567,22 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setHakukelpoisuusVaatimusKuvaus(MonikielinenTeksti hakukelpoisuusVaatimusKuvaus) {
         this.hakukelpoisuusVaatimusKuvaus = hakukelpoisuusVaatimusKuvaus;
+    }
+
+
+    public Long getValintaPerusteKuvausTunniste() {
+        return valintaPerusteKuvausTunniste;
+    }
+
+    public void setValintaPerusteKuvausTunniste(Long valintaPerusteKuvausTunniste) {
+        this.valintaPerusteKuvausTunniste = valintaPerusteKuvausTunniste;
+    }
+
+    public Long getSoraKuvausTunniste() {
+        return soraKuvausTunniste;
+    }
+
+    public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
+        this.soraKuvausTunniste = soraKuvausTunniste;
     }
 }
