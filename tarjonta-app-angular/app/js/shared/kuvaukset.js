@@ -30,6 +30,24 @@ app.factory('Kuvaus',function($http,Config,$q){
 
         },
 
+        findWithVuosiOppilaitostyyppiTyyppiVuosi : function(oppilaitosTyyppi,tyyppi,vuosi) {
+
+            var promise = $q.defer();
+
+            var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix +tyyppi+"/"+oppilaitosTyyppi+"/"+vuosi+"/"+"kuvaustenTiedot";
+
+            $http.get(queryUri)
+                .success(function(data){
+                    promise.resolve(data);
+                })
+                .error(function(data){
+                    promise.resolve(data);
+                });
+
+            return promise.promise;
+
+        },
+
         findKuvausWithId : function(kuvausTunniste) {
 
 
