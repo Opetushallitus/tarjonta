@@ -275,7 +275,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
     };
 
     factory.createUiKoodistoSingleModel = function() {
-        return {'uri': null};
+        return {'uri': null, koodis: []};
     };
     factory.createUiKoodistoMultiModel = function() {
         return {koodis: [], 'uris': []};

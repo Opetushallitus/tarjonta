@@ -41,11 +41,19 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 }
             };
 
+            /**
+             * Initialize buttons and date fields.
+             */
             $scope.reset = function() {
                 if (!angular.isUndefined($scope.dates) && $scope.dates.length > 0) {
                     //when page is loaded and one or more datea are in the model, then
                     //set kausi to status of disabled and all date fields to active
-                    $scope.disabledKausi = true;
+                    if ($scope.dates.length > 1) {
+                        $scope.disabledKausi = true;
+                    } else {
+                        $scope.fnClearKausi();
+                        $scope.disabledKausi = false;
+                    }
                     $scope.disabledDate = false;
 
                     //load data to directive model
@@ -54,9 +62,11 @@ app.directive('alkamispaivat', ['$log', function($log) {
                         a.push({id: $scope.ctrl.index++, date: new Date($scope.dates[i])});
                     }
                     $scope.ctrl.addedDates = a;
-                } else if ($scope.kausiUri != -1) {
+                } else if ($scope.kausiUri !== -1 && $scope.dates.length === 0) {
+                    //Date field is diabled
                     $scope.disabledKausi = false;
                     $scope.disabledDate = true;
+                    $scope.clickAddDate(); //add 1 date row
                 } else {
                     //no loaded dates available,  add one ui date object to date list
                     $scope.clickAddDate(); //add 1 date row
@@ -121,7 +131,7 @@ app.directive('alkamispaivat', ['$log', function($log) {
             });
 
             $scope.$watch("disabledKausi", function(valNew, valOld) {
-                if (valNew !== valOld && !valNew) {
+                if (!valNew) {
                     //clear price data field
                     var arrRemoveDatesTmp = [];
                     for (var i = 0; i < $scope.ctrl.addedDates.length; i++) {
@@ -141,11 +151,12 @@ app.directive('alkamispaivat', ['$log', function($log) {
              * DATA INIT / RELOAD LISTENER
              * 
              * There is no init, because you can force directive data model
-             * to reload by creating new array od dates.
+             * to reload by creating new array of dates.
              */
             $scope.$watch("dates", function(valNew, valOld) {
                 $scope.reset();
             });
+
         }
 
         return {

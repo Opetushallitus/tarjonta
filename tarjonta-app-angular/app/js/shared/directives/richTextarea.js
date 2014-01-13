@@ -13,7 +13,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			resize:false,
 			schema:"html5",
 			language:LocalisationService.getLocale(),
-			plugins:"link image table media",
+			plugins:"link table",
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
 			tools:"inserttable"
