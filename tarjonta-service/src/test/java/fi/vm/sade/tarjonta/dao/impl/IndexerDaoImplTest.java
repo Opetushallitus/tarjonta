@@ -27,6 +27,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -64,13 +65,15 @@ public class IndexerDaoImplTest extends TestData {
         super.initializeData(em, fixtures);
     }
 
-//    @Test
-//    public void testFindAllKoulutukset() {
-//        List<KoulutusIndexEntity> result = indexerDao.findAllKoulutukset();
-//        assertEquals(4, result.size());
-//    }
+    @Test
+    @DirtiesContext 
+    public void testFindAllKoulutukset() {
+        List<KoulutusIndexEntity> result = indexerDao.findAllKoulutukset();
+        assertEquals(4, result.size());
+    }
 
     @Test
+    @DirtiesContext 
     public void testFindKoulutusById() {
         //komoto #1
         KoulutusIndexEntity result = indexerDao.findKoulutusById(getPersistedKomoto1().getId());
