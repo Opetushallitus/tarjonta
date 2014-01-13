@@ -42,10 +42,12 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -129,41 +131,9 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komoto.setTarjoaja(organisationOId);
         Preconditions.checkNotNull(dto.getOpintojenMaksullisuus(), "OpintojenMaksullisuus boolean cannot be null.");
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
-        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
 
-        //clear all old date objects
-        if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
-            //one or many dates   
-
-            final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
-            final String baseKausi = IndexDataUtils.parseKausiKoodi(firstDate);
-            final Integer baseVuosi = IndexDataUtils.parseYearInt(firstDate);
-            Preconditions.checkNotNull(baseKausi, "Parsed alkamiskausi cannot be null!");
-            Preconditions.checkNotNull(baseVuosi, "Parsed alkamisvuosi cannot be null!");
-
-            //pre-check if the dates are within same date range of kausi + vuosi
-            for (Date pvm : koulutuksenAlkamisPvms) {
-                if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
-                    throw new RuntimeException("Not within correct date range - found an invalid kausi!");
-                }
-
-                if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
-                    throw new RuntimeException("Not within correct date range - found an invalid year!");
-                }
-                komoto.addKoulutuksenAlkamisPvms(pvm);
-            }
-
-            komoto.setAlkamisVuosi(baseVuosi);
-            komoto.setAlkamiskausi(baseKausi);
-        } else {
-            //allowed only one kausi and year
-            Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
-            Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
-            komoto.clearKoulutuksenAlkamisPvms();
-            //only kausi + year, no date objects   
-            komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
-            komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
-        }
+        //set dates
+        handleDates(komoto, dto);
 
         if (dto.getAihees() != null) {
 //            System.out.println("aiheet:" + dto.getAihees());
@@ -245,5 +215,69 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         }
 
         return mt;
+    }
+
+    /**
+     * Remove all entity dates excluded from API DTOs.
+     *
+     * @param entityDates
+     * @param dtoDates
+     */
+    private void removeExcludedDates(Set<Date> entityDates, Set<Date> dtoDates) {
+        Set<Date> removableDates = Sets.<Date>newHashSet(entityDates);
+
+        for (Date dtoDate : dtoDates) {
+            Date dateWithoutMinutes = DateUtils.truncate(dtoDate, Calendar.DATE);
+            if (removableDates.contains(dateWithoutMinutes)) {
+                removableDates.remove(dateWithoutMinutes);
+            }
+        }
+
+        for (Date date : removableDates) {
+            entityDates.remove(date);
+        }
+    }
+
+    /**
+     * Logic for handling dates.
+     *
+     * @param komoto
+     * @param dto
+     */
+    public void handleDates(KoulutusmoduuliToteutus komoto, KoulutusKorkeakouluV1RDTO dto) {
+        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
+
+        if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
+            //one or many dates   
+            removeExcludedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
+            final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
+            final String baseKausi = IndexDataUtils.parseKausiKoodi(firstDate);
+            final Integer baseVuosi = IndexDataUtils.parseYearInt(firstDate);
+            Preconditions.checkNotNull(baseKausi, "Parsed alkamiskausi cannot be null!");
+            Preconditions.checkNotNull(baseVuosi, "Parsed alkamisvuosi cannot be null!");
+
+            //pre-check if the dates are within same date range of kausi + vuosi
+            for (Date pvm : koulutuksenAlkamisPvms) {
+                if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
+                    throw new RuntimeException("Not within correct date range - found an invalid kausi!");
+                }
+
+                if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
+                    throw new RuntimeException("Not within correct date range - found an invalid year!");
+                }
+
+                komoto.addKoulutuksenAlkamisPvms(pvm);
+            }
+            komoto.setAlkamisVuosi(baseVuosi);
+            komoto.setAlkamiskausi(baseKausi);
+        } else {
+            //allowed only one kausi and year
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
+            komoto.clearKoulutuksenAlkamisPvms();
+            //only kausi + year, no date objects   
+            komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
+            komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
+        }
     }
 }

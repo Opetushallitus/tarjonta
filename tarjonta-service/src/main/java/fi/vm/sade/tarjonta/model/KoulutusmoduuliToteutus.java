@@ -943,7 +943,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void addKoulutuksenAlkamisPvms(Date koulutuksenAlkamisPvm) {
         Preconditions.checkNotNull(koulutuksenAlkamisPvm, "koulutuksenAlkamisPvm date object cannot be null.");
-        this.koulutuksenAlkamisPvms.add(DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE));
+        final Date dateWithoutMinutes = DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE);
+
+        if (!this.koulutuksenAlkamisPvms.contains(dateWithoutMinutes)) {
+            this.koulutuksenAlkamisPvms.add(dateWithoutMinutes);
+        }
     }
 
     public void clearKoulutuksenAlkamisPvms() {

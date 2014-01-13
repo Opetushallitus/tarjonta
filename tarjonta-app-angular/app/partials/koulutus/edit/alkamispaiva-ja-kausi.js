@@ -4,27 +4,35 @@ var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation']);
 
 app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($log, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
-
             $scope.ctrl = {
                 disabledDate: false,
                 disableKausi: false,
+                koodis: []
             };
 
-            //add default option
-            $scope.kausiUiModel = $scope.kausiUiModel || [];
-            $scope.kausiUiModel.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
+            $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
 
-            $scope.$watch("kausiModel.uri", function(valNew, valOld) {
+            $scope.$watch("kausiUri", function(valNew, valOld) {
                 $scope.ctrl.disabledDate = (valNew !== -1);
+                $scope.kausiUiModel.uri = $scope.kausiUri;
             });
 
             $scope.clearKausiSelection = function() {
-                $scope.kausiModel.uri = -1
+                $scope.kausiUri = -1
             }
 
             $scope.$watch("ctrl.disabledKausi", function(valNew, valOld) {
                 if (angular.isUndefined(valNew) || valNew === "" || valNew === true) {
-                    $scope.clearKausiSelection();
+                    if (!angular.isUndefined(valNew)) {
+                        $scope.clearKausiSelection();
+                    }
+                }
+
+            });
+
+            $scope.kausiUiModel.promise.then(function(result) {
+                for (var i = 0; i < $scope.kausiUiModel.koodis.length; i++) {
+                    $scope.ctrl.koodis.push($scope.kausiUiModel.koodis[i]);
                 }
             });
         }
@@ -37,8 +45,8 @@ app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($l
             scope: {
                 pvms: "=",
                 vuosi: "=",
-                kausiModel: "=",
-                kausiUiModel: "="
+                kausiUiModel: "=",
+                kausiUri: "="
             }
         };
     }]);
