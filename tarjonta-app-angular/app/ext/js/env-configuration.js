@@ -50,7 +50,7 @@ window.CONFIG = {
         "koodisto-uris.sorakuvausryhma": "sorakuvaus",
         "koodisto-uris.suunniteltuKesto": "suunniteltukesto",
         "koodisto-uris.tarjontakoulutustyyppi": "koulutustyyppi",
-        "koodisto-uris.teemat": "teemat",
+        "koodisto-uris.teemat": "teemat",   
         "koodisto-uris.tutkinto": "tutkinto",
         "koodisto-uris.koulutus": "koulutus",
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",

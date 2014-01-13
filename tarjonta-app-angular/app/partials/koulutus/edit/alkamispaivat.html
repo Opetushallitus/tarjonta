@@ -1,14 +1,14 @@
 <div>
     <ul>
-        <li ng-repeat="pvm in ctrl.addedDates">
+        <li style="width:300px" ng-repeat="pvm in ctrl.addedDates">
             <input type="text"
                    name="alkamisPvm"
                    data-datepicker-popup="dd.MM.yyyy"
                    data-ng-model="pvm.date"
                    data-ng-disabled="disabledDate"
                    />
-            <a href="" 
-               data-ng-show="(!$first && disabledDate)" 
+            <a  href="" 
+               data-ng-show="(!$first || (disabledDate && !$first ))" 
                data-ng-click="clickRemoveDate(pvm)">X</a>
         </li>
     </ul>

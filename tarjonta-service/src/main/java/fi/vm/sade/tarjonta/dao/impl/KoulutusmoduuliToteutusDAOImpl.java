@@ -167,11 +167,11 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
 
         if (koulutusAlkuVuosi > 0) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().year().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().year().eq(koulutusAlkuVuosi));
         }
 
         if (!koulutusAlkuKuukaudet.isEmpty()) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().month().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().month().in(koulutusAlkuKuukaudet));
         }
 
         List<KoulutusmoduuliToteutus> komotos;

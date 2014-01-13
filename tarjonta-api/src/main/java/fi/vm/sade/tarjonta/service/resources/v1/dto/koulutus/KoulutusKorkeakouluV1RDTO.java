@@ -53,10 +53,13 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
 
-    @ApiModelProperty(value = "Koulutuksen kesto koodisto koodi uri, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
+    @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto koodi uri, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
     private KoodiV1RDTO koulutuksenAlkamiskausi;
+    
+    @ApiModelProperty(value = "Koulutuksen alkamisvuosi, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
+    private Integer koulutuksenAlkamisvuosi;
 
-    @ApiModelProperty(value = "Koulutuksen alkamispvm, voi olla yksi tai enemmän")
+    @ApiModelProperty(value = "Koulutuksen alkamispvm, voi olla tyhjä, jos tyhjä alkamiskausi ja alkamisvuosi pitää olla valittuna")
     private Set<Date> koulutuksenAlkamisPvms;
 
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
@@ -260,5 +263,19 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setKoulutuksenAlkamiskausi(KoodiV1RDTO koulutuksenAlkamiskausi) {
         this.koulutuksenAlkamiskausi = koulutuksenAlkamiskausi;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisvuosi
+     */
+    public Integer getKoulutuksenAlkamisvuosi() {
+        return koulutuksenAlkamisvuosi;
+    }
+
+    /**
+     * @param koulutuksenAlkamisvuosi the koulutuksenAlkamisvuosi to set
+     */
+    public void setKoulutuksenAlkamisvuosi(Integer koulutuksenAlkamisvuosi) {
+        this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
     }
 }

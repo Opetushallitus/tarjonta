@@ -4,6 +4,7 @@
             <td style="vertical-align: top">
         <alkamispaivat 
             dates="pvms" 
+            kausi-uri="kausiModel.uri"
             fn-clear-kausi="clearKausiSelection"
             disabled-kausi="ctrl.disableKausi"  
             disabled-date="ctrl.disabledDate"> 
@@ -15,6 +16,12 @@
                 ng-model="kausiModel.uri" 
                 ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in kausiUiModel | orderByNum:'koodiNimi'"
                 ng-disabled="ctrl.disableKausi"/>
+        </td>
+        <td style="vertical-align: top">
+            <input type="text" 
+                   ng-model="vuosi" 
+                   ng-disabled="!ctrl.disabledDate"
+                   />
         </td>
     </table>
 </div>

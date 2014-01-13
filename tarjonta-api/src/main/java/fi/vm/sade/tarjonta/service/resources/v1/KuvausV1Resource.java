@@ -47,6 +47,19 @@ public interface KuvausV1Resource {
             @PathParam("organisaatioTyyppi")String orgType
     );
 
+    @GET
+    @Path("/{tyyppi}/{organisaatioTyyppi}/{vuosi}/kuvaustenTiedot")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation( value = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset", notes = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset")
+    ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "kuvauksen vuosi", required = true)
+            @PathParam("vuosi") int vuosi,
+            @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
+            @PathParam("organisaatioTyyppi")String orgType
+    );
+
 
     @GET
     @Path("/{tyyppi}/{organisaatioTyyppi}/nimet")
