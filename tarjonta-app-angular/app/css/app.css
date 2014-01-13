@@ -527,3 +527,13 @@ div#select-koulutus div.koulutus-tree > ul > li {
     margin-left:-450px
 }
 
+/* tekstikentän hakuikoni */
+
+input[type=text].search {
+
+    background-image: url('../img/icon20-search.png');
+	background-repeat: no-repeat;
+	background-position: center right;
+	padding-right:22px;
+}
+
