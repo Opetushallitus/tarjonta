@@ -141,4 +141,32 @@ public class KoulutusIndexEntity {
                 + ", koulutuslaji=" + koulutuslaji + "]";
     }
 
+    /**
+     * @return the kausi
+     */
+    public String getKausi() {
+        return kausi;
+    }
+
+    /**
+     * @param kausi the kausi to set
+     */
+    public void setKausi(String kausi) {
+        this.kausi = kausi;
+    }
+
+    /**
+     * @return the vuosi
+     */
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    /**
+     * @param vuosi the vuosi to set
+     */
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
+    }
+
 }

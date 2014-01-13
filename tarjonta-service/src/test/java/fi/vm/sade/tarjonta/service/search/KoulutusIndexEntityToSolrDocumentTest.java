@@ -40,7 +40,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String POHJAKOULUTUSVAATIMUSKOODI = "pohjakoulutusvaatimuskoodi";
     private static final String KOULUTUSTUYYPPIKOODI = KOULUTUSTYYPPIKOODI;
     private static final String TARJOAJA_OID = "tarjoaja-oid";
-    private static final String KAUSI = "kausi_uri";
+    private static final String KAUSI_URI = "kausi_uri";
     private static final int VUOSI = 2014;
 
     @Test
@@ -50,7 +50,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
                 KOULUTUSKOODI, TUTKINTONIMIKEKOODI, KOULUTUSTYYPPIKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
-                POHJAKOULUTUSVAATIMUSKOODI, KAUSI, VUOSI);
+                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 
@@ -147,6 +147,40 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         // tekstihaku contains something
         Assert.assertTrue(doc.removeField(SolrFields.Koulutus.TEKSTIHAKU)
                 .getValueCount() > 1);
+    }
+
+    @Test
+    public void testNullAlkamispvm() {
+        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
+                TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
+                KOULUTUSKOODI, TUTKINTONIMIKEKOODI, KOULUTUSTYYPPIKOODI,
+                LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
+                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
+
+        KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
+
+        OrganisaatioSearchService organisaatioSearchService = Mockito
+                .mock(OrganisaatioSearchService.class);
+        Whitebox.setInternalState(converter, "organisaatioSearchService",
+                organisaatioSearchService);
+        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet()))
+                .toReturn(Lists.newArrayList(getOrg(TARJOAJA_OID)));
+
+        KoodiService koodiService = Mockito.mock(KoodiService.class);
+        Whitebox.setInternalState(converter, "koodiService", koodiService);
+        Mockito.reset(koodiService);
+        stubKoodi(koodiService, KAUSI_URI);
+
+        IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
+        Whitebox.setInternalState(converter, "indexerDao", indexerDao);
+
+        List<SolrInputDocument> docs = converter.apply(e);
+        Assert.assertEquals("lukumäärä ei vastaa odotettua", 1, docs.size());
+
+        SolrInputDocument doc = docs.get(0);
+
+        Assert.assertEquals(KAUSI_URI + "#0", doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
+        Assert.assertEquals(new Integer(VUOSI), (Integer) doc.removeField(SolrFields.Koulutus.VUOSI_KOODI).getValue());
     }
 
     private void stubKoodi(KoodiService koodiService, String uri) {
