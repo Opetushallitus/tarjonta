@@ -14,7 +14,6 @@
  */
 window.CONFIG = {
     "env": {
-        "authentication-service.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/",
         "koodi-uri.koulutuslaji.nuortenKoulutus": "koulutuslaji_n",
         "koodi-uri.lukio.pohjakoulutusvaatimus": "peruskoulu",
         "koodi.public.rest.address": "https://itest-virkailija.oph.ware.fi:443/koodi/rest/",
@@ -108,7 +107,7 @@ window.CONFIG = {
         //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          //"henkilöhaku"
-        "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources",
+        "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
          
         "place": "holder"
 
