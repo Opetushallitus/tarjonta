@@ -24,6 +24,10 @@ app.controller('HakuEditController',
 
                 $scope.model = null;
 
+                $scope.getLocale = function() {
+                    return 'FI';
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {

@@ -1,14 +1,5 @@
 <div>
 
-    <i class="icon-large icon-search"></i>
-
-    <div class="btn" ttt="haku.edit.tallenna"><i>Tallenna</i> 1</div>
-    <span ttt="haku.edit.tallenna2">Tallenna <b>2</b></span>
-    <div class="btn" ttt="haku.edit.tallenna3" locale="ar">Tallenna <b>AR</b></div>
-
-    <input type="button" value="Tallenna4" ttt="haku.edit.tallenna4">
-
-
     <form class="form-horizontal">
         <fieldset>
 
@@ -17,85 +8,68 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic">Hakutyyppi</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutyyppi">Hakutyyppi</label>
                 <div class="controls">
-                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
-                        <option>Varsinainen haku</option>
-                        <option>Lisähaku</option>
-                        <option>Täydennyshaku</option>
-                    </select>
+                    <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required></koodistocombo>
                 </div>
             </div>
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic">Hakukausi ja vuosi</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakukausi">Hakukausi ja vuosi</label>
                 <div class="controls">
-                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
-                        <option>Kevät</option>
-                        <option>Syksy</option>
-                    </select>
-                    <input id="textinput" name="textinput" type="text" placeholder="vuosi" class="input-xlarge">
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.kausiUri" required></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi">
                 </div>
             </div>
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic">Koulutuksen alkamiskaus</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</label>
                 <div class="controls">
-                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
-                        <option>Kevät</option>
-                        <option>Syksy</option>
-                    </select>
-                    <input id="textinput" name="textinput" type="text" placeholder="vuosi" class="input-xlarge">
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.alkamiskausiUri" required></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi">
                 </div>
             </div>
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic">Haun kohdejoukko</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.haunKohdejoukko">Haun kohdejoukko</label>
                 <div class="controls">
-                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
-                        <option>Ammatillinen koulutus</option>
-                        <option>Ammatillinen peruskoulutus erityisopetuksena</option>
-                    </select>
+                    <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required></koodistocombo>
                 </div>
             </div>
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic">Hakutapa</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutapa">Hakutapa</label>
                 <div class="controls">
-                    <select id="selectbasic" name="selectbasic" class="input-xlarge">
-                        <option>Yhteishaku</option>
-                        <option>Erillishaku</option>
-                    </select>
+                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required></koodistocombo>
                 </div>
             </div>
 
             <!-- Text input-->
             <div class="control-group">
-                <label class="control-label" for="textinput">Haun nimi</label>
+                <label class="control-label" for="textinput" ttt="haku.edit.haunNimi">Haun nimi</label>
+
                 <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi suomeksi" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi ruotsiksi" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="haun nimi englanniksi" class="input-xlarge">
+                    <mk-textfield model="model.haku.nimi" name="XXXX" required></mk-textfield>
                     <p class="help-block">help</p>
                 </div>
             </div>
 
             <!-- Text input-->
             <div class="control-group">
-                <label class="control-label" for="textinput">Haun tunniste</label>
+                <label class="control-label" for="textinput" ttt="haku.edit.haunTunniste">Haun tunniste</label>
                 <div class="controls">
-                    <strong>jfhjkh sdkfjh asfjkh fdjksfd</strong>
-                    <p class="help-block">help</p>
+                    <strong>HAUN TUNNISTE TULEE SITTEN JOSTAIN TÄHÄN</strong>
+                    <p class="help-block" ttt="haku.edit.haunTunniste.help">help</p>
                 </div>
             </div>
 
             <!-- Multiple Radios -->
             <div class="control-group">
-                <label class="control-label" for="radios">Hakuaika</label>
+                <label class="control-label" for="radios" ttt="haku.edit.hakuaika">Hakuaika</label>
                 <div class="controls">
                     <label class="radio" for="radios-0">
                         <input type="radio" name="radios" id="radios-0" value="Yksi hakuaika" checked="checked">
