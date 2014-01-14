@@ -704,12 +704,23 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 });
 
-app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi){
+app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
 
+    var koodistoKieliUri = "kieli";
 
     $scope.dialog = {};
 
     $scope.dialog.kuvaukset = [];
+
+    var kaikkiVpkKielet = {};
+
+    var kaikkiKuvaukset = {};
+
+    $scope.dialog.copySelection = "link";
+
+    $scope.showKieliSelectionCheckboxDisabled = true;
+
+    $scope.showKieliSelection = false;
 
     $scope.dialog.titles = {};
 
@@ -732,6 +743,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$modalInstanc
     $scope.dialog.titles.cancelBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.cancel');
 
 
+
     var getYear = function() {
 
         var today = new Date();
@@ -742,17 +754,90 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$modalInstanc
 
     var haeValintaPerusteet = function() {
 
+        //TODO: refactor this to more smaller functions and separate concerns
+
         angular.forEach(oppilaitosTyypit,function(oppilaitosTyyppi){
 
             var valintaPerustePromise =  Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(oppilaitosTyyppi,tyyppi,getYear());
 
             valintaPerustePromise.then(function(valintaperusteet){
 
+                 var userLang = AuthService.getLanguage();
+                 // All different kieli promises
+                var kieliPromises = {};
+
+                var kieliPromiseArray = [];
+
+                //Loop through valintaperusteet and get all different kieli promises
                 angular.forEach(valintaperusteet.result,function(valintaPeruste){
-                    $scope.dialog.kuvaukset.push(valintaPeruste);
+
+                    console.log('VALINTAPERUSTE : ', valintaPeruste);
+
+                    kaikkiKuvaukset[valintaPeruste.kuvauksenTunniste] = valintaPeruste;
+
+                    var valintaPerusteObj = {};
+
+                    valintaPerusteObj.kielet = "";
+
+                    valintaPerusteObj.kieliUris = [];
+
+                    valintaPerusteObj.tunniste = valintaPeruste.kuvauksenTunniste;
+
+                    for (var kieli in valintaPeruste.kuvaukset) {
+
+
+                       if(kieli.toString().indexOf(userLang) != -1) {
+
+                           valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[kieli];
+
+                        }
+
+                        valintaPerusteObj.kieliUris.push(kieli);
+                        if (kieliPromises[kieli] === undefined) {
+                            var kieliPromise = Koodisto.getKoodi(koodistoKieliUri,kieli,userLang);
+                            kieliPromises[kieli] = kieli;
+                            kieliPromiseArray.push(kieliPromise);
+                        }
+
+
+
+
+                    }
+
+                    $scope.dialog.kuvaukset.push(valintaPerusteObj);
 
                 });
 
+                //Wait all promises to complete and add those values to objects
+                $q.all(kieliPromiseArray).then(function(kieliKoodis){
+
+                    angular.forEach(kieliKoodis,function(kieliKoodi){
+
+                        if (kaikkiVpkKielet[kieliKoodi.koodiUri] === undefined) {
+                            kaikkiVpkKielet[kieliKoodi.koodiUri] = kieliKoodi.koodiNimi;
+                        }
+
+                    });
+
+                    //Loop through kuvaukses and find suitable name for language from object
+                    angular.forEach($scope.dialog.kuvaukset,function(kuvaus){
+
+                        for (var i = 0; i < kuvaus.kieliUris.length; i++) {
+
+                            var counter = kuvaus.kieliUris.length - i;
+
+                            if (counter != 1)  {
+                                kuvaus.kielet = kuvaus.kielet + kaikkiVpkKielet[kuvaus.kieliUris[i]] + ",";
+                            } else {
+                                kuvaus.kielet = kuvaus.kielet + kaikkiVpkKielet[kuvaus.kieliUris[i]];
+                            }
+
+
+                        };
+
+                    });
+
+                });
             });
 
         });
@@ -760,5 +845,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$modalInstanc
     };
 
     haeValintaPerusteet();
+
+
+    $scope.selectKuvaus = function(kuvaus) {
+
+        $scope.showKieliSelectionCheckboxDisabled = false;
+
+    };
 
 });

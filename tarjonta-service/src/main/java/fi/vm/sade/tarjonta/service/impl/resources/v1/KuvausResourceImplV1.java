@@ -108,7 +108,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                 List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
                 for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
-                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,false));
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,true));
                 }
 
                 kuvaukset.setResult(foundKuvaukses);
