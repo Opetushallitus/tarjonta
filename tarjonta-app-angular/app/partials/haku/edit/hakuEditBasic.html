@@ -8,7 +8,7 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutyyppi">Hakutyyppi</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutyyppi">Hakutyyppi *</label>
                 <div class="controls">
                     <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required></koodistocombo>
                 </div>
@@ -16,7 +16,7 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakukausi">Hakukausi ja vuosi</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakukausi">Hakukausi ja vuosi *</label>
                 <div class="controls">
                     <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.kausiUri" required></koodistocombo>
                     <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi">
@@ -25,7 +25,7 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi *</label>
                 <div class="controls">
                     <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.alkamiskausiUri" required></koodistocombo>
                     <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi">
@@ -34,7 +34,7 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.haunKohdejoukko">Haun kohdejoukko</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.haunKohdejoukko">Haun kohdejoukko *</label>
                 <div class="controls">
                     <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required></koodistocombo>
                 </div>
@@ -42,7 +42,7 @@
 
             <!-- Select Basic -->
             <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutapa">Hakutapa</label>
+                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutapa">Hakutapa *</label>
                 <div class="controls">
                     <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required></koodistocombo>
                 </div>
@@ -50,7 +50,7 @@
 
             <!-- Text input-->
             <div class="control-group">
-                <label class="control-label" for="textinput" ttt="haku.edit.haunNimi">Haun nimi</label>
+                <label class="control-label" for="textinput" ttt="haku.edit.haunNimi">Haun nimi *</label>
 
                 <div class="controls">
                     <mk-textfield model="model.haku.nimi" name="XXXX" required></mk-textfield>
@@ -69,7 +69,7 @@
 
             <!-- Multiple Radios -->
             <div class="control-group">
-                <label class="control-label" for="radios" ttt="haku.edit.hakuaika">Hakuaika</label>
+                <label class="control-label" for="radios" ttt="haku.edit.hakuaika">Hakuaika *</label>
                 <div class="controls">
 
                     <div ng-repeat="hakuaika in model.haku.hakuaikas">
@@ -88,7 +88,7 @@
 
             <!-- Multiple Checkboxes (inline) -->
             <div class="control-group">
-                <label class="control-label" for="checkboxes" ttt="haku.edit.sijoittelu">Sijoittelu</label>
+                <label class="control-label" for="checkboxes" ttt="haku.edit.sijoittelu">Sijoittelu *</label>
                 <div class="controls">
                     <input type="checkbox" ng-model="model.haku.sijoittelu"> <span ttt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
                 </div>
@@ -96,25 +96,15 @@
 
             <!-- Multiple Radios -->
             <div class="control-group">
-                <label class="control-label" for="radios">Hakulomake</label>
+                <label class="control-label" for="radios">Hakulomake *</label>
                 <div class="controls">
-                    <label class="radio" for="radios-0">
-                        <input type="radio" name="radios" id="radios-0" value="Käytetään järjestelmän hakulomaketta" checked="checked">
-                        Käytetään järjestelmän hakulomaketta
-                    </label>
-                    <label class="radio" for="radios-1">
-                        <input type="radio" name="radios" id="radios-1" value="Käytetään muuta hakulomaketta">
-                        Käytetään muuta hakulomaketta
-                    </label>
-                </div>
-            </div>
+                    <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                    Käytetään järjestelmän hakulomaketta
 
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">-</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="http://" class="input-xlarge">
-                    <p class="help-block">help</p>
+                    <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                        <span ttt="haku.edit.kaytaMuutaHakulomaketta">Käytetään muuta hakulomaketta.</span>
+                        <input type="text" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com">
+                    </p>
                 </div>
             </div>
 

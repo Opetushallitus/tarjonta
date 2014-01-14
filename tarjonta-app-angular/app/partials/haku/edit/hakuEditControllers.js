@@ -31,7 +31,7 @@ app.controller('HakuEditController',
                 $scope.doRemoveHakuaika = function(hakuaika, index) {
                     $log.info("doRemoveHakuaika()", hakuaika, index);
                     if ($scope.model.haku.hakuaikas.length > 1) {
-                        $scope.model.haku.hakuaikas.splice(index);
+                        $scope.model.haku.hakuaikas.splice(index, 1);
                     }
                 };
 
@@ -63,9 +63,10 @@ app.controller('HakuEditController',
                             hakuaikas: [
                                 {nimi: "Hakuajan nimi 1", alkaa: 1, loppuu: 2},
                                 {nimi: "Hakuajan nimi 2", alkaa: 3, loppuu: 4}
-                            ]
+                            ],
+
+                            hakulomakeKaytaJarjestemlmanOmaa : true
                         },
-                        sijoittelu: false,
 
                         place: "holder"
                     };
