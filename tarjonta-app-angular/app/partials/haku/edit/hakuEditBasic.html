@@ -1,77 +1,85 @@
 <div>
 
-    <form class="form-horizontal">
-        <fieldset>
+    <form  name="hakuEditBasic">
 
-            <!-- Form Name -->
-            <legend ttt="haku.edit.title">Haun tiedot</legend>
+        <table class="tarjontaForm">
+            <tr class="required">
+                <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required name="hakuTyyppi"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Select Basic -->
-            <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutyyppi">Hakutyyppi *</label>
-                <div class="controls">
-                    <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required></koodistocombo>
-                </div>
-            </div>
+            <tr class="required">
+                <th ttt='haku.edit.hakukausi'>Hakukausi ja vuosi</th>
+                <td>
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.kausiUri" required name="hakuKausi"></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi" required name="hakuVuosi">
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="hakuVuosi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Select Basic -->
-            <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakukausi">Hakukausi ja vuosi *</label>
-                <div class="controls">
-                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.kausiUri" required></koodistocombo>
-                    <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi">
-                </div>
-            </div>
+            <tr class="required">
+                <th ttt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
+                <td>
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.alkamiskausiUri" required name="alkamisKausi"></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi" required name="alkamisVuosi">
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="alkamisKausi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="alkamisVuosi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Select Basic -->
-            <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi *</label>
-                <div class="controls">
-                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.alkamiskausiUri" required></koodistocombo>
-                    <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi">
-                </div>
-            </div>
+            <tr class="required">
+                <th ttt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
+                <td>
+                    <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required name="haunKohdejoukko"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Select Basic -->
-            <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.haunKohdejoukko">Haun kohdejoukko *</label>
-                <div class="controls">
-                    <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required></koodistocombo>
-                </div>
-            </div>
+            <tr class="required">
+                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Select Basic -->
-            <div class="control-group">
-                <label class="control-label" for="selectbasic" ttt="haku.edit.hakutapa">Hakutapa *</label>
-                <div class="controls">
-                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required></koodistocombo>
-                </div>
-            </div>
+            <tr class="required">
+                <th ttt='haku.edit.haunNimi'>Haun nimi</th>
+                <td>
+                    <mk-textfield model="model.haku.nimi" required name="haunNimi"></mk-textfield>
+                    <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
 
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput" ttt="haku.edit.haunNimi">Haun nimi *</label>
-
-                <div class="controls">
-                    <mk-textfield model="model.haku.nimi" name="XXXX" required></mk-textfield>
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput" ttt="haku.edit.haunTunniste">Haun tunniste</label>
-                <div class="controls">
+            <tr>
+                <th ttt='haku.edit.haunTunniste'>Haun tunniste</th>
+                <td>
                     <strong>HAUN TUNNISTE TULEE SITTEN JOSTAIN TÄHÄN</strong>
-                    <p class="help-block" ttt="haku.edit.haunTunniste.help">help</p>
-                </div>
-            </div>
+                </td>
+                <td>
+                </td>
+            </tr>
 
-            <!-- Multiple Radios -->
-            <div class="control-group">
-                <label class="control-label" for="radios" ttt="haku.edit.hakuaika">Hakuaika *</label>
-                <div class="controls">
-
+            <tr class="required">
+                <th ttt='haku.edit.hakuaika'>Hakuaika</th>
+                <td colspan="2">
                     <div ng-repeat="hakuaika in model.haku.hakuaikas">
                         <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
                         <input type="text" placeholder="Alkuaika pvm + kello" ng-model="hakuaika.alkaa">
@@ -81,34 +89,37 @@
                     </div>
                     <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
 
-                    <p class="help-block">help</p>
-                </div>
-            </div>
+                    <p class="help-block" ttt="haku.edit.hakuaika.help">help</p>
+                </td>
+                <!-- TODO check for errors here! -->
+            </tr>
 
-
-            <!-- Multiple Checkboxes (inline) -->
-            <div class="control-group">
-                <label class="control-label" for="checkboxes" ttt="haku.edit.sijoittelu">Sijoittelu *</label>
-                <div class="controls">
+            <tr class="required">
+                <th ttt='haku.edit.sijoittelu'>Sijoittelu</th>
+                <td>
                     <input type="checkbox" ng-model="model.haku.sijoittelu"> <span ttt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
-                </div>
-            </div>
+                </td>
+                <td>
+                </td>
+            </tr>
 
-            <!-- Multiple Radios -->
-            <div class="control-group">
-                <label class="control-label" for="radios">Hakulomake *</label>
-                <div class="controls">
+            <tr class="required">
+                <th ttt='haku.edit.hakulomake'>Hakulomake</th>
+                <td>
                     <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
-                    Käytetään järjestelmän hakulomaketta
+                    <span ttt="haku.edit.hakulomake.kaytaJarjestelman">Käytetään järjestelmän hakulomaketta</span>
 
                     <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
-                        <span ttt="haku.edit.kaytaMuutaHakulomaketta">Käytetään muuta hakulomaketta.</span>
-                        <input type="text" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com">
+                        <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta.</span>
+                        <input type="url" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" required>
                     </p>
-                </div>
-            </div>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit" ng-if="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"/>
+                </td>
+            </tr>
+        </table>
 
-        </fieldset>
     </form>
 
 </div>
