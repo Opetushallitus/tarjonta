@@ -73,7 +73,7 @@ public class KomoResourceImpl implements KomoResource {
     @Override
     public KomoDTO getByOID(String oid) {
         try {
-			LOG.info("/komo/}{} -- getByOID()", oid);
+			LOG.debug("/komo/}{} -- getByOID()", oid);
 			Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
 			KomoDTO result = conversionService.convert(komo, KomoDTO.class);
 			LOG.debug("  result={}", result);
@@ -87,15 +87,12 @@ public class KomoResourceImpl implements KomoResource {
     // GET /komo?searchTerms=xxx&count=x&startIndex=x&lastModifiedBefore=x&lastModifiedSince=x
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+        LOG.debug("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         // TarjontaTila == null (== all states ok)
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountValue(count);
 
         List<OidRDTO> result =
                 HakuResourceImpl.convertOidList(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
@@ -106,15 +103,27 @@ public class KomoResourceImpl implements KomoResource {
     // GET /komo/OID/komoto?count=x&startIndex=x
     @Override
     public List<OidRDTO> getKomotosByKomoOID(String oid, int count, int startIndex) {
-        LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[]{oid, count, startIndex});
+        LOG.debug("/komo/{}/komoto -- (si={}, c={})", new Object[]{oid, count, startIndex});
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountValue(count);
 
         List<OidRDTO> result = HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex));
         LOG.debug("  result={}", result);
         return result;
+    }
+
+    private int manageCountValue(int count) {
+
+        if (count < 0) {
+            count = Integer.MAX_VALUE;
+            LOG.debug("  count < 0, using Integer.MAX_VALUE");
+        }
+
+        if (count == 0) {
+            count = 100;
+            LOG.debug("  autolimit search to {} entries!", count);
+        }
+
+        return count;
     }
 }

@@ -1,12 +1,13 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
-    function BaseReviewController($scope, $location, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
         $log.info("BaseReviewController()");
-        
+
         $scope.formControls = {};
         $scope.model = {
+            koodistoLocale: LocalisationService.getLocale(),
             routeParams: $routeParams,
             collapse: {
                 perusTiedot: false,
@@ -32,27 +33,9 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
             console.log("parents:", parents);
         });
 
-        $scope.lisatiedot = [
-            {type: "TAVOITTEET", isKomo: true},
-            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-            {type: "PAAAINEEN_VALINTA", isKomo: false},
-            {type: "MAKSULLISUUS", isKomo: false},
-            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-            {type: "PATEVYYS", isKomo: true},
-            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-            {type: "SISALTO", isKomo: false},
-            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-            {type: "KANSAINVALISTYMINEN", isKomo: false},
-            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-            {type: "ARVIOINTIKRITEERIT", isKomo: false},
-            {type: "PAINOTUS", isKomo: false},
-            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-        ];
+        $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
 
-        $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, key, kieliuri) {
+        $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
             if (typeof boolIsKomo !== 'boolean') {
                 converter.throwError('An invalid boolean variable : ' + boolIsKomo);
@@ -64,14 +47,45 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
                 kuvaus = $scope.model.koulutus.kuvausKomoto;
             }
 
-            if (kuvaus[key] && kuvaus[key].tekstis && kuvaus[key].tekstis[kieliuri]) {
-                return kuvaus[key].tekstis[kieliuri];
-            }
+            return kuvaus;
         };
 
         $scope.doEdit = function(event, targetPart) {
             $log.info("doEdit()...", event, targetPart);
-            $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
+
+            if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_LIITA') {
+                $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+                $scope.luoKoulutusDialog = $modal.open({
+                    templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
+                    controller: 'LiitaSisaltyvyysCtrl',
+                    resolve: {
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                        },
+                        organisaatioOid: function() {
+                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                        }
+                    }
+                });
+            } else if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_POISTA') {
+                $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+                $scope.luoKoulutusDialog = $modal.open({
+                    templateUrl: 'partials/koulutus/sisaltyvyys/poista-koulutuksia.html',
+                    controller: 'PoistaSisaltyvyysCtrl',
+                    resolve: {
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                        },
+                        organisaatioOid: function() {
+                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                        }
+                    }
+
+                });
+
+            } else {
+                $location.path("/koulutus/" + $scope.model.koulutus.oid + "/edit");
+            }
         };
 
         $scope.goBack = function(event) {
@@ -143,7 +157,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
 
             angular.forEach(map, function(val, key) {
                 var lang = {'koodi_uri': val};
-                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
+                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, $scope.model.koodistoLocale)
                 $scope.model.languages.push(lang);
             });
         } else {
@@ -151,21 +165,12 @@ app.controller('BaseReviewController', ['$scope', '$location', '$log', 'Tarjonta
         }
 
         $scope.treeClickHandler = function(obj, event) {
-            $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
-            $scope.luoKoulutusDialog = $modal.open({
-                templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
-                controller: 'SisaltyvyysCtrl',
-                resolve: {
-                    targetKomoOid: function() {
-                        return obj.oid;
-                    },
-                    organisaatioOid: function() {
-                        return  $scope.model.koulutus.organisaatio.oid
-                    }
-                }
-
-            });
-
+//            tarjontaService.haeKoulutukset({//search parameter object
+//                komoOid: obj.oid
+//            }).then(function(result) {
+//                $location.path("/koulutus/" + result.tulokset[0].tulokset[0].oid);
+//                $route.reload();
+//            });
         };
 
     }]);

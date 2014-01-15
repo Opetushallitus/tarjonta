@@ -194,8 +194,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private EditKoulutusView editKoulutusView;
     private SearchResultsView searchResultsView;
     private EditHakukohdeView editHakukohdeView;
-    @Autowired(required = true)
-    private PublishingService publishingService;
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
@@ -203,6 +201,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private TarjontaKorkeakouluPresenter korkeakouluPresenter;
     @Autowired
     private TarjontaSearchService tarjontaSearchService;
+    @Autowired(required = true)
+    protected PublishingService publishingService;
+
 
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
@@ -591,20 +592,30 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<String> returnVal = new ArrayList<String>();
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
+        Set<String> tarjoajaOids = new HashSet<String>();
 
         Set<String> koulutusAlkamiskaudes = new HashSet<String>();
         Set<Integer> koulutusAlkamisVuodes = new HashSet<Integer>();
-        for (KoulutusPerustieto koulutusModel : koulutukses) {
-            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
-            koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
-            koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
-            pohjakoulutukses.add(koulutusModel.getPohjakoulutusvaatimus().getUri());
+        for (KoulutusPerustieto koulutus : koulutukses) {
+            koulutusAlkamiskaudes.add(koulutus.getKoulutuksenAlkamiskausi().getUri());
+            koulutusAlkamisVuodes.add(koulutus.getKoulutuksenAlkamisVuosi());
+            koulutusKoodis.add(koulutus.getKoulutuskoodi().getUri());
+            pohjakoulutukses.add(koulutus.getPohjakoulutusvaatimus().getUri());
+            tarjoajaOids.add(koulutus.getTarjoaja().getOid());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi"));
         }
         if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (tarjoajaOids.size()>1) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.tarjoajaDoesNotMatch"));
         }
 
         if (koulutusAlkamiskaudes.size() > 1 || koulutusAlkamisVuodes.size() > 1) {
@@ -1449,7 +1460,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(hakukohdetulos.size());
         for (HakukohdePerustieto curHk : hakukohdetulos) {
-            String hkKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHk.getTarjoajaNimi());
+            String hkKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curHk.getTarjoajaNimi()) + "," + curHk.getTarjoajaOid();
             if (!map.containsKey(hkKey)) {
                 List<HakukohdePerustieto> hakukohteetM = Lists.newArrayList();
                 hakukohteetM.add(curHk);
@@ -1662,7 +1673,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
-        if (checkExistingKomoto(lisaa)) {
+        //OVT-6477 valmentava ja kuntouttava saa olla useita
+        if (Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
@@ -1809,7 +1821,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
         // Creating the datasource model
         for (KoulutusPerustieto curKoulutus : getModel().getKoulutukset()) {
-            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi());
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getTarjoaja().getNimi()) + "," + curKoulutus.getTarjoaja().getOid();
             if (!map.containsKey(koulutusKey)) {
                 //LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
@@ -2346,37 +2358,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
     }
 
-    /**
-     * Cancel single tarjonta model by OID and data model type.
-     *     
-* @param oid
-     * @param sisalto
-     */
-    @Override
-    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.PERUTTU, sisalto);
-    }
-
-    @Override
-    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
-        publish(oid, TarjontaTila.JULKAISTU, sisalto);
-    }
-
-    /**
-     * Palauttaa true jos tilamuutos meni ok.
-     * @param oid
-     * @param toState
-     * @param sisalto
-     * @return
-     */
-    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
-        if (publishingService.changeState(oid, toState, sisalto)) {
-            showNotification(UserNotification.GENERIC_SUCCESS);
-        } else {
-            showNotification(UserNotification.GENERIC_ERROR);
-        }
-    }
-
     public void setLisatiedotView(
             EditKoulutusLisatiedotToinenAsteView lisatiedotView) {
         this.lisatiedotView = lisatiedotView;
@@ -2649,6 +2630,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     
     public void setTarjontaSearchService(TarjontaSearchService tarjontaSearchService) {
         this.tarjontaSearchService = tarjontaSearchService;
+    }
+
+    @Override
+    PublishingService getPublishingService() {
+        return publishingService;
     }
 
 }

@@ -26,5 +26,6 @@ window.CONFIG.app = {
     "tarjonta.koulutusaste.korkeakoulu-uris": ["koulutusasteoph2002_60", "koulutusasteoph2002_61", "koulutusasteoph2002_62", "koulutusasteoph2002_63", "koulutusasteoph2002_70", "koulutusasteoph2002_71", "koulutusasteoph2002_72", "koulutusasteoph2002_73", "koulutusasteoph2002_80", "koulutusasteoph2002_81", "koulutusasteoph2002_82", "koulutusasteoph2002_90"],
     "koodisto-uris.tutkintotyyppi": "tutkintotyyppi",
     "koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto": "tutkintotyyppi_13",
-    "koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto": "tutkintotyyppi_14"
+    "koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto": "tutkintotyyppi_14",
+    "haku.kohdejoukko.kk.uri" : 'haunkohdejoukko_12#1'
 };

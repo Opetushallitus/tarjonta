@@ -58,20 +58,22 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.MetaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import java.util.Calendar;
 
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -90,6 +92,8 @@ import org.springframework.core.convert.TypeDescriptor;
 @Transactional()
 public class KoulutusResourceImplV1Test {
 
+    private static final Integer VUOSI = 2013;
+    private static final String KAUSI_KOODI_URI = "kausi_k";
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
@@ -100,7 +104,7 @@ public class KoulutusResourceImplV1Test {
     private static final String OPINTOALA = "opintoala";
     private static final String TUTKINTO = "tutkinto";
     private static final String TUTKINTONIMIKE = "tutkintonimike";
-    private static final String TEEMA = "teema";
+    private static final String AIHEES = "aihees";
     private static final String OPETUSKIELI = "opetuskieli";
     private static final String POHJAKOULUTUS = "pohjakoulutus";
     private static final String OPETUMUOTO = "opetusmuto";
@@ -115,7 +119,7 @@ public class KoulutusResourceImplV1Test {
     private static final String SUUNNITELTU_KESTO = "suunnteltu_kesto";
     private static final String[] PERSON = {"henkilo_oid", "firstanames", "lastname", "Mr.", "oph@oph.fi", "12345678"};
     private KoulutusResourceImplV1 instance;
-    private final DateTime DATE = new DateTime(2013, 1, 1, 1, 1);
+    private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
     private OrganisaatioService organisaatioServiceMock;
     private OIDService oidServiceMock;
     private ConversionService conversionServiceMock;
@@ -133,6 +137,7 @@ public class KoulutusResourceImplV1Test {
     private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
     private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
+    private PermissionChecker permissionChecker;
 
     @Before
     public void setUp() {
@@ -150,6 +155,7 @@ public class KoulutusResourceImplV1Test {
         oidServiceMock = createMock(OIDService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
+        permissionChecker = createMock(PermissionChecker.class);
 
         //INIT DATA CONVERTERS
         convertToDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
@@ -167,6 +173,7 @@ public class KoulutusResourceImplV1Test {
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
+        Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
 
         //no need for replay or verify:
         Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
@@ -201,15 +208,15 @@ public class KoulutusResourceImplV1Test {
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
-        dto.setKoulutuksenAlkamisPvm(DATE.toDate());
+        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
-        dto.getTeemas().getMeta().put(URI_KIELI_FI, toKoodiUri(TEEMA));
+        dto.getAihees().getMeta().put(URI_KIELI_FI, toKoodiUri(AIHEES));
         dto.getOpetuskielis().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
         dto.getOpetusmuodos().getMeta().put(URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
         dto.getAmmattinimikkeet().getMeta().put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
         dto.getPohjakoulutusvaatimukset().getMeta().put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
 
-        dto.getTeemas().getUris().put(toKoodiUriStr(TEEMA), 1);
+        dto.getAihees().getUris().put(toKoodiUriStr(AIHEES), 1);
         dto.getOpetuskielis().getUris().put(toKoodiUriStr(OPETUSKIELI), 1);
         dto.getOpetusmuodos().getUris().put(toKoodiUriStr(OPETUMUOTO), 1);
         dto.getAmmattinimikkeet().getUris().put(toKoodiUriStr(AMMATTINIMIKE), 1);
@@ -229,9 +236,13 @@ public class KoulutusResourceImplV1Test {
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
 
-        //KOODISTO DATA CALLS IN CORRECT CALL ORDER
+        permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
+
+        //KOODISTO DATA CALLS IN CORRECT CALL ORDER (1st)
+        expectKausi();
+
         expectMetaUri(KOULUTUSKOODI);
-        expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
         expectMetaUri(TUTKINTO);
         expectMetaUri(LAAJUUS_ARVO);
         expectMetaUri(KOULUTUSASTE);
@@ -239,10 +250,19 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(OPINTOALA);
         expectMetaUri(TUTKINTONIMIKE);
         expectMetaUri(EQF);
+
+        expectMeta2Uri(AIHEES);
+        expectMeta2Uri(OPETUSKIELI);
+        expectMeta2Uri(OPETUMUOTO);
+        expectMeta2Uri(POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO);
+        expectMeta2Uri(AMMATTINIMIKE);
+
+//        expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
+//        //2nd calls
+        expectKausi();
 
         expectMetaUri(KOULUTUSKOODI);
-        expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
         expectMetaUri(TUTKINTO);
         expectMetaUri(LAAJUUS_ARVO);
         expectMetaUri(KOULUTUSASTE);
@@ -250,19 +270,13 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(OPINTOALA);
         expectMetaUri(TUTKINTONIMIKE);
         expectMetaUri(EQF);
+
+        expectMeta2Uri(AIHEES);
+        expectMeta2Uri(OPETUSKIELI);
+        expectMeta2Uri(OPETUMUOTO);
+        expectMeta2Uri(POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO);
-
-        expectMeta2Uri(TEEMA);
-        expectMeta2Uri(OPETUSKIELI);
-        expectMeta2Uri(OPETUMUOTO);
         expectMeta2Uri(AMMATTINIMIKE);
-        expectMeta2Uri(POHJAKOULUTUS);
-
-        expectMeta2Uri(TEEMA);
-        expectMeta2Uri(OPETUSKIELI);
-        expectMeta2Uri(OPETUMUOTO);
-        expectMeta2Uri(AMMATTINIMIKE);
-        expectMeta2Uri(POHJAKOULUTUS);
 
         //REPLAY
         replay(oidServiceMock);
@@ -318,9 +332,11 @@ public class KoulutusResourceImplV1Test {
         assertEquals(TUNNISTE, result.getTunniste());
         assertEquals(new Double(1.11), result.getHinta());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
-        assertEquals(DATE.toDate(), result.getKoulutuksenAlkamisPvm());
+        assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
+        assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
+        assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
 
-        assertEqualMetaDto(TEEMA, result.getTeemas());
+        assertEqualMetaDto(AIHEES, result.getAihees());
         assertEqualMetaDto(OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(OPETUMUOTO, result.getOpetusmuodos());
         assertEqualMetaDto(POHJAKOULUTUS, result.getPohjakoulutusvaatimukset());
@@ -355,6 +371,16 @@ public class KoulutusResourceImplV1Test {
         return value + "_" + lang;
     }
 
+    private void expectKausi() {
+        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(createKoodiType(KAUSI_KOODI_URI)).times(1);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI + "#1", new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        expect(tarjontaKoodistoHelperMock.getKoodiByUri(URI_KIELI_FI)).andReturn(createKoodiType(URI_KIELI_FI + "_" + KAUSI_KOODI_URI)).times(1);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
+    }
+
     private void expectMetaUri(final String field) {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri#1", new Locale(LOCALE_FI))).andReturn(field).times(1);
@@ -375,9 +401,17 @@ public class KoulutusResourceImplV1Test {
     }
 
     private void assertEqualDtoKoodi(final String field, final KoodiV1RDTO dto) {
+        assertEqualDtoKoodi(field, dto, false);
+    }
+
+    private void assertEqualDtoKoodi(final String field, final KoodiV1RDTO dto, boolean realUri) {
         assertNotNull("UiDTO : " + field, dto);
         assertNotNull("KoodiDTO : " + field, dto);
-        assertEquals(field + "_uri", dto.getUri());
+        if (realUri) {
+            assertEquals(field, dto.getUri());
+        } else {
+            assertEquals(field + "_uri", dto.getUri());
+        }
         assertEquals(new Integer(1), dto.getVersio());
         assertEquals(field, dto.getKaannos());
         assertEquals(field, dto.getArvo());

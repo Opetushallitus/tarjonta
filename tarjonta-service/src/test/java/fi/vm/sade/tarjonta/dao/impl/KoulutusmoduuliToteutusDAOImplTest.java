@@ -67,7 +67,7 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
     @Test
     public void testUpdate() {
         //other data checks
-        KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto();
+        KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto1();
 
         persistedKomoto.setKuvaByUri(URI_FI, fixtures.createBinaryData());
         persistedKomoto.setKuvaByUri("kieli_sv", fixtures.createBinaryData());
@@ -97,7 +97,7 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
     @Test
     public void testInsert() {
         //other data checks
-        KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto();
+        KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto1();
         KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus("777777");
         komoto1.setKoulutusmoduuli(persistedKomoto.getKoulutusmoduuli());
         persistedKomoto.setKuvaByUri(URI_EN, fixtures.createBinaryData());

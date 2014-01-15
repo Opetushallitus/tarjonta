@@ -33,7 +33,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -45,14 +44,13 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
- * 
+ *
  * @author Markus
  *
  */
 public class IndexDataUtils {
-	
-    private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
 
+    private static final Logger log = LoggerFactory.getLogger(IndexDataUtils.class);
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
 
@@ -140,52 +138,55 @@ public class IndexDataUtils {
         return cal.get(Calendar.MONTH) < 7 ? KEVAT_URI : SYKSY_URI;
     }
 
-    public static String parseYear(Date koulutuksenAlkamisPvm) {
+    public static Integer parseYearInt(Date koulutuksenAlkamisPvm) {
         if (koulutuksenAlkamisPvm == null) {
             return null;
         }
         Calendar cal = Calendar.getInstance();
         cal.setTime(koulutuksenAlkamisPvm);
-        return "" + cal.get(Calendar.YEAR);
+        return cal.get(Calendar.YEAR);
     }
-    
-    
+
+    public static String parseYear(Date koulutuksenAlkamisPvm) {
+        return "" + parseYearInt(koulutuksenAlkamisPvm);
+    }
+
     public static KoodistoKoodi createKoodistoKoodi(String koodiUri,
             String koodiFi, String koodiSv,
             String koodiEn, SolrDocument koulutusDoc) {
         final Object valueO = koulutusDoc.getFieldValue(koodiUri);
         String value;
-        if(valueO instanceof List) {
-            value = (String)((List)valueO).get(0);
+        if (valueO instanceof List) {
+            value = (String) ((List) valueO).get(0);
         } else {
             value = (String) valueO;
         }
         final KoodistoKoodi koodi = new KoodistoKoodi(value);
-        asetaArvoJosEiNull(koodi.getNimi(), Nimi.FI, (String)koulutusDoc.getFieldValue(koodiFi));
-        asetaArvoJosEiNull(koodi.getNimi(), Nimi.SV, (String)koulutusDoc.getFieldValue(koodiSv));
-        asetaArvoJosEiNull(koodi.getNimi(), Nimi.EN, (String)koulutusDoc.getFieldValue(koodiEn));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.FI, (String) koulutusDoc.getFieldValue(koodiFi));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.SV, (String) koulutusDoc.getFieldValue(koodiSv));
+        asetaArvoJosEiNull(koodi.getNimi(), Nimi.EN, (String) koulutusDoc.getFieldValue(koodiEn));
         return koodi;
     }
-    
-    private static void asetaArvoJosEiNull(Nimi nimi, String lang, String value){
-        if(value!=null) {
+
+    private static void asetaArvoJosEiNull(Nimi nimi, String lang, String value) {
+        if (value != null) {
             nimi.put(lang, value);
         }
     }
-    
+
     public static TarjontaTila createTila(SolrDocument doc) {
         String tila = "" + doc.getFieldValue(TILA);
         if (tila.isEmpty()) {
             return null;
         }
         try {
-			return TarjontaTila.valueOf(tila);
-		} catch (Exception e) {
-			log.debug("Ignored unknown state: "+tila, e);
-			return null;
-		}
+            return TarjontaTila.valueOf(tila);
+        } catch (Exception e) {
+            log.debug("Ignored unknown state: " + tila, e);
+            return null;
+        }
     }
-    
+
     public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
         final Tarjoaja tarjoaja = new Tarjoaja();
@@ -195,68 +196,66 @@ public class IndexDataUtils {
         if (organisaatio != null) {
             tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
         }
-        
+
         return tarjoaja;
     }
 
-   private static Nimi getOrganisaatioNimi(
+    private static Nimi getOrganisaatioNimi(
             OrganisaatioPerustieto org) {
         Nimi nimi = new Nimi();
         nimi.putAll(org.getNimi());
         return nimi;
     }
-   
-   public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
-       if (kausikoodi == null) {
-           return;
-       }
 
-       KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
+    public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
+        if (kausikoodi == null) {
+            return;
+        }
 
-       if (koodi != null) {
-           KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-           add(doc, KAUSI_FI, metadata.getNimi());
-           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-           add(doc, KAUSI_SV, metadata.getNimi());
-           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-           add(doc, KAUSI_EN, metadata.getNimi());
-           add(doc, KAUSI_URI,
-                   koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
-       } 
-   }
+        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
 
-   public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc, String koodiUri, KoodiService koodiService, String uriField, String fiField, String svField, String enField) {
-       if (koodiUri == null) {
-           return;
-       }
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, KAUSI_FI, metadata.getNimi());
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, KAUSI_SV, metadata.getNimi());
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, KAUSI_EN, metadata.getNimi());
+            add(doc, KAUSI_URI,
+                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+        }
+    }
 
-       final KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koodiUri, koodiService);
+    public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc, String koodiUri, KoodiService koodiService, String uriField, String fiField, String svField, String enField) {
+        if (koodiUri == null) {
+            return;
+        }
 
-       if (koodi != null) {
-           KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
-           add(doc, fiField, metadata.getLyhytNimi());
-           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
-           add(doc, svField, metadata.getLyhytNimi());
-           metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
-           add(doc, enField, metadata.getLyhytNimi());
-           add(doc, uriField,
-                   koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
-       }
-   }
+        final KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koodiUri, koodiService);
 
-   /**
-    * Add field if value is not null
-    * 
-    * @param doc
-    * @param nimifi
-    * @param string
-    */
-   private static void add(final SolrInputDocument doc, final String fieldName, final Object value) {
-       if (value != null) {
-           doc.addField(fieldName, value);
-       }
-   }
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, fiField, metadata.getLyhytNimi());
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, svField, metadata.getLyhytNimi());
+            metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, enField, metadata.getLyhytNimi());
+            add(doc, uriField,
+                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+        }
+    }
 
+    /**
+     * Add field if value is not null
+     *
+     * @param doc
+     * @param nimifi
+     * @param string
+     */
+    private static void add(final SolrInputDocument doc, final String fieldName, final Object value) {
+        if (value != null) {
+            doc.addField(fieldName, value);
+        }
+    }
 
-    
 }

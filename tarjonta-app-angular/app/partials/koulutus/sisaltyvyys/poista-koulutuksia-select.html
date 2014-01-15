@@ -1,0 +1,30 @@
+<div>
+<div class="modal-body">
+
+<p ng-bind-html="model.text.headLabel"></p>
+
+<tabset>
+    <tab heading="{{model.text.list}}">   
+        <div class="koulutus-list" ng-grid="selectGridOptions"></div>
+    </tab>
+    <tab heading="{{model.text.hierarchy}}"> 
+        <tree-field 
+            class="koulutus-tree"
+            names="model.hakutulos"
+            oids="model.searchKomoOids" 
+            review-oids="null" 
+            fn-click-handler="selectTreeHandler" 
+            fn-loaded-handler="treeItemsLoaded"
+            lang="koodistoLocale"></tree-field>        
+    </tab>
+</tabset>
+
+<h4 tt="sisaltyvyys.valitut-koulutukset"></h4>
+<ul class="listView"><li ng-repeat="obj in model.selectedRowData"><a href ng-click="removeItem(obj)">[x]</a> {{obj.nimi}}</li></ul>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="clickCancel()"><div tt="sisaltyvyys.peruuta"></div></button>
+    <button class="btn btn-primary" ng-disabled="model.selectedRowData.length == 0" ng-click="clickReviewDialogi()"><div tt="sisaltyvyys.jatka"></div></button>
+</div>
+</div>

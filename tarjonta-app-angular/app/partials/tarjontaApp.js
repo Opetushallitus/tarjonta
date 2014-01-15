@@ -8,15 +8,20 @@ angular.module('app.kk',
             'app.kk.filters',
             'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
+            'app.kk.edit.hakukohde.review.ctrl',
+            'app.kk.edit.valintaperustekuvaus.ctrl',
+            'app.kk.search.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
+            'app.edit.ctrl.alkamispaiva',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
+            'app.haku.ctrl',
             'ui.bootstrap',
             'ngRoute',
             'config',
             'auth',
-            'TarjontaConverter',
+            'KoulutusConverter',
             'imageupload'
         ]);
 
@@ -50,12 +55,13 @@ angular.module('app',
             'KoodistoCombo',
             'KoodistoArvoCombo',
             'SharedStateService',
+            'CommonUtilServiceModule',
             'DateTimePicker',
             'Hakukohde',
+            'Kuvaus',
             'KoodistoMultiSelect',
             'KoodistoTypeAhead',
             'orgAngularTreeview',
-            'TarjontaConverter',
             'ResultsTable',
             'imageupload',
             'MultiSelect',
@@ -67,13 +73,15 @@ angular.module('app',
             'MonikielinenTextArea',
             'ControlsLayout',
             'angularTreeview',
-            'TreeFieldDirective'
+            'DateFormat',
+            'TreeFieldDirective',
+            'AiheetJaTeematChooser',
+            'debounce'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
-angular.module('app').config(['$routeProvider', function($routeProvider)
-    {
+angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         $routeProvider
                 .when("/etusivu", {
@@ -137,12 +145,42 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);        
+                            $log.info("/koulutus/ID/edit", $route);
                             return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
                         }
                     }
                 })
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW',{
 
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController'
+
+
+                })
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId',{
+
+                    action : "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController',
+                    resolve : {
+                        resolvedValintaPerusteKuvaus : function($route,Kuvaus) {
+                            console.log('RESOLVING VALINTAPERUSTE KUVAUS : ', $route.current.params.kuvausId);
+                            if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
+                                console.log('FINDING KUVAUS : ', $route.current.params.kuvausId);
+                                var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
+
+                                return kuvausPromise;
+                            }
+
+                        }
+                    }
+
+                })
+                .when('/valintaPerusteKuvaus/search',{
+
+                    action : "valintaPerusteKuvaus.search",
+                    controller: 'ValintaperusteSearchController'
+
+                })
                 .when('/hakukohde/:id', {
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',
@@ -190,8 +228,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
                                     hakukohteenLiitteet: [],
                                     valintakokeet: [],
                                     lisatiedot: {},
-                                    valintaperusteKuvaukset : {},
-                                    soraKuvaukset : {}
+                                    valintaperusteKuvaukset: {},
+                                    soraKuvaukset: {}
                                 });
 
                                 //  SharedStateService.removeState('SelectedKoulutukses');
@@ -204,12 +242,52 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-                                 
+
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;
                                  return deferredHakukohde.promise;  */
 
+                            }
+                        }
+                    }
+                })
+
+
+                .when('/haku', {
+                    action: "haku.list",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakus: function($log, $route) {
+                            $log.info("/haku", $route);
+                            return ["foo", "bar", "zyzzy"];
+                        }
+                    }
+                })
+
+                .when('/haku/:id', {
+                    action: "haku.review",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakux: function($log, $route) {
+                            $log.info("/haku/ID", $route);
+
+                            return {
+                                oid : "oid-this-entry-not-really-loaded-from-database"
+                            }
+                        }
+                    }
+                })
+
+                 .when('/haku/:id/edit', {
+                    action: "haku.edit",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakux: function($log, $route) {
+                            $log.info("/haku/ID/edit", $route);
+
+                            return {
+                                oid : "oid-this-entry-not-really-loaded-from-database"
                             }
                         }
                     }
@@ -222,11 +300,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider)
     }]);
 
 
-angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $routeParams, $log) {
+angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
+    function($scope, $route, $routeParams, $log, PermissionService) {
 
     $log.debug("app.AppRoutingCtrl()");
 
     $scope.count = 0;
+
+
+    PermissionService.permissionResource().authorize({}, function(response) {
+        console.log("Authorization check : " + response.result);
+    });
+
 
     var render = function() {
         $log.debug("app.AppRoutingCtrl.render()");
@@ -254,7 +339,7 @@ angular.module('app').controller('AppRoutingCtrl', function($scope, $route, $rou
             }
     );
 
-});
+}]);
 
 
 

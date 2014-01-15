@@ -162,7 +162,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
             tarjontaPresenter.changeStateToPublished(hakukohdeOid, HAKUKOHDE);
-            tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getOid()));
 
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             //TODO päivitä entiteetin tila containerissa, älä lataa kokohakutulosta uudelleen
@@ -182,7 +181,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
                 tarjontaPresenter.changeStateToCancelled(hakukohde.getOid(), HAKUKOHDE);
-                tarjontaPresenter.sendEvent(HakukohdeContainerEvent.update(hakukohde.getOid()));
 
             }
 

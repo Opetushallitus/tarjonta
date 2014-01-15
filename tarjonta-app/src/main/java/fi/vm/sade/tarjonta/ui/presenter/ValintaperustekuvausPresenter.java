@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
+import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.tarjonta.ui.view.valinta.SaveDialogView;
 import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
@@ -62,6 +63,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ValintaperustekuvausPresenter extends CommonPresenter<ValintaModel> {
+
+    @Autowired(required = true)
+    protected PublishingService publishingService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValintaperustekuvausPresenter.class);
     private ValintaperustekuvausRootView rootView;
@@ -117,16 +121,6 @@ public class ValintaperustekuvausPresenter extends CommonPresenter<ValintaModel>
     @Override
     public void showMainDefaultView() {
         getRootView();
-    }
-
-    @Override
-    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
-        //Not needed, Leave method body empty.
-    }
-
-    @Override
-    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
-        //Not needed, Leave method body empty.
     }
 
     /**
@@ -281,5 +275,10 @@ public class ValintaperustekuvausPresenter extends CommonPresenter<ValintaModel>
 
     public KoodiType getKoodiByUri(String uri) {
         return tarjotaHelper.getKoodis(uri).get(0);
+    }
+
+    @Override
+    PublishingService getPublishingService() {
+        return publishingService;
     }
 }

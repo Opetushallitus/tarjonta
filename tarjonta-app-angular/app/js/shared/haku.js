@@ -43,9 +43,27 @@ angular.module('Haku', [ 'ngResource', 'config' ])
 
                return hakuPromise.promise;
 
+           },
+
+           getHakuWithOid : function(oid) {
+
+               var hakuPromise = $q.defer();
+
+               var hakuOidUri = Config.env["tarjontaRestUrlPrefix"] + "haku/"+oid;
+
+               $http({method: 'GET',url:hakuOidUri}).success(function(data, status, headers, config){
+
+                    hakuPromise.resolve(data.result);
+
+               }).error( function(data, status, headers, config) {
+
+                   console.log('ERROR GETTING HAKU WITH OID');
+               }
+               );
+
+               return hakuPromise.promise;
+
            }
-
-
 
 
 

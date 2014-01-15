@@ -131,7 +131,7 @@ public class KoulutusIndexEntityToSolrDocument implements
             final KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.fromValue(koulutus.getKoulutusTyyppi());
             switch (tyyppi) {
                 case LUKIOKOULUTUS:
-                //koulutusohjelma ilman pohjakoulutusta
+                    //koulutusohjelma ilman pohjakoulutusta
 
                     break;
                 case KORKEAKOULUTUS:
@@ -139,10 +139,10 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case YLIOPISTOKOULUTUS:
                     //vapaavalintainen nimi
                     MonikielinenTeksti nimi = indexerDao.getKomoNimi(koulutus.getKoulutusId());
-                    if(nimi==null) {
+                    if (nimi == null) {
                         nimi = new MonikielinenTeksti();
                     }
-                    
+
                     for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
                         Preconditions.checkNotNull(koodiService);
                         KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
@@ -151,15 +151,15 @@ public class KoulutusIndexEntityToSolrDocument implements
                             add(komotoDoc, NIMET, tekstikaannos.getArvo());
                             add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
                         }
-                    }                    
+                    }
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                     nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
-                    
-                    if(nimi==null) {
+
+                    if (nimi == null) {
                         nimi = new MonikielinenTeksti();
                     }
-                    
+
                     for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
                         Preconditions.checkNotNull(koodiService);
                         KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
@@ -168,10 +168,8 @@ public class KoulutusIndexEntityToSolrDocument implements
                             add(komotoDoc, NIMET, tekstikaannos.getArvo());
                             add(komotoDoc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
                         }
-                    }                    
+                    }
 
-                    
-                    
                     break;
                 default:
                     //muut: koulutusohjelma, pohjakoulutus
@@ -184,9 +182,17 @@ public class KoulutusIndexEntityToSolrDocument implements
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
-        IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()), koodiService);
-        add(komotoDoc, KAUSI, IndexDataUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
-        add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
+
+        if (koulutus.getKoulutuksenAlkamisPvm() == null) {
+            IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutus.getKausi(), koodiService);
+            add(komotoDoc, KAUSI, koulutus.getKausi());
+            add(komotoDoc, VUOSI_KOODI, koulutus.getVuosi());
+        } else {
+            IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()), koodiService);
+            add(komotoDoc, KAUSI, IndexDataUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
+            add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
+        }
+
         add(komotoDoc, TILA, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
         add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutusTyyppi());

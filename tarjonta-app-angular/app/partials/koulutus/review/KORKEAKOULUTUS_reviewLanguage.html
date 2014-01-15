@@ -2,19 +2,20 @@
   Kieliriippuva data review tabeissa.
 -->
 
-<table class="tarjontaForm">
+<table class="tarjontaForm">   
     <tr><th></th><td></td><td></td></tr>
     
     <!-- PERUSTIEDOT / TODO collapse -->
     
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "PERUSTIEDOT")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
     
     <tbody ng-show="!model.collapse.perusTiedot">
     
     <!-- oid/tila/tyyppi -->
+    <!-- 
     <tr>
         <th tt="koulutus.review.perustiedot.oidTilaTyyppi"/>
         <td colspan="2">
@@ -23,6 +24,7 @@
             {{model.koulutus.koulutusmoduuliTyyppi}}
         </td>
     </tr>
+     -->
     
     <!-- organisaation nimi -->
     <tr>
@@ -45,7 +47,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.tutkintoOhjelmaJaTunniste"/>
         <td colspan="2">
-            {{model.koulutus.koulutusohjelma.meta[lang.koodi_uri].koodi.kaannos}}
+            {{model.koulutus.koulutusohjelma.tekstis[lang.koodi_uri]}}
             <i>({{model.koulutus.tunniste}})</i>
         </td>
     </tr>
@@ -114,27 +116,30 @@
         </td>
     </tr>
     
-    <!-- koulutuslaji -->
+    <!-- koulutuslaji 
     <tr>
         <th tt="koulutus.review.perustiedot.koulutuslaji"/>
         <td colspan="2">
             [KOULUTUSLAJI]
         </td>
-    </tr>
+    </tr>-->
     
     <!-- pohjakoulutusvaatimus -->
+    <!-- 
     <tr>
         <th tt="koulutus.review.perustiedot.pohjakoulutusvaatimus"/>
         <td colspan="2">
             <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.kaannos}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
+     -->
     
     <!-- alkamispvm -->
     <tr>
         <th tt="koulutus.review.perustiedot.alkamispvm"/>
-        <td colspan="2">
-            {{ model.koulutus.koulutuksenAlkamisPvm}}
+        <td colspan="2"> 
+            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].kaannos}} {{model.koulutus.koulutuksenAlkamisvuosi}} 
+            <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | ldate }}</p>
         </td>
     </tr>
     
@@ -154,11 +159,27 @@
         </td>
     </tr>
     
+    <!-- opetusajat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetusajat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
     <!-- opetusmuodot -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetusmuodot"/>
         <td colspan="2">
-            <span data-ng-repeat='opetusmuoto in model.koulutus.opetusmuodos.meta'>{{ opetusmuoto.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+    
+    <!-- opetuspaikat -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.opetuspaikat"/>
+        <td colspan="2">
+            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -176,7 +197,7 @@
         
     <tr class="collapse" ng-class="model.collapse.kuvailevatTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.kuvailevatTiedot.otsikko" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "KUVAILEVATTIEDOT")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
     
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
@@ -191,18 +212,19 @@
     
     <tr ng-repeat="lisatieto in lisatiedot">
         <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
-        <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, kieliUri)"></td>
+        <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
     </tr>
     
     </tbody>
 
-    <!-- SIS�LTYV�T OPINTOKOKONAISUUDET -->
-    
-       <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
+    <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
         
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>
-        <td><!--input class="btn" type="button" ng-click='doEdit($event, "SISALTYVATOPINTOKOKONAISUUDET")' value="{{t('koulutus.review.muokkaa')}}"/--></td>
+        <td>
+            <a class="btn" href data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_LIITA')"><span tt="koulutus.review.sisaltyvyys-liita"/> <span class="icon-plus-sign"></span></a>
+            <a class="btn" href data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_POISTA')"><span tt="koulutus.review.sisaltyvyys-poista"/> <span class="icon-minus-sign"></span></a>
+        </td>
     </tr>
 
     <tbody ng-show="!model.collapse.sisaltyvatOpintokokonaisuudet">
@@ -213,7 +235,9 @@
             <tree-field 
             names="[]" 
             oids="model.selectedKomoOid" 
-            fn-click-handler="treeClickHandler"
+            review-oids="null"
+            fn-click-handler="null"
+            fn-loaded-handler="null"
             lang="fi"></tree-field> <!-- TODO get real user's lang code -->
         </td>
     </tr>
@@ -225,7 +249,7 @@
             
     <tr class="collapse" ng-class="model.collapse.hakukohteet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.hakukohteet.otsikko" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "HAKUKOHTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href data-ng-click="doEdit($event, 'HAKUKOHTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
     
     <tbody ng-show="!model.collapse.hakukohteet">

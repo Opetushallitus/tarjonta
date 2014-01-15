@@ -1,26 +1,32 @@
-<div >
-<button class="btn btn-primary" ng-click="model.newValintakoe()">{{t('tarjonta.hakukohde.valintakoe.listaus.uusi.valintakoe')}}</button>
-   <br/>
-   <br/>
+<div>
+
+    <p class="float-right">
+        <button class="btn btn-primary" ng-click="model.newValintakoe()">{{t('tarjonta.hakukohde.valintakoe.listaus.uusi.valintakoe')}} <span class="icon-plus-sign"></span></button>
+    </p>
+
     <tabset>
         <tab heading="{{kieli}}" ng-repeat="kieli in model.kielet">
             <table class="table table-hover">
                 <tr>
-                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus')}}</th>
-                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika')}}</th>
-                    <th>{{t('tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot')}}</th>
-                </tr>                                                                                            
+                    <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus"></th>
+                    <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika"></th>
+                    <!-- 
+                    <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot"></th>
+                     -->
+                    <th></th>
+                </tr>
                 <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
-                    <td>
-                        <div data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti "/>
-                       </td>
+                    <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
                     <td> <p data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
-                        {{  valintakoeaika.alkaa | date: 'dd.MM.yyyy HH:mm' }} - {{ valintakoeaika.loppuu | date: 'dd.MM.yyyy HH:mm' }}    <br/>
+                        {{  valintakoeaika.alkaa | date: 'dd.MM.yyyy HH:mm' }} - {{ valintakoeaika.loppuu | date: 'dd.MM.yyyy HH:mm' }}
+                        <br/>
                         {{  valintakoeaika.osoite.osoiterivi1 }}  , {{ valintakoeaika.osoite.postitoimipaikka }}
                     </td>
                     <td>
-                        <a href="" data-ng-click="model.muokaaValintakoetta(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.muokkaa')}}</a>
-                        <a href="" data-ng-click="model.poistaValintakoe(valintakoe)">{{t('tarjonta.hakukohde.valintakoe.listaus.valintakoe.poista')}}</a>
+                        <div class="align-right">
+	                        <a class="btn" href data-ng-click="model.muokaaValintakoetta(valintakoe)"><span tt="tarjonta.hakukohde.valintakoe.listaus.valintakoe.muokkaa"/> <span class="icon-edit"></span></a>
+	                        <a class="btn" href data-ng-click="model.poistaValintakoe(valintakoe)"><span tt="tarjonta.hakukohde.valintakoe.listaus.valintakoe.poista"/> <span class="icon-remove"></span></a>
+                        </div>
                     </td>
                 </tr>
 

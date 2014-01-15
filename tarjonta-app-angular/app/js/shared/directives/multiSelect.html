@@ -7,11 +7,32 @@
 				ng-options="e.key as e.value for e in items"
 				ng-change="onPreselection(preselection)">
 	    </select>
-	    <ul>
+	    <ul class="selection">
 	    	<li ng-repeat="k in selection">
 	 			<a href ng-click="toggle(k)">[x]</a> {{names[k]}}
 	    	</li>    
 	    </ul>
+	</div>
+	
+	<!-- combobox -->
+	<div class="combobox" ng-switch-when="combobox">
+	    <div>
+	        <input type="text"
+	                class="icon-typeahead"
+	                ng-model="combo.selection"
+	                typeahead="value for value in titles | filter:$viewValue | limitTo:10"
+	                typeahead-on-select="onComboSelect()"
+	                typeahead-editable="false"
+	                typeahead-wait-ms="50"/>
+	        
+	        <a href ng-click="onShowAll()">{{txtShowAll}}</a>
+	    </div>
+        
+        <ul class="selection">
+           <li ng-repeat="k in selection">
+               <a href ng-click="toggle(k)">[x]</a> {{names[k]}}
+           </li>    
+       </ul>
 	</div>
 	
 	<!-- checklist -->

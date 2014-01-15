@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -102,6 +103,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hakukelpoisuusvaatimuskuvaus_teksti_id")
+    private MonikielinenTeksti hakukelpoisuusVaatimusKuvaus;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hakukohde_monikielinen_nimi_id")
     private MonikielinenTeksti hakukohdeMonikielinenNimi;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -133,6 +137,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name="hakuaikaLoppuPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date hakuaikaLoppuPvm;
+
+    @Column(name = "valintaPerusteKuvausTunniste")
+    private Long valintaPerusteKuvausTunniste;
+
+    @Column(name = "soraKuvausTunniste")
+    private Long soraKuvausTunniste;
+
+
 
     public Hakuaika getHakuaika() {
 		return hakuaika;
@@ -547,5 +559,30 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
+    }
+
+    public MonikielinenTeksti getHakukelpoisuusVaatimusKuvaus() {
+        return hakukelpoisuusVaatimusKuvaus;
+    }
+
+    public void setHakukelpoisuusVaatimusKuvaus(MonikielinenTeksti hakukelpoisuusVaatimusKuvaus) {
+        this.hakukelpoisuusVaatimusKuvaus = hakukelpoisuusVaatimusKuvaus;
+    }
+
+
+    public Long getValintaPerusteKuvausTunniste() {
+        return valintaPerusteKuvausTunniste;
+    }
+
+    public void setValintaPerusteKuvausTunniste(Long valintaPerusteKuvausTunniste) {
+        this.valintaPerusteKuvausTunniste = valintaPerusteKuvausTunniste;
+    }
+
+    public Long getSoraKuvausTunniste() {
+        return soraKuvausTunniste;
+    }
+
+    public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
+        this.soraKuvausTunniste = soraKuvausTunniste;
     }
 }

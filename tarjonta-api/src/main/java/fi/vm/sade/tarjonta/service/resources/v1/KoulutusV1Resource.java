@@ -210,7 +210,7 @@ public interface KoulutusV1Resource {
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, 
+            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid
     );
 
@@ -228,25 +228,4 @@ public interface KoulutusV1Resource {
             notes = "Operaatio näyttää koulutukseen liittyvien hakukohteiden nimen ja oid:n annetulla koulutuksen oid:lla")
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(@PathParam("oid") String oid);
 
-    //    @POST
-//    @Path("/LUKIOKOULUTUS")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus);
-//    @POST
-//    @Path("/AMMATILLINEN_PERUSKOULUTUS")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    @ApiOperation(value = "Luo uuden ammattillisen koulutuksen", notes = "Ei ole vielä toteutettu", response = KoulutusAmmatillinenPeruskoulutusV1RDTO.class)
-//    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus);
-    //    @POST
-//    @Path("/PERUSOPETUKSEN_LISAOPETUS")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus);
-//    @POST
-//    @Path("/VALMENTAVA_JA_KUNTOUTTAVA_OPETUS")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus);
 }

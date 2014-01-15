@@ -89,7 +89,7 @@ public interface KomotoResource {
      * /komoto?searchTerms=xxx&count=x&startIndex=XX&language=XXX
      *
      * @param searchTerms
-     * @param count
+     * @param count count if count < 0 then count = Integer.MAX_VALUE, if count == 0, then count == 100, else not modified
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
