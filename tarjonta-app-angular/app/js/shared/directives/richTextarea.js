@@ -1,8 +1,8 @@
 'use strict';
 
-var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'ui.tinymce']);
+var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'ui.tinymce', 'ngSanitize']);
 
-app.directive('richTextarea',function(LocalisationService, $log) {
+app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
@@ -13,7 +13,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			resize:false,
 			schema:"html5",
 			language:LocalisationService.getLocale(),
-			plugins:"link image table media",
+			plugins:"link table",
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
 			tools:"inserttable"
@@ -33,6 +33,10 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		
 		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
 		$scope.edit = $scope.mode()===false;
+		
+		$scope.html = function() {
+			return $sce.trustAsHtml($scope.model);
+		}
 		
 		$scope.isEmpty = function() {
 			return !$scope.model || $scope.model.trim().length==0;

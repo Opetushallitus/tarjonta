@@ -17,13 +17,8 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKU_OID1;
-import static fi.vm.sade.tarjonta.dao.impl.TestData.OID1;
-import fi.vm.sade.tarjonta.model.Haku;
+import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKUKOHDE_OID1;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
@@ -79,28 +74,28 @@ public class HakukohdeDAOImplTest extends TestData {
 
     @Test
     public void testFindHakukohdeByOid() {
-        Hakukohde hakukohde = instance.findHakukohdeByOid(OID1);
+        Hakukohde hakukohde = instance.findHakukohdeByOid(HAKUKOHDE_OID1);
         assertNotNull(hakukohde);
-        assertEquals(OID1, hakukohde.getOid());
+        assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
         assertEquals(HAKU_OID1, hakukohde.getHaku().getOid());
         assertEquals(VALINTAKOE_COUNT_FOR_OID1, hakukohde.getValintakoes().size());
     }
 
     @Test
     public void testFindValintakoeByHakukohdeOid1() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID1);
+        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID1);
         assertEquals(VALINTAKOE_COUNT_FOR_OID1, result.size());
     }
 
     @Test
     public void testFindValintakoeByHakukohdeOid2() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID2);
+        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID2);
         assertEquals(1, result.size());
     }
 
     @Test
     public void testFindValintakoeByHakukohdeOid3() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID3);
+        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID3);
         assertEquals(0, result.size());
     }
 

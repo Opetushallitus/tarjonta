@@ -1,8 +1,8 @@
 'use strict';
 
-var app = angular.module('MultiSelect', ['pasvaz.bindonce']);
+var app = angular.module('MultiSelect', ['pasvaz.bindonce','ngGrid', 'localisation']);
 
-app.directive('multiSelect', function($log) {
+app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
     function columnize(values, cols) {
         var ret = [];
@@ -31,6 +31,7 @@ app.directive('multiSelect', function($log) {
         		$name:$scope.name
         }
 
+        $scope.titles = [];
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
@@ -56,6 +57,82 @@ app.directive('multiSelect', function($log) {
         if ($scope.value == undefined) {
             $scope.value = "koodiNimi";
         }
+        
+        if (!$scope.ttShowAll) {
+        	$scope.ttShowAll = "tarjonta.toiminnot.näytä_kaikki";
+        }
+    	$scope.txtShowAll = LocalisationService.t($scope.ttShowAll);
+        
+        if (!$scope.ttShowAllTitle) {
+        	$scope.ttShowAllTitle = "tarjonta.toiminnot.valitse";
+        }
+    	$scope.txtShowAllTitle = LocalisationService.t($scope.ttShowAllTitle);
+        
+        if ($scope.ttShowAllHelp) {
+        	$scope.txtShowAllHelp = LocalisationService.t($scope.ttShowAllHelp);
+        }
+        
+        $scope.combo = {selection: ""};
+        
+        // autocomplete-valinta
+        $scope.onComboSelect = function(v) {
+        	
+        	for (var i in $scope.names) {
+        		if ($scope.names[i] == $scope.combo.selection) {
+                	$scope.onPreselection([i]);
+        			break;
+        		}
+        	}
+        	
+        	$scope.combo.selection = "";
+        }
+        
+        $scope.onShowAll = function() {
+
+        	var ns = $scope.$new();
+        	ns.parent = $scope;
+
+        	ns.selection = $scope.selection;
+        	ns.items = $scope.items;
+        	ns.selecteds = [];
+        	
+        	
+        	for (var i in ns.items) {
+        		var r = ns.items[i];
+        		if ($scope.selection.indexOf(r.key)!=-1) {
+        			ns.selecteds.push(r);
+        		}
+        	}
+
+            $modal.open({
+                controller: function($scope, $modalInstance) {
+                	
+                	$scope.gridOptions = {
+                			data: "items",
+                			columnDefs: [{field:'value'}],
+                			headerRowHeight:0,
+                			showSelectionCheckbox:true,//,
+                			selectedItems: $scope.selecteds
+                	};
+                	
+                	$scope.ok = function() {
+                		var cs = [];
+                		for (var i in $scope.selecteds) {
+                			cs.push($scope.selecteds[i].key)
+                		}
+                		$scope.parent.onSelection(cs);
+                        $modalInstance.dismiss();
+                	};
+                    $scope.cancel = function() {
+                        $modalInstance.dismiss();
+                    };
+                },
+                templateUrl: "js/shared/directives/multiSelect-chooser.html",
+                scope: ns
+            });
+        	
+        	
+        }
 
         // (multi)select-valinta
         $scope.onPreselection = function(preselection) {
@@ -64,6 +141,7 @@ app.directive('multiSelect', function($log) {
                     $scope.selection.push(preselection[i]);
                 }
             }
+
             // TODO orderWith -tuki
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
@@ -71,6 +149,17 @@ app.directive('multiSelect', function($log) {
             updateErrors();
         }
 
+        $scope.onSelection = function(selection) {
+        	for (var i in $scope.selection) {
+        		var s = $scope.selection[i];
+        		if (selection.indexOf(s)==-1) {
+        			$scope.selection.splice(i, 1);
+        		}
+        	}
+
+        	$scope.onPreselection(selection);
+        }
+        
         // salli valintojen muuttaminen "ulkopuolelta"
         $scope.$watch('selection', function(newValue, oldValue){
            	for(var i=0;i<$scope.items.length;i++) {
@@ -103,7 +192,6 @@ app.directive('multiSelect', function($log) {
         
         var init = function(model) {
 
-
             for (var k in model) {
                 var e = model[k];
                 var w = 0;
@@ -114,6 +202,9 @@ app.directive('multiSelect', function($log) {
                     }
                 }
                 //console.log("cw="+cw+" -> w="+w);
+                
+                $scope.titles.push(e[value]);
+                
                 $scope.items.push({
                     selected: $scope.selection.indexOf(e[key]) !== -1,
                     key: e[key],
@@ -123,12 +214,12 @@ app.directive('multiSelect', function($log) {
                 $scope.names[e[key]] = e[value];
             }
 
+            $scope.titles.sort();
+            
             $scope.items.sort(function(a, b) {
                 return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
             
-            //console.log("ITEMS", $scope.items);
-
             $scope.rows = columnize($scope.items, columns);
             updateErrors();
         }
@@ -156,7 +247,7 @@ app.directive('multiSelect', function($log) {
         	}
         },
         scope: {
-            display: "@", // checklist | dualpane
+            display: "@", // checklist | dualpane | combobox
             columns: "@", // sarakkeiden määrä (vain checklist)
             key: "@", // arvo-avain (vakio: koodiUri)
             value: "@", // nimi-avain (vakio: koodiNimi)
@@ -164,6 +255,10 @@ app.directive('multiSelect', function($log) {
             model: "=", // map jossa arvo->nimi
             promise: "=", // async TODO yhdistä modeliin
             selection: "=", // lista jonne valinnat päivitetään
+            
+            ttShowAll: "@", // näytä kaikki -tekstin käännösavain (combobox)
+            ttShowAllTitle: "@", // näytä kaikki -dialogin otsikko (combobox)
+            ttShowAllHelp: "@", // näytä kaikki -dialogin ohjeteksti (combobox)
                 
 	        // angular-form-logiikkaa varten
 	        name: "@", // nimi formissa

@@ -13,7 +13,6 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (kuvausTunniste !== undefined) {
 
                 var kuvausGetUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+kuvausTunniste;
-
                 $http.delete(kuvausGetUri)
                     .success(function(data){
                         promise.resolve(data);
@@ -26,6 +25,24 @@ app.factory('Kuvaus',function($http,Config,$q){
                 promise.resolve();
             }
 
+
+            return promise.promise;
+
+        },
+
+        findWithVuosiOppilaitostyyppiTyyppiVuosi : function(oppilaitosTyyppi,tyyppi,vuosi) {
+
+            var promise = $q.defer();
+
+            var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix +tyyppi+"/"+oppilaitosTyyppi+"/"+vuosi+"/"+"kuvaustenTiedot";
+
+            $http.get(queryUri)
+                .success(function(data){
+                    promise.resolve(data);
+                })
+                .error(function(data){
+                    promise.resolve(data);
+                });
 
             return promise.promise;
 
@@ -151,6 +168,30 @@ app.factory('Kuvaus',function($http,Config,$q){
                 promise.resolve();
             }
 
+
+            return promise.promise;
+
+        },
+
+        findKuvauksesWithSearchSpec : function(searchSpec, tyyppi) {
+
+            var promise = $q.defer();
+
+            if (searchSpec !== undefined && tyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix +kuvausUriPrefix +tyyppi+"/search";
+
+
+                 $http.post(queryUri,searchSpec)
+                     .success(function(data){
+                          promise.resolve(data);
+                     }).error(function(errorData) {
+                         promise.resolve(errorData);
+                     });
+
+            }  else {
+                promise.resolve(null);
+            }
 
             return promise.promise;
 

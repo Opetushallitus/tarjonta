@@ -137,8 +137,9 @@
     <!-- alkamispvm -->
     <tr>
         <th tt="koulutus.review.perustiedot.alkamispvm"/>
-        <td colspan="2">
-            {{ model.koulutus.koulutuksenAlkamisPvm | ldate }}
+        <td colspan="2"> 
+            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].kaannos}} {{model.koulutus.koulutuksenAlkamisvuosi}} 
+            <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | ldate }}</p>
         </td>
     </tr>
     

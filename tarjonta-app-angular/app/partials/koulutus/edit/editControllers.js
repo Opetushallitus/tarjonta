@@ -76,8 +76,9 @@ app.controller('BaseEditController',
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
+                        uiModel[key].promise = koodisPromise;
                         koodisPromise.then(function(result) {
-                            uiModel[key] = result;
+                            uiModel[key].koodis = result;
                         });
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
@@ -181,7 +182,7 @@ app.controller('BaseEditController',
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         //search version information for list of uris;
 
-                        var koodis = $scope.uiModel[key];
+                        var koodis = $scope.uiModel[key].koodis;
                         for (var i in koodis) {
                             if (koodis[i].koodiUri === apiModel[key].uri) {
                                 apiModel[key] = {

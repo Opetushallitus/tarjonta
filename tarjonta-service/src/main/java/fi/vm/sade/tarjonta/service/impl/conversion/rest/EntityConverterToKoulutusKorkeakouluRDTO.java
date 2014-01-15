@@ -89,8 +89,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
         kkDto.setKoulutuksenAlkamiskausi(convertToKoodiDTO(komoto.getAlkamiskausi(), DEMO_LOCALE, FieldNames.ALKAMISKAUSI, true));
-        // WTF? Database @Temporal DATE becomes string, normal "date" is milliseconds...
-        kkDto.getKoulutuksenAlkamisPvms().add(komoto.getKoulutuksenAlkamisPvm() != null ? new Date(komoto.getKoulutuksenAlkamisPvm().getTime()) : null);
+        kkDto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
+        kkDto.getKoulutuksenAlkamisPvms().addAll(komoto.getKoulutuksenAlkamisPvms());
 
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), showMeta));

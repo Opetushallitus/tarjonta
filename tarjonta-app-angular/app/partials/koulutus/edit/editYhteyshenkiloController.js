@@ -6,105 +6,92 @@ var app = angular.module('app.edit.ctrl');
 
 app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', function($scope, $compile, YhteyshenkiloService, converter, debounce) {
 
-        $scope.editYhModel = {data: [],
-            henkilotFetched: false};
-
+        $scope.editYhModel = {data: []};
+        
+        $scope.getOrgOid=function(){
+        	var orgOid = $scope.koulutusModel!==undefined ? $scope.koulutusModel.result.organisaatio.oid:null;
+        	console.log("orgOid", orgOid);
+        	return orgOid;
+        };
+        
+        var orgOid=$scope.getOrgOid();
+        
+        YhteyshenkiloService.etsi({org:[orgOid]}).then(function(data){
+        	if(data!==undefined) {
+        		$scope.editYhModel.data=data.results;
+        		$scope.editYhModel.henkilotFetched=true;
+        	}
+        });
+        
+        
         /*
          * Clearing of the contact person data.
          */
         $scope.editYhModel.clearYh = function() {
-            $scope.uiModel.contactPerson = {};
+            $scope.uiModel.contactPerson = {henkiloTyyppi:'YHTEYSHENKILO'};
         };
 
         /*
          * Clearing of the ects coordinator data.
          */
         $scope.editYhModel.clearEctsYh = function() {
-            $scope.uiModel.ectsCoordinator = {};
+            $scope.uiModel.ectsCoordinator = {henkiloTyyppi:'ECTS_KOORDINAATTORI'};
         };
-
-//
-//
-//        /*
-//         * Method that watches the search field of the contact person.
-//         * Fetches users for the current organisation if those have not been fetced yet.
-//         */
-//        $scope.$watch('uiModel.contactPerson.nimet', function() {
-//            $scope.editYhModel.fetchHenkilot();
-//        });
-
-//        /*
-//         * Method that watches the search field of the ects coordinator.
-//         * Fetches users for the current organisation if those have not been fetced yet.
-//         */
-//        $scope.$watch('uiModel.ectsCoordinator.nimet', function() {
-//            $scope.editYhModel.fetchHenkilot();
-//        });
 
         /*
          * Sets the contact person to be the one that the user selected from the autocomplete field.
          */
-        $scope.editYhModel.selectHenkilo = function() {
-
-            if ($scope.editYhModel.searchPersonMap != undefined
-                    && $scope.editYhModel.searchPersonMap[$scope.uiModel.contactPerson.nimet] != undefined) {
-                var selectedUser = $scope.editYhModel.searchPersonMap[$scope.uiModel.contactPerson.nimet];
-                $scope.uiModel.contactPerson.sahkoposti = selectedUser.sahkoposti;
-                $scope.uiModel.contactPerson.titteli = selectedUser.titteli;
-                $scope.uiModel.contactPerson.puhelin = selectedUser.puhelin;
-                $scope.uiModel.contactPerson.etunimet = selectedUser.etunimet;
-                $scope.uiModel.contactPerson.sukunimi = selectedUser.sukunimi;
-
-            } else {
-                $scope.uiModel.contactPerson = {};
-            }
+        $scope.editYhModel.selectHenkilo = function SelectHenkilo(selectedUser) {
+        	var to = $scope.uiModel.contactPerson;
+        	$scope.setValues(to, selectedUser);
         };
-
+        
+        
         /*
          * Sets the ects coordinator to be the one that the user selected from the autocomplete field.
          */
-        $scope.editYhModel.selectEctsHenkilo = function() {
-
-            if ($scope.editYhModel.searchPersonMap != undefined
-                    && $scope.editYhModel.searchPersonMap[$scope.uiModel.ectsCoordinator.nimet] != undefined) {
-                var selectedUser = $scope.editYhModel.searchPersonMap[$scope.uiModel.ectsCoordinator.nimet];
-                $scope.uiModel.ectsCoordinator.titteli = selectedUser.titteli;
-                $scope.uiModel.ectsCoordinator.puhelin = selectedUser.puhelin;
-                $scope.uiModel.ectsCoordinator.etunimet = selectedUser.etunimet;
-                $scope.uiModel.ectsCoordinator.sukunimi = selectedUser.sukunimi;
-
-            } else {
-                $scope.uiModel.ectsCoordinator = {};
-            }
+        $scope.editYhModel.selectEctsHenkilo = function(selectedUser) {
+        	console.log("selecting ectshenkilö");
+        	var to = $scope.uiModel.ectsCoordinator;
+        	$scope.setValues(to, selectedUser);
         };
+        
+        
+        /**
+         * kopioi data modeliin
+         */
+        $scope.setValues = function(to, selectedUser){
+        	var orgOid=$scope.getOrgOid();
+        	
+        	var henkiloOid = selectedUser.oidHenkilo;
 
-        $scope.doFiltering = function() {
-            var scope = this;
-            debounce("filterYhteyshenkilo", function() {
-                var hakuehdot = {
-                    organisaatioOid: '1.2.246.562.10.00000000001',
-                    terms: scope.uiModel.contactPerson.nimet
-                };
-                var resource = YhteyshenkiloService.resourceYhteyshenkilo.search(hakuehdot);
+        	YhteyshenkiloService.haeHenkilo(henkiloOid).then(function(data){
+        		//console.log("henkilo data", data);
+        		var yhteystiedotRyhma = data.yhteystiedotRyhma;
+        		if(yhteystiedotRyhma.length>0) {
+        			for(var i=0;i<yhteystiedotRyhma[0].yhteystiedot.length;i++) {
+        				var yt = yhteystiedotRyhma[0].yhteystiedot[i];
+        				if("YHTEYSTIETO_PUHELINNUMERO" == yt.yhteystietoTyyppi) {
+        	                to.puhelin = yt.yhteystietoArvo;
+        				} else if("YHTEYSTIETO_SAHKOPOSTI" == yt.yhteystietoTyyppi) {
+        	        		to.sahkoposti = yt.yhteystietoArvo;
+        				}
+        			}
+        		}
+        		
+        	});
 
-                return resource.$promise.then(function(response) {
-                    console.log("Saatiin tulos: ");
-                    console.log(response.result);
-                    if (response.status === 'OK') {
-                        var results = response.result;
-                        $scope.editYhModel.data = [];
-                        $scope.editYhModel.searchPersonMap = {};
-                        angular.forEach(results, function(value, key) {
-                            var curNimet = value.etunimet + ' ' + value.sukunimi;
-                            $scope.editYhModel.data.push(curNimet);
-                            $scope.editYhModel.searchPersonMap[curNimet] = value;
-                        });
+        	//tehtavanimike
+        	YhteyshenkiloService.haeOrganisaatiohenkilo(henkiloOid).then(function(data){
+     			for(var i=0;i<data.length;i++) {
+     				if(data[i].organisaatioOid==orgOid){
+     	                to.titteli = data[i].tehtavanimike;
+     				}
+      			}
+        	});
 
-                    } else {
-                        console.log("Error in contact person service : " + response.status);
-                    }
-                });
-            }, 300);
+            to.etunimet = selectedUser.etunimet;
+            to.sukunimi = selectedUser.sukunimi;
         };
 
     }]);

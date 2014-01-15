@@ -9,6 +9,7 @@
             <!-- otsikkorivi -->
             <tr>
                 <th>{{t('tarjonta.valintaperustekuvaus.haenimella')}}</th>
+                <th>{{t('tarjonta.valintaperustekuvaus.kausi')}}</th>
                 <th>{{t('tarjonta.valintaperustekuvaus.oppilaitostyyppi')}}</th>
 
                 <th colspan="2">&nbsp;</th>
@@ -18,11 +19,14 @@
             <tr>
                 <td>
                     <div class="search">
-                        <input type="text" ng-model="spec.terms" ng-enter="search()"/>
+                        <input type="text" ng-model="model.searchSpec.hakusana"/>
                     </div>
                 </td>
                 <td>
-                    <koodistocombo koodistouri="'oppilaitostyyppi'" koodiuri="model.spec.oppilaitostyyppi" locale="'fi'"/>
+                    <koodistocombo koodistouri="'kausi'" koodiuri="model.searchSpec.kausiUri" locale="'fi'"/>
+                </td>
+                <td>
+                    <koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="model.userOrgTypes" koodiuri="model.searchSpec.oppilaitosTyyppi" locale="'fi'"/>
                 </td>
 
                 <td class="controls">

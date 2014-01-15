@@ -97,6 +97,40 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(String tyyppi,int vuosi, String orgType) {
+
+        ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
+        try {
+
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiOrgTypeAndYear(vpsTyyppi,orgType,vuosi);
+            if (kuvaukses != null && kuvaukses.size() > 0) {
+
+                List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,true));
+                }
+
+                kuvaukset.setResult(foundKuvaukses);
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            } else {
+                kuvaukset.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+
+        } catch (Exception exp) {
+
+            kuvaukset.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            kuvaukset.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+        }
+
+        return kuvaukset;
+
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimet(String tyyppi) {
        ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
@@ -345,7 +379,37 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(KuvausSearchV1RDTO searchParam) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(String tyyppi, KuvausSearchV1RDTO searchParam) {
+        ResultV1RDTO<List<KuvausV1RDTO>> result = new ResultV1RDTO<List<KuvausV1RDTO>>();
+
+        try {
+
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
+
+            LOG.debug("SEARCHING WITH TYYPPI : " + tyyppi);
+
+            LOG.debug("SEARCHING WITH SEARCH SPEC KAUSI : "  + searchParam.getKausiUri());
+
+            List<ValintaperusteSoraKuvaus> resultList = kuvausDAO.findBySearchSpec(searchParam,vpsTyyppi);
+
+            if (resultList != null && resultList.size() > 0) {
+                List<KuvausV1RDTO>  kuvauksesList = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpk:resultList) {
+                    kuvauksesList.add(converter.toKuvausRDTO(vpk,false));
+                }
+               result.setResult(kuvauksesList);
+               result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            } else {
+                result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            }
+
+        } catch (Exception exp) {
+            LOG.warn("EXCEPTION RETRIEVING KUVAUKSES : {}", exp.toString() );
+            result.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+        }
+
+        return result;
     }
 }

@@ -26,8 +26,12 @@ import org.springframework.stereotype.Repository;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
+import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.DateTimeExpression;
+import com.mysema.query.types.path.DatePath;
+import com.mysema.query.types.path.DateTimePath;
 
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
@@ -47,9 +51,10 @@ import fi.vm.sade.tarjonta.model.index.QKoulutusIndexEntity;
 @Repository
 public class IndexerDaoImpl implements IndexerDAO {
 
+    private final DateTimePath<Date> ALKAMISPVM = Expressions.dateTimePath(Date.class, "alkamispvm");
+
     @PersistenceContext
     private EntityManager entityManager;
-
 
     @Override
     public List<HakukohdeIndexEntity> findAllHakukohteet() {
@@ -64,7 +69,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     }
 
     @Override
-    public List<KoulutusIndexEntity> findKoulutusmoduuliToteutusesByHakukohdeId(Long hakukohdeId) { 
+    public List<KoulutusIndexEntity> findKoulutusmoduuliToteutusesByHakukohdeId(Long hakukohdeId) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
@@ -76,7 +81,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public HakukohdeIndexEntity findHakukohdeById(Long id) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        
+
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
                 .join(hakukohde.haku, haku)
@@ -84,7 +89,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .singleResult(
                         new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.koulutuksenAlkamiskausiUri, haku.koulutuksenAlkamisVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri)); 
+                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri));
     }
 
     @Override
@@ -97,47 +102,67 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .list(
                         (new QHakuAikaIndexEntity(hakuaika.alkamisPvm, hakuaika.paattymisPvm)));
     }
-    
+
     @Override
     public List<Long> findAllHakukohdeIds() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         return q(hakukohde).list(hakukohde.id);
     }
-    
+
     @Override
     public List<KoulutusIndexEntity> findAllKoulutukset() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        /* query dsl query should be something like this in sql:
+         select MAX(kta.alkamispvm), kt.id
+         from koulutusmoduuli_toteutus kt left join koulutusmoduuli_toteutus_alkamispvm kta 
+         on kt.id=kta.koulutusmoduuli_toteutus_id group by kt.id, kta.koulutusmoduuli_toteutus_id
+         */
         return q(komoto)
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
+                .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
+                        komoto.id, komoto.oid, komoto.tila,
+                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
+                        koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
+                        koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
+                        komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
+                )
                 .list(
-                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, komoto.koulutuksenAlkamisPvm, komoto.tila,
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
                                 koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                                 koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimus)));        
+                                komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
     }
 
     @Override
     public KoulutusIndexEntity findKoulutusById(Long koulutusmoduuliToteutusId) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+
         return q(komoto)
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
+                .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
+                        komoto.id, komoto.oid, komoto.tila,
+                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
+                        koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
+                        koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
+                        komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
+                )
                 .where(komoto.id.eq(koulutusmoduuliToteutusId))
                 .singleResult(
-                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, komoto.koulutuksenAlkamisPvm, komoto.tila,
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
                                 koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                                 koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimus)));        
+                                komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
     }
 
-    private BooleanBuilder bb(Predicate initial){
+    private BooleanBuilder bb(Predicate initial) {
         return new BooleanBuilder(initial);
     }
 
-    private JPAQuery q(EntityPath<?> entityPath){
+    private JPAQuery q(EntityPath<?> entityPath) {
         return new JPAQuery(entityManager).from(entityPath);
     }
 
@@ -161,11 +186,10 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<String> findKoulutusLajisForKoulutus(
             Long koulutusmoduuliToteutusId) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        
+
         return q(komoto).join(komoto.koulutuslajis, QKoodistoUri.koodistoUri).where(komoto.id.eq(koulutusmoduuliToteutusId)).list(QKoodistoUri.koodistoUri.koodiUri);
     }
-    
-    
+
     @Override
     public MonikielinenTeksti getKomoNimi(Long koulutusId) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
@@ -220,8 +244,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public void updateKoulutusIndexed(Long id, Date time) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm,time).execute();
+        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
     }
-
 
 }

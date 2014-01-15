@@ -264,7 +264,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.DATES, function(value, key) {
-            if (!angular.isUndefined(uiModel[key])) {
+            if (angular.isUndefined(uiModel[key])) {
                 uiModel[key] = [];
             }
         });
@@ -275,7 +275,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
     };
 
     factory.createUiKoodistoSingleModel = function() {
-        return {'uri': null};
+        return {'uri': null, koodis: []};
     };
     factory.createUiKoodistoMultiModel = function() {
         return {koodis: [], 'uris': []};

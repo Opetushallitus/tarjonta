@@ -16,6 +16,7 @@ angular.module('app.kk',
             'app.edit.ctrl.alkamispaiva',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
+            'app.haku.ctrl',
             'ui.bootstrap',
             'ngRoute',
             'config',
@@ -54,6 +55,7 @@ angular.module('app',
             'KoodistoCombo',
             'KoodistoArvoCombo',
             'SharedStateService',
+            'CommonUtilServiceModule',
             'DateTimePicker',
             'Hakukohde',
             'Kuvaus',
@@ -173,7 +175,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
 
                 })
-                .when('/valintaPerusteKuvaus/search/:oppilaitosTyyppi',{
+                .when('/valintaPerusteKuvaus/search',{
 
                     action : "valintaPerusteKuvaus.search",
                     controller: 'ValintaperusteSearchController'
@@ -240,12 +242,52 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-                                 
+
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;
                                  return deferredHakukohde.promise;  */
 
+                            }
+                        }
+                    }
+                })
+
+
+                .when('/haku', {
+                    action: "haku.list",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakus: function($log, $route) {
+                            $log.info("/haku", $route);
+                            return ["foo", "bar", "zyzzy"];
+                        }
+                    }
+                })
+
+                .when('/haku/:id', {
+                    action: "haku.review",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakux: function($log, $route) {
+                            $log.info("/haku/ID", $route);
+
+                            return {
+                                oid : "oid-this-entry-not-really-loaded-from-database"
+                            }
+                        }
+                    }
+                })
+
+                 .when('/haku/:id/edit', {
+                    action: "haku.edit",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakux: function($log, $route) {
+                            $log.info("/haku/ID/edit", $route);
+
+                            return {
+                                oid : "oid-this-entry-not-really-loaded-from-database"
                             }
                         }
                     }

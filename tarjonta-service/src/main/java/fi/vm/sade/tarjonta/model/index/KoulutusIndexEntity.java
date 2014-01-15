@@ -24,6 +24,8 @@ public class KoulutusIndexEntity {
     private String koulutusmoduuliOid;
     private String pohjakoulutusVaatimus;
     private String koulutuslaji;
+    private String kausi;
+    private Integer vuosi;
 
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri, String koulutusTyyppi) {
@@ -39,7 +41,7 @@ public class KoulutusIndexEntity {
             TarjontaTila tila, String koulutusTyyppi,
             String koulutusmoduuliOid, String koulutusKoodi,
             String tutkintoNimike, String koulutustyyppi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus) {
+            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi) {
         this.koulutusId = id;
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
@@ -52,11 +54,13 @@ public class KoulutusIndexEntity {
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
         this.tarjoaja = tarjoaja;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
+        this.kausi = kausi;
+        this.vuosi = vuosi;
     }
 
     /**
      * Return koulutusmoduulitoteutus.id
-     * 
+     *
      * @return
      */
     public Long getKoulutusId() {
@@ -65,7 +69,7 @@ public class KoulutusIndexEntity {
 
     /**
      * Return koulutus oid.
-     * 
+     *
      * @return
      */
     public String getOid() {
@@ -74,7 +78,7 @@ public class KoulutusIndexEntity {
 
     /**
      * Return tarjoaja oid.
-     * 
+     *
      * @return
      */
     public String getTarjoaja() {
@@ -132,9 +136,37 @@ public class KoulutusIndexEntity {
                 + koulutuksenAlkamisPvm + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
+                + ", kausi=" + kausi
+                + ", vuosi=" + vuosi
                 + ", koulutuslaji=" + koulutuslaji + "]";
     }
-    
-    
-    
+
+    /**
+     * @return the kausi
+     */
+    public String getKausi() {
+        return kausi;
+    }
+
+    /**
+     * @param kausi the kausi to set
+     */
+    public void setKausi(String kausi) {
+        this.kausi = kausi;
+    }
+
+    /**
+     * @return the vuosi
+     */
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    /**
+     * @param vuosi the vuosi to set
+     */
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
+    }
+
 }

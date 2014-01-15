@@ -15,71 +15,65 @@
 
 var app = angular.module('app.haku.edit.ctrl', []);
 
-app.controller('BaseHakuEditController',
+app.controller('HakuEditController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
-            function BaseEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
-                $log.info("BaseHakuEditController()");
+            function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
+                $log.info("HakuEditController()");
 
                 // TODO preloaded / resolved haku is where?
 
-                $scope.koodistoLocale = LocalisationService.getLocale();//"fi";
                 $scope.model = null;
+
+                $scope.getLocale = function() {
+                    return 'FI';
+                };
+
+                $scope.doRemoveHakuaika = function(hakuaika, index) {
+                    $log.info("doRemoveHakuaika()", hakuaika, index);
+                    if ($scope.model.haku.hakuaikas.length > 1) {
+                        $scope.model.haku.hakuaikas.splice(index, 1);
+                    }
+                };
+
+                $scope.doAddNewHakuaika = function() {
+                    $log.info("doAddNewHakuaika()");
+                    $scope.model.haku.hakuaikas.push({nimi: "", alkaa: 0, loppuu: 0});
+                };
 
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {
-                        validation: {
-                            showValidationErrors: false,
-                            showError: false,
-                            showSuccess: false
-                        },
                         collapse: {
                             model: true
                         },
+                        haku: {
+                            "nimi": {
+                                "kieli_fi": "suomi",
+                                "kieli_sv": "ruotsi",
+                                "kieli_en": "englanti",
+                                "kieli_ay": "aimara"
+                            },
+                            "hakutapaUri": "hakutapa_02",
+                            "haunkohdejoukkoUri": "haunkohdejoukko_10",
+                            "alkamiskausiUri": "kausi_k",
+                            "kausiUri": "kausi_s",
+                            "hakutyyppiUri": "hakutyyppi_02",
+                            "kausiVuosi": 2013,
+                            "alkamiskausiVuosi": 2014,
+                            hakuaikas: [
+                                {nimi: "Hakuajan nimi 1", alkaa: 1, loppuu: 2},
+                                {nimi: "Hakuajan nimi 2", alkaa: 3, loppuu: 4}
+                            ],
+
+                            hakulomakeKaytaJarjestemlmanOmaa : true
+                        },
+
                         place: "holder"
                     };
 
                     $log.info("init... done.");
                     $scope.model = model;
                 };
-
-                /**
-                 * Save koulutus data to tarjonta-service database.
-                 * TODO: strict data validation, exception handling and optimistic locking
-                 */
-                $scope.saveLuonnos = function(tila) {
-                    $scope.saveByStatus(tila);
-                };
-                $scope.saveValmis = function(tila) {
-                    $scope.saveByStatus(tila);
-                };
-                $scope.saveByStatus = function(tila) {
-                    $log.info("saveByStatus(): tila = " + tila);
-
-                    if (angular.isUndefined(tila)) {
-                        throw "save haku with undefined tila?";
-                    }
-
-                    if ($scope.hakuForm.$invalid) {
-                        $scope.model.valudation.showError = true;
-                        return;
-                    }
-
-                    // DO THE SAVE
-                    $log.info("saveByStatus(): NOT IMPLEMENTED!");
-                };
-
-
-                /*
-                 * WATCHES
-                 */
-
-//                $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
-//                    if (!valNew && valOld) {
-//                        //clear price data field
-//                        $scope.model.hinta = '';
-//                    }
-//                });
 
                 $scope.init();
             }]);

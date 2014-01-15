@@ -256,7 +256,7 @@ app.directive('resultsTable',function(LocalisationService, loadingService, $log)
     	}
 
     	
-    	console.log("INIT ",data);
+    	//console.log("INIT ",data);
     	
     	forceClear(em);
         $("input.selectAll", em).prop("checked", false);
@@ -310,7 +310,7 @@ app.directive('resultsTable',function(LocalisationService, loadingService, $log)
 		},
 		
 		link: function(scope, element, attrs, controller) {
-			console.log("LINK", scope);
+			//console.log("LINK", scope);
 			
 		    // tyhjentää taulukot hakusivulta poistuessa, estäen angularia jumittamasta ui:ta
 		    scope.$on("$destroy", function(){

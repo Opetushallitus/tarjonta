@@ -233,6 +233,10 @@ div#searchResults input.selectAll + label {
 	margin-left:0.25em;
 }
 
+div#searchResults div.tools {
+	float:right;	
+}
+
 div#searchResults table {
 	width:100%;
 }
@@ -525,5 +529,20 @@ div#select-koulutus div.koulutus-tree > ul > li {
 .valintakoe-modal {
     width:900px;
     margin-left:-450px
+}
+
+/* tekstikentän hakuikoni */
+
+input[type=text].typeahead {
+
+    background-image: url('../img/icon20-search.png');
+	background-repeat: no-repeat;
+	background-position: center right;
+	padding-right:22px;
+}
+
+/* virkailija-teeman checkbox-korjaus */
+input[type=checkbox], input[type=radio] {
+	box-shadow:none;
 }
 
