@@ -56,7 +56,7 @@
 
 var app = angular.module('ControlsLayout', ['localisation']);
 
-app.directive('displayControls',function($log, LocalisationService) {
+app.directive('displayControls',function($log, LocalisationService, $filter) {
 	
     return {
         restrict: 'E',
@@ -124,7 +124,8 @@ app.directive('displayControls',function($log, LocalisationService) {
        			if (!user || user.length==0) {
        				user = LocalisationService.t("tarjonta.metadata.unknown");
        			}
-       			md.push(LocalisationService.t(key, [ new Date(timestamp).toLocaleDateString(), new Date(timestamp).toLocaleTimeString(), user ]));
+       			md.push(LocalisationService.t(key,
+       					[ $filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user ]));
        		}
        		
        		$scope.metadata = [];
