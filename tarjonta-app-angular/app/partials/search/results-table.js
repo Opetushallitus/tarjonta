@@ -306,7 +306,7 @@ app.directive('resultsTable',function(LocalisationService, loadingService, $log)
 		},
 		controller: function($scope) {
 			$scope.valitseKaikkiMsg = LocalisationService.t("tarjonta.toiminnot.valitse_kaikki");
-			$scope.serial = 1;			
+			$scope.serial = 1;		
 		},
 		
 		link: function(scope, element, attrs, controller) {
