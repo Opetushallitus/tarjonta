@@ -197,11 +197,11 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         // hakukohdeNimi
         t.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(s.getHakukohdeNimi()));
         // Painotetun keskiarvon arvoväli
-        t.setPainotettuKeskiarvoHylkaysMax(s.getAlinHyvaksyttavaKeskiarvo() != null ? new BigDecimal(s.getAlinHyvaksyttavaKeskiarvo()) : nolla);
+        t.setPainotettuKeskiarvoHylkaysMax(s.getAlinHyvaksyttavaKeskiarvo() != null ? new BigDecimal(String.valueOf(s.getAlinHyvaksyttavaKeskiarvo())) : nolla);
         t.setPainotettuKeskiarvoHylkaysMin(nolla);
 
         // Kokonaishylkäyksen arvoväli
-        t.setHylkaysMax(s.getAlinValintaPistemaara() != null ? new BigDecimal(s.getAlinValintaPistemaara()) : nolla);
+        t.setHylkaysMax(s.getAlinValintaPistemaara() != null ? new BigDecimal(String.valueOf(s.getAlinValintaPistemaara())) : nolla);
         t.setHylkaysMin(nolla);
 
         // Valintakokeiden arvovälit
