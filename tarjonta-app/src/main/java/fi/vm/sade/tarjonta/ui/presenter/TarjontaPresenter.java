@@ -641,7 +641,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         LueKoulutusKyselyTyyppi lueK = new LueKoulutusKyselyTyyppi();
         lueK.setOid(getModel().getHakukohde().getKomotoOids().get(0));
         LueKoulutusVastausTyyppi koulutus = this.tarjontaPublicService.lueKoulutus(lueK);
-        List<KoulutusPerustieto> validKoulutukses = getValidKoulutuksesForHakukohde(vastaus, koulutus.getKoulutusKoodi(), koulutus.getPohjakoulutusvaatimus());
+        List<KoulutusPerustieto> validKoulutukses = getValidKoulutuksesForHakukohde(vastaus, koulutus.getKoulutusKoodi(), koulutus.getPohjakoulutusvaatimus(), koulutus.getTarjoaja());
         List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(validKoulutukses));
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses, KoulutusOidNameViewModel.class, "ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup", false);
         return dialog;
@@ -649,7 +649,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     private List<KoulutusPerustieto> getValidKoulutuksesForHakukohde(
-            KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi) {
+            KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi, String tarjoajaOid) {
         ListaaHakuTyyppi kysely = new ListaaHakuTyyppi();
         kysely.setHakuOid(getModel().getHakukohde().getHakuViewModel().getHakuOid());
         ListHakuVastausTyyppi hakuVastaus = this.tarjontaPublicService.listHaku(kysely);
@@ -659,7 +659,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
-            if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid)  &&  curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
