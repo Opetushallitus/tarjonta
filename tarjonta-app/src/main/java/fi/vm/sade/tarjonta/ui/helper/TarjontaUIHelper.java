@@ -1034,14 +1034,8 @@ public class TarjontaUIHelper {
     }
 
     public String getAjankohtaStr(KoulutusPerustieto curKoulutus) {
-
-        String[] ajankohtaParts = curKoulutus.getAjankohta().split(" ");
-        if (ajankohtaParts.length < 2) {
-            return "";
-        }
-        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curKoulutus.getKoulutuksenAlkamiskausi().getNimi()) + " " + curKoulutus.getKoulutuksenAlkamisVuosi();
     }
-
 
     /**
      * Return koodi with uri and version.

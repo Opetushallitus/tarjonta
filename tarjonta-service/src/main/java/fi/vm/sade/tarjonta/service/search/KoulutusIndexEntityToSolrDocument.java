@@ -21,7 +21,6 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_SV;
@@ -185,11 +184,9 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         if (koulutus.getKoulutuksenAlkamisPvm() == null) {
             IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutus.getKausi(), koodiService);
-            add(komotoDoc, KAUSI, koulutus.getKausi());
             add(komotoDoc, VUOSI_KOODI, koulutus.getVuosi());
         } else {
             IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()), koodiService);
-            add(komotoDoc, KAUSI, IndexDataUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
             add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
         }
 
