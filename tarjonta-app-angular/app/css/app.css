@@ -529,7 +529,7 @@ div#select-koulutus div.koulutus-tree > ul > li {
 
 /* tekstikentän hakuikoni */
 
-input[type=text].icon-typeahead {
+input[type=text].typeahead {
 
     background-image: url('../img/icon20-search.png');
 	background-repeat: no-repeat;
