@@ -21,6 +21,7 @@ app.controller('HakuEditController',
                 $log.info("HakuEditController()");
 
                 // TODO preloaded / resolved haku is where?
+                // $route.local.xxx
 
                 $scope.model = null;
 
@@ -40,9 +41,31 @@ app.controller('HakuEditController',
                     $scope.model.haku.hakuaikas.push({nimi: "", alkaa: 0, loppuu: 0});
                 };
 
+                $scope.goBack = function(event) {
+                    $log.info("goBack()");
+                };
+
+                $scope.saveLuonnos = function(event) {
+                    $scope.model.showError = !$scope.model.showError;
+                    $scope.model.showSuccess = !$scope.model.showError;
+                    $log.info("saveLuonnos()");
+                };
+
+                $scope.saveValmis = function(event) {
+                    $log.info("saveValmis()");
+                };
+
+                $scope.goToReview = function(event) {
+                    $log.info("goToReview()");
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {
+                        formControls: {},
+                        showError: false,
+                        showSuccess: false,
+                        validationmsgs: [],
                         collapse: {
                             model: true
                         },
@@ -61,13 +84,11 @@ app.controller('HakuEditController',
                             "kausiVuosi": 2013,
                             "alkamiskausiVuosi": 2014,
                             hakuaikas: [
-                                {nimi: "Hakuajan nimi 1", alkaa: 1, loppuu: 2},
-                                {nimi: "Hakuajan nimi 2", alkaa: 3, loppuu: 4}
+                                {nimi: "Hakuajan nimi 1", alkaa: new Date(), loppuu: new Date()},
+                                {nimi: "Hakuajan nimi 2", alkaa: new Date(), loppuu: new Date()}
                             ],
-
-                            hakulomakeKaytaJarjestemlmanOmaa : true
+                            hakulomakeKaytaJarjestemlmanOmaa: true
                         },
-
                         place: "holder"
                     };
 
@@ -77,4 +98,3 @@ app.controller('HakuEditController',
 
                 $scope.init();
             }]);
-
