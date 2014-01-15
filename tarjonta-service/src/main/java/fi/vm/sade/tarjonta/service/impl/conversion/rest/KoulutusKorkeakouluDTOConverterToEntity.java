@@ -30,7 +30,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.business.impl.KoulutusBusinessServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -42,14 +41,10 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.lang.time.DateUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,27 +213,6 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
     }
 
     /**
-     * Remove all entity dates excluded from API DTOs.
-     *
-     * @param entityDates
-     * @param dtoDates
-     */
-    private void removeExcludedDates(Set<Date> entityDates, Set<Date> dtoDates) {
-        Set<Date> removableDates = Sets.<Date>newHashSet(entityDates);
-
-        for (Date dtoDate : dtoDates) {
-            Date dateWithoutMinutes = DateUtils.truncate(dtoDate, Calendar.DATE);
-            if (removableDates.contains(dateWithoutMinutes)) {
-                removableDates.remove(dateWithoutMinutes);
-            }
-        }
-
-        for (Date date : removableDates) {
-            entityDates.remove(date);
-        }
-    }
-
-    /**
      * Logic for handling dates.
      *
      * @param komoto
@@ -249,7 +223,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
 
         if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
             //one or many dates   
-            removeExcludedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
+            EntityUtils.keepSelectedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
             final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
             final String baseKausi = IndexDataUtils.parseKausiKoodi(firstDate);
             final Integer baseVuosi = IndexDataUtils.parseYearInt(firstDate);

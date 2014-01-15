@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
@@ -65,7 +66,7 @@ import org.apache.commons.lang.time.DateUtils;
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 @EntityListeners(XssFilterListener.class)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
-
+    
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,11 +79,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nimi")
     private MonikielinenTeksti nimi;
-
+    
     public MonikielinenTeksti getNimi() {
         return nimi;
     }
-
+    
     public void setNimi(MonikielinenTeksti nimi) {
         this.nimi = nimi;
     }
@@ -121,12 +122,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
-
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetusaika", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
-
+    
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuspaikka", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -169,91 +170,91 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @MapKey(name = "key")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<String, Kielivalikoima> tarjotutKielet = new HashMap<String, Kielivalikoima>();
-
+    
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_lukiodiplomi", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
-
+    
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
-
+    
     @Column(name = "viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date viimIndeksointiPvm = null;
-
+    
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_pohjakoulutusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "kk_pohjakoulutusvaatimus")
     private Set<KoodistoUri> kkPohjakoulutusvaatimus = new HashSet<KoodistoUri>();
-
+    
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = TABLE_NAME + "_tekstit", inverseJoinColumns = @JoinColumn(name = "monikielinen_teksti_id"))
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomotoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomotoTeksti, MonikielinenTeksti>();
-
+    
     @Column(name = "opintojen_laajuus_arvo")
     private String opintojenLaajuusArvo;
-
+    
     @Column(name = "opintojen_laajuus_yksikko")
     private String opintojenLaajuusYksikko;
-
+    
     @Column(name = "hinta")
     private BigDecimal hinta;
-
+    
     @Column(name = "alkamiskausi")
     private String alkamiskausi;
-
+    
     @Column(name = "alkamisvuosi")
     private Integer alkamisVuosi;
-
+    
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
-
+    
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_alkamispvm",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "alkamispvm")
     private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
-
+    
     private transient boolean showMeta = true;
-
+    
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusArvo;
     }
-
+    
     public void setOpintojenLaajuusArvo(String opintojenLaajuusArvo) {
         this.opintojenLaajuusArvo = opintojenLaajuusArvo;
     }
-
+    
     public String getOpintojenLaajuusYksikko() {
         return opintojenLaajuusYksikko;
     }
-
+    
     public void setOpintojenLaajuusYksikko(String opintojenLaajuusYksikko) {
         this.opintojenLaajuusYksikko = opintojenLaajuusYksikko;
     }
-
+    
     public Map<KomotoTeksti, MonikielinenTeksti> getTekstit() {
         return tekstit;
     }
-
+    
     public void setTekstit(Map<KomotoTeksti, MonikielinenTeksti> tekstit) {
         this.tekstit = tekstit;
     }
-
+    
     public Date getViimIndeksointiPvm() {
         return viimIndeksointiPvm;
     }
-
+    
     public void setViimIndeksointiPvm(Date viimIndeksointiPvm) {
         this.viimIndeksointiPvm = viimIndeksointiPvm;
     }
-
+    
     public KoulutusmoduuliToteutus() {
         super();
     }
@@ -277,7 +278,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         }
         this.koulutusmoduuli = moduuli;
     }
-
+    
     public Koulutusmoduuli getKoulutusmoduuli() {
         return koulutusmoduuli;
     }
@@ -313,11 +314,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void addKoulutuslaji(String koulutuslajiUri) {
         koulutuslajis.add(new KoodistoUri(koulutuslajiUri));
     }
-
+    
     public void removeKoulutuslaji(String koulutuslajiUri) {
         koulutuslajis.remove(new KoodistoUri(koulutuslajiUri));
     }
-
+    
     public void setKoulutuslajis(Collection<String> uris) {
         koulutuslajis.clear();
         for (String uri : uris) {
@@ -342,12 +343,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public Set<KoodistoUri> getTeemas() {
         return Collections.unmodifiableSet(teemas);
     }
-
+    
     @Deprecated
     public void removeTeema(KoodistoUri uri) {
         teemas.remove(uri);
     }
-
+    
     @Deprecated
     public void addTeema(KoodistoUri uri) {
         teemas.add(uri);
@@ -360,19 +361,19 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setTeemas(Set<KoodistoUri> teemaUris) {
         this.teemas = new HashSet<KoodistoUri>(teemaUris);
     }
-
+    
     public Set<KoodistoUri> getAvainsanas() {
         return Collections.unmodifiableSet(avainsanas);
     }
-
+    
     public void removeAvainsana(KoodistoUri avainsana) {
         avainsanas.remove(avainsana);
     }
-
+    
     public void addAvainsana(KoodistoUri avainsana) {
         avainsanas.add(avainsana);
     }
-
+    
     public void setAvainsanas(Set<KoodistoUri> avainsanas) {
         this.avainsanas = new HashSet<KoodistoUri>(avainsanas);
     }
@@ -403,11 +404,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public Set<Hakukohde> getHakukohdes() {
         return Collections.unmodifiableSet(hakukohdes);
     }
-
+    
     public void addHakukohde(Hakukohde hakukohde) {
         hakukohdes.add(hakukohde);
     }
-
+    
     public void removeHakukohde(Hakukohde hakukohde) {
         hakukohdes.remove(hakukohde);
     }
@@ -434,35 +435,35 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void addOpetuskieli(KoodistoUri opetuskieli) {
         opetuskielis.add(opetuskieli);
     }
-
+    
     public void removeOpetuskieli(KoodistoUri opetuskieli) {
         opetuskielis.remove(opetuskieli);
     }
-
+    
     public void setAmmattinimikes(Set<KoodistoUri> ammattinimikes) {
         this.ammattinimikes = ammattinimikes;
     }
-
+    
     public Set<KoodistoUri> getAmmattinimikes() {
         return Collections.unmodifiableSet(ammattinimikes);
     }
-
+    
     public void addAmmattinimike(KoodistoUri ammattinimike) {
         ammattinimikes.add(ammattinimike);
     }
-
+    
     public void removeAmmattinimike(KoodistoUri ammattinimike) {
         ammattinimikes.remove(ammattinimike);
     }
-
+    
     public Set<KoodistoUri> getOpetusmuotos() {
         return Collections.unmodifiableSet(opetusmuotos);
     }
-
+    
     public void addOpetusmuoto(KoodistoUri opetusmuoto) {
         opetusmuotos.add(opetusmuoto);
     }
-
+    
     public void removeOpetusmuoto(KoodistoUri opetusmuoto) {
         opetusmuotos.remove(opetusmuoto);
     }
@@ -475,15 +476,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setOpetusmuoto(Set<KoodistoUri> uris) {
         this.opetusmuotos = uris;
     }
-
+    
     public void addLinkki(WebLinkki linkki) {
         linkkis.add(linkki);;
     }
-
+    
     public void removeLinkki(WebLinkki linkki) {
         linkkis.remove(linkki);
     }
-
+    
     public Set<WebLinkki> getLinkkis() {
         return Collections.unmodifiableSet(linkkis);
     }
@@ -496,28 +497,28 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setLinkkis(Set<WebLinkki> linkkis) {
         this.linkkis = new HashSet<WebLinkki>(linkkis);
     }
-
+    
     public Set<Yhteyshenkilo> getYhteyshenkilos() {
         return Collections.unmodifiableSet(yhteyshenkilos);
     }
-
+    
     public void addYhteyshenkilo(Yhteyshenkilo henkilo) {
         yhteyshenkilos.add(henkilo);
     }
-
+    
     public void removeYhteyshenkilo(Yhteyshenkilo henkilo) {
         yhteyshenkilos.remove(henkilo);
     }
-
+    
     public void setYhteyshenkilos(Set<Yhteyshenkilo> yhteyshenkilos) {
         this.yhteyshenkilos.clear();
         this.yhteyshenkilos = yhteyshenkilos;
     }
-
+    
     public Map<String, Kielivalikoima> getTarjotutKielet() {
         return Collections.unmodifiableMap(tarjotutKielet);
     }
-
+    
     public Kielivalikoima getKieliValikoima(String key) {
         Kielivalikoima ret = tarjotutKielet.get(key);
         if (ret == null) {
@@ -527,7 +528,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         }
         return ret;
     }
-
+    
     public void setKieliValikoima(String key, Collection<String> codes) {
         if (codes != null && !codes.isEmpty()) {
             getKieliValikoima(key).setKielet(codes);
@@ -628,7 +629,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getArviointikriteerit() {
         return tekstit.get(KomotoTeksti.ARVIOINTIKRITEERIT);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setArviointikriteerit(MonikielinenTeksti arviointikriteerit) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.ARVIOINTIKRITEERIT, arviointikriteerit);
@@ -643,7 +644,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getLoppukoeVaatimukset() {
         return tekstit.get(KomotoTeksti.LOPPUKOEVAATIMUKSET);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.LOPPUKOEVAATIMUKSET, loppukoeVaatimukset);
@@ -682,7 +683,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getKuvailevatTiedot() {
         return tekstit.get(KomotoTeksti.KUVAILEVAT_TIEDOT);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKuvailevatTiedot(MonikielinenTeksti kuvailevatTiedot) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.KUVAILEVAT_TIEDOT, kuvailevatTiedot);
@@ -697,7 +698,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getSisalto() {
         return tekstit.get(KomotoTeksti.SISALTO);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSisalto(MonikielinenTeksti sisalto) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.SISALTO, sisalto);
@@ -712,7 +713,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getSijoittuminenTyoelamaan() {
         return tekstit.get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setSijoittuminenTyoelamaan(MonikielinenTeksti sijoittuminenTyoelamaan) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, sijoittuminenTyoelamaan);
@@ -727,7 +728,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getKansainvalistyminen() {
         return tekstit.get(KomotoTeksti.KANSAINVALISTYMINEN);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKansainvalistyminen(MonikielinenTeksti kansainvalistyminen) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.KANSAINVALISTYMINEN, kansainvalistyminen);
@@ -742,7 +743,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public MonikielinenTeksti getYhteistyoMuidenToimijoidenKanssa() {
         return tekstit.get(KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, yhteistyoMuidenToimijoidenKanssa);
@@ -763,58 +764,58 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setPainotus(MonikielinenTeksti painotus) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.PAINOTUS, painotus);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getKoulutusohjelmanValinta() {
         return tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKoulutusohjelmanValinta(MonikielinenTeksti koulutusohjelmanValinta) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, koulutusohjelmanValinta);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getLisatietoaOpetuskielista() {
         return tekstit.get(KomotoTeksti.LISATIETOA_OPETUSKIELISTA);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setLisatietoaOpetuskielista(MonikielinenTeksti tavoitteet) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.LISATIETOA_OPETUSKIELISTA, tavoitteet);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public MonikielinenTeksti getTutkimuksenPainopisteet() {
         return tekstit.get(KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET);
     }
-
+    
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setTutkimuksenPainopisteet(MonikielinenTeksti tavoitteet) {
         MonikielinenTeksti.merge(tekstit, KomotoTeksti.TUTKIMUKSEN_PAINOPISTEET, tavoitteet);
     }
-
+    
     public void setLukiodiplomit(Set<KoodistoUri> lukiodiplomit) {
         this.lukiodiplomit.clear();
         this.lukiodiplomit = lukiodiplomit;
     }
-
+    
     public Set<KoodistoUri> getLukiodiplomit() {
         return Collections.unmodifiableSet(lukiodiplomit);
     }
-
+    
     public void addLukiodiplomi(KoodistoUri lukiodiplomi) {
         lukiodiplomit.add(lukiodiplomi);
     }
-
+    
     public void removeLukiodiplomi(KoodistoUri lukiodiplomi) {
         lukiodiplomit.remove(lukiodiplomi);
     }
-
+    
     public String getLastUpdatedByOid() {
         return lastUpdatedByOid;
     }
-
+    
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
     }
@@ -846,19 +847,19 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setHinta(BigDecimal hinta) {
         this.hinta = hinta;
     }
-
+    
     public String getAlkamiskausi() {
         return alkamiskausi;
     }
-
+    
     public void setAlkamiskausi(String alkamiskausi) {
         this.alkamiskausi = alkamiskausi;
     }
-
+    
     public Integer getAlkamisVuosi() {
         return alkamisVuosi;
     }
-
+    
     public void setAlkamisVuosi(Integer alkamisVuosi) {
         this.alkamisVuosi = alkamisVuosi;
     }
@@ -876,11 +877,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setKuvat(Map<String, BinaryData> kuvat) {
         this.kuvat = kuvat;
     }
-
+    
     public boolean isKuva(String kielikoodi) {
         return kuvat.containsKey(kielikoodi);
     }
-
+    
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
     }
@@ -898,27 +899,27 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setShowMeta(boolean showMeta) {
         this.showMeta = showMeta;
     }
-
+    
     public Set<KoodistoUri> getAihees() {
         return aihees;
     }
-
+    
     public void setAihees(Set<KoodistoUri> aihees) {
         this.aihees = aihees;
     }
-
+    
     public Set<KoodistoUri> getOpetusAikas() {
         return opetusAikas;
     }
-
+    
     public void setOpetusAikas(Set<KoodistoUri> opetusAikas) {
         this.opetusAikas = opetusAikas;
     }
-
+    
     public Set<KoodistoUri> getOpetusPaikkas() {
         return opetusPaikkas;
     }
-
+    
     public void setOpetusPaikkas(Set<KoodistoUri> opetusPaikkas) {
         this.opetusPaikkas = opetusPaikkas;
     }
@@ -940,16 +941,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setKoulutuksenAlkamisPvms(Set<Date> koulutuksenAlkamisPvms) {
         this.koulutuksenAlkamisPvms = koulutuksenAlkamisPvms;
     }
-
+    
     public void addKoulutuksenAlkamisPvms(Date koulutuksenAlkamisPvm) {
         Preconditions.checkNotNull(koulutuksenAlkamisPvm, "koulutuksenAlkamisPvm date object cannot be null.");
         final Date dateWithoutMinutes = DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE);
-
+        
         if (!this.koulutuksenAlkamisPvms.contains(dateWithoutMinutes)) {
             this.koulutuksenAlkamisPvms.add(dateWithoutMinutes);
         }
     }
-
+    
     public void clearKoulutuksenAlkamisPvms() {
         this.koulutuksenAlkamisPvms.clear();
     }
@@ -961,7 +962,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
         Preconditions.checkNotNull(koulutuksenAlkamisPvm, "koulutuksenAlkamisPvm date object cannot be null.");
-        this.koulutuksenAlkamisPvms.clear();
+        EntityUtils.keepSelectedDates(this.koulutuksenAlkamisPvms, koulutuksenAlkamisPvm);
         this.koulutuksenAlkamisPvms.add(DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE));
     }
 
@@ -977,7 +978,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             //at least parent komoto's date can be null. 
             return null;
         }
-
+        
         return this.koulutuksenAlkamisPvms.iterator().next();
     }
 }
