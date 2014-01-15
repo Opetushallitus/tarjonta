@@ -20,8 +20,10 @@
                     <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi" required name="hakuVuosi">
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" />
-                    <show-errors form="hakuForm" field="hakuVuosi" tt-prefix="haku.edit" />
+                    <div>
+                        <show-errors form="hakuForm" field="hakuVuosi" tt-prefix="haku.edit" ></show-errors>
+                        <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" ></show-errors>
+                    </div>
                 </td>
             </tr>
 
@@ -32,8 +34,10 @@
                     <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi" required name="alkamisVuosi">
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="alkamisKausi" tt-prefix="haku.edit" />
-                    <show-errors form="hakuForm" field="alkamisVuosi" tt-prefix="haku.edit" />
+                    <div>
+                        <show-errors form="hakuForm" field="alkamisVuosi" tt-prefix="haku.edit" ></show-errors>
+                        <show-errors form="hakuForm" field="alkamisKausi" tt-prefix="haku.edit" ></show-errors>
+                    </div>
                 </td>
             </tr>
 
