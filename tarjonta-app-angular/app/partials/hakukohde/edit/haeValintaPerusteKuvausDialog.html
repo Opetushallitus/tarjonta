@@ -27,6 +27,23 @@
                 <div class="row-fluid">
                     <input type="checkbox" data-ng-model="showKieliSelection" data-ng-disabled="showKieliSelectionCheckboxDisabled">  {{dialog.titles.tuoMyosMuutkieletTitle}}
                 </div>
+                <div class="row-fluid">
+
+                    <!--
+                    <multi-select
+                            selection="dialog.valitutKuvauksenKielet"
+                            model="dialog.kuvauksenKielet"
+                            display="combobox"/>   -->
+                   <select data-ng-model="dialog.valittuKuvausKieli" data-ng-disabled="!showKieliSelection" data-ng-change="onKieliValittu()" data-ng-options="koodi.uri as koodi.nimi for  koodi in dialog.kuvauksenKielet">
+
+                    </select>
+
+
+                        <span ng-repeat="k in dialog.valitutKuvauksenKielet">
+                            <a href ng-click="toggle(k)">[x]</a> {{k.nimi}}
+                        </span>
+
+                </div>
             </div>
         </form>
    </div>

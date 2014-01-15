@@ -716,6 +716,10 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
     var kaikkiKuvaukset = {};
 
+    $scope.dialog.kuvauksenKielet = {};
+
+    $scope.dialog.valitutKuvauksenKielet = [];
+
     $scope.dialog.copySelection = "link";
 
     $scope.showKieliSelectionCheckboxDisabled = true;
@@ -850,6 +854,57 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
     $scope.selectKuvaus = function(kuvaus) {
 
         $scope.showKieliSelectionCheckboxDisabled = false;
+
+        $scope.dialog.kuvauksenKielet = [];
+
+       // $scope.dialog.kuvauksenKielet = {};
+
+        angular.forEach(kuvaus.kieliUris,function(kuvausKieliUri){
+
+            var kieliNimi = kaikkiVpkKielet[kuvausKieliUri];
+
+
+            //$scope.dialog.kuvauksenKielet[kuvausKieliUri] = kieliNimi;
+            var kieliObj = {
+                uri : kuvausKieliUri,
+                nimi : kieliNimi
+            };
+
+            $scope.dialog.kuvauksenKielet.push(kieliObj);
+
+        });
+
+
+    };
+
+    $scope.onKieliValittu = function() {
+
+
+
+        angular.forEach($scope.dialog.kuvauksenKielet,function(kieliObj){
+
+            if (kieliObj.uri === $scope.dialog.valittuKuvausKieli ) {
+                    $scope.dialog.valitutKuvauksenKielet.push(kieliObj);
+
+
+            }
+
+        });
+
+    };
+
+    $scope.toggle = function(kuvaus) {
+
+        angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKuvaus){
+
+            if (kuvaus.uri === valittuKuvaus.uri) {
+
+               var index =   $scope.dialog.valitutKuvauksenKielet.indexOf(valittuKuvaus);
+               $scope.dialog.valitutKuvauksenKielet.splice(index,1);
+
+            };
+
+        });
 
     };
 
