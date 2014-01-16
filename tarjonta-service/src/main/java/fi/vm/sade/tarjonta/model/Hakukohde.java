@@ -141,10 +141,18 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "valintaPerusteKuvausTunniste")
     private Long valintaPerusteKuvausTunniste;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_valintaperuste_kielet", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<String> valintaPerusteKuvausKielet = new HashSet<String>();
+
     @Column(name = "soraKuvausTunniste")
     private Long soraKuvausTunniste;
 
-
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<String> soraKuvausKielet = new HashSet<String>();
 
     public Hakuaika getHakuaika() {
 		return hakuaika;
@@ -584,5 +592,21 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
         this.soraKuvausTunniste = soraKuvausTunniste;
+    }
+
+    public Set<String> getValintaPerusteKuvausKielet() {
+        return valintaPerusteKuvausKielet;
+    }
+
+    public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
+        this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
+    }
+
+    public Set<String> getSoraKuvausKielet() {
+        return soraKuvausKielet;
+    }
+
+    public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
+        this.soraKuvausKielet = soraKuvausKielet;
     }
 }

@@ -70,9 +70,6 @@
                     <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna"/></a>
                     <a href class="btn btn-primary"" ng-click="search()"><span tt="tarjonta.haku.hae"/> <span class="icon-search"></span></a>
                 </td>
-                <td class="controls">
-                    <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a>
-                </td>
 
             </tr>
         </table>
@@ -84,6 +81,9 @@
     </div>
 
 	<div id="searchResults">
+        <div class="tools">
+            <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a>
+        </div>	   
 	    <tabset>
 	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
 

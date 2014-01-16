@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Jani Wilén
  */
 @ApiModel(value = "Monen koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
-public class KoodiUrisV1RDTO extends MetaV1RDTO {
+public class KoodiUrisV1RDTO extends KoodiV1RDTO {
 
     @Override
     public String toString() {

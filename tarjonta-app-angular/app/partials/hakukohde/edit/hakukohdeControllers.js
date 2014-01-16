@@ -116,6 +116,59 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         });
 
+        modalInstance.result.then(function(kuvaukset){
+
+            if ($scope.model.hakukohde.valintaPerusteKuvausKielet === undefined) {
+                $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
+
+            }
+
+            if ($scope.model.hakukohde.soraKuvausKielet === undefined) {
+                $scope.model.hakukohde.soraKuvausKielet = [];
+            }
+
+                angular.forEach(kuvaukset,function(kuvaus){
+
+
+                    if (type === "valintaperustekuvaus") {
+
+                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri.uri);
+
+                        if (kuvaus.toimintoTyyppi === "link") {
+                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
+                        } else if (kuvaus.toimintoTyyppi === "copy") {
+                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = undefined;
+                        }
+
+
+                    } else if (type === "SORA") {
+
+                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri.uri);
+
+                        if (kuvaus.toimintoTyyppi === "link") {
+                            $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
+                        }  else if (kuvaus.toimintoTyyppi === "copy") {
+                            $scope.model.hakukohde.soraKuvausTunniste = undefined;
+                        }
+
+
+                    }
+
+                });
+
+
+
+
+        });
+
+    }
+
+    var createFormattedDateString = function(date) {
+
+        return moment(date).format('DD.MM.YYYY hh:mm');
+
     }
 
     var getHakuWithOid = function(hakuOid) {
@@ -535,6 +588,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
 
                 angular.forEach(haku.hakuaikas,function(hakuaika){
+
+                    var formattedStartDate = createFormattedDateString(hakuaika.alkuPvm);
+
+                    var formattedEndDate = createFormattedDateString(hakuaika.loppuPvm);
+
+                    hakuaika.formattedNimi = hakuaika.nimi + ", " + formattedStartDate + " - " + formattedEndDate;
+
                     $scope.model.hakuaikas.push(hakuaika);
                 });
 
@@ -564,6 +624,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
+
+            /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.valintaperusteKuvaukset = {};
+            }
+
+            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.soraKuvaukset = {};
+            }*/
+
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
@@ -618,6 +687,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
+
+           /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.valintaperusteKuvaukset = {};
+            }
+
+            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.soraKuvaukset = {};
+            }  */
+
         if ($scope.model.hakukohde.oid === undefined) {
 
             console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
@@ -715,6 +793,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
     var kaikkiVpkKielet = {};
 
     var kaikkiKuvaukset = {};
+
+    var valittuKuvaus = undefined;
+
+    $scope.dialog.kuvauksenKielet = {};
+
+    $scope.dialog.valitutKuvauksenKielet = [];
 
     $scope.dialog.copySelection = "link";
 
@@ -851,6 +935,91 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         $scope.showKieliSelectionCheckboxDisabled = false;
 
+        $scope.dialog.kuvauksenKielet = [];
+
+
+        valittuKuvaus = kuvaus;
+
+       // $scope.dialog.kuvauksenKielet = {};
+
+        angular.forEach(kuvaus.kieliUris,function(kuvausKieliUri){
+
+            var kieliNimi = kaikkiVpkKielet[kuvausKieliUri];
+
+
+            //$scope.dialog.kuvauksenKielet[kuvausKieliUri] = kieliNimi;
+            var kieliObj = {
+                uri : kuvausKieliUri,
+                nimi : kieliNimi
+            };
+
+            $scope.dialog.kuvauksenKielet.push(kieliObj);
+
+        });
+
+
     };
+
+    $scope.onKieliValittu = function() {
+
+
+
+        angular.forEach($scope.dialog.kuvauksenKielet,function(kieliObj){
+
+            if (kieliObj.uri === $scope.dialog.valittuKuvausKieli ) {
+                    $scope.dialog.valitutKuvauksenKielet.push(kieliObj);
+
+
+            }
+
+        });
+
+    };
+
+    $scope.toggle = function(kuvaus) {
+
+        angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKuvaus){
+
+            if (kuvaus.uri === valittuKuvaus.uri) {
+
+               var index =   $scope.dialog.valitutKuvauksenKielet.indexOf(valittuKuvaus);
+               $scope.dialog.valitutKuvauksenKielet.splice(index,1);
+
+            };
+
+        });
+
+    };
+
+    $scope.onCancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.onOk = function() {
+
+        var valitutKuvaukset = [];
+
+        angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKieli){
+
+            if (valittuKuvaus !== undefined) {
+               console.log('VALITTU KUVAUS: ' , valittuKuvaus);
+
+                var valittuKokoKuvaus = kaikkiKuvaukset[valittuKuvaus.tunniste];
+                var kuvaus = {
+                    toimintoTyyppi : $scope.dialog.copySelection,
+                    tunniste :  valittuKokoKuvaus.kuvauksenTunniste,
+                    teksti : valittuKokoKuvaus.kuvaukset[valittuKieli.uri],
+                    kieliUri : valittuKieli
+
+                }
+
+                valitutKuvaukset.push(kuvaus);
+            }
+
+
+        });
+
+        $modalInstance.close(valitutKuvaukset);
+    }
 
 });

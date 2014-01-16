@@ -37,7 +37,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.MetaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -218,8 +217,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return komoData(koodistoKoodiUri, locale, fieldName, false);
     }
 
-    private MetaV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final FieldNames fieldName, boolean allowNullKoodi) {
-        MetaV1RDTO koodiUriDto = new MetaV1RDTO();
+    private KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final FieldNames fieldName, boolean allowNullKoodi) {
+        KoodiV1RDTO koodiUriDto = new KoodiV1RDTO();
 
         if (allowNullKoodi && fromKoodiUri == null) {
             //no koodi uri, return empty data object
@@ -230,7 +229,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return koodiUriDto;
     }
 
-    private MetaV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final FieldNames fieldName) {
+    private KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String langCode, final FieldNames fieldName) {
         return convertToKoodiDTO(fromKoodiUri, langCode, fieldName, false);
     }
 
@@ -271,7 +270,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return convertToKoodiUriDTO(new KoodiV1RDTO(), fromKoodiUri, langCode, fieldName);
     }
 
-    private void convertKoodiUriToKoodiDTO(final String fromKoodiUri, final MetaV1RDTO koodiDto, final Locale locale, final FieldNames fieldName, boolean allowNullKoodisto) {
+    private void convertKoodiUriToKoodiDTO(final String fromKoodiUri, final KoodiV1RDTO koodiDto, final Locale locale, final FieldNames fieldName, boolean allowNullKoodisto) {
         Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(locale, "Locale object cannot be null in field in " + fieldName);
         Preconditions.checkNotNull(koodiDto, "KoodiV1RDTO object cannot be null in field " + fieldName);
@@ -299,7 +298,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         return dto;
     }
 
-    private void addOtherLanguages(final MetaV1RDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
+    private void addOtherLanguages(final KoodiV1RDTO koodiUriDto, List<KoodiMetadataType> metadata, final Locale locale) {
         Preconditions.checkNotNull(koodiUriDto, "KoodiUriDTO object cannot be null.");
 
         for (KoodiMetadataType meta : metadata) {

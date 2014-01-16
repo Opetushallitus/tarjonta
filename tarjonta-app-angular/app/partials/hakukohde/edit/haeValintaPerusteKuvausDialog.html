@@ -25,10 +25,30 @@
                     </table>
                 </div>
                 <div class="row-fluid">
-                    <input type="checkbox" data-ng-model="showKieliSelection" data-ng-disabled="showKieliSelectionCheckboxDisabled">  {{dialog.titles.tuoMyosMuutkieletTitle}}
+                  {{dialog.titles.tuoMyosMuutkieletTitle}}
+                </div>
+                <div class="row-fluid">
+
+                    <!--
+                    <multi-select
+                            selection="dialog.valitutKuvauksenKielet"
+                            model="dialog.kuvauksenKielet"
+                            display="combobox"/>   -->
+                   <select data-ng-model="dialog.valittuKuvausKieli" data-ng-disabled="showKieliSelectionCheckboxDisabled" data-ng-change="onKieliValittu()" data-ng-options="koodi.uri as koodi.nimi for  koodi in dialog.kuvauksenKielet">
+
+                    </select>
+
+
+                        <span ng-repeat="k in dialog.valitutKuvauksenKielet">
+                            <a href ng-click="toggle(k)">[x]</a> {{k.nimi}}
+                        </span>
+
                 </div>
             </div>
         </form>
    </div>
-
+    <div class="modal-footer">
+        <button type="button" class="btn" data-ng-click="onCancel()">{{dialog.titles.cancelBtn}}</button>
+        <button class="btn btn-primary" data-ng-click="onOk()">{{dialog.titles.okBtn}}</button>
+    </div>
 </div>

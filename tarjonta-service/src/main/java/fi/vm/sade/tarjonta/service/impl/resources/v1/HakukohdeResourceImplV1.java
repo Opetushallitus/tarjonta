@@ -22,6 +22,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
@@ -70,6 +71,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private HakuDAO hakuDao;
     @Autowired
     private HakukohdeDAO hakukohdeDao;
+
+    @Autowired
+    private KuvausDAO kuvausDAO;
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -264,6 +268,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
 
+        if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
+              hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste(),hakukohdeRDTO.getSoraKuvausKielet()));
+        }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+             hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet()));
+        }
+
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
         result.setResult(hakukohdeRDTO);
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -275,6 +287,29 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
+    }
+
+    private HashMap<String,String> getKuvauksetWithId(Long kuvausId, Set<String> kielet) {
+
+        HashMap<String,String> kuvaukset = new HashMap<String,String>();
+
+        ValintaperusteSoraKuvaus kuvaus = kuvausDAO.read(kuvausId);
+
+        if (kielet != null ) {
+            for (MonikielinenMetadata meta: kuvaus.getTekstis()) {
+                for (String kieli : kielet) {
+                    if (kieli.trim().equals(meta.getKieli().trim())) {
+                        kuvaukset.put(meta.getKieli(),meta.getArvo());
+                    }
+
+                }
+
+            }
+        }
+
+
+        return kuvaukset;
+
     }
 
 
@@ -380,6 +415,15 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         hakukohde.setId(hakukohdeTemp.getId());
         hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+        //Just in case remove kuvaukses if tunniste is defined
+        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+            hakukohde.setValintaperusteKuvaus(null);
+        }
+
+        if (hakukohde.getSoraKuvausTunniste() != null) {
+            hakukohde.setSoraKuvaus(null);
+        }
 
         Haku haku = hakuDao.findByOid(hakuOid);
 

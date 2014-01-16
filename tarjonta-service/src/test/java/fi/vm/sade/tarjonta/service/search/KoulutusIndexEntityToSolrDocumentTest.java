@@ -92,9 +92,6 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.KOULUTUSMODUULI_OID)
                 .getValue());
 
-        // TODO miksi kevät tallennettu kun kuitenkin koodi löytyy kanssa
-        Assert.assertEquals("kevat", doc.removeField(SolrFields.Koulutus.KAUSI)
-                .getValue());
         Assert.assertEquals(VUOSI + "",
                 doc.removeField(SolrFields.Koulutus.VUOSI_KOODI).getValue());
         Assert.assertEquals(KOULUTUSKOODI + "-nimi-EN",

@@ -1,6 +1,5 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMET;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.NIMIEN_KIELET;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_URI;
@@ -57,7 +56,6 @@ public class SolrDocumentToKoulutusConverter {
 
     private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutusPerustieto koulutus = new KoulutusPerustieto();
-        koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutuskoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));

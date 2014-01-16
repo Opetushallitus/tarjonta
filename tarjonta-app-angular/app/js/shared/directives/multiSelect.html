@@ -18,7 +18,7 @@
 	<div class="combobox" ng-switch-when="combobox">
 	    <div>
 	        <input type="text"
-	                class="icon-typeahead"
+	                class="typeahead"
 	                ng-model="combo.selection"
 	                typeahead="value for value in titles | filter:$viewValue | limitTo:10"
 	                typeahead-on-select="onComboSelect()"

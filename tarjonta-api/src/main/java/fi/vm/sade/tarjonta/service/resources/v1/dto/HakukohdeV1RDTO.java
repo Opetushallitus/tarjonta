@@ -83,7 +83,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private List<ValintakoeV1RDTO> valintakokeet;
 
+    private Long valintaPerusteKuvausTunniste;
 
+    private Long soraKuvausTunniste;
+
+    private Set<String> valintaPerusteKuvausKielet;
+
+    private Set<String> soraKuvausKielet;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -361,5 +367,37 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakukelpoisuusVaatimusKuvaukset(HashMap<String, String> hakukelpoisuusVaatimusKuvaukset) {
         this.hakukelpoisuusVaatimusKuvaukset = hakukelpoisuusVaatimusKuvaukset;
+    }
+
+    public Long getValintaPerusteKuvausTunniste() {
+        return valintaPerusteKuvausTunniste;
+    }
+
+    public void setValintaPerusteKuvausTunniste(Long valintaPerusteKuvausTunniste) {
+        this.valintaPerusteKuvausTunniste = valintaPerusteKuvausTunniste;
+    }
+
+    public Long getSoraKuvausTunniste() {
+        return soraKuvausTunniste;
+    }
+
+    public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
+        this.soraKuvausTunniste = soraKuvausTunniste;
+    }
+
+    public Set<String> getValintaPerusteKuvausKielet() {
+        return valintaPerusteKuvausKielet;
+    }
+
+    public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
+        this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
+    }
+
+    public Set<String> getSoraKuvausKielet() {
+        return soraKuvausKielet;
+    }
+
+    public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
+        this.soraKuvausKielet = soraKuvausKielet;
     }
 }
