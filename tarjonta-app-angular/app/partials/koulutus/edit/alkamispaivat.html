@@ -4,11 +4,11 @@
                name="alkamisPvm"
                data-datepicker-popup="dd.MM.yyyy"
                data-ng-model="pvm.date"
-               data-ng-disabled="!disabledKausi"
+               data-ng-disabled="!enabled"
                ng-change="onDateAdded()"
                />
         <a  href
-           data-ng-show="disabledKausi && pvm.date!=null && ctrl.addedDates.length>1" 
+           data-ng-show="enabled && pvm.date!=null && ctrl.addedDates.length>1" 
            data-ng-click="clickRemoveDate(pvm)">[x]</a>
     </li>
 </ul>

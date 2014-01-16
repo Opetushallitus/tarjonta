@@ -552,3 +552,7 @@ ul#koulutuksenAlkamisPvm {
 	list-style:none;	
     margin:15px 0 0 0;
 }
+
+span.disabled {
+    color:#a0a0a0;
+}

@@ -1,16 +1,19 @@
 <div>
-    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.disableKausi" ng-value="true" /> 
-    <span tt="koulutus.alkamispvm.disableKausi"></span><br/>
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="0" ng-disabled="pvms.length>1"/> 
+    <span tt="koulutus.alkamispvm.singlePvm" ng-class="pvms.length>1 ? 'disabled' : ''"></span><br/>
+
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="1" />
+    <span tt="koulutus.alkamispvm.multiPvm"></span><br/>
 
     <alkamispaivat 
         dates="pvms" 
         kausi-uri="kausiUri"
         fn-clear-kausi="clearKausiSelection"
-        disabled-kausi="ctrl.disableKausi"  
-        disabled-date="ctrl.disabledDate"> 
+        enabled="ctrl.mode!=2"
+        multi="ctrl.mode==1"> 
     </alkamispaivat>
 
-    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.disableKausi" ng-value="false" ng-click="onEnableKausi($event)"/>
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="2" ng-click="onEnableKausi($event)"/>
     <span tt="koulutus.alkamispvm.enableKausi"></span><br/>
     
     <table class="help">
@@ -23,12 +26,12 @@
 			    <select
 			        ng-model="kausiUri" 
 			        ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
-			        ng-disabled="ctrl.disableKausi"/>
+			        ng-disabled="ctrl.mode!=2"/>
             </td>        
             <td>
 			    <input type="text" 
 			        ng-model="vuosi" 
-			        ng-disabled="ctrl.disableKausi"/>
+                    ng-disabled="ctrl.mode!=2"/>
             </td>        
         </tr>
     
