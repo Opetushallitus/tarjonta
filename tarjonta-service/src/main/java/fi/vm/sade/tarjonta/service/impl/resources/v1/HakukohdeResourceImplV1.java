@@ -350,6 +350,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         hakukohdeRDTO.setOid(null);
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
+        hakukohde.setLastUpdateDate(new Date());
 
         LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
@@ -403,7 +404,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-
+        hakukohde.setLastUpdateDate(new Date());
         Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
         //These are updated in a separate resource

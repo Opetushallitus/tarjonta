@@ -12,6 +12,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
 import javax.ws.rs.PathParam;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import  fi.vm.sade.tarjonta.dao.KuvausDAO;
@@ -311,6 +312,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         try {
             LOG.debug("CREATING NEW KUVAUS ");
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
+            valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
             valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
             KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
 
@@ -339,6 +341,8 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             oldVps.setTyyppi(valintaperusteSoraKuvaus.getTyyppi());
             oldVps.setVuosi(valintaperusteSoraKuvaus.getVuosi());
             oldVps.setTekstis(valintaperusteSoraKuvaus.getTekstis());
+            oldVps.setViimPaivittajaOid(valintaperusteSoraKuvaus.getViimPaivittajaOid());
+            oldVps.setViimPaivitysPvm(new Date());
 
             kuvausDAO.update(oldVps);
 

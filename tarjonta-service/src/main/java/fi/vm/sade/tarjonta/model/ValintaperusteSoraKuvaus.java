@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -40,6 +41,12 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MonikielinenMetadata> tekstis;
 
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date viimPaivitysPvm = new Date();
+
+    @Column(name="viimPaivittajaOid")
+    private String viimPaivittajaOid;
 
     public MonikielinenTeksti getMonikielinenNimi() {
         return monikielinenNimi;
@@ -87,5 +94,21 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 
     public void setVuosi(Integer vuosi) {
         this.vuosi = vuosi;
+    }
+
+    public Date getViimPaivitysPvm() {
+        return viimPaivitysPvm;
+    }
+
+    public void setViimPaivitysPvm(Date viimPaivitysPvm) {
+        this.viimPaivitysPvm = viimPaivitysPvm;
+    }
+
+    public String getViimPaivittajaOid() {
+        return viimPaivittajaOid;
+    }
+
+    public void setViimPaivittajaOid(String viimPaivittajaOid) {
+        this.viimPaivittajaOid = viimPaivittajaOid;
     }
 }
