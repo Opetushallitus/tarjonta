@@ -176,3 +176,17 @@ table.tarjontaForm tr.collapse.open th:before {
 table.tarjontaForm tr.collapse td {
     text-align: right;
 }
+
+
+/* aputaulukko */
+table.tarjontaForm table.help th {
+    font-weight:normal;
+    text-align:left;
+    font-size:90%;
+    color:#606060;
+}
+
+table.tarjontaForm table.help {
+    margin: 0 0 15px 0;
+}
+
