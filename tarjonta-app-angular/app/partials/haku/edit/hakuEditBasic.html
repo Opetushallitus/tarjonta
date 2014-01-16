@@ -4,12 +4,22 @@
 
         <table class="tarjontaForm">
             <tr class="required">
+                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" ></show-errors>
+                </td>
+            </tr>
+
+            <tr class="required">
                 <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
                 <td>
                     <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required name="hakuTyyppi"></koodistocombo>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" ></show-errors>
                 </td>
             </tr>
 
@@ -47,17 +57,7 @@
                     <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required name="haunKohdejoukko"></koodistocombo>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" />
-                </td>
-            </tr>
-
-            <tr class="required">
-                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
-                <td>
-                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
-                </td>
-                <td>
-                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" ></show-errors>
                 </td>
             </tr>
 
@@ -68,7 +68,7 @@
                     <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" ></show-errors>
                 </td>
             </tr>
 
@@ -119,7 +119,7 @@
                     </p>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit" ng-if="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"/>
+                    <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit" ng-if="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"></show-errors>
                 </td>
             </tr>
         </table>
