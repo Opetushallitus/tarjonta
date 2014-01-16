@@ -55,7 +55,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Rekisteröi uusi event listeneri.
      */
     public void registerEventListener(Object o) {
-        LOG.debug("registering new listener:" + o.getClass());
+        LOG.debug("registering new listener:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.register(o);        
     }
 
@@ -63,7 +63,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Poista listenerin rekisteröinti.
      */
     public void unregisterEventListener(Object o) {
-        LOG.debug("inregistering listener:" + o.getClass());
+        LOG.debug("unregistering listener:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.unregister(o);        
     }
     
@@ -71,7 +71,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Lähetä eventti.
      */
     public void sendEvent(Object o) {
-        LOG.debug("sending event:" + o.getClass());
+        LOG.debug("sending event:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.post(o);
     }
 
@@ -146,9 +146,11 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
         PaivitaTilaVastausTyyppi vastaus = publishingService.changeState(oid, toState, sisalto);
         if (vastaus!=null) {
             for(String hakukohdeOid:vastaus.getHakukohdeOidit()){
+                LOG.debug("event for hakukohde " + hakukohdeOid);
                 sendEvent(HakukohdeContainerEvent.update(hakukohdeOid));
             }
             for(String komotoOid:vastaus.getKomotoOidit()){
+                LOG.debug("event for komoto " + komotoOid);
                 sendEvent(KoulutusContainerEvent.update(komotoOid));
             }
             
