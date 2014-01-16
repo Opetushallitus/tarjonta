@@ -245,6 +245,20 @@ public class HakuResourceImpl implements HakuResource {
                             return StringUtils.upperCase(tekstit.get(kieliAvain));
                     }
 
+                    // Koska kieliavain on vielä kovakoodattu ja tarjoajanimiä ei ole
+                    // kuin yhdellä kielellä niin testataan muutkin kielet
+                    if(tekstit.containsKey(kieliAvain_fi)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_fi));
+                    }
+
+                    if(tekstit.containsKey(kieliAvain_sv)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_sv));
+                    }
+
+                    if(tekstit.containsKey(kieliAvain_en)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_en));
+                    }
+
                     return StringUtils.EMPTY;
                 }
 
