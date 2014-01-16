@@ -343,6 +343,14 @@ public class ConverterV1 {
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
+        if(hakukohde.getValintaPerusteKuvausKielet() != null) {
+            hakukohdeRDTO.setValintaPerusteKuvausKielet(hakukohde.getValintaPerusteKuvausKielet());
+        }
+
+        if (hakukohde.getSoraKuvausKielet() != null) {
+            hakukohdeRDTO.setSoraKuvausKielet(hakukohde.getSoraKuvausKielet());
+        }
+
         if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
             hakukohdeRDTO.setValintaPerusteKuvausTunniste(hakukohde.getValintaPerusteKuvausTunniste());
         }
@@ -471,6 +479,14 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getSoraKuvausTunniste() != null ) {
             hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
+        }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausKielet() != null) {
+            hakukohde.setValintaPerusteKuvausKielet(hakukohdeRDTO.getValintaPerusteKuvausKielet());
+        }
+
+        if (hakukohdeRDTO.getSoraKuvausKielet() != null) {
+            hakukohde.setSoraKuvausKielet(hakukohdeRDTO.getSoraKuvausKielet());
         }
 
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));

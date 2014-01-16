@@ -118,12 +118,22 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         modalInstance.result.then(function(kuvaukset){
 
+            if ($scope.model.hakukohde.valintaPerusteKuvausKielet === undefined) {
+                $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
+
+            }
+
+            if ($scope.model.hakukohde.soraKuvausKielet === undefined) {
+                $scope.model.hakukohde.soraKuvausKielet = [];
+            }
+
                 angular.forEach(kuvaukset,function(kuvaus){
 
 
                     if (type === "valintaperustekuvaus") {
 
                         $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri.uri);
 
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
@@ -135,6 +145,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     } else if (type === "SORA") {
 
                         $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri.uri);
+
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
                         }  else if (kuvaus.toimintoTyyppi === "copy") {
