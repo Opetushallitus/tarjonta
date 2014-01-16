@@ -5,15 +5,13 @@ var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation']);
 app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
             $scope.ctrl = {
-                disabledDate: false,
-                disableKausi: false,
+            	mode:0,
                 koodis: []
             };
 
             $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
 
             $scope.$watch("kausiUri", function(valNew, valOld) {
-                $scope.ctrl.disabledDate = (valNew !== -1);
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
 
@@ -33,7 +31,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
         				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog.html',
         				controller: function($scope) {
         					$scope.ok = function() {
-        						ctrl.disableKausi = false;
+        						ctrl.mode = 2;
         						modalInstance.dismiss();
         					}
         					$scope.cancel = function() {
@@ -45,7 +43,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             	}
             }
 
-            $scope.$watch("ctrl.disabledKausi", function(valNew, valOld) {
+            $scope.$watch("ctrl.mode", function(valNew, valOld) {
                 if (angular.isUndefined(valNew) || valNew === "" || valNew === true) {
                     if (!angular.isUndefined(valNew)) {
                         $scope.clearKausiSelection();

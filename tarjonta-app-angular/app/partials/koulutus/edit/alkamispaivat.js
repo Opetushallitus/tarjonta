@@ -16,7 +16,9 @@ app.directive('alkamispaivat', ['$log', function($log) {
             			return;
             		}
             	}
-                $scope.clickAddDate();
+            	if ($scope.multi) {
+            		$scope.clickAddDate();
+            	}
             }
 
             $scope.clickAddDate = function() {
@@ -115,14 +117,22 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 }
             }, true);
 
-            $scope.$watch("disabledKausi", function(valNew, valOld) {
+            $scope.$watch("multi", function(valNew, valOld) {
+            	if (!valNew && $scope.ctrl.addedDates.length>1) {
+            		$scope.ctrl.addedDates = [$scope.ctrl.addedDates[0]];
+            	} else if (valNew && $scope.ctrl.addedDates.length==1) {
+            		$scope.clickAddDate();
+            	}
+            });            
+            
+            $scope.$watch("enabled", function(valNew, valOld) {
                 if (!valNew) {
                 	$scope.ctrl.addedDates = [];
                 	$scope.clickAddDate();                	
                 } else {
-	             	if ($scope.dates.length==1 && $scope.dates[0]!=null) {
+	             	if ($scope.multi && $scope.dates.length==1 && $scope.dates[0]!=null) {
 	                     $scope.clickAddDate(); //add 1 date row
-	             	}                     	
+	             	}
                     $scope.fnClearKausi();
                 }
             });
@@ -148,8 +158,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 dates: "=", //BaseEditController ui model
                 kausiUri: "=",
                 fnClearKausi: "=",
-                disabledKausi: "=",
-                disabledDate: "="
+                enabled: "=",
+                multi: "="
 
             }
         };
