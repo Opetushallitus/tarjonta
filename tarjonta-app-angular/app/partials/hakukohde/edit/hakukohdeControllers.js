@@ -116,6 +116,41 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         });
 
+        modalInstance.result.then(function(kuvaukset){
+
+                angular.forEach(kuvaukset,function(kuvaus){
+
+
+                    if (type === "valintaperustekuvaus") {
+
+                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+
+                        if (kuvaus.toimintoTyyppi === "link") {
+                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
+                        } else if (kuvaus.toimintoTyyppi === "copy") {
+                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = undefined;
+                        }
+
+
+                    } else if (type === "SORA") {
+
+                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
+                        if (kuvaus.toimintoTyyppi === "link") {
+                            $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
+                        }  else if (kuvaus.toimintoTyyppi === "copy") {
+                            $scope.model.hakukohde.soraKuvausTunniste = undefined;
+                        }
+
+
+                    }
+
+                });
+
+
+
+
+        });
+
     }
 
     var getHakuWithOid = function(hakuOid) {
@@ -564,6 +599,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
+
+            /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.valintaperusteKuvaukset = {};
+            }
+
+            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.soraKuvaukset = {};
+            }*/
+
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('MODEL: ', $scope.model.hakukohde);
@@ -618,6 +662,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
+
+           /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.valintaperusteKuvaukset = {};
+            }
+
+            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                $scope.model.hakukohde.soraKuvaukset = {};
+            }  */
+
         if ($scope.model.hakukohde.oid === undefined) {
 
             console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
@@ -715,6 +768,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
     var kaikkiVpkKielet = {};
 
     var kaikkiKuvaukset = {};
+
+    var valittuKuvaus = undefined;
 
     $scope.dialog.kuvauksenKielet = {};
 
@@ -857,6 +912,9 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         $scope.dialog.kuvauksenKielet = [];
 
+
+        valittuKuvaus = kuvaus;
+
        // $scope.dialog.kuvauksenKielet = {};
 
         angular.forEach(kuvaus.kieliUris,function(kuvausKieliUri){
@@ -907,5 +965,36 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
         });
 
     };
+
+    $scope.onCancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.onOk = function() {
+
+        var valitutKuvaukset = [];
+
+        angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKieli){
+
+            if (valittuKuvaus !== undefined) {
+               console.log('VALITTU KUVAUS: ' , valittuKuvaus);
+
+                var valittuKokoKuvaus = kaikkiKuvaukset[valittuKuvaus.tunniste];
+                var kuvaus = {
+                    toimintoTyyppi : $scope.dialog.copySelection,
+                    tunniste :  valittuKokoKuvaus.kuvauksenTunniste,
+                    teksti : valittuKokoKuvaus.kuvaukset[valittuKieli.uri],
+                    kieliUri : valittuKieli
+
+                }
+
+                valitutKuvaukset.push(kuvaus);
+            }
+
+
+        });
+
+        $modalInstance.close(valitutKuvaukset);
+    }
 
 });

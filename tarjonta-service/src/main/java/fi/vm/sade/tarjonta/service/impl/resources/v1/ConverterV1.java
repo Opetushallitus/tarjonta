@@ -343,6 +343,14 @@ public class ConverterV1 {
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
+        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+            hakukohdeRDTO.setValintaPerusteKuvausTunniste(hakukohde.getValintaPerusteKuvausTunniste());
+        }
+
+        if (hakukohde.getSoraKuvausTunniste() != null) {
+            hakukohdeRDTO.setSoraKuvausTunniste(hakukohde.getSoraKuvausTunniste());
+        }
+
         if (hakukohde.getHakuaika() != null) {
             hakukohdeRDTO.setHakuaikaId(hakukohde.getHakuaika().getId().toString());
         }
@@ -456,6 +464,15 @@ public class ConverterV1 {
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
         }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+            hakukohde.setValintaPerusteKuvausTunniste(hakukohdeRDTO.getValintaPerusteKuvausTunniste());
+        }
+
+        if (hakukohdeRDTO.getSoraKuvausTunniste() != null ) {
+            hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
+        }
+
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdeRDTO.getLiitteidenToimitusPvm());
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeRDTO.getValintojenAloituspaikatLkm());
