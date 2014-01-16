@@ -116,11 +116,13 @@ public class ListHakukohdeView extends VerticalLayout {
     @Override
     public void attach() {
         super.attach();
-        presenter.registerEventListener(this);
 
         if (attached) {
             return;
         }
+        
+        presenter.registerEventListener(this);
+
         attached = true;
 
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
@@ -134,11 +136,11 @@ public class ListHakukohdeView extends VerticalLayout {
         presenter.setHakukohdeListView(this);
     }
     
+
     @Override
-    public void detach() {
+    protected void finalize() throws Throwable {
         presenter.unregisterEventListener(this);
     }
-
     /*
      *  Adding the actual hakukohde-listing component.
      */
@@ -383,6 +385,8 @@ public class ListHakukohdeView extends VerticalLayout {
     
         switch (e.type) {
         case REMOVE:
+            LOG.debug("remove event");
+
             for(Object itemid: categoryTree.getItemIds()){
                 if (itemid.getClass() == HakukohdePerustieto.class) {
                     HakukohdePerustieto currentHakukohde = (HakukohdePerustieto)itemid;
@@ -395,7 +399,8 @@ public class ListHakukohdeView extends VerticalLayout {
             break;
 
         case UPDATE:
-            
+            LOG.debug("update event");
+
             for(Object itemid: categoryTree.getItemIds()){
                 if (itemid.getClass() == HakukohdePerustieto.class) {
                     HakukohdePerustieto currentHakukohde = (HakukohdePerustieto)itemid;

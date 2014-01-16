@@ -131,14 +131,17 @@ public class ListKoulutusView extends VerticalLayout {
     public void attach() {
         super.attach();
 
+
         if (isAttached) {
             LOG.debug("already attached : ListKoulutusView()");
             return;
         }
+        
+        presenter.registerEventListener(this);
+
         LOG.debug("attach : ListKoulutusView()");
         isAttached = true;
 
-        presenter.registerEventListener(this);
 
 
         //Initialization of the view layout
@@ -657,12 +660,13 @@ public class ListKoulutusView extends VerticalLayout {
     @Subscribe 
     public void receiveKoulutusContainerEvent(KoulutusContainerEvent e) {
 
+        LOG.debug("Received container event");
 
         final String eventKoulutusOid = e.oid;
     
         switch (e.type) {
         case DELETE:
-            
+            LOG.debug("delete event");
             
             for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusPerustieto.class))){
                     final KoulutusPerustieto currentKoulutus = (KoulutusPerustieto)itemid;
@@ -673,7 +677,7 @@ public class ListKoulutusView extends VerticalLayout {
             break;
 
         case UPDATE:
-            
+            LOG.debug("update event");
             for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusPerustieto.class))){
                     KoulutusPerustieto currentKoulutus = (KoulutusPerustieto)itemid;
                     if(currentKoulutus.getKomotoOid().equals(eventKoulutusOid)) {
@@ -688,6 +692,8 @@ public class ListKoulutusView extends VerticalLayout {
             break;
 
         case CREATE:
+            LOG.debug("create event");
+
             final KoulutusPerustieto freshKoulutus = presenter.findKoulutusByKoulutusOid(eventKoulutusOid).getKoulutukset().get(0);
             Object parent = findParent(freshKoulutus.getTarjoaja().getOid());
             if(parent==null) {

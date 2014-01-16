@@ -210,6 +210,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private String pkVaatimus;
     private KoulutusasteTyyppi koulutusastetyyppi;
+    
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
 
     /*
      *
@@ -810,17 +813,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     /*
      * Checks if the hakuaika is acceptable for hakukohde
      */
-    private boolean accepts(HakuaikaViewModel ham, boolean isLisahaku) {
+    private boolean accepts(HakuaikaViewModel ham, boolean isLisahakuOrErillishaku) {
         //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(ham);
         }
         //If it is lisahaku it is acceptable if hakuaika has not ended yet.
-        if (isLisahaku) {
+        if (isLisahakuOrErillishaku) {
             return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
         }
+        
         //Hakuaika is ok if it has not started yet.
-    	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
+        return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
 
     /*
@@ -841,7 +845,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
         //If at least 1 hakuaika is acceptabe, then the haku is acceptable.
         for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-                if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
+                if (accepts(ham, isErillishakuOrLisahaku(hm))) {
                         return true;
                 }
         }
@@ -858,9 +862,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             return acceptsForOph(hm);
         }
 
-        //If it is lisahaku it is ok for hakukohde if the haku has not ended
-        if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
-                && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
+        final boolean isErillishakuOrLisahaku = isErillishakuOrLisahaku(hm);
+        
+        //If it is lisahaku or erillishauku  it is ok for hakukohde if the haku has not ended
+        if (isErillishakuOrLisahaku && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
             return true;
         }
         //If haku has not started it is ok for hakukohde
@@ -870,11 +875,15 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-    		if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
-    			return true;
-    		}
+    	    if (accepts(ham, isErillishakuOrLisahaku)) {
+    	        return true;
+    	    }
     	}
     	return false;
+    }
+
+    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
+        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
     }
 
 
@@ -889,6 +898,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         List<HakuViewModel> fhaut = new ArrayList<HakuViewModel>();
         for (HakuViewModel hvm : haut) {
+                
         	if (accepts(hvm)) {
         		fhaut.add(hvm);
         	}
@@ -928,13 +938,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         	boolean hamSelected = false;
             for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
-            	if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hk.getHakutyyppi()))) {
+            	if (accepts(ham, isErillishakuOrLisahaku(hk))) {
 
-            		hvms.add(ham);
-            		if (!hamSelected) {
-            		    model.setHakuaika(ham);
-            		    hamSelected = true;
-            		}
+            	    hvms.add(ham);
+            	    if (!hamSelected) {
+            	        model.setHakuaika(ham);
+            	        hamSelected = true;
+            	    }
             	}
             }
 
