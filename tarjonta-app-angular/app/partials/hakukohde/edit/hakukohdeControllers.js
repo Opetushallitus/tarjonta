@@ -165,6 +165,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+    var createFormattedDateString = function(date) {
+
+        return moment(date).format('DD.MM.YYYY hh:mm');
+
+    }
+
     var getHakuWithOid = function(hakuOid) {
 
         var foundHaku;
@@ -582,6 +588,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
 
                 angular.forEach(haku.hakuaikas,function(hakuaika){
+
+                    var formattedStartDate = createFormattedDateString(hakuaika.alkuPvm);
+
+                    var formattedEndDate = createFormattedDateString(hakuaika.loppuPvm);
+
+                    hakuaika.formattedNimi = hakuaika.nimi + ", " + formattedStartDate + " - " + formattedEndDate;
+
                     $scope.model.hakuaikas.push(hakuaika);
                 });
 
