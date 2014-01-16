@@ -2,7 +2,7 @@
 
 var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation']);
 
-app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($log, LocalisationService) {
+app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
             $scope.ctrl = {
                 disabledDate: false,
@@ -20,6 +20,30 @@ app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($l
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = -1
             }
+            
+            $scope.onEnableKausi = function($event) {
+            	if ($scope.pvms.length>0) {
+                	$event.preventDefault();
+                	$event.stopImmediatePropagation();
+                	
+                	// alkamispvm:iä valittu -> näytä vahvistusdialogi
+                	var ctrl = $scope.ctrl;
+                	var modalInstance = $modal.open({
+        				scope: $scope,
+        				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog.html',
+        				controller: function($scope) {
+        					$scope.ok = function() {
+        						ctrl.disableKausi = false;
+        						modalInstance.dismiss();
+        					}
+        					$scope.cancel = function() {
+        						modalInstance.dismiss();
+        					}        					
+        					return $scope;
+        				}
+        			});
+            	}
+            }
 
             $scope.$watch("ctrl.disabledKausi", function(valNew, valOld) {
                 if (angular.isUndefined(valNew) || valNew === "" || valNew === true) {
@@ -27,7 +51,6 @@ app.directive('alkamispaivaJaKausi', ['$log', 'LocalisationService', function($l
                         $scope.clearKausiSelection();
                     }
                 }
-
             });
 
             $scope.kausiUiModel.promise.then(function(result) {

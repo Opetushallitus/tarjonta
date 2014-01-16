@@ -21,22 +21,28 @@ var app = angular.module('ShowErrors', ['localisation']);
  * Usage:
  *
  * <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" />
+ *   equals to
+ * <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" field-check="true" custom-check="false" />
  *
- * Will generate:
+ * Will generate in case of errors:
  *
  *   <p class="error" ttt="haku.edit.hakuForm.error">Tarkista kentän arvo!</p>
  *
  * IFF all of this applies:
  *
- * 1. Form has been modified
- * 2. Form has defined field (name="hakuKausi")
- * 3. Form field has "$error" map
- * 4. Error map has true value in: "required", "invalid", "max", "min", "url", "email", "number" fields.
+ * 1. Form is modified
+ * 2. Field is modified
+ * 3. "custom-check" is true OR
+ * 4. "field-check" is true AND field has error(s)
+ *
+ * Field has errors if field has $error map AND
+ * it has true in any of fields: "required", "invalid", "max", "min", "url", "email", "number"
  *
  * Translation key is generated from:
  *
  *   tt-prefix + "." + field + ".error"
  *
+ * @author mlyly
  */
 app.directive('showErrors', function($log, LocalisationService) {
 
@@ -47,10 +53,22 @@ app.directive('showErrors', function($log, LocalisationService) {
         scope: {
             form: "=",
             field: "@",
-            ttPrefix: "@"
+            ttPrefix: "@", // attribute "tt-prefix"
+            fieldCheck: "=?", // attribute "field-check" default TRUE
+            customCheck : "=?" // attribute "custom-check" default FALSE
         },
         controller: function($scope) {
             // $log.info("showErrors()", $scope);
+
+            // Perform field value validations by default, if false no normal "required" etc checks done.
+            if (!angular.isDefined($scope.fieldCheck)) {
+                $scope.fieldCheck = true;
+            }
+
+            // If custom check by default finds no errors
+            if (!angular.isDefined($scope.customCheck)) {
+                $scope.customCheck = false;
+            }
 
             /**
              * Translation key that is needed to show the error message.
@@ -59,51 +77,39 @@ app.directive('showErrors', function($log, LocalisationService) {
 
             /**
              * This method decides if the error message should be shown.
+             * True means "yes - show the error".
              *
              * @param {type} form
              * @param {type} field
-             * @returns {form.$dirty|@var;result}
+             * @returns true if field has error OR custom error handling has detected some errors
              */
             $scope.errorCheck = function(form, field) {
-                // $log.info("errorCheck()", form, field);
+                // $log.info("errorCheck()", form, field, $scope);
 
                 if (!angular.isDefined(form)) {
-                    $log.info("*** Form is not defined!");
+                    $log.info("*** Form is not defined!?");
                     return false;
                 }
 
-                if (!angular.isDefined(form[field])) {
-                    $log.info("*** Form field is not defined! field name = " + field);
+                if ($scope.fieldCheck && !angular.isDefined(form[field])) {
+                    $log.info("*** Form field is not defined!? field name = " + field);
                     return false;
                 }
 
-                if (!angular.isDefined(form[field].$error)) {
-                    $log.info("*** Form field $error is not defined! field name = " + field);
-                    return false;
-                }
+                // 1. Is form dirty?
+                // 2. Has the customcheck failed?
+                // 3. Or is the form field check enabled AND field modified AND in error?
+                var result = form.$dirty && ($scope.customCheck || ($scope.fieldCheck && form[field].$dirty && form[field].$invalid));
 
-                // Only check when form is dirty
-                var result = form.$dirty;
-
-                // Any error map available?
-                var result = result && angular.isDefined(form[field]);
-                var result = result && angular.isDefined(form[field].$error);
-
-                // Skip test if field is unmodified?
-                result = result && (!form[field].$error.pristine || form[field].$error.dirty);
-
-                // Check spesific errors if needed
-                result = result && angular.isDefined(form[field].$error) && (
-                        form[field].$error.required ||
-                        form[field].$error.invalid ||
-                        form[field].$error.min ||
-                        form[field].$error.max ||
-                        form[field].$error.url ||
-                        form[field].$error.number
-                        );
-
-                if (result) {
-                    $log.info("Field: " + field + " has errors! ", form[field].$error);
+                // Enable logging if you have problems with error checking results...
+                if (false && result) {
+                    $log.info("Field: " + field + " has errors! $scope.fieldCheck=", $scope.fieldCheck);
+                    if (angular.isDefined(form[field])) {
+                        $log.info("  field: ", form[field]);
+                    }
+                    if (angular.isDefined(form[field].$error)) {
+                        $log.info("  errors: ", form[field].$error);
+                    }
                 }
 
                 return result;
