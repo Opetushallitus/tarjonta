@@ -83,11 +83,18 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   var initialializeForm = function() {
 
+
+
+
+
       if ($route.current.locals.resolvedValintaPerusteKuvaus !== undefined ) {
 
          $scope.model.valintaperustekuvaus =  $route.current.locals.resolvedValintaPerusteKuvaus.result;
 
+          if ($route.current.locals.action !== undefined && $route.current.locals.action === "COPY") {
 
+              $scope.model.valintaperustekuvaus.kuvauksenTunniste = undefined;
+          }
 
          if ($scope.model.valintaperustekuvaus.modifiedBy !== undefined) {
 

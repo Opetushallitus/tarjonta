@@ -231,6 +231,12 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     }
 
+    $scope.copyKuvaus = function(kuvaus) {
+
+        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+kuvaus.kuvauksenTyyppi +"/"+kuvaus.kuvauksenTunniste+"/COPY";
+        $location.path(kuvausEditUri);
+    }
+
     $scope.search = function() {
 
         angular.forEach($scope.model.kuvaustyyppis,function(tyyppi){
