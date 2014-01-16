@@ -1,15 +1,23 @@
 <div>
 
-    <form  name="hakuEditBasic">
-
         <table class="tarjontaForm">
+            <tr class="required">
+                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" ></show-errors>
+                </td>
+            </tr>
+
             <tr class="required">
                 <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
                 <td>
                     <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required name="hakuTyyppi"></koodistocombo>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" ></show-errors>
                 </td>
             </tr>
 
@@ -47,17 +55,7 @@
                     <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required name="haunKohdejoukko"></koodistocombo>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" />
-                </td>
-            </tr>
-
-            <tr class="required">
-                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
-                <td>
-                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
-                </td>
-                <td>
-                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" ></show-errors>
                 </td>
             </tr>
 
@@ -68,14 +66,14 @@
                     <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" />
+                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" field-check="false" custom-check="checkHaunNimiValidity()"></show-errors>
                 </td>
             </tr>
 
             <tr>
                 <th ttt='haku.edit.haunTunniste'>Haun tunniste</th>
                 <td>
-                    <strong>HAUN TUNNISTE TULEE SITTEN JOSTAIN TÄHÄN</strong>
+                    <strong>HAUN TUNNISTE TULEE SITTEN JOSTAIN JOSKUS TÄHÄN</strong>
                 </td>
                 <td>
                 </td>
@@ -111,19 +109,20 @@
                 <th ttt='haku.edit.hakulomake'>Hakulomake</th>
                 <td>
                     <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
-                    <span ttt="haku.edit.hakulomake.kaytaJarjestelman">Käytetään järjestelmän hakulomaketta</span>
+                    <span ttt="haku.edit.hakulomake.kaytaJarjestelmanOmaa">Käytetään järjestelmän omaa hakulomaketta</span>
 
                     <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
-                        <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta.</span>
+                        <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
                         <input type="url" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" required>
                     </p>
                 </td>
                 <td>
-                    <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit" ng-if="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"/>
+                    <div>
+                        <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit"
+                                     field-check="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"></show-errors>
+                    </div>
                 </td>
             </tr>
         </table>
-
-    </form>
 
 </div>

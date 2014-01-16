@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
@@ -132,6 +133,12 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
             t.getYhteyshenkilos().add(convert(yhteyshenkilo));
         }
 
+        // OVT-6619 Add koulutusohjelman nimi, free text
+        if(s.getNimi()!=null && s.getNimi().getTekstis()!=null) {
+            for(TekstiKaannos kaannos:s.getNimi().getTekstis()){
+                t.setKoulutusohjelmanNimi(kaannos.getArvo());  //stored under "fi"
+            }
+        }
 
         //
         // Lukio spesific data

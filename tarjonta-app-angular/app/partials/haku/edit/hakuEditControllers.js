@@ -59,6 +59,23 @@ app.controller('HakuEditController',
                     $log.info("goToReview()");
                 };
 
+                $scope.checkHaunNimiValidity = function() {
+                    $log.info("checkHaunNimiValidity()");
+                    var result = false;
+
+                    // At least one name should have real value
+                    angular.forEach($scope.model.haku.nimi, function (value, key) {
+                        result = result || !value;
+
+                        // regexp check for empty / whitespace
+                        // $log.info("key: " + key + " -- value: " + value);
+                    });
+
+                    // TODO check that at leas kieli_fi is defined?
+
+                    return result;
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {
