@@ -8,7 +8,7 @@ app.directive('ttt', ['$log', 'LocalisationService', function($log, Localisation
         return {
             restrict: 'EA',
             replace: true,
-            //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
+            //template: '<div ttt="this.is.key" locale="fi">Default saved for the given key</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
                 $log.info("ttt compile", tElement, tAttrs, transclude);

@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Jani Wilén
  */
 @ApiModel(value = "Monikielisen tekstin syötämiseen ja näyttämiseen käytettävä rajapintaolio")
-public class NimiV1RDTO extends MetaV1RDTO {
+public class NimiV1RDTO extends KoodiV1RDTO {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "Avain-arvopari, jossa avain on koodisto kieli uri ja arvo on kuvausteksti", required = true)
