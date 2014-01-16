@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -43,6 +45,9 @@ public class KoodiV1RDTO implements Serializable {
     private String arvo;
     @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
     private String kaannos;
+
+    @ApiModelProperty(value = "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio", required = false)
+    private Map<String, KoodiV1RDTO> meta;
 
     public KoodiV1RDTO() {
     }
@@ -177,6 +182,20 @@ public class KoodiV1RDTO implements Serializable {
      */
     public void setKieliKaannos(String kieliKaannos) {
         this.kieliKaannos = kieliKaannos;
+    }
+
+    /**
+     * @param meta the meta to set
+     */
+    public void setMeta(Map<String, KoodiV1RDTO> meta) {
+        this.meta = meta;
+    }
+
+    public Map<String, KoodiV1RDTO> getMeta() {
+        if (meta == null) {
+            meta = new HashMap<String, KoodiV1RDTO>();
+        }
+        return meta;
     }
 
 }
