@@ -167,7 +167,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var createFormattedDateString = function(date) {
 
-        return moment(date).format('DD.MM.YYYY hh:mm');
+        return moment(date).format('DD.MM.YYYY HH:mm');
 
     }
 
@@ -624,6 +624,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
+        $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
 
             /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -687,6 +688,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
+
+        $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
