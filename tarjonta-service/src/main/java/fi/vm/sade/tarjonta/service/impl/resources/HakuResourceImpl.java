@@ -200,6 +200,7 @@ public class HakuResourceImpl implements HakuResource {
         final String kieliAvain = "fi"; // TODO: lisää
                                         // rajapintaan
 
+        final String kieliAvain_fi = "fi";
         final String kieliAvain_sv = "sv";
         final String kieliAvain_en = "en";
 
@@ -259,10 +260,14 @@ public class HakuResourceImpl implements HakuResource {
         Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
             public Comparable apply(HakukohdePerustieto input) {
                 String tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain);
+                // Varajärjestys, jos valitulla kieliavaimella ei löydy tarjoajanimeä
                 if(tarjoajaNimi == null) {
-                    tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_sv);
+                    tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_fi);
                     if(tarjoajaNimi == null) {
-                        tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_en);
+                        tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_sv);
+                        if(tarjoajaNimi == null) {
+                            tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_en);
+                        }
                     }
                 }
                 return tarjoajaNimi;
