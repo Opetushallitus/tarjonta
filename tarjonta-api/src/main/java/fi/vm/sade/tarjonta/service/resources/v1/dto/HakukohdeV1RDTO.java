@@ -87,6 +87,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private Long soraKuvausTunniste;
 
+    private Set<String> valintaPerusteKuvausKielet;
+
+    private Set<String> soraKuvausKielet;
+
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
     }
@@ -379,5 +383,21 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
         this.soraKuvausTunniste = soraKuvausTunniste;
+    }
+
+    public Set<String> getValintaPerusteKuvausKielet() {
+        return valintaPerusteKuvausKielet;
+    }
+
+    public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
+        this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
+    }
+
+    public Set<String> getSoraKuvausKielet() {
+        return soraKuvausKielet;
+    }
+
+    public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
+        this.soraKuvausKielet = soraKuvausKielet;
     }
 }
