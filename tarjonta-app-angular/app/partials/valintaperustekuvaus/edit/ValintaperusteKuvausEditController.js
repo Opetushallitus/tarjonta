@@ -200,6 +200,12 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     };
 
 
+    $scope.takaisin = function() {
+
+        var oriUri = "/valintaPerusteKuvaus/search";
+        $location.path(oriUri);
+
+    }
 
     $scope.model.canSaveVpk = function() {
       return true;
