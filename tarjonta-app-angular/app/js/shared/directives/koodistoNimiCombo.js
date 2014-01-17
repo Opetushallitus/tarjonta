@@ -41,6 +41,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
+            isrequired : "=",
             usearvocombo : "=",
             parentkoodiuri : "=",
             filteruris : "=",
@@ -50,6 +51,15 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
         },
         controller :  function($scope,Koodisto) {
+
+            if ($scope.isrequired !== undefined && $scope.isrequired === "true" || $scope.isrequired) {
+
+                $scope.valuerequired = true;
+            }  else {
+                $scope.valuerequired = false;
+
+            }
+
 
             if ($scope.usearvocombo !== undefined) {
                 $scope.combotype = {

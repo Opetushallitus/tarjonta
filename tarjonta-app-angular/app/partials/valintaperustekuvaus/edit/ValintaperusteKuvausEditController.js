@@ -13,6 +13,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.model.years = [];
 
+  $scope.model.validationmsgs = [];
+
   $scope.model.valintaperustekuvaus = {};
 
   $scope.model.valintaperustekuvaus.kuvauksenTyyppi = $route.current.params.kuvausTyyppi;
@@ -25,10 +27,13 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.formControls = {}; // controls-layouttia varten
 
+  $scope.model.userLang;
 
   $scope.model.showError = false;
 
   $scope.model.showSuccess = false;
+
+  $scope.model.nimiValidationFailed = false;
 
 
 
@@ -75,6 +80,67 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   };
 
+
+    var validateForm= function() {
+
+        var retVal = true;
+        var errorMsgs = [];
+
+        if(!validateNames()) {
+
+            errorMsg = {
+                errorMessageKey : "valintaperustekuvaus.validation.name.missing.exception"
+            };
+            errorMsgs.push(errorMsg);
+
+            $scope.model.nimiValidationFailed = true;
+
+            retVal = false;
+
+        }
+
+        if (!$scope.valintaPerusteForm.$valid) {
+            retVal = false;
+        }
+
+        if (errorMsgs.length > 0) {
+            showError(errorMsgs);
+        }
+
+        return retVal;
+    };
+
+    var resetErrorMsgs = function() {
+
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+
+        $scope.model.nimiValidationFailed = false;
+        $scope.model.showError = false;
+
+    };
+
+    var validateNames  = function() {
+        for(var i in $scope.model.valintaperustekuvaus.kuvauksenNimet){ return true;}
+        return false;
+    }
+
+    var showError = function(errorArray) {
+
+
+
+        angular.forEach(errorArray,function(error) {
+
+
+            $scope.model.validationmsgs.push(error.errorMessageKey);
+
+
+        });
+
+
+    }
+
     var createFormattedDateString = function(date) {
 
         return moment(date).format('DD.MM.YYYY HH:mm');
@@ -84,7 +150,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
   var initialializeForm = function() {
 
 
-
+      $scope.model.userLang = AuthService.getLanguage();
 
 
       if ($route.current.locals.resolvedValintaPerusteKuvaus !== undefined ) {
@@ -163,37 +229,51 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     $scope.model.saveValmis = function(){
 
+        resetErrorMsgs();
+        console.log('NIMET : ' , $scope.model.valintaperustekuvaus.kuvauksenNimet);
+        console.log('VALIDATION : ', $scope.valintaPerusteForm.kausicombo.$invalid);
+        console.log('KAUSI : ',$scope.valintaPerusteForm.kausicombo);
 
-       $scope.model.valintaperustekuvaus.modifiedBy = AuthService.getUserOid();
+        if (validateForm()) {
+
+            $scope.model.valintaperustekuvaus.modifiedBy = AuthService.getUserOid();
 
 
 
 
-       if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
+            if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
 
-           var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
-           resultPromise.then(function(data){
-               if (data.status === "OK") {
-                   $scope.model.showSuccess = true;
-                   $scope.model.valintaperustekuvaus.modified  = data.result.modified;
-               } else {
-                   //TODO: Do what ?
-               }
-           });
-       } else {
+                var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+                resultPromise.then(function(data){
+                    if (data.status === "OK") {
+                        $scope.model.showSuccess = true;
+                        $scope.model.valintaperustekuvaus.modified  = data.result.modified;
+                    } else {
+                        showError(data.errors);
+                        console.log('DID NOT GET OK : ', data);
+                    }
+                });
+            } else {
 
-           var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
-           resultPromise.then(function(data){
-               console.log('GOT DATA : ', data);
-               if (data.status === "OK") {
-                   $scope.model.valintaperustekuvaus.modified  = data.result.modified;
-                   $scope.model.showSuccess = true;
-               } else {
-                   //TODO: Do what ?
-               }
-           });
+                var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+                resultPromise.then(function(data){
+                    console.log('GOT DATA : ', data);
+                    if (data.status === "OK") {
+                        $scope.model.valintaperustekuvaus.modified  = data.result.modified;
+                        $scope.model.showSuccess = true;
+                    } else {
+                        showError(data.errors);
+                    }
+                });
 
-       }
+            }
+
+
+        }   else {
+            $scope.model.showError = true;
+            $scope.model.showSuccess = false;
+        }
+
 
 
 
@@ -211,8 +291,12 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
       return true;
     };
 
+    $scope.getNimetKey = function() {
+        return $scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined  ? 'valintaperustekuvaus.edit.create.msg' : 'valintaperustekuvaus.edit.update.msg';
+    }
 
-
-
+    $scope.getNimet = function() {
+        return "";
+    }
 
 });
