@@ -548,11 +548,20 @@ input[type=checkbox], input[type=radio] {
 
 /* koulutuksen alkamispvm */
 
-ul#koulutuksenAlkamisPvm {
+div#koulutuksenAlkamisPvm ul {
 	list-style:none;	
     margin:15px 0 0 0;
 }
 
-span.disabled {
+div#koulutuksenAlkamisPvm ul li {
+	display: inline-block;
+	margin-right:15px;
+}
+
+div#koulutuksenAlkamisPvm div.indent {
+    margin:10px 0 20px 30px;
+}
+
+div#koulutuksenAlkamisPvm span.disabled {
     color:#a0a0a0;
 }

@@ -146,7 +146,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
             $scope.$watch("dates", function(valNew, valOld) {
                 $scope.reset();
             });
-
+            
+            return $scope;
         }
 
         return {
@@ -154,6 +155,10 @@ app.directive('alkamispaivat', ['$log', function($log) {
             replace: true,
             templateUrl: "partials/koulutus/edit/alkamispaivat.html",
             controller: controller,
+            require: '^alkamispaivaJaKausi',
+            link: function(scope, element, attrs, controller) {
+            	controller.alkamisPaivat = scope;
+            },
             scope: {
                 dates: "=", //BaseEditController ui model
                 kausiUri: "=",
