@@ -1,62 +1,86 @@
 <div>
 
+    <h3 ttt='haku.edit.aikataulu.julkaisuJaHakuaika'>Tarjonnan julkaisu ja hakuaika</h3>
+
+    <table class="tarjontaForm">
+        <tr class="required">
+            <th ttt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="julkaisunTakaraja" required ng-model="model.parameter.julkaisunTakaraja">
+                <p class="help-block" ttt='haku.edit.aikataulu.julkaisunTakaraja.help'>
+                    Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="julkaisunTakaraja" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja'>Aloituspaikkojen muokkauksen takaraja</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="aloituspaikkojenMuokkauksenTakaraja" ng-model="model.parameter.aloituspaikkojenMuokkauksenTakaraja">
+                <p class="help-block" ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja.help'>
+                    Hakuajan jälkeen hakukohteen aloituspaikkojen muokkaaminen on sallittu annettuun päivämäärään asti.
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="aloituspaikkojenMuokkauksenTakaraja" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
+            <td colspan="2">ALKAA --- LOPPUU</td>
+        </tr>
+
+    </table>
+
+
+    <h3 ttt='haku.edit.aikataulu.valinnatJaSijoittelu'>Valinnat ja sijoittelu</h3>
+
+    <table class="tarjontaForm">
+        <tr>
+            <th ttt='haku.edit.aikataulu.koekutsujenMuodostaminen'>Koekutsujen muodostaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koekutsujenMuodostaminen_start" ng-model="model.parameter.koekutsujenMuodostaminen.start">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koekutsujenMuodostaminen_end" ng-model="model.parameter.koekutsujenMuodostaminen.end">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="koekutsujenMuodostaminen_start" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="koekutsujenMuodostaminen_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.harkinnanvarainenValintaTallennusPaattyy'>Harkinnanvaraisen valinnan tallennus päättyy</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="harkinnanvarainenValintaTallennusPaattyy" ng-model="model.parameter.harkinnanvarainenValintaTallennusPaattyy">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="harkinnanvarainenValintaTallennusPaattyy" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                </div>
+            </td>
+        </tr>
+
+
+    </table>
+
+
+
 
 
     <form class="form-horizontal" id='hakuForm'>
-        <fieldset>
-
-            <!-- Form Name -->
-            <legend>Tarjonnan julkaisu ja hakuaika</legend>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Tarjonnan julkaisun takaraja</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge" required="">
-                    <p class="help-block">Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Aloituspaikkojen muokkauksen takaraja</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">Hakuajan jälkeen hakukohteen aloituspaikkojen muokkaaminen on sallittu annettuun päivämäärään asti</p>
-                </div>
-            </div>
-
-            <div class="control-group">
-                Hakuaika 1.1.2011 klo 08:00 - 31.12.2017 23:59
-            </div>
-
-        </fieldset>
-
-
 
         <fieldset>
-
-            <!-- Form Name -->
-            <legend>Valinnat ja sijoittelu</legend>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Koekutsujen muodostaminen</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">-</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Harkinnanvaraisen valinnan päätösten tallennus päättyy</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
 
             <!-- Text input-->
             <div class="control-group">

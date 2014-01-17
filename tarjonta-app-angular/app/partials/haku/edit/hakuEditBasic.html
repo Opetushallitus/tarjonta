@@ -1,4 +1,4 @@
-<div>
+<div ng-if="model.hakux.status == 'OK'">
 
         <table class="tarjontaForm">
             <tr class="required">
@@ -111,7 +111,7 @@
                     <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
                     <span ttt="haku.edit.hakulomake.kaytaJarjestelmanOmaa">Käytetään järjestelmän omaa hakulomaketta</span>
 
-                    <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                    <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
                         <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
                         <input type="url" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" required>
                     </p>

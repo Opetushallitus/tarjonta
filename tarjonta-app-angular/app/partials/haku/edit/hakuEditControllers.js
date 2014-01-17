@@ -18,7 +18,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
             function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
-                $log.info("HakuEditController()");
+                $log.info("HakuEditController()", $scope);
 
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
@@ -86,6 +86,10 @@ app.controller('HakuEditController',
                         collapse: {
                             model: true
                         },
+
+                        // Preloaded Haku result
+                        hakux : $route.current.locals.hakux,
+
                         haku: {
                             "nimi": {
                                 "kieli_fi": "suomi",
@@ -106,6 +110,18 @@ app.controller('HakuEditController',
                             ],
                             hakulomakeKaytaJarjestemlmanOmaa: true
                         },
+
+                        parameter: {
+                            julkaisunTakaraja : new Date(),
+                            aloituspaikkojenMuokkauksenTakaraja : new Date(),
+                            koekutsujenMuodostaminen : {
+                                start : new Date(),
+                                end : new Date()
+                            },
+                            harkinnanvarainenValintaTallennusPaattyy : new Date()
+                        },
+
+
                         place: "holder"
                     };
 
