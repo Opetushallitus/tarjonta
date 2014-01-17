@@ -5,7 +5,8 @@ var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation']);
 app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
             $scope.ctrl = {
-            	mode:0,
+            	kausi:false,
+            	multi:false,
                 koodis: []
             };
 
@@ -17,6 +18,10 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
 
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = -1
+            }
+            
+            $scope.onAddDate = function() {
+            	$scope.alkamisPaivat.clickAddDate();
             }
             
             $scope.onEnableKausi = function($event) {
@@ -31,7 +36,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
         				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog.html',
         				controller: function($scope) {
         					$scope.ok = function() {
-        						ctrl.mode = 2;
+        						ctrl.kausi = true;
+        						ctrl.multi = false;
         						modalInstance.dismiss();
         					}
         					$scope.cancel = function() {
@@ -56,6 +62,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                     $scope.ctrl.koodis.push($scope.kausiUiModel.koodis[i]);
                 }
             });
+            return $scope;
         }
 
         return {
