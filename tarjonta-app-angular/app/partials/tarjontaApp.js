@@ -290,12 +290,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "haku.review",
                     controller: 'HakuRoutingController',
                     resolve: {
-                        hakux: function($log, $route) {
+                        hakux: function($log, $route, HakuV1) {
                             $log.info("/haku/ID", $route);
-
-                            return {
-                                oid : "oid-this-entry-not-really-loaded-from-database"
-                            }
+                            return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }
                 })
@@ -304,12 +301,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "haku.edit",
                     controller: 'HakuRoutingController',
                     resolve: {
-                        hakux: function($log, $route) {
+                        hakux: function($log, $route, HakuV1) {
                             $log.info("/haku/ID/edit", $route);
-
-                            return {
-                                oid : "oid-this-entry-not-really-loaded-from-database"
-                            }
+                            return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }
                 })
