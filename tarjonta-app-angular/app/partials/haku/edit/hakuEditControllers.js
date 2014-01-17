@@ -110,6 +110,18 @@ app.controller('HakuEditController',
                             ],
                             hakulomakeKaytaJarjestemlmanOmaa: true
                         },
+
+                        parameter: {
+                            julkaisunTakaraja : new Date(),
+                            aloituspaikkojenMuokkauksenTakaraja : new Date(),
+                            koekutsujenMuodostaminen : {
+                                start : new Date(),
+                                end : new Date()
+                            },
+                            harkinnanvarainenValintaTallennusPaattyy : new Date()
+                        },
+
+
                         place: "holder"
                     };
 

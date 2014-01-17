@@ -312,18 +312,76 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         try {
             LOG.debug("CREATING NEW KUVAUS ");
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
-            valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
-            valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
-            KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
 
-            resultV1RDTO.setResult(kuvaus);
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            if (!checkForExistingKuvaus(valintaperusteSoraKuvaus)) {
+
+                LOG.debug("NO EXISTING KUVAUS FOUND, CREATING NEW");
+                valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
+                valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
+                KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
+
+                resultV1RDTO.setResult(kuvaus);
+                resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            } else {
+                LOG.debug("EXISTING KUVAUS FOUND, REPLYING WITH EXCEPTION");
+                resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+                ErrorV1RDTO errorMsg = ErrorV1RDTO.createInfo("valintaperustekuvaus.validation.name.existing.exception");
+                resultV1RDTO.addError(errorMsg);
+
+            }
+
 
         } catch (Exception exp) {
            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
         return  resultV1RDTO;
+    }
+
+    @Transactional
+    private boolean checkForExistingKuvaus(ValintaperusteSoraKuvaus kuvaus) {
+
+        List<ValintaperusteSoraKuvaus> kuvaukset =  null;
+
+        boolean retVal = false;
+
+        try {
+
+            kuvaukset = kuvausDAO.findByTyyppiOrgTypeYearKausi(kuvaus.getTyyppi(),
+                    kuvaus.getOrganisaatioTyyppi(),kuvaus.getKausi(),kuvaus.getVuosi());
+
+        } catch (Exception exp) {
+
+        }
+
+
+        if (kuvaukset == null || kuvaukset.size() < 1) {
+            retVal = false;
+        } else {
+
+            for(ValintaperusteSoraKuvaus loopKuvaus: kuvaukset) {
+
+                 for (TekstiKaannos tekstiKaannos : loopKuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
+
+                     for(TekstiKaannos toinenTeksti : kuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
+
+                         if (toinenTeksti.getKieliKoodi().trim().equals(tekstiKaannos.getKieliKoodi().trim())
+                                 && toinenTeksti.getArvo().trim().equals(tekstiKaannos.getArvo().trim())){
+                             retVal = true;
+                         }
+
+                     }
+
+                 }
+
+            }
+
+
+        }
+
+        return retVal;
+
     }
 
     @Override
