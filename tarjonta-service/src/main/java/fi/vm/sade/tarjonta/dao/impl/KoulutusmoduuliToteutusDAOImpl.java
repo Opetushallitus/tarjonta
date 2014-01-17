@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -29,6 +30,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -165,11 +167,11 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
 
         if (koulutusAlkuVuosi > 0) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().year().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().year().eq(koulutusAlkuVuosi));
         }
 
         if (!koulutusAlkuKuukaudet.isEmpty()) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().month().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().month().in(koulutusAlkuKuukaudet));
         }
 
         List<KoulutusmoduuliToteutus> komotos;
@@ -299,4 +301,66 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.containsKey(kieliUri))).
                 singleResult(qBinaryData);
     }
+    
+    /**
+     * Search LOI entities by application option OIDs.
+     *
+     * @param hakukohdeIds
+     * @param requiredStatus
+     * @return Map<koulutusmoduuliId, koulutusmoduuliOid>
+     */
+    public List<Long> searchKomotoIdsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus) {
+
+        boolean hasStatus =requiredStatus!=null && requiredStatus.length>0 && requiredStatus[0]!=null;  
+        
+        Query q = getEntityManager().createQuery(hasStatus?
+                "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)":
+                    
+                    "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                    + "WHERE hk.id IN(:hakukohdeIds)"
+                );
+        q.setParameter("hakukohdeIds", hakukohdeIds);
+        log.debug("searching for komotos with status:" + Lists.newArrayList(requiredStatus));
+
+        if(hasStatus) { 
+            q.setParameter("requiredStatus", Lists.newArrayList(requiredStatus));
+        }
+
+        List<Long> list = (List<Long>) q.getResultList();
+
+        return list;
+    }
+    
+    @Override
+    public List<String> searchKomotoOIDsByHakukohdesId(
+            Collection<Long> hakukohdeIds, TarjontaTila... requiredStatus) {
+        boolean hasStatus =requiredStatus!=null && requiredStatus.length>0 && requiredStatus[0]!=null;  
+        
+        Query q = getEntityManager().createQuery(hasStatus?
+                "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)":
+                    
+                    "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                    + "WHERE hk.id IN(:hakukohdeIds)"
+                );
+        q.setParameter("hakukohdeIds", hakukohdeIds);
+        log.debug("searching for komotos with status:" + Lists.newArrayList(requiredStatus));
+
+        if(hasStatus) { 
+            q.setParameter("requiredStatus", Lists.newArrayList(requiredStatus));
+        }
+
+        List<String> list = (List<String>) q.getResultList();
+
+        return list;
+    }
+    
+    @Override
+    public List<Long> findIdsByoids(Collection<String> oids) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final BooleanExpression criteria = komoto.oid.in(oids);
+        return from(komoto).where(criteria).distinct().list(komoto.id);
+    }
+
 }

@@ -10,13 +10,10 @@
 </div>
 
 <span ng-repeat="b in model.buttons">
-	<input
+	<a href
 	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
-	    type="button"
 	    data-ng-click="b.action()"
-	    value="{{t(b.tt)}}"
-	    ng-disabled="b.disabled()"
-	    />
+	    ng-disabled="b.disabled()">{{t(b.tt)}}<span ng-show="b.icon"> <span ng-class="'icon-'+b.icon"/></span></a>
 </span>
 
 <div class="msgOk" ng-show="showSuccess()">

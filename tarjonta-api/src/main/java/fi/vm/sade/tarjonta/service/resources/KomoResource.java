@@ -68,7 +68,7 @@ public interface KomoResource {
      * Search KOMO's
      *
      * @param searchTerms
-     * @param count
+     * @param count count if count < 0 then count = Integer.MAX_VALUE, if count == 0, then count == 100, else not modified
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
@@ -86,7 +86,7 @@ public interface KomoResource {
      * GET Komoto's by Komo.
      *
      * @param oid
-     * @param count
+     * @param count count if count < 0 then count = Integer.MAX_VALUE, if count == 0, then count == 100, else not modified
      * @param startIndex
      * @return list of KOMOTO OID's belonging to given KOMO
      */

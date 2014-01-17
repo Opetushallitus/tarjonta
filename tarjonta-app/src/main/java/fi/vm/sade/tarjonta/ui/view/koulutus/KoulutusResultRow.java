@@ -206,7 +206,6 @@ public class KoulutusResultRow extends HorizontalLayout {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(koulutus.getKomotoOid(), KOMOTO);
-            tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKomotoOid()));
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             showPeruutaDialog();
         } else if (selection.equals(i18n.getMessage("naytaHakukohteet"))) {
@@ -223,7 +222,6 @@ public class KoulutusResultRow extends HorizontalLayout {
             public void buttonClick(ClickEvent event) {
                 closeDialogWindow();
                 tarjontaPresenter.changeStateToCancelled(koulutus.getKomotoOid(), KOMOTO);
-                tarjontaPresenter.sendEvent(KoulutusContainerEvent.update(koulutus.getKomotoOid()));
             }
         },
                 new Button.ClickListener() {

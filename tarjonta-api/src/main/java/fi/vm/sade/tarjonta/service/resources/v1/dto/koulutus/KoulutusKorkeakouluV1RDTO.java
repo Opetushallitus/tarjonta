@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -48,17 +50,18 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
-    /**
-     * @deprecated not used!!
-     */
-    @ApiModelProperty(value = "Koulutuksen teemat (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO teemas;
-
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
 
-    @ApiModelProperty(value = "Koulutuksen alkamispvm", required = true)
-    private Date koulutuksenAlkamisPvm;
+    @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto koodi uri, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
+    private KoodiV1RDTO koulutuksenAlkamiskausi;
+    
+    @ApiModelProperty(value = "Koulutuksen alkamisvuosi, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
+    private Integer koulutuksenAlkamisvuosi;
+
+    @ApiModelProperty(value = "Koulutuksen alkamispvm, voi olla tyhjä, jos tyhjä alkamiskausi ja alkamisvuosi pitää olla valittuna")
+    private Set<Date> koulutuksenAlkamisPvms;
+
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
 
@@ -171,40 +174,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
-     * @return the teemas
-     * @deprecated not used!!
-     */
-    public KoodiUrisV1RDTO getTeemas() {
-        if (teemas == null) {
-            teemas = new KoodiUrisV1RDTO();
-        }
-
-        return teemas;
-    }
-
-    /**
-     * @param teemas the teemas to set
-     * @deprecated not used!!
-     */
-    public void setTeemas(KoodiUrisV1RDTO teemas) {
-        this.teemas = teemas;
-    }
-
-    /**
-     * @return the koulutuksenAlkamisPvm
-     */
-    public Date getKoulutuksenAlkamisPvm() {
-        return koulutuksenAlkamisPvm;
-    }
-
-    /**
-     * @param koulutuksenAlkamisPvm the koulutuksenAlkamisPvm to set
-     */
-    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
-        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
-    }
-
-    /**
      * @return the ammattinimikkeet
      */
     public KoodiUrisV1RDTO getAmmattinimikkeet() {
@@ -253,10 +222,60 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoodiUrisV1RDTO getAihees() {
+        if (aihees == null) {
+            aihees = new KoodiUrisV1RDTO();
+        }
+
         return aihees;
     }
 
     public void setAihees(KoodiUrisV1RDTO aihees) {
         this.aihees = aihees;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisPvms
+     */
+    public Set<Date> getKoulutuksenAlkamisPvms() {
+        if (koulutuksenAlkamisPvms == null) {
+            koulutuksenAlkamisPvms = new HashSet<Date>();
+        }
+
+        return koulutuksenAlkamisPvms;
+    }
+
+    /**
+     * @param koulutuksenAlkamisPvms the koulutuksenAlkamisPvms to set
+     */
+    public void setKoulutuksenAlkamisPvms(Set<Date> koulutuksenAlkamisPvms) {
+        this.koulutuksenAlkamisPvms = koulutuksenAlkamisPvms;
+    }
+
+    /**
+     * @return the koulutuksenAlkamiskausi
+     */
+    public KoodiV1RDTO getKoulutuksenAlkamiskausi() {
+        return koulutuksenAlkamiskausi;
+    }
+
+    /**
+     * @param koulutuksenAlkamiskausi the koulutuksenAlkamiskausi to set
+     */
+    public void setKoulutuksenAlkamiskausi(KoodiV1RDTO koulutuksenAlkamiskausi) {
+        this.koulutuksenAlkamiskausi = koulutuksenAlkamiskausi;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisvuosi
+     */
+    public Integer getKoulutuksenAlkamisvuosi() {
+        return koulutuksenAlkamisvuosi;
+    }
+
+    /**
+     * @param koulutuksenAlkamisvuosi the koulutuksenAlkamisvuosi to set
+     */
+    public void setKoulutuksenAlkamisvuosi(Integer koulutuksenAlkamisvuosi) {
+        this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
     }
 }

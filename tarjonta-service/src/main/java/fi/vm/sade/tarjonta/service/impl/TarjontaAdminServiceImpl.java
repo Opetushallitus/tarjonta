@@ -907,31 +907,37 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
-        publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
-        indexTilatToSolr(tarjontatiedonTila);
-        return new PaivitaTilaVastausTyyppi();
+        Tilamuutokset tm = publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
+        indexTilatToSolr(tarjontatiedonTila, tm);
+        return new PaivitaTilaVastausTyyppi(Lists.newArrayList(tm.getMuutetutHakukohteet()), Lists.newArrayList(tm.getMuutetutKomotot()));
     }
 
-    private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila) {
-        List<Long> komotot = Lists.newArrayList();
-        List<Long> hakukohteet = Lists.newArrayList();
+    private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila, Tilamuutokset tm) {
+        Set<String> hakukohdeOidit = new HashSet<String>(tm.getMuutetutHakukohteet());
+        Set<String> koulutusOidit = new HashSet<String>(tm.getMuutetutKomotot());
         for (GeneerinenTilaTyyppi curTilaT : tarjontatiedonTila.getTilaOids()) {
             if (SisaltoTyyppi.KOMOTO.equals(curTilaT.getSisalto())) {
-                KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(curTilaT.getOid());
-                if (komoto != null) {
-                    komotot.add(komoto.getId());
-                }
+                koulutusOidit.add(curTilaT.getOid());
             } else if (SisaltoTyyppi.HAKUKOHDE.equals(curTilaT.getSisalto())) {
-                Hakukohde hakukohde = this.hakukohdeDAO.findHakukohdeWithKomotosByOid(curTilaT.getOid());
-                if (hakukohde != null) {
-                    hakukohteet.add(hakukohde.getId());
-                }
-            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto()) && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
-                addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot, hakukohteet);
+                hakukohdeOidit.add(curTilaT.getOid());
+            } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto())
+                    && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
+                //älä indeksoi välittömästi jos haku julkaistiin, indeksointi tapahtuu taustalla asynkronisesti 
+//                addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot,
+//                        hakukohteet);
             }
+            
         }
-        solrIndexer.indexKoulutukset(komotot);
-        solrIndexer.indexHakukohteet(hakukohteet);
+        if (koulutusOidit.size() > 0) {
+            log.debug("indexing koulutukset:", koulutusOidit);
+            solrIndexer.indexKoulutukset(koulutusmoduuliToteutusDAO
+                    .findIdsByoids(koulutusOidit));
+        }
+        if (hakukohdeOidit.size() > 0) {
+            log.debug("indexing hakukohteet:", hakukohdeOidit);
+            solrIndexer.indexHakukohteet(hakukohdeDAO
+                    .findIdsByoids(hakukohdeOidit));
+        }
     }
 
     private void addRelatedHakukohteetAndKoulutukset(String hakuOid, List<Long> komotoIds, List<Long> hakukohdeIds) {
@@ -939,11 +945,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuOids.add(hakuOid);
 
         //Hakukohde IDs
-        List<Long> hakukohdeOids = publication.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
+        List<Long> hakukohdeOids = hakukohdeDAO.searchHakukohteetByHakuOid(hakuOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         //toteutus Ids
         if (hakukohdeOids != null && !hakukohdeOids.isEmpty()) {
-            komotoIds.addAll(publication.searchKomotoIdsByHakukohdesOid(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
+            komotoIds.addAll(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeOids, fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU));
         }
     }
 
@@ -963,7 +969,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.info("  entity = {}", md);
 
         if (md == null) {
-            //Metadata was removed.
+            //KuvausV1RDTO was removed.
             return null;
         }
 
@@ -1012,5 +1018,5 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return result;
     }
-
+    
 }

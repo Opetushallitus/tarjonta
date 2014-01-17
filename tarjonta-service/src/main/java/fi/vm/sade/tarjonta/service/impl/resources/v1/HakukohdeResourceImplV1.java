@@ -18,9 +18,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
@@ -45,7 +47,7 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.*;
-
+import org.apache.commons.collections.CollectionUtils;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -55,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -68,6 +71,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private HakuDAO hakuDao;
     @Autowired
     private HakukohdeDAO hakukohdeDao;
+
+    @Autowired
+    private KuvausDAO kuvausDAO;
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -262,6 +268,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
 
+        if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
+              hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste()));
+        }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+             hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste()));
+        }
+
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
         result.setResult(hakukohdeRDTO);
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -273,6 +287,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
+    }
+
+    private HashMap<String,String> getKuvauksetWithId(Long kuvausId) {
+
+        HashMap<String,String> kuvaukset = new HashMap<String,String>();
+
+        ValintaperusteSoraKuvaus kuvaus = kuvausDAO.read(kuvausId);
+
+        for (MonikielinenMetadata meta: kuvaus.getTekstis()) {
+            kuvaukset.put(meta.getKieli(),meta.getArvo());
+        }
+
+        return kuvaukset;
+
     }
 
 
@@ -369,8 +397,24 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
+        //These are updated in a separate resource
+        hakukohde.getValintakoes().clear();
+        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
+
+        hakukohde.getLiites().clear();
+        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+
         hakukohde.setId(hakukohdeTemp.getId());
         hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+        //Just in case remove kuvaukses if tunniste is defined
+        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+            hakukohde.setValintaperusteKuvaus(null);
+        }
+
+        if (hakukohde.getSoraKuvausTunniste() != null) {
+            hakukohde.setSoraKuvaus(null);
+        }
 
         Haku haku = hakuDao.findByOid(hakuOid);
 
@@ -791,5 +835,117 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<String> koulutukses) {
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+
+        List<KoulutusmoduuliToteutus> liitettavatKomotot = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses);
+
+        if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
+
+            for (KoulutusmoduuliToteutus komoto : liitettavatKomotot) {
+
+                hakukohde.addKoulutusmoduuliToteutus(komoto);
+
+                komoto.addHakukohde(hakukohde);
+
+                koulutusmoduuliToteutusDAO.update(komoto);
+
+            }
+
+            hakukohdeDao.update(hakukohde);
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        } else {
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+
+        }
+
+        return resultV1RDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<String> koulutukses) {
+
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+
+        if (hakukohde != null) {
+
+            List<KoulutusmoduuliToteutus> komotoToRemove = new ArrayList<KoulutusmoduuliToteutus>();
+
+
+            for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+                LOG.debug("Looping hakukohde komoto : {}",komoto.getOid());
+                for (String komotoOid : koulutukses) {
+                    if (komoto.getOid().trim().equals(komotoOid)) {
+                        komotoToRemove.add(komoto);
+                    }
+                }
+
+            }
+
+            if (komotoToRemove.size() > 0) {
+                Collection<KoulutusmoduuliToteutus> remainingKomotos =  CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(),komotoToRemove);
+
+
+                LOG.debug("Removed {} koulutukses from hakukohde : {}",komotoToRemove.size(),hakukohde.getOid());
+                if (remainingKomotos.size() > 0)  {
+
+                    for (KoulutusmoduuliToteutus komoto : komotoToRemove) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                        koulutusmoduuliToteutusDAO.update(komoto);
+
+                    }
+
+                    LOG.debug("Hakukohde has more koulutukses, updating it");
+                    hakukohdeDao.update(hakukohde);
+                } else {
+
+                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
+
+                    for (KoulutusmoduuliToteutus komoto : komotos) {
+
+                        komoto.removeHakukohde(hakukohde);
+
+                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+
+                    }
+
+                    LOG.debug("Hakukohde does not have anymore koulutukses, removing it");
+                    hakukohdeDao.remove(hakukohde);
+                    try {
+                    solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                    } catch (Exception exp) {
+                        LOG.warn("EXCEPTION REMOVING HAKUKOHDE: {} FROM INDEX : {}",hakukohdeOid,exp.toString());
+                    }
+                }
+
+            }
+
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            resultV1RDTO.setResult(koulutukses);
+
+
+        } else {
+
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+           resultV1RDTO.setResult(koulutukses);
+
+        }
+
+        return resultV1RDTO;
+
     }
 }

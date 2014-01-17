@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -49,8 +48,6 @@ public class KomotoResourceImpl implements KomotoResource {
     private static final Logger LOG = LoggerFactory.getLogger(KomotoResourceImpl.class);
 
     @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired(required = true)
     private ConversionService conversionService;
@@ -58,14 +55,14 @@ public class KomotoResourceImpl implements KomotoResource {
     // GET /komoto/hello
     @Override
     public String hello() {
-        LOG.info("hello() -- /komoto/hello");
+        LOG.debug("hello() -- /komoto/hello");
         return "hello";
     }
 
     // GET /komoto/{oid}
     @Override
     public KomotoDTO getByOID(String oid) {
-        LOG.info("getByOID() -- /komoto/{}", oid);
+        LOG.debug("getByOID() -- /komoto/{}", oid);
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         KomotoDTO result = conversionService.convert(komoto, KomotoDTO.class);
         LOG.debug("  result={}", result);
@@ -75,18 +72,15 @@ public class KomotoResourceImpl implements KomotoResource {
     // GET /komoto?searchTerms=xxx etc.
     @Override
     public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("search() -- /komoto?st={}, c={}, si={}, lmb={}, lma={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+        LOG.debug("search() -- /komoto?st={}, c={}, si={}, lmb={}, lma={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         // TODO hard coded, add param tarjonta tila + get the state!
         TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountValue(count);
 
-        List<OidRDTO> result =
-                HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        List<OidRDTO> result
+                = HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.debug("  result={}", result);
         return result;
     }
@@ -94,7 +88,7 @@ public class KomotoResourceImpl implements KomotoResource {
     // GET /komoto/{oid}/komo
     @Override
     public KomoDTO getKomoByKomotoOID(String oid) {
-        LOG.info("getKomoByKomotoOID() -- /komoto/{}/komo", oid);
+        LOG.debug("getKomoByKomotoOID() -- /komoto/{}/komo", oid);
         KomoDTO result = null;
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         if (komoto != null) {
@@ -104,11 +98,10 @@ public class KomotoResourceImpl implements KomotoResource {
         return result;
     }
 
-
     // GET /komoto/{oid}/hakukohde
     @Override
     public List<OidRDTO> getHakukohdesByKomotoOID(String oid) {
-        LOG.info("getHakukohdesByKomotoOID() -- /komoto/{}/hakukohde", oid);
+        LOG.debug("getHakukohdesByKomotoOID() -- /komoto/{}/hakukohde", oid);
         List<OidRDTO> result = new ArrayList<OidRDTO>();
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
@@ -122,4 +115,20 @@ public class KomotoResourceImpl implements KomotoResource {
         LOG.debug("  result={}", result);
         return result;
     }
+
+    private int manageCountValue(int count) {
+
+        if (count < 0) {
+            count = Integer.MAX_VALUE;
+            LOG.debug("  count < 0, using Integer.MAX_VALUE");
+        }
+
+        if (count == 0) {
+            count = 100;
+            LOG.debug("  autolimit search to {} entries!", count);
+        }
+
+        return count;
+    }
+
 }

@@ -83,8 +83,9 @@ public enum TarjontaTila {
     	}
     }
     
+    @Deprecated // muokattavuuslogiikka ei ole tilasidonnaista
     public boolean isMutable() {
-    	return this==LUONNOS || this==KOPIOITU;
+    	return true; // this==LUONNOS || this==KOPIOITU;
     }
     
     public boolean isRemovable() {

@@ -17,28 +17,37 @@
 //});
 
 
+
 describe('Edit koulutus testeja', function() {
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
         "env": {
+            "authentication-service.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/",
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2"
         }, "app": {
             "key-app-1": "mock-value-app-1",
             "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
         }
-    }
+    };
 
-    //set mock data to module by using the value-method,
-    var mockModule = angular.module('test.module', []);
-    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
+//    //set mock data to module by using the value-method,
+//    var mockModule = angular.module('test.module', []);
+//    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
-    beforeEach(module('TarjontaConverter'));
+    beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
     beforeEach(module('app.edit.ctrl'));
-    beforeEach(module('config'));
+    beforeEach(module('debounce'));
+
+    beforeEach(function(){
+        module(function ($provide) {
+            $provide.value('Config', CONFIG_ENV_MOCK);
+        });
+    });
+
     var $scope, $modalInstance;
     beforeEach(inject(function($rootScope) {
         $scope = $rootScope.$new();
@@ -48,6 +57,7 @@ describe('Edit koulutus testeja', function() {
             controller: 'SelectTutkintoOhjelmaController'
         };
     }));
+    
     it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
             $scope: $scope,
@@ -59,6 +69,7 @@ describe('Edit koulutus testeja', function() {
         expect($scope.stoModel.active).toEqual({});
 
     }));
+    
     it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
             $scope: $scope,
@@ -69,13 +80,13 @@ describe('Edit koulutus testeja', function() {
         $scope.clearCriteria();
         expect($scope.stoModel.hakulause).toEqual('');
     }));
+    
     it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
         $controller('EditYhteyshenkiloCtrl', {
             $scope: $scope,
         });
 
         $scope.uiModel = {};
-
         $scope.uiModel.contactPerson = {};
         $scope.uiModel.contactPerson.nimet = 'Testi nimi';
         $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
@@ -87,28 +98,121 @@ describe('Edit koulutus testeja', function() {
         $scope.editYhModel.clearYh();
         expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
     }));
-    it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller) {
+    
+    
+    it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller, $httpBackend) {
+
+        $scope.koulutusModel={result:{organisaatio:{oid:'org-oid-1.2.3.4'}}};
+
         $controller('EditYhteyshenkiloCtrl', {
             $scope: $scope,
         });
-
-        $scope.editYhModel.searchPersonMap = {};
-
-        $scope.editYhModel.searchPersonMap['Testi nimi'] = {etunimet: 'Testi', sukunimi: 'nimi', puhelin: '05043210', titteli: 'Herra', sahkoposti: 'test@oph.fi'};
-        $scope.editYhModel.searchPersonMap['Pekka Pekkola'] = {etunimet: 'Pekka', sukunimi: 'Pekkola', puhelin: '050345345', titteli: 'lehtori', sahkoposti: 'test2@oph.fi'};
-
+        
+        //mock backend calls
+        var henkilo1={
+		    "etunimet" : "Testeri",
+		    "oidHenkilo" : "1.2.246.562.24.91121139885",
+		    "sukunimi" : "1194-Kuormitus"
+		  };
+        
+        var response = {
+        		  "totalCount" : 5,
+        		  "results" : [  henkilo1, {
+        		    "etunimet" : "Testeri",
+        		    "oidHenkilo" : "1.2.246.562.24.91121139885",
+        		    "sukunimi" : "1194-Kuormitus"
+        		  } ]
+        		};
+        
+        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
+        
+        var henkilo={
+        		  "id" : 29256,
+        		  "etunimet" : "Testeri",
+        		  "syntymaaika" : null,
+        		  "passinnumero" : null,
+        		  "hetu" : null,
+        		  "kutsumanimi" : "Testeri",
+        		  "oidHenkilo" : "1.2.246.562.24.91121139885",
+        		  "oppijanumero" : null,
+        		  "sukunimi" : "1194-Kuormitus",
+        		  "sukupuoli" : "MIES",
+        		  "turvakielto" : false,
+        		  "henkiloTyyppi" : "VIRKAILIJA",
+        		  "eiSuomalaistaHetua" : false,
+        		  "passivoitu" : false,
+        		  "yksiloity" : false,
+        		  "asiointiKieli" : {
+        		    "kieliKoodi" : "fi",
+        		    "kieliTyyppi" : "suomi"
+        		  },
+        		  "yksilointitieto" : null,
+        		  "kayttajatiedot" : {
+        		    "username" : "tes1194k"
+        		  },
+        		  "kielisyys" : [ {
+        		    "kieliKoodi" : "fi",
+        		    "kieliTyyppi" : "suomi"
+        		  } ],
+        		  "kansalaisuus" : [ {
+        		    "kansalaisuusKoodi" : "Suomi"
+        		  } ],
+        		  "yhteystiedotRyhma" : [ {
+        		    "id" : 92137,
+        		    "ryhmaKuvaus" : "a",
+        		    "yhteystiedot" : [ {
+        		      "id" : 92142,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_KATUOSOITE",
+        		      "yhteystietoArvo" : "jokukatu 1"
+        		    }, {
+        		      "id" : 92143,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_KAUPUNKI",
+        		      "yhteystietoArvo" : "Helsinki"
+        		    }, {
+        		      "id" : 92140,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_POSTINUMERO",
+        		      "yhteystietoArvo" : "00001"
+        		    }, {
+        		      "id" : 92141,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_PUHELINNUMERO",
+        		      "yhteystietoArvo" : "012343"
+        		    }, {
+        		      "id" : 92138,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_KUNTA",
+        		      "yhteystietoArvo" : "Helsinki"
+        		    }, {
+        		      "id" : 92139,
+        		      "yhteystietoTyyppi" : "YHTEYSTIETO_SAHKOPOSTI",
+        		      "yhteystietoArvo" : "email@foo.bar"
+        		    } ]
+        		  } ]
+        		};
+        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
+        
+        var organisaatiohenkilo=[ {
+        	"id" : 29258,
+        	"organisaatioOid" : "1.2.246.562.10.82388989657",
+        	"tehtavanimike" : "testaaja",
+        	"passivoitu" : false
+        } ];
+        
+        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
+        
         $scope.uiModel = {};
 
         $scope.uiModel.contactPerson = {};
 
-        $scope.uiModel.contactPerson.nimet = 'Pekka Pekkola';
-
         expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
 
-        $scope.editYhModel.selectHenkilo();
+        $scope.editYhModel.selectHenkilo(henkilo1);
+        
+        $httpBackend.flush();
 
-        expect($scope.uiModel.contactPerson.etunimet).toEqual('Pekka');
-
+        expect($scope.uiModel.contactPerson.etunimet).toEqual('Testeri');
+        expect($scope.uiModel.contactPerson.sukunimi).toEqual('1194-Kuormitus');
+        expect($scope.uiModel.contactPerson.puhelin).toEqual('012343');
+        expect($scope.uiModel.contactPerson.sahkoposti).toEqual('email@foo.bar');
+        
     }));
 
 });
@@ -121,7 +225,28 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(function() {
         module(function($provide) {
             $provide.value('globalConfig', {
-                env: {},
+                env: {
+                    "koodisto-uris.pohjakoulutusvaatimus": "",
+                    "koodisto-uris.postinumero": "",
+                    "koodisto-uris.suunniteltuKesto": "",
+                    "koodisto-uris.tarjontakoulutustyyppi": "",
+                    "koodisto-uris.teemat": "",
+                    "koodisto-uris.tutkinto": "",
+                    "koodisto-uris.koulutus": "",
+                    "koodisto-uris.tutkintonimike": "",
+                    "koodisto-uris.valintakokeentyyppi": "",
+                    "koodisto-uris.valintaperustekuvausryhma": "",
+                    "koodisto-uris.tutkintonimike_kk": "",
+                    "koodisto-uris.pohjakoulutusvaatimus_kk": "",
+                    "koodisto-uris.eqf-luokitus": "",
+                    "koodisto-uris.aiheet": "",
+                    "koodisto-uris.opetusmuotokk" : "",
+                    "koodisto-uris.opetusaika" : "",
+                    "koodisto-uris.opetuspaikka" : "",
+                    "koodisto-uris.kieli" : "",
+                    "koodisto-uris.ammattinimikkeet" : ""
+                            
+                },
                 app: {"userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']}});
         });
     });
@@ -134,9 +259,10 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('TarjontaCache'));
 
     beforeEach(module('Tarjonta'));
-    beforeEach(module('TarjontaConverter'));
+    beforeEach(module('KoulutusConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('TarjontaPermissions'));
 
     var scope, localisationService, routeParams, tarjontaService, cfg, organisaatioService;
 
@@ -153,7 +279,7 @@ describe('Edit koulutus insert/edit/load', function() {
 
     }));
 
-    var EMPTY_UI_MODEL = {uri : '', versio : -1};
+    var EMPTY_UI_MODEL = {uri: '', versio: -1};
     var EMPTY_META_UI_MODEL = {uris: {}};
     var EMPTY_META_UI_MODEL_KOULUTUOHJELMA = {tekstis: {
             kieli_fi: '',

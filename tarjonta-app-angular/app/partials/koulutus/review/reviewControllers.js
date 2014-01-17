@@ -1,12 +1,13 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
         $log.info("BaseReviewController()");
 
         $scope.formControls = {};
         $scope.model = {
+            koodistoLocale: LocalisationService.getLocale(),
             routeParams: $routeParams,
             collapse: {
                 perusTiedot: false,
@@ -32,25 +33,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             console.log("parents:", parents);
         });
 
-        $scope.lisatiedot = [
-            {type: "TAVOITTEET", isKomo: true},
-            {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-            {type: "PAAAINEEN_VALINTA", isKomo: false},
-            {type: "MAKSULLISUUS", isKomo: false},
-            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-            {type: "PATEVYYS", isKomo: true},
-            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-            {type: "SISALTO", isKomo: false},
-            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-            {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-            {type: "KANSAINVALISTYMINEN", isKomo: false},
-            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-            {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-            {type: "ARVIOINTIKRITEERIT", isKomo: false},
-            {type: "PAINOTUS", isKomo: false},
-            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-            {type: "KUVAILEVAT_TIEDOT", isKomo: false}
-        ];
+        $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
@@ -76,8 +59,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
                     controller: 'LiitaSisaltyvyysCtrl',
                     resolve: {
-                        targetKomoOid: function() {
-                            return $scope.koulutusModel.result.komoOid;
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
                             return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
@@ -90,8 +73,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     templateUrl: 'partials/koulutus/sisaltyvyys/poista-koulutuksia.html',
                     controller: 'PoistaSisaltyvyysCtrl',
                     resolve: {
-                        targetKomoOid: function() {
-                            return $scope.koulutusModel.result.komoOid;
+                        targetKomo: function() {
+                            return {oid: $scope.koulutusModel.result.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
                             return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
@@ -174,7 +157,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
             angular.forEach(map, function(val, key) {
                 var lang = {'koodi_uri': val};
-                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, "FI")
+                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, $scope.model.koodistoLocale)
                 $scope.model.languages.push(lang);
             });
         } else {

@@ -202,7 +202,7 @@ public class HakukohdeDAOTest {
 //        final List<MonikielinenMetadata> metaResult = monikielinenMetadataDAO.findByAvain(metaIncluded.getAvain());
 //
 //        assertNotNull("MonikielinenMetadata entity was null", metaResult);
-//        assertEquals("Metadata not inserted", 1, metaResult.size());
+//        assertEquals("KuvausV1RDTO not inserted", 1, metaResult.size());
 //        
 //        assertEquals("query join key mismatch", KOODI_URI_METADATA_RELATION, metaResult.get(0).getAvain());
 //        assertNotNull("Hakukohde entity was null", result);

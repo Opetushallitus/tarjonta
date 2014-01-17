@@ -72,6 +72,16 @@
         <filter-class>fi.vm.sade.generic.common.UserToMDCFilter</filter-class>
     </filter>
 
+    <filter>
+        <filter-name>AllowAllCorsFilter</filter-name>
+        <filter-class>fi.vm.sade.tarjonta.service.AllowAllCorsRequestsFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AllowAllCorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
@@ -95,3 +105,7 @@
     </resource-ref>
 
 </web-app>
+
+
+
+

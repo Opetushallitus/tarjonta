@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 @Component
 public class PermissionChecker {
@@ -134,6 +135,12 @@ public class PermissionChecker {
                 .userCanCreateKoulutus(OrganisaatioContext
                 .getContext(tarjoajaOid)));
     }
+    
+    public void checkAddKoulutusKuva(String tarjoajaOid) {
+        checkPermission(permissionService
+                .userCanCreateKoulutus(OrganisaatioContext
+                .getContext(tarjoajaOid)));
+    }
 
     public void checkUpdateKoulutusByTarjoajaOid(String tarjoajaOid) {
         checkPermission(permissionService
@@ -142,6 +149,13 @@ public class PermissionChecker {
     }
 
     public void checkRemoveKoulutus(String koulutusOid) {
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
+        checkPermission(permissionService
+                .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
+                .getTarjoaja())));
+    }
+    
+    public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
@@ -175,7 +189,7 @@ public class PermissionChecker {
         }
     }
 
-    private void checkUpdateKoulutusByKoulutusOid(String oid) {
+    public void checkUpdateKoulutusByKoulutusOid(String oid) {
         final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(oid);
         checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
     }

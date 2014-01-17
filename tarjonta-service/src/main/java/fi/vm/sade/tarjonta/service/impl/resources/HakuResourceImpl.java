@@ -47,20 +47,20 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
  * Run:
- * 
+ *
  * <pre>
  * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
  * </pre>
- * 
+ *
  * Test:
- * 
+ *
  * <pre>
  * http://localhost:8084/tarjonta-service/rest?_wadl
  * </pre>
- * 
+ *
  * Internal documentation:
  * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- * 
+ *
  * @author mlyly
  * @see HakuResource
  */
@@ -111,10 +111,7 @@ public class HakuResourceImpl implements HakuResource {
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountDefaultValue(count);
 
         List<OidRDTO> result = convertOidList(hakuDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore,
                 lastModifiedSince));
@@ -175,10 +172,7 @@ public class HakuResourceImpl implements HakuResource {
             throw new IllegalArgumentException("hakukohdeTilas - parameter not supported yet");
         }
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountDefaultValue(count);
 
         List<OidRDTO> result = convertOidList(hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex,
                 lastModifiedBefore, lastModifiedSince));
@@ -213,10 +207,7 @@ public class HakuResourceImpl implements HakuResource {
         LOG.debug("  oids = {}", organisationOids);
         LOG.debug("  tilas = {}", hakukohdeTilas);
 
-        if (count <= 0) {
-            count = 100;
-            LOG.debug("  autolimit search to {} entries!", count);
-        }
+        count = manageCountDefaultValue(count);
 
         HakukohteetKysely hakukohteetKysely = new HakukohteetKysely();
         hakukohteetKysely.setHakuOid(oid);
@@ -242,13 +233,13 @@ public class HakuResourceImpl implements HakuResource {
         // mukaan!
         if (!filtterointiTeksti.isEmpty()) {
             tulokset = Collections2.filter(tulokset, new Predicate<HakukohdePerustieto>() {
-                
+
                 private String haeTekstiAvaimella(Map<String, String> tekstit) {
-                    
+
                     if(tekstit.containsKey(kieliAvain)) {
                             return StringUtils.upperCase(tekstit.get(kieliAvain));
                     }
-                    
+
                     return StringUtils.EMPTY;
                 }
 
@@ -260,10 +251,10 @@ public class HakuResourceImpl implements HakuResource {
             });
         }
         // sortataan tarjoajanimen mukaan!, testi olis kiva (tm)
-        
+
         Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
             public Comparable apply(HakukohdePerustieto input) {
-                return input.getTarjoajaNimi().get(kieliAvain); 
+                return input.getTarjoajaNimi().get(kieliAvain);
             }
         });
 
@@ -302,6 +293,8 @@ public class HakuResourceImpl implements HakuResource {
         LOG.debug("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
 
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+
+        count = manageCountDefaultValue(count);
 
         // Get list of oids
         List<OidRDTO> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore,
@@ -358,5 +351,27 @@ public class HakuResourceImpl implements HakuResource {
         PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid,
                 SisaltoTyyppi.HAKU, tt.asDto())));
         tarjontaAdminService.paivitaTilat(ptt);
+    }
+
+
+    /**
+     * Adjust default value.
+     *
+     * @param count
+     * @return if count < 0, set count = Integer.MAX_VALUE), if count == 0, set count to 100, else not modified
+     */
+    private int manageCountDefaultValue(int count) {
+
+        if (count < 0) {
+            count = Integer.MAX_VALUE;
+            LOG.info("  count < 0, adjusting to Integer.MAX_VALUE");
+        }
+
+        if (count == 0) {
+            count = 100;
+            LOG.info("  count == 0, adjusting to default value of {}", count);
+        }
+
+        return count;
     }
 }

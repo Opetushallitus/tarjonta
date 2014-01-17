@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.Window;
@@ -30,6 +31,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
@@ -37,11 +39,14 @@ import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeContainerEvent;
+import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusContainerEvent;
 
 /**
  *
  * @author jani
  */
+@Component
 public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
     
     private static Logger LOG = LoggerFactory.getLogger(CommonPresenter.class);
@@ -50,7 +55,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Rekisteröi uusi event listeneri.
      */
     public void registerEventListener(Object o) {
-        LOG.debug("registering new listener:" + o.getClass());
+        LOG.debug("registering new listener:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.register(o);        
     }
 
@@ -58,7 +63,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Poista listenerin rekisteröinti.
      */
     public void unregisterEventListener(Object o) {
-        LOG.debug("inregistering listener:" + o.getClass());
+        LOG.debug("unregistering listener:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.unregister(o);        
     }
     
@@ -66,7 +71,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
      * Lähetä eventti.
      */
     public void sendEvent(Object o) {
-        LOG.debug("sending event:" + o.getClass());
+        LOG.debug("sending event:" + o.getClass() + ", eventbus=" + eventBus);
         eventBus.post(o);
     }
 
@@ -80,8 +85,6 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
     protected TarjontaPublicService tarjontaPublicService;
     @Autowired(required = true)
     protected TarjontaAdminService tarjontaAdminService;
-    @Autowired(required = true)
-    protected PublishingService publishingService;
     @Autowired(required = true)
     protected TarjontaPermissionServiceImpl tarjontaPermissionService;
     @Autowired(required = true)
@@ -110,10 +113,6 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
 
     public abstract void showMainDefaultView();
 
-    public abstract void changeStateToCancelled(final String oid, final SisaltoTyyppi sisalto);
-
-    public abstract void changeStateToPublished(final String oid, final SisaltoTyyppi sisalto);
-
     public abstract MODEL getModel();
     
     public TarjontaPermissionServiceImpl getPermission() {
@@ -134,5 +133,46 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
         }
     }
     
+    
+    /**
+     * Palauttaa true jos tilamuutos meni ok.
+     * @param oid
+     * @param toState
+     * @param sisalto
+     * @return
+     */
+    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
+        PublishingService publishingService = getPublishingService();
+        PaivitaTilaVastausTyyppi vastaus = publishingService.changeState(oid, toState, sisalto);
+        if (vastaus!=null) {
+            for(String hakukohdeOid:vastaus.getHakukohdeOidit()){
+                LOG.debug("event for hakukohde " + hakukohdeOid);
+                sendEvent(HakukohdeContainerEvent.update(hakukohdeOid));
+            }
+            for(String komotoOid:vastaus.getKomotoOidit()){
+                LOG.debug("event for komoto " + komotoOid);
+                sendEvent(KoulutusContainerEvent.update(komotoOid));
+            }
+            
+            showNotification(UserNotification.GENERIC_SUCCESS);
+        } else {
+            showNotification(UserNotification.GENERIC_ERROR);
+        }
+    }
 
+    abstract PublishingService getPublishingService();
+
+    /**
+     * Cancel single tarjonta model by OID and data model type.
+     *     
+* @param oid
+     * @param sisalto
+     */
+    public final void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.PERUTTU, sisalto);
+    }
+
+    public final void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.JULKAISTU, sisalto);
+    }
 }

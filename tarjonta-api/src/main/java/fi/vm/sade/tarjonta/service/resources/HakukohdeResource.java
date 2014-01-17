@@ -36,7 +36,7 @@ public interface HakukohdeResource {
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX
      *
      * @param searchTerms
-     * @param count
+     * @param count default value 100, if value is < 0 then Integer.MAX_VALUE will be used.
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince

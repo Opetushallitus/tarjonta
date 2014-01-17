@@ -198,6 +198,21 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         	return MyRolesModel.userinfo.lastName;
         },
 
+        isUserOph : function() {
+
+            var ophUser = false;
+
+            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
+
+                if (orgOid === Config.env['root.organisaatio.oid']) {
+                    ophUser = true;
+                }
+            });
+
+            return ophUser;
+
+        },
+
         /**
          * Palauttaa käyttäjän organisaatiot ('TARJONTA-APP')
          */

@@ -1,0 +1,21 @@
+<div id="aiheetJaTeemat">
+	<ul class="tree listView">
+	    <li ng-repeat="t in teemat" ng-class="t.show ? '' : 'fold'">
+	        <a href ng-click="t.show = !t.show">{{t.title}}</a> <span ng-show="t.size>0">({{t.size}})</span>
+	        <ul ng-show="t.show">
+	            <li ng-repeat="a in t.aiheet"><input type="checkbox" ng-model="a.selected" ng-click="toggle(a.uri, t.uri)"/> {{a.title}}</li>
+	        </ul>
+	    </li>
+	
+	</ul>
+	
+	<ul class="selection listView">
+        <span ng-repeat="t in teemat">
+	        <span ng-repeat="a in t.aiheet">
+                <li ng-show="a.selected"><a href ng-click="unselect(a.uri)">[x]</a> {{a.title}}</li>    
+	        </span>
+        </span>
+	
+	</ul>
+
+</div>

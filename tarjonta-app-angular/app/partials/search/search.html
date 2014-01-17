@@ -23,8 +23,8 @@
         <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
 
         <div class="buttons">
-            <div class="btn btn-primary" ng-click="resetOrg()"><div tt="organisaatiohaku.button.tyhjenna"></div></div>
-            <div class="btn btn-primary" ng-click="submitOrg()"><div tt="organisaatiohaku.button.hae"></div></div>
+            <a href class="btn btn-primary" ng-click="resetOrg()"><span tt="organisaatiohaku.button.tyhjenna"></span></a>
+            <a href class="btn btn-primary" ng-click="submitOrg()"><span tt="organisaatiohaku.button.hae"/> <span class="icon-search"></span></a>
         </div>
     </div>
 
@@ -67,11 +67,8 @@
                     <select ng-model="spec.season" ng-options="s as t for (s,t) in seasons"/>
                 </td>
                 <td class="controls">
-                    <input class="btn" type="button" value="{{t('tarjonta.haku.tyhjenna')}}" ng-click="reset()"/>
-                    <input class="btn btn-primary" type="button" value="{{t('tarjonta.haku.hae')}}" ng-click="search()"/>
-                </td>
-                <td class="controls">
-                    <input class="btn" type="button" value="{{t('tarjonta.haku.tulosta_raportti')}}" ng-click="report()" disabled="true"/>
+                    <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna"/></a>
+                    <a href class="btn btn-primary"" ng-click="search()"><span tt="tarjonta.haku.hae"/> <span class="icon-search"></span></a>
                 </td>
 
             </tr>
@@ -84,15 +81,18 @@
     </div>
 
 	<div id="searchResults">
+        <div class="tools">
+            <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a>
+        </div>	   
 	    <tabset>
 	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
 
 	        	<div class="controls">
-	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.siirra_tai_kopioi')}}" ng-disabled="!koulutusActions.canMoveOrCopy"/>
-	        		<input class="btn" type="button" value="{{t('tarjonta.toiminnot.luo_uusi_hakukohde')}}" data-ng-click="luoUusiHakukohde()" ng-disabled="!koulutusActions.canCreateHakukohde"/>
-	        		<input class="btn float-right" type="button"  ng-click="openLuoKoulutusDialogi()" value="{{t('tarjonta.toiminnot.luo_uusi_koulutus')}}" ng-disabled="luoKoulutusDisabled()"/>
-                                   
-                        </div>
+	        	
+                    <a href class="btn" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi"/></a>
+                    <a href class="btn" ng-click="luoUusiHakukohde()" ng-disabled="!koulutusActions.canCreateHakukohde"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde"/> <span class="icon-plus-sign"></span></a>
+                    <a href class="btn float-right" ng-click="openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus"/> <span class="icon-plus-sign"></span></a>
+                </div>
 
 	        	<results-table
 	        		id="nkoulutuksetResults"
@@ -102,14 +102,6 @@
 	        		options="koulutusOptions"
 	        		selection="selection.koulutukset"/>
 
-	        	<!--
-	        	<div class="controls">
-	        		<input type="checkbox" class="selectAll"/>
-			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-				</div>
-
-	        	<table id="koulutuksetResults"></table>
-		         -->
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
 
@@ -120,15 +112,6 @@
 	        		columns="hakukohdeColumns"
 	        		options="hakukohdeOptions"
 	        		selection="selection.hakukohteet"/>
-
-				<!--
-	        	<div class="controls">
-	        		<input type="checkbox" class="selectAll"/>
-			 		<label>{{t('tarjonta.toiminnot.valitse_kaikki')}}</label>
-				</div>
-
-	        	<table id="hakukohteetResults"></table>
-				 -->
 
 	        </tab>
 

@@ -34,7 +34,8 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 },
                 hakukohde : {
                     valintaperusteKuvaukset : {},
-                    soraKuvaukset : {}
+                    soraKuvaukset : {},
+                    kaytetaanJarjestelmanValintaPalvelua: true
 
                 }
             }

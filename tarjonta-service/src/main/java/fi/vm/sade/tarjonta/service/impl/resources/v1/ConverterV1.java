@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -55,6 +56,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConverterV1 {
 
+
+    public static final String VALINTAPERUSTEKUVAUS_TYYPPI = "valintaperustekuvaus";
+    public static final String SORA_TYYPPI = "SORA";
     private static final Logger LOG = LoggerFactory.getLogger(ConverterV1.class);
     @Autowired
     HakuDAO hakuDao;
@@ -179,6 +183,133 @@ public class ConverterV1 {
         return hakuV1RDTOs;
     }
 
+
+    // ----------------------------------------------------------------------
+    // KUVAUS (esim. KK valintaperuste- tai SORA -kuvaus
+    // ----------------------------------------------------------------------
+
+    /**
+     *  Convert domain ValintaperusteSoraKuvaus to KuvausV1RDTO
+     *
+     * @param kuvaus
+     *
+     * @return
+     */
+
+    public KuvausV1RDTO toKuvausRDTO(ValintaperusteSoraKuvaus kuvaus,boolean convertTeksti) {
+
+        KuvausV1RDTO kuvausV1RDTO = new KuvausV1RDTO();
+
+        if (kuvaus.getMonikielinenNimi() != null) {
+            HashMap<String,String> nimet = new HashMap<String, String>();
+
+            for (TekstiKaannos tekstiKaannos:kuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
+
+                nimet.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
+
+            }
+            kuvausV1RDTO.setKuvauksenNimet(nimet);
+        }
+        if (kuvaus.getKausi() != null) {
+            kuvausV1RDTO.setKausi(kuvaus.getKausi());
+        }
+        if (kuvaus.getVuosi() != null) {
+            kuvausV1RDTO.setVuosi(kuvaus.getVuosi());
+        }
+
+        kuvausV1RDTO.setKuvauksenTyyppi(getStringFromKuvausTyyppi(kuvaus.getTyyppi()));
+        if (kuvaus.getId() != null) {
+            kuvausV1RDTO.setKuvauksenTunniste(kuvaus.getId().toString());
+        }
+
+        kuvausV1RDTO.setOrganisaatioTyyppi(kuvaus.getOrganisaatioTyyppi());
+        if (kuvaus.getTekstis() != null && convertTeksti) {
+            HashMap<String,String> tekstis = new HashMap<String, String>();
+            for(MonikielinenMetadata monikielinenMetadata:kuvaus.getTekstis()) {
+                tekstis.put(monikielinenMetadata.getKieli(),monikielinenMetadata.getArvo());
+            }
+            kuvausV1RDTO.setKuvaukset(tekstis);
+        }
+
+        return kuvausV1RDTO;
+    }
+
+    public ValintaperusteSoraKuvaus toValintaperusteSoraKuvaus(KuvausV1RDTO kuvausV1RDTO) {
+
+        ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = new ValintaperusteSoraKuvaus();
+
+        if (kuvausV1RDTO.getKuvauksenTunniste() != null) {
+            valintaperusteSoraKuvaus.setId(new Long(kuvausV1RDTO.getKuvauksenTunniste()));
+        }
+
+        if (kuvausV1RDTO.getKuvauksenNimet() != null) {
+            MonikielinenTeksti nimet = new MonikielinenTeksti();
+
+            for (String kieli:kuvausV1RDTO.getKuvauksenNimet().keySet()) {
+                nimet.addTekstiKaannos(kieli,kuvausV1RDTO.getKuvauksenNimet().get(kieli));
+            }
+            valintaperusteSoraKuvaus.setMonikielinenNimi(nimet);
+        }
+        if (kuvausV1RDTO.getVuosi() != null) {
+            valintaperusteSoraKuvaus.setVuosi(kuvausV1RDTO.getVuosi());
+        }
+        if (kuvausV1RDTO.getKausi() != null) {
+            valintaperusteSoraKuvaus.setKausi(kuvausV1RDTO.getKausi());
+        }
+
+        valintaperusteSoraKuvaus.setOrganisaatioTyyppi(kuvausV1RDTO.getOrganisaatioTyyppi());
+        valintaperusteSoraKuvaus.setTyyppi(getTyyppiFromString(kuvausV1RDTO.getKuvauksenTyyppi()));
+        if (kuvausV1RDTO.getKuvaukset() != null) {
+            List<MonikielinenMetadata> tekstit = new ArrayList<MonikielinenMetadata>();
+            for (String kieli:kuvausV1RDTO.getKuvaukset().keySet()) {
+                MonikielinenMetadata teksti = new MonikielinenMetadata();
+                teksti.setKieli(kieli);
+                teksti.setKategoria(kuvausV1RDTO.getKuvauksenTyyppi());
+                teksti.setArvo(kuvausV1RDTO.getKuvaukset().get(kieli));
+                tekstit.add(teksti);
+            }
+            valintaperusteSoraKuvaus.setTekstis(tekstit);
+        }
+
+        return valintaperusteSoraKuvaus;
+    }
+
+    public static ValintaperusteSoraKuvaus.Tyyppi getTyyppiFromString(String tyyppi) {
+
+        if (tyyppi.trim().equalsIgnoreCase(ConverterV1.VALINTAPERUSTEKUVAUS_TYYPPI)) {
+            return ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS;
+        } else if (tyyppi.trim().equalsIgnoreCase(ConverterV1.SORA_TYYPPI)) {
+            return ValintaperusteSoraKuvaus.Tyyppi.SORA;
+        } else {
+            return null;
+        }
+
+    }
+
+    public static String getStringFromKuvausTyyppi(ValintaperusteSoraKuvaus.Tyyppi tyyppi) {
+
+        switch (tyyppi) {
+
+            case VALINTAPERUSTEKUVAUS:
+
+                return VALINTAPERUSTEKUVAUS_TYYPPI;
+
+
+
+            case SORA:
+
+                return SORA_TYYPPI;
+
+
+            default:
+
+                return null;
+
+
+        }
+
+    }
+
     // ----------------------------------------------------------------------
     // HAKUKOHDE
     // ----------------------------------------------------------------------
@@ -210,6 +341,14 @@ public class ConverterV1 {
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
+        }
+
+        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+            hakukohdeRDTO.setValintaPerusteKuvausTunniste(hakukohde.getValintaPerusteKuvausTunniste());
+        }
+
+        if (hakukohde.getSoraKuvausTunniste() != null) {
+            hakukohdeRDTO.setSoraKuvausTunniste(hakukohde.getSoraKuvausTunniste());
         }
 
         if (hakukohde.getHakuaika() != null) {
@@ -274,6 +413,13 @@ public class ConverterV1 {
 
         }
 
+        if (hakukohde.getLiites() != null) {
+            List<HakukohdeLiiteV1RDTO> liites = new ArrayList<HakukohdeLiiteV1RDTO>();
+            for (HakukohdeLiite liite : hakukohde.getLiites()) {
+               liites.add(convertLiiteToDto(liite));
+            }
+            hakukohdeRDTO.setHakukohteenLiitteet(liites);
+        }
 
         return hakukohdeRDTO;
     }
@@ -318,6 +464,15 @@ public class ConverterV1 {
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
         }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+            hakukohde.setValintaPerusteKuvausTunniste(hakukohdeRDTO.getValintaPerusteKuvausTunniste());
+        }
+
+        if (hakukohdeRDTO.getSoraKuvausTunniste() != null ) {
+            hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
+        }
+
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdeRDTO.getLiitteidenToimitusPvm());
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeRDTO.getValintojenAloituspaikatLkm());
@@ -491,6 +646,42 @@ public class ConverterV1 {
 
         return monikielinenTeksti;
     }
+
+    private HakukohdeLiiteV1RDTO convertLiiteToDto(HakukohdeLiite liite) {
+        HakukohdeLiiteV1RDTO liiteDto = new HakukohdeLiiteV1RDTO();
+
+        liiteDto.setLiitteenToimitusOsoite(convertOsoiteToDto(liite.getToimitusosoite()));
+        liiteDto.setKieliUri(liite.getKieli());
+        liiteDto.setLiitteenNimi(liite.getHakukohdeLiiteNimi());
+        liiteDto.setToimitettavaMennessa(liite.getErapaiva());
+        liiteDto.setLiitteenKuvaukset(convertMonikielinenTekstiToHashMap(liite.getKuvaus()));
+
+
+
+        return liiteDto;
+    }
+
+
+
+
+
+    private OsoiteRDTO convertOsoiteToDto(Osoite osoite) {
+
+        OsoiteRDTO osoiteRDTO = new OsoiteRDTO();
+
+        osoiteRDTO.setOsoiterivi1(osoite.getOsoiterivi1());
+        osoiteRDTO.setOsoiterivi2(osoite.getOsoiterivi2());
+        osoiteRDTO.setPostinumero(osoite.getPostinumero());
+        if (osoite.getPostinumero() != null) {
+            KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(osoite.getPostinumero());
+            osoiteRDTO.setPostinumeroArvo(postinumeroKoodi != null ? postinumeroKoodi.getKoodiArvo() : null);
+        }
+
+        osoiteRDTO.setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+        return osoiteRDTO;
+
+    };
 
 
     private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {

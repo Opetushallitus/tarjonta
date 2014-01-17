@@ -26,6 +26,7 @@
                 <value>classpath:tarjonta-rest.properties</value>
                 <value>file:///${user.home:''}/oph-configuration/common.properties</value>
                 <value>file:///${user.home:''}/oph-configuration/tarjonta-app.properties</value>           
+                <value>file:///${user.home:''}/oph-configuration/override.properties</value>           
             </list>
         </property>
     </bean>

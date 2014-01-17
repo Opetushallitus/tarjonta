@@ -14,10 +14,10 @@
  */
 window.CONFIG = {
     "env": {
-        "authentication-service.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/",
         "koodi-uri.koulutuslaji.nuortenKoulutus": "koulutuslaji_n",
         "koodi-uri.lukio.pohjakoulutusvaatimus": "peruskoulu",
         "koodi.public.rest.address": "https://itest-virkailija.oph.ware.fi:443/koodi/rest/",
+        "koodisto-uris.aiheet": "aiheet",
         "koodisto-uris.alkamiskausi": "kausi",
         "koodisto-uris.ammattinimikkeet": "ammattiluokitus",
         "koodisto-uris.hakukausi": "kausi",
@@ -49,7 +49,7 @@ window.CONFIG = {
         "koodisto-uris.sorakuvausryhma": "sorakuvaus",
         "koodisto-uris.suunniteltuKesto": "suunniteltukesto",
         "koodisto-uris.tarjontakoulutustyyppi": "koulutustyyppi",
-        "koodisto-uris.teemat": "teemat",
+        "koodisto-uris.teemat": "teemat",   
         "koodisto-uris.tutkinto": "tutkinto",
         "koodisto-uris.koulutus": "koulutus",
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",
@@ -75,6 +75,8 @@ window.CONFIG = {
         "host.base-uri": "https://itest-virkailija.oph.ware.fi",
         "haku.uri": "/tarjonta-service/rest/haku",
         "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
+        "haku.kohdejoukko.kk.uri": "haunkohdejoukko_12#1",
+        "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         //käsin lisätyt:
 
         //
@@ -86,10 +88,11 @@ window.CONFIG = {
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
 
-        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
@@ -100,9 +103,12 @@ window.CONFIG = {
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
         // Only for development, since production reads "/cas/myroles"
-         "casUrl": "cas_me_ophadmin.json",
+        "casUrl": "cas_me_ophadmin.json",
         //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
+         //"henkilöhaku"
+        "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
+         
         "place": "holder"
 
     }

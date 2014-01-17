@@ -91,3 +91,76 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
     });
 
 });
+
+app.factory('HakukohdeKoulutukses',function($http,Config,$q){
+
+    return {
+
+
+
+        removeKoulutuksesFromHakukohde : function(hakukohdeOid,koulutusOids){
+
+            if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
+
+                var hakukohdeKoulutusUri =  Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
+
+                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                    return true;
+                }).error(function(data){
+                        return false;
+                    });
+
+            }
+
+
+        },
+
+        addKoulutuksesToHakukohde : function(hakukohdeOid, koulutusOids) {
+
+
+
+            var promise = $q.defer();
+            if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
+
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
+                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                    promise.resolve(true);
+                }).error(function(data){
+                    promise.resolve(false);
+                    });
+
+            }
+
+           return promise.promise;
+        } ,
+
+        getKoulutusHakukohdes : function(koulutusOid) {
+
+            var promise = $q.defer();
+
+            if (koulutusOid !== undefined) {
+
+                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix+"koulutus/"+koulutusOid+"/hakukohteet";
+
+                $http.get(getKoulutusHakukohdesUri)
+                    .success(function(data){
+                        promise.resolve(data);
+                    })
+                    .error(function(data){
+                        promise.resolve(data);
+                    });
+
+            } else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
+        }
+
+
+
+    };
+
+});

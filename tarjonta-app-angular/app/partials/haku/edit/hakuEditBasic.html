@@ -1,0 +1,129 @@
+<div>
+
+    <form  name="hakuEditBasic">
+
+        <table class="tarjontaForm">
+            <tr class="required">
+                <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.haku.hakutyyppiUri" required name="hakuTyyppi"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.hakukausi'>Hakukausi ja vuosi</th>
+                <td>
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.kausiUri" required name="hakuKausi"></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.kausiVuosi" required name="hakuVuosi">
+                </td>
+                <td>
+                    <div>
+                        <show-errors form="hakuForm" field="hakuVuosi" tt-prefix="haku.edit" ></show-errors>
+                        <show-errors form="hakuForm" field="hakuKausi" tt-prefix="haku.edit" ></show-errors>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
+                <td>
+                    <koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.haku.alkamiskausiUri" required name="alkamisKausi"></koodistocombo>
+                    <input type="number" placeholder="vuosi" ng-model="model.haku.alkamiskausiVuosi" required name="alkamisVuosi">
+                </td>
+                <td>
+                    <div>
+                        <show-errors form="hakuForm" field="alkamisVuosi" tt-prefix="haku.edit" ></show-errors>
+                        <show-errors form="hakuForm" field="alkamisKausi" tt-prefix="haku.edit" ></show-errors>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
+                <td>
+                    <koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.haku.haunkohdejoukkoUri" required name="haunKohdejoukko"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" />
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.hakutapa'>Hakutapa</th>
+                <td>
+                    <koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.haku.hakutapaUri" required name="hakutapa"></koodistocombo>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" />
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.haunNimi'>Haun nimi</th>
+                <td>
+                    <mk-textfield model="model.haku.nimi" required name="haunNimi"></mk-textfield>
+                    <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" />
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt='haku.edit.haunTunniste'>Haun tunniste</th>
+                <td>
+                    <strong>HAUN TUNNISTE TULEE SITTEN JOSTAIN TÄHÄN</strong>
+                </td>
+                <td>
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.hakuaika'>Hakuaika</th>
+                <td colspan="2">
+                    <div ng-repeat="hakuaika in model.haku.hakuaikas">
+                        <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
+                        <input type="text" placeholder="Alkuaika pvm + kello" ng-model="hakuaika.alkaa">
+                        <input type="text" placeholder="Loppuaika pvm + kello" ng-model="hakuaika.loppuu">
+
+                        <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
+                    </div>
+                    <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
+
+                    <p class="help-block" ttt="haku.edit.hakuaika.help">help</p>
+                </td>
+                <!-- TODO check for errors here! -->
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.sijoittelu'>Sijoittelu</th>
+                <td>
+                    <input type="checkbox" ng-model="model.haku.sijoittelu"> <span ttt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
+                </td>
+                <td>
+                </td>
+            </tr>
+
+            <tr class="required">
+                <th ttt='haku.edit.hakulomake'>Hakulomake</th>
+                <td>
+                    <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                    <span ttt="haku.edit.hakulomake.kaytaJarjestelman">Käytetään järjestelmän hakulomaketta</span>
+
+                    <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                        <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta.</span>
+                        <input type="url" ng-model="model.haku.hakulomake"  placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" required>
+                    </p>
+                </td>
+                <td>
+                    <show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit" ng-if="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"/>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+</div>
