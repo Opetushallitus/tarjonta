@@ -1,27 +1,40 @@
 <div>
-    <table>
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="0" ng-disabled="pvms.length>1"/> 
+    <span tt="koulutus.alkamispvm.singlePvm" ng-class="pvms.length>1 ? 'disabled' : ''"></span><br/>
+
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="1" />
+    <span tt="koulutus.alkamispvm.multiPvm"></span><br/>
+
+    <alkamispaivat 
+        dates="pvms" 
+        kausi-uri="kausiUri"
+        fn-clear-kausi="clearKausiSelection"
+        enabled="ctrl.mode!=2"
+        multi="ctrl.mode==1"> 
+    </alkamispaivat>
+
+    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.mode" ng-value="2" ng-click="onEnableKausi($event)"/>
+    <span tt="koulutus.alkamispvm.enableKausi"></span><br/>
+    
+    <table class="help">
         <tr>
-            <td style="vertical-align: top">
-        <alkamispaivat 
-            dates="pvms" 
-            kausi-uri="kausiUri"
-            fn-clear-kausi="clearKausiSelection"
-            disabled-kausi="ctrl.disableKausi"  
-            disabled-date="ctrl.disabledDate"> 
-        </alkamispaivat>
-        </td>
-        <td style="vertical-align: top"><span tt="koulutus.edit.alkamispaiva.tai-alkamiskausi"></span></td>
-        <td style="vertical-align: top">
-            <select
-                ng-model="kausiUri" 
-                ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
-                ng-disabled="ctrl.disableKausi"/>
-        </td>
-        <td style="vertical-align: top">
-            <input type="text" 
-                   ng-model="vuosi" 
-                   ng-disabled="!ctrl.disabledDate"
-                   />
-        </td>
+	        <th tt="koulutus.alkamispvm.kausi"></th>
+	        <th tt="koulutus.alkamispvm.vuosi"></th>
+        </tr>
+        <tr>
+            <td>
+			    <select
+			        ng-model="kausiUri" 
+			        ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
+			        ng-disabled="ctrl.mode!=2"/>
+            </td>        
+            <td>
+			    <input type="text" 
+			        ng-model="vuosi" 
+                    ng-disabled="ctrl.mode!=2"/>
+            </td>        
+        </tr>
+    
     </table>
+
 </div>

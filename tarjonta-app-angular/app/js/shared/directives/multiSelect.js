@@ -189,8 +189,27 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         var value = $scope.value;
         var columns = $scope.columns;
     	var cw = $scope.orderWith();
+    	
+    	function toObjectArray(model) {
+    		var ret = [];
+        	for (var k in model) {
+        		var e = {};
+        		e[key] = k;
+        		e[value] = model[k];
+        		ret.push(e);
+        	}
+    		return ret;    		
+    	}
         
-        var init = function(model) {
+        function init(model) {
+        	
+        	// jos model on muotoa key -> value, muunnetaan se muotoon {key: .., value: ..}
+        	for (var k in model) {
+        		if (!(model[k] instanceof Object)) {
+        			model = toObjectArray(model);
+        			break;
+        		}
+        	}
 
             for (var k in model) {
                 var e = model[k];
@@ -252,7 +271,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             key: "@", // arvo-avain (vakio: koodiUri)
             value: "@", // nimi-avain (vakio: koodiNimi)
             orderWith: "&", // lista avaimista jotka järjestetään ensimmäisiksi
-            model: "=", // map jossa arvo->nimi
+            model: "=", // map jossa arvo->nimi TAI array jossa {key: .., value: ..} -olioita,
+            			// joissa key- ja value viittaavat samannimisten parametrien arvoihin
             promise: "=", // async TODO yhdistä modeliin
             selection: "=", // lista jonne valinnat päivitetään
             

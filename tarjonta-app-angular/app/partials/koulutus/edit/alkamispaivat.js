@@ -9,6 +9,17 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 index: 0,
                 ignoreDateListChanges: false
             };
+            
+            $scope.onDateAdded = function() {
+            	for (var i in $scope.ctrl.addedDates) {
+            		if ($scope.ctrl.addedDates[i].date==null) {
+            			return;
+            		}
+            	}
+            	if ($scope.multi) {
+            		$scope.clickAddDate();
+            	}
+            }
 
             $scope.clickAddDate = function() {
                 $scope.ctrl.addedDates.push({id: $scope.ctrl.index++, date: null});
@@ -45,28 +56,19 @@ app.directive('alkamispaivat', ['$log', function($log) {
              * Initialize buttons and date fields.
              */
             $scope.reset = function() {
-                if (!angular.isUndefined($scope.dates) && $scope.dates.length > 0) {
+            	if (!$scope.dates) {
+            		$scope.dates = [];
+            	}
+                if ($scope.dates.length > 0) {
                     //when page is loaded and one or more datea are in the model, then
                     //set kausi to status of disabled and all date fields to active
-                    if ($scope.dates.length > 1) {
-                        $scope.disabledKausi = true;
-                    } else {
-                        $scope.fnClearKausi();
-                        $scope.disabledKausi = false;
-                    }
-                    $scope.disabledDate = false;
-
+                                    	
                     //load data to directive model
                     var a = [];
                     for (var i = 0; i < $scope.dates.length; i++) {
                         a.push({id: $scope.ctrl.index++, date: new Date($scope.dates[i])});
                     }
                     $scope.ctrl.addedDates = a;
-                } else if ($scope.kausiUri !== -1 && $scope.dates.length === 0) {
-                    //Date field is diabled
-                    $scope.disabledKausi = false;
-                    $scope.disabledDate = true;
-                    $scope.clickAddDate(); //add 1 date row
                 } else {
                     //no loaded dates available,  add one ui date object to date list
                     $scope.clickAddDate(); //add 1 date row
@@ -115,34 +117,22 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 }
             }, true);
 
-            /*
-             * Clear all date objects when an user has
-             * chosen to disable the date field.
-             * 
-             * The list must have at least one item, or select field 
-             * is removed from the ui.
-             */
-            $scope.$watch("disabledDate", function(valNew, valOld) {
-                if (valNew !== valOld && valNew) {
-                    //clear date data objects
-                    $scope.ctrl.addedDates = [];
-                    $scope.clickAddDate();
-                }
-            });
-
-            $scope.$watch("disabledKausi", function(valNew, valOld) {
+            $scope.$watch("multi", function(valNew, valOld) {
+            	if (!valNew && $scope.ctrl.addedDates.length>1) {
+            		$scope.ctrl.addedDates = [$scope.ctrl.addedDates[0]];
+            	} else if (valNew && $scope.ctrl.addedDates.length==1) {
+            		$scope.clickAddDate();
+            	}
+            });            
+            
+            $scope.$watch("enabled", function(valNew, valOld) {
                 if (!valNew) {
-                    //clear price data field
-                    var arrRemoveDatesTmp = [];
-                    for (var i = 0; i < $scope.ctrl.addedDates.length; i++) {
-                        arrRemoveDatesTmp.push($scope.ctrl.addedDates[i]);
-                    }
-
-                    //loop starts from arr[1]
-                    for (var i = 1; i < arrRemoveDatesTmp.length; i++) {
-                        $scope.clickRemoveDate(arrRemoveDatesTmp[i]);
-                    }
+                	$scope.ctrl.addedDates = [];
+                	$scope.clickAddDate();                	
                 } else {
+	             	if ($scope.multi && $scope.dates.length==1 && $scope.dates[0]!=null) {
+	                     $scope.clickAddDate(); //add 1 date row
+	             	}
                     $scope.fnClearKausi();
                 }
             });
@@ -168,8 +158,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 dates: "=", //BaseEditController ui model
                 kausiUri: "=",
                 fnClearKausi: "=",
-                disabledKausi: "=",
-                disabledDate: "="
+                enabled: "=",
+                multi: "="
 
             }
         };

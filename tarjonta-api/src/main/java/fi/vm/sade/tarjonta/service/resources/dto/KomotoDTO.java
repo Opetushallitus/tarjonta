@@ -51,6 +51,15 @@ public class KomotoDTO extends BaseRDTO {
     private TarjontaTila _tila;
     private String _ulkoinenTunniste;
     private String _parentKomotoOid;
+    private String koulutusohjelmanNimi;  // vapaavalintainen nimi, er OVT-6619
+
+    public String getKoulutusohjelmanNimi() {
+        return koulutusohjelmanNimi;
+    }
+
+    public void setKoulutusohjelmanNimi(String koulutusohjelmanNimi) {
+        this.koulutusohjelmanNimi = koulutusohjelmanNimi;
+    }
 
     private Map<KomotoTeksti, Map<String,String>> _tekstit;
 

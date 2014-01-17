@@ -18,7 +18,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
             function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
-                $log.info("HakuEditController()");
+                $log.info("HakuEditController()", $scope);
 
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
@@ -59,6 +59,23 @@ app.controller('HakuEditController',
                     $log.info("goToReview()");
                 };
 
+                $scope.checkHaunNimiValidity = function() {
+                    $log.info("checkHaunNimiValidity()");
+                    var result = false;
+
+                    // At least one name should have real value
+                    angular.forEach($scope.model.haku.nimi, function (value, key) {
+                        result = result || !value;
+
+                        // regexp check for empty / whitespace
+                        // $log.info("key: " + key + " -- value: " + value);
+                    });
+
+                    // TODO check that at leas kieli_fi is defined?
+
+                    return result;
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {
@@ -69,6 +86,10 @@ app.controller('HakuEditController',
                         collapse: {
                             model: true
                         },
+
+                        // Preloaded Haku result
+                        hakux : $route.current.locals.hakux,
+
                         haku: {
                             "nimi": {
                                 "kieli_fi": "suomi",

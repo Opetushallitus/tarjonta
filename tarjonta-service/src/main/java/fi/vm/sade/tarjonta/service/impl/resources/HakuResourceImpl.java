@@ -199,6 +199,11 @@ public class HakuResourceImpl implements HakuResource {
 
         final String kieliAvain = "fi"; // TODO: lisää
                                         // rajapintaan
+
+        final String kieliAvain_fi = "fi";
+        final String kieliAvain_sv = "sv";
+        final String kieliAvain_en = "en";
+
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
@@ -240,6 +245,20 @@ public class HakuResourceImpl implements HakuResource {
                             return StringUtils.upperCase(tekstit.get(kieliAvain));
                     }
 
+                    // Koska kieliavain on vielä kovakoodattu ja tarjoajanimiä ei ole
+                    // kuin yhdellä kielellä niin testataan muutkin kielet
+                    if(tekstit.containsKey(kieliAvain_fi)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_fi));
+                    }
+
+                    if(tekstit.containsKey(kieliAvain_sv)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_sv));
+                    }
+
+                    if(tekstit.containsKey(kieliAvain_en)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_en));
+                    }
+
                     return StringUtils.EMPTY;
                 }
 
@@ -254,7 +273,18 @@ public class HakuResourceImpl implements HakuResource {
 
         Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
             public Comparable apply(HakukohdePerustieto input) {
-                return input.getTarjoajaNimi().get(kieliAvain);
+                String tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain);
+                // Varajärjestys, jos valitulla kieliavaimella ei löydy tarjoajanimeä
+                if(tarjoajaNimi == null) {
+                    tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_fi);
+                    if(tarjoajaNimi == null) {
+                        tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_sv);
+                        if(tarjoajaNimi == null) {
+                            tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_en);
+                        }
+                    }
+                }
+                return tarjoajaNimi;
             }
         });
 

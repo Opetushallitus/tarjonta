@@ -1,23 +1,14 @@
-<div>
-    <ul>
-        <li style="width:300px" ng-repeat="pvm in ctrl.addedDates">
-            <input type="text"
-                   name="alkamisPvm"
-                   data-datepicker-popup="dd.MM.yyyy"
-                   data-ng-model="pvm.date"
-                   data-ng-disabled="disabledDate"
-                   />
-            <a  href="" 
-               data-ng-show="(!$first || (disabledDate && !$first ))" 
-               data-ng-click="clickRemoveDate(pvm)">X</a>
-        </li>
-    </ul>
-
-    <div><!--  Koulutuksella voi olla useita alkamispäivänmääriä -->
-        <span><input type="checkbox" ng-model="disabledKausi" /><span tt="koulutus.edit.alkamispaiva.checkbox-useita-alkamispaivanmaaria"></span></span> 
-    </div>
-    <a href="" data-ng-show="disabledKausi" 
-       data-ng-click="clickAddDate()" tt="koulutus.edit.alkamispaiva.lisaa"></a>
-</tr>
-
-</div>
+<ul id="koulutuksenAlkamisPvm">
+    <li ng-repeat="pvm in ctrl.addedDates">
+        <input type="text"
+               name="alkamisPvm"
+               data-datepicker-popup="dd.MM.yyyy"
+               data-ng-model="pvm.date"
+               data-ng-disabled="!enabled"
+               ng-change="onDateAdded()"
+               />
+        <a  href
+           data-ng-show="enabled && pvm.date!=null && ctrl.addedDates.length>1" 
+           data-ng-click="clickRemoveDate(pvm)">[x]</a>
+    </li>
+</ul>

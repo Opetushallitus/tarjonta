@@ -213,6 +213,16 @@ public class ConverterV1 {
         if (kuvaus.getKausi() != null) {
             kuvausV1RDTO.setKausi(kuvaus.getKausi());
         }
+
+        if (kuvaus.getViimPaivittajaOid() != null) {
+            kuvausV1RDTO.setModifiedBy(kuvaus.getViimPaivittajaOid());
+        }
+
+        if (kuvaus.getViimPaivitysPvm() != null) {
+            kuvausV1RDTO.setModified(kuvaus.getViimPaivitysPvm());
+
+        }
+
         if (kuvaus.getVuosi() != null) {
             kuvausV1RDTO.setVuosi(kuvaus.getVuosi());
         }
@@ -250,6 +260,15 @@ public class ConverterV1 {
             }
             valintaperusteSoraKuvaus.setMonikielinenNimi(nimet);
         }
+
+        if (kuvausV1RDTO.getModified() != null) {
+            valintaperusteSoraKuvaus.setViimPaivittajaOid(kuvausV1RDTO.getModifiedBy());
+        }
+
+        if (kuvausV1RDTO.getModified() != null) {
+            valintaperusteSoraKuvaus.setViimPaivitysPvm(kuvausV1RDTO.getModified());
+        }
+
         if (kuvausV1RDTO.getVuosi() != null) {
             valintaperusteSoraKuvaus.setVuosi(kuvausV1RDTO.getVuosi());
         }
@@ -343,12 +362,28 @@ public class ConverterV1 {
             //hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToHashMap(hakukohde.getHakukohdeMonikielinenNimi()));
         }
 
+        if(hakukohde.getValintaPerusteKuvausKielet() != null) {
+            hakukohdeRDTO.setValintaPerusteKuvausKielet(hakukohde.getValintaPerusteKuvausKielet());
+        }
+
+        if (hakukohde.getSoraKuvausKielet() != null) {
+            hakukohdeRDTO.setSoraKuvausKielet(hakukohde.getSoraKuvausKielet());
+        }
+
         if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
             hakukohdeRDTO.setValintaPerusteKuvausTunniste(hakukohde.getValintaPerusteKuvausTunniste());
         }
 
         if (hakukohde.getSoraKuvausTunniste() != null) {
             hakukohdeRDTO.setSoraKuvausTunniste(hakukohde.getSoraKuvausTunniste());
+        }
+
+        if (hakukohde.getLastUpdateDate() != null) {
+            hakukohdeRDTO.setModified(hakukohde.getLastUpdateDate());
+        }
+
+        if (hakukohde.getLastUpdatedByOid() != null) {
+            hakukohdeRDTO.setModifiedBy(hakukohde.getLastUpdatedByOid());
         }
 
         if (hakukohde.getHakuaika() != null) {
@@ -471,6 +506,22 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getSoraKuvausTunniste() != null ) {
             hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
+        }
+
+        if (hakukohdeRDTO.getModified() != null) {
+            hakukohde.setLastUpdateDate(hakukohdeRDTO.getModified());
+        }
+
+        if (hakukohdeRDTO.getModifiedBy() != null) {
+            hakukohde.setLastUpdatedByOid(hakukohdeRDTO.getModifiedBy());
+        }
+
+        if (hakukohdeRDTO.getValintaPerusteKuvausKielet() != null) {
+            hakukohde.setValintaPerusteKuvausKielet(hakukohdeRDTO.getValintaPerusteKuvausKielet());
+        }
+
+        if (hakukohdeRDTO.getSoraKuvausKielet() != null) {
+            hakukohde.setSoraKuvausKielet(hakukohdeRDTO.getSoraKuvausKielet());
         }
 
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
