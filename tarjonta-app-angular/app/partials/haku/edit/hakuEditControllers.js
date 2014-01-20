@@ -112,13 +112,61 @@ app.controller('HakuEditController',
                         },
 
                         parameter: {
-                            julkaisunTakaraja : new Date(),
-                            aloituspaikkojenMuokkauksenTakaraja : new Date(),
-                            koekutsujenMuodostaminen : {
-                                start : new Date(),
-                                end : new Date()
-                            },
-                            harkinnanvarainenValintaTallennusPaattyy : new Date()
+                            // Tarjonnan julkaisu ja hakuaika
+                            PH_TJT : new Date(),
+                            PH_HKLPT : new Date(),
+                            PH_HKMT : new Date(),
+
+                            // Valinnat ja sijoittelu
+                            PH_KKM_S : new Date(),
+                            PH_KKM_E : new Date(),
+                            PH_HVVPTP : new Date(),
+                            PH_KTT_S : new Date(),
+                            PH_KTT_E : new Date(),
+                            PH_OLVVPKE_S : new Date(),
+                            PH_OLVVPKE_E : new Date(),
+                            PH_VLS_S : new Date(),
+                            PH_VLS_E : new Date(),
+                            PH_SS_ : new Date(),
+                            PH_SSAVTM : true,
+                            PH_SST : 48,
+                            PH_SSKA : "23:59",
+                            PH_VTSSV : new Date(),
+                            PH_VSSAV : new Date(),
+
+                            // Tulokset ja paikan vastaanotto
+                            PH_JKLIP : new Date(),
+                            PH_HKP : new Date(),
+                            PH_VTJH_S : new Date(),
+                            PH_VTJH_E : new Date(),
+                            PH_EVR : new Date(),
+                            PH_OPVP : new Date(),
+                            PH_HPVOA : 7,
+
+                            // Lisähaku
+                            PH_HTA : new Date(),
+                            PH_HKP : new Date(),
+
+                            // Hakukauden parametrit
+                            PHK_PLPS_S : new Date(),
+                            PHK_PLPS_E : new Date(),
+                            PHK_PLAS_S : new Date(),
+                            PHK_PLAS_E : new Date(),
+                            PHK_LPAS_S : new Date(),
+                            PHK_LPAS_E : new Date(),
+
+                            // Tiedonsiirto
+                            PHK_KTTS : new Date(),
+                            PHK_TAVS_S : new Date(),
+                            PHK_TAVS_E : new Date(),
+                            PHK_TAVSM : true,
+                            PHK_KAVS_S : new Date(),
+                            PHK_KAVS_E : new Date(),
+                            PHK_KAVSM : true,
+                            PHK_VTST : 2,
+                            PHK_VTSAK : "23:59",
+
+                            place: "Holder"
                         },
 
 

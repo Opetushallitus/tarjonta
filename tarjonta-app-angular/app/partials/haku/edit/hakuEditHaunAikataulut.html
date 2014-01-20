@@ -6,29 +6,44 @@
         <tr class="required">
             <th ttt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="julkaisunTakaraja" required ng-model="model.parameter.julkaisunTakaraja">
-                <p class="help-block" ttt='haku.edit.aikataulu.julkaisunTakaraja.help'>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_TJT" required ng-model="model.parameter.PH_TJT">
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_TJT.help'>
                     Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
                 </p>
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="julkaisunTakaraja" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_TJT" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja'>Aloituspaikkojen muokkauksen takaraja</th>
+            <th ttt='haku.edit.aikataulu.hakukohdeTakaraja'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="aloituspaikkojenMuokkauksenTakaraja" ng-model="model.parameter.aloituspaikkojenMuokkauksenTakaraja">
-                <p class="help-block" ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja.help'>
-                    Hakuajan jälkeen hakukohteen aloituspaikkojen muokkaaminen on sallittu annettuun päivämäärään asti.
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="hakukohdeTakaraja" required ng-model="model.parameter.hakukohdeTakaraja">
+                <p class="help-block" ttt='haku.edit.aikataulu.hakukohdeTakaraja.help'>
+                    Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.
                 </p>
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="aloituspaikkojenMuokkauksenTakaraja" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                    <show-errors form="hakuForm" field="hakukohdeTakaraja" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.hakukohdeMuokkausTakaraja'>Hakukohteen muokkauksen takaraja</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="hakukohdeMuokkausTakaraja" required ng-model="model.parameter.hakukohdeMuokkausTakaraja">
+                <p class="help-block" ttt='haku.edit.aikataulu.hakukohdeMuokkausTakaraja.help'>
+                    Annetun ajan jälkeen hakukohteita ei voi muokata.
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="hakukohdeMuokkausTakaraja" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
@@ -70,6 +85,95 @@
                 </div>
             </td>
         </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.koetulostenTallennus'>Koetulosten tallentaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koetulostenTallennus_start" ng-model="model.parameter.koetulostenTallennus.start">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koetulostenTallennus_end" ng-model="model.parameter.koetulostenTallennus.end">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="koetulostenTallennus_start" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="koetulostenTallennus_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.virkailijatValintapalveluEstetty'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="virkailijatValintapalveluEstetty_start" ng-model="model.parameter.virkailijatValintapalveluEstetty.start">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="virkailijatValintapalveluEstetty_end" ng-model="model.parameter.virkailijatValintapalveluEstetty.end">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="virkailijatValintapalveluEstetty_start" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="virkailijatValintapalveluEstetty_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.valintalaskentaSuorittaminen'>Valintalaskennan suorittaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="valintalaskentaSuorittaminen_start" ng-model="model.parameter.valintalaskentaSuorittaminen.start">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="valintalaskentaSuorittaminen_end" ng-model="model.parameter.valintalaskentaSuorittaminen.end">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="valintalaskentaSuorittaminen_start" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="valintalaskentaSuorittaminen_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="required">
+            <th ttt='haku.edit.aikataulu.sijoitteluSuorittaminen'>Sijoittelun suorittaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="sijoitteluSuorittaminen_start" ng-model="model.parameter.sijoitteluSuorittaminen.start">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="sijoitteluSuorittaminen_end" ng-model="model.parameter.sijoitteluSuorittaminen.end">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="sijoitteluSuorittaminen_start" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="sijoitteluSuorittaminen_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.sijoitteluSuorittaminenMuutoksissa'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
+            <td>
+                <input type="checkbox" ng-model="model.parameter.sijoitteluSuorittaminenMuutoksissa" name="sijoitteluSuorittaminenMuutoksissa">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="sijoitteluSuorittaminenMuutoksissa" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.sijoitteluSuorittaminenMuutoksissa'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
+            <td>
+                <input type="checkbox" ng-model="model.parameter.sijoitteluSuorittaminenMuutoksissa" name="sijoitteluSuorittaminenMuutoksissa">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="sijoitteluSuorittaminenMuutoksissa" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+
+
+
+
 
 
     </table>
