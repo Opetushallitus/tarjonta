@@ -204,7 +204,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         } else {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
-        
+       
         if (model.getOpintojenLaajuusTot() != null && !model.getOpintojenLaajuusTot().isEmpty()) {
             KoulutuksenKestoTyyppi laajuus = new KoulutuksenKestoTyyppi();
             laajuus.setArvo(model.getOpintojenLaajuusTot());

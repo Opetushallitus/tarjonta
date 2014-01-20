@@ -190,7 +190,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         opetusmuodos.add("opetumuoto2");
 
         perustiedot.setOpetusmuoto(opetusmuodos);
-        perustiedot.setOpintojenLaajuus(LAAJUUS_ARVO);
+        perustiedot.setOpintojenLaajuus(createKoodiModel(LAAJUUS_ARVO));
         perustiedot.setOpintojenLaajuusyksikko(createKoodiModel(LAAJUUS_YKSIKKO));
         perustiedot.setOpsuLinkki(WEB_LINK);
         perustiedot.setPohjakoulutusvaatimus(createKoodiModel("pohjakoulutusvaatimus"));
@@ -538,7 +538,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiTypes(KOULUTUSLAJI));
         expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
-        //expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
         expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
 
 
@@ -608,7 +608,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals(TarjontaTila.VALMIS, perustiedotModel.getTila());
         assertYhteyshenkilo(perustiedotModel.getYhteyshenkilo());
         assertEquals(null, perustiedotModel.getTutkinto());
-        assertEquals(null, perustiedotModel.getPohjakoulutusvaatimus());
+        assertNotNull(null, perustiedotModel.getPohjakoulutusvaatimus());
     }
 
     protected void assertYhteyshenkilo(YhteyshenkiloModel cperson) {

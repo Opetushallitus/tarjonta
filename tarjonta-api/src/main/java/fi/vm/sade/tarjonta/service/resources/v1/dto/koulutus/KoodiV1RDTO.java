@@ -192,9 +192,6 @@ public class KoodiV1RDTO implements Serializable {
     }
 
     public Map<String, KoodiV1RDTO> getMeta() {
-        if (meta == null) {
-            meta = new HashMap<String, KoodiV1RDTO>();
-        }
         return meta;
     }
 

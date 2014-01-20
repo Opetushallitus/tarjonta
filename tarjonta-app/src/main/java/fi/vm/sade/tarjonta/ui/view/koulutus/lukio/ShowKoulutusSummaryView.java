@@ -109,41 +109,39 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         Set<String> langs = getLanguages();
         addNavigationButtons(layout, context);
-        
+
         if (langs.size() < 1) {
             LOG.debug("buildLayout(): No languages, this should happen only for imported koulutukset");
             Panel panel = new Panel();
             panel.setContent(buildMainLayout(perustiedot, T("lang.fi")));
-                layout.addComponent(panel);
-        } else if (langs.size()==1) {
+            layout.addComponent(panel);
+        } else if (langs.size() == 1) {
             LOG.debug("buildLayout(): Only one lang");
             Panel panel = new Panel();
             panel.setContent(buildMainLayout(perustiedot, langs.iterator().next()));
-        	layout.addComponent(panel);
+            layout.addComponent(panel);
         } else {
-        	TabSheet ts = new TabSheet();
-        	layout.addComponent(ts);
-        	for (String lang : langs) {
-        		ts.addTab(buildMainLayout(perustiedot, lang), _tarjontaUIHelper.getKoodiNimi(lang));
-        	}
+            TabSheet ts = new TabSheet();
+            layout.addComponent(ts);
+            for (String lang : langs) {
+                ts.addTab(buildMainLayout(perustiedot, lang), _tarjontaUIHelper.getKoodiNimi(lang));
+            }
         }
-        
+
         /*
-        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
-        Panel panel = new Panel();
+         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+         Panel panel = new Panel();
 
-        panel.setContent(vl);
-        layout.addComponent(panel);
+         panel.setContent(vl);
+         layout.addComponent(panel);
 
-        addNavigationButtons(vl, OrganisaatioContext.getContext(_presenter.getTarjoaja().getOrganisationOid()));
+         addNavigationButtons(vl, OrganisaatioContext.getContext(_presenter.getTarjoaja().getOrganisationOid()));
 
-        buildPerustiedot(vl, perustiedot, "lukiolinja", perustiedot.getLukiolinja());
-        addLayoutSplit(vl);
-        buildKuvailevatTiedot(vl);*/
-        
-
+         buildPerustiedot(vl, perustiedot, "lukiolinja", perustiedot.getLukiolinja());
+         addLayoutSplit(vl);
+         buildKuvailevatTiedot(vl);*/
     }
-    
+
     private VerticalLayout buildMainLayout(KoulutusLukioPerustiedotViewModel perustiedot, String lang) {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
 
@@ -159,15 +157,14 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private Label buildTallennettuLabel(Date date, String viimPaivittajaOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         String viimPaivittaja = uiHelper.findUserWithOid(viimPaivittajaOid);
-        Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja +  " )");
+        Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
         return lastUpdLbl;
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel ,boolean showButton) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel, boolean showButton) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
-
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
@@ -190,17 +187,14 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
                 });
             }
 
-
             //headerLayout.setExpandRatio(btn, 1f);
             headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
             if (lastUpdatedLabel != null) {
-                headerLayout.setComponentAlignment(lastUpdatedLabel,Alignment.TOP_CENTER);
+                headerLayout.setComponentAlignment(lastUpdatedLabel, Alignment.TOP_CENTER);
             }
         }
         return headerLayout;
     }
-
-
 
     private void buildPerustiedot(VerticalLayout vl, KoulutusRelaatioModel model, String otherCbLabel, MonikielinenTekstiModel otherCbKoodi) {
         Preconditions.checkNotNull(vl, "VericalLayout object cannot be null.");
@@ -209,12 +203,11 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         Preconditions.checkNotNull(otherCbKoodi, "Combobox MonikielinenTekstiModel object cannot be null.");
 
         Label viimeisinPaivitysPvm = null;
-        if (model instanceof KoulutusLukioPerustiedotViewModel && ((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm() != null) {
+        if (model instanceof KoulutusLukioPerustiedotViewModel && ((KoulutusLukioPerustiedotViewModel) model).getViimeisinPaivitysPvm() != null) {
 
-           viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm(),((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivittajaOid());
+            viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel) model).getViimeisinPaivitysPvm(), ((KoulutusLukioPerustiedotViewModel) model).getViimeisinPaivittajaOid());
         }
 
-        
         vl.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -222,33 +215,25 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 _presenter.getLukioPresenter().showEditKoulutusView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        },viimeisinPaivitysPvm, _presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)));
-        
+        }, viimeisinPaivitysPvm, _presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)));
+
         FormGridBuilder grid = new FormGridBuilder(getClass());
-        
-        
-        String opintojenLaajuus;
-        if (model.getOpintojenLaajuus()==null) {
-        	opintojenLaajuus = "";
-        } else {        	
-        	opintojenLaajuus = model.getOpintojenLaajuus() + " "+_tarjontaUIHelper.getKoodiLyhytNimi(model.getOpintojenLaajuusyksikko().getKoodistoUri(), I18N.getLocale());
-        }
-        
+
         grid.addText("organisaatio", _presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName())
-        	.addText("tutkinto", modelToStr(model.getKoulutuskoodiModel()))
-	        .addText(otherCbLabel, modelToStr(otherCbKoodi))
-	        .addSpace()
-	        .addText("koulutusaste", modelToStr(model.getKoulutusaste()))
-	        .addText("koulutusala", modelToStr(model.getKoulutusala()))
-	        .addText("opintoala", modelToStr(model.getOpintoala()))
-	        .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
-	        .addText("opintojenLaajuus", opintojenLaajuus)
-	        .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
-	        .addText("pohjakoulutusvaatimus", findPohjakoulutusVaatimus(model.getPohjakoulutusvaatimus()))
-	        .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))
-	        .addXhtml("tavoitteet", modelToStr(model.getTavoitteet()))
-	        .addXhtml("jatkoopintomahdollisuudet", modelToStr(model.getJatkoopintomahdollisuudet()))
-	        .addSpace();
+                .addText("tutkinto", modelToStr(model.getKoulutuskoodiModel()))
+                .addText(otherCbLabel, modelToStr(otherCbKoodi))
+                .addSpace()
+                .addText("koulutusaste", modelToStr(model.getKoulutusaste()))
+                .addText("koulutusala", modelToStr(model.getKoulutusala()))
+                .addText("opintoala", modelToStr(model.getOpintoala()))
+                .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
+                .addText("opintojenLaajuus", createLaajuusString(model))
+                .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
+                .addText("pohjakoulutusvaatimus", findPohjakoulutusVaatimus(model.getPohjakoulutusvaatimus()))
+                .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))
+                .addXhtml("tavoitteet", modelToStr(model.getTavoitteet()))
+                .addXhtml("jatkoopintomahdollisuudet", modelToStr(model.getJatkoopintomahdollisuudet()))
+                .addSpace();
         buildLukiokoulutuksenPerustiedot(grid);
 
         vl.addComponent(grid);
@@ -256,11 +241,11 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
     private void buildLukiokoulutuksenPerustiedot(FormGridBuilder grid) {
         KoulutusLukioPerustiedotViewModel model = _presenter.getModel().getKoulutusLukioPerustiedot();
-        
+
         grid.addText("opetuskieli", koodiToStr(model.getOpetuskieli()))
-        	.addText("koulutuksenAlkamisPvm", _tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm()))
-        	.addText("suunniteltuKesto", suunniteltuKesto(model.getSuunniteltuKesto(), model.getSuunniteltuKestoTyyppi()))
-        	.add("opetusmuoto",  getOpetusMuoto(model.getOpetusmuoto()), Label.CONTENT_PREFORMATTED);
+                .addText("koulutuksenAlkamisPvm", _tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm()))
+                .addText("suunniteltuKesto", suunniteltuKesto(model.getSuunniteltuKesto(), model.getSuunniteltuKestoTyyppi()))
+                .add("opetusmuoto", getOpetusMuoto(model.getOpetusmuoto()), Label.CONTENT_PREFORMATTED);
 
         String lnk = null;
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
@@ -271,15 +256,15 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         buildYhteyshenkilo(grid, model.getYhteyshenkilo());
     }
-    
+
     private String getOpetusMuoto(Set<String> oms) {
-    	StringBuffer ret = new StringBuffer();
-    	for (String om : oms) {
-    		ret.append(_tarjontaUIHelper.getKoodiNimi(om)).append('\n');
-    	}
-    	return ret.toString();
+        StringBuffer ret = new StringBuffer();
+        for (String om : oms) {
+            ret.append(_tarjontaUIHelper.getKoodiNimi(om)).append('\n');
+        }
+        return ret.toString();
     }
-    
+
     private Set<String> getLanguages() {
         KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = _presenter.getModel().getKoulutusLukioKuvailevatTiedot();
         return new TreeSet<String>(kuvailevatTiedot.getTekstikentat().keySet());
@@ -296,14 +281,13 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             }
         }));
 
-
         FormGridBuilder grid = new FormGridBuilder(getClass())
-        	.addText("kieliA", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliA(), null))
-        	.addText("kieliB1", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB1(), null))
-        	.addText("kieliB2", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB2(), null))
-        	.addText("kieliB3", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB3(), null))
-        	.addText("kieletMuu", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieletMuu(), null))
-        	.addText("lukiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
+                .addText("kieliA", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliA(), null))
+                .addText("kieliB1", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB1(), null))
+                .addText("kieliB2", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB2(), null))
+                .addText("kieliB3", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB3(), null))
+                .addText("kieletMuu", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieletMuu(), null))
+                .addText("lukiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
 
         vl.addComponent(grid);
 
@@ -312,16 +296,16 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         FormGridBuilder gridLang = new FormGridBuilder(getClass());
 
         gridLang
-        	.addXhtml("tutkinnonSisalto", tiedotModel.getSisalto())
-        	.addXhtml("tutkinnonKansainvalistyminen", tiedotModel.getKansainvalistyminen())
-        	.addXhtml("tutkinnonYhteistyoMuidenToimijoidenKanssa", tiedotModel.getYhteistyoMuidenToimijoidenKanssa());
-        
+                .addXhtml("tutkinnonSisalto", tiedotModel.getSisalto())
+                .addXhtml("tutkinnonKansainvalistyminen", tiedotModel.getKansainvalistyminen())
+                .addXhtml("tutkinnonYhteistyoMuidenToimijoidenKanssa", tiedotModel.getYhteistyoMuidenToimijoidenKanssa());
+
         vl.addComponent(gridLang);
     }
 
     private void buildYhteyshenkilo(FormGridBuilder grid, YhteyshenkiloModel model) {
-    	grid.addText("yhteyshenkilo", noNullStr(model.getYhtHenkTitteli()) + " " + noNullStr(model.getYhtHenkKokoNimi()))
-    		.addText(null, noNullStr(model.getYhtHenkPuhelin()) + " " + noNullStr(model.getYhtHenkEmail()));
+        grid.addText("yhteyshenkilo", noNullStr(model.getYhtHenkTitteli()) + " " + noNullStr(model.getYhtHenkKokoNimi()))
+                .addText(null, noNullStr(model.getYhtHenkPuhelin()) + " " + noNullStr(model.getYhtHenkEmail()));
     }
 
     private String findPohjakoulutusVaatimus(KoodiModel pohjakoulutusVaatimusKoodi) {
@@ -355,7 +339,6 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         }
         return tmp;
     }
-
 
     private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
         int numberOfApplicationTargets = _presenter.getModel().getKoulutusLukioPerustiedot().getKoulutuksenHakukohteet().size();
@@ -417,7 +400,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
         for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel,OrganisaatioContext.getContext(_presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()),true);
+            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel, OrganisaatioContext.getContext(_presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()), true);
             rows.add(row);
         }
         return rows;
@@ -427,7 +410,6 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
-
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
@@ -475,50 +457,51 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
           //Uncomment when functionality is done
     /*    final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-                //KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px");
-                //getWindow().addWindow(kopiointiDialog);
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         //KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px");
+         //getWindow().addWindow(kopiointiDialog);
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                 getWindow().showNotification("Ei toteutettu");
-               // _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid(),null);
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         // _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid(),null);
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        *//*final Button esikatsele = *//*addNavigationButton(T("esikatsele"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+         *//*final Button esikatsele = *//*addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+         private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Ei toteutettu");
+         }
+         }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
+
 
         //check permissions
         final TarjontaPermissionServiceImpl permissions = _presenter.getPermission();
         poista.setVisible(permissions.userCanDeleteKoulutus(context, hakuStarted));
-      /*  kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
-        siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
-        lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));*/
+        /*  kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
+         siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
+         lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));*/
     }
 
     public void addLayoutSplit(VerticalLayout layout) {
@@ -530,6 +513,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         layout.addComponent(split);
     }
+
     //Uncomment when functionality is done
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), new Button.ClickListener() {
@@ -569,14 +553,13 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     }
 
     /*
-    private Label buildLabel(String text) {
-        Label label = UiUtil.label(null, text);
-        label.setContentMode(Label.CONTENT_XHTML);
-        label.setSizeFull();
-        return label;
-    }
-    */
-
+     private Label buildLabel(String text) {
+     Label label = UiUtil.label(null, text);
+     label.setContentMode(Label.CONTENT_XHTML);
+     label.setSizeFull();
+     return label;
+     }
+     */
     private static String modelToStr(KoulutusKoodistoModel model) {
         if (model != null) {
             return model.getNimi();
@@ -594,5 +577,39 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             return "";
         }
         return str;
+    }
+
+    private String createLaajuusString(final KoulutusRelaatioModel model) {
+
+        final boolean laajuudenYksikko = (model.getOpintojenLaajuusyksikko() != null
+                && model.getOpintojenLaajuusyksikko().getKoodistoUri() != null
+                && model.getOpintojenLaajuusyksikko().getKoodistoUri().isEmpty());
+
+        final boolean laajuudenArvo = (model.getOpintojenLaajuus() != null
+                && model.getOpintojenLaajuus().getKoodistoUri() != null
+                && model.getOpintojenLaajuus().getKoodistoUri().isEmpty());
+
+        String opintojenLaajuus = "";
+        if (laajuudenArvo && laajuudenYksikko) {
+            if (model.getOpintojenLaajuus().getNimi() != null && !model.getOpintojenLaajuus().getNimi().isEmpty()) {
+                //IB-lukio has laajuus 'arvo' as a text string
+                opintojenLaajuus = model.getOpintojenLaajuus().getNimi() + " " + model.getOpintojenLaajuusyksikko().getNimi();
+            } else {
+                //laajuus 'arvo' as a number
+                opintojenLaajuus = model.getOpintojenLaajuus().getKoodi() + " " + model.getOpintojenLaajuusyksikko().getNimi();
+            }
+        } else if (laajuudenYksikko) {
+            opintojenLaajuus = model.getOpintojenLaajuusyksikko().getNimi();
+        } else if (laajuudenArvo) {
+            if (model.getOpintojenLaajuus().getNimi() != null && !model.getOpintojenLaajuus().getNimi().isEmpty()) {
+                //IB-lukio has laajuus 'arvo' as a text string
+                opintojenLaajuus = model.getOpintojenLaajuus().getNimi();
+            } else {
+                //laajuus 'arvo' as a number
+                opintojenLaajuus = model.getOpintojenLaajuus().getKoodi();
+            }
+        }
+
+        return opintojenLaajuus;
     }
 }
