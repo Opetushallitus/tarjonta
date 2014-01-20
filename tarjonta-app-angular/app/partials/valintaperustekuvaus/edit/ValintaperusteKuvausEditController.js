@@ -9,6 +9,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
      */
 
+    var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
+
   $scope.model = {};
 
   $scope.model.years = [];
@@ -141,6 +143,21 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     }
 
+
+    var showCommonUnknownErrorMsg = function() {
+
+        var errors = [];
+
+        var error = {};
+
+        error.errorMessageKey =  commonExceptionMsgKey;
+
+        errors.push(error);
+
+        showError(errors);
+
+    }
+
     var createFormattedDateString = function(date) {
 
         return moment(date).format('DD.MM.YYYY HH:mm');
@@ -230,9 +247,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     $scope.model.saveValmis = function(){
 
         resetErrorMsgs();
-        console.log('NIMET : ' , $scope.model.valintaperustekuvaus.kuvauksenNimet);
-        console.log('VALIDATION : ', $scope.valintaPerusteForm.kausicombo.$invalid);
-        console.log('KAUSI : ',$scope.valintaPerusteForm.kausicombo);
+
 
         if (validateForm()) {
 
@@ -252,6 +267,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                         showError(data.errors);
                         console.log('DID NOT GET OK : ', data);
                     }
+                },function(error) {
+                   showCommonUnknownErrorMsg();
                 });
             } else {
 
@@ -264,6 +281,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                     } else {
                         showError(data.errors);
                     }
+                },function(error) {
+                    showCommonUnknownErrorMsg();
                 });
 
             }
