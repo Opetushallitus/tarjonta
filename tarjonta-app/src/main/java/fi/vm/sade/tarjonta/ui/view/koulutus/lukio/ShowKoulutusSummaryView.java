@@ -583,11 +583,11 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         final boolean laajuudenYksikko = (model.getOpintojenLaajuusyksikko() != null
                 && model.getOpintojenLaajuusyksikko().getKoodistoUri() != null
-                && model.getOpintojenLaajuusyksikko().getKoodistoUri().isEmpty());
+                && !model.getOpintojenLaajuusyksikko().getKoodistoUri().isEmpty());
 
         final boolean laajuudenArvo = (model.getOpintojenLaajuus() != null
                 && model.getOpintojenLaajuus().getKoodistoUri() != null
-                && model.getOpintojenLaajuus().getKoodistoUri().isEmpty());
+                && !model.getOpintojenLaajuus().getKoodistoUri().isEmpty());
 
         String opintojenLaajuus = "";
         if (laajuudenArvo && laajuudenYksikko) {
