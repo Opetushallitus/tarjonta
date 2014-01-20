@@ -23,7 +23,7 @@ app.controller('BaseEditController',
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                $scope.lisatiedot = [];
 
                 $scope.init = function() {
                     var uiModel = {};
@@ -40,6 +40,7 @@ app.controller('BaseEditController',
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         //DATA WAS LOADED BY KOMOTO OID
+                        $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
@@ -155,6 +156,7 @@ app.controller('BaseEditController',
                                 $scope.model = model;
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
+                                $scope.lisatiedot = converter.KUVAUS_ORDER;
                             } else {
                                 //save failed
                                 $scope.uiModel.showError = true;
@@ -284,7 +286,9 @@ app.controller('BaseEditController',
 
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
                         kuvaus[textEnum] = {tekstis: {}};
-                        kuvaus[textEnum].tekstis[kieliUri] = '';
+                        if (!angular.isUndefined(kieliUri)) {
+                            kuvaus[textEnum].tekstis[kieliUri] = '';
+                        }
                     }
 
                     return kuvaus[textEnum].tekstis;

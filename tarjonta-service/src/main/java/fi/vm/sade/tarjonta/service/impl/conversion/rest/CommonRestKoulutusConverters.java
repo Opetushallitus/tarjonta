@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
 import java.util.Locale;
@@ -39,6 +40,9 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
 
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
+    private final KoodistoURI koodistoUri = new KoodistoURI();
+
     private static final String DEMO_LOCALE = "FI";
 
     public KuvausV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit, boolean showMeta) {
@@ -93,6 +97,8 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
     }
 
     private TekstiKaannos searchByKielikoodi(MonikielinenTeksti merge, final String kieliUri) {
+        koodistoUri.validateKieliUri(kieliUri);
+
         for (TekstiKaannos k : merge.getTekstis()) {
             if (k.getKieliKoodi().equals(kieliUri)) {
                 return k;

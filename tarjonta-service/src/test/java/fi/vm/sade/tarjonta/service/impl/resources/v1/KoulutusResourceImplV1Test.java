@@ -67,6 +67,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -139,9 +140,13 @@ public class KoulutusResourceImplV1Test {
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
     private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
     private PermissionChecker permissionChecker;
+    private KoodistoURI koodistoUri;
 
     @Before
     public void setUp() {
+        //used in regexp kieli uri validation
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
+
         //INIT ORGANISATION DTO
         organisaatioDTO = new OrganisaatioDTO();
         organisaatioDTO.setOid(ORGANISAATIO_OID);
@@ -157,6 +162,7 @@ public class KoulutusResourceImplV1Test {
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
+        koodistoUri = createMock(KoodistoURI.class);
 
         //INIT DATA CONVERTERS
         convertToDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
@@ -179,8 +185,13 @@ public class KoulutusResourceImplV1Test {
         //no need for replay or verify:
         Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToDTO, "komotoKoulutusConverters", komotoKoulutusConverters);
+
         Whitebox.setInternalState(convertToKomoto, "komoKoulutusConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToKomoto, "komotoKoulutusConverters", komotoKoulutusConverters);
+      //  Whitebox.setInternalState(convertToKomoto, "koodistoUri", koodistoUri);
+
+        //Whitebox.setInternalState(komotoKoulutusConverters, "koodistoUri", koodistoUri);
+        //Whitebox.setInternalState(komoKoulutusConverters, "koodistoUri", koodistoUri);
     }
 
     @After

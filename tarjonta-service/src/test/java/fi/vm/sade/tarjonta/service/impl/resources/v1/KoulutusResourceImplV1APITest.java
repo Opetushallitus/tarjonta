@@ -44,6 +44,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakoulu
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Map;
 
@@ -122,6 +123,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
 
     @Before
     public void setup() {
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
+
         Mockito.stub(organisaatioService.findByOid(ORGANISAATIO_OID)).toReturn(
                 getOrganisaatio(ORGANISAATIO_OID));
         stubKoodi(koodiService, "kieli_fi", "FI");
