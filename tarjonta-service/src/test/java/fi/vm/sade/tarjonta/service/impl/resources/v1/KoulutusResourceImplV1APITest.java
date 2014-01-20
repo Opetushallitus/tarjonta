@@ -23,6 +23,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
@@ -44,12 +45,13 @@ import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Map;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class })
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
@@ -80,8 +82,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
     private static final String TUNNISTE = "tunniste_txt";
     private static final String SUUNNITELTU_KESTO_VALUE = "10";
     private static final String SUUNNITELTU_KESTO = "suunniteltu_kesto";
-    private static final String[] PERSON = { "henkilo_oid", "firstanames",
-            "lastname", "Mr.", "oph@oph.fi", "12345678" };
+    private static final String[] PERSON = {"henkilo_oid", "firstanames",
+        "lastname", "Mr.", "oph@oph.fi", "12345678"};
     private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
 
     private static String toKoodiUriStr(final String type) {
@@ -154,7 +156,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
-                vastaus);
+                        vastaus);
     }
 
     private KoodiType getKoodiType(String uri, String arvo) {
@@ -206,9 +208,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         /*
          * KOMO data fields:
          */
-        dto.getKoulutusohjelma()
-                .getMeta()
-                .put(URI_KIELI_FI, toMetaValue("koulutusohjelma", URI_KIELI_FI));
+
+        meta(dto.getKoulutusohjelma(), URI_KIELI_FI, toMetaValue("koulutusohjelma", URI_KIELI_FI));
         dto.getKoulutusohjelma()
                 .getTekstis()
                 .put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
@@ -228,15 +229,11 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
-        dto.getAihees().getMeta().put(URI_KIELI_FI, toKoodiUri(AIHEES));
-        dto.getOpetuskielis().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
-        dto.getOpetusmuodos().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
-        dto.getAmmattinimikkeet().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
-        dto.getPohjakoulutusvaatimukset().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
+        meta(dto.getAihees(), URI_KIELI_FI, toKoodiUri(AIHEES));
+        meta(dto.getOpetuskielis(), URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
+        meta(dto.getOpetusmuodos(), URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
+        meta(dto.getAmmattinimikkeet(), URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
+        meta(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
 
         dto.getAihees().getUris().put(toKoodiUriStr(AIHEES), 1);
         dto.getOpetuskielis().getUris().put(toKoodiUriStr(OPETUSKIELI), 1);
@@ -273,5 +270,10 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(0, result.getYhteyshenkilos().size());
 
+    }
+
+    private static KoodiV1RDTO meta(final KoodiV1RDTO dto, final String kieli, final KoodiV1RDTO metaValue) {
+        dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+        return dto.getMeta().put(kieli, metaValue);
     }
 }

@@ -199,7 +199,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
 
     private MonikielinenTeksti convertToTexts(final NimiV1RDTO dto, MonikielinenTeksti mt, final FieldNames msg) {
         Preconditions.checkNotNull(dto, "UiListDTO object cannot be null! Error field : " + msg);
-        Preconditions.checkNotNull(dto.getMeta(), "UiListDTO's map of UiDTO objects cannot be null! Error in field : " + msg);
+        Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
 
         if (mt == null) {
             mt = new MonikielinenTeksti();
@@ -247,7 +247,9 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         } else {
             //allowed only one kausi and year
             Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
+            Preconditions.checkArgument(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI).isEmpty(), "Alkamiskausi cannot be empty string.");
             Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
+
             komoto.clearKoulutuksenAlkamisPvms();
             //only kausi + year, no date objects   
             komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());

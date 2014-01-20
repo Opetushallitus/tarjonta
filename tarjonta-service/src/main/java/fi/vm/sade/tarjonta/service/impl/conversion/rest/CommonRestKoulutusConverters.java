@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
@@ -55,6 +56,9 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
                     uri.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(type.getKoodiUri(), new Locale(DEMO_LOCALE)));
 
                     if (showMeta) {
+                        if (dto.getMeta() == null) {
+                            dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                        }
                         dto.getMeta().put(uri.getUri(), uri);
                     }
                     dto.getTekstis().put(uri.getUri(), kaannos.getArvo());

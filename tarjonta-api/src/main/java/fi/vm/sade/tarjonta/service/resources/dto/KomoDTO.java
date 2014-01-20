@@ -28,14 +28,15 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  */
 public class KomoDTO extends BaseRDTO {
 
-	private static final long serialVersionUID = 1L;
-	
-	private TarjontaTila _tila;
+    private static final long serialVersionUID = 1L;
+
+    private TarjontaTila _tila;
     private List<String> _ylaModuulit;
     private List<String> _alaModuulit;
     private String _organisaatioOid;
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
-    private String _laajuusArvo;
+    private String _laajuusArvo; //value
+    private String laajuusArvoUri; //koodi uri
     private String _laajuusYksikkoUri;
     private String _eqfLuokitusUri;
     private String _koulutusAsteUri;
@@ -52,23 +53,22 @@ public class KomoDTO extends BaseRDTO {
     private String _ulkoinenTunniste;
     private String _moduuliTyyppi;
     private Map<String, String> _nimi;
-    private Map<KomoTeksti, Map<String,String>> _tekstit;
+    private Map<KomoTeksti, Map<String, String>> _tekstit;
     private String _koulutusKoodiUri;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
     //
-    
     public Map<KomoTeksti, Map<String, String>> getTekstit() {
-    	if (_tekstit==null) {
-    		_tekstit = new EnumMap<KomoTeksti, Map<String,String>>(KomoTeksti.class);
-    	}
-		return _tekstit;
-	}
-    
+        if (_tekstit == null) {
+            _tekstit = new EnumMap<KomoTeksti, Map<String, String>>(KomoTeksti.class);
+        }
+        return _tekstit;
+    }
+
     public void setTekstit(Map<KomoTeksti, Map<String, String>> _tekstit) {
-		this._tekstit = _tekstit;
-	}
+        this._tekstit = _tekstit;
+    }
 
     public TarjontaTila getTila() {
         return _tila;
@@ -241,7 +241,6 @@ public class KomoDTO extends BaseRDTO {
     // -----------------------------------------------
     // Multilanguage metadata
     //
-
     public Map<String, String> getNimi() {
         return _nimi;
     }
@@ -257,7 +256,7 @@ public class KomoDTO extends BaseRDTO {
 
     @Deprecated
     public void setKoulutuksenRakenne(Map<String, String> _koulutuksenRakenne) {
-    	getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, _koulutuksenRakenne);
+        getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, _koulutuksenRakenne);
     }
 
     @Deprecated
@@ -267,17 +266,17 @@ public class KomoDTO extends BaseRDTO {
 
     @Deprecated
     public void setJatkoOpintoMahdollisuudet(Map<String, String> _jatkoOpintoMahdollisuudet) {
-    	getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, _jatkoOpintoMahdollisuudet);
+        getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, _jatkoOpintoMahdollisuudet);
     }
 
     @Deprecated
     public Map<String, String> getTavoitteet() {
-    	return getTekstit().get(KomoTeksti.TAVOITTEET);
+        return getTekstit().get(KomoTeksti.TAVOITTEET);
     }
 
     @Deprecated
     public void setTavoitteet(Map<String, String> _tavoitteet) {
-    	getTekstit().put(KomoTeksti.TAVOITTEET, _tavoitteet);
+        getTekstit().put(KomoTeksti.TAVOITTEET, _tavoitteet);
     }
 
     public String getKoulutusKoodiUri() {
@@ -286,5 +285,19 @@ public class KomoDTO extends BaseRDTO {
 
     public void setKoulutusKoodiUri(String _koulutusKoodiUri) {
         this._koulutusKoodiUri = _koulutusKoodiUri;
+    }
+
+    /**
+     * @return the laajuusArvoUri
+     */
+    public String getLaajuusArvoUri() {
+        return laajuusArvoUri;
+    }
+
+    /**
+     * @param laajuusArvoUri the laajuusArvoUri to set
+     */
+    public void setLaajuusArvoUri(String laajuusArvoUri) {
+        this.laajuusArvoUri = laajuusArvoUri;
     }
 }
