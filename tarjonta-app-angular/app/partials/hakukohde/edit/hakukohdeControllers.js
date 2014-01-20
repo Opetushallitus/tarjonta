@@ -25,6 +25,8 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Or
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService) {
 
 
+    var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
+
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
@@ -83,6 +85,19 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         return false;
     }
 
+    var showCommonUnknownErrorMsg = function() {
+
+        var errors = [];
+
+        var error = {};
+
+        error.errorMessageKey =  commonExceptionMsgKey;
+
+        errors.push(error);
+
+        showError(errors);
+
+    }
 
     var validateHakukohde = function() {
 
@@ -208,7 +223,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var showError = function(errorArray) {
     	
-    	$scope.model.validationmsgs = [];
+    	$scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
 
         angular.forEach(errorArray,function(error) {
 
@@ -677,6 +692,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                }
 
 
+           },function(error){
+
+
+               showCommonUnknownErrorMsg();
            });
 
         } else {
@@ -698,6 +717,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+            },function (error) {
+               showCommonUnknownErrorMsg();
             });
 
         }
@@ -742,6 +763,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
+            },function(error) {
+
+                showCommonUnknownErrorMsg();
+
             });
 
         } else {
@@ -762,6 +787,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+            }, function(error) {
+                showCommonUnknownErrorMsg();
             });
         }
         }
