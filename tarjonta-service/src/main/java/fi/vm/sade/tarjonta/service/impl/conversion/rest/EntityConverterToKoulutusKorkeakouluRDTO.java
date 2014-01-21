@@ -204,9 +204,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         if (kieliUri != null && !kieliUri.isEmpty()) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kieliUri);
             dto.setKieliUri(type.getKoodiUri());
-            dto.setKieliVersio(type.getVersio() + "");
+            dto.setKieliVersio(type.getVersio());
             dto.setKieliArvo(arvo);
-            dto.setKieliKaannos(tarjontaKoodistoHelper.getKoodiNimi(kieliUri, locale));
             dto.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(koodiUri, new Locale(arvo)));
         }
     }

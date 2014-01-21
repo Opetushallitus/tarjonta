@@ -272,8 +272,8 @@ public class KoulutusResourceImplV1Test {
         expectMeta2Uri(POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO);
         expectMeta2Uri(AMMATTINIMIKE);
-//        expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
-//        //2nd calls
+//       expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
+////        //2nd calls
         expectKausi();
 
         expectMetaUri(KOULUTUSKOODI);
@@ -391,7 +391,7 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(createKoodiType(KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI + "#1", new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(URI_KIELI_FI)).andReturn(createKoodiType(URI_KIELI_FI + "_" + KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
@@ -399,14 +399,12 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(URI_KIELI_FI)).andReturn(createKoodiType(URI_KIELI_FI + "_" + KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
     }
 
     private void expectMetaUri(final String field) {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri#1", new Locale(LOCALE_FI))).andReturn(field).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi").times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
     }
 
@@ -415,9 +413,7 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri")).andReturn(createKoodiType(field)).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi").times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
-
     }
 
     private void expectKoulutusohjelmaUris(final String field) {
