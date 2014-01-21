@@ -98,8 +98,8 @@
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
-				<version>2.5.7</version>
-			</dependency>
+                <version>2.5.0</version>
+            </dependency>
 			<dependency>
 				<groupId>fi.vm.sade.generic</groupId>
 				<artifactId>generic-common</artifactId>
