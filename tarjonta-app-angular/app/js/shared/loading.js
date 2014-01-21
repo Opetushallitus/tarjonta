@@ -36,7 +36,7 @@ angular.module('loading', ['localisation'])
         	clearTimeout();
     	} else {
     		console.log("REQUEST FAILED", req);
-    		service.service.errors++;
+    		service.errors++;
     	}
     },
     commit: function() {
