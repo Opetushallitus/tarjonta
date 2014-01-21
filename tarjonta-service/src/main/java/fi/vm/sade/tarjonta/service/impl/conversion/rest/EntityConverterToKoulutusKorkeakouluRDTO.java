@@ -117,7 +117,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         }
         kkDto.setKoulutuskoodi(convertToKoodiDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, FieldNames.KOULUTUSKOODI));
         kkDto.setTutkinto(koodiData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, FieldNames.TUTKINTO)); //correct data mapping?
-        kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUS_ARVO));
+        kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUSARVO));
+        kkDto.setOpintojenLaajuusyksikko(koodiData(komo.getLaajuusYksikko(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
         kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
         kkDto.setOrganisaatio(searchOrganisaationNimi(komoto.getTarjoaja()));
