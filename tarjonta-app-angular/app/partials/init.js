@@ -20,10 +20,11 @@ function tarjontaInit() {
 	    } else {
 	        console.log("OK! That was the last request, init the app!");*/
 	    if (init_counter == 0) {
-	    	
+	    		    	
 	        angular.element(document).ready(function() {
 	            angular.module('myApp', ['app']);
 	            angular.bootstrap(document, ['myApp']);
+		    	loader.toggleClass("pre-init", false);
 	        });
 	    }
 	};
