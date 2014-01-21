@@ -42,6 +42,13 @@ app.controller('BaseEditController',
                         //DATA WAS LOADED BY KOMOTO OID
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
+                        
+                     
+                        if(angular.isUndefined(model.opintojenLaajuusyksikko.uri)){
+                            //remove when not needed...
+                            $scope.searchOpintojenLaajuusyksikko();
+                        }
+                        
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
                                 uiModel.contactPerson = converter.converPersonObjectForUi(value);
@@ -109,6 +116,8 @@ app.controller('BaseEditController',
                     $scope.model = model;
                 };
                 $scope.loadRelationKoodistoData = function() {
+                    $scope.searchOpintojenLaajuusyksikko();
+
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
                         var koodistoData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
@@ -292,6 +301,14 @@ app.controller('BaseEditController',
                     }
 
                     return kuvaus[textEnum].tekstis;
+                };
+                
+                $scope.searchOpintojenLaajuusyksikko = function(){
+                  var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
+
+                    promise.then(function(koodi) {
+                        $scope.model['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
+                    });  
                 };
 
                 // TODO omaksi direktiivikseen tjsp..
