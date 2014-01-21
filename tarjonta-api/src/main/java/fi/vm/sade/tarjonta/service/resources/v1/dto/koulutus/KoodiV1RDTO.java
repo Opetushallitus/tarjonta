@@ -43,7 +43,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
     private String arvo;
     @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
-    private String kaannos;
+    private String nimi;
 
     @ApiModelProperty(value = "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio", required = false)
     private Map<String, KoodiV1RDTO> meta;
@@ -57,18 +57,18 @@ public class KoodiV1RDTO implements Serializable {
         this.arvo = arvo;
     }
 
-    public KoodiV1RDTO(String uri, Integer versio, String arvo, String kaannos) {
+    public KoodiV1RDTO(String uri, Integer versio, String arvo, String nimi) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;
-        this.kaannos = kaannos;
+        this.nimi = nimi;
     }
 
-    public void setKoodi(String uri, Integer versio, String arvo, String kaannos) {
+    public void setKoodi(String uri, Integer versio, String arvo, String nimi) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;
-        this.kaannos = kaannos;
+        this.nimi = nimi;
     }
 
     /**
@@ -114,17 +114,17 @@ public class KoodiV1RDTO implements Serializable {
     }
 
     /**
-     * @return the kaannos
+     * @return the nimi
      */
-    public String getKaannos() {
-        return kaannos;
+    public String getNimi() {
+        return nimi;
     }
 
     /**
-     * @param kaannos the kaannos to set
+     * @param nimi the kaannos to set
      */
-    public void setKaannos(String kaannos) {
-        this.kaannos = kaannos;
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 
     /**
