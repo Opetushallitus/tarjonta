@@ -32,7 +32,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private boolean kaytaHaunPaattymisenAikaa;
     private String liitteidenSahkoinenToimitusOsoite;
     private Date liitteidenToimitusPvm;
-    private String osoiteRivi1 = "";
+    private String osoiteRivi1 = "";                                                                          
     private String osoiteRivi2 = "";
     private String postinumero;
     private String postitoimipaikka = "";
@@ -50,7 +50,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private boolean kaksoisTutkinto;
+    private boolean kaksoisTutkinto = false;
     private Set<String> opetusKielet;
     
     private boolean customHakuaikaEnabled;
