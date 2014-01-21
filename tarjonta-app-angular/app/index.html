@@ -293,30 +293,27 @@
             </div>
         </div>
 
-        <div data-ng-controller="LoadingCtrl"
-             data-ng-show="loading"
-             id="ajax-loader"
-             class="pre-init max"
-             ng-class="{{ isModal() ? 'max' : 'min'}}">
-            <div class="frame">
-                <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                <span class="post-init">{{t("loading")}}</span>
-            </div>
-            <div class="fail">
-                <h1>Tarjonta on rikki</h1>
-                <hr/>
-                
-                <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
-                kehotus kokeilla hetken päästä uudelleen jne..</p>
-                
-                <p>Samma på svenska.</p>
-                
-                <p>Same in English.</p>
+        <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
+	             ng-class="{{isModal() ? 'max' : 'min'}}">
+           <div class="frame" ng-show="!isTimeout()">
+               <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+               <span class="post-init" ng-cloack>{{t("loading")}}</span>
+           </div>
+           <div class="fail">
+               <h1>Tarjonta on rikki - bruten - broken !!1</h1>
+               <hr/>
                
-                <hr/>
-                <a href onclick="window.refresh()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
-            
-            </div>
+               <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
+               kehotus kokeilla hetken päästä uudelleen jne.. Ks. KJOH-728</p>
+               
+               <p>Samma på svenska.</p>
+               
+               <p>Same in English.</p>
+              
+               <hr/>
+               <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
+           
+           </div>
         </div>
 
         <script> tarjontaInit(); </script>
