@@ -50,7 +50,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String viimeisinPaivittaja;
     private Date viimeisinPaivitysPvm;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private boolean kaksoisTutkinto;
+    private boolean kaksoisTutkinto = false;
     private Set<String> opetusKielet;
     
     private boolean customHakuaikaEnabled;
