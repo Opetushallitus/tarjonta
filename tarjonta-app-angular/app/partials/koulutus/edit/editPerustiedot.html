@@ -1,5 +1,4 @@
 <form name="perustiedotForm">
-
     <table class="tarjontaForm">
         <!-- koulutuskoodi -->
         <tr class="info">
@@ -83,7 +82,7 @@
         <tr class="required">
             <th tt="koulutus.edit.opintojen-laajuus"/> 
             <td>
-                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select>
+                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select> {{model.opintojenLaajuusyksikko.kaannos}}
             </td>
             <td>
                 <p class="error" ng-show="uiModel.showError && perustiedotForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>

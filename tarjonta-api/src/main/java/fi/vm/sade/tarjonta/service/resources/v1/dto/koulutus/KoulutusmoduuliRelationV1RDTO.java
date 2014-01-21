@@ -40,8 +40,10 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO tutkintonimike;
     @ApiModelProperty(value = "EQF-koodi", required = true)
     private KoodiV1RDTO eqf;
-    @ApiModelProperty(value = "Opintojen laajuuden numeraalinen arvo", required = true)
+    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuus;
+    @ApiModelProperty(value = "Opintojen laajuuden yksikko", required = true)
+    private KoodiV1RDTO opintojenLaajuusyksikko;
 
     /**
      * @return the koulutuskoodi
@@ -154,5 +156,20 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     public void setOpintojenLaajuus(KoodiV1RDTO opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
+
+    /**
+     * @return the opintojenLaajuusyksikko
+     */
+    public KoodiV1RDTO getOpintojenLaajuusyksikko() {
+        return opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @param opintojenLaajuusyksikko the opintojenLaajuusyksikko to set
+     */
+    public void setOpintojenLaajuusyksikko(KoodiV1RDTO opintojenLaajuusyksikko) {
+        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
+    }
+
 
 }

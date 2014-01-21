@@ -44,6 +44,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakoulu
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Map;
 
@@ -59,7 +60,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
 
     private static final Integer VUOSI = 2013;
     private static final String KAUSI_KOODI_URI = "kausi_k";
-    private static final String LAAJUUS_ARVO = "laajuus_arvo";
+    private static final String LAAJUUSARVO = "laajuusarvo";
+    private static final String LAAJUUSYKSIKKO = "laajuusyksikko";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
     private static final String LOCALE_FI = "FI";
@@ -122,12 +124,15 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
 
     @Before
     public void setup() {
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
+
         Mockito.stub(organisaatioService.findByOid(ORGANISAATIO_OID)).toReturn(
                 getOrganisaatio(ORGANISAATIO_OID));
         stubKoodi(koodiService, "kieli_fi", "FI");
         stubKoodi(koodiService, "koulutuskoodi_uri", "FI");
         stubKoodi(koodiService, "tutkinto_uri", "FI");
-        stubKoodi(koodiService, "laajuus_arvo_uri", "FI");
+        stubKoodi(koodiService, "laajuusarvo_uri", "FI");
+        stubKoodi(koodiService, "laajuusyksikko_uri", "FI");
         stubKoodi(koodiService, "koulutusaste_uri", "FI");
         stubKoodi(koodiService, "koulutusala_uri", "FI");
         stubKoodi(koodiService, "opintoala_uri", "FI");
@@ -250,7 +255,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
                 new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], PERSON[5], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUS_ARVO));
+        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = koulutusResource
                 .postKorkeakouluKoulutus(dto);

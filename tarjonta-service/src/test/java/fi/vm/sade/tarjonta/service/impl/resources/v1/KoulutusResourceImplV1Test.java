@@ -67,6 +67,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -95,7 +96,8 @@ public class KoulutusResourceImplV1Test {
 
     private static final Integer VUOSI = 2013;
     private static final String KAUSI_KOODI_URI = "kausi_k";
-    private static final String LAAJUUS_ARVO = "laajuus_arvo";
+    private static final String LAAJUUSYKSIKKO = "laajuusyksikko";
+    private static final String LAAJUUSARVO = "laajuusarvo";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
     private static final String LOCALE_FI = "FI";
@@ -139,9 +141,13 @@ public class KoulutusResourceImplV1Test {
     private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
     private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
     private PermissionChecker permissionChecker;
+    private KoodistoURI koodistoUri;
 
     @Before
     public void setUp() {
+        //used in regexp kieli uri validation
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
+
         //INIT ORGANISATION DTO
         organisaatioDTO = new OrganisaatioDTO();
         organisaatioDTO.setOid(ORGANISAATIO_OID);
@@ -157,6 +163,7 @@ public class KoulutusResourceImplV1Test {
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
+        koodistoUri = createMock(KoodistoURI.class);
 
         //INIT DATA CONVERTERS
         convertToDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
@@ -179,8 +186,13 @@ public class KoulutusResourceImplV1Test {
         //no need for replay or verify:
         Whitebox.setInternalState(convertToDTO, "komoKoulutusConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToDTO, "komotoKoulutusConverters", komotoKoulutusConverters);
+
         Whitebox.setInternalState(convertToKomoto, "komoKoulutusConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToKomoto, "komotoKoulutusConverters", komotoKoulutusConverters);
+      //  Whitebox.setInternalState(convertToKomoto, "koodistoUri", koodistoUri);
+
+        //Whitebox.setInternalState(komotoKoulutusConverters, "koodistoUri", koodistoUri);
+        //Whitebox.setInternalState(komoKoulutusConverters, "koodistoUri", koodistoUri);
     }
 
     @After
@@ -227,7 +239,8 @@ public class KoulutusResourceImplV1Test {
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUS_ARVO));
+        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         //EXPECT
         expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(3);
@@ -245,7 +258,8 @@ public class KoulutusResourceImplV1Test {
 
         expectMetaUri(KOULUTUSKOODI);
         expectMetaUri(TUTKINTO);
-        expectMetaUri(LAAJUUS_ARVO);
+        expectMetaUri(LAAJUUSARVO);
+        expectMetaUri(LAAJUUSYKSIKKO);
         expectMetaUri(KOULUTUSASTE);
         expectMetaUri(KOULUTUSALA);
         expectMetaUri(OPINTOALA);
@@ -258,13 +272,14 @@ public class KoulutusResourceImplV1Test {
         expectMeta2Uri(POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO);
         expectMeta2Uri(AMMATTINIMIKE);
-//        expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
-//        //2nd calls
+//       expectKoulutusohjelmaUris(KOULUTUSOHJELMA);
+////        //2nd calls
         expectKausi();
 
         expectMetaUri(KOULUTUSKOODI);
         expectMetaUri(TUTKINTO);
-        expectMetaUri(LAAJUUS_ARVO);
+        expectMetaUri(LAAJUUSARVO);
+        expectMetaUri(LAAJUUSYKSIKKO);
         expectMetaUri(KOULUTUSASTE);
         expectMetaUri(KOULUTUSALA);
         expectMetaUri(OPINTOALA);
@@ -322,7 +337,8 @@ public class KoulutusResourceImplV1Test {
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(EQF, result.getEqf());
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
-        assertEqualDtoKoodi(LAAJUUS_ARVO, result.getOpintojenLaajuus());
+        assertEqualDtoKoodi(LAAJUUSARVO, result.getOpintojenLaajuus());
+        assertEqualDtoKoodi(LAAJUUSYKSIKKO, result.getOpintojenLaajuusyksikko());
         assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
@@ -375,7 +391,7 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(createKoodiType(KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI + "#1", new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(KAUSI_KOODI_URI, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(URI_KIELI_FI)).andReturn(createKoodiType(URI_KIELI_FI + "_" + KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
@@ -383,14 +399,12 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(URI_KIELI_FI)).andReturn(createKoodiType(URI_KIELI_FI + "_" + KAUSI_KOODI_URI)).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi_kausi").times(1);
     }
 
     private void expectMetaUri(final String field) {
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field)).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri#1", new Locale(LOCALE_FI))).andReturn(field).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi").times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
     }
 
@@ -399,9 +413,7 @@ public class KoulutusResourceImplV1Test {
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri")).andReturn(createKoodiType(field)).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri(LOCALE_FI)).andReturn(URI_KIELI_FI).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(URI_KIELI_FI, new Locale(LOCALE_FI))).andReturn("suomi").times(1);
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(field + "_uri", new Locale(LOCALE_FI))).andReturn(field).times(1);
-
     }
 
     private void expectKoulutusohjelmaUris(final String field) {

@@ -23,7 +23,7 @@ app.controller('BaseEditController',
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                $scope.lisatiedot = [];
 
                 $scope.init = function() {
                     var uiModel = {};
@@ -40,7 +40,15 @@ app.controller('BaseEditController',
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         //DATA WAS LOADED BY KOMOTO OID
+                        $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
+                        
+                     
+                        if(angular.isUndefined(model.opintojenLaajuusyksikko.uri)){
+                            //remove when not needed...
+                            $scope.searchOpintojenLaajuusyksikko();
+                        }
+                        
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
                                 uiModel.contactPerson = converter.converPersonObjectForUi(value);
@@ -108,6 +116,8 @@ app.controller('BaseEditController',
                     $scope.model = model;
                 };
                 $scope.loadRelationKoodistoData = function() {
+                    $scope.searchOpintojenLaajuusyksikko();
+
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
                         var koodistoData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
@@ -155,6 +165,7 @@ app.controller('BaseEditController',
                                 $scope.model = model;
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
+                                $scope.lisatiedot = converter.KUVAUS_ORDER;
                             } else {
                                 //save failed
                                 $scope.uiModel.showError = true;
@@ -284,10 +295,20 @@ app.controller('BaseEditController',
 
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
                         kuvaus[textEnum] = {tekstis: {}};
-                        kuvaus[textEnum].tekstis[kieliUri] = '';
+                        if (!angular.isUndefined(kieliUri)) {
+                            kuvaus[textEnum].tekstis[kieliUri] = '';
+                        }
                     }
 
                     return kuvaus[textEnum].tekstis;
+                };
+                
+                $scope.searchOpintojenLaajuusyksikko = function(){
+                  var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
+
+                    promise.then(function(koodi) {
+                        $scope.model['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
+                    });  
                 };
 
                 // TODO omaksi direktiivikseen tjsp..

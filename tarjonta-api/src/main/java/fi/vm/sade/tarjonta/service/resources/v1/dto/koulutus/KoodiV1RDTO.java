@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +31,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
     private String kieliUri;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
-    private String kieliVersio;
+    private Integer kieliVersio;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
     private String kieliArvo;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
@@ -145,14 +144,14 @@ public class KoodiV1RDTO implements Serializable {
     /**
      * @return the kieliVersio
      */
-    public String getKieliVersio() {
+    public Integer getKieliVersio() {
         return kieliVersio;
     }
 
     /**
      * @param kieliVersio the kieliVersio to set
      */
-    public void setKieliVersio(String kieliVersio) {
+    public void setKieliVersio(Integer kieliVersio) {
         this.kieliVersio = kieliVersio;
     }
 
