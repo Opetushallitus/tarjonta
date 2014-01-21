@@ -1,0 +1,168 @@
+<!-- 2. aste + other parameters -->
+<div>
+    <h3 ttt='haku.edit.aikataulu.valinnatJaSijoittelu'>Valinnat ja sijoittelu</h3>
+
+    <table class="tarjontaForm">
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_KKM_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_KKM_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_HVVPTP" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_KTT_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_KTT_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_OLVVPKE_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_OLVVPKE_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_VLS'>Valintalaskennan suorittaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S">
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_VLS_E" ng-model="model.parameter.PH_VLS_E">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_VLS_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_VLS_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="required">
+            <th ttt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_SS_S" ng-model="model.parameter.PH_SS_S" required>
+                --
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_SS_E" ng-model="model.parameter.PH_SS_E" required>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_SS_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_SS_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_SSAVTM'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
+            <td>
+                <input type="checkbox" ng-model="model.parameter.PH_SSAVTM" name="PH_SSAVTM"> Sijoittelu aina valintatietojen muuttuessa
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_SSAVTM" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
+            <td>
+                <input type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span ttt="haku.tuntia">tuntia</span>
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_SST.help'>
+                    Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_SST" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+<!--
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_SSKA'>Sijoittelun suorittaminen päivittäin kello</th>
+            <td>
+                <span ttt="haku.klo">klo</span>
+                <input type="text" ng-model="model.parameter.PH_SSKA" name="PH_SSKA" placeholder="23:59" ng-pattern="/[012][0-9]:[0-5][0-9]/">
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_SSKA.help'>
+                    Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen.
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_SSKA" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+-->
+
+    </table>
+
+    <h3 ttt='haku.edit.aikataulu.tuloksetJaPaikanVastaanotto'>Tulokset ja paikan vastaanotto</h3>
+
+    <table class="tarjontaForm">
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_JKLIP" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKP" ng-model="model.parameter.PH_HKP">
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_HKP" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- /2. aste + other parameters -->

@@ -434,7 +434,7 @@ public class KoulutusResourceImplV1Test {
             assertEquals(field + "_uri", dto.getUri());
         }
         assertEquals(new Integer(1), dto.getVersio());
-        assertEquals(field, dto.getKaannos());
+        assertEquals(field, dto.getNimi());
         assertEquals(field, dto.getArvo());
     }
 

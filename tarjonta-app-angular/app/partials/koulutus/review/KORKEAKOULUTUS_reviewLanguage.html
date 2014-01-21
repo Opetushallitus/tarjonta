@@ -38,8 +38,8 @@
     <tr>
         <th tt="koulutus.review.perustiedot.koulutus"/>
         <td colspan="2">
-            {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].kaannos}}
-            <i>{{model.koulutus.koulutuskoodi.koodi.kaannos}}</i>
+            {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
+            <i>{{model.koulutus.koulutuskoodi.koodi.nimi}}</i>
         </td>
     </tr>
     
@@ -56,7 +56,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.koulutusaste"/>
         <td colspan="2">
-            {{model.koulutus.koulutusaste.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.koulutusaste.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
  
@@ -64,7 +64,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.koulutusala"/>
         <td colspan="2">
-            {{model.koulutus.koulutusala.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.koulutusala.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
 
@@ -72,7 +72,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opintoala"/>
         <td colspan="2">
-            {{model.koulutus.opintoala.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.opintoala.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
     
@@ -80,7 +80,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.teematJaAiheet"/>
         <td colspan="2">
-            <span data-ng-repeat='teema in model.koulutus.teemas.meta'>{{ teema.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='teema in model.koulutus.teemas.meta'>{{ teema.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -88,7 +88,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.tutkinto"/>
         <td colspan="2">
-            {{model.koulutus.tutkinto.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.tutkinto.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
     
@@ -96,7 +96,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.tutkintonimike"/>
         <td colspan="2">
-            {{model.koulutus.tutkintonimike.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.tutkintonimike.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
     
@@ -104,7 +104,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.vaativuustaso"/>
         <td colspan="2">
-            {{model.koulutus.eqf.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.eqf.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
      
@@ -112,7 +112,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opintojenLaajuus"/>
         <td colspan="2">
-            {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].kaannos}} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].kaannos}}
+            {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].nimi}} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
     
@@ -129,7 +129,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.pohjakoulutusvaatimus"/>
         <td colspan="2">
-            <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
      -->
@@ -138,7 +138,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.alkamispvm"/>
         <td colspan="2"> 
-            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].kaannos}} {{model.koulutus.koulutuksenAlkamisvuosi}} 
+            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].nimi}} {{model.koulutus.koulutuksenAlkamisvuosi}} 
             <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | ldate }}</p>
         </td>
     </tr>
@@ -147,7 +147,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.suunniteltuKesto"/>
         <td colspan="2">
-            {{ model.koulutus.suunniteltuKestoArvo}} {{ model.koulutus.suunniteltuKestoTyyppi.meta[lang.koodi_uri].kaannos}}
+            {{ model.koulutus.suunniteltuKestoArvo}} {{ model.koulutus.suunniteltuKestoTyyppi.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
     
@@ -155,7 +155,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opetuskielet"/>
         <td colspan="2">
-            <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -163,7 +163,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opetusajat"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -171,7 +171,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opetusmuodot"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     
@@ -179,7 +179,7 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opetuspaikat"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
     

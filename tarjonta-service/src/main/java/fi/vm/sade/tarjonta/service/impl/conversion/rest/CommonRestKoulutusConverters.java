@@ -97,7 +97,20 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
                 tekstiKaannos.setArvo(text);
                 mkMerge.addTekstiKaannos(tekstiKaannos);
             }
-            tekstit.put(e.getKey(), mkMerge);
+
+            boolean clear = true;
+            for (TekstiKaannos kaannos : mkMerge.getTekstis()) {
+                if (kaannos.getArvo() != null && !kaannos.getArvo().isEmpty()) {
+                    clear = false;
+                    break;
+                }
+            }
+
+            if (clear) {
+                tekstit.remove(e.getKey());
+            } else {
+                tekstit.put(e.getKey(), mkMerge);
+            }
         }
     }
 
