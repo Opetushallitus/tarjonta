@@ -105,8 +105,7 @@ app.controller('HakuEditController',
                             "kausiVuosi": 2013,
                             "alkamiskausiVuosi": 2014,
                             hakuaikas: [
-                                {nimi: "Hakuajan nimi 1", alkaa: new Date(), loppuu: new Date()},
-                                {nimi: "Hakuajan nimi 2", alkaa: new Date(), loppuu: new Date()}
+                                {nimi: null, alkaa: new Date(), loppuu: new Date()}
                             ],
                             hakulomakeKaytaJarjestemlmanOmaa: true
                         },
@@ -127,12 +126,13 @@ app.controller('HakuEditController',
                             PH_OLVVPKE_E : new Date(),
                             PH_VLS_S : new Date(),
                             PH_VLS_E : new Date(),
-                            PH_SS_ : new Date(),
+                            PH_SS_S : new Date(),
+                            PH_SS_E : new Date(),
                             PH_SSAVTM : true,
                             PH_SST : 48,
                             PH_SSKA : "23:59",
-                            PH_VTSSV : new Date(),
-                            PH_VSSAV : new Date(),
+                            PH_VTSSV : new Date(), // kk
+                            PH_VSSAV : new Date(), // kk
 
                             // Tulokset ja paikan vastaanotto
                             PH_JKLIP : new Date(),
@@ -144,8 +144,8 @@ app.controller('HakuEditController',
                             PH_HPVOA : 7,
 
                             // Lisähaku
-                            PH_HTA : new Date(),
-                            PH_HKP : new Date(),
+                            PH_HKTA : new Date(),
+                            // PH_HKP : new Date(),
 
                             // Hakukauden parametrit
                             PHK_PLPS_S : new Date(),
