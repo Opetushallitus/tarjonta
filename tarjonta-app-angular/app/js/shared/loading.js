@@ -1,9 +1,10 @@
-angular.module('loading', [])
+angular.module('loading', ['localisation'])
 
 .factory('loadingService', function() {
   var service = {
     requestCount: 0,
     operationCount: 0,
+    errors: 0,
     isLoading: function() {
       return service.requestCount > 0 || service.operationCount > 0;
     },
@@ -15,6 +16,14 @@ angular.module('loading', [])
     },
     afterOperation: function() {
     	service.operationCount--;
+    },
+    onFailure: function(req) {
+    	console.log("FAIL", req);
+    	service.errors++;
+    },
+    commit: function() {
+    	service.requestCount -= service.errors;
+    	service.errors = 0;
     }
   };
   return service;
@@ -37,7 +46,8 @@ angular.module('loading', [])
         return response;
     };
     var decrementRequestCountError = function(response) {
-        loadingService.requestCount--;
+        //loadingService.requestCount--;
+        loadingService.onFailure(response);
         return $q.reject(response);
     };
     return promise.then(decrementRequestCountSuccess, decrementRequestCountError);
@@ -52,7 +62,27 @@ angular.module('loading', [])
     $http.defaults.transformRequest.push(onStartInterceptor);
 })
 
-.controller('LoadingCtrl', function($scope, $rootElement, loadingService) {
+.controller('LoadingCtrl', function($scope, $rootElement, $modal, loadingService) {
+	
+	//var ctrl = $scope;
+	
+	function showErrorDialog() {
+		$modal.open({
+	        controller: function($scope, $modalInstance) {
+	        	$scope.commit = function() {
+	        		loadingService.commit();
+	                $modalInstance.dismiss();
+	        	};
+	            $scope.restart = function() {
+	            	location.hash = "";
+	            	location.reload();
+	            };
+	        },
+	        templateUrl: "js/shared/loading-error-dialog.html"
+	        //scope: ns
+	    });
+	}
+	
     $scope.$watch(function() {
         return loadingService.isLoading();
     }, function(value) {
@@ -63,9 +93,23 @@ angular.module('loading', [])
           $rootElement.removeClass('spinner');
         }
     });
-    
+
+    $scope.$watch(function() {
+        return loadingService.errors;
+    }, function(value, oldv) {
+        if(value>0 && oldv==0) {
+        	showErrorDialog();
+        	console.log("SHOW ERROR DIALOG!!");
+        	//loadingService.commit();
+        }
+    });
+
     $scope.isModal = function() {
     	return loadingService.isModal();
     }
 
+    $scope.isError = function() {
+    	return loadingService.errors>0;
+    }
+    
 });

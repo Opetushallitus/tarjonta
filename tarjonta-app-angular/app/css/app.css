@@ -57,6 +57,20 @@ div#ajax-loader.pre-init .post-init {
     display:none;
 }
 
+div#ajax-loader .dialog {
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin-left:-200px;
+    margin-top:-150px;
+    width:400px;
+    height:300px;
+    background:#ffffff;
+    border: 1px solid #cccccc;
+    border-radius:4px;    
+    z-index:10001;
+}
+
 div#ajax-loader div.fail, div#ajax-loader.fail div.frame {
 	display:none;
 }
@@ -90,7 +104,7 @@ div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
-	z-index:10000;
+	z-index:999;
 }
 
 div#ajax-loader.max {
