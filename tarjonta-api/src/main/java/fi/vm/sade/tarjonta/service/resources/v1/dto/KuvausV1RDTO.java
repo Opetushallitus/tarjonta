@@ -2,12 +2,13 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /*
 * @author: Tuomas Katva 16/12/13
 */
-public class KuvausV1RDTO {
+public class KuvausV1RDTO extends BaseV1RDTO {
 
     @ApiModelProperty(value = "Unique id of the description")
     private String kuvauksenTunniste;
@@ -85,4 +86,5 @@ public class KuvausV1RDTO {
     public void setVuosi(Integer vuosi) {
         this.vuosi = vuosi;
     }
+
 }

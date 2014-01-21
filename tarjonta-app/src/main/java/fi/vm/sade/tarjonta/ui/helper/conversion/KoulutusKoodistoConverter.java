@@ -285,7 +285,7 @@ public class KoulutusKoodistoConverter {
     public KoodiModel listaaKoodi(final String uri, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         if (uri == null) {
             LOG.warn("Koodisto URI was null - an unknown URI data cannot be loaded.");
-            return null;
+            return new KoodiModel();
         }
 
         final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(uri);
@@ -332,12 +332,12 @@ public class KoulutusKoodistoConverter {
         UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
 
         tutkinto.setTavoitteet(UiModelBuilder.build(tyyppi.getTutkinnonTavoitteet(), locale));
-        
+
         tutkinto.setJatkoopintomahdollisuudet(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET), locale));
         tutkinto.setKoulutuksenRakenne(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE), locale));
 
         //koodisto koodi data models 
-        tutkinto.setOpintojenLaajuus(tyyppi.getLaajuusarvoUri());
+        tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), kc, locale));
         tutkinto.setOpintojenLaajuusyksikko(listaaKoodi(tyyppi.getLaajuusyksikkoUri(), kc, locale));
         tutkinto.setOpintoala(listaaKoodi(tyyppi.getOpintoalaUri(), kc, locale));
         tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), kc, locale));
@@ -367,6 +367,8 @@ public class KoulutusKoodistoConverter {
                 koulutuskoodi.setTutkintonimike(listaaKoodi(type.getKoodiUri(), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)) {
                 koulutuskoodi.setOpintojenLaajuusyksikko(listaaKoodi(type.getKoodiUri(), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI)) {
+                koulutuskoodi.setOpintojenLaajuus(listaaKoodi(type.getKoodiUri(), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSASTE_URI)) {
                 koulutuskoodi.setKoulutusaste(listaaKoodi(type.getKoodiUri(), kc, locale));
             } else {

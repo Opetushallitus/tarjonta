@@ -4,12 +4,12 @@
 
 var app = angular.module('app.edit.ctrl');
 
-app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', function($scope, $compile, YhteyshenkiloService, converter, debounce) {
+app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams) {
 
         $scope.editYhModel = {data: []};
         
         $scope.getOrgOid=function(){
-        	var orgOid = $scope.koulutusModel!==undefined ? $scope.koulutusModel.result.organisaatio.oid:null;
+        	var orgOid = !angular.isUndefined($scope.koulutusModel) && !angular.isUndefined($scope.koulutusModel.result) ? $scope.koulutusModel.result.organisaatio.oid:$routeParams.org;
         	console.log("orgOid", orgOid);
         	return orgOid;
         };

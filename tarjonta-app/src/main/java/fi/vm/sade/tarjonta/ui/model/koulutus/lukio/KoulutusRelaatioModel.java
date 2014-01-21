@@ -56,13 +56,15 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     protected KoodiModel tutkinto;
     protected KoodiModel tutkintonimike;
     protected KoodiModel opintojenLaajuusyksikko;
+    protected KoodiModel opintojenLaajuus; //Example : '120', '75' etc.
     protected KoodiModel opintoala;
     protected KoodiModel pohjakoulutusvaatimus;
     protected KoodiModel koulutuslaji;
+    
     /*
      * From KOMO, but not koodi URIs (static labels)
      */
-    protected String opintojenLaajuus; //Example : '120', '75' etc.
+   
     /*
      * From KOMO, text data (static labels):
      * TODO:change to KielikaannosViewModel
@@ -197,14 +199,14 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     /**
      * @return the opintojenLaajuus
      */
-    public String getOpintojenLaajuus() {
+    public KoodiModel getOpintojenLaajuus() {
         return opintojenLaajuus;
     }
 
     /**
      * @param opintojenLaajuus the opintojenLaajuus to set
      */
-    public void setOpintojenLaajuus(String opintojenLaajuus) {
+    public void setOpintojenLaajuus(KoodiModel opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
 

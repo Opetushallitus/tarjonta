@@ -20,7 +20,7 @@
 	        <input type="text"
 	                class="typeahead"
 	                ng-model="combo.selection"
-	                typeahead="value for value in titles | filter:$viewValue | limitTo:10"
+	                typeahead="value for value in titles | startsWith:$viewValue | limitTo:10"
 	                typeahead-on-select="onComboSelect()"
 	                typeahead-editable="false"
 	                typeahead-wait-ms="50"/>

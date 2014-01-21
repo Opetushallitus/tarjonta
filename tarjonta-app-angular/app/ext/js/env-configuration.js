@@ -49,7 +49,7 @@ window.CONFIG = {
         "koodisto-uris.sorakuvausryhma": "sorakuvaus",
         "koodisto-uris.suunniteltuKesto": "suunniteltukesto",
         "koodisto-uris.tarjontakoulutustyyppi": "koulutustyyppi",
-        "koodisto-uris.teemat": "teemat",   
+        "koodisto-uris.teemat": "teemat",
         "koodisto-uris.tutkinto": "tutkinto",
         "koodisto-uris.koulutus": "koulutus",
         "koodisto-uris.tutkintonimike": "tutkintonimikkeet",
@@ -89,10 +89,10 @@ window.CONFIG = {
         //
 
         //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-        "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
@@ -108,7 +108,7 @@ window.CONFIG = {
 
          //"henkilöhaku"
         "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
-         
+
         "place": "holder"
 
     }

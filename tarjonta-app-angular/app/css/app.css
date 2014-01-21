@@ -53,6 +53,39 @@ label {
 
 /* latauspylpyrä (kokosivu) */
 
+div#ajax-loader.pre-init .post-init {
+    display:none;
+}
+
+div#ajax-loader div.fail, div#ajax-loader.fail div.frame {
+	display:none;
+}
+
+div#ajax-loader.fail div.fail {
+    display:block;
+    position:absolute;
+    left:50%;
+    margin-left:-300px;
+    width:600px;
+}
+
+div#ajax-loader.fail h1 {
+    margin:50px 0 0 0;    
+}
+
+div#ajax-loader.fail p {
+    margin: 30px 0 0 0;
+}
+
+div#ajax-loader.fail a {
+	margin-top:20px;
+	float:right;
+}
+
+div#ajax-loader.fail hr {
+	margin: 30px 0 0 0;	
+} 
+
 div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
@@ -68,14 +101,14 @@ div#ajax-loader.max {
 	bottom:0;
 }
 
-div#ajax-loader.max div {
+div#ajax-loader.max div.frame {
 	position: absolute;
 	margin-left:50%;
 	width:50%;
 	height:100%;
 }
 
-div#ajax-loader.max img {
+div#ajax-loader.max div.frame img {
 	position:absolute;
 	left:-16px;
 	bottom:55%;
@@ -102,11 +135,11 @@ div#ajax-loader.min {
 	padding-bottom:8px;
 }
 
-div#ajax-loader.min div {
+div#ajax-loader.min div.frame {
 	width:100%;
 }
 
-div#ajax-loader.min img {
+div#ajax-loader.min div.frame img {
 	display:inline;
 	position:relative;
 }
@@ -546,3 +579,22 @@ input[type=checkbox], input[type=radio] {
 	box-shadow:none;
 }
 
+/* koulutuksen alkamispvm */
+
+div#koulutuksenAlkamisPvm ul {
+	list-style:none;	
+    margin:15px 0 0 0;
+}
+
+div#koulutuksenAlkamisPvm ul li {
+	display: inline-block;
+	margin-right:15px;
+}
+
+div#koulutuksenAlkamisPvm div.indent {
+    margin:10px 0 20px 30px;
+}
+
+div#koulutuksenAlkamisPvm span.disabled {
+    color:#a0a0a0;
+}

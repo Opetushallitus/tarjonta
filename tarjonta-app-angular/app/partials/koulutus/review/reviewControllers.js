@@ -5,6 +5,11 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
     function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
         $log.info("BaseReviewController()");
 
+       if(angular.isUndefined( $scope.koulutusModel.result)){
+           $location.path("/error");
+           return;
+       }
+
         $scope.formControls = {};
         $scope.model = {
             koodistoLocale: LocalisationService.getLocale(),

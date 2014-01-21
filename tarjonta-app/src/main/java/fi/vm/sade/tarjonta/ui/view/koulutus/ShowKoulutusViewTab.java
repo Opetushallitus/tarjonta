@@ -127,9 +127,9 @@ public class ShowKoulutusViewTab extends CustomComponent {
         insertLayoutSplit(layout);
         insertKoulutuksenHakukohteet(layout);
     }
-    
+
     private void checkHakustarted() {
-        
+
     }
 
     private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean buttonVisible, boolean showTime) {
@@ -141,7 +141,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         final Label titleLabel = UiUtil.label(grid, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
-
 
         final Date modifiedDate = presenter.getModel().getKoulutusPerustiedotModel().getViimeisinPaivitysPvm();
 
@@ -176,7 +175,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
-
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             if (lastUpdatedLabel != null) {
@@ -197,7 +195,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
                     }
                 });
             }
-
 
             //headerLayout.setExpandRatio(btn, 1f);
             headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
@@ -248,15 +245,15 @@ public class ShowKoulutusViewTab extends CustomComponent {
                 i18n.getMessage("kuvailevatTiedot"),
                 i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+                    private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(ClickEvent event) {
-                presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
-                presenter.showKoulutustEditView(getEditViewOid(),
-                        KoulutusActiveTab.LISATIEDOT);
-            }
-        }, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted), false));
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
+                        presenter.showKoulutustEditView(getEditViewOid(),
+                                KoulutusActiveTab.LISATIEDOT);
+                    }
+                }, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted), false));
 
         final KoulutusLisatietoModel lisatietoForLang = lisatiedotModel
                 .getLisatiedot().get(language);
@@ -281,7 +278,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
      */
     private String getText(final String tabLanguage, final MonikielinenTekstiModel text) {
         if (tabLanguage != null && text != null) {
-            
+
             //1st search text by tab language:
             //If no result use the default language (text is in user language or fallback language).
             final String inTabLanguage = text.getTextByLangCode(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(tabLanguage));
@@ -301,13 +298,13 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
             }
             if (lastUpdater != null) {
-                lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " +  lastUpdater +   " )");
+                lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + lastUpdater + " )");
             } else {
                 lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
             }
 
         } else {
-        lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+            lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
         }
         return lastUpdLbl;
     }
@@ -321,7 +318,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         Label lastUpdDateLbl = null;
         if (model.getViimeisinPaivitysPvm() != null) {
-            lastUpdDateLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm(),model.getViimeisinPaivittajaOid());
+            lastUpdDateLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm(), model.getViimeisinPaivittajaOid());
         }
 
         layout.addHeader(buildHeaderLayout(i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
@@ -339,18 +336,16 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel tutkintonimike = model.getKoulutusohjelmaModel().getTutkintonimike();
         final KoodiModel opintoala = koodiModel.getOpintoala();
         String opintojenLaajuusTot = presenter.getModel().getKoulutusPerustiedotModel().getOpintojenLaajuusTot();
-        final String opintojenLaajuusArvo = (opintojenLaajuusTot != null && !opintojenLaajuusTot.isEmpty()) ? opintojenLaajuusTot : koodiModel.getOpintojenLaajuus();
+        final String opintojenLaajuusArvo = (opintojenLaajuusTot != null && !opintojenLaajuusTot.isEmpty()) ? opintojenLaajuusTot : koodiModel.getOpintojenLaajuus().getKoodi();
         String opintojenLaajYksTot = presenter.getModel().getKoulutusPerustiedotModel().getOpintojenLaajuusyksikkoTot();        
-        final String laajuusyksikkoStr = (opintojenLaajYksTot != null && !opintojenLaajYksTot.isEmpty()) ?  uiHelper.getKoodiLyhytNimi(opintojenLaajYksTot, locale) : null;
-        final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
-        final KoodiModel koulutusaste =  koodiModel.getKoulutusaste();
-        
+        final String laajuusyksikkoStr = (opintojenLaajYksTot != null && !opintojenLaajYksTot.isEmpty()) ?  uiHelper.getKoodiLyhytNimi(opintojenLaajYksTot, locale) : koodiModel.getOpintojenLaajuusyksikko().getNimi();
+        final KoodiModel koulutusaste = koodiModel.getKoulutusaste();
 
         //TODO get org name for current language?
         layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
         layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuskoodiModel().getKoodistoUri(), locale)));
 
-        if(presenter.getModel().getKoulutusPerustiedotModel().getNimi()!=null) {
+        if (presenter.getModel().getKoulutusPerustiedotModel().getNimi() != null) {
             // show nimi if available
             layout.add(getTextRow("koulutusohjelma", presenter.getModel().getKoulutusPerustiedotModel().getNimi()));
         } else {
@@ -369,17 +364,10 @@ public class ShowKoulutusViewTab extends CustomComponent {
         }
         layout.addSpace();
 
-        String str = "";
-        if (laajuusyksikkoStr != null && !laajuusyksikkoStr.isEmpty()) {
-            str = laajuusyksikkoStr;
+        if (opintojenLaajuusArvo != null && laajuusyksikkoStr != null) {
+            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " +laajuusyksikkoStr));
         } else {
-            str = (opintojenLaajuusyksikko != null) ? uiHelper.getKoodiLyhytNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale) : "";
-        }
-
-        if (opintojenLaajuusArvo != null) {
-            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + " " + str));
-        } else {
-            layout.add(getTextRow("opintojenLaajuus", str));
+            layout.add(getTextRow("opintojenLaajuus", laajuusyksikkoStr));
         }
 
         layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuslaji(), locale)));
