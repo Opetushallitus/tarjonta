@@ -460,7 +460,7 @@ public final class EntityUtils {
         /*
          * Optional data
          */
-        tyyppi.setLaajuusarvoUri(parentKomo.getLaajuusArvo());
+        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo() != null && !komo.getLaajuusArvo().isEmpty() ? komo.getLaajuusArvo() : parentKomo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());

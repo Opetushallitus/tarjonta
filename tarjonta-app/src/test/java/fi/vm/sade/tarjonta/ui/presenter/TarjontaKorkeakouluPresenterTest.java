@@ -128,6 +128,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         helpper.setOpintoalaUri(createKoodistoUri(OPINTOALA));
         helpper.setTutkintonimikeUri(createKoodistoUri(TUTKINTONIMIKE));
         helpper.setOpintojenLaajuusyksikkoUri(createKoodistoUri(LAAJUUS_YKSIKKO));
+        helpper.setOpintojenLaajuusarvoUri(createKoodistoUri(LAAJUUS_ARVO));
 
         orgs = Lists.<OrganisaatioPerustieto>newArrayList();
 
@@ -208,7 +209,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
         perustiedot.setKomotoOid(KOMOTO_OID);
         perustiedot.setKoulutuksenAlkamisPvm(DATE);
-        perustiedot.setOpintojenLaajuus(LAAJUUS_ARVO);
+        perustiedot.setOpintojenLaajuus(createKoodiModel(LAAJUUS_ARVO));
         perustiedot.setOpintojenLaajuusyksikko(createKoodiModel(LAAJUUS_YKSIKKO));
         perustiedot.setSuunniteltuKesto("kesto");
         perustiedot.setSuunniteltuKestoTyyppi("kesto_tyyppi");
@@ -255,7 +256,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         /*
          * Kuvailevat tiedot tab data
          */
-
         kuvailevatTiedot = instance.getKuvailevatTiedotModel();
 
         Map<String, KorkeakouluLisatietoModel> map = new HashMap<String, KorkeakouluLisatietoModel>();
@@ -494,12 +494,12 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
 
-
         final KoodiType koulutuskoodi = createKoodiType(KOULUTUSKOODI, helpper.KOODISTO_TUTKINTO_URI);
         final KoodiType koulutusala = createKoodiType(KOULUTUSALA, helpper.KOODISTO_KOULUTUSALA_URI);
         final KoodiType opintoala = createKoodiType(OPINTOALA, helpper.KOODISTO_OPINTOALA_URI);
         final KoodiType tutkintonimike = createKoodiType(TUTKINTONIMIKE, helpper.KOODISTO_TUTKINTONIMIKE_URI);
         final KoodiType laajuusyksikko = createKoodiType(LAAJUUS_YKSIKKO, helpper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI);
+        final KoodiType laajuusarvo = createKoodiType(LAAJUUS_ARVO, helpper.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI);
         final KoodiType koulutusaste = createKoodiType(KOULUTUSASTE, helpper.KOODISTO_KOULUTUSASTE_URI);
         List<KoodiType> commonKomoData = Lists.<KoodiType>newArrayList();
 
@@ -507,14 +507,15 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         commonKomoData.add(opintoala);
         commonKomoData.add(tutkintonimike);
         commonKomoData.add(laajuusyksikko);
+        commonKomoData.add(laajuusarvo);
         commonKomoData.add(koulutusaste);
-
 
         expect(tarjontaUiHelper.getKoodis(eq(koulutuskoodi.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(koulutuskoodi));
         expect(tarjontaUiHelper.getKoodis(eq(koulutusaste.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(koulutusaste));
         expect(tarjontaUiHelper.getKoodis(eq(opintoala.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(opintoala));
         expect(tarjontaUiHelper.getKoodis(eq(tutkintonimike.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(tutkintonimike));
         expect(tarjontaUiHelper.getKoodis(eq(laajuusyksikko.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(laajuusyksikko));
+        expect(tarjontaUiHelper.getKoodis(eq(laajuusarvo.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(laajuusarvo));
         expect(tarjontaUiHelper.getKoodis(eq(koulutusala.getKoodiUri() + "#1"))).andReturn(createKoodiTypeList(koulutusala));
 
         /*
@@ -529,7 +530,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         /*
          * Presenter method call
          */
-
         instance.showEditKoulutusView(KOMOTO_OID, null);
 
         /*
@@ -552,7 +552,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         assertEquals(createUri(KOULUTUSKOODI), perustiedotModel.getKoulutuskoodiModel().getKoodistoUriVersio());
         assertEquals(createUri(OPINTOALA), perustiedotModel.getKoulutuskoodiModel().getOpintoala().getKoodistoUriVersio());
         assertEquals(createUri(LAAJUUS_YKSIKKO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuusyksikko().getKoodistoUriVersio());
-        assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getOpintojenLaajuus());
+        assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuus().getKoodistoUriVersio());
 
         assertEquals(KOMO_OID, perustiedotModel.getKoulutusmoduuliOid());
 
@@ -636,7 +636,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
     }
 
     private void assertOther(KoulutusTyyppi koulutus) {
-    	
+
         assertNotNull("getKansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA));
         assertEquals("kansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getKieliKoodi());
@@ -680,7 +680,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          * KOMO data
          */
         assertNotNull(koulutus.getKoulutusmoduuli());
-        assertEquals(LAAJUUS_ARVO, koulutus.getKoulutusmoduuli().getLaajuusarvoUri());
         assertEquals(KOMO_OID, koulutus.getKoulutusmoduuli().getOid());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusmoduuli().getKoulutuskoodiUri());
 

@@ -53,11 +53,58 @@ label {
 
 /* latauspylpyrä (kokosivu) */
 
+div#ajax-loader.pre-init .post-init {
+    display:none;
+}
+
+div#ajax-loader .dialog {
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin-left:-200px;
+    margin-top:-150px;
+    width:400px;
+    height:300px;
+    background:#ffffff;
+    border: 1px solid #cccccc;
+    border-radius:4px;    
+    z-index:10001;
+}
+
+div#ajax-loader div.fail, div#ajax-loader.fail div.frame {
+	display:none;
+}
+
+div#ajax-loader.fail div.fail {
+    display:block;
+    position:absolute;
+    left:50%;
+    margin-left:-300px;
+    width:600px;
+}
+
+div#ajax-loader.fail h1 {
+    margin:50px 0 0 0;    
+}
+
+div#ajax-loader.fail p {
+    margin: 30px 0 0 0;
+}
+
+div#ajax-loader.fail a {
+	margin-top:20px;
+	float:right;
+}
+
+div#ajax-loader.fail hr {
+	margin: 30px 0 0 0;	
+} 
+
 div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
-	z-index:10000;
+	z-index:999;
 }
 
 div#ajax-loader.max {
@@ -68,14 +115,14 @@ div#ajax-loader.max {
 	bottom:0;
 }
 
-div#ajax-loader.max div {
+div#ajax-loader.max div.frame {
 	position: absolute;
 	margin-left:50%;
 	width:50%;
 	height:100%;
 }
 
-div#ajax-loader.max img {
+div#ajax-loader.max div.frame img {
 	position:absolute;
 	left:-16px;
 	bottom:55%;
@@ -102,11 +149,11 @@ div#ajax-loader.min {
 	padding-bottom:8px;
 }
 
-div#ajax-loader.min div {
+div#ajax-loader.min div.frame {
 	width:100%;
 }
 
-div#ajax-loader.min img {
+div#ajax-loader.min div.frame img {
 	display:inline;
 	position:relative;
 }

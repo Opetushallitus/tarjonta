@@ -97,48 +97,48 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
 
     factory.STRUCTURE = {
         MLANG: {
-            koulutusohjelma: {'validate': true, 'required': true, 'nullable': false, 'defaultLangs': true, default: {tekstis: []}}
+            koulutusohjelma: {'defaultLangs': true, default: {tekstis: []}}
         },
         RELATION: {
-            koulutuskoodi: {'validate': true, 'required': true, nullable: false},
-            koulutusaste: {'validate': true, 'required': true, nullable: false},
-            koulutusala: {'validate': true, 'required': true, nullable: false},
-            opintoala: {'validate': true, 'required': true, nullable: false},
-            eqf: {'validate': true, 'required': true, nullable: false},
-            tutkinto: {'validate': true, 'required': true, nullable: false},
-            tutkintonimike: {'validate': true, 'required': true, nullable: false}
+            koulutuskoodi: {},
+            koulutusaste: {},
+            koulutusala: {},
+            opintoala: {},
+            eqf: {},
+            tutkinto: {},
+            tutkintonimike: {}
         }, COMBO: {
             //in correct place
-            suunniteltuKestoTyyppi: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
-            koulutuksenAlkamiskausi: {'validate': true, 'required': true, nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+            suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+            opintojenLaajuus: {koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
+            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
-            pohjakoulutusvaatimukset: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
-            opetusmuodos: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusmuotokk'},
-            opetusAikas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetusaika'},
-            opetusPaikkas: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.opetuspaikka'},
-            opetuskielis: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.kieli'},
-            aihees: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.aiheet'},
-            ammattinimikkeet: {'validate': true, 'required': true, nullable: false, koodisto: 'koodisto-uris.ammattinimikkeet'}
+            pohjakoulutusvaatimukset: {koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+            opetuskielis: {koodisto: 'koodisto-uris.kieli'},
+            aihees: {koodisto: 'koodisto-uris.aiheet'},
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
-            koulutusmoduuliTyyppi: {'validate': true, 'required': true, nullable: false, default: 'TUTKINTO'},
-            koulutusasteTyyppi: {'validate': true, 'required': true, nullable: false, default: 'KORKEAKOULUTUS'},
-            tila: {'validate': true, 'required': true, 'nullable': false, 'default': 'LUONNOS'},
-            tunniste: {'validate': true, 'required': true, nullable: true, default: ''},
-            suunniteltuKestoArvo: {'validate': true, 'required': true, nullable: true, default: ''}
+            koulutusmoduuliTyyppi: {default: 'TUTKINTO'},
+            koulutusasteTyyppi: {default: 'KORKEAKOULUTUS'},
+            tila: {'default': 'LUONNOS'},
+            tunniste: {default: ''},
+            suunniteltuKestoArvo: {nullable: true, default: ''}
         }, DATES: {
-            koulutuksenAlkamisPvms: {'validate': true, 'required': true, nullable: false, default: new Date()}
+            koulutuksenAlkamisPvms: {default: new Date()}
         }, BOOL: {
-            opintojenMaksullisuus: {'validate': true, 'required': true, nullable: false, default: false}
+            opintojenMaksullisuus: {default: false}
         }, DESC: {
-            kuvausKomo: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
+            kuvausKomo: {'nullable': false, default: factory.createBaseDescUiField([
                     'KOULUTUKSEN_RAKENNE',
                     'JATKOOPINTO_MAHDOLLISUUDET',
                     'TAVOITTEET',
                     'PATEVYYS'
                 ])},
-            kuvausKomoto: {'validate': true, 'required': true, 'nullable': false, default: factory.createBaseDescUiField([
+            kuvausKomoto: {'nullable': false, default: factory.createBaseDescUiField([
                     'MAKSULLISUUS',
                     'ARVIOINTIKRITEERIT',
                     'LOPPUKOEVAATIMUKSET',
@@ -181,6 +181,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             return {}; //return an empty object;
         }
         metaMap[kbObj.koodiUri] = factory.convertKoodistoComboToKoodiDTO(kbObj);
+    };
+    
+    
+    factory.convertKoodistoRelationApiModel = function(kbObj) {
+        return factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio);
     };
     /**
      * Convert koodisto component data model to API koodi model.
@@ -331,7 +336,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
-            apiModel[key] = factory.createKoodiUriBase('', -1);
+            if (!angular.isUndefined(value.default)) {
+                apiModel[key] = factory.createKoodiUriBase(value.default, -1);
+            } else {
+                apiModel[key] = factory.createKoodiUriBase('', -1);
+            }
         });
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {

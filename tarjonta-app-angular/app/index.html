@@ -101,6 +101,7 @@
 
         <script src="js/shared/filters/orderByNum.js"></script>
         <script src="js/shared/filters/dateFormat.js"></script>
+        <script src="js/shared/filters/startsWith.js"></script>
 
         <script src="partials/controllers.js"></script>
         <script src="partials/directives.js"></script>
@@ -152,6 +153,7 @@
         <script src="partials/common/dialogService.js"></script>
 
         <script src="partials/tarjontaApp.js"></script>
+        <script src="partials/init.js"></script>
 
         <!-- TYYLIT - huomaa järjestys kun lisäilet -->
         <!-- 1. bootstrap pohjalle -->
@@ -186,8 +188,8 @@
             <div data-ng-controller="LocalisationCtrl">
 
                 <div data-ng-switch on="renderPath[0]">
-                    <div data-ng-switch-when="foo">
-                        <div data-ng-include="'partials/koulutus/index.html'"></div>
+                    <div data-ng-switch-when="error">
+                        <div data-ng-include="'partials/error.html'"></div>
                     </div>
                     <div data-ng-switch-when="home">
                         <div data-ng-include="'partials/search/search.html'"></div>
@@ -289,90 +291,31 @@
                 -->
 
             </div>
-
-            <div data-ng-controller="LoadingCtrl"
-                 data-ng-show="loading"
-                 id="ajax-loader"
-                 class="{{ isModal() ? 'max' : 'min'}}">
-                <div>
-                    <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                    <span>{{ t("loading")}}</span>
-                </div>
-            </div>
-
-            <script>
-                    var init_counter = 0;
-                    var initFunction = function(id, xhr, status) {
-                        init_counter--;
-
-                        console.log("Got ready signal from: " + id);
-                        console.log("  status = ", status);
-                        console.log("  xhr = ", xhr);
-
-                        if (init_counter > 0) {
-                            console.log("Got ready signal from: '" + id + "' -- still waiting for " + init_counter + " requests.");
-                        } else {
-                            console.log("OK! That was the last request, init the app!");
-
-                            angular.element(document).ready(function() {
-                                angular.module('myApp', ['app']);
-                                angular.bootstrap(document, ['myApp']);
-                            });
-                        }
-                    };
-
-                    //
-                    // Get current users info (/cas/me)
-                    //
-                    console.log("** Loading user info; from: ", window.CONFIG.env.casUrl);
-                    window.CONFIG.env.cas = {}
-                    init_counter++;
-                    jQuery.ajax(window.CONFIG.env.casUrl, {
-                        dataType: "json",
-                        success: function(xhr, status) {
-                            window.CONFIG.env.cas.userinfo = xhr;
-                            initFunction("AUTHENTICATION", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            initFunction("AUTHENTICATION FAILED", xhr, status);
-                        }
-                    });
-
-                    //
-                    // Preload "tarjonta.tila"???
-                    //
-                    console.log("** Loading tarjonta.tila info; from: " + window.CONFIG.env.tarjontaRestUrlPrefix + "tila");
-                    init_counter++;
-                    jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
-                        dataType: "json",
-                        success: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = xhr.result;
-                            initFunction("tarjonta.tila", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = {};
-                            initFunction("tarjonta.tila FAILED", xhr, status);
-                        }
-                    });
-
-                    //
-                    // Preload application localisations for tarjonta
-                    //
-                    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta";
-                    console.log("** Loading localisation info; from: ", localisationUrl);
-                    init_counter++;
-                    jQuery.ajax(localisationUrl, {
-                        dataType: "json",
-                        complete: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.localisations"] = xhr.responseJSON;
-                            initFunction("localisations", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.localisations"] = [];
-                            initFunction("localisations FAILED", xhr, status);
-                        }
-                    });
-            </script>
         </div>
+
+        <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
+	             ng-class="{{isModal() ? 'max' : 'min'}}">
+           <div class="frame" ng-show="!isTimeout()">
+               <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+               <span class="post-init" ng-cloack>{{t("loading")}}</span>
+           </div>
+           <div class="fail">
+               <h1>Tarjonta on rikki - bruten - broken !!1</h1>
+               <hr/>
+               
+               <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
+               kehotus kokeilla hetken päästä uudelleen jne.. Ks. KJOH-728</p>
+               
+               <p>Samma på svenska.</p>
+               
+               <p>Same in English.</p>
+              
+               <hr/>
+               <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
+           
+           </div>
+        </div>
+
+        <script> tarjontaInit(); </script>
     </body>
 </html>

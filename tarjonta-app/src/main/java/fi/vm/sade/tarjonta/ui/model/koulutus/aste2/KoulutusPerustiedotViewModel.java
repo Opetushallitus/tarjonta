@@ -34,6 +34,7 @@ import java.util.List;
  * @author mlyly
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
+
     private static final long serialVersionUID = 8039462177057261652L;
 
     /*
@@ -63,13 +64,15 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected KoodiModel tutkinto;
     protected KoodiModel tutkintonimike;
     protected KoodiModel opintojenLaajuusyksikko;
-    protected String opintojenLaajuus;
+    protected KoodiModel opintojenLaajuus;
     protected KoodiModel opintoala;
-    
-    protected String opintojenLaajuusTot;
 
+    /*
+     * only in ValmentavaJaKuntouttavaOpetus...
+     */
+    protected String opintojenLaajuusTot;
     protected String opintojenLaajuusyksikkoTot;
-    
+
     /*
      * KOMO text data (static labels):
      * TODO:change to KielikaannosViewModel
@@ -378,14 +381,14 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the opintojenLaajuus
      */
-    public String getOpintojenLaajuus() {
+    public KoodiModel getOpintojenLaajuus() {
         return opintojenLaajuus;
     }
 
     /**
      * @param opintojenLaajuus the opintojenLaajuus to set
      */
-    public void setOpintojenLaajuus(String opintojenLaajuus) {
+    public void setOpintojenLaajuus(KoodiModel opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
 
@@ -488,7 +491,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
         this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
     }
-    
+
     public String getOpintojenLaajuusTot() {
         return opintojenLaajuusTot;
     }

@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +31,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
     private String kieliUri;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
-    private String kieliVersio;
+    private Integer kieliVersio;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
     private String kieliArvo;
     @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
@@ -44,7 +43,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
     private String arvo;
     @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
-    private String kaannos;
+    private String nimi;
 
     @ApiModelProperty(value = "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio", required = false)
     private Map<String, KoodiV1RDTO> meta;
@@ -58,18 +57,18 @@ public class KoodiV1RDTO implements Serializable {
         this.arvo = arvo;
     }
 
-    public KoodiV1RDTO(String uri, Integer versio, String arvo, String kaannos) {
+    public KoodiV1RDTO(String uri, Integer versio, String arvo, String nimi) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;
-        this.kaannos = kaannos;
+        this.nimi = nimi;
     }
 
-    public void setKoodi(String uri, Integer versio, String arvo, String kaannos) {
+    public void setKoodi(String uri, Integer versio, String arvo, String nimi) {
         this.uri = uri;
         this.versio = versio;
         this.arvo = arvo;
-        this.kaannos = kaannos;
+        this.nimi = nimi;
     }
 
     /**
@@ -115,17 +114,17 @@ public class KoodiV1RDTO implements Serializable {
     }
 
     /**
-     * @return the kaannos
+     * @return the nimi
      */
-    public String getKaannos() {
-        return kaannos;
+    public String getNimi() {
+        return nimi;
     }
 
     /**
-     * @param kaannos the kaannos to set
+     * @param nimi the kaannos to set
      */
-    public void setKaannos(String kaannos) {
-        this.kaannos = kaannos;
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 
     /**
@@ -145,14 +144,14 @@ public class KoodiV1RDTO implements Serializable {
     /**
      * @return the kieliVersio
      */
-    public String getKieliVersio() {
+    public Integer getKieliVersio() {
         return kieliVersio;
     }
 
     /**
      * @param kieliVersio the kieliVersio to set
      */
-    public void setKieliVersio(String kieliVersio) {
+    public void setKieliVersio(Integer kieliVersio) {
         this.kieliVersio = kieliVersio;
     }
 
@@ -192,9 +191,6 @@ public class KoodiV1RDTO implements Serializable {
     }
 
     public Map<String, KoodiV1RDTO> getMeta() {
-        if (meta == null) {
-            meta = new HashMap<String, KoodiV1RDTO>();
-        }
         return meta;
     }
 
