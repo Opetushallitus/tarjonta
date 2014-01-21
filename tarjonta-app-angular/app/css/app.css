@@ -107,6 +107,24 @@ div#ajax-loader {
 	z-index:999;
 }
 
+div#ajax-loader .timeout {
+	position:absolute;
+	top:55%;
+    left:0;
+    width:350px;
+    margin-left:-175px;
+    margin-top:40px;
+    font-size:14px;
+}
+
+div#ajax-loader .timeout p {
+
+}
+
+div#ajax-loader.min .timeout {
+    display:none;	
+}
+
 div#ajax-loader.max {
 	position:fixed;
 	left:0;
@@ -122,14 +140,14 @@ div#ajax-loader.max div.frame {
 	height:100%;
 }
 
-div#ajax-loader.max div.frame img {
+div#ajax-loader.max div.frame img.spinner {
 	position:absolute;
 	left:-16px;
 	bottom:55%;
 	display:block;
 }
 
-div#ajax-loader.max span {
+div#ajax-loader.max span.spinner-msg {
 	position:absolute;
 	width:200px;
 	left:-100px;
@@ -153,12 +171,12 @@ div#ajax-loader.min div.frame {
 	width:100%;
 }
 
-div#ajax-loader.min div.frame img {
+div#ajax-loader.min div.frame img.spinner {
 	display:inline;
 	position:relative;
 }
 
-div#ajax-loader.min span {
+div#ajax-loader.min span.spinner-msg {
 	display:inline;
 	position:relative;
 }
