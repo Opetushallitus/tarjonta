@@ -38,6 +38,7 @@ public class HakukohdeValintaperusteetDTO extends BaseRDTO {
     private String lisanayttoTunniste;
     private String lisapisteTunniste;
     private String kielikoeTunniste;
+    private String urheilijaLisapisteTunniste;
 
     private BigDecimal painotettuKeskiarvoHylkaysMin;
     private BigDecimal painotettuKeskiarvoHylkaysMax;
@@ -64,6 +65,14 @@ public class HakukohdeValintaperusteetDTO extends BaseRDTO {
     private BigDecimal hylkaysMax;
 
     private String tila;
+
+    public String getUrheilijaLisapisteTunniste() {
+        return urheilijaLisapisteTunniste;
+    }
+
+    public void setUrheilijaLisapisteTunniste(String urheilijaLisapisteTunniste) {
+        this.urheilijaLisapisteTunniste = urheilijaLisapisteTunniste;
+    }
 
     public String getTila() {
         return tila;

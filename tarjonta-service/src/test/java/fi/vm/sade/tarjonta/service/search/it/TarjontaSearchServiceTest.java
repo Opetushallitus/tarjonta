@@ -68,6 +68,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -120,6 +121,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Before
     @Override
     public void before() {
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());
             clearIndex(solrServerFactory.getSolrServer("hakukohteet"));

@@ -324,7 +324,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         formData.append('image', image.file, name);
 
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
-            headers: {'Content-Type': 'multipart/form-data'},
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data'},
             transformRequest: angular.identity
         }).success(fnSuccess).error(fnError);
     };

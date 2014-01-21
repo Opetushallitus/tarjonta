@@ -41,6 +41,8 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('TarjontaCache'));
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('debounce'));
+      beforeEach(module('ngRoute'));
+    
 
     beforeEach(function(){
         module(function ($provide) {

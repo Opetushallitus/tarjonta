@@ -2,7 +2,7 @@
 
 var app = angular.module('ImageDirective', []);
 
-app.directive('imageField', function($log, TarjontaService) {
+app.directive('imageField', function($log, TarjontaService, PermissionService) {
     function controller($scope, $q, $element, $compile) {
         /*
          * DEFAULT VARIABLES:
@@ -10,7 +10,7 @@ app.directive('imageField', function($log, TarjontaService) {
         $scope.base64 = {};
         $scope.mime = {};
         $scope.filename = "";
-        
+
         if (angular.isUndefined($scope.btnNameRemove)) {
             $scope.btnNameRemove = "remove";
         }
@@ -60,11 +60,21 @@ app.directive('imageField', function($log, TarjontaService) {
         };
 
         $scope.uploadImage = function(event, kieliUri, image) {
-            TarjontaService.saveImage($scope.oid, kieliUri, image, function() {
-                console.log(image);
-                $scope.loadImage($scope.oid, kieliUri); // load uploaded image to page     
-            }, function(error) {
-                console.error("Image upload failed.", error);
+            PermissionService.permissionResource().authorize({}, function(authResponse) {
+                console.log("Authorization check : " + authResponse.result);
+
+                if (authResponse.status !== 'OK') {
+                    //not authenticated
+                    console.error("User auth failed.", error);
+                    return;
+                }
+
+                TarjontaService.saveImage($scope.oid, kieliUri, image, function() {
+                    console.log(image);
+                    $scope.loadImage($scope.oid, kieliUri); // load uploaded image to page     
+                }, function(error) {
+                    console.error("Image upload failed.", error);
+                });
             });
         };
 

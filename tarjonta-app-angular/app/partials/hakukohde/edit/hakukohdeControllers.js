@@ -25,6 +25,8 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Or
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService) {
 
 
+    var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
+
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
@@ -60,6 +62,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
+    $scope.model.nimiValidationFailed = false;
+
+    $scope.model.hakukelpoisuusValidationErrMsg = false;
+
     var koulutusSet = new buckets.Set();
 
     /*
@@ -74,6 +80,25 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+    var validateNames  = function() {
+        for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
+        return false;
+    }
+
+    var showCommonUnknownErrorMsg = function() {
+
+        var errors = [];
+
+        var error = {};
+
+        error.errorMessageKey =  commonExceptionMsgKey;
+
+        errors.push(error);
+
+        showError(errors);
+
+    }
+
     var validateHakukohde = function() {
 
         var errors = [];
@@ -83,10 +108,21 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             var error = {};
             error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
+            $scope.model.hakukelpoisuusValidationErrMsg = true;
             errors.push(error);
 
 
         }
+
+        if (!validateNames())  {
+
+            var err = {};
+            err.errorMessageKey = 'hakukohde.edit.nimi.missing';
+            $scope.model.nimiValidationFailed = true;
+            errors.push(err);
+
+        }
+
 
         if (errors.length < 1 ) {
             return true;
@@ -187,7 +223,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var showError = function(errorArray) {
     	
-    	$scope.model.validationmsgs = [];
+    	$scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
 
         angular.forEach(errorArray,function(error) {
 
@@ -691,6 +727,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                }
 
 
+           },function(error){
+
+
+               showCommonUnknownErrorMsg();
            });
 
         } else {
@@ -712,6 +752,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+            },function (error) {
+               showCommonUnknownErrorMsg();
             });
 
         }
@@ -756,6 +798,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
+            },function(error) {
+
+                showCommonUnknownErrorMsg();
+
             });
 
         } else {
@@ -776,6 +822,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+            }, function(error) {
+                showCommonUnknownErrorMsg();
             });
         }
         }
@@ -846,13 +894,11 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
     $scope.dialog.titles = {};
 
-    $scope.dialog.titles.title = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.title');
+
 
     $scope.dialog.titles.toimintoTitle =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.title');
 
-    $scope.dialog.titles.kopioTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.title');
 
-    $scope.dialog.titles.linkkausTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.title');
 
     $scope.dialog.titles.tableValintaRyhma = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.valintaryhma.title');
 
@@ -872,6 +918,33 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         return today.getFullYear();
 
+    }
+
+    var getTitle = function(){
+        if (tyyppi === "valintaperustekuvaus") {
+
+            $scope.dialog.titles.title = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.title');
+
+            $scope.dialog.titles.kopioTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.title');
+
+            $scope.dialog.titles.kopioiHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.help');
+
+            $scope.dialog.titles.linkkausTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.title');
+
+            $scope.dialog.titles.linkkausHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.help');
+
+
+        } else {
+            $scope.dialog.titles.title = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.sora.title');
+
+            $scope.dialog.titles.kopioTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.sora.title');
+
+            $scope.dialog.titles.kopioiHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.sora.help');
+
+            $scope.dialog.titles.linkkausTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.sora.title');
+
+            $scope.dialog.titles.linkkausHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.sora.help');
+        }
     }
 
     var haeValintaPerusteet = function() {
@@ -966,6 +1039,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
     };
 
+    getTitle();
     haeValintaPerusteet();
 
 

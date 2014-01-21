@@ -176,8 +176,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getOid(), "KOMOTO OID cannot be null.");
 
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(dto.getOrganisaatio().getOid());
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID : %s.", dto.getOid());
         return conversionService.convert(dto, KoulutusmoduuliToteutus.class);
     }
@@ -428,6 +429,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
 
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+        Preconditions.checkNotNull(komoto, "Image save failed, no KOMOTO found by OID '%s'", oid);
+
         permissionChecker.checkAddKoulutusKuva(komoto.getTarjoaja());
         Attachment att = body.getRootAttachment();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);

@@ -55,22 +55,22 @@ public class AdminApplication extends AbstractWebApplication {
         HorizontalLayout hl = new HorizontalLayout();
 
         window.addComponent(hl);
-
-        Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                try {
-                    LOG.debug("Luo komot event");
-                    tarjontaKomoData.preLoadAllKoodistot();
-                    tarjontaKomoData.createData(true);
-                } catch (Exception ex) {
-                    LOG.error("Failed to create KOMOs", ex);
-                }
-            }
-        });
-        hl.addComponent(btnKomo);
+//
+//        Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
+//            private static final long serialVersionUID = 5019806363620874205L;
+//
+//            @Override
+//            public void buttonClick(Button.ClickEvent event) {
+//                try {
+//                    LOG.debug("Luo komot event");
+//                    tarjontaKomoData.preLoadAllKoodistot();
+//                    tarjontaKomoData.createData(true);
+//                } catch (Exception ex) {
+//                    LOG.error("Failed to create KOMOs", ex);
+//                }
+//            }
+//        });
+//        hl.addComponent(btnKomo);
 
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;

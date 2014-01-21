@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class KoulutusKorkeakouluDTOConverterToEntityTest {
 
-    private KoulutusKorkeakouluDTOConverterToEntity instance = new KoulutusKorkeakouluDTOConverterToEntity();
+    private final KoulutusKorkeakouluDTOConverterToEntity instance = new KoulutusKorkeakouluDTOConverterToEntity();
 
     @Before
     public void setUp() {
@@ -51,6 +51,16 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
         dto.setKoulutuksenAlkamiskausi(new KoodiUrisV1RDTO());
+        instance.handleDates(komoto, dto);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testHandleEmptyStrKausiVuosi() {
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
+        KoodiUrisV1RDTO koodiUrisV1RDTO = new KoodiUrisV1RDTO();
+        koodiUrisV1RDTO.setUri("");
+        koodiUrisV1RDTO.setVersio(1);
         instance.handleDates(komoto, dto);
     }
 
@@ -106,5 +116,4 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
         assertEquals(null, dto.getKoulutuksenAlkamiskausi());
         assertEquals(null, dto.getKoulutuksenAlkamisvuosi());
     }
-
 }

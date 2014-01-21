@@ -66,6 +66,7 @@ angular.module('app',
             'imageupload',
             'MultiSelect',
             'OrderByNumFilter',
+            'StartsWithFilter',
             'CommonDirectives',
             'MonikielinenTextField',
             'ImageDirective',
@@ -89,8 +90,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "home.default",
                     reloadOnSearch: false
                 })
-                .when("/foo", {
-                    action: "foo"//,
+                .when("/error", {
+                    action: "error"//,
                 })
                 .when("/index", {
                     action: "index",

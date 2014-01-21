@@ -21,16 +21,41 @@ app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log',
 
         // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
 
-        $scope.model = {
-            collapse: {
-                model: true
-            },
-            haku : {todo : "TODO LOAD ME 1"},
-            place : "holder"
+        $scope.model = null;
+
+        $scope.goBack = function(event) {
+            $log.info("goBack()", event);
+        };
+
+        $scope.doEdit = function(event, part) {
+            $log.info("goEdit()", event, part);
+        };
+
+        $scope.getHakuNimi = function() {
+            return "TODO: get haku nimi: " + new Date();
         };
 
         $scope.init = function() {
             $log.info("HakuReviewController.init()...");
+
+            $scope.model = {
+                formControls : {},
+                collapse: {
+                    haunTiedot : false,
+                    haunAikataulut : true,
+                    haunMuistutusviestit : true,
+                    haunSisaisetHaut : true,
+                    haunHakukohteet : true,
+                    model: true
+                },
+
+                // Preloaded Haku result
+                hakux: $route.current.locals.hakux,
+
+                haku: {todo: "TODO LOAD ME 1"},
+                place: "holder"
+            };
+
             $log.info("HakuReviewController.init()... done.");
         };
 
