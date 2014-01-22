@@ -325,7 +325,13 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     }
 
     $scope.model.canSaveVpk = function() {
-      return true;
+
+        if ($scope.valintaPerusteForm !== undefined) {
+            return $scope.valintaPerusteForm.$valid;
+        } else {
+            return false;
+        }
+
     };
 
     $scope.getNimetKey = function() {
