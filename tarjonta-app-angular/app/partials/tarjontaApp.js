@@ -223,7 +223,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         hakukohdex: function(Hakukohde, $log, $route, SharedStateService) {
                             $log.info("/hakukohde/ID", $route);
                             if ("new" === $route.current.params.id) {
-
+                                $log.info("CREATING NEW HAKUKOHDE: ", $route.current.params.id);
                                 var selectedTarjoajaOids;
                                 var selectedKoulutusOids;
 

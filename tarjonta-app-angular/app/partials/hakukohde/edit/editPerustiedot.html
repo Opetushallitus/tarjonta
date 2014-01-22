@@ -79,79 +79,7 @@
 		</td>
 	</tr>
 	
-	<!-- liitteiden toimitusosoite -->
-	<tr>
-		<th tt="kk.hakukohde.liitteidentoimitusosoite"/>
-		<td>
-		
-			<!-- TODO osoitedirektiivi -->
-			<input type="radio" ng-model="osoiteType"/>
-            <span tt="tarjonta.hakukohde.label.oletus.postisoite"></span>
-            <br/>
 
-			<input type="radio" ng-model="osoiteType"  value="false"/>
-            <span tt="tarjonta.hakukohde.label.muu.osoite"></span>           
-            <br/>
-
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th></th>
-		<td>			
-			<input type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
-			<input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-			<input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	
-	<!-- sähköinen toimitus -->
-	<tr>
-		<th></th>
-		<td>
-			<input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/>
-			<span tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></span>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th tt="kk.hakukohde.sahkoinentoimitusosoite"/>
-		<td>
-			<input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-
-	<!-- liitteiden toimituspvm -->
-	<tr>
-		<th tt="kk.hakukohde.liitteidenToimitusPvm"/>
-		<td>
-			<input type="checkbox" ng-change="model.checkboxChange()" ng-model="model.hakukohde.kaytetaanHaunPaattymisenAikaa"/>
-			<span tt="kk.hakukohde.kaytetaanHaunPaattymisenAikaa"></span><br/>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th></th>
-		<td>
-
-			<date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
 
 </table>
 
