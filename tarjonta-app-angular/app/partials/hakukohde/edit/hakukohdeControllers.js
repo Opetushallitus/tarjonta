@@ -221,6 +221,27 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+
+    var removeEmptyKuvaukses = function() {
+
+          for (var langKey in $scope.model.hakukohde.valintaperusteKuvaukset) {
+
+               if ($scope.model.hakukohde.valintaperusteKuvaukset[langKey].length < 1) {
+                   delete  $scope.model.hakukohde.valintaperusteKuvaukset[langKey];
+               }
+
+          }
+
+          for (var langKey in $scope.model.hakukohde.soraKuvaukset) {
+
+              if ($scope.model.hakukohde.soraKuvaukset[langKey].length < 1) {
+                  delete  $scope.model.hakukohde.soraKuvaukset[langKey];
+              }
+
+          }
+
+    }
+
     var showError = function(errorArray) {
     	
     	$scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
@@ -621,6 +642,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
+        removeEmptyKuvaukses();
 
             /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -687,11 +709,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveLuonnos = function() {
 
+
+
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
+        removeEmptyKuvaukses();
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};

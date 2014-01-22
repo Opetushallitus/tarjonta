@@ -82,6 +82,20 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   };
 
+    var removeEmptyKuvaukses = function() {
+
+      for (var langKey in $scope.model.valintaperustekuvaus.kuvaukset) {
+
+          if ($scope.model.valintaperustekuvaus.kuvaukset[langKey].length < 1) {
+
+              delete $scope.model.valintaperustekuvaus.kuvaukset[langKey];
+
+          }
+
+      }
+
+    };
+
 
     var validateForm= function() {
 
@@ -246,10 +260,14 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     $scope.model.saveValmis = function(){
 
+
+
         resetErrorMsgs();
 
 
         if (validateForm()) {
+
+            removeEmptyKuvaukses();
 
             $scope.model.valintaperustekuvaus.modifiedBy = AuthService.getUserOid();
 
