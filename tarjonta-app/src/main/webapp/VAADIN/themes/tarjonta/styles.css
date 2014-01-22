@@ -56,3 +56,6 @@ Alternative for Vaadin horizontal layout:
     font-weight: bold;
 }
 
+.v-app {
+   height: 1000px;
+}
