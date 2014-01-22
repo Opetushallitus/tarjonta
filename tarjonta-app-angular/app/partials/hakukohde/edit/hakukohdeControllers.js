@@ -471,40 +471,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //$scope.model.koodiuriPromise = $q.defer();
 
-    /*
-        ----> Retrieve all postinumeros
-     */
 
-    $scope.model.postinumeroarvo = {
 
-    };
-
-    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti',$scope.model.userLang);
-
-    koodistoPromise.then(function(koodisParam){
-      $scope.model.koodis = koodisParam;
-
-      if (postinumero !== undefined) {
-          console.log('Changing arvo : ', postinumero);
-          var koodi =  findKoodiWithUri(postinumero,$scope.model.koodis);
-          console.log('TO : ', koodi);
-          $scope.model.postinumeroarvo.arvo = koodi.koodiArvo;
-      }
-    });
-
-   /*
-
-        -----> Get selected postinumero from and set the nimi to postitoimipaikka text
-
-    */
-
-    $scope.model.onKieliTypeAheadChange = function() {
-       var koodi = findKoodiWithArvo($scope.model.postinumeroarvo.arvo,$scope.model.koodis);
-
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
-
-    };
 
 
     /*
@@ -555,14 +523,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.kieliRemoveCallback = function(kieliUri) {
       removeLisatieto(kieliUri);
     };
-
-    $scope.model.postinumeroCallback = function(selectedPostinumero) {
-       console.log('Postinumero callback : ', selectedPostinumero);
-
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
-    };
-
-
 
 
     /*
