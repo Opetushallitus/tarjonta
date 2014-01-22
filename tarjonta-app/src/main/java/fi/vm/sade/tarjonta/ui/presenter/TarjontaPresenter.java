@@ -1418,7 +1418,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (model.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
             return model.getEditedHakukohdeNimi();
         }
-        return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        //return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        return uiHelper.getHakukohdeHakukentta(model.getKomotoOids().get(0),I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
     public ListHakukohdeView getHakukohdeListView() {

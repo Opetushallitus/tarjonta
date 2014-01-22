@@ -295,9 +295,17 @@
 
         <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
 	             ng-class="{{isModal() ? 'max' : 'min'}}">
-           <div class="frame" ng-show="!isTimeout()">
-               <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-               <span class="post-init" ng-cloack>{{t("loading")}}</span>
+           <div class="frame">
+               <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+               <span class="post-init spinner-msg" tt="loading" ng-show="isTimeout(false)"></span>
+               <div class="post-init timeout" ng-show="isTimeout(true)">
+                    <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
+                    tai järjestelmän väliaikaisesta kuormituksesta.</p>
+                    
+                    <a href bg-click="restart()" class="btn float-right">
+                    <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
+                   </a>
+               </div>
            </div>
            <div class="fail">
                <h1>Tarjonta on rikki - bruten - broken !!1</h1>
