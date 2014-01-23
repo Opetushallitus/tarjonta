@@ -78,6 +78,7 @@ angular.module('app',
             'DateFormat',
             'TreeFieldDirective',
             'AiheetJaTeematChooser',
+            'TarjontaDateTime',
             'debounce'
         ]);
 

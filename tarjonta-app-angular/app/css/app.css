@@ -630,3 +630,22 @@ div#koulutuksenAlkamisPvm div.indent {
 div#koulutuksenAlkamisPvm span.disabled {
     color:#a0a0a0;
 }
+
+/* date-time */
+
+div.tarjontaDateTime {
+    display:inline-block;	
+}
+
+div.tarjontaDateTime input.date {
+    width:6.66em;
+}
+
+div.tarjontaDateTime input.time {
+    width:3.33em;
+}
+
+div.tarjontaDateTime button {
+    position: relative;
+    top:-5px;
+}

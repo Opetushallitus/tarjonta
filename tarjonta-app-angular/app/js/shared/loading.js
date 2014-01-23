@@ -33,11 +33,11 @@ angular.module('loading', ['localisation'])
     afterRequest: function(success, req) {
     	if (success) {
         	service.requestCount--;
-        	clearTimeout();
     	} else {
     		console.log("REQUEST FAILED", req);
     		service.errors++;
     	}
+    	clearTimeout();
     },
     commit: function() {
     	service.requestCount -= service.errors;
