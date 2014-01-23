@@ -52,6 +52,25 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		}
     		return ret;
     	}
+    	
+    	function applyConstraints(d) {
+    		var min = $scope.min();
+    		if (min && min.getTime) {
+    			min = min.getTime();
+    		}
+    		var max = $scope.max();
+    		if (max && max.getTime) {
+    			max = min.getTime();
+    		}
+    		
+    		if (min && d.getTime() < min) {
+    			d.setTime(min);
+    		} else if (max && d.getTime() > max) {
+    			d.setTime(max);
+    		}
+
+    		return d;
+    	}
 
     	updateModels();
     	$scope.$watch("model", function(nv, ov){
@@ -113,7 +132,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         		
         		if (!isNaN(nd.getTime())) {
         			omitUpdate = true;
-        			$scope.model = nd;
+        			$scope.model = applyConstraints(nd);
         		}
     		}
     		    		
@@ -146,6 +165,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         	type: "@",  // ajan tietotyyppi
         				//   object: javascript Date
         				//   long: unix timestamp
+        	
+        	// minimi ja maksimi (js Date tai unix timestamp)
+        	min: "&",
+        	max: "&",
 
         	// disablointi
         	disabled: "@",
