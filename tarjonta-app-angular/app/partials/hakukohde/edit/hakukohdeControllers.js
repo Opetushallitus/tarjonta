@@ -104,7 +104,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             } else {
 
-                return false;
+                return true;
 
             }
 
