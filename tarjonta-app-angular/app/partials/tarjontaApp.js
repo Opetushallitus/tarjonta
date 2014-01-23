@@ -264,7 +264,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
                                 console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                                 var canCreateVar  = PermissionService.canCreate(selectedTarjoajaOids[0]);
-
+                                console.log('CREATE VAR : ', canCreateVar);
                                 return canCreateVar;
                             } else {
                                 return undefined;
