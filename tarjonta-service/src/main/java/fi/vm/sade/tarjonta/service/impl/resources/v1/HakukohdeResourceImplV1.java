@@ -263,7 +263,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
 
         LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
-        if (oid != null && oid.length() > 0) {
+        if (oid != null && oid.trim().length() > 0) {
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
         HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
