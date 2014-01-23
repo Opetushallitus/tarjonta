@@ -1,12 +1,14 @@
 <ul>
     <li ng-repeat="pvm in ctrl.addedDates">
-        <input type="text"
-               name="alkamisPvm"
-               data-datepicker-popup="dd.MM.yyyy"
-               data-ng-model="pvm.date"
-               data-ng-disabled="!enabled"
-               ng-change="onDateAdded()"
-               />
+	   
+	    <t-date-time type="object"
+	        name="alkamisPvm" 
+	        ng-model="pvm.date"
+	        ng-disabled="!enabled"
+	        ng-change="onDateAdded()"
+	        required
+	        ></t-date-time>
+           
         <a  href
            data-ng-show="enabled && pvm.date!=null && ctrl.addedDates.length>1" 
            data-ng-click="clickRemoveDate(pvm)">[x]</a>
