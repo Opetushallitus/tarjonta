@@ -220,6 +220,58 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "hakukohde.edit",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
+
+                        canEdit : function(Hakukohde, $log, $route,$q, SharedStateService,PermissionService) {
+
+                            if ($route.current.params.id !== "new") {
+                                var deferredPermission = $q.defer();
+                                Hakukohde.get({oid: $route.current.params.id},function(data){
+                                    console.log("GOT HAKUKOHDE DATA: ", data);
+
+
+
+                                    var canEditVar = PermissionService.canEdit(data.result.tarjoajaOids[0]);
+
+                                    //deferredPermission.resolve(canEditVar);
+                                     canEditVar.then(function(permission){
+
+                                     console.log('GOT PERMISSION DATA ' , permission);
+                                         deferredPermission.resolve(permission);
+
+                                     });
+
+                                });
+
+                                return deferredPermission.promise;
+
+                            } else {
+                                return undefined;
+                            }
+
+
+                        },
+                        canCreate : function(Hakukohde, $log, $route, SharedStateService,PermissionService) {
+
+                            var  selectedTarjoajaOids;
+
+                            if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
+                                selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
+                            } else {
+                                selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                            }
+
+                            if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
+                                console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                                var canCreateVar  = PermissionService.canCreate(selectedTarjoajaOids[0]);
+
+                                return canCreateVar;
+                            } else {
+                                return undefined;
+                            }
+
+
+                        },
+
                         hakukohdex: function(Hakukohde, $log, $route, SharedStateService) {
                             $log.info("/hakukohde/ID", $route);
                             if ("new" === $route.current.params.id) {

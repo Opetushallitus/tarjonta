@@ -22,7 +22,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
 
 
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
@@ -84,6 +84,41 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
     }
+
+    var checkCanCreateOrEditHakukohde = function() {
+
+        if ($scope.model.hakukohde.oid !== undefined) {
+
+            if ($scope.canEdit !== undefined) {
+                return $scope.canEdit;
+            } else {
+                return false;
+            }
+
+
+        } else {
+
+            if ($scope.canCreate !== undefined) {
+
+                return $scope.canCreate;
+
+            } else {
+
+                return false;
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
+    console.log('CAN SAVE : ', $scope.canEdit);
+    console.log('CAN CREATE : ', $scope.canCreate);
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -200,6 +235,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     }
+
 
     var createFormattedDateString = function(date) {
 
@@ -318,7 +354,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.canSaveHakukohde = function() {
 
         if ($scope.editHakukohdeForm !== undefined) {
-            return $scope.editHakukohdeForm.$valid;
+
+            return $scope.editHakukohdeForm.$valid && checkCanCreateOrEditHakukohde();
         } else {
             return false;
         }
@@ -450,6 +487,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     haeTarjoajaOppilaitosTyypit();
+
+
 
     $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
 
