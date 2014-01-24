@@ -711,7 +711,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                    $scope.model.hakukohde.soraKuvaukset = {};
                }
-
+               $scope.canEdit = true;
 
            },function(error){
 
@@ -786,6 +786,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+                $scope.canEdit = true;
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
 
@@ -823,6 +824,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.takaisin = function() {
         $location.path('/etusivu');
     };
+
+    $scope.model.tarkastele = function() {
+
+        $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
+
+    }
 
     $scope.haeValintaPerusteKuvaus = function(){
 
