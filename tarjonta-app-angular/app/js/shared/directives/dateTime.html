@@ -1,0 +1,24 @@
+<div class="tarjontaDateTime">
+
+    <input class="date" type="text" maxlength="10"
+        ng-pattern="/\d?\d\.\d?\d(\.\d?\d?\d?\d)?/"
+        ng-model="date"
+        ng-required="isRequired()"
+        ng-disabled="isDisabled()"
+        ng-change="onModelChanged()"
+        ng-blur="onFocusOut()"/>
+    <input class="time" type="text" maxlength="5"
+        ng-pattern="/\d?\d:\d?\d/"
+        ng-model="time"
+        ng-show="timestamp"
+        ng-required="timestamp && isRequired()"
+        ng-disabled="isDisabled()"
+        ng-change="onModelChanged()"
+        ng-blur="onFocusOut()"/>
+    <button class="btn"
+        ng-disabled="isDisabled()"
+        ng-click="startDateChooser()">
+        <span class="icon-calendar"></span>
+    </button>
+
+</div>
