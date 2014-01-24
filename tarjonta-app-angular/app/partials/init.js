@@ -6,6 +6,8 @@ function tarjontaInit() {
 	var init_counter = 0;
 	var fail = false;
 	
+	jQuery.support.cors = true;
+	
 	function initFail(id, xhr, status) {
 	    fail = true;
 	    console.log("Init failure: " + id + " -> "+status, xhr);
@@ -15,12 +17,8 @@ function tarjontaInit() {
 	function initFunction(id, xhr, status) {
 	    init_counter--;
 	
-	    console.log("Got ready signal from: " + id + " -> "+status+" -> IC="+init_counter, xhr);
+	    console.log("Got ready signal from: " + id + " -> "+status+" -> IC="+init_counter/*, xhr*/);
 	
-	    /*if (init_counter > 0) {
-	        console.log("Got ready signal from: '" + id + "' -- still waiting for " + init_counter + " requests.");
-	    } else {
-	        console.log("OK! That was the last request, init the app!");*/
 	    if (!fail && init_counter == 0) {
 	    		    	
 	        angular.element(document).ready(function() {
@@ -31,6 +29,10 @@ function tarjontaInit() {
 	    }
 	};
 	
+	 function logRequest(xhr, status) {
+		 console.log("LOG "+status+": "+xhr.status+" "+xhr.statusText, xhr);
+	 }
+	
 	//
 	// Get current users info (/cas/me)
 	//
@@ -39,6 +41,8 @@ function tarjontaInit() {
 	init_counter++;
 	jQuery.ajax(window.CONFIG.env.casUrl, {
 	    dataType: "json",
+	    crossDomain:true,
+	    complete: logRequest,
 	    success: function(xhr, status) {
 	        window.CONFIG.env.cas.userinfo = xhr;
 	        initFunction("AUTHENTICATION", xhr, status);
@@ -55,6 +59,8 @@ function tarjontaInit() {
 	init_counter++;
 	jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
 	    dataType: "json",
+	    crossDomain:true,
+	    complete: logRequest,
 	    success: function(xhr, status) {
 	        window.CONFIG.env["tarjonta.tila"] = xhr.result;
 	        initFunction("tarjonta.tila", xhr, status);
@@ -73,8 +79,10 @@ function tarjontaInit() {
 	init_counter++;
 	jQuery.ajax(localisationUrl, {
 	    dataType: "json",
-	    complete: function(xhr, status) {
-	        window.CONFIG.env["tarjonta.localisations"] = xhr.responseJSON;
+	    crossDomain:true,
+	    complete: logRequest,
+	    success: function(xhr, status) {
+	        window.CONFIG.env["tarjonta.localisations"] = xhr;
 	        initFunction("localisations", xhr, status);
 	    },
 	    error: function(xhr, status) {
