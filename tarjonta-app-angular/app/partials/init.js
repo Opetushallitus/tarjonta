@@ -4,8 +4,10 @@ function tarjontaInit() {
 	var loader = $("div#ajax-loader");
 
 	var init_counter = 0;
+	var fail = false;
 	
 	function initFail(id, xhr, status) {
+	    fail = true;
 	    console.log("Init failure: " + id + " -> "+status, xhr);
 	    loader.toggleClass("fail", true);
 	}
@@ -13,13 +15,13 @@ function tarjontaInit() {
 	function initFunction(id, xhr, status) {
 	    init_counter--;
 	
-	    console.log("Got ready signal from: " + id + " -> "+status, xhr);
+	    console.log("Got ready signal from: " + id + " -> "+status+" -> IC="+init_counter, xhr);
 	
 	    /*if (init_counter > 0) {
 	        console.log("Got ready signal from: '" + id + "' -- still waiting for " + init_counter + " requests.");
 	    } else {
 	        console.log("OK! That was the last request, init the app!");*/
-	    if (init_counter == 0) {
+	    if (!fail && init_counter == 0) {
 	    		    	
 	        angular.element(document).ready(function() {
 	            angular.module('myApp', ['app']);
