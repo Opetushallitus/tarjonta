@@ -108,6 +108,13 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
 
     private static final long serialVersionUID = 1L;
+
+    private final String HAKUKELPOISUUSVAATIMUS_KOODISTO_URI = "hakukelpoisuusvaatimusta";
+
+    private final String PERUSKOULUPOHJAINEN_ARVO = "1";
+
+
+
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
@@ -164,6 +171,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @PropertyId("kaksoisTutkinto")
     private CheckBox kaksoistutkintoCheckbox;
+
+    private Label kaksoisTutkintoLabel;
 
     @PropertyId("customHakuaikaEnabled")
     private CheckBox customHakuaika;
@@ -254,6 +263,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 public void valueChange(ValueChangeEvent event) {
                     if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
                         HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
+                        setKaksoistutkintoEnabledOrDisabled(selectedHakukohde.getHakukohdeUri());
                         setTunnisteKoodi(selectedHakukohde.getHakukohdeArvo());
                     } else {
                         LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
@@ -316,7 +326,55 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 || presenter.isKoulutusNivelvaihe();
     }
 
+    private boolean checkPeruskouluPohjaisuus(KoodiType koodiType) {
+        if (koodiType.getKoodiArvo().trim().equals(PERUSKOULUPOHJAINEN_ARVO)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    private void setKaksoistutkintoEnabledOrDisabled(String hakukohdeNimiUri) {
+        if(this.isHakukohdeAnErkkaOrValmentava()) {
+            //kaksoistutkinto is only applicable to reqular ammmatillinen koulutus 
+            return;
+        }
+        if (isPeruskoulupohjainen(hakukohdeNimiUri))  {
+            kaksoistutkintoCheckbox.setVisible(true);
+            kaksoisTutkintoLabel.setVisible(true);
+        } else {
+            kaksoistutkintoCheckbox.setVisible(false);
+            kaksoisTutkintoLabel.setVisible(false);
+        }
+
+    }
+
+    private boolean isPeruskoulupohjainen(String hakukohdeNimiUriParam) {
+       String hakukohdeNimiUri = null;
+       if (hakukohdeNimiUriParam != null) {
+           hakukohdeNimiUri = hakukohdeNimiUriParam;
+       } else if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
+           hakukohdeNimiUri =  presenter.getModel().getHakukohde().getSelectedHakukohdeNimi().getHakukohdeUri();
+       }
+
+
+       if (hakukohdeNimiUri != null) {
+
+           Collection<KoodiType> koodiTypes = tarjontaUIHelper.getKoodistoRelations(hakukohdeNimiUri,HAKUKELPOISUUSVAATIMUS_KOODISTO_URI,
+                   false,SuhteenTyyppiType.SISALTYY);
+
+           for (KoodiType koodi: koodiTypes) {
+               if (checkPeruskouluPohjaisuus(koodi)) {
+                   return true;
+               }
+           }
+
+           return false;
+       } else {
+           return false;
+       }
+
+    }
 
     private GridLayout buildGrid() {
         Preconditions.checkNotNull(koulutusasteTyyppi, "KoulutusasteTyyppi enum cannot be null.");
@@ -350,9 +408,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
             addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
-            if (koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS) {
-            addItemToGrid("", buildKaksoistutkintoField("PerustiedotView.kaksoistutkinto"));
-            }
+
+
+            addItemToGrid("", buildKaksoistutkintoField("PerustiedotView.kaksoistutkinto",(koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS && isPeruskoulupohjainen(null))));
+
             checkCheckboxes();
 
             if (muuOsoite) {
@@ -370,17 +429,19 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return itemContainer;
     }
 
-    private AbstractComponent buildKaksoistutkintoField(String captionKey) {
+    private AbstractComponent buildKaksoistutkintoField(String captionKey, boolean isVisible) {
 
         HorizontalLayout verticalLayout = new HorizontalLayout();
 
-        Label label = UiUtil.label(null, T(captionKey));
+        kaksoisTutkintoLabel = UiUtil.label(null, T(captionKey));
 
         kaksoistutkintoCheckbox = new CheckBox();
 
         verticalLayout.addComponent(kaksoistutkintoCheckbox);
-        verticalLayout.addComponent(label);
+        verticalLayout.addComponent(kaksoisTutkintoLabel);
 
+        kaksoistutkintoCheckbox.setVisible(isVisible);
+        kaksoisTutkintoLabel.setVisible(isVisible);
 
         return verticalLayout;
 

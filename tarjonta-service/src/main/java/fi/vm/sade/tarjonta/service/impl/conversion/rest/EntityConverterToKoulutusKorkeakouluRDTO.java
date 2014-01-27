@@ -117,7 +117,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         }
         kkDto.setKoulutuskoodi(convertToKoodiDTO(komo.getKoulutusKoodi(), DEMO_LOCALE, FieldNames.KOULUTUSKOODI));
         kkDto.setTutkinto(koodiData(komo.getTutkintoOhjelmanNimi(), DEMO_LOCALE, FieldNames.TUTKINTO)); //correct data mapping?
-        kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUS_ARVO));
+        kkDto.setOpintojenLaajuus(koodiData(komo.getLaajuusArvo(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUSARVO));
+        kkDto.setOpintojenLaajuusyksikko(koodiData(komo.getLaajuusYksikko(), DEMO_LOCALE, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
         kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
         kkDto.setOrganisaatio(searchOrganisaationNimi(komoto.getTarjoaja()));
@@ -179,7 +180,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
             dto.setUri(type.getKoodiUri());
             dto.setVersio(type.getVersio());
             dto.setArvo(arvo);
-            dto.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(fromKoodiUri, locale));
+            dto.setNimi(tarjontaKoodistoHelper.getKoodiNimi(fromKoodiUri, locale));
             if (showSubMeta) {
                 final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
                 if (koodiType != null) {
@@ -194,7 +195,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
             dto.setUri("");
             dto.setVersio(-1);
             dto.setArvo("");
-            dto.setKaannos("");
+            dto.setNimi("");
             dto.setMeta(null);
         }
     }
@@ -203,10 +204,9 @@ public class EntityConverterToKoulutusKorkeakouluRDTO extends AbstractFromDomain
         if (kieliUri != null && !kieliUri.isEmpty()) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kieliUri);
             dto.setKieliUri(type.getKoodiUri());
-            dto.setKieliVersio(type.getVersio() + "");
+            dto.setKieliVersio(type.getVersio());
             dto.setKieliArvo(arvo);
-            dto.setKieliKaannos(tarjontaKoodistoHelper.getKoodiNimi(kieliUri, locale));
-            dto.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(koodiUri, new Locale(arvo)));
+            dto.setNimi(tarjontaKoodistoHelper.getKoodiNimi(koodiUri, new Locale(arvo)));
         }
     }
 

@@ -3,7 +3,7 @@
         <!-- koulutuskoodi -->
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi"/>
-            <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
+            <td>{{model.koulutuskoodi.nimi}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
             <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
         </tr>
 
@@ -41,40 +41,40 @@
         <!-- k. aste -->
         <tr>
             <th tt="koulutus.edit.koulutusaste"/>
-            <td>{{model.koulutusaste.kaannos}}</td>
+            <td>{{model.koulutusaste.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- k. ala -->
         <tr>
             <th tt="koulutus.edit.koulutusala"/>
-            <td>{{model.koulutusala.kaannos}}</td>
+            <td>{{model.koulutusala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- o. ala -->
         <tr>
             <th tt="koulutus.edit.opintoala"/>
-            <td>{{model.opintoala.kaannos}}</td>
+            <td>{{model.opintoala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkinto -->
         <tr>
             <th tt="koulutus.edit.tutkinto"/>
-            <td>{{model.tutkinto.kaannos}}</td>
+            <td>{{model.tutkinto.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.edit.tutkintonimike"/>
-            <td>{{model.tutkintonimike.kaannos}}</td>
+            <td>{{model.tutkintonimike.nimi}}</td>
             <td></td>
         </tr>
         <tr>
             <th tt="koulutus.edit.eqf-luokitus"/>
-            <td>{{model.eqf.kaannos}}</td>
+            <td>{{model.eqf.nimi}}</td>
             <td></td>
         </tr>
 
@@ -82,7 +82,7 @@
         <tr class="required">
             <th tt="koulutus.edit.opintojen-laajuus"/> 
             <td>
-                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select>
+                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select> {{model.opintojenLaajuusyksikko.nimi}}
             </td>
             <td>
                 <p class="error" ng-show="uiModel.showError && perustiedotForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>

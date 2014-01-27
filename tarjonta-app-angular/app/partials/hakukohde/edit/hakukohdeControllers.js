@@ -22,7 +22,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
 
 
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
@@ -84,6 +84,41 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
     }
+
+    var checkCanCreateOrEditHakukohde = function() {
+
+        if ($scope.model.hakukohde.oid !== undefined) {
+
+            if ($scope.canEdit !== undefined) {
+                return $scope.canEdit;
+            } else {
+                return false;
+            }
+
+
+        } else {
+
+            if ($scope.canCreate !== undefined) {
+
+                return $scope.canCreate;
+
+            } else {
+
+                return true;
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
+    console.log('CAN SAVE : ', $scope.canEdit);
+    console.log('CAN CREATE : ', $scope.canCreate);
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -201,6 +236,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+
     var createFormattedDateString = function(date) {
 
         return moment(date).format('DD.MM.YYYY HH:mm');
@@ -218,6 +254,27 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
         return foundHaku;
+
+    }
+
+
+    var removeEmptyKuvaukses = function() {
+
+          for (var langKey in $scope.model.hakukohde.valintaperusteKuvaukset) {
+
+               if ($scope.model.hakukohde.valintaperusteKuvaukset[langKey].length < 1) {
+                   delete  $scope.model.hakukohde.valintaperusteKuvaukset[langKey];
+               }
+
+          }
+
+          for (var langKey in $scope.model.hakukohde.soraKuvaukset) {
+
+              if ($scope.model.hakukohde.soraKuvaukset[langKey].length < 1) {
+                  delete  $scope.model.hakukohde.soraKuvaukset[langKey];
+              }
+
+          }
 
     }
 
@@ -297,7 +354,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.canSaveHakukohde = function() {
 
         if ($scope.editHakukohdeForm !== undefined) {
-            return $scope.editHakukohdeForm.$valid;
+
+            return $scope.editHakukohdeForm.$valid && checkCanCreateOrEditHakukohde();
         } else {
             return false;
         }
@@ -465,6 +523,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     haeTarjoajaOppilaitosTyypit();
 
+
+
     $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
 
 
@@ -506,40 +566,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //$scope.model.koodiuriPromise = $q.defer();
 
-    /*
-        ----> Retrieve all postinumeros
-     */
 
-    $scope.model.postinumeroarvo = {
 
-    };
-
-    var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri('posti',$scope.model.userLang);
-
-    koodistoPromise.then(function(koodisParam){
-      $scope.model.koodis = koodisParam;
-
-      if (postinumero !== undefined) {
-          console.log('Changing arvo : ', postinumero);
-          var koodi =  findKoodiWithUri(postinumero,$scope.model.koodis);
-          console.log('TO : ', koodi);
-          $scope.model.postinumeroarvo.arvo = koodi.koodiArvo;
-      }
-    });
-
-   /*
-
-        -----> Get selected postinumero from and set the nimi to postitoimipaikka text
-
-    */
-
-    $scope.model.onKieliTypeAheadChange = function() {
-       var koodi = findKoodiWithArvo($scope.model.postinumeroarvo.arvo,$scope.model.koodis);
-
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = koodi.koodiUri;
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = koodi.koodiNimi;
-
-    };
 
 
     /*
@@ -590,14 +618,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.kieliRemoveCallback = function(kieliUri) {
       removeLisatieto(kieliUri);
     };
-
-    $scope.model.postinumeroCallback = function(selectedPostinumero) {
-       console.log('Postinumero callback : ', selectedPostinumero);
-
-       $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = selectedPostinumero.koodiNimi;
-    };
-
-
 
 
     /*
@@ -696,6 +716,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
+        removeEmptyKuvaukses();
 
             /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -725,7 +746,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                    $scope.model.hakukohde.soraKuvaukset = {};
                }
-
+               $scope.canEdit = true;
 
            },function(error){
 
@@ -762,11 +783,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveLuonnos = function() {
 
+
+
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "LUONNOS";
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
+        removeEmptyKuvaukses();
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -797,6 +821,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
+                $scope.canEdit = true;
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
 
@@ -834,6 +859,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.takaisin = function() {
         $location.path('/etusivu');
     };
+
+    $scope.model.tarkastele = function() {
+
+        $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
+
+
+    }
 
     $scope.haeValintaPerusteKuvaus = function(){
 

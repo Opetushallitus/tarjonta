@@ -164,6 +164,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "koulutus-uri", "FI");
         stubKoodi(koodiService, "tutkinto-uri", "FI");
         stubKoodi(koodiService, "laajuus-uri", "FI");
+        stubKoodi(koodiService, "laajuusyksikko-uri", "FI");
         stubKoodi(koodiService, "koulutusaste-uri", "FI");
         stubKoodi(koodiService, "koulutusala-uri", "FI");
         stubKoodi(koodiService, "opintoala-uri", "FI");
@@ -377,6 +378,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4.555", null, null));
         kk.setTutkinto(new KoodiV1RDTO("tutkinto-uri", 1, null));
         kk.setOpintojenLaajuus(new KoodiV1RDTO("laajuus-uri", 1, null));
+        kk.setOpintojenLaajuusyksikko(new KoodiV1RDTO("laajuusyksikko-uri", 1, null));
         kk.setKoulutusaste(new KoodiV1RDTO("koulutusaste-uri", 1, null));
         kk.setKoulutusala(new KoodiV1RDTO("koulutusala-uri", 1, null));
         kk.setOpintoala(new KoodiV1RDTO("opintoala-uri", 1, null));

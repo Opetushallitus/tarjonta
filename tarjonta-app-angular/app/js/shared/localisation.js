@@ -75,7 +75,7 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
                 var t = LocalisationService.t(tAttrs["tt"]);
-                tElement.text(t);
+                tElement.html(t);
 
                 return function postLink(scope, iElement, iAttrs, controller) {
                     // $timeout(scope.$destroy.bind(scope), 0);

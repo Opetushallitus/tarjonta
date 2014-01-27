@@ -97,6 +97,7 @@
         <script src="js/shared/directives/controlsLayout.js"></script>
         <script src="js/shared/directives/treeField.js"></script>
         <script src="js/shared/directives/showErrors.js"></script>
+        <script src="js/shared/directives/dateTime.js"></script>
         <script src="js/shared/directives/zippy.js"></script>
 
         <script src="js/shared/filters/orderByNum.js"></script>
@@ -137,7 +138,6 @@
         <script src="partials/koulutus/edit/koulutusConverter.js"></script>
 
         <script src="partials/koulutus/edit/alkamispaiva-ja-kausi.js"></script>
-        <script src="partials/koulutus/edit/alkamispaivat.js"></script>
 
         <script src="partials/koulutus/review/reviewControllers.js"></script>
 
@@ -294,30 +294,35 @@
             </div>
         </div>
 
-        <div data-ng-controller="LoadingCtrl"
-             data-ng-show="loading"
-             id="ajax-loader"
-             class="pre-init max"
-             ng-class="{{ isModal() ? 'max' : 'min'}}">
-            <div class="frame">
-                <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                <span class="post-init">{{t("loading")}}</span>
-            </div>
-            <div class="fail">
-                <h1>Tarjonta on rikki</h1>
-                <hr/>
-                
-                <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
-                kehotus kokeilla hetken päästä uudelleen jne..</p>
-                
-                <p>Samma på svenska.</p>
-                
-                <p>Same in English.</p>
+        <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
+	             ng-class="{{isModal() ? 'max' : 'min'}}">
+           <div class="frame">
+               <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+               <span class="post-init spinner-msg" tt="loading" ng-show="isTimeout(false)"></span>
+               <div class="post-init timeout" ng-show="isTimeout(true)">
+                    <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
+                    tai järjestelmän väliaikaisesta kuormituksesta.</p>
+                    
+                    <a href bg-click="restart()" class="btn float-right">
+                    <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
+                   </a>
+               </div>
+           </div>
+           <div class="fail">
+               <h1>Tarjonta on rikki - bruten - broken !!1</h1>
+               <hr/>
                
-                <hr/>
-                <a href onclick="window.refresh()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
-            
-            </div>
+               <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
+               kehotus kokeilla hetken päästä uudelleen jne.. Ks. KJOH-728</p>
+               
+               <p>Samma på svenska.</p>
+               
+               <p>Same in English.</p>
+              
+               <hr/>
+               <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
+           
+           </div>
         </div>
 
         <script> tarjontaInit(); </script>

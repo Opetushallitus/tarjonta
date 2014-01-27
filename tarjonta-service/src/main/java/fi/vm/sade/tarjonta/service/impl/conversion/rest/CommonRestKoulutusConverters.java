@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.collect.Maps;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
@@ -52,20 +53,24 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
 
             Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstis();
             for (TekstiKaannos kaannos : tekstis1) {
-                KoodiV1RDTO uri = new KoodiV1RDTO();
+
                 if (kaannos.getKieliKoodi() != null && !kaannos.getKieliKoodi().isEmpty()) {
                     final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kaannos.getKieliKoodi());
-                    uri.setUri(type.getKoodiUri());
-                    uri.setVersio(type.getVersio());
-                    uri.setKaannos(tarjontaKoodistoHelper.getKoodiNimi(type.getKoodiUri(), new Locale(DEMO_LOCALE)));
 
                     if (showMeta) {
-                        if (dto.getMeta() == null) {
-                            dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                        final KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(type.getKoodiUri());
+                        if (koodi != null) {
+                            KoodiV1RDTO metaData = new KoodiV1RDTO();
+                            metaData.setKieliUri(type.getKoodiUri());
+                            metaData.setKieliArvo(koodi.getKoodiArvo());
+                            metaData.setKieliVersio(koodi.getVersio());
+                            if (dto.getMeta() == null) {
+                                dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                            }
+                            dto.getMeta().put(type.getKoodiUri(), metaData);
                         }
-                        dto.getMeta().put(uri.getUri(), uri);
                     }
-                    dto.getTekstis().put(uri.getUri(), kaannos.getArvo());
+                    dto.getTekstis().put(type.getKoodiUri(), kaannos.getArvo());
                 }
                 tekstis.put(e.getKey(), dto);
             }
@@ -92,7 +97,20 @@ public class CommonRestKoulutusConverters<TYPE extends Enum> {
                 tekstiKaannos.setArvo(text);
                 mkMerge.addTekstiKaannos(tekstiKaannos);
             }
-            tekstit.put(e.getKey(), mkMerge);
+
+            boolean clear = true;
+            for (TekstiKaannos kaannos : mkMerge.getTekstis()) {
+                if (kaannos.getArvo() != null && !kaannos.getArvo().isEmpty()) {
+                    clear = false;
+                    break;
+                }
+            }
+
+            if (clear) {
+                tekstit.remove(e.getKey());
+            } else {
+                tekstit.put(e.getKey(), mkMerge);
+            }
         }
     }
 

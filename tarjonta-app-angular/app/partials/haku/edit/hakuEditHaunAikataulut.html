@@ -1,4 +1,6 @@
+
 <div>
+    <!-- Common parameters for all hakutyyppi's -->
 
     <h3 ttt='haku.edit.aikataulu.julkaisuJaHakuaika'>Tarjonnan julkaisu ja hakuaika</h3>
 
@@ -6,29 +8,44 @@
         <tr class="required">
             <th ttt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="julkaisunTakaraja" required ng-model="model.parameter.julkaisunTakaraja">
-                <p class="help-block" ttt='haku.edit.aikataulu.julkaisunTakaraja.help'>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_TJT" required ng-model="model.parameter.PH_TJT">
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_TJT.help'>
                     Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
                 </p>
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="julkaisunTakaraja" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_TJT" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja'>Aloituspaikkojen muokkauksen takaraja</th>
+            <th ttt='haku.edit.aikataulu.PH_HKLPT'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="aloituspaikkojenMuokkauksenTakaraja" ng-model="model.parameter.aloituspaikkojenMuokkauksenTakaraja">
-                <p class="help-block" ttt='haku.edit.aikataulu.aloituspaikkojenMuokkauksenTakaraja.help'>
-                    Hakuajan jälkeen hakukohteen aloituspaikkojen muokkaaminen on sallittu annettuun päivämäärään asti.
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKLPT" required ng-model="model.parameter.PH_HKLPT">
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_HKLPT.help'>
+                    Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.
                 </p>
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="aloituspaikkojenMuokkauksenTakaraja" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                    <show-errors form="hakuForm" field="PH_HKLPT" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_HKMT'>Hakukohteen muokkauksen takaraja</th>
+            <td>
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKMT" required ng-model="model.parameter.PH_HKMT">
+                <p class="help-block" ttt='haku.edit.aikataulu.PH_HKMT.help'>
+                    Annetun ajan jälkeen hakukohteita ei voi muokata.
+                </p>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_HKMT" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
@@ -39,176 +56,56 @@
         </tr>
 
     </table>
+</div><!-- /commmon parameters -->
 
 
-    <h3 ttt='haku.edit.aikataulu.valinnatJaSijoittelu'>Valinnat ja sijoittelu</h3>
+<div data-ng-switch on="model.haku.haunkohdejoukkoUri">
+
+    <!-- Korkeakoulu -->
+    <div data-ng-switch-when="haunkohdejoukko_12">
+        <div ng-include="'partials/haku/edit/hakuEditHaunAikataulut_korkeakoulu.html'">Korkeakoulu</div>
+    </div>
+
+    <!-- 2. aster + other parameters -->
+    <div data-ng-switch-default>
+        <div ng-include="'partials/haku/edit/hakuEditHaunAikataulut_toinenaste.html'">2. aste + muut</div>
+    </div>
+</div>
+
+<!-- Lisähaku -->
+<div ng-if="model.haku.hakutyyppiUri == 'hakutyyppi_03'">
+
+    <h3 ttt='haku.edit.aikataulu.lisahaunTiedot'>Lisähaun tiedot</h3>
 
     <table class="tarjontaForm">
         <tr>
-            <th ttt='haku.edit.aikataulu.koekutsujenMuodostaminen'>Koekutsujen muodostaminen</th>
+            <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
+            <td colspan="2">ALKAA --- LOPPUU</td>
+        </tr>
+
+        <tr>
+            <th ttt='haku.edit.aikataulu.PH_HKTA'>Hakukohteiden tallennus alkaa</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koekutsujenMuodostaminen_start" ng-model="model.parameter.koekutsujenMuodostaminen.start">
-                --
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="koekutsujenMuodostaminen_end" ng-model="model.parameter.koekutsujenMuodostaminen.end">
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKTA" ng-model="model.parameter.PH_HKTA">
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="koekutsujenMuodostaminen_start" tt-prefix="haku.edit.aikataulu"></show-errors>
-                    <show-errors form="hakuForm" field="koekutsujenMuodostaminen_end" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_HKTA" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.harkinnanvarainenValintaTallennusPaattyy'>Harkinnanvaraisen valinnan tallennus päättyy</th>
+            <th ttt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="harkinnanvarainenValintaTallennusPaattyy" ng-model="model.parameter.harkinnanvarainenValintaTallennusPaattyy">
+                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKP" ng-model="model.parameter.PH_HKP">
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="harkinnanvarainenValintaTallennusPaattyy" tt-prefix="haku.edit.aikataulu" ></show-errors>
+                    <show-errors form="hakuForm" field="PH_HKP" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
         </tr>
-
-
     </table>
-
-
-
-
-
-    <form class="form-horizontal" id='hakuForm'>
-
-        <fieldset>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Koetulosten tallentaminen</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Oppilaitosten virkailijoiden valintapalvelun käyttäminen estetty</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Valintalaskennan suorittaminen</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Sijoittelun suorittaminen</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Multiple Checkboxes (inline) -->
-            <div class="control-group">
-                <label class="control-label" for="checkboxes">Sijoittelun suorittaminen</label>
-                <div class="controls">
-                    <label class="checkbox inline" for="checkboxes-0">
-                        <input type="checkbox" name="checkboxes" id="checkboxes-0" value="Aina valintatietojen muuttuessa">
-                        Aina valintatietojen muuttuessa
-                    </label>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Sijoittelun suorittamistiheys</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <p class="help-block">Tiheys määritellään kokonaisina tunteina välillä 1 - 336 tuntia (14 vrk)</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Sijoittelun suorittamisen vuorokaudessa klo</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="placeholder" class="input-xlarge">
-                    <p class="help-block">Kellonaika, HH:mm formaatissa, esim: 23:45</p>
-                </div>
-            </div>
-
-        </fieldset>
-
-
-
-
-
-        <fieldset>
-
-            <!-- Form Name -->
-            <legend>Tulokset ja paikan vastaanotto</legend>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Jälkiohjauskirjeen aineiston lähettäminen iPostiin</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Hakukierros päättyy</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-        </fieldset>
-
-
-
-        <fieldset>
-
-            <!-- Form Name -->
-            <legend>Lisähaun tiedot</legend>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Hakukohteiden tallennus alkaa</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">Hakuaika 1.1.1234 klo 12:34 - 1.1.4321 klo 12:34</p>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="control-group">
-                <label class="control-label" for="textinput">Hakukierros päättyy</label>
-                <div class="controls">
-                    <input id="textinput" name="textinput" type="text" placeholder="pvm + kello" class="input-xlarge">
-                    <p class="help-block">help</p>
-                </div>
-            </div>
-
-        </fieldset>
-
-    </form>
-
 </div>
+<!-- /Lisähaku -->

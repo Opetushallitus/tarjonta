@@ -182,7 +182,7 @@ public class TarjontaKoodistoHelper {
             result[0] = koodiUriWithVersion.substring(0, index);
             result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
         } else {
-            LOG.warn("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
+            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
             result[0] = koodiUriWithVersion;
             result[1] = "-1";
         }
@@ -257,28 +257,25 @@ public class TarjontaKoodistoHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         LOG.debug("getKoodiNimi({}, {})", koodiUriWithPossibleVersionInformation, locale);
 
-        String result = null;
-
         if (locale == null) {
             locale = I18N.getLocale();
         }
 
         KoodiType koodi = getKoodiByUri(koodiUriWithPossibleVersionInformation);
-        if (koodi == null) {
-            result = null;
-        } else {
+        return  getNimiByKoodi(koodi, locale);
+    }
+
+    public String getNimiByKoodi(final KoodiType koodi, final Locale locale) {
+        if (koodi != null) {
 
             // Get metadata
             KoodiMetadataType kmdt = getKoodiMetadataForLanguage(koodi, locale);
 
             if (kmdt != null) {
-                result = kmdt.getNimi();
+                return kmdt.getNimi();
             }
         }
-
-        LOG.debug("  --> result = {}", result);
-
-        return result;
+        return null;
     }
 
     /**

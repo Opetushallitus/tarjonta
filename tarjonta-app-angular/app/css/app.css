@@ -57,6 +57,20 @@ div#ajax-loader.pre-init .post-init {
     display:none;
 }
 
+div#ajax-loader .dialog {
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin-left:-200px;
+    margin-top:-150px;
+    width:400px;
+    height:300px;
+    background:#ffffff;
+    border: 1px solid #cccccc;
+    border-radius:4px;    
+    z-index:10001;
+}
+
 div#ajax-loader div.fail, div#ajax-loader.fail div.frame {
 	display:none;
 }
@@ -90,7 +104,25 @@ div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
-	z-index:10000;
+	z-index:999;
+}
+
+div#ajax-loader .timeout {
+	position:absolute;
+	top:55%;
+    left:0;
+    width:350px;
+    margin-left:-175px;
+    margin-top:40px;
+    font-size:14px;
+}
+
+div#ajax-loader .timeout p {
+
+}
+
+div#ajax-loader.min .timeout {
+    display:none;	
 }
 
 div#ajax-loader.max {
@@ -108,14 +140,14 @@ div#ajax-loader.max div.frame {
 	height:100%;
 }
 
-div#ajax-loader.max div.frame img {
+div#ajax-loader.max div.frame img.spinner {
 	position:absolute;
 	left:-16px;
 	bottom:55%;
 	display:block;
 }
 
-div#ajax-loader.max span {
+div#ajax-loader.max span.spinner-msg {
 	position:absolute;
 	width:200px;
 	left:-100px;
@@ -139,12 +171,12 @@ div#ajax-loader.min div.frame {
 	width:100%;
 }
 
-div#ajax-loader.min div.frame img {
+div#ajax-loader.min div.frame img.spinner {
 	display:inline;
 	position:relative;
 }
 
-div#ajax-loader.min span {
+div#ajax-loader.min span.spinner-msg {
 	display:inline;
 	position:relative;
 }
@@ -597,4 +629,23 @@ div#koulutuksenAlkamisPvm div.indent {
 
 div#koulutuksenAlkamisPvm span.disabled {
     color:#a0a0a0;
+}
+
+/* date-time */
+
+div.tarjontaDateTime {
+    display:inline-block;	
+}
+
+div.tarjontaDateTime input.date {
+    width:6.66em;
+}
+
+div.tarjontaDateTime input.time {
+    width:3.33em;
+}
+
+div.tarjontaDateTime button {
+    position: relative;
+    top:-5px;
 }
