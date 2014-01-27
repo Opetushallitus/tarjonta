@@ -62,6 +62,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
+    $scope.model.continueToReviewEnabled = false;
+
     $scope.model.nimiValidationFailed = false;
 
     $scope.model.hakukelpoisuusValidationErrMsg = false;
@@ -115,6 +117,19 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     }
+
+    var checkJatkaBtn =   function() {
+
+        if ($scope.model.hakukohde === undefined || $scope.model.hakukohde.oid === undefined) {
+            console.log('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
+
+            $scope.model.continueToReviewEnabled = false;
+        } else {
+            $scope.model.continueToReviewEnabled  = true;
+        }
+
+    }
+
 
     console.log('HAKUKOHDE : ', $scope.model.hakukohde);
     console.log('CAN SAVE : ', $scope.canEdit);
@@ -364,6 +379,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
+
     if ($scope.model.hakukohde.lisatiedot !== undefined) {
         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
 
@@ -487,6 +503,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     haeTarjoajaOppilaitosTyypit();
+    checkJatkaBtn();
 
 
 
@@ -712,6 +729,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                    $scope.model.hakukohde.soraKuvaukset = {};
                }
                $scope.canEdit = true;
+               $scope.model.continueToReviewEnabled = true;
 
            },function(error){
 
@@ -787,6 +805,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
                 $scope.canEdit = true;
+                $scope.model.continueToReviewEnabled = true;
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
 
