@@ -137,7 +137,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
-        	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
     }
 
@@ -243,8 +243,14 @@ public class HakukohdeResultRow extends HorizontalLayout {
                     && hakukohde != null
                     && hakukohde.getHakuAlkamisPvm() != null
                     && hakukohde.getHakuAlkamisPvm().before(today))
-                    && !KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde.getHakutyyppiUri())) {
+                && (!(KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde
+                        .getHakutyyppiUri()) || KoodistoURI.KOODI_ERILLISHAKU_URI
+                        .equals(hakukohde.getHakutapaKoodi().getUri())))) {
             hakuStarted = true;
+            
+            System.out.println("" + hakukohde.getHakutyyppiUri());
+            System.out.println("" + hakukohde.getHakutapaKoodi().getUri());
+            
         }
         
         isSelected = UiUtil.checkbox(null, null);

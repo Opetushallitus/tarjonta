@@ -35,7 +35,7 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
     private static final String ROLE_UPDATE = "ROLE_APP_TARJONTA_READ_UPDATE";
     private static final String ROLE_CRUD = "ROLE_APP_TARJONTA_CRUD";
 
-    @Secured({ROLE_READ})
+    @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
     @Override
     public ResultV1RDTO<String> authorize() {
         LOG.info("authorize()");
