@@ -335,6 +335,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private void setKaksoistutkintoEnabledOrDisabled(String hakukohdeNimiUri) {
+        if(this.isHakukohdeAnErkkaOrValmentava()) {
+            //kaksoistutkinto is only applicable to reqular ammmatillinen koulutus 
+            return;
+        }
         if (isPeruskoulupohjainen(hakukohdeNimiUri))  {
             kaksoistutkintoCheckbox.setVisible(true);
             kaksoisTutkintoLabel.setVisible(true);
