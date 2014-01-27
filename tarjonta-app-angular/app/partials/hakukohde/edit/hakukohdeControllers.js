@@ -829,6 +829,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
 
+
     }
 
     $scope.haeValintaPerusteKuvaus = function(){

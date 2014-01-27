@@ -66,6 +66,22 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
           var koodiPromises = [];
 
+          if ($scope.model.allkieles === undefined || $scope.model.allkieles.length < 1) {
+              var allKieles = new buckets.Set();
+
+              for (var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
+
+                  allKieles.add(kieliUri);
+              }
+
+              for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
+                  allKieles.add(kieliUri);
+              }
+              $scope.model.allkieles = allKieles.toArray();
+          }
+
+          console.log('ALL KIELES : ' , $scope.model.allkieles);
+
           if ($scope.model.allkieles!== undefined) {
 
           angular.forEach($scope.model.allkieles,function(hakukohdeKieli) {
@@ -74,6 +90,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
                koodiPromises.push(koodi);
             });
           }
+
+
 
           angular.forEach(koodiPromises,function(koodiPromise){
               koodiPromise.then(function(koodi){
@@ -297,7 +315,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
     $scope.goBack = function(event) {
-
+        window.history.back();
     };
 
     $scope.doDelete = function(event) {

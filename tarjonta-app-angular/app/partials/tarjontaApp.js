@@ -210,6 +210,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     resolve: {
                         hakukohdex: function(Hakukohde, $log, $route) {
                             $log.info("/hakukohde/ID", $route);
+
                             //return TarjontaService.getHakukohde({oid: $route.current.params.id});
                             var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
 
