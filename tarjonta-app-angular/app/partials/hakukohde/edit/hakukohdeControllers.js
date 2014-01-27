@@ -82,6 +82,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+    var emptyErrorMessages = function() {
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+        $scope.model.showError = false;
+
+    }
+
+
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
@@ -693,7 +702,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.saveValmis = function() {
-
+        emptyErrorMessages();
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
@@ -766,7 +775,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveLuonnos = function() {
 
-
+        emptyErrorMessages();
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
@@ -774,6 +783,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
+
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
