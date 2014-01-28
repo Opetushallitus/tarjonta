@@ -317,10 +317,11 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     };
 
 
-    $scope.takaisin = function() {
+    $scope.model.takaisin = function() {
 
-        var oriUri = "/valintaPerusteKuvaus/search";
-        $location.path(oriUri);
+        window.history.back();
+       // var oriUri = "/valintaPerusteKuvaus/search";
+       // $location.path(oriUri);
 
     }
 

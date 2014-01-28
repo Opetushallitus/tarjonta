@@ -1,0 +1,55 @@
+div#dateTimeChooser table {
+	width:100%;
+}
+
+div#dateTimeChooser table th {
+    font-weight:normal;
+}
+
+div#dateTimeChooser table td {
+	text-align:center;
+	font-size:20px;
+	width:66px;
+	height:44px;
+	border: 1px solid rgb(146, 204, 224);
+	cursor:pointer;
+}
+
+div#dateTimeChooser table .week {
+	font-style: italic;
+}
+
+div#dateTimeChooser table td.week {
+    color:rgb(146, 204, 224);
+    border:none;
+    cursor:default;
+}
+
+div#dateTimeChooser table td.vkl {
+    background-color:#d2ecf5;
+}
+
+div#dateTimeChooser table td.other {
+	color:#a0a0a0;
+    background:#eeeeee;
+}
+
+div#dateTimeChooser table td.selected {
+    background-color:rgb(146, 204, 224);
+    border:1px inset rgb(146, 204, 224);
+    cursor:default;
+}
+
+div#dateTimeChooser div.ymcontrols {
+    text-align:center;
+    margin-bottom:10px;
+}
+
+div#dateTimeChooser select.month {
+    width:150px;
+}
+
+div#dateTimeChooser select.year {
+    width:100px;
+}
+
