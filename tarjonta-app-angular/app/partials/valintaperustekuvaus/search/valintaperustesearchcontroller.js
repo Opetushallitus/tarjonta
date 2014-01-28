@@ -1,6 +1,6 @@
 var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','ResultsTable']);
 
-app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal) {
+app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal,$log) {
 
 
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
@@ -36,9 +36,11 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     var getUserOrgs = function() {
 
         if (!AuthService.isUserOph())   {
+
+            $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
             OrganisaatioService.etsi({oidRestrictionList:AuthService.getOrganisations()})
                 .then(function(data){
-
+                    $log.info('OID RESTRICTION LIST : ', data);
                   getOppilaitosTyyppis(data.organisaatiot);
 
                 });
@@ -89,9 +91,11 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     var checkForUserOrgs = function() {
 
         //If user has not selected anything for oppilaitostyyppi and has oppilaitostyyppis in userOrgTypes, then
-        //it is safe to asume that user is not ophadmin so restrict the query with first available oppilaitostyyppi
+        //it is safe to assume that user is not ophadmin so restrict the query with first available oppilaitostyyppi
+        $log.info('SEARCH SPEC OPPILAITOSTYYPPI : ', $scope.model.searchSpec.oppilaitosTyyppi);
         if ($scope.model.searchSpec.oppilaitosTyyppi === undefined && $scope.model.userOrgTypes.length  > 0 ) {
             $scope.model.searchSpec.oppilaitosTyyppi =  $scope.model.userOrgTypes[0];
+            $log.info(' USER ORG TYPE SET :  ', $scope.model.userOrgTypes[0]);
         }
 
     }
