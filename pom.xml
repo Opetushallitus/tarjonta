@@ -17,7 +17,7 @@
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-      <organisaatio.api.version>8.0</organisaatio.api.version>
+      <organisaatio.api.version>7.0</organisaatio.api.version>
       <authentication.api.version>8.0</authentication.api.version>
       <generic.version>8.0-SNAPSHOT</generic.version>
       <vaadin.theme.version>6.2</vaadin.theme.version>
