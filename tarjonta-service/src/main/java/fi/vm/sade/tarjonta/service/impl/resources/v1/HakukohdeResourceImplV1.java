@@ -79,7 +79,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-    
+
     @Autowired(required=true)
     TarjontaSearchService tarjontaSearchService;
 
@@ -101,7 +101,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired
     private PermissionChecker permissionChecker;
 
-    
+
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
@@ -120,7 +120,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         if(hakukohdeOid!=null) {
             q.setHakukohdeOid(hakukohdeOid);
         }
-        
+
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
 
         for (String s : hakukohdeTilas) {
@@ -141,7 +141,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
        if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstis() != null && hakukohde.getValintaperusteKuvaus().getTekstis().size() > 0) {
            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
 
-           HashMap<String,String> tekstis = converter.convertMonikielinenTekstiToStringHashMap(hakukohde.getValintaperusteKuvaus());
+           HashMap<String,String> tekstis = converter.convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false);
            result.setStatus(ResultV1RDTO.ResultStatus.OK);
            result.setResult(tekstis);
 
@@ -162,7 +162,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-            MonikielinenTeksti valintaPerusteetMonikielinen = converter.convertStringHashMapToMonikielinenTeksti(valintaPerusteet);
+            MonikielinenTeksti valintaPerusteetMonikielinen = converter.convertMapToMonikielinenTeksti(valintaPerusteet);
 
             hakukohde.setValintaperusteKuvaus(valintaPerusteetMonikielinen);
             //TODO : Enable
@@ -189,7 +189,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-            MonikielinenTeksti soraKuvaukset = converter.convertStringHashMapToMonikielinenTeksti(sorat);
+            MonikielinenTeksti soraKuvaukset = converter.convertMapToMonikielinenTeksti(sorat);
             hakukohde.setSoraKuvaus(soraKuvaukset);
             //TODO: Fix it
             //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
@@ -850,7 +850,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         return komotos;
     }
-    
+
     @Override
     @Transactional(readOnly = false)
     public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
