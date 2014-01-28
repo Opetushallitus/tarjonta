@@ -440,7 +440,9 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         return  resultV1RDTO;
     }
 
+
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(String tyyppi, KuvausSearchV1RDTO searchParam) {
         ResultV1RDTO<List<KuvausV1RDTO>> result = new ResultV1RDTO<List<KuvausV1RDTO>>();
 
