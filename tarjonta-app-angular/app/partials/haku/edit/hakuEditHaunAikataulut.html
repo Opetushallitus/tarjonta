@@ -8,6 +8,11 @@
         <tr class="required">
             <th ttt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
+            <t-date-time type="long"
+	        name="PH_TJT" 
+	        ng-model="model.parameter.PH_TJT"
+	        required></t-date-time>
+	        XXX
                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_TJT" required ng-model="model.parameter.PH_TJT">
                 <p class="help-block" ttt='haku.edit.aikataulu.PH_TJT.help'>
                     Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
