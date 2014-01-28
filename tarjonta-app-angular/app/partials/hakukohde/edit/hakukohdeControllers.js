@@ -140,9 +140,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
-    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
-    console.log('CAN SAVE : ', $scope.canEdit);
-    console.log('CAN CREATE : ', $scope.canCreate);
+
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -259,6 +257,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     }
+
+
 
 
     var createFormattedDateString = function(date) {
@@ -651,7 +651,30 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
+    $scope.model.isSoraEditable = function() {
 
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+
+    };
+
+    $scope.model.isValintaPerusteEditable = function() {
+
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+    }
     /*
 
         ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
