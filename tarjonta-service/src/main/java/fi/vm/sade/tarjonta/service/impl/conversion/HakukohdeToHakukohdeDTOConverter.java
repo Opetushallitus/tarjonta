@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
@@ -78,13 +79,20 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
                 String organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
                 t.setTarjoajaOid(organisaatioOid);
                 if (organisaatioOid != null) {
-                    OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
-                    if (organisaatio != null) {
-                        Map<String, String> map = new HashMap<String, String>();
-                        for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
-                            map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
-                                    teksti.getValue());
+                    try {
+                        OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
+                        if (organisaatio != null) {
+                            Map<String, String> map = new HashMap<String, String>();
+                            for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
+                                map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
+                                        teksti.getValue());
+                            }
+                            t.setTarjoajaNimi(map);
                         }
+                    } catch (Throwable th) {
+                        //organisaation nimihaku epäonnistui!!!
+                        Map<String, String> map = new HashMap<String, String>();
+                        map.put(KoodistoURI.KOODI_LANG_FI_URI, "Organisaatiohaku epäonnistui (" + organisaatioOid + ")");
                         t.setTarjoajaNimi(map);
                     }
                 }

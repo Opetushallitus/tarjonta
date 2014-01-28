@@ -1,6 +1,6 @@
 var app = angular.module('Kuvaus', ['ngResource','config']);
 
-app.factory('Kuvaus',function($http,Config,$q){
+app.factory('Kuvaus',function($http,Config,$q,$log){
 
     var kuvausUriPrefix = "kuvaus/";
 
@@ -181,6 +181,7 @@ app.factory('Kuvaus',function($http,Config,$q){
 
                 var queryUri = Config.env.tarjontaRestUrlPrefix +kuvausUriPrefix +tyyppi+"/search";
 
+                $log.info('KUVAUS SEARCH SPEC URI : ', queryUri);
 
                  $http.post(queryUri,searchSpec)
                      .success(function(data){

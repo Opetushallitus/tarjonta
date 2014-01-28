@@ -47,7 +47,7 @@ app.directive('koodistoarvocombo',function(Koodisto,$log){
 
     return {
 
-        restrict:'E',
+        restrict:'EA',
         replace:true,
         templateUrl : "js/shared/directives/koodistoArvoCombo.html",
         scope: {

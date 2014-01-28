@@ -62,6 +62,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
+    $scope.model.continueToReviewEnabled = false;
+
     $scope.model.nimiValidationFailed = false;
 
     $scope.model.hakukelpoisuusValidationErrMsg = false;
@@ -77,6 +79,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
         $scope.model.hakukohdeTabsDisabled = false;
+    }
+
+
+    var emptyErrorMessages = function() {
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+        $scope.model.showError = false;
+
     }
 
 
@@ -116,9 +127,20 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
-    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
-    console.log('CAN SAVE : ', $scope.canEdit);
-    console.log('CAN CREATE : ', $scope.canCreate);
+    var checkJatkaBtn =   function() {
+
+        if ($scope.model.hakukohde === undefined || $scope.model.hakukohde.oid === undefined) {
+            console.log('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
+
+            $scope.model.continueToReviewEnabled = false;
+        } else {
+            $scope.model.continueToReviewEnabled  = true;
+        }
+
+    }
+
+
+
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -235,6 +257,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     }
+
+
 
 
     var createFormattedDateString = function(date) {
@@ -364,6 +388,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
+
     if ($scope.model.hakukohde.lisatiedot !== undefined) {
         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
 
@@ -487,6 +512,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     };
 
     haeTarjoajaOppilaitosTyypit();
+    checkJatkaBtn();
 
 
 
@@ -625,7 +651,30 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
+    $scope.model.isSoraEditable = function() {
 
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+
+    };
+
+    $scope.model.isValintaPerusteEditable = function() {
+
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+    }
     /*
 
         ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
@@ -676,7 +725,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.saveValmis = function() {
-
+        emptyErrorMessages();
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
@@ -712,6 +761,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                    $scope.model.hakukohde.soraKuvaukset = {};
                }
                $scope.canEdit = true;
+               $scope.model.continueToReviewEnabled = true;
 
            },function(error){
 
@@ -748,7 +798,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveLuonnos = function() {
 
-
+        emptyErrorMessages();
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
@@ -756,6 +806,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
+
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -787,6 +838,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakukohde.soraKuvaukset = {};
                 }
                 $scope.canEdit = true;
+                $scope.model.continueToReviewEnabled = true;
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
 
