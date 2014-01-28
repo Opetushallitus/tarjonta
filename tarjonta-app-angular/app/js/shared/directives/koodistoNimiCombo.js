@@ -33,7 +33,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
     return {
 
-        restrict:'E',
+        restrict:'EA',
         require: '^form',
         replace: true,
         templateUrl : "js/shared/directives/koodistoNimiCombo.html",
