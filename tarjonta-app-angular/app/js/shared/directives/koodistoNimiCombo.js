@@ -29,6 +29,16 @@ app.directive('koodistocombo',function(Koodisto,$log){
         return foundKoodi;
     };
 
+    var addVersionToKoodis = function(koodis) {
+
+        if ($scope.version !== undefined && $scope.version) {
+            angular.forEach(koodis,function(koodi){
+                koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+            });
+        }
+
+    }
+
     return {
 
         restrict:'E',
@@ -88,11 +98,8 @@ app.directive('koodistocombo',function(Koodisto,$log){
                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                        koodisPromise.then(function(koodisParam){
 
-                           if ($scope.version !== undefined && $scope.version) {
-                               angular.forEach(koodisParam,function(koodi){
-                                   koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                               });
-                           }
+                           addVersionToKoodis(koodisParam);
+
                            $scope.koodis = koodisParam;
                        });
                    } else {
@@ -113,11 +120,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
 
-                   if ($scope.version !== undefined && $scope.version) {
-                       angular.forEach(koodisParam,function(koodi){
-                           koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                       });
-                   }
+                   addVersionToKoodis(koodisParam);
 
                    $scope.koodis = koodisParam;
                });
@@ -156,18 +159,12 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         koodisPromise.then(function(koodisParam){
                             if ($scope.filterwithkoodistouri !== undefined) {
                                 if ($scope.version !== undefined && $scope.version) {
-                                    angular.forEach(koodisParam,function(koodi){
-                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                                    });
+                                    addVersionToKoodis(koodisParam);
                                 }
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
 
                             } else {
-                                if ($scope.version !== undefined && $scope.version) {
-                                    angular.forEach(koodisParam,function(koodi){
-                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                                    });
-                                }
+                                addVersionToKoodis(koodisParam);
                                 $scope.koodis = koodisParam;
                             }
 
@@ -177,18 +174,10 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         koodisPromise.then(function(koodisParam){
 
                             if ($scope.filterwithkoodistouri !== undefined){
-                                if ($scope.version !== undefined && $scope.version) {
-                                    angular.forEach(koodisParam,function(koodi){
-                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                                    });
-                                }
+                                addVersionToKoodis(koodisParam);
                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
                             } else {
-                                if ($scope.version !== undefined && $scope.version) {
-                                    angular.forEach(koodisParam,function(koodi){
-                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-                                    });
-                                }
+                                addVersionToKoodis(koodisParam);
                                 $scope.koodis = koodisParam;
                             }
 
