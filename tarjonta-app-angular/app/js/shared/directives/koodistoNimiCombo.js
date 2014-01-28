@@ -29,15 +29,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
         return foundKoodi;
     };
 
-    var addVersionToKoodis = function(koodis) {
 
-        if ($scope.version !== undefined && $scope.version) {
-            angular.forEach(koodis,function(koodi){
-                koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
-            });
-        }
-
-    }
 
     return {
 
@@ -62,6 +54,17 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
         },
         controller :  function($scope,Koodisto) {
+
+
+            var addVersionToKoodis = function(koodis) {
+
+                if ($scope.version !== undefined && $scope.version) {
+                    angular.forEach(koodis,function(koodi){
+                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                    });
+                }
+
+            }
 
             if ($scope.isrequired !== undefined && $scope.isrequired === "true" || $scope.isrequired) {
 
