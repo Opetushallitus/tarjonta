@@ -1,7 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers) {
+app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService,dialogService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers) {
 
       console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
@@ -66,6 +66,22 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
           var koodiPromises = [];
 
+          if ($scope.model.allkieles === undefined || $scope.model.allkieles.length < 1) {
+              var allKieles = new buckets.Set();
+
+              for (var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
+
+                  allKieles.add(kieliUri);
+              }
+
+              for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
+                  allKieles.add(kieliUri);
+              }
+              $scope.model.allkieles = allKieles.toArray();
+          }
+
+          console.log('ALL KIELES : ' , $scope.model.allkieles);
+
           if ($scope.model.allkieles!== undefined) {
 
           angular.forEach($scope.model.allkieles,function(hakukohdeKieli) {
@@ -74,6 +90,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
                koodiPromises.push(koodi);
             });
           }
+
+
 
           angular.forEach(koodiPromises,function(koodiPromise){
               koodiPromise.then(function(koodi){
@@ -297,13 +315,53 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
     $scope.goBack = function(event) {
-
+        window.history.back();
     };
 
-    $scope.doDelete = function(event) {
-        $log.info("doDelete()...");
+    $scope.doDelete = function() {
 
-    };
+        var texts = {
+            title: LocalisationService.t("hakukohde.review.remove.title"),
+            description: LocalisationService.t("hakukohde.review.remove.desc"),
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
+        };
+
+        var d = dialogService.showDialog(texts);
+        d.result.then(function(data){
+            if ("ACTION" === data) {
+
+                var hakukohdeResource = new Hakukohde($scope.model.hakukohde);
+                var resultPromise =  hakukohdeResource.$delete();
+                resultPromise.then(function(result){
+
+                    console.log('GOT RESULT : ' , result);
+
+                    if (result.status === "OK") {
+
+                        var confTexts = {
+                            title: LocalisationService.t("hakukohde.review.remove.confirmation.title"),
+                            description: LocalisationService.t("hakukohde.review.remove.confirmation.desc"),
+                            ok: LocalisationService.t("ok")};
+
+                        var dd = dialogService.showDialog(confTexts);
+
+                        dd.result.then(function(daatta){
+                            $location.path('/etusivu');
+                        });
+
+
+
+                    }  else {
+                        //TODO: Show some error message
+                    }
+
+                });
+
+            }
+        });
+
+    }
 
     $scope.getHakukelpoisuusVaatimusKuvaus = function(kieliUri) {
         return $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset[kieliUri];
@@ -533,6 +591,8 @@ app.controller('ShowKoulutusHakukohtees',function($scope,$modalInstance,Localisa
     $scope.model.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
+
+
 
 });
 

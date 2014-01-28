@@ -27,6 +27,11 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
+
+        remove : {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
         save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
