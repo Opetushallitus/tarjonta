@@ -382,7 +382,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutusaste(new KoodiV1RDTO("koulutusaste-uri", 1, null));
         kk.setKoulutusala(new KoodiV1RDTO("koulutusala-uri", 1, null));
         kk.setOpintoala(new KoodiV1RDTO("opintoala-uri", 1, null));
-        kk.setTutkintonimike(new KoodiV1RDTO("tutkintonimike-uri", 1, null));
+        //kk.setTutkintonimike(new KoodiV1RDTO("tutkintonimike-uri", 1, null));
         kk.setEqf(new KoodiV1RDTO("EQF-uri", 1, null));
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);

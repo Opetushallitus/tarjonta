@@ -106,7 +106,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             opintoala: {},
             eqf: {},
             tutkinto: {},
-            tutkintonimike: {}
+        },
+        RELATIONS: {
+            tutkintonimikes: {}
         }, COMBO: {
             //in correct place
             suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
@@ -182,8 +184,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         }
         metaMap[kbObj.koodiUri] = factory.convertKoodistoComboToKoodiDTO(kbObj);
     };
-    
-    
+
+
     factory.convertKoodistoRelationApiModel = function(kbObj) {
         return factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio);
     };
@@ -274,6 +276,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             }
         });
 
+        angular.forEach(factory.STRUCTURE.RELATIONS, function(value, key) {
+            uiModel[key] = factory.createUiMetaMultiModel();
+        });
+
         uiModel.showSuccess = false;
 
         return uiModel;
@@ -283,8 +289,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         return {'uri': null, koodis: []};
     };
     factory.createUiKoodistoMultiModel = function() {
-        return {koodis: [], 'uris': []};
+        return {'uris': [], koodis: []};
     };
+     factory.createUiMetaMultiModel = function() {
+        return {'uris': [], meta: []};
+    };
+    
     factory.throwError = function(msg) {
         throw new Error('Tarjonta application error - ' + msg);
     };
@@ -336,11 +346,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.RELATION, function(value, key) {
-            if (!angular.isUndefined(value.default)) {
-                apiModel[key] = factory.createKoodiUriBase(value.default, -1);
-            } else {
-                apiModel[key] = factory.createKoodiUriBase('', -1);
-            }
+            apiModel[key] = factory.createKoodiUriBase('', -1);
+        });
+
+        angular.forEach(factory.STRUCTURE.RELATIONS, function(value, key) {
+            apiModel[key] = {'uris': {}};
         });
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {

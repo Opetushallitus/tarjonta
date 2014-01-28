@@ -58,9 +58,9 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusKorkeakouluDTOConverterToEntity.class);
     @Autowired(required = true)
-    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
-    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
+    private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
@@ -99,13 +99,12 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
 
         komo.setTutkintoOhjelmanNimi(convertToUri(dto.getTutkinto(), FieldNames.TUTKINTO)); //correct data mapping?
         komo.setLaajuus(
-                convertToUri(dto.getOpintojenLaajuusyksikko(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), 
+                convertToUri(dto.getOpintojenLaajuusyksikko(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO),
                 convertToUri(dto.getOpintojenLaajuus(), FieldNames.OPINTOJEN_LAAJUUSARVO));
         komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?
         komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), FieldNames.KOULUTUSASTE));
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
-        komo.setTutkintonimike(convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
         komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF));
         komo.setTila(TarjontaTila.JULKAISTU); //is this correct state for a new komo?
 
@@ -113,13 +112,16 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
 
-        komo.setNimi(MonikielinenTeksti.merge(komo.getNimi(), convertToTexts(dto.getKoulutusohjelma(), null, FieldNames.KOULUTUSOHJELMA)));
+        komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         komo.setKoulutustyyppi(dto.getKoulutusasteTyyppi().value());
 
-        komoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
+        komo.setTutkintonimikes(convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
+        //Preconditions.checkArgument(dto.getTutkintonimikes().getUris().isEmpty(), "Set of Tutkintonimike objects cannot be empty.");
+
+        komoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
 
         /*
          * KOMOTO data fields
@@ -157,7 +159,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
-        komotoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
+        komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
         return komoto;
     }
 
@@ -199,14 +201,11 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         return modifiedUris;
     }
 
-    private MonikielinenTeksti convertToTexts(final NimiV1RDTO dto, MonikielinenTeksti mt, final FieldNames msg) {
+    private MonikielinenTeksti convertToTexts(final NimiV1RDTO dto, final FieldNames msg) {
         Preconditions.checkNotNull(dto, "Language map object cannot be null! Error field : " + msg);
         Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
 
-        if (mt == null) {
-            mt = new MonikielinenTeksti();
-        }
-
+        MonikielinenTeksti mt = new MonikielinenTeksti();
         for (Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
             koodistoUri.validateKieliUri(kieliAndText.getKey());
             mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());

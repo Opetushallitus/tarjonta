@@ -123,14 +123,12 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
                         koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                        koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                         koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
                         komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
                 )
                 .list(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                                koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                                 koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
     }
@@ -145,7 +143,6 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
                         koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                        koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                         koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
                         komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
                 )
@@ -153,7 +150,6 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .singleResult(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                                koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
                                 koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
     }

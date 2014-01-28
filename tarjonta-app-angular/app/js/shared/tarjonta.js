@@ -275,7 +275,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         console.log("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri", {koulutuskoodiUri: '@koulutuskoodiUri'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
         return koulutus.get(arg, func);
     };
 
