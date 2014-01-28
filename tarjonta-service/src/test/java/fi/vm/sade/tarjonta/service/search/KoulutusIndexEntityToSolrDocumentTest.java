@@ -48,7 +48,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         Date d = new GregorianCalendar(VUOSI, 1, 1).getTime();
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d,
                 TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
-                KOULUTUSKOODI, TUTKINTONIMIKEKOODI, KOULUTUSTYYPPIKOODI,
+                KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
 
@@ -64,7 +64,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         KoodiService koodiService = Mockito.mock(KoodiService.class);
         Whitebox.setInternalState(converter, "koodiService", koodiService);
         Mockito.reset(koodiService);
-        stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
+        //stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
         stubKoodi(koodiService, KOULUTUSTUYYPPIKOODI);
         stubKoodi(koodiService, LUKIOLINJAKOODI);
         stubKoodi(koodiService, KOULUTUSOHJELMAKOODI);
@@ -119,18 +119,18 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         Assert.assertEquals(KOULUTUSOHJELMAKOODI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                 .getValue());
-        Assert.assertEquals(TUTKINTONIMIKEKOODI,
-                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_URI)
-                .getValue());
-        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-EN",
-                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_EN)
-                .getValue());
-        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-SV",
-                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_SV)
-                .getValue());
-        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-FI",
-                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
-                .getValue());
+//        Assert.assertEquals(TUTKINTONIMIKEKOODI,
+//                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_URI)
+//                .getValue());
+//        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-EN",
+//                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_EN)
+//                .getValue());
+//        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-SV",
+//                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_SV)
+//                .getValue());
+//        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-FI",
+//                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
+//                .getValue());
 
         //System.out.println(doc);
         Assert.assertEquals("kausi_k#0",
@@ -150,7 +150,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     public void testNullAlkamispvm() {
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
                 TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
-                KOULUTUSKOODI, TUTKINTONIMIKEKOODI, KOULUTUSTYYPPIKOODI,
+                KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
 

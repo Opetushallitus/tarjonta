@@ -47,7 +47,7 @@ var app = angular.module('ShowErrors', ['localisation']);
 app.directive('showErrors', function($log, LocalisationService) {
 
     return {
-        restrict: 'E',
+        restrict: 'EA',
         templateUrl: "js/shared/directives/showErrors.html",
         replace: true,
         scope: {

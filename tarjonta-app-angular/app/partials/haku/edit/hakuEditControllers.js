@@ -97,17 +97,12 @@ app.controller('HakuEditController',
                                 "kieli_en": "englanti",
                                 "kieli_ay": "aimara"
                             },
-                            "hakutapaUri": "hakutapa_02",
-                            "haunkohdejoukkoUri": "haunkohdejoukko_10",
-                            "alkamiskausiUri": "kausi_k",
-                            "kausiUri": "kausi_s",
-                            "hakutyyppiUri": "hakutyyppi_02",
-                            "kausiVuosi": 2013,
-                            "alkamiskausiVuosi": 2014,
                             hakuaikas: [
                                 {nimi: null, alkaa: new Date(), loppuu: new Date()}
                             ],
-                            hakulomakeKaytaJarjestemlmanOmaa: true
+
+                            // State of the checkbox
+                            hakulomakeKaytaJarjestemlmanOmaa: !!$route.current.locals.hakux.hakulomakeUri
                         },
 
                         parameter: {

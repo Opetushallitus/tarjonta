@@ -42,13 +42,12 @@ app.controller('BaseEditController',
                         //DATA WAS LOADED BY KOMOTO OID
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
-                        
-                     
-                        if(angular.isUndefined(model.opintojenLaajuusyksikko.uri)){
+
+                        if (angular.isUndefined(model.opintojenLaajuusyksikko.uri)) {
                             //remove when not needed...
                             $scope.searchOpintojenLaajuusyksikko();
                         }
-                        
+
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
                                 uiModel.contactPerson = converter.converPersonObjectForUi(value);
@@ -58,6 +57,8 @@ app.controller('BaseEditController',
                                 converter.throwError('Undefined henkilotyyppi : ', value);
                             }
                         });
+
+                        $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
 
                         /*
                          * remove version data from the list 
@@ -70,7 +71,7 @@ app.controller('BaseEditController',
                     } else if (!angular.isUndefined($routeParams.org)) {
                         //CREATE NEW KOULUTUS
                         converter.createAPIModel(model, cfg.app.userLanguages);
-                        $scope.loadRelationKoodistoData();
+                        $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
                             converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
@@ -115,13 +116,21 @@ app.controller('BaseEditController',
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
-                $scope.loadRelationKoodistoData = function() {
+                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
                     $scope.searchOpintojenLaajuusyksikko();
 
-                    tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
-                        var koodistoData = data.result;
+                    tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
+                        var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
-                            $scope.model[key] = koodistoData[key];
+                            apiModel[key] = restRelationData[key];
+                        });
+
+                        angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                            uiModel[key].meta = restRelationData[key].meta;
+
+                            if (!angular.isUndefined(apiModel[key].uris)) {
+                                uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                            }
                         });
                     });
                 };
@@ -203,7 +212,19 @@ app.controller('BaseEditController',
                                 break;
                             }
                         }
+                    });
 
+                    angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                        apiModel[key] = {'uris': {}};
+                        //search version information for list of uris;
+                        var map = {};
+                        var meta = $scope.uiModel[key].meta;
+                        for (var i in meta) {
+                            map[meta[i].uri] = meta[i].versio;
+                        }
+                        angular.forEach(uiModel[key].uris, function(uri) {
+                            apiModel[key].uris[uri] = map[uri];
+                        });
                     });
 
                     //multi-select models, add version to the koodi 
@@ -302,13 +323,13 @@ app.controller('BaseEditController',
 
                     return kuvaus[textEnum].tekstis;
                 };
-                
-                $scope.searchOpintojenLaajuusyksikko = function(){
-                  var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
+
+                $scope.searchOpintojenLaajuusyksikko = function() {
+                    var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
 
                     promise.then(function(koodi) {
                         $scope.model['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
-                    });  
+                    });
                 };
 
                 // TODO omaksi direktiivikseen tjsp..

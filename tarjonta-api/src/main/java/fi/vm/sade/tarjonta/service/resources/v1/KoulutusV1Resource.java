@@ -62,7 +62,7 @@ public interface KoulutusV1Resource {
             value = "Näyttää yhden koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio näyttää yhden koulutuksen annetulla koulutuksen oid:lla."
             + "Muut parametrit: meta=true lisää koodisto-palvelun metatietoa haettavaan koulutuksen dataan")
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta);
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta,  @QueryParam("lang") String lang);
 
     @DELETE
     @Path("/{oid}")
@@ -97,7 +97,7 @@ public interface KoulutusV1Resource {
             value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             response = KoulutusmoduuliRelationV1RDTO.class)
-    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi);
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta,  @QueryParam("lang") String lang);
 
     @GET
     @Path("/{oid}/tekstis/komoto")

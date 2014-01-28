@@ -180,7 +180,6 @@ public class KoulutusIndexEntityToSolrDocument implements
         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
-        addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
 
         if (koulutus.getKoulutuksenAlkamisPvm() == null) {
             IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutus.getKausi(), koodiService);

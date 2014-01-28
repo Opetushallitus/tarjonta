@@ -14,6 +14,7 @@ angular.module('app.kk',
             'app.kk.services',
             'app.edit.ctrl',
             'app.edit.ctrl.alkamispaiva',
+            'app.edit.ctrl.tutkintonimike',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
             'app.haku.ctrl',
@@ -72,6 +73,7 @@ angular.module('app',
             'ImageDirective',
             'RichTextArea',
             'MonikielinenTextArea',
+            'MultiLangSimpleTextArea',
             'ControlsLayout',
             'ShowErrors',
             'angularTreeview',
@@ -153,19 +155,17 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW',{
-
-                    action : "valintaPerusteKuvaus.edit",
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW', {
+                    action: "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'
 
 
                 })
-                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId',{
-
-                    action : "valintaPerusteKuvaus.edit",
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId', {
+                    action: "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController',
-                    resolve : {
-                        resolvedValintaPerusteKuvaus : function($route,Kuvaus) {
+                    resolve: {
+                        resolvedValintaPerusteKuvaus: function($route, Kuvaus) {
                             if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
 
                                 var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
@@ -177,30 +177,28 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
 
                 })
-            .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId/COPY',{
+                .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId/COPY', {
+                    action: "valintaPerusteKuvaus.edit",
+                    controller: 'ValintaperusteEditController',
+                    resolve: {
+                        resolvedValintaPerusteKuvaus: function($route, Kuvaus) {
+                            if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
 
-                action : "valintaPerusteKuvaus.edit",
-                controller: 'ValintaperusteEditController',
-                resolve : {
-                    resolvedValintaPerusteKuvaus : function($route,Kuvaus) {
-                        if ($route.current.params.kuvausId !== undefined && $route.current.params.kuvausId !== "NEW") {
+                                var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
 
-                            var kuvausPromise = Kuvaus.findKuvausWithId($route.current.params.kuvausId);
+                                return kuvausPromise;
+                            }
 
-                            return kuvausPromise;
+                        },
+                        action: function() {
+                            return 'COPY';
                         }
-
-                    } ,
-                    action : function() {
-                        return 'COPY';
                     }
-                }
 
-            })
+                })
 
-                .when('/valintaPerusteKuvaus/search',{
-
-                    action : "valintaPerusteKuvaus.search",
+                .when('/valintaPerusteKuvaus/search', {
+                    action: "valintaPerusteKuvaus.search",
                     controller: 'ValintaperusteSearchController'
 
                 })
@@ -222,12 +220,11 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "hakukohde.edit",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
-
-                        canEdit : function(Hakukohde, $log, $route,$q, SharedStateService,PermissionService) {
+                        canEdit: function(Hakukohde, $log, $route, $q, SharedStateService, PermissionService) {
 
                             if ($route.current.params.id !== "new") {
                                 var deferredPermission = $q.defer();
-                                Hakukohde.get({oid: $route.current.params.id},function(data){
+                                Hakukohde.get({oid: $route.current.params.id}, function(data) {
                                     console.log("GOT HAKUKOHDE DATA: ", data);
 
 
@@ -235,12 +232,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                     var canEditVar = PermissionService.canEdit(data.result.tarjoajaOids[0]);
 
                                     //deferredPermission.resolve(canEditVar);
-                                     canEditVar.then(function(permission){
+                                    canEditVar.then(function(permission) {
 
-                                     console.log('GOT PERMISSION DATA ' , permission);
-                                         deferredPermission.resolve(permission);
+                                        console.log('GOT PERMISSION DATA ', permission);
+                                        deferredPermission.resolve(permission);
 
-                                     });
+                                    });
 
                                 });
 
@@ -252,9 +249,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
 
                         },
-                        canCreate : function(Hakukohde, $log, $route, SharedStateService,PermissionService) {
+                        canCreate: function(Hakukohde, $log, $route, SharedStateService, PermissionService) {
 
-                            var  selectedTarjoajaOids;
+                            var selectedTarjoajaOids;
 
                             if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
                                 selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
@@ -264,7 +261,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
                             if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
                                 console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
-                                var canCreateVar  = PermissionService.canCreate(selectedTarjoajaOids[0]);
+                                var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
                                 console.log('CREATE VAR : ', canCreateVar);
                                 return canCreateVar;
                             } else {
@@ -273,7 +270,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
 
                         },
-
                         hakukohdex: function(Hakukohde, $log, $route, SharedStateService) {
                             $log.info("/hakukohde/ID", $route);
                             if ("new" === $route.current.params.id) {
@@ -318,7 +314,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-
+                                 
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;
@@ -352,7 +348,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
                 })
 
-                 .when('/haku/:id/edit', {
+                .when('/haku/:id/edit', {
                     action: "haku.edit",
                     controller: 'HakuRoutingController',
                     resolve: {
@@ -373,43 +369,43 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
     function($scope, $route, $routeParams, $log, PermissionService) {
 
-    $log.debug("app.AppRoutingCtrl()");
+        $log.debug("app.AppRoutingCtrl()");
 
-    $scope.count = 0;
-
-
-    PermissionService.permissionResource().authorize({}, function(response) {
-        console.log("Authorization check : " + response.result);
-    });
+        $scope.count = 0;
 
 
-    var render = function() {
-        $log.debug("app.AppRoutingCtrl.render()");
+        PermissionService.permissionResource().authorize({}, function(response) {
+            console.log("Authorization check : " + response.result);
+        });
 
-        var renderAction = $route.current.action;
-        var renderPath = renderAction ? renderAction.split(".") : [];
 
-        // Store the values in the model.
-        $scope.renderAction = renderAction;
-        $scope.renderPath = renderPath;
-        $scope.routeParams = $routeParams ? $routeParams : {};
-        $scope.count++;
+        var render = function() {
+            $log.debug("app.AppRoutingCtrl.render()");
 
-        $log.debug("  renderAction: ", $scope.renderAction);
-        $log.debug("  renderPath: ", $scope.renderPath);
-        $log.debug("  routeParams: ", $scope.routeParams);
-        $log.debug("  count: ", $scope.count);
-    };
+            var renderAction = $route.current.action;
+            var renderPath = renderAction ? renderAction.split(".") : [];
 
-    $scope.$on(
-            "$routeChangeSuccess",
-            function($currentRoute, $previousRoute) {
-                $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
-                render();
-            }
-    );
+            // Store the values in the model.
+            $scope.renderAction = renderAction;
+            $scope.renderPath = renderPath;
+            $scope.routeParams = $routeParams ? $routeParams : {};
+            $scope.count++;
 
-}]);
+            $log.debug("  renderAction: ", $scope.renderAction);
+            $log.debug("  renderPath: ", $scope.renderPath);
+            $log.debug("  routeParams: ", $scope.routeParams);
+            $log.debug("  count: ", $scope.count);
+        };
+
+        $scope.$on(
+                "$routeChangeSuccess",
+                function($currentRoute, $previousRoute) {
+                    $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
+                    render();
+                }
+        );
+
+    }]);
 
 
 
