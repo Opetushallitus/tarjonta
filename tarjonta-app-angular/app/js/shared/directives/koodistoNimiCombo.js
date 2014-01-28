@@ -41,6 +41,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
+            version : "=",
             isrequired : "=",
             usearvocombo : "=",
             parentkoodiuri : "=",
@@ -86,11 +87,22 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                        koodisPromise.then(function(koodisParam){
+
+                           if ($scope.version !== undefined && $scope.version) {
+                               angular.forEach(koodisParam,function(koodi){
+                                   koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                               });
+                           }
                            $scope.koodis = koodisParam;
                        });
                    } else {
                    var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                    koodisPromise.then(function(koodisParam){
+                       if ($scope.version !== undefined && $scope.version) {
+                           angular.forEach(koodisParam,function(koodi){
+                               koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                           });
+                       }
                        $scope.koodis = koodisParam;
                    });
                    }
@@ -100,6 +112,13 @@ app.directive('koodistocombo',function(Koodisto,$log){
            } else {
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
+
+                   if ($scope.version !== undefined && $scope.version) {
+                       angular.forEach(koodisParam,function(koodi){
+                           koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                       });
+                   }
+
                    $scope.koodis = koodisParam;
                });
            }
@@ -136,10 +155,19 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                         koodisPromise.then(function(koodisParam){
                             if ($scope.filterwithkoodistouri !== undefined) {
-
+                                if ($scope.version !== undefined && $scope.version) {
+                                    angular.forEach(koodisParam,function(koodi){
+                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                                    });
+                                }
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
 
                             } else {
+                                if ($scope.version !== undefined && $scope.version) {
+                                    angular.forEach(koodisParam,function(koodi){
+                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                                    });
+                                }
                                 $scope.koodis = koodisParam;
                             }
 
@@ -149,8 +177,18 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         koodisPromise.then(function(koodisParam){
 
                             if ($scope.filterwithkoodistouri !== undefined){
+                                if ($scope.version !== undefined && $scope.version) {
+                                    angular.forEach(koodisParam,function(koodi){
+                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                                    });
+                                }
                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
                             } else {
+                                if ($scope.version !== undefined && $scope.version) {
+                                    angular.forEach(koodisParam,function(koodi){
+                                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                                    });
+                                }
                                 $scope.koodis = koodisParam;
                             }
 
