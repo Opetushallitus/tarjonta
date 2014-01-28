@@ -298,6 +298,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         checkForUserOrgs();
         angular.forEach($scope.model.kuvaustyyppis,function(tyyppi){
 
+            $log.info('SEARCHING KUVAUKSES WITH : ', tyyppi);
+
             var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,tyyppi);
 
             $scope.model.valintaperusteet = [];
@@ -305,6 +307,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
             $scope.model.sorat = [];
 
             searchPromise.then(function(resultData){
+
+                $log.info('GOT KUVAUS RESULT : ', resultData);
 
                 if (resultData.status === "OK") {
                     if (tyyppi === $scope.model.kuvaustyyppis[0]) {
