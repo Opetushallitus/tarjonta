@@ -538,6 +538,11 @@ public class KoulutusResourceImplV1Test {
 
     private void koodiUrisMap(final KoodiUrisV1RDTO dto, final String kieliUri, final String fieldName) {
         meta(dto, kieliUri, toKoodiUri(fieldName));
+
+        if (dto.getUris() == null) {
+            dto.setUris(Maps.<String, Integer>newHashMap());
+        }
+
         dto.getUris().put(toKoodiUriStr(fieldName), 1);
     }
 

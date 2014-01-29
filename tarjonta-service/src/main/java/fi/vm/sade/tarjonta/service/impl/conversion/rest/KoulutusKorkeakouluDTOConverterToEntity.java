@@ -194,8 +194,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             modifiedUris = Sets.<KoodistoUri>newHashSet();
         }
 
-        for (Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
-            modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
+        if (dto.getUris() != null) {
+            for (Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
+                modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
+            }
         }
 
         return modifiedUris;
