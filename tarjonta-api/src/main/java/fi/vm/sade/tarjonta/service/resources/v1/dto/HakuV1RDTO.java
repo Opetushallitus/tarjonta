@@ -18,7 +18,9 @@ import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -48,7 +50,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     private boolean sijoittelu;
 
-    private List<TekstiRDTO> nimi;
+//    private List<TekstiRDTO> nimi;
 
     private List<HakuaikaV1RDTO> hakuaikas;
 
@@ -60,6 +62,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     private Date lastUpdatedDate;
 
+    private Map<String, String> nimi = new HashMap<String, String>();
 
     public String getHakukausiUri() {
         return hakukausiUri;
@@ -141,16 +144,16 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.sijoittelu = sijoittelu;
     }
 
-    public List<TekstiRDTO> getNimi() {
-        if (nimi == null) {
-            nimi = new ArrayList<TekstiRDTO>();
-        }
-        return nimi;
-    }
-
-    public void setNimi(List<TekstiRDTO> nimi) {
-        this.nimi = nimi;
-    }
+//    public List<TekstiRDTO> getNimi() {
+//        if (nimi == null) {
+//            nimi = new ArrayList<TekstiRDTO>();
+//        }
+//        return nimi;
+//    }
+//
+//    public void setNimi(List<TekstiRDTO> nimi) {
+//        this.nimi = nimi;
+//    }
 
     public List<HakuaikaV1RDTO> getHakuaikas() {
         if (hakuaikas == null) {
@@ -205,6 +208,14 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setHakukausiVuosi(int hakukausiVuosi) {
         this.hakukausiVuosi = hakukausiVuosi;
+    }
+
+    public void setNimi(Map<String, String> nimi) {
+        this.nimi = nimi;
+    }
+
+    public Map<String, String> getNimi() {
+        return nimi;
     }
 
 }

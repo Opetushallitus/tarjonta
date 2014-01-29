@@ -2,12 +2,25 @@
 
     HAKU LIST
 
+    <table>
+        <tr>
+            <th>OID</th>
+            <th>Name</th>
+            <th>Edit</th>
+            <th>Review</th>
+        </tr>
+
+        <tr ng-repeat="haku in model.hakus">
+            <td>{{ haku.oid }}</td>
+            <td>{{ getHakuName(haku) }}</td>
+            <td><a href="#/haku/{{ haku.oid }}/edit">Edit</a></td>
+            <td><a href="#/haku/{{ haku.oid }}">Review</a></td>
+        </tr>
+    </table>
+
+
     <hr/>
 
-    <div collapse="model.collapse.model">
-        <pre>
-            {{ model | json }}
-        </pre>
-    </div>
+        <pre>{{ model | json }}</pre>
 
 </div>

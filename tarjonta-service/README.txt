@@ -2,9 +2,21 @@
 			   Tarjonta Service
 ======================================================================
 
-Runing:
+Running:
+--------------------------------------------------
 
   mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties jetty:run
+
+(if you want to use local db see src tarjonta-service/src/main/webapp/META-INF/jetty-env.xml)
+
+Get luokka db to localhost:
+--------------------------------------------------
+  dropdb -U oph tarjonta
+  createdb -U oph tarjonta
+  pg_dump -b -h taulu.hard.ware.fi -p 5432 tarjonta -U oph > tarjonta.sql
+  psql tarjonta -U oph < tarjonta.sql
+
+
 
 
 Tietokannan alustaminen lokaaliin "tarjonta" kantaan:

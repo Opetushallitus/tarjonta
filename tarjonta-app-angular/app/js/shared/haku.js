@@ -94,8 +94,10 @@ app.factory('HakuV1', function($resource, $log, Config) {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
-            getAll: {
+            findAll: {
                 method: 'GET',
+                params: {oid : 'findAll'},
+                isArray: false,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             remove: {

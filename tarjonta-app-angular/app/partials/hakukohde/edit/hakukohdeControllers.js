@@ -535,7 +535,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             angular.forEach(haku.nimi,function(nimi){
 
-                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+                if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
@@ -917,9 +917,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 });
 
-app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
+app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
 
     var koodistoKieliUri = "kieli";
+
+    var defaultKieliUri = "kieli_fi";
 
     $scope.dialog = {};
 
@@ -1000,13 +1002,19 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         //TODO: refactor this to more smaller functions and separate concerns
 
+        $log.info('VALINTAPERUSTEET OPPILAITOSTYYPIT : ', oppilaitosTyypit);
+
         angular.forEach(oppilaitosTyypit,function(oppilaitosTyyppi){
 
             var valintaPerustePromise =  Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(oppilaitosTyyppi,tyyppi,getYear());
 
             valintaPerustePromise.then(function(valintaperusteet){
 
+                 $log.info('VALINTAPERUSTEET : ', valintaperusteet);
+
                  var userLang = AuthService.getLanguage();
+
+                $log.info('VALINTAPERUSTE USER LANGUAGE : ', userLang);
                  // All different kieli promises
                 var kieliPromises = {};
 
@@ -1036,6 +1044,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
                         }
 
+                        if (valintaPerusteObj.nimi === undefined) {
+
+                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[defaultKieliUri];
+
+                        }
+
                         valintaPerusteObj.kieliUris.push(kieli);
                         if (kieliPromises[kieli] === undefined) {
                             var kieliPromise = Koodisto.getKoodi(koodistoKieliUri,kieli,userLang);
@@ -1054,7 +1068,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
                 //Wait all promises to complete and add those values to objects
                 $q.all(kieliPromiseArray).then(function(kieliKoodis){
-
+                    $log.info('KIELIKOODIS: ', kieliKoodis);
                     angular.forEach(kieliKoodis,function(kieliKoodi){
 
                         if (kaikkiVpkKielet[kieliKoodi.koodiUri] === undefined) {

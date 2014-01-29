@@ -98,6 +98,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(String tyyppi,int vuosi, String orgType) {
 
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
@@ -208,6 +209,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(String tyyppi, String orgType) {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
@@ -240,6 +242,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<KuvausV1RDTO> findByNimiAndOppilaitosTyyppi(String tyyppi,
                                                                     String oppilaitosTyyppi,
                                                                     String nimi) {
@@ -440,7 +443,9 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         return  resultV1RDTO;
     }
 
+
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(String tyyppi, KuvausSearchV1RDTO searchParam) {
         ResultV1RDTO<List<KuvausV1RDTO>> result = new ResultV1RDTO<List<KuvausV1RDTO>>();
 
