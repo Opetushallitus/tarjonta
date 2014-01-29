@@ -17,22 +17,66 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
+        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1',
+            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku) {
                 $log.info("HakuListController()");
-
-                // TODO preloaded / resolved haku is where?
 
                 $scope.model = null;
 
+                function isEmpty(value) {
+                    return (typeof value === "undefined" || value == null || value.length === 0);
+                }
+
+                $scope.getHakuName = function(haku) {
+                    var userLocale = LocalisationService.getLocale();
+                    var userKieliUri = "kieli_" + userLocale;
+
+                    var result = haku.nimi[userKieliUri];
+
+                    if (isEmpty(result)) {
+                        result = haku.nimi["kieli_fi"];
+                        if (!isEmpty(result)) {
+                            result = result + " (FI)";
+                        }
+                    }
+                    if (isEmpty(result)) {
+                        result = haku.nimi["kieli_sv"];
+                        if (!isEmpty(result)) {
+                            result = result + " (SV)";
+                        }
+                    }
+                    if (isEmpty(result)) {
+                        result = haku.nimi["kieli_en"];
+                        if (!isEmpty(result)) {
+                            result = result + " (EN)";
+                        }
+                    }
+                    if (isEmpty(result)) {
+                        result = "[EI NIMIEÄ]";
+                    }
+
+                    return result;
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
+
                     var model = {
                         collapse: {
                             model: true
                         },
+                        hakus : [],
                         place: "holder"
                     };
+
+                    // Load all hakus
+                    Haku.findAll(function(result) {
+                        $log.info("Haku.get() result", result);
+                        model.hakus = result.result;
+                    }, function(error) {
+                        $log.info("Haku.get() error", error);
+                        model.hakus = [];
+                    });
 
                     $log.info("init... done.");
                     $scope.model = model;
