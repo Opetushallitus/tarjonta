@@ -17,8 +17,8 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku) {
+        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService',
+            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService) {
                 $log.info("HakuListController()");
 
                 $scope.model = null;
@@ -26,6 +26,29 @@ app.controller('HakuListController',
                 function isEmpty(value) {
                     return (typeof value === "undefined" || value == null || value.length === 0);
                 }
+
+                $scope.doCreateNew = function() {
+                    $log.info("doCreateNew()");
+                    dialogService.showNotImplementedDialog();
+                };
+
+                $scope.doDelete = function() {
+                    $log.info("doDelete()");
+                    dialogService.showNotImplementedDialog();
+                };
+
+                $scope.doSearch = function() {
+                    $log.info("doSearch()");
+                    dialogService.showNotImplementedDialog();
+                };
+
+                $scope.doSearchClear = function() {
+                    $log.info("doSearchClear()");
+                    $scope.model.search.tila = "";
+                    delete $scope.model.search.koulutuksenAlkamiskausiUri;
+                    delete $scope.model.search.koulutuksenAlkamisVuosi;
+                };
+
 
                 $scope.getHakuName = function(haku) {
                     var userLocale = LocalisationService.getLocale();
@@ -64,6 +87,9 @@ app.controller('HakuListController',
                     var model = {
                         collapse: {
                             model: true
+                        },
+                        search: {
+                            tila : ""
                         },
                         hakus : [],
                         place: "holder"
