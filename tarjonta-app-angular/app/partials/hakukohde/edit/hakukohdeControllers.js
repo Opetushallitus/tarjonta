@@ -535,7 +535,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             angular.forEach(haku.nimi,function(nimi){
 
-                if (nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+                if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
