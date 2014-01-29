@@ -45,7 +45,7 @@ app.controller('BaseEditController',
 
                         if (angular.isUndefined(model.opintojenLaajuusyksikko.uri)) {
                             //remove when not needed...
-                            $scope.searchOpintojenLaajuusyksikko();
+                            $scope.searchOpintojenLaajuusyksikko(model);
                         }
 
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
@@ -64,7 +64,7 @@ app.controller('BaseEditController',
                          * remove version data from the list 
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            uiModel[key].uris = _.keys(model[key].uris);
+                              uiModel[key].uris = _.keys(model[key].uris);
                         });
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
@@ -117,7 +117,7 @@ app.controller('BaseEditController',
                     $scope.model = model;
                 };
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    $scope.searchOpintojenLaajuusyksikko();
+                    $scope.searchOpintojenLaajuusyksikko(apiModel);
 
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
@@ -324,11 +324,11 @@ app.controller('BaseEditController',
                     return kuvaus[textEnum].tekstis;
                 };
 
-                $scope.searchOpintojenLaajuusyksikko = function() {
+                $scope.searchOpintojenLaajuusyksikko = function(apiModel) {
                     var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
 
                     promise.then(function(koodi) {
-                        $scope.model['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
+                        apiModel['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
                     });
                 };
 

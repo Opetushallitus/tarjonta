@@ -67,13 +67,13 @@ public class KoulutusCommonV1RDTO {
                 KoodiUriAndVersioType type = new KoodiUriAndVersioType();
                 type.setKoodiUri(koodiType.getKoodiUri());
                 type.setVersio(koodiType.getVersio());
-                data.getMeta().put(koodiUri, convertToKoodiUriDTO(new KoodiV1RDTO(), type, langCode, msg, true));
+                data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, langCode, msg, true));
             }
         }
         return data;
     }
 
-    public void convertKoodistoMetaData(KoodiV1RDTO dto, KoodiUriAndVersioType type, final String arvo, Locale locale, boolean showSubMeta) {
+    private void convertKoodistoMetaData(KoodiV1RDTO dto, KoodiUriAndVersioType type, final String arvo, Locale locale, boolean showSubMeta) {
         if (type != null && type.getKoodiUri() != null && !type.getKoodiUri().isEmpty()) {
             final KoodiType koodiType = tarjontaKoodistoHelper.getKoodi(type.getKoodiUri(), type.getVersio());
             dto.setUri(type.getKoodiUri());
@@ -150,8 +150,12 @@ public class KoulutusCommonV1RDTO {
         return koodiUriDto;
     }
 
-    public KoodiUrisV1RDTO convertToKoodiDTO(final Set<KoodistoUri> fromKoodiUris, final Locale Locale, final FieldNames fieldName, final boolean showMeta) {
+    public KoodiUrisV1RDTO convertToKoodiUrisDTO(final Set<KoodistoUri> fromKoodiUris, final Locale Locale, final FieldNames fieldName, final boolean showMeta) {
         KoodiUrisV1RDTO koodiMapDto = new KoodiUrisV1RDTO();
+        if (koodiMapDto.getUris() == null) {
+            koodiMapDto.setUris(Maps.<String, Integer>newHashMap());
+        }
+
         for (KoodistoUri koodiUri : fromKoodiUris) {
             final KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodiUri.getKoodiUri());
             addToKoodiUrisMap(koodiMapDto, type, Locale, fieldName, showMeta);
@@ -160,7 +164,7 @@ public class KoulutusCommonV1RDTO {
         return koodiMapDto;
     }
 
-    public KoodiV1RDTO convertToKoodiUriDTO(KoodiV1RDTO uiDto, final KoodiUriAndVersioType type, final Locale locale, final FieldNames fieldName, final boolean showSubMeta) {
+    public KoodiV1RDTO convertToKoodiDTO(KoodiV1RDTO uiDto, final KoodiUriAndVersioType type, final Locale locale, final FieldNames fieldName, final boolean showSubMeta) {
         Preconditions.checkNotNull(type, "Koodi URI cannot be null in field : " + fieldName);
         Preconditions.checkNotNull(locale, "Locale object cannot be null. field in " + fieldName);
 
@@ -251,15 +255,11 @@ public class KoulutusCommonV1RDTO {
     }
 
     public void addToKoodiUrisMap(final KoodiUrisV1RDTO koodiUris, final KoodiUriAndVersioType type, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
-        if (koodiUris.getUris() == null) {
-            koodiUris.setUris(Maps.<String, Integer>newHashMap());
-        }
-
         koodiUris.getUris().put(type.getKoodiUri(), type.getVersio());
-        //Meta key koodi URI must not have the hashtag!
+        //do not use hashtag uris as map key!
         if (koodiUris.getMeta() == null) {
             koodiUris.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
         }
-        koodiUris.getMeta().put(type.getKoodiUri(), convertToKoodiUriDTO(new KoodiUrisV1RDTO(), type, locale, fieldName, showMeta));
+        koodiUris.getMeta().put(type.getKoodiUri(), convertToKoodiDTO(new KoodiUrisV1RDTO(), type, locale, fieldName, showMeta));
     }
 }
