@@ -535,7 +535,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
             angular.forEach(haku.nimi,function(nimi){
 
-                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+                if (nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
@@ -999,6 +999,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
     var haeValintaPerusteet = function() {
 
         //TODO: refactor this to more smaller functions and separate concerns
+
+        $log.info('VALINTAPERUSTEET OPPILAITOSTYYPIT : ', oppilaitosTyypit);
 
         angular.forEach(oppilaitosTyypit,function(oppilaitosTyyppi){
 
