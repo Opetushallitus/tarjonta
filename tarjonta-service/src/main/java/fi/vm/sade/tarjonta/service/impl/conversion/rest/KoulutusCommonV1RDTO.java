@@ -251,6 +251,10 @@ public class KoulutusCommonV1RDTO {
     }
 
     public void addToKoodiUrisMap(final KoodiUrisV1RDTO koodiUris, final KoodiUriAndVersioType type, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
+        if (koodiUris.getUris() == null) {
+            koodiUris.setUris(Maps.<String, Integer>newHashMap());
+        }
+
         koodiUris.getUris().put(type.getKoodiUri(), type.getVersio());
         //Meta key koodi URI must not have the hashtag!
         if (koodiUris.getMeta() == null) {
