@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.koodisto;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
@@ -40,20 +41,21 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class KoulutuskoodiRelations {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(KoulutuskoodiRelations.class);
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired(required = true)
     private KoulutusCommonV1RDTO commonConverter;
-
+    
     public KoulutusmoduuliRelationV1RDTO getKomoRelationByKoulutuskoodiUri(final String koulutuskoodiUri, final boolean korkeakoulu, final Locale locale, final boolean showMeta) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
         Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri, korkeakoulu);
-
+        
         KoulutusmoduuliRelationV1RDTO dto = new KoulutusmoduuliRelationV1RDTO();
-        dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, FieldNames.KOULUTUSKOODI, locale, showMeta));
-
+        dto.setKoulutuskoodi(listaaKoodi(koulutuskoodiUri, FieldNames.KOULUTUSKOODI, locale, showMeta)); 
+        dto.getTutkintonimikes().setUris(Maps.<String, Integer>newHashMap());        
+        
         for (KoodiType type : koodistoRelations) {
             LOG.info("KOODISTO : " + type.getKoodisto().getKoodistoUri());
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
@@ -72,25 +74,25 @@ public class KoulutuskoodiRelations {
                 dto.setEqf(listaaKoodi(type.getKoodiUri(), FieldNames.EQF, locale, showMeta));
             }
         }
-
+        
         return dto;
     }
-
+    
     private void addToTutkintonimikesMap(final KoodiType type, KoodiUrisV1RDTO koodiUris, final Locale locale, final boolean showMeta) {
         KoodiUriAndVersioType uriAndVersion = new KoodiUriAndVersioType();
         uriAndVersion.setKoodiUri(type.getKoodiUri());
         uriAndVersion.setVersio(type.getVersio());
         commonConverter.addToKoodiUrisMap(koodiUris, uriAndVersion, locale, FieldNames.TUTKINTONIMIKE, showMeta);
     }
-
+    
     private Collection<KoodiType> getKoulutusRelations(final String koulutuskoodiUri, final boolean korkeakoulu) {
         Preconditions.checkNotNull(koulutuskoodiUri, "Koulutuskoodi URI cannot be null");
         Collection<KoodiType> koodiTypes = Lists.<KoodiType>newArrayList();
-
+        
         for (String koodistoUri : koodisByAste(korkeakoulu)) {
             koodiTypes.addAll(tarjontaKoodistoHelper.getKoodistoRelations(koulutuskoodiUri, koodistoUri, SuhteenTyyppiType.SISALTYY, false));
         }
-
+        
         return koodiTypes;
     }
 
@@ -106,7 +108,7 @@ public class KoulutuskoodiRelations {
         Preconditions.checkNotNull(uri, "Koodisto URI was null - an unknown URI data cannot be loaded.");
         return commonConverter.convertToKoodiDTO(uri, locale, fieldName, showMeta);
     }
-
+    
     private String[] koodisByAste(final boolean korkeakoulu) {
         if (korkeakoulu) {
             return new String[]{
