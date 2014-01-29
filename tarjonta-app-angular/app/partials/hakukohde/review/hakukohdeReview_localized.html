@@ -26,6 +26,13 @@
     </tr>
 
     <tr>
+        <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
+        <td colspan="2">
+            {{ model.hakukohde.kaytetaanJarjestelmanValintaPalveluaArvo }}
+        </td>
+    </tr>
+
+    <tr>
         <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
         <td colspan="2">
             <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
@@ -33,6 +40,7 @@
             </span>
         </td>
     </tr>
+
 
     <tr>
         <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>

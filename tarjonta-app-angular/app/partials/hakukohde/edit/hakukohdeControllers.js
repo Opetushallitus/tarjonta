@@ -30,6 +30,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
+    var defaultLang = "kieli_fi";
+
 	$scope.formControls = {}; // controls-layouttia varten
 
     //All kieles is received from koodistomultiselect
@@ -533,13 +535,26 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         angular.forEach(hakuDatas,function(haku){
 
 
-            angular.forEach(haku.nimi,function(nimi){
+            var userLang = AuthService.getLanguage();
+
+
+
+            var hakuLang = userLang !== undefined ? userLang : defaultLang;
+
+            for (var kieliUri in haku.nimi) {
+
+                if (kieliUri.indexOf(hakuLang) != -1 ) {
+                    haku.lokalisoituNimi = haku.nimi[kieliUri];
+                }
+
+            }
+            /*angular.forEach(haku.nimi,function(nimi){
 
                 if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
-            });
+            });*/
             
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
