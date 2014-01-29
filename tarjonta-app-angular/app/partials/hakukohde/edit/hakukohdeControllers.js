@@ -917,7 +917,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 });
 
-app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
+app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
 
     var koodistoKieliUri = "kieli";
 
@@ -1006,6 +1006,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
             valintaPerustePromise.then(function(valintaperusteet){
 
+                 $log.info('VALINTAPERUSTEET : ', valintaperusteet);
+
                  var userLang = AuthService.getLanguage();
                  // All different kieli promises
                 var kieliPromises = {};
@@ -1054,7 +1056,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
                 //Wait all promises to complete and add those values to objects
                 $q.all(kieliPromiseArray).then(function(kieliKoodis){
-
+                    $log.info('KIELIKOODIS: ', kieliKoodis);
                     angular.forEach(kieliKoodis,function(kieliKoodi){
 
                         if (kaikkiVpkKielet[kieliKoodi.koodiUri] === undefined) {
