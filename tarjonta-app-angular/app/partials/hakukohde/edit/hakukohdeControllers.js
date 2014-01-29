@@ -30,6 +30,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
+    var defaultLang = "kieli_fi";
+
 	$scope.formControls = {}; // controls-layouttia varten
 
     //All kieles is received from koodistomultiselect
@@ -533,13 +535,26 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         angular.forEach(hakuDatas,function(haku){
 
 
-            angular.forEach(haku.nimi,function(nimi){
+            var userLang = AuthService.getLanguage();
 
-                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+
+
+            var hakuLang = userLang !== undefined ? userLang : defaultLang;
+
+            for (var kieliUri in haku.nimi) {
+
+                if (kieliUri.indexOf(hakuLang) != -1 ) {
+                    haku.lokalisoituNimi = haku.nimi[kieliUri];
+                }
+
+            }
+            /*angular.forEach(haku.nimi,function(nimi){
+
+                if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
-            });
+            });*/
             
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
@@ -921,6 +936,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
     var koodistoKieliUri = "kieli";
 
+    var defaultKieliUri = "kieli_fi";
+
     $scope.dialog = {};
 
     $scope.dialog.kuvaukset = [];
@@ -1000,6 +1017,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
         //TODO: refactor this to more smaller functions and separate concerns
 
+        $log.info('VALINTAPERUSTEET OPPILAITOSTYYPIT : ', oppilaitosTyypit);
+
         angular.forEach(oppilaitosTyypit,function(oppilaitosTyyppi){
 
             var valintaPerustePromise =  Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(oppilaitosTyyppi,tyyppi,getYear());
@@ -1009,6 +1028,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                  $log.info('VALINTAPERUSTEET : ', valintaperusteet);
 
                  var userLang = AuthService.getLanguage();
+
+                $log.info('VALINTAPERUSTE USER LANGUAGE : ', userLang);
                  // All different kieli promises
                 var kieliPromises = {};
 
@@ -1035,6 +1056,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                        if(kieli.toString().indexOf(userLang) != -1) {
 
                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[kieli];
+
+                        }
+
+                        if (valintaPerusteObj.nimi === undefined) {
+
+                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[defaultKieliUri];
 
                         }
 

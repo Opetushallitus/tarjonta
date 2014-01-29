@@ -20,6 +20,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 	    	});
     	} else if ($scope.type == "long") {
     		$scope.model = new Date($scope.ngModel);
+	    	$scope.$watch("ngModel", function(nv, ov){
+	    		$scope.model = new Date($scope.ngModel);
+	    	});
     	} else {
     		throw new ("Unknown type "+$scope.type);
     	}
@@ -192,6 +195,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					
 					$scope.ok = function() {						
 						ctrl.model = $scope.model;
+						updateModels();
 						modalInstance.dismiss();
 					}
 					

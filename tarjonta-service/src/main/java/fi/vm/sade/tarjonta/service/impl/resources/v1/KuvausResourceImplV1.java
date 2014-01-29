@@ -98,6 +98,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(String tyyppi,int vuosi, String orgType) {
 
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
