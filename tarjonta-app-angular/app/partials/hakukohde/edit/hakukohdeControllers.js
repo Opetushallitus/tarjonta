@@ -921,6 +921,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
     var koodistoKieliUri = "kieli";
 
+    var defaultKieliUri = "kieli_fi";
+
     $scope.dialog = {};
 
     $scope.dialog.kuvaukset = [];
@@ -1011,6 +1013,8 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                  $log.info('VALINTAPERUSTEET : ', valintaperusteet);
 
                  var userLang = AuthService.getLanguage();
+
+                $log.info('VALINTAPERUSTE USER LANGUAGE : ', userLang);
                  // All different kieli promises
                 var kieliPromises = {};
 
@@ -1037,6 +1041,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                        if(kieli.toString().indexOf(userLang) != -1) {
 
                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[kieli];
+
+                        }
+
+                        if (valintaPerusteObj.nimi === undefined) {
+
+                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[defaultKieliUri];
 
                         }
 
