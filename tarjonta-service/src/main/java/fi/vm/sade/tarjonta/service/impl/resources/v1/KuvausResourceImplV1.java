@@ -208,6 +208,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(String tyyppi, String orgType) {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
@@ -240,6 +241,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResultV1RDTO<KuvausV1RDTO> findByNimiAndOppilaitosTyyppi(String tyyppi,
                                                                     String oppilaitosTyyppi,
                                                                     String nimi) {
