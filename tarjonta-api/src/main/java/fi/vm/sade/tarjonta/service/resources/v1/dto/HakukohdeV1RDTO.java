@@ -1,12 +1,16 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 
-import java.util.*;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 
 /*
 * @author: Tuomas Katva 10/11/13
@@ -87,8 +91,12 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private Long soraKuvausTunniste;
 
+    private Set<String> opetusKielet;
+
+    @Deprecated // sama kuin opetuskielet
     private Set<String> valintaPerusteKuvausKielet;
 
+    @Deprecated // sama kuin opetuskielet
     private Set<String> soraKuvausKielet;
 
     public String getHakukohteenNimi() {
@@ -385,19 +393,32 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.soraKuvausTunniste = soraKuvausTunniste;
     }
 
+    @Deprecated // sama kuin opetuskielet
     public Set<String> getValintaPerusteKuvausKielet() {
         return valintaPerusteKuvausKielet;
     }
 
+    @Deprecated // sama kuin opetuskielet
     public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
         this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
     }
 
+    @Deprecated // sama kuin opetuskielet
     public Set<String> getSoraKuvausKielet() {
         return soraKuvausKielet;
     }
 
+    @Deprecated // sama kuin opetuskielet
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
     }
+    
+    public void setOpetusKielet(Set<String> opetusKielet) {
+		this.opetusKielet = opetusKielet;
+	}
+    
+    public Set<String> getOpetusKielet() {
+		return opetusKielet;
+	}
+    
 }
