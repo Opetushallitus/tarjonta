@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid']);
 
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
@@ -931,7 +931,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
     var kaikkiKuvaukset = {};
 
-    var valittuKuvaus = undefined;
+    $scope.valittuKuvaus = null;
 
     $scope.dialog.kuvauksenKielet = {};
 
@@ -1105,15 +1105,38 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
     getTitle();
     haeValintaPerusteet();
 
+    $scope.selectedKuvaus = [];
+    
+    $scope.kuvausGrid = {
+    	data: "dialog.kuvaukset",
+    	multiSelect: false,
+    	selectedItems: $scope.selectedKuvaus,
+    	afterSelectionChange: function(row, event){
+    		if ($scope.selectedKuvaus[0]) {
+    			$scope.selectKuvaus($scope.selectedKuvaus[0]);
+    		}
+    	},
+    	columnDefs:
+    		[{field:"nimi", displayName: $scope.dialog.titles.tableValintaRyhma, width: "75%" },
+    		 {field:"kielet", displayName: $scope.dialog.titles.tableKuvauskielet, width: "25%" }]
+    };
+    
+    $scope.isOk = function() {
+    	return $scope.valittuKuvaus && $scope.dialog.valitutKuvauksenKielet.length>0
+    }
 
     $scope.selectKuvaus = function(kuvaus) {
+        console.log("SELECT ",kuvaus);
 
         $scope.showKieliSelectionCheckboxDisabled = false;
 
         $scope.dialog.kuvauksenKielet = [];
 
-
-        valittuKuvaus = kuvaus;
+        if ($scope.valittuKuvaus) {
+        	$scope.valittuKuvaus.selected = false;
+        }
+        $scope.valittuKuvaus = kuvaus;
+    	$scope.valittuKuvaus.selected = true;
 
        // $scope.dialog.kuvauksenKielet = {};
 
@@ -1176,10 +1199,10 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
         angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKieli){
 
-            if (valittuKuvaus !== undefined) {
-               console.log('VALITTU KUVAUS: ' , valittuKuvaus);
+            if ($scope.valittuKuvaus !== undefined) {
+               console.log('VALITTU KUVAUS: ' , $scope.valittuKuvaus);
 
-                var valittuKokoKuvaus = kaikkiKuvaukset[valittuKuvaus.tunniste];
+                var valittuKokoKuvaus = kaikkiKuvaukset[$scope.valittuKuvaus.tunniste];
                 var kuvaus = {
                     toimintoTyyppi : $scope.dialog.copySelection,
                     tunniste :  valittuKokoKuvaus.kuvauksenTunniste,

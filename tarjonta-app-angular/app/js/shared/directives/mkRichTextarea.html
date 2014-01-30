@@ -2,10 +2,10 @@
 	<tabset>
 
         <tab ng-repeat="l in selectedLangs" heading="{{langs[l]}}" active="selectedTab[l]">
-            <rich-textarea model="model[l]" mode="false" max="{{max}}"></rich-textarea>
+            <rich-textarea model="model[l]" mode="isDisabled()" max="{{max}}"></rich-textarea>
         </tab>
         
-        <tab heading="+" class="addLangTab">
+        <tab heading="+" class="addLangTab" ng-show="!isDisabled()">
             <multi-select
                 order-with="userLangs"
                 model="langs"
