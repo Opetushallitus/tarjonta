@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +64,28 @@ public class HakuV1RDTO extends BaseV1RDTO {
     private Date lastUpdatedDate;
 
     private Map<String, String> nimi = new HashMap<String, String>();
+
+    private Map<String, KoodiV1RDTO> koodiMeta;
+
+
+    public void addKoodiMeta(KoodiV1RDTO koodi) {
+        if (koodi == null) {
+            return;
+        }
+
+        if (getKoodiMeta() == null) {
+            setKoodiMeta(new HashMap<String, KoodiV1RDTO>());
+        }
+        getKoodiMeta().put(koodi.getUri(), koodi);
+    }
+
+    public Map<String, KoodiV1RDTO> getKoodiMeta() {
+        return koodiMeta;
+    }
+
+    public void setKoodiMeta(Map<String, KoodiV1RDTO> koodiMeta) {
+        this.koodiMeta = koodiMeta;
+    }
 
     public String getHakukausiUri() {
         return hakukausiUri;
