@@ -31,6 +31,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
@@ -113,6 +115,12 @@ public class ConverterV1 {
                 }
             }
         }
+
+        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
+        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
+        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
+        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
+        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
 
         return t;
     }
@@ -1045,4 +1053,60 @@ public class ConverterV1 {
         return ret;
     }
 
+
+    /**
+     * Resolves given koodiUri to metadata (translatios);
+     *
+     * Becomes:
+     * {
+     *   arvo : koodiArvo,
+     *   uri: koodiUri,
+     *   version : koodiVersion,
+     *   meta: {
+     *     kieli_fi#1 : "Koodin suomekielinen nimi",
+     *     kieli_sv#1 : "Kod ruattalainen namn",
+     *     ...
+     *   }
+     * }
+     *
+     * @param koodiUri
+     * @return
+     */
+    private KoodiV1RDTO resolveKoodiMeta(String koodiUri) {
+
+        KoodiV1RDTO result = null;
+
+        if (tarjontaKoodistoHelper == null) {
+            return result;
+        }
+
+        if (koodiUri == null) {
+            return result;
+        }
+
+        KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(koodiUri);
+        if (koodi != null) {
+            result = new KoodiV1RDTO();
+
+            result.setArvo(koodi.getKoodiArvo());
+            result.setUri(koodi.getKoodiUri());
+            result.setVersio(koodi.getVersio());
+
+            // Save translations by kieliUri to "meta"
+            HashMap<String, KoodiV1RDTO> meta = new HashMap<String, KoodiV1RDTO>();
+            result.setMeta(meta);
+
+            for (KoodiMetadataType koodiMetadataType : koodi.getMetadata()) {
+                KoodiV1RDTO subMeta = new KoodiV1RDTO();
+
+                String kieliUri = tarjontaKoodistoHelper.convertKielikoodiToKieliUri(koodiMetadataType.getKieli().value());
+                subMeta.setKieliUri(kieliUri);
+                subMeta.setArvo(koodiMetadataType.getNimi());
+
+                meta.put(kieliUri, subMeta);
+            }
+        }
+
+        return result;
+    }
 }
