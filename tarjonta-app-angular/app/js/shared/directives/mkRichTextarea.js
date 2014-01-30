@@ -19,7 +19,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	}
     	
     	$scope.isDisabled = function() {
-    		return $scope.ngDisabled && $scope.ngDisabled();
+    		return $scope.disabled()===true;
     	}
 
     	$scope.langs = [];
@@ -28,17 +28,31 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	
     	$scope.selectedTab = {"kieli_fi":true};
     	
-    	if (isEmpty($scope.model)) {
-    		for (var i in window.CONFIG.app.userLanguages) {
-    			var lang = window.CONFIG.app.userLanguages[i];
-    			$scope.selectedLangs.push(lang);
-    			$scope.model[lang] = "";
-    		}
-		} else {
-    		for (var i in $scope.model) {
-    			$scope.selectedLangs.push(i);
-    		}
+    	function updateLangs() {
+    		var langs = [];
+        	if (isEmpty($scope.model)) {
+        		//console.log("EMPTY -> INIT");
+        		for (var i in window.CONFIG.app.userLanguages) {
+        			var lang = window.CONFIG.app.userLanguages[i];
+        			langs.push(lang);
+        			$scope.model[lang] = "";
+        		}
+    		} else {
+        		for (var i in $scope.model) {
+        			//console.log("INIT "+i+" -> ", $scope.model[i]);
+        			if ($scope.model[i]!==undefined) { // undefinedit pois
+        				langs.push(i);
+        			}
+        		}
+        	}
+        	
+    		$scope.selectedLangs = langs;
+        	/*console.log("MODEL = ",$scope.model);
+        	console.log("TABS = ",$scope.selectedTab);
+        	console.log("LANGS = ",$scope.selectedLangs);*/
     	}
+    	
+    	updateLangs();
 
         // kielikoodit koodistosta
     	$scope.langsPromise = Koodisto.getAllKoodisWithKoodiUri("kieli", LocalisationService.getLocale());
@@ -49,6 +63,18 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
             }
             $scope.langs = nc;
         });
+    	
+    	$scope.updateLangs = updateLangs;
+    	
+    	$scope.$watch("model", function(nv, ov){
+    		//console.log("model = ",$scope.model);
+    		updateLangs();
+    	},false);
+
+    	$scope.$watch("disabled", function(nv, ov){
+    		//console.log("disabled = ",$scope.disabled());
+    		updateLangs();
+    	});
 
     }
 
@@ -60,7 +86,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         scope: {
             model: "=",  // map jossa kieliuri -> teksti, esim. {kieli_fi: "Suomeksi", kieli_sv: "På svenska"}
         	max: "@",	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
-        	ngDisabled: "&" // disablointi
+        	disabled: "&" // disablointi
         }
     }
 

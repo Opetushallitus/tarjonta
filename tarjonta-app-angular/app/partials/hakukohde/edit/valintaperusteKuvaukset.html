@@ -4,8 +4,9 @@
 
     <p tt="kk.hakukohde.valintaperustekuvaus.addl.title"></p>
     <p><a href data-ng-click="haeValintaPerusteKuvaus()" >{{t('tarjonta.hakukohde.hae.valintaperustekuvaus')}}</a></p>
-<!-- 
-    <multi-lang-simple-textarea ng-show="!model.isValintaPerusteEditable()" model="model.hakukohde.valintaperusteKuvaukset"></multi-lang-simple-textarea>
+    
+    <!-- 
+    <multi-lang-simple-textarea xng-show="!model.isValintaPerusteEditable()" model="model.hakukohde.valintaperusteKuvaukset"></multi-lang-simple-textarea>
      -->
     <mk-rich-textarea ng-disabled="!model.isValintaPerusteEditable()" model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
 
