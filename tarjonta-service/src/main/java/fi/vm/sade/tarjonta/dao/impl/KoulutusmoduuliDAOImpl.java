@@ -56,8 +56,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
 
     @SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+
     @Autowired
     private OIDService oidService;
 
@@ -100,7 +100,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     }
 
-     @Override
+    @Override
     public List<Koulutusmoduuli> search(SearchCriteria criteria) {
 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
@@ -110,7 +110,6 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
         //Expression groupBy = groupBy(criteria);
-
         if (criteria.getNimiQuery() != null) {
             // todo: FIX THIS
             //whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
@@ -118,6 +117,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         if (criteria.getKoulutusKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        }
+
+        if (criteria.getLikeKoulutusKoodiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
@@ -185,15 +188,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     @Override
     public List<Koulutusmoduuli> findAllKomos() {
         /*QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
-        QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
-        QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
-        return from(moduuli).
-                leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-                leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
-                leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
-                list(moduuli);*/
-    	return findAll();
+         QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
+         QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+         QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
+         return from(moduuli).
+         leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+         leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
+         leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
+         list(moduuli);*/
+        return findAll();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

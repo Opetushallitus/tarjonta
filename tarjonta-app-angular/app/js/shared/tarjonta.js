@@ -449,6 +449,34 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
     };
 
+    /**
+     * POST: Insert new KOMO. API object must be valid.
+     *
+     * @param json data in JSON format.
+     * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
+     * @returns {undefined}
+     */
+    dataFactory.komo = function() {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/:oid", {}, {
+            update: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            get: {
+                method: 'GET'
+            },
+            search: {
+                method: 'GET',
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutuskoodi",
+            },
+        });
+    };
 
     return dataFactory;
 });

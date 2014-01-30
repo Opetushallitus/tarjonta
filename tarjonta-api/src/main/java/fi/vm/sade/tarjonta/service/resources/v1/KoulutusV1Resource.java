@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
@@ -61,8 +62,10 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Näyttää yhden koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio näyttää yhden koulutuksen annetulla koulutuksen oid:lla."
-            + "Muut parametrit: meta=true lisää koodisto-palvelun metatietoa haettavaan koulutuksen dataan")
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta,  @QueryParam("lang") String lang);
+            + " Muut parametrit : "
+            + "1. meta=false poistaa koodisto-palvelun metatietoa haettavaan koulutuksen dataan. "
+            + "2. lang=FI näyttää yksittäisen metadatan annetun kielikoodin mukaan.")
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
 
     @DELETE
     @Path("/{oid}")
@@ -97,7 +100,7 @@ public interface KoulutusV1Resource {
             value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             response = KoulutusmoduuliRelationV1RDTO.class)
-    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta,  @QueryParam("lang") String lang);
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
 
     @GET
     @Path("/{oid}/tekstis/komoto")

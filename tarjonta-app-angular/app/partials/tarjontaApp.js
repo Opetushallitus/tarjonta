@@ -15,6 +15,7 @@ angular.module('app.kk',
             'app.edit.ctrl',
             'app.edit.ctrl.alkamispaiva',
             'app.edit.ctrl.tutkintonimike',
+            'app.komo.ctrl',
             'app.review.ctrl',
             'app.hakukohde.ctrl',
             'app.haku.ctrl',
@@ -361,6 +362,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
 
                 .when('/koodistoTest', {action: 'koodistoTest'})
+
+                .when('/komo', {
+                    action: "komo",
+                    controller: 'KomoController'
+
+                })
 
                 .otherwise({redirectTo: "/etusivu"});
     }]);
