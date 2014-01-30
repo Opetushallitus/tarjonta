@@ -37,6 +37,12 @@
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-widget</artifactId>
             <version>${koodisto.widget.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>vaadin</artifactId>
+                    <groupId>com.vaadin</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -192,12 +198,14 @@
         </dependency>
         -->
 
+<!--
         <dependency>
             <groupId>com.google.gwt.google-apis</groupId>
             <artifactId>gwt-maps</artifactId>
             <version>1.1.0</version>
             <classifier>gwt23</classifier>
         </dependency>
+-->
 
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
@@ -232,6 +240,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -251,7 +265,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-jgroupsreplication</artifactId>
