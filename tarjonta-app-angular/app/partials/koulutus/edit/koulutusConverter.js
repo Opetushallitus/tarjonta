@@ -116,7 +116,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
-            pohjakoulutusvaatimukset: {koodisto: 'koodisto-uris.pohjakoulutusvaatimus_kk'},
             opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
             opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
             opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},

@@ -630,6 +630,10 @@ public class ShowHakukohdeTab extends VerticalLayout {
         addItemToGrid(grid, "hakuaika", getHakuaikaStr());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
+        if(kTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            addItemToGrid(grid,"kaksoistutkino", presenter.getModel().getHakukohde().isKaksoisTutkinto() ? this.i18n.getMessage("kylla") : i18n.getMessage("ei"));
+        }
+
         if (checkLukioKoulutus()) {
             
             addItemToGrid(grid, "alinHyvaksyttyvaKeskiarvo", presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo());

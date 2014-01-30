@@ -102,26 +102,26 @@ public class EntityConverterToKoulutusKorkeakouluRDTO {
         kkDto.setKoulutusaste(commonConverter.koodiData(komo.getKoulutusAste(), locale, FieldNames.KOULUTUSASTE, showMeta));
         kkDto.setKoulutusala(commonConverter.koodiData(komo.getKoulutusala(), locale, FieldNames.KOULUTUSALA, showMeta));
         kkDto.setOpintoala(commonConverter.koodiData(komo.getOpintoala(), locale, FieldNames.OPINTOALA, showMeta));
-        kkDto.setTutkintonimikes(commonConverter.convertToKoodiDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
+        kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
         kkDto.setEqf(commonConverter.komoData(komo.getEqfLuokitus(), locale, FieldNames.EQF, showMeta));
 
         if (komoto.getAihees() != null) {
-            kkDto.setAihees(commonConverter.convertToKoodiDTO(komoto.getAihees(), locale, FieldNames.AIHEES, showMeta));
+            kkDto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), locale, FieldNames.AIHEES, showMeta));
         }
-        kkDto.setOpetuskielis(commonConverter.convertToKoodiDTO(komoto.getOpetuskielis(), locale, FieldNames.OPETUSKIELIS, showMeta));
+        kkDto.setOpetuskielis(commonConverter.convertToKoodiUrisDTO(komoto.getOpetuskielis(), locale, FieldNames.OPETUSKIELIS, showMeta));
         final String maksullisuus = komoto.getMaksullisuus();
         kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
-        kkDto.setOpetusmuodos(commonConverter.convertToKoodiDTO(komoto.getOpetusmuotos(), locale, FieldNames.OPETUSMUODOS, showMeta));
+        kkDto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), locale, FieldNames.OPETUSMUODOS, showMeta));
         if (komoto.getOpetusAikas() != null) {
-            kkDto.setOpetusAikas(commonConverter.convertToKoodiDTO(komoto.getOpetusAikas(), locale, FieldNames.OPETUSAIKAS, showMeta));
+            kkDto.setOpetusAikas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusAikas(), locale, FieldNames.OPETUSAIKAS, showMeta));
         }
         if (komoto.getOpetusPaikkas() != null) {
-            kkDto.setOpetusPaikkas(commonConverter.convertToKoodiDTO(komoto.getOpetusPaikkas(), locale, FieldNames.OPETUSPAIKKAS, showMeta));
+            kkDto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), locale, FieldNames.OPETUSPAIKKAS, showMeta));
         }
-        kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUKSET, showMeta));
+        kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUKSET, showMeta));
         kkDto.setSuunniteltuKestoTyyppi(commonConverter.koodiData(komoto.getSuunniteltuKestoYksikko(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, showMeta));
         kkDto.setSuunniteltuKestoArvo(komoto.getSuunniteltuKestoArvo());
-        kkDto.setAmmattinimikkeet(commonConverter.convertToKoodiDTO(komoto.getAmmattinimikes(), locale, FieldNames.AMMATTINIMIKKEET, showMeta));
+        kkDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), locale, FieldNames.AMMATTINIMIKKEET, showMeta));
 
         if (komoto.getHinta() != null) {
             kkDto.setHinta(komoto.getHinta().doubleValue());

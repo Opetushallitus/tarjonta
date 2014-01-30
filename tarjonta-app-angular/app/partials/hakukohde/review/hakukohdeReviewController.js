@@ -62,9 +62,23 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
       */
 
 
+     var convertValintaPalveluValue = function() {
+
+
+        if ( $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua ) {
+            $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.kylla');
+        } else {
+            $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
+        }
+
+     }
+
+
       var loadKielesSetFromHakukohde = function() {
 
           var koodiPromises = [];
+
+
 
           if ($scope.model.allkieles === undefined || $scope.model.allkieles.length < 1) {
               var allKieles = new buckets.Set();
@@ -79,8 +93,6 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
               }
               $scope.model.allkieles = allKieles.toArray();
           }
-
-          console.log('ALL KIELES : ' , $scope.model.allkieles);
 
           if ($scope.model.allkieles!== undefined) {
 
@@ -105,6 +117,13 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
       };
+
+
+    var createFormattedDateString = function(date) {
+
+        return moment(date).format('DD.MM.YYYY HH:mm');
+
+    }
 
     var filterNewKoulutukses = function(koulutukses) {
 
@@ -207,12 +226,34 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
          var hakuPromise = HakuService.getHakuWithOid($scope.model.hakukohde.hakuOid);
          hakuPromise.then(function(haku){
-            angular.forEach(haku.nimi,function(nimi){
+            console.log('HAKU: ', haku);
+            for (var kieliUri in haku.nimi) {
+                if (kieliUri.indexOf($scope.model.userLang) != -1) {
+                    $scope.model.hakukohde.hakuNimi = haku.nimi[kieliUri];
+                }
+            }
 
-                if (nimi.arvo.toLowerCase() === $scope.model.userLang) {
-                     $scope.model.hakukohde.hakuNimi = nimi.teksti;
-                 }
-            });
+            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
+
+                var valittuHakuAika = undefined;
+                angular.forEach(haku.hakuaikas,function(hakuaika){
+
+                      if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
+                          valittuHakuAika = hakuaika;
+                      }
+
+                });
+
+                if (valittuHakuAika !== undefined) {
+
+                    var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
+
+                    $scope.model.hakukohde.hakuNimi = $scope.model.hakukohde.hakuNimi + "  ( " + prefix  + createFormattedDateString(valittuHakuAika.alkuPvm) + " - " + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
+
+                }
+
+            }
+
          });
 
      };
@@ -294,7 +335,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         -----------> Controller "initialization" part where initialization functions are run  <--------------
 
       */
-
+    convertValintaPalveluValue();
     loadKielesSetFromHakukohde();
     loadHakuInformation();
     modelInit();
