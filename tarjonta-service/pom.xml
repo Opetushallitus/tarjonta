@@ -204,7 +204,7 @@
                         </exclusion>
                     </exclusions>
                 </dependency>
-        -->        
+        -->
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
@@ -263,7 +263,7 @@
             <version>1.0.4</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>jgrapht</groupId>
             <artifactId>jgrapht</artifactId>
@@ -362,10 +362,10 @@
             <artifactId>gson</artifactId>
             <version>2.2.4</version>
         </dependency>
-        
-        <!-- 
-        Jos/kun palvelunne huutaa jotain jgroupsiin tai ehcacheen liittyen, 
-        ottakaa seuraavat riippuvuudet kayttoon, jotta cassin 
+
+        <!--
+        Jos/kun palvelunne huutaa jotain jgroupsiin tai ehcacheen liittyen,
+        ottakaa seuraavat riippuvuudet kayttoon, jotta cassin
         ticket cache saadaan replikoitumaan:
         -->
         <dependency>
@@ -383,11 +383,13 @@
             <artifactId>jgroups</artifactId>
             <version>2.10.0.GA</version>
         </dependency>
+<!--
         <dependency>
                 <groupId>org.jasig.cas</groupId>
                 <artifactId>cas-client-core</artifactId>
                 <version>3.1.10</version>
         </dependency>
+-->
     </dependencies>
 
     <build>

@@ -171,7 +171,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA, true));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA, true));
         komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF, true));
-        komo.setKoulutusohjelmaKoodi(convertToUri(dto.getEqf(), FieldNames.KOULUTUSOHJELMA, true));
+        komo.setKoulutusohjelmaKoodi(convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA, true));
         komo.setTila(dto.getTila());
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
