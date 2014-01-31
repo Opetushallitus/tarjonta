@@ -59,16 +59,17 @@ public interface LinkingV1Resource {
      * Linkkaa kaksi (tai useampi) koulutusta yhteen
      */
     @POST
-    @Path("/test")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Linkkaa kaksi (tai useampi) koulutus yhteen", notes = "Linkkaa kaksi (tai useampi) koulutus yhteen")
     public ResultV1RDTO link(KomoLink link);
 
     /**
-     * Testaa onko linkki mahdollinen (tekee sama tatrkistukset kuin link mutta ei linkkaa)
+     * Testaa onko linkki mahdollinen (tekee sama tatrkistukset kuin link mutta
+     * ei linkkaa)
      */
     @POST
+    @Path("/test")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Testaa, onko kahden koulutuksen likkaaminen mahdollista", notes = "Testaa, onko kahden koulutuksen likkaaminen mahdollista")
