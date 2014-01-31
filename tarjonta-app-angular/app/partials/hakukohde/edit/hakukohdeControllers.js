@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid']);
 
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
@@ -29,6 +29,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
+
+    var defaultLang = "kieli_fi";
 
 	$scope.formControls = {}; // controls-layouttia varten
 
@@ -82,6 +84,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+    var emptyErrorMessages = function() {
+
+        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+        $scope.model.showError = false;
+
+    }
+
+
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
@@ -131,9 +142,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
-    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
-    console.log('CAN SAVE : ', $scope.canEdit);
-    console.log('CAN CREATE : ', $scope.canCreate);
+
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -250,6 +259,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
     }
+
+
 
 
     var createFormattedDateString = function(date) {
@@ -559,13 +570,26 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         angular.forEach(hakuDatas,function(haku){
 
 
-            angular.forEach(haku.nimi,function(nimi){
+            var userLang = AuthService.getLanguage();
 
-                if (nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
+
+
+            var hakuLang = userLang !== undefined ? userLang : defaultLang;
+
+            for (var kieliUri in haku.nimi) {
+
+                if (kieliUri.indexOf(hakuLang) != -1 ) {
+                    haku.lokalisoituNimi = haku.nimi[kieliUri];
+                }
+
+            }
+            /*angular.forEach(haku.nimi,function(nimi){
+
+                if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
                     haku.lokalisoituNimi = nimi.teksti;
                 }
 
-            });
+            });*/
             
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
@@ -677,7 +701,30 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
+    $scope.model.isSoraEditable = function() {
 
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+
+    };
+
+    $scope.model.isValintaPerusteEditable = function() {
+
+        var retval = true;
+
+        if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+            retval = false;
+        }
+
+
+        return retval;
+    }
     /*
 
         ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
@@ -728,7 +775,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.saveValmis = function() {
-
+        emptyErrorMessages();
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
         $scope.model.hakukohde.tila = "VALMIS";
@@ -801,7 +848,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.saveLuonnos = function() {
 
-
+        emptyErrorMessages();
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
@@ -809,6 +856,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
+
 
            /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.valintaperusteKuvaukset = {};
@@ -919,9 +967,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 });
 
-app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
+app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,AuthService){
 
     var koodistoKieliUri = "kieli";
+
+    var defaultKieliUri = "kieli_fi";
 
     $scope.dialog = {};
 
@@ -931,7 +981,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
     var kaikkiKuvaukset = {};
 
-    var valittuKuvaus = undefined;
+    $scope.valittuKuvaus = null;
 
     $scope.dialog.kuvauksenKielet = {};
 
@@ -1002,13 +1052,19 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         //TODO: refactor this to more smaller functions and separate concerns
 
+        $log.info('VALINTAPERUSTEET OPPILAITOSTYYPIT : ', oppilaitosTyypit);
+
         angular.forEach(oppilaitosTyypit,function(oppilaitosTyyppi){
 
             var valintaPerustePromise =  Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(oppilaitosTyyppi,tyyppi,getYear());
 
             valintaPerustePromise.then(function(valintaperusteet){
 
+                 $log.info('VALINTAPERUSTEET : ', valintaperusteet);
+
                  var userLang = AuthService.getLanguage();
+
+                $log.info('VALINTAPERUSTE USER LANGUAGE : ', userLang);
                  // All different kieli promises
                 var kieliPromises = {};
 
@@ -1038,6 +1094,12 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
                         }
 
+                        if (valintaPerusteObj.nimi === undefined) {
+
+                            valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[defaultKieliUri];
+
+                        }
+
                         valintaPerusteObj.kieliUris.push(kieli);
                         if (kieliPromises[kieli] === undefined) {
                             var kieliPromise = Koodisto.getKoodi(koodistoKieliUri,kieli,userLang);
@@ -1056,7 +1118,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
                 //Wait all promises to complete and add those values to objects
                 $q.all(kieliPromiseArray).then(function(kieliKoodis){
-
+                    $log.info('KIELIKOODIS: ', kieliKoodis);
                     angular.forEach(kieliKoodis,function(kieliKoodi){
 
                         if (kaikkiVpkKielet[kieliKoodi.koodiUri] === undefined) {
@@ -1093,15 +1155,38 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
     getTitle();
     haeValintaPerusteet();
 
+    $scope.selectedKuvaus = [];
+    
+    $scope.kuvausGrid = {
+    	data: "dialog.kuvaukset",
+    	multiSelect: false,
+    	selectedItems: $scope.selectedKuvaus,
+    	afterSelectionChange: function(row, event){
+    		if ($scope.selectedKuvaus[0]) {
+    			$scope.selectKuvaus($scope.selectedKuvaus[0]);
+    		}
+    	},
+    	columnDefs:
+    		[{field:"nimi", displayName: $scope.dialog.titles.tableValintaRyhma, width: "75%" },
+    		 {field:"kielet", displayName: $scope.dialog.titles.tableKuvauskielet, width: "25%" }]
+    };
+    
+    $scope.isOk = function() {
+    	return $scope.valittuKuvaus && $scope.dialog.valitutKuvauksenKielet.length>0
+    }
 
     $scope.selectKuvaus = function(kuvaus) {
+        console.log("SELECT ",kuvaus);
 
         $scope.showKieliSelectionCheckboxDisabled = false;
 
         $scope.dialog.kuvauksenKielet = [];
 
-
-        valittuKuvaus = kuvaus;
+        if ($scope.valittuKuvaus) {
+        	$scope.valittuKuvaus.selected = false;
+        }
+        $scope.valittuKuvaus = kuvaus;
+    	$scope.valittuKuvaus.selected = true;
 
        // $scope.dialog.kuvauksenKielet = {};
 
@@ -1164,10 +1249,10 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$modalInst
 
         angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKieli){
 
-            if (valittuKuvaus !== undefined) {
-               console.log('VALITTU KUVAUS: ' , valittuKuvaus);
+            if ($scope.valittuKuvaus !== undefined) {
+               console.log('VALITTU KUVAUS: ' , $scope.valittuKuvaus);
 
-                var valittuKokoKuvaus = kaikkiKuvaukset[valittuKuvaus.tunniste];
+                var valittuKokoKuvaus = kaikkiKuvaukset[$scope.valittuKuvaus.tunniste];
                 var kuvaus = {
                     toimintoTyyppi : $scope.dialog.copySelection,
                     tunniste :  valittuKokoKuvaus.kuvauksenTunniste,

@@ -92,6 +92,7 @@
         <script src="js/shared/directives/multiSelect.js"></script>
         <script src="js/shared/directives/mkTextfield.js"></script>
         <script src="js/shared/directives/richTextarea.js"></script>
+        <script src="js/shared/directives/multilangSimpleTextArea.js"></script>
         <script src="js/shared/directives/mkRichTextarea.js"></script>
         <script src="js/shared/directives/imageField.js"></script>
         <script src="js/shared/directives/controlsLayout.js"></script>
@@ -131,11 +132,14 @@
         <script src="partials/koulutus/sisaltyvyys/liita-sisaltyvyys-ctrl.js"></script>
         <script src="partials/koulutus/sisaltyvyys/poista-sisaltyvyys-ctrl.js"></script>
 
+        <script src="partials/komo/komo-ctrl.js"></script>
+
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
         <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
         <script src="partials/koulutus/edit/aiheet-teemat.js"></script>
         <script src="partials/koulutus/edit/koulutusConverter.js"></script>
+        <script src="partials/koulutus/edit/tutkintonimike.js"></script>
 
         <script src="partials/koulutus/edit/alkamispaiva-ja-kausi.js"></script>
 
@@ -176,8 +180,7 @@
         <link href="css/richTextarea.css" rel="stylesheet"/>
         <link href="css/mkRichTextarea.css" rel="stylesheet"/>
         <link href="css/tarjontaform.css" rel="stylesheet"/>
-      
-
+        <link href="css/dateTime.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     </head>
@@ -268,63 +271,41 @@
                     <div data-ng-switch-when="koodistoTest">
                         <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
                     </div>
+
+                    <div data-ng-switch-when="komo">
+                        <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
+                    </div>
                 </div><!-- /renderPath[0] -->
-
-                <!--
-                                <div class="wsidebar-main">
-                                    <hr>
-                                    Footer, route counter = {{count}}<br>
-                                    <a href="#/etusivu">Etusivulle</a>
-                                    <a href="/lokalisointi">Käännösten hallinta</a>
-
-                                    <div>
-                                        <span data-ng-click="showTheSheisse = !showTheSheisse"
-                                              class="collapseHeader"
-                                              data-ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
-                                        <div collapse="!showTheSheisse">
-                                            <pre>
-                                        {{ CONFIG | json }}
-                                            </pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                -->
 
             </div>
         </div>
 
         <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
-	             ng-class="{{isModal() ? 'max' : 'min'}}">
-           <div class="frame">
-               <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-               <span class="post-init spinner-msg" tt="loading" ng-show="isTimeout(false)"></span>
-               <div class="post-init timeout" ng-show="isTimeout(true)">
+             ng-class="{{isModal() ? 'max' : 'min'}}">
+            <div class="frame">
+                <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+                <span class="post-init spinner-msg" tt="loading" ng-show="isTimeout(false)"></span>
+                <div class="post-init timeout" ng-show="isTimeout(true)">
                     <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
-                    tai järjestelmän väliaikaisesta kuormituksesta.</p>
-                    
+                        tai järjestelmän väliaikaisesta kuormituksesta.</p>
+
                     <a href bg-click="restart()" class="btn float-right">
-                    <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
-                   </a>
-               </div>
-           </div>
-           <div class="fail">
-               <h1>Tarjonta on rikki - bruten - broken !!1</h1>
-               <hr/>
-               
-               <p>Tarjonta on siis rikki, palvelimet alhaalla tai jotain. Tähän ohje kenelle pitää valittaa ja/tai
-               kehotus kokeilla hetken päästä uudelleen jne.. Ks. KJOH-728</p>
-               
-               <p>Samma på svenska.</p>
-               
-               <p>Same in English.</p>
-              
-               <hr/>
-               <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
-           
-           </div>
+                        <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
+                    </a>
+                </div>
+            </div>
+            <div class="fail">
+                <hr/>
+                <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
+
+                <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>
+
+                <hr/>
+                <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
+
+            </div>
         </div>
 
-        <script> tarjontaInit(); </script>
+        <script> tarjontaInit();</script>
     </body>
 </html>

@@ -20,7 +20,7 @@
         <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
          
     </controls-model>
 

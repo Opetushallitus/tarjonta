@@ -42,7 +42,7 @@ app.directive('koodistotypeahead',function(Koodisto,$log){
 
     return {
 
-        restrict:'E',
+        restrict:'EA',
         replace:true,
         templateUrl : "js/shared/directives/koodistoTypeAhead.html",
         scope: {

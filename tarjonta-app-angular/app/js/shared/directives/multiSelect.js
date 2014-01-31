@@ -160,6 +160,15 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         	$scope.onPreselection(selection);
         }
         
+    	// poistetaan valinnat joita ei ole (uudessa) modelissa
+        function filterSelection() {
+           	for (var i in $scope.selection) {
+           		if (!$scope.names[$scope.selection[i]]) {
+           			$scope.selection.splice(i,1);
+           		}
+           	}
+        }
+
         // salli valintojen muuttaminen "ulkopuolelta"
         $scope.$watch('selection', function(newValue, oldValue){
            	for(var i=0;i<$scope.items.length;i++) {
@@ -170,11 +179,22 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
            			item.selected = true;
            		}            		
            	}
+           	filterSelection();
+            updateErrors();
+        });
+
+        // kuuntelija model-muutoksille
+        $scope.$watch('model', function(newValue, oldValue){
+           	init(newValue);
+           	filterSelection();
             updateErrors();
         });
         	
         // checkbox-valinta
         $scope.toggle = function(k) {
+        	if ($scope.disabled()) {
+        		return;
+        	}
             var p = $scope.selection.indexOf(k);
             if (p == -1) {
                 $scope.selection.push(k);
@@ -203,6 +223,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         
         function init(model) {
         	
+			$scope.titles = [];
+			$scope.items = [];
+			$scope.rows = [];
+	
         	// jos model on muotoa key -> value, muunnetaan se muotoon {key: .., value: ..}
         	for (var k in model) {
         		if (!(model[k] instanceof Object)) {
@@ -257,7 +281,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         replace: true,
         templateUrl: "js/shared/directives/multiSelect.html",
         controller: controller,
-        require: '^form',
+        require: '^?form',
         link: function(scope, element, attrs, controller) {
         	if (scope.name) {
             	scope.isrequired = (attrs.required !== undefined);
@@ -282,7 +306,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 
 	        // angular-form-logiikkaa varten
 	        name: "@", // nimi formissa
-	        required: "@" // jos tosi, vähintään yksi arvo vaaditaan
+	        required: "@", // jos tosi, vähintään yksi arvo vaaditaan
+	        disabled: "&"
         }
     }
 

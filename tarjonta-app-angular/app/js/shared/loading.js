@@ -34,15 +34,14 @@ angular.module('loading', ['localisation'])
     	if (success) {
         	service.requestCount--;
     	} else {
-    		console.log("REQUEST FAILED", req);
     		service.errors++;
     	}
-    	clearTimeout();
+    	service.clearTimeout();
     },
     commit: function() {
     	service.requestCount -= service.errors;
     	service.errors = 0;
-    	clearTimeout();
+    	service.clearTimeout();
     },
     clearTimeout: function() {
     	if (service.requestCount==0 && service.timeout!=null) {

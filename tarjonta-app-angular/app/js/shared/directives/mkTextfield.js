@@ -17,13 +17,13 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
     function defaultToDirectiveObjConverter(model, init, kieliUri) {
         return {uri: kieliUri, value: model[kieliUri], removable: init.indexOf(kieliUri) === -1};
     }
-    
+
     function directiveModelTokoulutusApiModelConverter(data, model, codes) {
         for (var i in data) {
             model[data[i].uri] = {'koodi': {'arvo': data[i].value, 'uri': data[i].uri, 'versio': codes[ data[i].uri].versio}};
         }
     }
-    
+
     function koulutusApiModelToDirectiveObjConverter(model, init, kieliUri) {
         return {uri: kieliUri, value: model[kieliUri].koodi.arvo, removable: init.indexOf(kieliUri) === -1};
     }
@@ -35,10 +35,10 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         if (!$scope.model) {
             $scope.model = {};
         }
-        
+
         $scope.init = window.CONFIG.app.userLanguages;
         $scope.data = [];
-        
+
         $scope.errors = {
         		required:false,
         		pristine:true,
@@ -52,7 +52,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             } else {
                 $scope.model = defaultLangMapConverter($scope.data);
             }
-        
+
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
 
@@ -117,7 +117,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
                     ns.codes.push($scope.codes[i]);
                 }
             }
-            
+
             ns.codes.sort(function(a,b){
             	return a.nimi.localeCompare(b.nimi);
             });
@@ -148,13 +148,13 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
     }
 
     return {
-        restrict: 'E',
+        restrict: 'EA',
         require: '^form',
         replace: true,
         templateUrl: "js/shared/directives/mkTextfield.html",
         controller: controller,
         link: function(scope, element, attrs, controller) {
-        	
+
         	if (scope.name) {
             	scope.isrequired = (attrs.required !== undefined);
             	scope.errors.required = scope.isrequired;
@@ -165,7 +165,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             type: "@", //Modelin suora convertointi tiettyyn objektiin. Jata tyhjaksi jos et tarvitse erikoiskasittelya.
             //init: "=", //lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
             model: "=", // map jossa kieliuri -> teksti
-            
+
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
             required: "@" // jos tosi, vähintään yksi arvo vaaditaan

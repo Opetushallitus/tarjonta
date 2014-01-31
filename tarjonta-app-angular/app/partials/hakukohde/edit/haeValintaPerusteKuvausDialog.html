@@ -1,69 +1,39 @@
-<div id="hakukohdeNimiChooseDialog">
+<div id="soraVapeChooserDialog">
     <div class="modal-header">
         <h3>{{ dialog.titles.title }}</h3>
     </div>
     <div class="modal-body">
         <form name="ValintakoeModalForm">
-            <table class="tarjontaForm">
-                 <tr>
-                     <td>{{ dialog.titles.toimintoTitle }}</td>
-                 </tr>
-                 <tr>
-
-                     <td>
-                         <input type="radio" data-ng-model="dialog.copySelection" value="link"/> {{ dialog.titles.linkkausTitle }} </td>
-
-
-                 </tr>
-                 <tr>
-                     <td colspan="2" class="help" >{{dialog.titles.kopioiHelp}}</td>
-                 </tr>
-                 <tr>
-                     <td>
-                         <input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }} </td>
-                 </tr>
-
-                <tr>
-                     <td colspan="2" class="help">{{dialog.titles.linkkausHelp}}</td>
-
-
-                 </tr>
-                <tr>
-                    <table class="table table-hover">
-                        <tr>
-                            <th>{{ dialog.titles.tableValintaRyhma }}</th>
-                            <th>{{ dialog.titles.tableKuvauskielet }}</th>
-                        </tr>
-                        <tr data-ng-click="selectKuvaus(kuvaus)" data-ng-repeat="kuvaus in dialog.kuvaukset">
-                            <td>{{ kuvaus.nimi }}</td>
-                            <td>{{ kuvaus.kielet }}</td>
-                        </tr>
-                    </table>
-                </tr>
-                <tr>
-                    <th>{{dialog.titles.tuoMyosMuutkieletTitle}}</th>
-                    <td>
-                        <select data-ng-model="dialog.valittuKuvausKieli" data-ng-disabled="showKieliSelectionCheckboxDisabled" data-ng-change="onKieliValittu()" data-ng-options="koodi.uri as koodi.nimi for  koodi in dialog.kuvauksenKielet">
-
-                        </select>
-
-
-                        <span ng-repeat="k in dialog.valitutKuvauksenKielet">
-                            <a href ng-click="toggle(k)">[x]</a> {{k.nimi}}
-                        </span>
-
-                    </td>
-                </tr>
-            </table>
-
-
-
-
+            <p>{{ dialog.titles.toimintoTitle }}</p>
+            
+            <dl>
+                <dt><input type="radio" data-ng-model="dialog.copySelection" value="link"/> {{ dialog.titles.linkkausTitle }}</dt>
+                <!-- 
+                <dd>{{dialog.titles.kopioiHelp}}</dd>
+                 -->
+                <dt><input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }}</dt>
+                <!-- 
+                <dd>{{dialog.titles.linkkausHelp}}</dd>
+                 -->
+           </dl>
+       
+       
+           <div ng-grid="kuvausGrid" class="kuvausGridStyle"></div>
+           
+            <p>{{dialog.titles.tuoMyosMuutkieletTitle}}</p>
+            
+	        <multi-select
+	            model="dialog.kuvauksenKielet"
+	            selection="dialog.valitutKuvauksenKielet"
+	            display="dualpane"
+	            key="uri"
+	            value="nimi"
+	            />
 
         </form>
    </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-ng-click="onCancel()">{{dialog.titles.cancelBtn}}</button>
-        <button class="btn btn-primary" data-ng-click="onOk()">{{dialog.titles.okBtn}}</button>
+        <button class="btn btn-primary" data-ng-click="onOk()" ng-disabled="!isOk()">{{dialog.titles.okBtn}}</button>
     </div>
 </div>

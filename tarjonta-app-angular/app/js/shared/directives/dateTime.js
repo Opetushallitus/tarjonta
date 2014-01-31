@@ -6,6 +6,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 
     function controller($scope) {
     	
+    	var ctrl = $scope;
+    	
     	$scope.errors = {};
     	
     	var omitUpdate = false;
@@ -18,6 +20,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 	    	});
     	} else if ($scope.type == "long") {
     		$scope.model = new Date($scope.ngModel);
+	    	$scope.$watch("ngModel", function(nv, ov){
+	    		$scope.model = new Date($scope.ngModel);
+	    	});
     	} else {
     		throw new ("Unknown type "+$scope.type);
     	}
@@ -140,6 +145,142 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     			$scope.ngChange();
     		}
     	}
+    	
+    	$scope.openChooser = function() {
+    		var modalInstance = $modal.open({
+				scope: $scope,
+				templateUrl: 'js/shared/directives/dateTime-chooser.html',
+				controller: function($scope) {
+					
+					// kuukaudet on seuraavasti koska angulaarin bugi (ei toimi dokumentaation mukaisesti)
+					$scope.months = [];
+					$scope.monthNames = [];
+					for (var i=0; i<12; i++) {
+						$scope.months.push(i);
+						$scope.monthNames.push(LocalisationService.t("tarjonta.kalenteri.kk."+(i+1)));
+					}
+					/*
+						["Tammikuu",
+						 "Helmikuu",
+						 "Maaliskuu",
+						 "Huhtikuu",
+						 "Toukokuu",
+						 "Kesäkuu",
+						 "Heinäkuu",
+						 "Elokuu",
+						 "Syyskuu",
+						 "Lokakuu",
+						 "Marraskuu",
+						 "Joulukuu"];
+						 */
+					
+					$scope.years = [];
+
+					$scope.model = ctrl.model;
+					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
+					$scope.calendar=[];
+					
+					function getWeekFromDate(d) {
+						var a = new Date(d.getFullYear(), 0, 1);
+						var ret = Math.ceil( (((d-a) / 86400000) + a.getDay()+1)/7);
+						if (ret>52) {
+							var nd = new Date(d.getFullYear(), 0, 1+ 7*(ret) );
+							if (nd.getFullYear() != d.getFullYear()) {
+								return 1;
+							}
+							//console.log("nd = "+ret+" -> ",nd);
+						}
+						return ret;
+					}
+					
+					$scope.ok = function() {						
+						ctrl.model = $scope.model;
+						updateModels();
+						modalInstance.dismiss();
+					}
+					
+					$scope.cancel = function() {
+						modalInstance.dismiss();
+					}
+
+					function updateCalendar(){
+						$scope.select.m = $scope.model.getMonth();
+						$scope.select.y = $scope.model.getFullYear();
+						
+						var sd = new Date($scope.model.getFullYear(), $scope.model.getMonth(), 1);
+						var ed = new Date($scope.model.getFullYear(), $scope.model.getMonth()+1, 1);
+						
+						var s = getWeekFromDate(sd);
+						var e = getWeekFromDate(ed);
+						
+						//console.log("D: "+s+" -> "+e,$scope.model);
+						var ret = [];
+						//for (var i=s; i!=e; nextWeek(i)) {
+						while (sd.getTime()<ed.getTime()) {
+							var i = getWeekFromDate(sd);
+							
+							var wd = {week:i, days:[]};
+							var d = new Date($scope.model.getFullYear(), 0, 1+ 7*(i-1) );
+							d.setDate(d.getDate() - d.getDay());
+							for (var j=0; j<7; j++) {
+								d.setDate(d.getDate()+1);
+								wd.days.push({
+									day: d.getDate(),
+									month: d.getMonth(),
+									year: d.getFullYear(),
+									other: (d.getMonth() != $scope.model.getMonth()),
+									vkl: (j>=5),
+									selected: (d.getDate()==$scope.model.getDate())
+										&& (d.getMonth()==$scope.model.getMonth())
+										&& (d.getFullYear()==$scope.model.getFullYear())
+									
+									});
+								
+							}
+							
+							ret.push(wd);
+							
+							sd.setTime(sd.getTime() + 604800000);
+						}
+						$scope.calendar = ret;
+						
+						$scope.years = [];
+						var y = $scope.model.getFullYear();
+						for (var i = y-2; i<=y+2; i++) {
+							$scope.years.push(i);
+						}
+						
+						return ret;
+					}
+
+					$scope.onSelect = function(d) {
+						$scope.model.setDate(d.day);
+						$scope.model.setMonth(d.month);
+						$scope.model.setFullYear(d.year);
+						updateCalendar();
+					}
+					
+					$scope.incYear = function(v) {
+						$scope.model.setFullYear($scope.model.getFullYear()+v);
+						updateCalendar();
+					}
+					
+					$scope.incMonth = function(v) {
+						$scope.model.setMonth($scope.model.getMonth()+v);
+						updateCalendar();
+					}
+					
+					$scope.onComboSelect = function() {
+						$scope.model.setMonth($scope.select.m);
+						$scope.model.setFullYear($scope.select.y);
+						updateCalendar();
+					}
+										
+					updateCalendar();
+					return $scope;
+				}
+			});
+		}
     	
     }
 

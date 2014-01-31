@@ -22,6 +22,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
@@ -31,7 +32,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestKoulutusConverters;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
@@ -77,6 +79,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -106,24 +110,26 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
-    private CommonRestKoulutusConverters<KomoTeksti> komoKoulutusConverters;
+    private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
     @Autowired(required = true)
-    private CommonRestKoulutusConverters<KomotoTeksti> komotoKoulutusConverters;
+    private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
     @Autowired
     private ConverterV1 converter;
     @Autowired
     private PermissionChecker permissionChecker;
 
+    @Autowired
+    private EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
+
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta) {
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
 
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 
-        if (meta != null) {
-            komoto.setShowMeta(meta);
-        }
+        lang = checkArgsLangCode(lang);
+        meta = checkArgsMeta(meta);
 
         if (komoto == null) {
             return resultRDTO;
@@ -133,7 +139,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         switch (koulutusasteTyyppi) {
             case KORKEAKOULUTUS:
-                resultRDTO.setResult(conversionService.convert(komoto, KoulutusKorkeakouluV1RDTO.class));
+                resultRDTO.setResult(converterToRDTO.convert(komoto, lang, meta));
                 break;
         }
 
@@ -143,20 +149,20 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Override
     public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         validateRestObjectKorkeakouluDTO(dto);
-        KoulutusmoduuliToteutus toteutus = null;
+        KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
         if (dto.getOid() != null && dto.getOid().length() > 0) {
             //update korkeakoulu koulutus
-            toteutus = updateKoulutusKorkeakoulu(dto);
+            fullKomotoWithKomo = updateKoulutusKorkeakoulu(dto);
         } else {
             //create korkeakoulu koulutus
-            toteutus = insertKoulutusKorkeakoulu(dto);
+            fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
         }
 
-        solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
         //publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
-        resultRDTO.setResult(conversionService.convert(toteutus, KoulutusKorkeakouluV1RDTO.class));
+        resultRDTO.setResult(converterToRDTO.convert(fullKomotoWithKomo, getUserLang(), true));
         return resultRDTO;
     }
 
@@ -290,23 +296,26 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi) {
+    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi, Boolean meta, String lang) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
         KoulutusmoduuliRelationV1RDTO relation = null;
+
+        lang = checkArgsLangCode(lang);
+        meta = checkArgsMeta(meta);
 
         /*
          * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
          */
         if (koulutuskoodi.contains("_")) {
             //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, true, new Locale("FI"));
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, true, new Locale(lang.toUpperCase()), meta);
         } else {
             SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
             List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
             if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                 throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
             }
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), true, new Locale("FI"));
+            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), true, new Locale(lang.toUpperCase()), meta);
         }
 
         ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();
@@ -466,5 +475,55 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         return Response.ok().build();
+    }
+
+    /**
+     * Validate user language code. Default or fallback value is 'FI'.
+     *
+     * @param lang
+     * @return
+     */
+    private String checkArgsLangCode(String lang) {
+        if (lang == null || lang.isEmpty() || lang.length() != 2) {
+            return "FI";
+        }
+
+        return lang;
+    }
+
+    /**
+     * Validate the show meta argument. No argument, then show all meta data
+     * objects.
+     *
+     * @param meta
+     * @return
+     */
+    private boolean checkArgsMeta(Boolean meta) {
+        return meta != null ? meta : true;
+    }
+
+    /**
+     * Get user's preferred language code. Default or fallback value is 'FI'.
+     */
+    private String getUserLang() {
+        Preconditions.checkNotNull(SecurityContextHolder.getContext(), "Context object cannot be null.");
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Preconditions.checkNotNull(authentication, "Authentication object cannot be null.");
+        final Object principal = authentication.getPrincipal();
+
+        if (principal != null && principal instanceof SadeUserDetailsWrapper) {
+            SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
+            LOG.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
+
+            if (sadeUser.getLang() != null && !sadeUser.getLang().isEmpty()) {
+                return sadeUser.getLang(); //return an user lang code
+            } else {
+                LOG.debug("user has no lang code!");
+                return "FI";
+            }
+        }
+
+        LOG.error("Not user data found.");
+        return "FI";
     }
 }

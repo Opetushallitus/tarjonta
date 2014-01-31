@@ -26,7 +26,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,14 +36,12 @@ import org.springframework.stereotype.Component;
  * @param <TYPE>
  */
 @Component
-public class CommonRestKoulutusConverters<TYPE extends Enum> {
+public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
 
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     private final KoodistoURI koodistoUri = new KoodistoURI();
-
-    private static final String DEMO_LOCALE = "FI";
 
     public KuvausV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit, boolean showMeta) {
         KuvausV1RDTO tekstis = new KuvausV1RDTO();

@@ -69,8 +69,7 @@
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.edit.tutkintonimike"/>
-            <td>{{model.tutkintonimike.nimi}}</td>
-            <td></td>
+            <td><tutkintonimike model="uiModel.tutkintonimikes"></tutkintonimike></td>
         </tr>
         <tr>
             <th tt="koulutus.edit.eqf-luokitus"/>
@@ -100,12 +99,12 @@
         <tr class="required">
             <th tt="koulutus.edit.koulutuksen-alkamispvm"/>
             <td>
-                <alkamispaiva-ja-kausi 
-                    pvms="model.koulutuksenAlkamisPvms"       
-                    vuosi="model.koulutuksenAlkamisvuosi"
-                    kausi-uri = "model.koulutuksenAlkamiskausi.uri"
-                    kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
-                </alkamispaiva-ja-kausi> 
+        <alkamispaiva-ja-kausi 
+            pvms="model.koulutuksenAlkamisPvms"       
+            vuosi="model.koulutuksenAlkamisvuosi"
+            kausi-uri = "model.koulutuksenAlkamiskausi.uri"
+            kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
+        </alkamispaiva-ja-kausi> 
         </td>
         <td>
             <p class="error" ng-show="uiModel.showError && perustiedotForm.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>

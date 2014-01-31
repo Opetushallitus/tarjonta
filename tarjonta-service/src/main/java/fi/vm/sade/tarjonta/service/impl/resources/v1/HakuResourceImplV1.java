@@ -78,6 +78,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             tmp.add(dto);
         }
 
+        LOG.info(" --> result = {}", result);
+
         return result;
     }
 

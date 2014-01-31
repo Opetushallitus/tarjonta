@@ -49,7 +49,7 @@ public class KoulutusValidator {
         validateKoodi(validationMessages, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_OPINTOALA);
         validateKoodi(validationMessages, dto.getOpintojenLaajuus(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_OPINTOJENLAAJUUS);
         validateKoodi(validationMessages, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_TUTKINTO);
-        validateKoodi(validationMessages, dto.getTutkintonimike(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_TUTKINTONIMIKE);
+        validateKoodi(validationMessages, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_TUTKINTONIMIKE);
     }
 
     private static boolean notNullOrEmpty(final List list) {
