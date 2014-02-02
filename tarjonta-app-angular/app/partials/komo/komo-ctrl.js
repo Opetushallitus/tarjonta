@@ -2,18 +2,20 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
         .controller('KomoController', function($scope, $q, TarjontaService, PermissionService) {
             'use strict';
             $scope.ctrl = {
+                apiKeys: {},
                 saved: false,
                 koulutuskoodi: null,
-                komoOid: "1.2.246.562.5.2013061010193487239386",
+                komoOid: "",
                 result: {},
+                koodisto: {},
                 link: {
                     komos: [],
+                    komosMap: {},
                     selectedKomoOids: [],
                     selectedLinkOids: [],
                     selectedParentLinkOids: [],
                 },
                 koodi: {uri: '', versio: ''},
-                createdDate: new Date(),
                 selectedLang: 'kieli_fi',
                 selectedKomoEnum: 'KOULUTUKSEN_RAKENNE',
                 komoOptions: [
@@ -81,11 +83,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 resource.get({oid: strKomoOid, meta: false}, function(res) {
                     console.log("loaded", res);
                     $scope.ctrl.result = res.result;
-                    $scope.ctrl.createdDate = new Date($scope.ctrl.result['modified']);
-
+                    $scope.ctrl.komoOid = $scope.ctrl.result.komoOid;
                     $scope.ctrl.koulutuskoodi = $scope.ctrl.result.koulutuskoodi.arvo;
                     $scope.fetchByKoulutuskoodi($scope.ctrl.result.koulutuskoodi.uri);
-
                     $scope.searchChilds(strKomoOid);
                     $scope.searchParents(strKomoOid);
                 });
@@ -95,20 +95,30 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 var resource = TarjontaService.komo();
                 resource.search({koulutuskoodi: strKoulutuskoodiUri, meta: false}, function(res) {
                     console.log("loaded", res);
-                    $scope.ctrl.komos = res.result;
+                    $scope.ctrl.link.komos = res.result;
+
+                    for (var i = 0; i < res.result.length; i++) {
+                        $scope.ctrl.link.komosMap[res.result[i].komoOid] = res.result[i];
+                    }
                 });
             };
 
             $scope.getField = function(field) {
                 return  $scope.ctrl.result[field];
             };
+
+
+            $scope.removeLanguageToFieldTekstis = function(langKey, fieldName) {
+                delete fieldName[langKey];
+            }
+
             $scope.addLanguageToFieldTekstis = function(langKey, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
@@ -118,13 +128,17 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 field.tekstis[langKey] = '';
             };
 
+            $scope.removeLanguageToEnumFieldTekstis = function(langKey, langs) {
+                delete langs[langKey];
+            }
+
             $scope.addLanguageToEnumFieldTekstis = function(langKey, komoEnum, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
@@ -137,6 +151,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     field[komoEnum]['tekstis'] = {};
                 }
 
+                var langs = field[komoEnum]['tekstis'];
+
                 if (angular.isUndefined(langs[langKey])) {
                     langs[langKey] = {};
                 }
@@ -145,20 +161,34 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             };
 
 
-            $scope.addUriVersio = function(uri, versio, fieldName) {
+            $scope.removeUriVersio = function(koodiUri, fieldName) {
+                var field = $scope.ctrl.result[fieldName];
+                delete field.uris[koodiUri];
+            };
+
+            $scope.addKey = function(fieldName) {
+                if (angular.isUndefined(fieldName)) {
+                    return;
+                }
+                $scope.ctrl.apiKeys[fieldName] = "";
+
+                return $scope.ctrl.apiKeys[fieldName];
+            };
+
+            $scope.addUriVersio = function(koodiUri, versio, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
                 if (angular.isUndefined(field.uris)) {
                     field.uris = {};
                 }
-                field.uris[uri] = versio;
+                field.uris[koodiUri] = versio;
             };
 
             $scope.save = function() {
@@ -223,13 +253,17 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             };
 
             $scope.searchKomoByOid = function(komoOid) {
-                var searchedKomos = $scope.ctrl.komos;
-                for (var i = 0; i < searchedKomos.length; i++) {
-                    if (searchedKomos[i].komoOid === komoOid) {
-                        return searchedKomos[i];
-                    }
+                var searchedKomos = $scope.ctrl.link.komosMap[komoOid];
+                if (!angular.isUndefined(searchedKomos)) {
+                    return searchedKomos;
                 }
+
                 return {komoOid: komoOid, koulutuskoodi: {}, koulutusohjelma: {}};
             };
 
+
+//            var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.ctrl.koodistoLocale);
+//            koodisPromise.then(function(result) {
+//                uiModel[key].koodis = result;
+//            });
         });

@@ -40,12 +40,11 @@
                             <hr />
                             <table>
                                 <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
-                                    <td><input type="text" ng-model="key" /><input  style="width:50px" type="text" ng-model="value" /></td>
+                                    <td><input type="text" ng-model="key" /><input  style="width:50px" type="text" ng-model="ctrl.result[obj.name].uris[key]" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="text" ng-model="ctrl.koodi.uri" /><input  style="width:50px" type="text" ng-model="ctrl.koodi.versio" />
-                                        <b><a href="" ng-click="addUriVersio(ctrl.koodi.uri, ctrl.koodi.versio, obj.name)">Lisää {{obj.name}}</a></b>
+                                        <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
                                     </td>
                                 </tr>
                             </table>
@@ -56,7 +55,9 @@
                             <hr />
                             <table>
                                 <tr ng-repeat="(key, value) in ctrl.result[obj.name].tekstis">
-                                    <td> <input type="text" ng-model="value" /> {{key}}</td>
+                                    <td>
+                                        <input type="text" ng-model=" ctrl.result[obj.name].tekstis[key]" /> {{key}} <a href="" ng-click="removeLanguageToFieldTekstis(key, ctrl.result[obj.name].tekstis)">X</a>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -81,7 +82,7 @@
                                     <td>{{key}}     
                                         <table>
                                             <tr ng-repeat="(a, b) in ctrl.result[obj.name][key].tekstis">
-                                                <td> <textarea style="width: 500px; height : 200px" type="text" ng-model="b" /> {{a}}</td>
+                                                <td> <textarea style="width: 500px; height : 200px" type="text" ng-model="ctrl.result[obj.name][key].tekstis[a]" /> {{a}} <a href="" ng-click="removeLanguageToEnumFieldTekstis(a, ctrl.result[obj.name][key].tekstis)">X</a></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -95,12 +96,12 @@
             </td>
             <td  style="vertical-align: top">
 
-                <input style="width:350px" type="text" ng-model="ctrl.koulutuskoodi" /> 
+                Hae koulutuskoodilla <input style="width:350px" type="text" ng-model="ctrl.koulutuskoodi" /> 
                 <b><a href="" ng-click="fetchByKoulutuskoodi(ctrl.koulutuskoodi)">Hae</a></b><br/>  
                 <select style="width : 600px" size="25" id="myselection" multiple 
                         ng-multiple="true" 
                         ng-model="ctrl.link.selectedKomoOids"  
-                        ng-options="c.oid as  c.koulutuskoodi.arvo + ' ' + c.koulutusohjelma.arvo + ' ' + c.koulutusasteTyyppi + ' ' + c.koulutusmoduuliTyyppi for c in ctrl.komos">
+                        ng-options="c.oid as  c.koulutuskoodi.arvo + ' ' + c.koulutusohjelma.arvo + ' ' + c.koulutusasteTyyppi + ' ' + c.koulutusmoduuliTyyppi for c in ctrl.link.komos">
                 </select><br/>
 
                 <table>
@@ -111,13 +112,13 @@
                         <td>Koulutuskoodi</td>
                         <td>Koulutusohjelma</td>
                         <td>Muokattu</td>
-                        <td>KOMO OID</td>
+                        <td>Muokkaa</td>
                     </tr>
                     <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
                         <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
                         <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
                         <td>{{searchKomoByOid(komoOid).modified | date:'dd.MM.yyyy HH:mm:ss'}}</td>
-                        <td><input style="width: 300px" type="text" value="{{komoOid}}" /></td>
+                        <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
                     </tr>
 
                 </table>
@@ -131,13 +132,13 @@
                     <tr>
                         <td>Koulutuskoodi</td>
                         <td>Koulutusohjelma</td>
-                        <td>KOMO OID</td>
-                        <td></td>
+                        <td>Muokkaa</td>
+                        <td>Poista</td>
                     </tr>
                     <tr ng-repeat="komoOid in ctrl.link.selectedLinkOids">
                         <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
                         <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
-                        <td><input style="width: 300px" type="text" value="{{komoOid}}" /></td>
+                        <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
                         <td><b><a ng-click="removeLink(ctrl.result.komoOid, komoOid)">X</a></b></td>
                     </tr>
 
@@ -151,13 +152,13 @@
                     <tr>
                         <td>Koulutuskoodi</td>
                         <td>Koulutusohjelma</td>
-                        <td>KOMO OID</td>
-                        <td></td>
+                        <td>Muokkaa</td>
+                        <td>Poista</td>
                     </tr>
                     <tr ng-repeat="komoOid in ctrl.link.selectedParentLinkOids">
                         <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
                         <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
-                        <td><input style="width: 300px" type="text" value="{{komoOid}}" /></td>
+                        <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
                         <td><b><a ng-click="removeLink(ctrl.komoOid, komoOid)">X</a></b></td>
                     </tr>
 
@@ -166,9 +167,9 @@
         </tr>
     </table>
     <div><input type="button" value="Tallenna" ng-click="save(ctrl.komoOid)" /></div>
-    <!--pre>
+    <pre>
             {{ctrl.result| json}}
-    </pre-->
+    </pre>
 </dev>
 </div>
 

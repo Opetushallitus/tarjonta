@@ -44,6 +44,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -61,6 +62,9 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private final KoodistoURI koodistoUri = new KoodistoURI();
+
+    @Value("${root.organisaatio.oid}")
+    String rootOrgOid;
 
     @Override
     public Koulutusmoduuli convert(KomoV1RDTO dto) {
@@ -173,6 +177,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF, true));
         komo.setKoulutusohjelmaKoodi(convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA, true));
         komo.setTila(dto.getTila());
+        komo.setOmistajaOrganisaatioOid(rootOrgOid); //is this correct?
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
