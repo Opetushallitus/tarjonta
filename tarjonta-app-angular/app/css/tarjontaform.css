@@ -190,3 +190,6 @@ table.tarjontaForm table.help {
     margin: 0 0 15px 0;
 }
 
+table.tarjontaForm div.inset {
+	margin: 10px 0 10px 20px;
+}

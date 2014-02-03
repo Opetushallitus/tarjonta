@@ -35,6 +35,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
+        
+        $scope.initialized = false;
 
         function updateErrors() {
             $scope.errors.dirty = true;
@@ -162,7 +164,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // poistetaan valinnat joita ei ole (uudessa) modelissa
         function filterSelection() {
-            for (var i in $scope.selection) {
+        	for (var i in $scope.selection) {
                 if (!$scope.names[$scope.selection[i]]) {
                     $scope.selection.splice(i, 1);
                 }
@@ -171,6 +173,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // salli valintojen muuttaminen "ulkopuolelta"
         $scope.$watch('selection', function(newValue, oldValue) {
+        	if (!$scope.initialized) {
+        		return;
+        	}
             for (var i = 0; i < $scope.items.length; i++) {
                 var item = $scope.items[i];
                 if (newValue.indexOf(item.key) == -1 && item.selected) {
@@ -185,9 +190,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // kuuntelija model-muutoksille
         $scope.$watch('model', function(newValue, oldValue) {
+        	if (!$scope.initialized) {
+        		return;
+        	}
             init(newValue);
-            filterSelection();
-            updateErrors();
         });
 
         // checkbox-valinta
@@ -268,6 +274,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             });
 
             $scope.rows = columnize($scope.items, columns);
+            $scope.initialized = true;
+
+            filterSelection();
             updateErrors();
         }
 
