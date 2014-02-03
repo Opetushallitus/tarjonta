@@ -271,11 +271,32 @@
                     <div data-ng-switch-when="koodistoTest">
                         <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
                     </div>
-
+                      
                     <div data-ng-switch-when="komo">
                         <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
                     </div>
                 </div><!-- /renderPath[0] -->
+
+                <!--
+                                <div class="wsidebar-main">
+                                    <hr>
+                                    Footer, route counter = {{count}}<br>
+                                    <a href="#/etusivu">Etusivulle</a>
+                                    <a href="/lokalisointi">Käännösten hallinta</a>
+
+                                    <div>
+                                        <span data-ng-click="showTheSheisse = !showTheSheisse"
+                                              class="collapseHeader"
+                                              data-ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
+                                        <div collapse="!showTheSheisse">
+                                            <pre>
+                                        {{ CONFIG | json }}
+                                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                -->
 
             </div>
         </div>
@@ -295,7 +316,7 @@
                 </div>
             </div>
             <div class="fail">
-                <hr/>
+                <hr/>               
                 <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
 
                 <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>

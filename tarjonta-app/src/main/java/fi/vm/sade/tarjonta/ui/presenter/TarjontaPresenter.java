@@ -2595,11 +2595,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
     }
 
-    /**
-     * Should be called "isKoulutusMutable" or something similar
-     * @param komotoOid
-     * @return
-     */
     public boolean isHakuStartedForKoulutus(String komotoOid) {
         boolean hakuStarted = false;
         HakukohteetVastaus hakukVastaus =  getHakukohteetForKoulutus(komotoOid);
@@ -2609,17 +2604,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             if (today.after(hakuAlku)) {
                 hakuStarted = true;
             }
-            
-            //jos hakutyyppi tai erillishaku 
-            if (KoodistoURI.KOODI_LISAHAKU_URI.equals(curHakuk
-                    .getHakutyyppiUri())
-                    || KoodistoURI.KOODI_ERILLISHAKU_URI.equals(curHakuk
-                            .getHakutapaKoodi().getUri())) {
-                hakuStarted = false;
-            }
-            
         }
-                        
         return hakuStarted;
     }
     

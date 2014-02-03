@@ -459,42 +459,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         }
 
 
-        if (data !== undefined) {
 
-            angular.forEach(data.tulokset,function(tulos){
-                if (tulos !== undefined && tulos.tulokset !== undefined) {
-
-                    tarjoajaOidsSet.add(tulos.oid);
-
-                    angular.forEach(tulos.tulokset,function(toinenTulos){
-                        koulutusSet.add(toinenTulos.nimi);
-
-                    });
-
-                }
-
-            });
-            $scope.model.koulutusnimet = koulutusSet.toArray();
-
-
-                $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
-
-                var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
-                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
-                orgPromise.then(function(data){
-                    if (data.postiosoite !== undefined) {
-
-
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
-                        postinumero = data.postiosoite.postinumeroUri;
-                    }
-                });
-
-
-
-        }
 
     });
 
