@@ -20,12 +20,15 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	    */
 	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-	       $log.debug('haetaan yhteyshenkiot, q:', hakuehdot);
-	       henkHaku.get(hakuehdot, function(result){
-	    	   ret.resolve(result);
-	       }, function(err){
-	    	   console.error("Error loading data", err);
-	       });
+		   
+		   //, XXX disabloitu koska henkilöhakupalvelu ei kerkiä mukaan
+//	       $log.debug('haetaan yhteyshenkiot, q:', hakuehdot);
+//	       henkHaku.get(hakuehdot, function(result){
+//	    	   ret.resolve(result);
+//	       }, function(err){
+//	    	   console.error("Error loading data", err);
+//	       });
+		   ret.resolve({});
 	       return ret.promise;
 	   },
 
