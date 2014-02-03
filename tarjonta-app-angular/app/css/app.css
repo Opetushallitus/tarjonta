@@ -43,6 +43,13 @@
     text-align:right;
 }
 
+.align-top {
+	vertical-align: top;
+}
+
+.align-bottom {
+	vertical-align: bottom;
+}
 .display-block {
 	display:block;
 }

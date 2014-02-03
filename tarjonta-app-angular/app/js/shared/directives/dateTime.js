@@ -24,7 +24,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 	    		$scope.model = new Date($scope.ngModel);
 	    	});
     	} else {
-    		throw new ("Unknown type "+$scope.type);
+    		throw ("Unknown type "+$scope.type);
     	}
     	
     	function zpad(v) {
