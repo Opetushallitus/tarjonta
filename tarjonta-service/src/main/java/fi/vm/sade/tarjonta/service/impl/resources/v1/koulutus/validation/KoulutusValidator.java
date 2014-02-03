@@ -33,6 +33,8 @@ public class KoulutusValidator {
     public static List<KoulutusValidationMessages> validateKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
         validateKoodistoRelations(dto, validationMessages);
+        
+         validateKoodiUris(validationMessages, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_TEEMAT_AIHEET);
         validateKoodiUris(validationMessages, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_TEEMAT_AIHEET);
         validateKoodiUris(validationMessages, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_OPETUSAIKA);
         validateKoodiUris(validationMessages, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_INVALID_KOODI_OPETUSPAIKKA);
@@ -91,6 +93,10 @@ public class KoulutusValidator {
     }
 
     private static boolean requireKoodiUrisWithVersion(Map<String, Integer> map) {
+        if(map == null){
+            return false;
+        }
+        
         for (Entry<String, Integer> e : map.entrySet()) {
             if (!notNullStrOrEmpty(e.getKey())) {
                 return false;
@@ -113,6 +119,11 @@ public class KoulutusValidator {
     }
 
     private static boolean validateKoodiUris(Set<KoulutusValidationMessages> validationMessages, KoodiUrisV1RDTO dto, KoulutusValidationMessages msg) {
+        if(dto == null){
+            validationMessages.add(msg);
+            return false;
+        }
+        
         if (requireKoodiUrisWithVersion(dto.getUris())) {
             validationMessages.add(msg);
             return false;
