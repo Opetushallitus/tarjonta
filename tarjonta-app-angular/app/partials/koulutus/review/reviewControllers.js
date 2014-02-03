@@ -2,7 +2,7 @@
 var app = angular.module('app.review.ctrl', []);
 
 app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService) {
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService,AuthService) {
         $log.info("BaseReviewController()");
 
        if(angular.isUndefined( $scope.koulutusModel.result)){
@@ -30,6 +30,21 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
         $scope.model.showError = false;
 
         $scope.model.validationmsgs = [];
+
+        $scope.model.userLangUri;
+
+
+        console.log('KOULUTUS : ', $scope.model.koulutus);
+
+        for(var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
+
+            if (kieliUri.indexOf(kieliUri) != -1) {
+                $scope.model.userLangUri = kieliUri;
+            }
+
+        }
+
+        console.log('USER LANGUAGE : ', $scope.model.userLangUri);
 
         var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
 
