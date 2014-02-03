@@ -415,7 +415,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the opetuskielis
      */
     public Set<KoodistoUri> getOpetuskielis() {
-        return Collections.unmodifiableSet(opetuskielis);
+        return opetuskielis;
     }
 
     /**
@@ -455,7 +455,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<KoodistoUri> getOpetusmuotos() {
-        return Collections.unmodifiableSet(opetusmuotos);
+        return opetusmuotos;
     }
     
     public void addOpetusmuoto(KoodistoUri opetusmuoto) {

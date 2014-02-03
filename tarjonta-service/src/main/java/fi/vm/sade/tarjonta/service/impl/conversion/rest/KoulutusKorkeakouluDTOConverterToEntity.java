@@ -140,8 +140,16 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             komoto.getAihees().clear();
             komoto.getAihees().addAll(convertToUris(dto.getAihees(), new HashSet(), FieldNames.AIHEES));
         }
-        komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
-        komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
+        if (dto.getOpetuskielis() != null) {
+            komoto.getOpetuskielis().clear();
+            komoto.setOpetuskieli(convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
+        }
+
+        if (dto.getOpetusmuodos() != null) {
+            komoto.getOpetusmuotos().clear();
+            komoto.setOpetusmuoto(convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
+        }
+
         if (dto.getOpetusAikas() != null) {
             komoto.setOpetusAikas(convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
         }
@@ -151,9 +159,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUKSET));
         komoto.setAmmattinimikes(convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
 
-        if (dto.getHinta() != null) {
-            komoto.setHinta(new BigDecimal(dto.getHinta().toString()));
-        }
+        komoto.setHinta(dto.getHinta() != null ? new BigDecimal(dto.getHinta().toString()) : null);
 
         komoto.setSuunniteltuKesto(convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
