@@ -34,14 +34,14 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
         var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
 
         hakukohdePromise.then(function(hakukohteet){
-           $scope.model.koulutus.hakukohteet = hakukohteet.result;
+           $scope.model.hakukohteet = hakukohteet.result;
 
         });
 
 
         var checkIsOkToRemoveHakukohde = function() {
 
-           if ($scope.model.koulutus.hakukohteet.length > 1) {
+           if ($scope.model.hakukohteet.length > 1) {
                return true;
            } else {
                return false;
@@ -53,11 +53,11 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
             HakukohdeKoulutukses.removeKoulutuksesFromHakukohde(hakukohde.oid,$scope.model.koulutus.oid);
 
-               angular.forEach($scope.model.koulutus.hakukohteet,function(loopHakukohde){
+               angular.forEach($scope.model.hakukohteet,function(loopHakukohde){
 
                       if (loopHakukohde.oid === hakukohde.oid) {
-                           var indx = $scope.model.koulutus.hakukohteet.indexOf(loopHakukohde);
-                          $scope.model.koulutus.hakukohteet.splice(indx,1);
+                           var indx = $scope.model.hakukohteet.indexOf(loopHakukohde);
+                          $scope.model.hakukohteet.splice(indx,1);
 
                       }
 

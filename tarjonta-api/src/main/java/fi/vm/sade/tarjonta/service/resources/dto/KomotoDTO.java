@@ -47,6 +47,8 @@ public class KomotoDTO extends BaseRDTO {
     private List<String> _teematUris;
     private String _laajuusArvo;
     private String _laajuusYksikkoUri;
+    private String suunniteltuKestoArvo;
+    private String suunniteltuKestoYksikkoUri;
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
     private TarjontaTila _tila;
     private String _ulkoinenTunniste;
@@ -356,6 +358,23 @@ public class KomotoDTO extends BaseRDTO {
 
     public void setTarjotutKielet(Map<String, List<String>> _tarjotutKielet) {
         this._tarjotutKielet = _tarjotutKielet;
+    }
+
+    public void setSuunniteltuKestoArvo(String suunniteltuKestoArvo) {
+        this.suunniteltuKestoArvo = suunniteltuKestoArvo;
+        
+    }
+
+    public void setSuunniteltuKestoYksikkoUri(String suunniteltuKestoYksikkoUri) {
+        this.suunniteltuKestoYksikkoUri = suunniteltuKestoYksikkoUri;
+    }
+
+    public String getSuunniteltuKestoYksikkoUri() {
+        return suunniteltuKestoYksikkoUri;
+    }
+
+    public String getSuunniteltuKestoArvo() {
+        return suunniteltuKestoArvo;
     }
 
 }
