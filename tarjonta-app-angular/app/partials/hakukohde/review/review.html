@@ -16,6 +16,8 @@
 
     <display-controls model="formControls" display="header"></display-controls>
 
+    <h2>{{ getHakukohteenNimi() }}</h2>
+
     <tabset>
     <tab heading="{{kieli.kieliNimi}}" ng-repeat="kieli in model.hakukohteenKielet">
         <div data-ng-include="'partials/hakukohde/review/hakukohdeReview_localized.html'"></div>

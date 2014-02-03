@@ -955,6 +955,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDao.update(hakukohde);
+                    try {
+                        solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                    }  catch (Exception exp ){
+
+                    }
                 } else {
 
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
