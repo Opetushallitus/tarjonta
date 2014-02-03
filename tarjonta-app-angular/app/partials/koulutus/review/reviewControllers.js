@@ -27,12 +27,43 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             selectedKomoOid: [$scope.koulutusModel.result.komoOid]
         };
 
+        $scope.model.showError = false;
+
+        $scope.model.validationmsgs = [];
+
         var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
 
         hakukohdePromise.then(function(hakukohteet){
            $scope.model.koulutus.hakukohteet = hakukohteet.result;
 
         });
+
+
+        var checkIsOkToRemoveHakukohde = function() {
+
+           if ($scope.model.koulutus.hakukohteet.length > 1) {
+               return true;
+           } else {
+               return false;
+           }
+
+        };
+
+        var reallyRemoveHakukohdeFromKoulutus = function(hakukohde) {
+
+            HakukohdeKoulutukses.removeKoulutuksesFromHakukohde(hakukohde.oid,$scope.model.koulutus.oid);
+
+               angular.forEach($scope.model.koulutus.hakukohteet,function(loopHakukohde){
+
+                      if (loopHakukohde.oid === hakukohde.oid) {
+                           var indx = $scope.model.koulutus.hakukohteet.indexOf(loopHakukohde);
+                          $scope.model.koulutus.hakukohteet.splice(indx,1);
+
+                      }
+
+               });
+
+        };
 
 
         var komoOid = $scope.koulutusModel.result.komoOid;
@@ -106,6 +137,35 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             $log.info("goBack()...");
             window.history.back();
         };
+
+        $scope.removeKoulutusFromHakukohde = function(hakukohde) {
+
+            if (checkIsOkToRemoveHakukohde()) {
+
+                    var texts = {
+                        title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
+                        description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
+                        ok: LocalisationService.t("ok"),
+                        cancel: LocalisationService.t("cancel")
+                    };
+
+                    var d = dialogService.showDialog(texts);
+                    d.result.then(function(data){
+                        if ("ACTION" === data) {
+                            reallyRemoveHakukohdeFromKoulutus(hakukohde);
+
+                        }
+                    });
+
+
+            } else {
+
+                $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
+                $scope.model.showError = true;
+
+            }
+
+        }
 
         $scope.doDelete = function(event) {
             $log.info("doDelete()...");
