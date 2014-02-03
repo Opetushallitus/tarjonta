@@ -324,6 +324,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return disabled;
     };
     
+    $scope.luoHakukohdeEnabled=function(){
+      return ($scope.selection.koulutukset!==undefined && $scope.selection.koulutukset.length>0) && $scope.koulutusActions.canCreateHakukohde; 
+    };
 
     if ($scope.spec.terms!="" || $scope.selectedOrgOid != OPH_ORG_OID) {
     	if ($scope.spec.terms=="*") {

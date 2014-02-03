@@ -409,7 +409,9 @@ public class ConverterV1 {
         Set<String> opetusKielet = new TreeSet<String>();
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
         	for (KoodistoUri ku : komoto.getOpetuskielis()) {
-        		opetusKielet.add(ku.getKoodiUri());
+        		// koodisto-urin version siivous pois kielikoodista
+        		int p = ku.getKoodiUri().lastIndexOf('#');
+        		opetusKielet.add(p==-1 ? ku.getKoodiUri() : ku.getKoodiUri().substring(0, p));
         	}
         }
         hakukohdeRDTO.setOpetusKielet(opetusKielet);
