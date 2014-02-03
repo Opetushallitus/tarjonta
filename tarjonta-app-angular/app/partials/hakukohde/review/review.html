@@ -8,6 +8,8 @@
        <controls-button icon="remove" tt="koulutus.review.poista" action="doDelete()"></controls-button>
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
         <controls-notify type="message" tt="'hakukohde.review.murupolku'" tp="[getHakukohteenNimi()]"></controls-notify>
+
+      <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
                 
     </controls-model>
 

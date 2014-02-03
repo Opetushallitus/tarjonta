@@ -17,10 +17,14 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import java.util.List;
 
 /**
  *
  */
 public interface KoulutusSisaltyvyysDAO extends JpaDAO<KoulutusSisaltyvyys, Long> {
-}
 
+    public List<String> getParents(String childId);
+
+    public List<String> getChildren(String parentKomoOid);
+}

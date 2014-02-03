@@ -473,7 +473,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             search: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutuskoodi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi",
             },
         });
     };

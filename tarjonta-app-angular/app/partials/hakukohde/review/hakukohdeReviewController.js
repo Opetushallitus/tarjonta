@@ -31,6 +31,10 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
       // form controls
       $scope.formControls = {};
 
+      $scope.model.validationmsgs = [];
+
+      $scope.model.showError = false;
+
       $scope.goBack = function(event) {
           window.history.back();
       };
@@ -117,6 +121,17 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
       };
+
+
+    var checkIsOkToRemoveKoulutus = function() {
+        if ($scope.model.koulutukses.length > 1) {
+
+            return true;
+        }  else {
+            return false;
+        }
+
+    }
 
 
     var createFormattedDateString = function(date) {
@@ -520,19 +535,28 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     $scope.removeKoulutusFromHakukohde = function(koulutus){
 
-        var texts = {
-            title: LocalisationService.t("hakukohde.review.remove.koulutus.title"),
-            description: LocalisationService.t("hakukohde.review.remove.koulutus.desc"),
-            ok: LocalisationService.t("ok"),
-            cancel: LocalisationService.t("cancel")
-        };
+        if (checkIsOkToRemoveKoulutus()) {
 
-        var d = dialogService.showDialog(texts);
-        d.result.then(function(data){
-            if ("ACTION" === data) {
-                reallyRemoveKoulutusFromHakukohde(koulutus);
-            }
-        });
+            var texts = {
+                title: LocalisationService.t("hakukohde.review.remove.koulutus.title"),
+                description: LocalisationService.t("hakukohde.review.remove.koulutus.desc"),
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel")
+            };
+
+            var d = dialogService.showDialog(texts);
+            d.result.then(function(data){
+                if ("ACTION" === data) {
+                    reallyRemoveKoulutusFromHakukohde(koulutus);
+                }
+            });
+
+        }  else {
+
+            $scope.model.validationmsgs.push('hakukohde.review.remove.koulutus.exp.msg');
+            $scope.model.showError = true;
+
+        }
 
     };
 
