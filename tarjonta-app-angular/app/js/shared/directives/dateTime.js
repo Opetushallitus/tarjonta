@@ -24,7 +24,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 	    		$scope.model = new Date($scope.ngModel);
 	    	});
     	} else {
-    		throw new ("Unknown type "+$scope.type);
+    		throw ("Unknown type "+$scope.type);
     	}
     	
     	function zpad(v) {
@@ -80,7 +80,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	updateModels();
     	$scope.$watch("model", function(nv, ov){
     		updateModels();
-    		$scope.errors.required = $scope.isRequired() ? $scope.model!=null : undefined;
+    		$scope.errors.required = $scope.isRequired && $scope.isRequired() ? $scope.model!=null : undefined;
     	});
     	
     	var thisyear = new Date().getFullYear();
@@ -289,7 +289,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         replace: true,
         templateUrl: "js/shared/directives/dateTime.html",
         controller: controller,
-        require: '^form',
+        require: '^?form',
         link: function(scope, element, attrs, controller) {
         	scope.isDisabled = function() {
         		return attrs.disabled || scope.ngDisabled();
