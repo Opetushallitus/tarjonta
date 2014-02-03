@@ -2,15 +2,20 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
         .controller('KomoController', function($scope, $q, TarjontaService, PermissionService) {
             'use strict';
             $scope.ctrl = {
-                komoOid: "1.2.246.562.5.2013061010193487239386",
+                apiKeys: {},
+                saved: false,
+                koulutuskoodi: null,
+                komoOid: "",
                 result: {},
+                koodisto: {},
                 link: {
                     komos: [],
+                    komosMap: {},
                     selectedKomoOids: [],
                     selectedLinkOids: [],
+                    selectedParentLinkOids: [],
                 },
                 koodi: {uri: '', versio: ''},
-                createdDate: new Date(),
                 selectedLang: 'kieli_fi',
                 selectedKomoEnum: 'KOULUTUKSEN_RAKENNE',
                 komoOptions: [
@@ -47,6 +52,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 ],
                 textFields: [
                     {name: "modified", type: "DATE"},
+                    {name: "tunniste", type: "STR"},
                     {name: "koulutusmoduuliTyyppi", type: "ENUM_TUTKINTO"},
                     {name: "koulutusasteTyyppi", type: "ENUM_KOULUTUS"},
                     {name: "tila", type: "ENUM_STATUS"},
@@ -59,7 +65,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "opintoala", type: "URI"},
                     {name: "koulutuskoodi", type: "URI"},
                     {name: "opintojenLaajuus", type: "URI"},
-                    {name: "tunniste", type: "STR"},
+                    {name: "koulutusohjelma", type: "URI"},
                     {name: "koulutusohjelma", type: "TEXT_MAP"},
                     {name: "tutkintonimikes", type: "URI_MAP"},
                     {name: "oppilaitostyyppis", type: "URI_MAP"},
@@ -67,11 +73,21 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 ]
             };
             $scope.fetchByOid = function(strKomoOid) {
+                $scope.ctrl.link.komos = [];
+                $scope.ctrl.link.selectedKomoOids = [];
+                $scope.ctrl.link.selectedLinkOids = [];
+                $scope.ctrl.link.selectedParentLinkOids = [];
+
+                $scope.ctrl.saved = false;
                 var resource = TarjontaService.komo();
                 resource.get({oid: strKomoOid, meta: false}, function(res) {
                     console.log("loaded", res);
                     $scope.ctrl.result = res.result;
-                    $scope.ctrl.createdDate = new Date($scope.ctrl.result['modified']);
+                    $scope.ctrl.komoOid = $scope.ctrl.result.komoOid;
+                    $scope.ctrl.koulutuskoodi = $scope.ctrl.result.koulutuskoodi.arvo;
+                    $scope.fetchByKoulutuskoodi($scope.ctrl.result.koulutuskoodi.uri);
+                    $scope.searchChilds(strKomoOid);
+                    $scope.searchParents(strKomoOid);
                 });
             };
 
@@ -79,20 +95,30 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 var resource = TarjontaService.komo();
                 resource.search({koulutuskoodi: strKoulutuskoodiUri, meta: false}, function(res) {
                     console.log("loaded", res);
-                    $scope.ctrl.komos = res.result;
+                    $scope.ctrl.link.komos = res.result;
+
+                    for (var i = 0; i < res.result.length; i++) {
+                        $scope.ctrl.link.komosMap[res.result[i].komoOid] = res.result[i];
+                    }
                 });
             };
 
             $scope.getField = function(field) {
                 return  $scope.ctrl.result[field];
             };
+
+
+            $scope.removeLanguageToFieldTekstis = function(langKey, fieldName) {
+                delete fieldName[langKey];
+            }
+
             $scope.addLanguageToFieldTekstis = function(langKey, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
@@ -102,13 +128,17 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 field.tekstis[langKey] = '';
             };
 
+            $scope.removeLanguageToEnumFieldTekstis = function(langKey, langs) {
+                delete langs[langKey];
+            }
+
             $scope.addLanguageToEnumFieldTekstis = function(langKey, komoEnum, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
@@ -121,6 +151,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     field[komoEnum]['tekstis'] = {};
                 }
 
+                var langs = field[komoEnum]['tekstis'];
+
                 if (angular.isUndefined(langs[langKey])) {
                     langs[langKey] = {};
                 }
@@ -129,20 +161,34 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             };
 
 
-            $scope.addUriVersio = function(uri, versio, fieldName) {
+            $scope.removeUriVersio = function(koodiUri, fieldName) {
+                var field = $scope.ctrl.result[fieldName];
+                delete field.uris[koodiUri];
+            };
+
+            $scope.addKey = function(fieldName) {
+                if (angular.isUndefined(fieldName)) {
+                    return;
+                }
+                $scope.ctrl.apiKeys[fieldName] = "";
+
+                return $scope.ctrl.apiKeys[fieldName];
+            };
+
+            $scope.addUriVersio = function(koodiUri, versio, fieldName) {
                 if (angular.isUndefined(fieldName)) {
                     return;
                 }
 
                 if (angular.isUndefined($scope.ctrl.result[fieldName])) {
-                    return;
+                    $scope.ctrl.result[fieldName] = {};
                 }
 
                 var field = $scope.ctrl.result[fieldName];
                 if (angular.isUndefined(field.uris)) {
                     field.uris = {};
                 }
-                field.uris[uri] = versio;
+                field.uris[koodiUri] = versio;
             };
 
             $scope.save = function() {
@@ -157,6 +203,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
 
                     resource.save($scope.ctrl.result, function(res) {
                         console.log("saved", res);
+                        $scope.ctrl.komoOid = res.result.komoOid;
+                        $scope.ctrl.saved = true;
+
                     });
                 });
             };
@@ -167,11 +216,32 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 }
                 PermissionService.permissionResource().authorize({}, function(authResponse) {
                     TarjontaService.saveResourceLink(komoOid, komoOids,
-                            function() {
+                            function(res) {
+                                console.log("success", res);
+                                $scope.ctrl.saved = true;
                             },
                             function() {
+                                console.error(res);
                             }
                     );
+                });
+            };
+
+            $scope.searchChilds = function(komoOid) {
+                if (angular.isUndefined(komoOid)) {
+                    return;
+                }
+                TarjontaService.resourceLink.get({oid: komoOid}, function(childKomos) {
+                    $scope.ctrl.link.selectedLinkOids = childKomos.result;
+                });
+            };
+
+            $scope.searchParents = function(komoOid) {
+                if (angular.isUndefined(komoOid)) {
+                    return;
+                }
+                TarjontaService.resourceLink.parents({oid: komoOid}, function(parentKomos) {
+                    $scope.ctrl.link.selectedParentLinkOids = parentKomos.result;
                 });
             };
 
@@ -182,148 +252,18 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 });
             };
 
+            $scope.searchKomoByOid = function(komoOid) {
+                var searchedKomos = $scope.ctrl.link.komosMap[komoOid];
+                if (!angular.isUndefined(searchedKomos)) {
+                    return searchedKomos;
+                }
 
-            ctrl.result = {
-                "result": {
-                    "koulutusmoduuliTyyppi": "TUTKINTO",
-                    "koulutusaste": {
-                        "nimi": "Ammatillinen koulutus",
-                        "arvo": "32",
-                        "versio": 1,
-                        "uri": "koulutusasteoph2002_32"
-                    },
-                    "eqf": {
-                    },
-                    "organisaatio": {
-                        "nimet": [
-                        ]
-                    },
-                    "koulutusala": {
-                        "nimi": "Tekniikan ja liikenteen ala",
-                        "arvo": "5",
-                        "versio": 1,
-                        "uri": "koulutusalaoph2002_5"
-                    },
-                    "oppilaitostyyppis": {
-                        "uris": {
-                            "oppilaitostyyppi_21": 1,
-                            "oppilaitostyyppi_61": 1,
-                            "oppilaitostyyppi_24": 1,
-                            "oppilaitostyyppi_23": 1,
-                            "oppilaitostyyppi_22": 1,
-                            "oppilaitostyyppi_62": 1,
-                            "oppilaitostyyppi_63": 1
-                        },
-                        "meta": {
-                            "oppilaitostyyppi_21": {
-                                "nimi": "Ammatilliset oppilaitokset",
-                                "arvo": "21",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_21"
-                            },
-                            "oppilaitostyyppi_61": {
-                                "nimi": "Musiikkioppilaitokset",
-                                "arvo": "61",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_61"
-                            },
-                            "oppilaitostyyppi_24": {
-                                "nimi": "Ammatilliset aikuiskoulutuskeskukset",
-                                "arvo": "24",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_24"
-                            },
-                            "oppilaitostyyppi_23": {
-                                "nimi": "Ammatilliset erikoisoppilaitokset",
-                                "arvo": "23",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_23"
-                            },
-                            "oppilaitostyyppi_22": {
-                                "nimi": "Ammatilliset erityisoppilaitokset",
-                                "arvo": "22",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_22"
-                            },
-                            "oppilaitostyyppi_62": {
-                                "nimi": "Liikunnan koulutuskeskukset",
-                                "arvo": "62",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_62"
-                            },
-                            "oppilaitostyyppi_63": {
-                                "nimi": "Kansanopistot",
-                                "arvo": "63",
-                                "versio": 1,
-                                "uri": "oppilaitostyyppi_63"
-                            }
-                        }
-                    },
-                    "kuvausKomo": {
-                        "JATKOOPINTO_MAHDOLLISUUDET": {
-                            "tekstis": {
-                                "kieli_sv": "<p>De yrkesinriktade grundexamina samt yrkes- och  specialyrkesexamina ger allmän behörighet för  fortsatta studier vid yrkeshögskolor och universitet. En naturlig väg till fortsatta studier är en  yrkeshögskoleexamen inom utbildningsområdet  teknik och kommunikation, ingenjör (YH). Vid  universitet kan man avlägga teknologie kandidatexamen och diplomingenjörsexamen. De  pedagogiska studierna för yrkeslärare ger möjlighet till påbyggnadsutbildning för yrkeslärarens arbetsuppgifter.</p>",
-                                "kieli_fi": "<p>Ammatillisista perustutkinnoista sekä ammatti- ja erikoisammattitutkinnoista saa yleisen jatko-opintokelpoisuuden ammattikorkeakouluihin  ja yliopistoihin. Luonteva jatko-opintoväylä on  tekniikan ja liikenteenalan ammattikorkeakoulututkinto, insinööri(AMK). Yliopistossa voi suorittaa esimerkiksi tekniikan kandidaatin ja diplomi-insinöörin tutkinnon. Ammatillisen opettajan  pedagogiset opinnot antavat jatkokoulutusmahdollisuuden ammatillisen opettajan työtehtäviin.</p>"
-                            }
-                        },
-                        "TAVOITTEET": {
-                            "tekstis": {
-                                "kieli_sv": "<p>Flygledare som har avlagt grunexamen i flygledning  kan tryggt leda den trafik de ansvarar för. De leder flera luftfarkoster och landtrafiken samtidigt utan att förorsaka onödiga förseningar i flygtrafiken. De kan agera i snabbt föränderliga trafiksituationer och i varje situation tillämpa de mest lämpliga trafiklösningarna och ledningsmetoderna. I arbetet är de serviceinriktade och kostnadsmedvetna och kan samarbeta och lösa problem. De utvärderar hur de trafiklösningar de gjort inverkar på kommande trafiksituationer.</p>",
-                                "kieli_fi": "<p>Lennonjohdon perustutkinnon suorittanut lennonjohtaja johtaa vastuullaan olevaa liikennettä turvallisesti. Hän johtaa useita ilma-aluksia sekä maaliikennettä samanaikaisesti aiheuttamatta tarpeetonta viivytystä lentoliikenteelle. Hän toimii nopeasti vaihtuvissa liikennetilanteissa ja soveltaa kuhunkin tilanteeseen parhaiten sopivia liikenneratkaisuja ja johtamismenetelmiä. Hän on työssään palvelualtis, kustannustietoinen, yhteistyökykyinen ja ongelmanratkaisutaitoinen. Hän arvioi tekemiensä liikenneratkaisujen vaikutukset tuleviin liikennetilanteisiin.</p>"
-                            }
-                        },
-                        "KOULUTUKSEN_RAKENNE": {
-                            "tekstis": {
-                                "kieli_sv": "<p>Examensdelarna flygtrafiktjänst (45 sv) och flygtrafikledningstjänst (45 sv) är obligatoriska för alla examinander. Examensdelar som individuellt fördjupar yrkeskompetensen (examensdelar som breddar grundexamen) är områdeskontrolltjänst (30 sv) och examensdelar inom den grundläggande yrkesutbildningen som individuellt fördjupar yrkeskompetensen och som erbjuds lokalt.</p>",
-                                "kieli_fi": "<p>Kaikille pakolliset tutkinnon osat ovat lennonvarmistuspalvelu (45 ov) ja ilmaliikennepalvelu (45 ov).</p> <p>Tämän lisäksi tutkintoon kuuluu ammattitaitoa täydentävät tutkinnon osat ammatillisessa peruskoulutuksessa (yhteiset opinnot) 20 ov sekä vapaasti valittavat tutkinnon osat ammatillisessa peruskoulutuksessa (10 ov). Tutkinnon osiin sisältyy työssäoppimista vähintään 20 ov, ja opinnäyte vähintään 2 ov. Ammatillista osaamista yksilöllisesti syventävä tutkinnon osa (perustutkintoa laajentava tutkinnon osa) koostuu aluelennonjohtopalvelusta (30 ov) ja ammatillista osaamista yksilöllisesti syventävistä paikallisesti tarjottavista tutkinnon osista.</p>"
-                            }
-                        }
-                    },
-                    "yhteyshenkilos": [
-                    ],
-                    "tutkinto": {
-                    },
-                    "modified": 1385643453032,
-                    "tila": "JULKAISTU",
-                    "opintojenLaajuusyksikko": {
-                        "nimi": "opintoviikkoa",
-                        "arvo": "1",
-                        "versio": 1,
-                        "uri": "opintojenlaajuusyksikko_1"
-                    },
-                    "opintoala": {
-                        "nimi": "Ajoneuvo- ja kuljetustekniikka",
-                        "arvo": "509",
-                        "versio": 1,
-                        "uri": "opintoalaoph2002_509"
-                    },
-                    "koulutusohjelma": {
-                        "tekstis": {
-                        }
-                    },
-                    "oid": "1.2.246.562.5.2013061010193487239386",
-                    "koulutuskoodi": {
-                        "nimi": "Lennonjohdon perustutkinto",
-                        "arvo": "381410",
-                        "versio": 1,
-                        "uri": "koulutus_381410"
-                    },
-                    "kuvausKomoto": {
-                    },
-                    "tutkintonimikes": {
-                        "uris": {
-                        }
-                    },
-                    "koulutusasteTyyppi": "AMMATILLINEN_PERUSKOULUTUS",
-                    "opintojenLaajuus": {
-                        "nimi": "120",
-                        "arvo": "120",
-                        "versio": 1,
-                        "uri": "opintojenlaajuus_120"
-                    },
-                    "komoOid": "1.2.246.562.5.2013061010193487239386"
-                },
-                "status": "OK"
-            }
+                return {komoOid: komoOid, koulutuskoodi: {}, koulutusohjelma: {}};
+            };
 
+
+//            var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.ctrl.koodistoLocale);
+//            koodisPromise.then(function(result) {
+//                uiModel[key].koodis = result;
+//            });
         });

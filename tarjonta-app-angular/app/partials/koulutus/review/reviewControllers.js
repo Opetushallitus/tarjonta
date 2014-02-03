@@ -1,14 +1,15 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService) {
         $log.info("BaseReviewController()");
 
        if(angular.isUndefined( $scope.koulutusModel.result)){
            $location.path("/error");
            return;
        }
+
 
         $scope.formControls = {};
         $scope.model = {
@@ -25,6 +26,14 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             koulutus: $scope.koulutusModel.result, // preloaded in route resolve, see
             selectedKomoOid: [$scope.koulutusModel.result.komoOid]
         };
+
+        var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
+
+        hakukohdePromise.then(function(hakukohteet){
+           $scope.model.koulutus.hakukohteet = hakukohteet.result;
+
+        });
+
 
         var komoOid = $scope.koulutusModel.result.komoOid;
 
@@ -117,6 +126,21 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     dialogService.showNotImplementedDialog();
                 }
             });
+
+        };
+
+        $scope.addHakukohde = function() {
+
+               console.log('KOULUTUS : ', $scope.model.koulutus);
+
+            var koulutusOids = [];
+            koulutusOids.push($scope.model.koulutus.oid);
+
+
+
+            SharedStateService.addToState('SelectedKoulutukses',koulutusOids);
+            SharedStateService.addToState('SelectedOrgOid',$scope.model.koulutus.organisaatio.oid);
+            $location.path('/hakukohde/new/edit');
 
         };
 

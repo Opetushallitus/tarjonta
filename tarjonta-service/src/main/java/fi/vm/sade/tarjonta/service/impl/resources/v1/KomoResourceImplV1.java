@@ -17,18 +17,19 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KomoV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -41,15 +42,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
- * @author mlyly
+ * @author jani
  */
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomoResourceImplV1 implements KomoV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImplV1.class);
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
@@ -58,30 +57,63 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     private PermissionChecker permissionChecker;
     @Autowired
     private EntityConverterToKomoRDTO converterKomoToRDTO;
+    @Autowired
+    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     private Koulutusmoduuli insertKomo(final KomoV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
-
+        permissionChecker.checkCreateKoulutusmoduuli();
         final Koulutusmoduuli newKomo = conversionService.convert(dto, Koulutusmoduuli.class);
         Preconditions.checkNotNull(newKomo, "KOMO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
 
-        permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
         return koulutusmoduuliDAO.insert(newKomo);
     }
 
     private Koulutusmoduuli updateKomo(final KomoV1RDTO dto) {
         Preconditions.checkNotNull(dto.getOid(), "KOMO OID cannot be null.");
-
-        final Koulutusmoduuli komo = this.koulutusmoduuliDAO.findByOid(dto.getOid());
         permissionChecker.checkUpdateKoulutusmoduuli();
+        final Koulutusmoduuli komo = this.koulutusmoduuliDAO.findByOid(dto.getOid());
 
         Preconditions.checkNotNull(komo, "KOMO not found by OID : %s.", dto.getOid());
         return conversionService.convert(dto, Koulutusmoduuli.class);
     }
 
     @Override
-    public Response deleteByOid(String oid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ResultV1RDTO deleteByOid(String oid) {
+        permissionChecker.checkCreateKoulutusmoduuli();
+
+        final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+        ResultV1RDTO dto = new ResultV1RDTO();
+
+        if (komo == null) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return dto;
+        }
+
+        if (!komo.getKoulutusmoduuliToteutusList().isEmpty()) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            ArrayList<ErrorV1RDTO> newArrayList = Lists.<ErrorV1RDTO>newArrayList();
+            ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
+            errorV1RDTO.setErrorMessageKey("KOMOTO_RELATION_FOUND");
+            newArrayList.add(errorV1RDTO);
+            dto.setErrors(newArrayList);
+            return dto;
+        }
+
+        final List<String> children = koulutusSisaltyvyysDAO.getChildren(oid);
+
+        if (!children.isEmpty()) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            ArrayList<ErrorV1RDTO> newArrayList = Lists.<ErrorV1RDTO>newArrayList();
+            ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
+            errorV1RDTO.setErrorMessageKey("CHILD_KOMO_RELATION_FOUND");
+            newArrayList.add(errorV1RDTO);
+            dto.setErrors(newArrayList);
+        } else {
+            koulutusmoduuliDAO.remove(komo);
+        }
+
+        return dto;
     }
 
     /**
@@ -109,11 +141,10 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         return checkArgsMeta(meta, true);
     }
 
-     private boolean checkArgsMeta(Boolean meta, boolean defaultValue) {
+    private boolean checkArgsMeta(Boolean meta, boolean defaultValue) {
         return meta != null ? meta : defaultValue;
     }
 
-    
     /**
      * Get user's preferred language code. Default or fallback value is 'FI'.
      */
@@ -175,7 +206,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(String koulutuskoodi, Boolean meta,  String lang) {
+    public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(String koulutuskoodi, Boolean meta, String lang) {
 
         lang = checkArgsLangCode(lang);
         meta = checkArgsMeta(meta, false);

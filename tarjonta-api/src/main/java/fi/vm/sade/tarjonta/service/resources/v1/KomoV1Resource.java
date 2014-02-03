@@ -47,7 +47,7 @@ public interface KomoV1Resource {
     @ApiOperation(
             value = "Poistaa koulutusmoduulin annetulla koulutusmoduulin oid:lla",
             notes = "Operaatio poistaa koulutusmoduulin annetulla koulutusmoduulin oid:lla")
-    public Response deleteByOid(@PathParam("oid") String oid);
+    public ResultV1RDTO deleteByOid(@PathParam("oid") String oid);
 
     @POST
     @Path("/")
