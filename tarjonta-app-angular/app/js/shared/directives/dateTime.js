@@ -38,12 +38,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     			return;
     		}
     		if ($scope.model==null) {
-            	$scope.date = "";
-            	$scope.time = "";
+            	   $scope.date = "";
+            	   $scope.time = "";
         		$scope.ngModel = null;
     		} else {
-            	$scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
-            	$scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
+            	  $scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
+            	  $scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
         		$scope.ngModel = $scope.type == "object" ? $scope.model : $scope.model.getTime();
     		}
     	}
@@ -177,6 +177,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					$scope.years = [];
 
 					$scope.model = ctrl.model;
+                                        if(angular.isUndefined($scope.model) || $scope.model === null){
+                                            $scope.model = new Date();
+                                        }
+                                        
+                                        
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
 					$scope.calendar=[];
 					
