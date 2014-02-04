@@ -112,6 +112,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas
                 : new ArrayList<String>();
 
+
+
         HakukohteetKysely q = new HakukohteetKysely();
         q.setNimi(searchTerms);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
@@ -129,6 +131,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+
+
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
@@ -955,6 +959,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDao.update(hakukohde);
+                    try {
+                        solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                    }  catch (Exception exp ){
+
+                    }
                 } else {
 
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);

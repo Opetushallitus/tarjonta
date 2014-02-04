@@ -179,6 +179,11 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoodiUrisV1RDTO getOpetusAikas() {
+        
+        if(opetusAikas == null){
+            opetusAikas = new KoodiUrisV1RDTO();
+        }
+        
         return opetusAikas;
     }
 
@@ -187,6 +192,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoodiUrisV1RDTO getOpetusPaikkas() {
+        if(opetusPaikkas == null){
+            opetusPaikkas = new KoodiUrisV1RDTO();
+        }
+        
         return opetusPaikkas;
     }
 

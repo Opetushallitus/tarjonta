@@ -20,6 +20,7 @@ app.controller('BaseEditController',
                     $scope.uiModel.showSuccess = true;
                     $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
+                    $scope.uiModel.validationmsgs = [];
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
@@ -32,6 +33,7 @@ app.controller('BaseEditController',
                     uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
+                    uiModel.validationmsgs = [];
 
                     converter.createUiModels(uiModel);
 
@@ -42,6 +44,11 @@ app.controller('BaseEditController',
                         //DATA WAS LOADED BY KOMOTO OID
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
+
+                        if (angular.isUndefined(model)) {
+                            $location.path("/error");
+                            return;
+                        }
 
                         if (angular.isUndefined(model.opintojenLaajuusyksikko.uri)) {
                             //remove when not needed...
@@ -64,7 +71,7 @@ app.controller('BaseEditController',
                          * remove version data from the list 
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                              uiModel[key].uris = _.keys(model[key].uris);
+                            uiModel[key].uris = _.keys(model[key].uris);
                         });
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
@@ -176,6 +183,10 @@ app.controller('BaseEditController',
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
                             } else {
+                                if (!angular.isUndefined(saveResponse.errors)) {
+                                    $scope.uiModel.validationmsgs = saveResponse.errors;
+                                }
+
                                 //save failed
                                 $scope.uiModel.showError = true;
                             }
