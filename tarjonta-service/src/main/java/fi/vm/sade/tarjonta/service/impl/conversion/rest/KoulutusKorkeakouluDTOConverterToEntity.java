@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
@@ -235,25 +236,11 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             //one or many dates   
             EntityUtils.keepSelectedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
             final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
-            final String baseKausi = IndexDataUtils.parseKausiKoodi(firstDate);
-            final Integer baseVuosi = IndexDataUtils.parseYearInt(firstDate);
-            Preconditions.checkNotNull(baseKausi, "Parsed alkamiskausi cannot be null!");
-            Preconditions.checkNotNull(baseVuosi, "Parsed alkamisvuosi cannot be null!");
+            KoulutusValidationMessages checkDates = validateDates(firstDate, koulutuksenAlkamisPvms, komoto);
+            Preconditions.checkArgument(checkDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS), "Alkamisaika validation error - key : %s.", checkDates);
 
-            //pre-check if the dates are within same date range of kausi + vuosi
-            for (Date pvm : koulutuksenAlkamisPvms) {
-                if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
-                    throw new RuntimeException("Not within correct date range - found an invalid kausi!");
-                }
-
-                if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
-                    throw new RuntimeException("Not within correct date range - found an invalid year!");
-                }
-
-                komoto.addKoulutuksenAlkamisPvms(pvm);
-            }
-            komoto.setAlkamisVuosi(baseVuosi);
-            komoto.setAlkamiskausi(baseKausi);
+            komoto.setAlkamisVuosi(IndexDataUtils.parseYearInt(firstDate));
+            komoto.setAlkamiskausi(IndexDataUtils.parseKausiKoodi(firstDate));
         } else {
             //allowed only one kausi and year
             Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
@@ -265,5 +252,39 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
             komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
         }
+    }
+
+    public static KoulutusValidationMessages validateDates(Date targetDate, Set<Date> dates) {
+        return validateDates(targetDate, dates, null);
+    }
+
+    private static KoulutusValidationMessages validateDates(Date targetDate, Set<Date> dates, KoulutusmoduuliToteutus komoto) {
+        final String baseKausi = IndexDataUtils.parseKausiKoodi(targetDate);
+        final Integer baseVuosi = IndexDataUtils.parseYearInt(targetDate);
+
+        if (baseKausi == null) {
+            return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING;
+        }
+
+        if (baseVuosi == null) {
+            return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID;
+        }
+
+        //pre-check if the dates are within same date range of kausi + vuosi
+        for (Date pvm : dates) {
+            if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
+                return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID;
+            }
+
+            if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
+                return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID;
+            }
+
+            if (komoto != null) {
+                komoto.addKoulutuksenAlkamisPvms(pvm);
+            }
+        }
+
+        return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS;
     }
 }

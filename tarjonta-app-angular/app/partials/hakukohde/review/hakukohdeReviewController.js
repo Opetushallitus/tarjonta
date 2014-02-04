@@ -243,7 +243,9 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
          hakuPromise.then(function(haku){
             console.log('HAKU: ', haku);
             for (var kieliUri in haku.nimi) {
-                if (kieliUri.indexOf($scope.model.userLang) != -1) {
+                var upperCaseKieliUri = kieliUri.toUpperCase();
+                var upperUserLang = $scope.model.userLang.toUpperCase();
+                if (upperCaseKieliUri.indexOf(upperUserLang) != -1) {
                     $scope.model.hakukohde.hakuNimi = haku.nimi[kieliUri];
                 }
             }
@@ -262,6 +264,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
                 if (valittuHakuAika !== undefined) {
 
                     var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
+
+
 
                     $scope.model.hakukohde.hakuNimi = $scope.model.hakukohde.hakuNimi + "  ( " + prefix  + createFormattedDateString(valittuHakuAika.alkuPvm) + " - " + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
 
@@ -566,13 +570,20 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
     $scope.getValintaperusteKuvaus = function(kieliUri) {
 
-        return $scope.model.hakukohde.valintaperusteKuvaukset[kieliUri];
+        if ($scope.model.hakukohde.valintaperusteKuvaukset !== undefined) {
+            return $scope.model.hakukohde.valintaperusteKuvaukset[kieliUri];
+        }
+
 
     };
 
     $scope.getSoraKuvaus = function(kieliUri) {
 
-        return $scope.model.hakukohde.soraKuvaukset[kieliUri];
+        if ($scope.model.hakukohde.soraKuvaukset !== undefined) {
+            return $scope.model.hakukohde.soraKuvaukset[kieliUri];
+        }
+
+
 
     };
 

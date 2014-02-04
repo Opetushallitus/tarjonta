@@ -1,78 +1,10 @@
 var app =  angular.module('app.kk.edit.hakukohde.ctrl');
 
-app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, dialogService , HakuService, $modal ,Config,$location, TarjontaService) {
+app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, dialogService , HakuService, $modal ,Config,$location) {
 
-    $scope.model.liitteet = [];
-    $scope.model.opetusKielet = [];
-    
-    $scope.model.selectedLiite = {};
-    
-    function newLiite(lc) {
-    	var tmennessa = 0;
-    	for (var hn in $scope.model.hakus) {
-    		for (var an in $scope.model.hakus[hn].hakuaikas) {
-    			var ha = $scope.model.hakus[hn].hakuaikas[an];
-    			if (ha.hakuaikaId == $scope.model.hakukohde.hakuaikaId) {
-    				tmennessa = ha.loppuPvm;
-    				break;
-    			}
-    		}
-    	}
-    	    	
-    	var kv = {};
-    	kv[lc] = "";
-    	
-    	return {
-    		kieliUri: lc,
-    		liitteenNimi: "",
-    		liitteenKuvaukset: kv,
-    		toimitettavaMennessa: tmennessa,
-    		liitteenToimitusOsoite: {},
-    		muuOsoiteEnabled: false,
-    		sahkoinenOsoiteEnabled: false,
-    	};
-    }
-    
-    if ($scope.model.hakukohde.oid !== undefined) {
-    	var liitteetResource = Liite.get({hakukohdeOid: $scope.model.hakukohde.oid});
-        var liitteetPromise = liitteetResource.$promise;
-
-        liitteetPromise.then(function(liitteet){
-            console.log('LIITTEET GOT: ',liitteet);
-            $scope.model.liitteet = liitteet.result;
-        });
-    }
-    
-    var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale());
-    kielet.then(function(ret){
-    	
-    	//console.log("KIELET = ", ret);
-    	for (var i in ret) {
-    		var lc = ret[i].koodiUri;
-    		var p = $scope.model.hakukohde.opetusKielet.indexOf(lc);
-    		if (p!=-1) {
-    			$scope.model.opetusKielet.push(ret[i]);
-    			$scope.model.selectedLiite[lc] = newLiite(lc);
-    		}
-    	}
-    	
-    });
-    
-    $scope.getLiitteetByKieli = function(lc) {
-    	var ret = [];
-    	
-    	for (var i in $scope.model.liitteet) {
-    		var li = $scope.model.liitteet[i];
-    		if (li.kieliUri == lc) {
-    			ret.push(li);
-    		}
-    	}
-    	
-    	return ret;
-    }
-	
-	/*
      var kieliSet = new buckets.Set();
+
+
 
      $scope.model.liitteenkielet = [];
 
@@ -244,7 +176,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     };
 
 
-	*/
+
 
 
 });
@@ -256,7 +188,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
 
  */
-/*
+
+
 app.controller('LiiteModalController', function($scope,$modalInstance,LocalisationService,Koodisto,liite,organisaationOsoite) {
 
     $scope.model = {};
@@ -399,5 +332,3 @@ app.controller('LiiteModalController', function($scope,$modalInstance,Localisati
         tallenna : LocalisationService.t('tarjonta.hakukohde.liite.modal.tallenna.button')
     }
 });
-
-*/

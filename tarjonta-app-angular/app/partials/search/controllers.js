@@ -299,7 +299,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             terms: $scope.spec.terms,
             state: $scope.spec.state == "*" ? null : $scope.spec.state,
             year: $scope.spec.year == "*" ? null : $scope.spec.year,
-            season: $scope.spec.season == "*" ? null : $scope.spec.season
+            season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1'
         };
     	
         console.log("search", spec);

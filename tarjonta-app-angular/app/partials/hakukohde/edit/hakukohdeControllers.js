@@ -92,6 +92,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
+
 
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
@@ -213,6 +215,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         modalInstance.result.then(function(kuvaukset){
 
+            console.log('GOT KUVAUKSET : ', kuvaukset);
             if ($scope.model.hakukohde.valintaPerusteKuvausKielet === undefined) {
                 $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
 
@@ -224,11 +227,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 angular.forEach(kuvaukset,function(kuvaus){
 
-
                     if (type === "valintaperustekuvaus") {
 
-                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
-                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri.uri);
+                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
+                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri);
 
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
@@ -239,8 +241,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                     } else if (type === "SORA") {
 
-                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
-                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri.uri);
+                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
+                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri);
 
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
@@ -249,6 +251,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                         }
 
 
+                    } else {
+                    	throw ("'valintaperustekuvaus' | 'SORA' != "+type);
                     }
 
                 });
@@ -378,10 +382,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.canSaveHakukohde = function() {
-
-
-        console.log(' IS EDIT HAKUKOHDE FORM VALID : ', $scope.editHakukohdeForm.$valid);
-        console.log(' CAN CREATE OR EDIT HAKUKOHDE :  ', checkCanCreateOrEditHakukohde());
 
         if ($scope.editHakukohdeForm !== undefined) {
 
@@ -1222,10 +1222,11 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                console.log('VALITTU KUVAUS: ' , $scope.valittuKuvaus);
 
                 var valittuKokoKuvaus = kaikkiKuvaukset[$scope.valittuKuvaus.tunniste];
+
                 var kuvaus = {
                     toimintoTyyppi : $scope.dialog.copySelection,
                     tunniste :  valittuKokoKuvaus.kuvauksenTunniste,
-                    teksti : valittuKokoKuvaus.kuvaukset[valittuKieli.uri],
+                    teksti : valittuKokoKuvaus.kuvaukset[valittuKieli],
                     kieliUri : valittuKieli
 
                 }
