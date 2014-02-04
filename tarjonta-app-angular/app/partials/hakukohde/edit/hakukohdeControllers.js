@@ -227,11 +227,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 angular.forEach(kuvaukset,function(kuvaus){
 
-
                     if (type === "valintaperustekuvaus") {
 
-                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
-                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri.uri);
+                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
+                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri);
 
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
@@ -242,8 +241,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                     } else if (type === "SORA") {
 
-                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri.uri] = kuvaus.teksti;
-                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri.uri);
+                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
+                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri);
 
                         if (kuvaus.toimintoTyyppi === "link") {
                             $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
@@ -252,6 +251,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                         }
 
 
+                    } else {
+                    	throw ("'valintaperustekuvaus' | 'SORA' != "+type);
                     }
 
                 });
