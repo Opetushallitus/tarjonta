@@ -131,6 +131,7 @@ public class ConverterV1 {
         t.setLastUpdatedDate(haku.getLastUpdateDate());
         t.setTila(haku.getTila().name());
         t.setHakukausiVuosi(haku.getHakukausiVuosi());
+        t.setMaxHakukohdes(haku.getMaxHakukohdes());
 
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
@@ -143,6 +144,7 @@ public class ConverterV1 {
             }
         }
 
+        // Koodistos as pre-resolved
         t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
         t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
         t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
@@ -172,6 +174,7 @@ public class ConverterV1 {
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
         haku.setTila(TarjontaTila.valueOf(hakuV1RDTO.getTila()));
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
+        haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
 
         if (hakuV1RDTO.getHakuaikas() != null ){
            for (HakuaikaV1RDTO hakuaikaRDTO: hakuV1RDTO.getHakuaikas()) {
@@ -416,7 +419,7 @@ public class ConverterV1 {
         }
         hakukohdeRDTO.setOpetusKielet(opetusKielet);
 
-        
+
         if(hakukohde.getValintaPerusteKuvausKielet() != null) {
             hakukohdeRDTO.setValintaPerusteKuvausKielet(hakukohde.getValintaPerusteKuvausKielet());
         }
