@@ -7,7 +7,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
     function defaultLangMapConverter(data) {
         var m = {};
         for (var i in data) {
-            if (data[i].value.length > 0) {
+            if (data[i] && data[i].value && data[i].value.length > 0) {
                 m[data[i].uri] = data[i].value;
             }
         }
@@ -59,7 +59,8 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             if ($scope.isrequired) {
             	$scope.errors.required = true;
             	for (var i in $scope.model) {
-            		if ($scope.model[i].trim().length>0) {
+                    $log.info("updateModel() - i = " + i);
+            		if ($scope.model[i] && $scope.model[i] != null && $scope.model[i].trim().length>0) {
                     	$scope.errors.required = false;
             			break;
             		}
