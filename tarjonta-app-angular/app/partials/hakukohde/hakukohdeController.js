@@ -52,6 +52,14 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         } else {
             var hakukohdeResource = new Hakukohde( $route.current.locals.hakukohdex.result);
 
+            if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
+                hakukohdeResource.valintaperusteKuvaukset = {};
+            }
+
+            if (hakukohdeResource.soraKuvaukset === undefined) {
+                hakukohdeResource.soraKuvaukset = {};
+            }
+
             $scope.model = {
                 collapse: {
                     model : true
