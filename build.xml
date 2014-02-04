@@ -47,7 +47,7 @@
 				<include name="tarjonta-service.war"/>
 			</fileset>
 			<fileset dir="tarjonta-app/target">
-				<include name="tarjonta-app-9.0-SNAPSHOT.war"/>
+				<include name="tarjonta-app*${pom.version}.war"/>
 			</fileset>
 		</scp>
 
@@ -56,7 +56,7 @@
 				mkdir ${tomcat.home}/webapps/tarjonta-service;
 				mkdir ${tomcat.home}/webapps/tarjonta-app;
 				
-				unzip -qo -d${tomcat.home}/webapps/tarjonta-service ${tomcat.home}/webapps/tarjonta-service*${pom.version}.war;
+				unzip -qo -d${tomcat.home}/webapps/tarjonta-service ${tomcat.home}/webapps/tarjonta-service.war;
 				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*${pom.version}.war;
 				
 				rm -rf ${tomcat.home}/webapps/*.war;
