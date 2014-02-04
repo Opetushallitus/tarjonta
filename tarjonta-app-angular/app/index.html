@@ -301,12 +301,12 @@
             </div>
         </div>
 
-        <div data-ng-controller="LoadingCtrl" id="ajax-loader" class="pre-init max" data-ng-show="loading"
-             ng-class="{{isModal() ? 'max' : 'min'}}">
+        <div data-ng-controller="LoadingCtrl">
+        <div id="ajax-loader" class="pre-init max ng-class: {{(isModal() ? 'max' : 'min') + ' ' + (isError() ? 'lowered' : '') }}" data-ng-show="loading">
             <div class="frame">
                 <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                <span class="post-init spinner-msg" tt="loading" ng-show="isTimeout(false)"></span>
-                <div class="post-init timeout" ng-show="isTimeout(true)">
+                <span class="post-init spinner-msg" tt="loading" ng-show="!isError() && isTimeout(false)"></span>
+                <div class="post-init timeout" ng-show="!isError() && isTimeout(true)">
                     <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
                         tai järjestelmän väliaikaisesta kuormituksesta.</p>
 
@@ -325,6 +325,7 @@
                 <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
 
             </div>
+        </div>
         </div>
 
         <script> tarjontaInit();</script>

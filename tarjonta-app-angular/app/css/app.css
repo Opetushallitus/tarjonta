@@ -111,7 +111,11 @@ div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
-	z-index:999;
+	z-index:10000;
+}
+
+div#ajax-loader.lowered {
+    z-index:999;
 }
 
 div#ajax-loader .timeout {
