@@ -19,14 +19,15 @@
 
     <input type="radio" name="kausiVaiPvm" ng-model="ctrl.kausi" ng-value="true" ng-click="onEnableKausi($event)"/>
     <span tt="koulutus.alkamispvm.enableKausi"></span>
-
+    
     <div class="indent">
 	    <span tt="koulutus.alkamispvm.kausi"></span>
 	    <select
 	        ng-model="kausiUri" 
 	        ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
 	        ng-disabled="!ctrl.kausi"/>
-	    <input type="text" 
+	    <span tt="koulutus.alkamispvm.vuosi"></span>
+            <input type="text" 
 	        ng-model="vuosi" 
 	                 ng-disabled="!ctrl.kausi"/>
     </div>
