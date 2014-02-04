@@ -112,6 +112,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas
                 : new ArrayList<String>();
 
+
+
         HakukohteetKysely q = new HakukohteetKysely();
         q.setNimi(searchTerms);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
@@ -129,6 +131,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+
+
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
