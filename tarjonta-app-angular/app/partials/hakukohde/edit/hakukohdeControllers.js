@@ -105,7 +105,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if ($scope.canEdit !== undefined) {
                 return $scope.canEdit;
             } else {
-                return false;
+                return true;
             }
 
 
@@ -378,6 +378,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.canSaveHakukohde = function() {
+
+
+        console.log(' IS EDIT HAKUKOHDE FORM VALID : ', $scope.editHakukohdeForm.$valid);
+        console.log(' CAN CREATE OR EDIT HAKUKOHDE :  ', checkCanCreateOrEditHakukohde());
 
         if ($scope.editHakukohdeForm !== undefined) {
 
