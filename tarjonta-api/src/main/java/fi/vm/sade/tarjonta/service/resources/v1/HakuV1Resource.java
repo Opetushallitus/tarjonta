@@ -42,7 +42,7 @@ import javax.ws.rs.core.MediaType;
  * GET    oid/state                                  -- state
  * PUT    oid/state                                  -- update state
  * POST   /                                          -- create haku
- * PUT    /                                          -- update hakue
+ * PUT    /oid                                       -- update hakue
  * DELETE oid                                        -- remove haku
  * </pre>
  *
@@ -73,6 +73,7 @@ public interface HakuV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)
+    @Path("/{oid}")
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
 
     @GET
