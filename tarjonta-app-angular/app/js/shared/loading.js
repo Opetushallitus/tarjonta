@@ -24,21 +24,21 @@ angular.module('loading', ['localisation'])
     	return service.errors!=0;
     },
     beforeOperation: function() {
-    	console.log("LOADING beforeOperation", service);
+    	//console.log("LOADING beforeOperation", service);
     	service.operationCount++;
     },
     afterOperation: function() {
-    	console.log("LOADING afterOperation", service);
+    	//console.log("LOADING afterOperation", service);
     	service.operationCount--;
     },
     beforeRequest: function() {
-    	console.log("LOADING beforeRequest", service);
+    	//console.log("LOADING beforeRequest", service);
 		service.modal = true;
 		service.startTimeout();
     	service.requestCount++;
     },
     afterRequest: function(success, req) {
-    	console.log("LOADING afterRequest "+success, service);
+    	//console.log("LOADING afterRequest "+success, service);
     	if (success) {
         	service.requestCount--;
     	} else {
@@ -47,13 +47,13 @@ angular.module('loading', ['localisation'])
     	service.clearTimeout();
     },
     commit: function() {
-    	console.log("LOADING commit", service);
+    	//console.log("LOADING commit", service);
     	service.requestCount -= service.errors;
     	service.errors = 0;
     	service.clearTimeout();
     },
     clearTimeout: function() {
-    	console.log("LOADING clearTimeout", service);
+    	//console.log("LOADING clearTimeout", service);
     	if (service.requestCount==0 && service.timeout!=null) {
     		window.clearTimeout(service.timeout);
     		service.timeout = null;
@@ -62,7 +62,7 @@ angular.module('loading', ['localisation'])
     	}
     },
     startTimeout: function() {
-    	console.log("LOADING startTimeout", service);
+    	//console.log("LOADING startTimeout", service);
     	if (service.timeout!=null) {
     		return;
     	}
