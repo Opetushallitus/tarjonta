@@ -5,6 +5,7 @@ angular.module('loading', ['localisation'])
     requestCount: 0,
     operationCount: 0,
     errors: 0,
+    modal:false,
     timeout: null,
     timeoutMinor: false,
     timeoutMajor: false,
@@ -12,12 +13,15 @@ angular.module('loading', ['localisation'])
     
     timeoutShort: window.CONFIG.env["ui.timeout.short"],
     timeoutLong: window.CONFIG.env["ui.timeout.long"],
-        
+    
     isLoading: function() {
       return service.requestCount > 0 || service.operationCount > 0;
     },
     isModal: function() {
     	return service.requestCount > 0;
+    },
+    isError: function() {
+    	return service.errors!=0;
     },
     beforeOperation: function() {
     	console.log("LOADING beforeOperation", service);
@@ -151,13 +155,13 @@ angular.module('loading', ['localisation'])
         	showErrorDialog();
         }
     });
-
+    
     $scope.isModal = function() {
     	return loadingService.isModal();
     }
 
     $scope.isError = function() {
-    	return loadingService.errors>0;
+    	return loadingService.isError();
     }
     
     $scope.isTimeout = function(major) {
