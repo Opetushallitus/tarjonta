@@ -118,11 +118,13 @@ public class KoulutusResourceImplV1Test {
     private static final String OPINTOALA = "opintoala";
     private static final String TUTKINTO = "tutkinto";
     private static final String MAP_TUTKINTONIMIKE = "tutkintonimike";
-    private static final String MAP_AIHEES = "aihees";
+    private static final String MAP_OPETUSAIHEES = "aihees";
     private static final String MAP_OPETUSKIELI = "opetuskieli";
     private static final String MAP_POHJAKOULUTUS = "pohjakoulutus";
     private static final String MAP_OPETUMUOTO = "opetusmuto";
     private static final String MAP_AMMATTINIMIKE = "ammattinimike";
+    private static final String MAP_OPETUSAIKAS = "opetusaikas";
+    private static final String MAP_OPETUSPAIKKAS = "opetuspaikkas";
     private static final String EQF = "EQF";
     private static final String KOMO_OID = "komo_oid";
     private static final String KOMOTO_OID = "komoto_oid";
@@ -237,7 +239,9 @@ public class KoulutusResourceImplV1Test {
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
         koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, MAP_TUTKINTONIMIKE);
-        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_AIHEES);
+        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
+        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
+        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_OPETUSAIHEES);
         koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
         koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, (MAP_AMMATTINIMIKE));
@@ -274,7 +278,10 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(OPINTOALA);
         expectMetaMapUris(MAP_TUTKINTONIMIKE);
         expectMetaUri(EQF);
-        expectMetaMapUris(MAP_AIHEES);
+
+        expectMetaMapUris(MAP_OPETUSPAIKKAS);
+        expectMetaMapUris(MAP_OPETUSAIKAS);
+        expectMetaMapUris(MAP_OPETUSAIHEES);
         expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_POHJAKOULUTUS);
@@ -292,7 +299,10 @@ public class KoulutusResourceImplV1Test {
         expectMetaUri(OPINTOALA);
         expectMetaMapUris(MAP_TUTKINTONIMIKE);
         expectMetaUri(EQF);
-        expectMetaMapUris(MAP_AIHEES);
+
+        expectMetaMapUris(MAP_OPETUSPAIKKAS);
+        expectMetaMapUris(MAP_OPETUSAIKAS);
+        expectMetaMapUris(MAP_OPETUSAIHEES);
         expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_POHJAKOULUTUS);
@@ -306,11 +316,12 @@ public class KoulutusResourceImplV1Test {
         replay(organisaatioServiceMock);
         replay(conversionServiceMock);
         replay(tarjontaKoodistoHelperMock);
-
         /*
          * INSERT KORKEAKOULU TO DB
          */
-        instance.postKorkeakouluKoulutus(dto);
+        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = instance.postKorkeakouluKoulutus(dto);
+        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+
         /*
          * LOAD KORKEAKOULU DTO FROM DB
          */
@@ -355,7 +366,7 @@ public class KoulutusResourceImplV1Test {
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
 
-        assertEqualMetaDto(MAP_AIHEES, result.getAihees());
+        assertEqualMetaDto(MAP_OPETUSAIHEES, result.getAihees());
         assertEqualMetaDto(MAP_OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
         assertEqualMetaDto(MAP_POHJAKOULUTUS, result.getPohjakoulutusvaatimukset());

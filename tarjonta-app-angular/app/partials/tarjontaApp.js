@@ -105,18 +105,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "home.default",
                     reloadOnSearch: false
                 })
-                .when("/kk/edit/:orgOid/:komotoOid", {
-                    action: "kk.edit"
-                })
-                .when("/kk/edit/:type/:part/:org/:komoto/:koulutuskoodi", {
-                    action: "kk.edit"
-                })
-                .when('/kk/review/:id', {
-                    action: "kk.review"
-                })
-                .when('/kk/review/:id/:part', {
-                    action: "kk.review"
-                })
                 .when('/helpers/localisations', {
                     action: "helpers.localisations"
                 })

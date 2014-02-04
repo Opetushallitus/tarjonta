@@ -34,6 +34,8 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
@@ -75,6 +77,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -150,20 +153,29 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
+        List<KoulutusValidationMessages> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
+        ResultV1RDTO resultRDTO = new ResultV1RDTO();
+        if (validateKoulutus.isEmpty()) {
 
-        if (dto.getOid() != null && dto.getOid().length() > 0) {
-            //update korkeakoulu koulutus
-            fullKomotoWithKomo = updateKoulutusKorkeakoulu(dto);
+            if (dto.getOid() != null && dto.getOid().length() > 0) {
+                //update korkeakoulu koulutus
+                fullKomotoWithKomo = updateKoulutusKorkeakoulu(dto);
+            } else {
+                //create korkeakoulu koulutus
+                fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
+            }
+
+            solrIndexer.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            //publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
+            resultRDTO.setResult(converterToRDTO.convert(fullKomotoWithKomo, getUserLang(), true));
         } else {
-            //create korkeakoulu koulutus
-            fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+            resultRDTO.setErrors(validateKoulutus);
+            resultRDTO.setResult(dto);
         }
 
-        solrIndexer.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-        //publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
-        ResultV1RDTO resultRDTO = new ResultV1RDTO();
-        resultRDTO.setResult(converterToRDTO.convert(fullKomotoWithKomo, getUserLang(), true));
         return resultRDTO;
+
     }
 
     private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {

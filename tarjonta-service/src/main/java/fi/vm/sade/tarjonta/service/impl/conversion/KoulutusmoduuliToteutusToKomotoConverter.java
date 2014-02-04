@@ -75,8 +75,10 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setOpetuskieletUris(convertKoodistoUrisToList(s.getOpetuskielis()));
         t.setOpetusmuodotUris(convertKoodistoUrisToList(s.getOpetusmuotos()));
         t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimus());
-        t.setLaajuusArvo(s.getSuunniteltuKestoArvo());
-        t.setLaajuusYksikkoUri(s.getSuunniteltuKestoYksikko());
+        t.setLaajuusArvo(s.getOpintojenLaajuusArvo());
+        t.setLaajuusYksikkoUri(s.getOpintojenLaajuusYksikko());
+        t.setSuunniteltuKestoArvo(s.getSuunniteltuKestoArvo());
+        t.setSuunniteltuKestoYksikkoUri(s.getSuunniteltuKestoYksikko());
         t.setTarjoajaOid(s.getTarjoaja());
         // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
         t.setTeematUris(convertKoodistoUrisToList(s.getTeemas()));

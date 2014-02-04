@@ -1,5 +1,4 @@
 <div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
-
     <controls-model
         model="formControls"
         tt-create="koulutus.edit.header.title"
@@ -17,10 +16,13 @@
         <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
         <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
 
+        
         <controls-notify type="error-detail" tt="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showError && koulutusForm.$invalid"></controls-notify>
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+        <controls-notify ng-repeat="e in uiModel.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
 
     </controls-model>
+    
+    
     
     <display-controls model="formControls" display="header"></display-controls>
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('MultiSelect', ['pasvaz.bindonce','ngGrid', 'localisation']);
+var app = angular.module('MultiSelect', ['pasvaz.bindonce', 'ngGrid', 'localisation']);
 
 app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
@@ -25,10 +25,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
     function controller($scope) {
 
         $scope.errors = {
-        		required:false,
-        		pristine:true,
-        		dirty:false,
-        		$name:$scope.name
+            required: false,
+            pristine: true,
+            dirty: false,
+            $name: $scope.name
         }
 
         $scope.titles = [];
@@ -36,12 +36,14 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.preselection = [];
         $scope.names = {};
         
+        $scope.initialized = false;
+
         function updateErrors() {
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
-        	$scope.errors.required = $scope.isrequired && $scope.selection.length==0;
+            $scope.errors.required = $scope.isrequired && $scope.selection.length == 0;
         }
-       
+
         if ($scope.columns == undefined) {
             $scope.columns = 1;
         }
@@ -57,72 +59,72 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         if ($scope.value == undefined) {
             $scope.value = "koodiNimi";
         }
-        
+
         if (!$scope.ttShowAll) {
-        	$scope.ttShowAll = "tarjonta.toiminnot.näytä_kaikki";
+            $scope.ttShowAll = "tarjonta.toiminnot.näytä_kaikki";
         }
-    	$scope.txtShowAll = LocalisationService.t($scope.ttShowAll);
-        
+        $scope.txtShowAll = LocalisationService.t($scope.ttShowAll);
+
         if (!$scope.ttShowAllTitle) {
-        	$scope.ttShowAllTitle = "tarjonta.toiminnot.valitse";
+            $scope.ttShowAllTitle = "tarjonta.toiminnot.valitse";
         }
-    	$scope.txtShowAllTitle = LocalisationService.t($scope.ttShowAllTitle);
-        
+        $scope.txtShowAllTitle = LocalisationService.t($scope.ttShowAllTitle);
+
         if ($scope.ttShowAllHelp) {
-        	$scope.txtShowAllHelp = LocalisationService.t($scope.ttShowAllHelp);
+            $scope.txtShowAllHelp = LocalisationService.t($scope.ttShowAllHelp);
         }
-        
+
         $scope.combo = {selection: ""};
-        
+
         // autocomplete-valinta
         $scope.onComboSelect = function(v) {
-        	
-        	for (var i in $scope.names) {
-        		if ($scope.names[i] == $scope.combo.selection) {
-                	$scope.onPreselection([i]);
-        			break;
-        		}
-        	}
-        	
-        	$scope.combo.selection = "";
+
+            for (var i in $scope.names) {
+                if ($scope.names[i] == $scope.combo.selection) {
+                    $scope.onPreselection([i]);
+                    break;
+                }
+            }
+
+            $scope.combo.selection = "";
         }
-        
+
         $scope.onShowAll = function() {
 
-        	var ns = $scope.$new();
-        	ns.parent = $scope;
+            var ns = $scope.$new();
+            ns.parent = $scope;
 
-        	ns.selection = $scope.selection;
-        	ns.items = $scope.items;
-        	ns.selecteds = [];
-        	
-        	
-        	for (var i in ns.items) {
-        		var r = ns.items[i];
-        		if ($scope.selection.indexOf(r.key)!=-1) {
-        			ns.selecteds.push(r);
-        		}
-        	}
+            ns.selection = $scope.selection;
+            ns.items = $scope.items;
+            ns.selecteds = [];
+
+
+            for (var i in ns.items) {
+                var r = ns.items[i];
+                if ($scope.selection.indexOf(r.key) != -1) {
+                    ns.selecteds.push(r);
+                }
+            }
 
             $modal.open({
                 controller: function($scope, $modalInstance) {
-                	
-                	$scope.gridOptions = {
-                			data: "items",
-                			columnDefs: [{field:'value'}],
-                			headerRowHeight:0,
-                			showSelectionCheckbox:true,//,
-                			selectedItems: $scope.selecteds
-                	};
-                	
-                	$scope.ok = function() {
-                		var cs = [];
-                		for (var i in $scope.selecteds) {
-                			cs.push($scope.selecteds[i].key)
-                		}
-                		$scope.parent.onSelection(cs);
+
+                    $scope.gridOptions = {
+                        data: "items",
+                        columnDefs: [{field: 'value'}],
+                        headerRowHeight: 0,
+                        showSelectionCheckbox: true, //,
+                        selectedItems: $scope.selecteds
+                    };
+
+                    $scope.ok = function() {
+                        var cs = [];
+                        for (var i in $scope.selecteds) {
+                            cs.push($scope.selecteds[i].key)
+                        }
+                        $scope.parent.onSelection(cs);
                         $modalInstance.dismiss();
-                	};
+                    };
                     $scope.cancel = function() {
                         $modalInstance.dismiss();
                     };
@@ -130,8 +132,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 templateUrl: "js/shared/directives/multiSelect-chooser.html",
                 scope: ns
             });
-        	
-        	
+
+
         }
 
         // (multi)select-valinta
@@ -150,51 +152,55 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         }
 
         $scope.onSelection = function(selection) {
-        	for (var i in $scope.selection) {
-        		var s = $scope.selection[i];
-        		if (selection.indexOf(s)==-1) {
-        			$scope.selection.splice(i, 1);
-        		}
-        	}
+            for (var i in $scope.selection) {
+                var s = $scope.selection[i];
+                if (selection.indexOf(s) == -1) {
+                    $scope.selection.splice(i, 1);
+                }
+            }
 
-        	$scope.onPreselection(selection);
+            $scope.onPreselection(selection);
         }
-        
-    	// poistetaan valinnat joita ei ole (uudessa) modelissa
+
+        // poistetaan valinnat joita ei ole (uudessa) modelissa
         function filterSelection() {
-           	for (var i in $scope.selection) {
-           		if (!$scope.names[$scope.selection[i]]) {
-           			$scope.selection.splice(i,1);
-           		}
-           	}
+        	for (var i in $scope.selection) {
+                if (!$scope.names[$scope.selection[i]]) {
+                    $scope.selection.splice(i, 1);
+                }
+            }
         }
 
         // salli valintojen muuttaminen "ulkopuolelta"
-        $scope.$watch('selection', function(newValue, oldValue){
-           	for(var i=0;i<$scope.items.length;i++) {
-            	var item = $scope.items[i];
-           		if(newValue.indexOf(item.key)==-1 && item.selected){
-       				item.selected = false;
-           		} else if(newValue.indexOf(item.key)!=-1 && !item.selected) {
-           			item.selected = true;
-           		}            		
-           	}
-           	filterSelection();
+        $scope.$watch('selection', function(newValue, oldValue) {
+        	if (!$scope.initialized) {
+        		return;
+        	}
+            for (var i = 0; i < $scope.items.length; i++) {
+                var item = $scope.items[i];
+                if (newValue.indexOf(item.key) == -1 && item.selected) {
+                    item.selected = false;
+                } else if (newValue.indexOf(item.key) != -1 && !item.selected) {
+                    item.selected = true;
+                }
+            }
+            filterSelection();
             updateErrors();
         });
 
         // kuuntelija model-muutoksille
-        $scope.$watch('model', function(newValue, oldValue){
-           	init(newValue);
-           	filterSelection();
-            updateErrors();
-        });
-        	
-        // checkbox-valinta
-        $scope.toggle = function(k) {
-        	if ($scope.disabled()) {
+        $scope.$watch('model', function(newValue, oldValue) {
+        	if (!$scope.initialized) {
         		return;
         	}
+            init(newValue);
+        });
+
+        // checkbox-valinta
+        $scope.toggle = function(k) {
+            if ($scope.disabled()) {
+                return;
+            }
             var p = $scope.selection.indexOf(k);
             if (p == -1) {
                 $scope.selection.push(k);
@@ -202,52 +208,56 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 $scope.selection.splice(p, 1);
             }
             updateErrors();
-       }
+        }
 
         //a hack: scope is missing in promise function?
         var key = $scope.key;
         var value = $scope.value;
         var columns = $scope.columns;
-    	var cw = $scope.orderWith();
-    	
-    	function toObjectArray(model) {
-    		var ret = [];
-        	for (var k in model) {
-        		var e = {};
-        		e[key] = k;
-        		e[value] = model[k];
-        		ret.push(e);
-        	}
-    		return ret;    		
-    	}
-        
+        var cw = $scope.orderWith();
+
+        function toObjectArray(model) {
+            var ret = [];
+            for (var k in model) {
+                var e = {};
+                e[key] = k;
+                e[value] = model[k];
+                ret.push(e);
+            }
+            return ret;
+        }
+
         function init(model) {
-        	
-			$scope.titles = [];
-			$scope.items = [];
-			$scope.rows = [];
-	
-        	// jos model on muotoa key -> value, muunnetaan se muotoon {key: .., value: ..}
-        	for (var k in model) {
-        		if (!(model[k] instanceof Object)) {
-        			model = toObjectArray(model);
-        			break;
-        		}
-        	}
+            if (angular.isUndefined(model)) {
+                //TODO : find out why the model is undefined?
+                //Without the fix, no items are shown on html.
+                return;
+            }
+            $scope.titles = [];
+            $scope.items = [];
+            $scope.rows = [];
+
+            // jos model on muotoa key -> value, muunnetaan se muotoon {key: .., value: ..}
+            for (var k in model) {
+                if (!(model[k] instanceof Object)) {
+                    model = toObjectArray(model);
+                    break;
+                }
+            }
 
             for (var k in model) {
                 var e = model[k];
                 var w = 0;
                 if (cw) {
-                	w = cw.indexOf(e[key]);
-                    if (w==-1) {
-                    	w = cw.length;
+                    w = cw.indexOf(e[key]);
+                    if (w == -1) {
+                        w = cw.length;
                     }
                 }
                 //console.log("cw="+cw+" -> w="+w);
-                
+
                 $scope.titles.push(e[value]);
-                
+
                 $scope.items.push({
                     selected: $scope.selection.indexOf(e[key]) !== -1,
                     key: e[key],
@@ -258,12 +268,15 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             }
 
             $scope.titles.sort();
-            
+
             $scope.items.sort(function(a, b) {
                 return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
-            
+
             $scope.rows = columnize($scope.items, columns);
+            $scope.initialized = true;
+
+            filterSelection();
             updateErrors();
         }
 
@@ -283,11 +296,11 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         controller: controller,
         require: '^?form',
         link: function(scope, element, attrs, controller) {
-        	if (scope.name) {
-            	scope.isrequired = (attrs.required !== undefined);
-            	scope.errors.required = scope.isrequired;
-            	controller.$addControl({"$name": scope.name, "$error": scope.errors});
-        	}
+            if (scope.name) {
+                scope.isrequired = (attrs.required !== undefined);
+                scope.errors.required = scope.isrequired;
+                controller.$addControl({"$name": scope.name, "$error": scope.errors});
+            }
         },
         scope: {
             display: "@", // checklist | dualpane | combobox
@@ -296,18 +309,18 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             value: "@", // nimi-avain (vakio: koodiNimi)
             orderWith: "&", // lista avaimista jotka järjestetään ensimmäisiksi
             model: "=", // map jossa arvo->nimi TAI array jossa {key: .., value: ..} -olioita,
-            			// joissa key- ja value viittaavat samannimisten parametrien arvoihin
+            // joissa key- ja value viittaavat samannimisten parametrien arvoihin
             promise: "=", // async TODO yhdistä modeliin
             selection: "=", // lista jonne valinnat päivitetään
-            
+
             ttShowAll: "@", // näytä kaikki -tekstin käännösavain (combobox)
             ttShowAllTitle: "@", // näytä kaikki -dialogin otsikko (combobox)
             ttShowAllHelp: "@", // näytä kaikki -dialogin ohjeteksti (combobox)
-                
-	        // angular-form-logiikkaa varten
-	        name: "@", // nimi formissa
-	        required: "@", // jos tosi, vähintään yksi arvo vaaditaan
-	        disabled: "&"
+
+            // angular-form-logiikkaa varten
+            name: "@", // nimi formissa
+            required: "@", // jos tosi, vähintään yksi arvo vaaditaan
+            disabled: "&"
         }
     }
 

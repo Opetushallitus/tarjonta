@@ -44,15 +44,15 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         };
 
         $scope.getKoulutusPartialName = function(actionType) {
-            if (!angular.isUndefined($scope.koulutusModel.$promise)) {
-                //load&review koulutus
-                $scope.koulutusModel.$promise.then(function(koulutus) {
-                    $scope.resolvePath(actionType, koulutus);
-                })
-            } else {
+//            if (!angular.isUndefined($scope.koulutusModel.$promise)) {
+//                //load&review koulutus
+//                $scope.koulutusModel.$promise.then(function(koulutus) {
+//                    $scope.resolvePath(actionType, koulutus);
+//                })
+//            } else {
                 //create new koulutus
                 $scope.resolvePath(actionType, $scope.koulutusModel);
-            }
+           // }
         };
     }
 ]);

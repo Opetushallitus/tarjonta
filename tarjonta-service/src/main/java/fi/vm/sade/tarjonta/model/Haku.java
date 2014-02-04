@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2012-2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -118,6 +118,12 @@ public class Haku extends TarjontaBaseEntity {
     private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+
+    /**
+     * KoulutusInformation service uses this to "know" how many hakukohdes can be added to "muistilista" (application list?)
+     */
+    @Column(name = "max_hakukohdes")
+    private int maxHakukohdes = 0;
 
     public String getOid() {
         return oid;
@@ -358,6 +364,14 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
+    }
+
+    public int getMaxHakukohdes() {
+        return maxHakukohdes;
+    }
+
+    public void setMaxHakukohdes(int maxHakukohdes) {
+        this.maxHakukohdes = maxHakukohdes;
     }
 }
 
