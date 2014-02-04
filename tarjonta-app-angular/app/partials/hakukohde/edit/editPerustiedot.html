@@ -8,7 +8,7 @@
 
 		</td>
 		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
+            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing"></p>
 		</td>
 	</tr>
 
@@ -16,20 +16,20 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.haut"/>
 		<td>
-			<select class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+			<select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
 		</td>
 		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
+            <p class="error" ng-show="model.showError && tarjontaForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing"></p>
 		</td>
 	</tr>
 
     <tr data-ng-show="model.showHakuaikas">
         <th tt="kk.hakukohde.hakuaikas"/>
         <td>
-            <select class="wide" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.nimi for hakuaika in model.hakuaikas"/>
+            <select class="wide" name="hakuaikaSelect" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
         </td>
         <td>
-            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+            <p class="error" ng-show="model.showError && tarjontaForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing"></p>
         </td>
     </tr>
 
@@ -38,15 +38,16 @@
 		<th tt="kk.hakukohde.hakukelpoisuusvaatimukset"/>
 		<td>
             <multi-select
+                    required
                     model="temp"
                     selection="model.hakukohde.hakukelpoisuusvaatimusUris"
                     promise="model.hakukelpoisuusVaatimusPromise"
-                    display="checklist"/>
+                    display="dualpane"/>
 			<!-- TODO multiselect -->
 			<!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
 		</td>
 		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
+            <p class="error" ng-show="model.showError && model.hakukelpoisuusValidationErrMsg" tt="tarjonta.hakukohde.hakukelpoisuusvaatimus.missing"></p>
 		</td>
 	</tr>
 	
@@ -54,10 +55,10 @@
 	<tr class="required">
 		<th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat"/>
 		<td>
-			<input class="thin" type="number" min="1" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
+			<input name="aloituspaikatlkm" class="thin" type="number" min="1" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
 		</td>
 		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
+            <p class="error" ng-show="model.showError && tarjontaForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.missing"></p>
 		</td>
 	</tr>
 	
@@ -79,79 +80,7 @@
 		</td>
 	</tr>
 	
-	<!-- liitteiden toimitusosoite -->
-	<tr>
-		<th tt="kk.hakukohde.liitteidentoimitusosoite"/>
-		<td>
-		
-			<!-- TODO osoitedirektiivi -->
-			<input type="radio" ng-model="osoiteType"/>
-            <span tt="tarjonta.hakukohde.label.oletus.postisoite"></span>
-            <br/>
 
-			<input type="radio" ng-model="osoiteType"  value="false"/>
-            <span tt="tarjonta.hakukohde.label.muu.osoite"></span>           
-            <br/>
-
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th></th>
-		<td>			
-			<input type="text" ng-disabled="!osoiteType" placeholder="Osoite" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.osoiterivi1" required />   <br/>
-			<input type="text" ng-disabled="!osoiteType" typeahead-editable="false" ng-model="model.postinumeroarvo.arvo" typeahead-on-select="model.onKieliTypeAheadChange()" typeahead="koodi.koodiArvo for koodi in model.koodis | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'">
-			<input type="text" placeholder="Postitoimipaikka" disabled="true" data-ng-model="model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka" required />
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	
-	<!-- sähköinen toimitus -->
-	<tr>
-		<th></th>
-		<td>
-			<input type="checkbox" ng-model="voidaanToimittaaSahkoisesti"/>
-			<span tt="kk.hakukohde.voidaantoimittaa.sahkoisesti"></span>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th tt="kk.hakukohde.sahkoinentoimitusosoite"/>
-		<td>
-			<input type="text" ng-disabled="!voidaanToimittaaSahkoisesti" data-ng-required="voidaanToimittaaSahkoisesti" ng-model="model.hakukohde.sahkoinenToimitusOsoite">
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-
-	<!-- liitteiden toimituspvm -->
-	<tr>
-		<th tt="kk.hakukohde.liitteidenToimitusPvm"/>
-		<td>
-			<input type="checkbox" ng-change="model.checkboxChange()" ng-model="model.hakukohde.kaytetaanHaunPaattymisenAikaa"/>
-			<span tt="kk.hakukohde.kaytetaanHaunPaattymisenAikaa"></span><br/>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
-	<tr>
-		<th></th>
-		<td>
-
-			<date-time-picker selecteddatetime="model.hakukohde.liitteidenToimitusPvm"></date-time-picker>
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  --> 
-		</td>
-	</tr>
 
 </table>
 

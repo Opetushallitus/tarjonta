@@ -10,20 +10,26 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
      $scope.model.liitteet = [];
 
-    var liitteetResource = Liite.get({hakukohdeOid: $scope.model.hakukohde.oid});
+    if ($scope.model.hakukohde.oid !== undefined) {
 
-    var liitteetPromise = liitteetResource.$promise;
+        var liitteetResource = Liite.get({hakukohdeOid: $scope.model.hakukohde.oid});
 
-    liitteetPromise.then(function(liitteet){
+        var liitteetPromise = liitteetResource.$promise;
 
-        console.log('LIITTEET GOT: ',liitteet);
+        liitteetPromise.then(function(liitteet){
 
-        angular.forEach(liitteet.result,function(liite){
-            addLiiteToLiitteet(liite);
+            console.log('LIITTEET GOT: ',liitteet);
+
+            angular.forEach(liitteet.result,function(liite){
+                addLiiteToLiitteet(liite);
+            });
+
+
         });
 
+    }
 
-    });
+
 
     var addLiiteToLiitteet = function(liite) {
         console.log('ADDING LIITE : ', liite);

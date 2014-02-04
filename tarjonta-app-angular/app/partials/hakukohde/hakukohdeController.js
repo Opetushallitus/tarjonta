@@ -22,8 +22,11 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         $log.info("$route: ", $route);
         $log.info("$route action: ", $route.current.$$route.action);
         $log.info("SCOPE: ", $scope);
+        $log.info("CAN EDIT : ", $route.current.locals.canEdit);
+        $log.info("CAN CREATE : ", $route.current.locals.canCreate);
 
-
+        $scope.canCreate = $route.current.locals.canCreate;
+        $scope.canEdit =  $route.current.locals.canEdit;
 
         $log.info('HAKUKOHDE : ', $route.current.locals.hakukohdex.result);
         if ($route.current.locals.hakukohdex.result === undefined) {
@@ -45,8 +48,17 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
 
 
 
+
         } else {
             var hakukohdeResource = new Hakukohde( $route.current.locals.hakukohdex.result);
+
+            if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
+                hakukohdeResource.valintaperusteKuvaukset = {};
+            }
+
+            if (hakukohdeResource.soraKuvaukset === undefined) {
+                hakukohdeResource.soraKuvaukset = {};
+            }
 
             $scope.model = {
                 collapse: {

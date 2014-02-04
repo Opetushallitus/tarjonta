@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 
 import org.slf4j.Logger;
@@ -60,10 +61,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {
         LOG.info("search({})", params);
 
+        int count = (params != null) ? params.getCount() : 0;
+        int startIndex = (params != null) ? params.getStartIndex() : 0;
+
         ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>();
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-        // TODO implement the search!
+        List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
+        result.setResult(tmp);
+
+        List<String> oidList = hakuDAO.findOIDsBy(null, count, startIndex, null, null);
+
+        for (String oid : oidList) {
+            OidV1RDTO dto = new OidV1RDTO();
+            dto.setOid(oid);
+            tmp.add(dto);
+        }
+
+        LOG.info(" --> result = {}", result);
 
         return result;
     }

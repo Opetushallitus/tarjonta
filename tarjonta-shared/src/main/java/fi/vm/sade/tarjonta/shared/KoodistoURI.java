@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.shared;
 
+import com.google.common.base.Preconditions;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -126,6 +128,8 @@ public class KoodistoURI {
     public static String KOODI_POHJAKOULUTUS_PERUSKOULU_URI;
     public static String KOODI_KOHDEJOUKKO_VALMISTAVA_URI;
     public static String KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI;
+
+    public static final String PATTERN_KIELI_URI = "^%s_[a-z]{2}$";
 
     @Value("${koodisto-uris.vapaaSivistys:haunkohdejoukko_18#1}")
     public void setKoodiKohdejoukkoVapaaSivistysUri(String uri) {
@@ -394,5 +398,13 @@ public class KoodistoURI {
     @Value("${koodisto-uris.tutkintonimike_kk}")
     public void setKoodistoTutkintonimikeKk(String uri) {
         KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI = uri;
+    }
+
+    public void validateKieliUri(String kieliUri) {
+        Preconditions.checkNotNull(kieliUri, "Language uri cannot be null.");
+        Preconditions.checkArgument(Pattern.matches(
+                String.format(PATTERN_KIELI_URI, KOODISTO_KIELI_URI), kieliUri), 
+                "An invalid URI error - URI '%s' do not match to pattern '%s'.", 
+                kieliUri, String.format(PATTERN_KIELI_URI, KOODISTO_KIELI_URI));
     }
 }

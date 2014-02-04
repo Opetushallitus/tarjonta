@@ -90,11 +90,10 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusPerustiedotFormView extends GridLayout {
 
-	/**
-	 * Kieli-urit, jotka näytetään valintalistalla ensimmäisinä.
-	 */
+    /**
+     * Kieli-urit, jotka näytetään valintalistalla ensimmäisinä.
+     */
     private static final List<String> PRIORITIZED_LANG_URIS = Arrays.asList("kieli_fi", "kieli_sv", "kieli_en");
-
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
@@ -145,7 +144,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @NotNull(message = "{validation.Koulutus.suunniteltuKestoTyyppi.notNull}")
     @PropertyId("suunniteltuKestoTyyppi")
     private KoodistoComponent kcSuunniteltuKestoTyyppi;
-    
+
     /*
      * This field is visible to valmentava ja kuntouttava opetus only
      */
@@ -153,14 +152,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @Pattern(regexp = "^[0-9]$|^[0-9]+$|^[0-9]+[-/][0-9]+$|^[0-9],[0-9]$|^[0-9]+,[0-9]$|^[0-9]+,[0-9][-/][0-9]+,[0-9]$", message = "{validation.Koulutus.suunniteltuKesto.invalid}")
     @PropertyId("opintojenLaajuusTot")
     private TextField tfOpintojenLaajuus;
-    
+
     /* 
      * This field is visible to valmentava ja kuntouttava opetus only
      */
     @NotNull(message = "{validation.Koulutus.opintojenLaajuusyksikko.notNull}")
     @PropertyId("opintojenLaajuusyksikkoTot")
     private KoodistoComponent kcOpintojenLaajuusyksikko;
-    
+
     /*
      * Ammatillinen:
      * A list of key words like Lähiopetus, Etäopiskelu, Verkko-opiskelu etc.
@@ -178,24 +177,24 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     /*@NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
      @PropertyId("pohjakoulutusvaatimus")
      private KoodistoComponent kcPohjakoulutusvaatimus;*/
-    @Size(min=1, max=255, message="{validation.koulutus.tooLong.opsuLink}")
+    @Size(min = 1, max = 255, message = "{validation.koulutus.tooLong.opsuLink}")
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
+
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.nimi}")
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
+
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.titteli}")
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
-    
-    @Size(min=1, max=255, message="{validation.koulutus.yhteyshenkilo.tooLong.email}")
+
+    @Size(min = 1, max = 255, message = "{validation.koulutus.yhteyshenkilo.tooLong.email}")
     @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
-    
+
     @Pattern(regexp = "(\\+|\\-| |\\(|\\)|[0-9]){3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
@@ -204,7 +203,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @PropertyId("nimi")
     private TextField koulutuksenNimi;
 
-    
     private String initialYhtHenkTitteli;
     private String initialYhtHenkEmail;
     private String initialYhtHenkPuhelin;
@@ -221,22 +219,22 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private transient UiBuilder uiBuilder;
     private boolean isPervako = false;
     private boolean isToinenasteValmentava = false;
-    
+
     private final Set<String> valmentavatTyypit = Sets
             .newHashSet(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS
                     .getKoulutustyyppiUri(),
                     Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS
-                            .getKoulutustyyppiUri(),
+                    .getKoulutustyyppiUri(),
                     Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS
-                            .getKoulutustyyppiUri(),
+                    .getKoulutustyyppiUri(),
                     Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
-                            .getKoulutustyyppiUri(),
+                    .getKoulutustyyppiUri(),
                     Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
-                            .getKoulutustyyppiUri(),
+                    .getKoulutustyyppiUri(),
                     Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS
-                            .getKoulutustyyppiUri(),
+                    .getKoulutustyyppiUri(),
                     Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS
-                            .getKoulutustyyppiUri());
+                    .getKoulutustyyppiUri());
 
     public EditKoulutusPerustiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder, final KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
@@ -245,16 +243,17 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
-        
+
         if (model.getOid() == null || model.getOid().equals("-1")) {
+            // only in ValmentavaJaKuntouttavaOpetus
             model.setOpintojenLaajuusTot("");
             model.setOpintojenLaajuusyksikkoTot("");
         }
-        
-        isPervako = koulutusModel.getKoulutuksenTyyppi() != null 
+
+        isPervako = koulutusModel.getKoulutuksenTyyppi() != null
                 && valmentavatTyypit.contains(koulutusModel.getKoulutuksenTyyppi().getKoodi());
-        
-        isToinenasteValmentava = koulutusModel.getKoulutuksenTyyppi() != null 
+
+        isToinenasteValmentava = koulutusModel.getKoulutuksenTyyppi() != null
                 && Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodi());
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
@@ -286,7 +285,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         bicKoulutusohjelma = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, koulutusModel.getKoulutusohjelmat());
         cbKoulutusohjelma.setContainerDataSource(bicKoulutusohjelma);
-        
+
         if (!koulutusModel.isLoaded()) {
             //when data is loaded, it do not need listeners.
 
@@ -304,7 +303,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     presenter.loadKoulutusohjelmat();
                     Collections.sort(koulutusModel.getKoulutusohjelmat());
                     bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
-                    if(koulutusModel.getKoulutusohjelmat().size()==1 && isPervako) {
+                    if (koulutusModel.getKoulutusohjelmat().size() == 1 && isPervako) {
                         //automatically select if only one selection!
                         koulutusModel.setKoulutusohjelmaModel(koulutusModel.getKoulutusohjelmat().get(0));
                     }
@@ -321,7 +320,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     reload();
                 }
             });
-            
+
         }
 
         presenter.loadKoulutuskoodit();
@@ -329,8 +328,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         Collections.sort(koulutusModel.getKoulutuskoodit());
         bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
 
-        
-        if(koulutusModel.getKoulutuskoodit().size()==1 && isPervako){
+        if (koulutusModel.getKoulutuskoodit().size() == 1 && isPervako) {
             KoulutuskoodiModel km = koulutusModel.getKoulutuskoodit().get(0);
             //ainoa valinta, valitse suoraan
             koulutusModel.setKoulutuskoodiModel(km);
@@ -378,11 +376,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
         buildGridKestoRow(this, "SuunniteltuKesto");
         buildGridOpetuskieliRow(this, "Opetuskieli");
-        
+
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
         //Removed because not needed... -> OVT-4560
         //buildGridPainotus(this, "painotus");
-        
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
         //buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
@@ -588,31 +585,31 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         addSelectedFormComponents(type, cbKoulutusohjelma);
 
     }
-    
+
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         // final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey);
         kcOpetuskieli = uiBuilder.koodistoComboBox(null, KoodistoURI.KOODISTO_KIELI_URI, true);
         kcOpetuskieli.setCaptionFormatter(koodiNimiFormatter);
         kcOpetuskieli.setImmediate(true);
-        
+
         kcOpetuskieli.setComparator(new Comparator<KoodiType>() {
-			@Override
-			public int compare(KoodiType o1, KoodiType o2) {
-				final int p1 = PRIORITIZED_LANG_URIS.indexOf(o1.getKoodiUri());
-				final int p2 = PRIORITIZED_LANG_URIS.indexOf(o2.getKoodiUri());
-				if (p1==-1 && p2==-1) {
-					return o1.getKoodiArvo().compareTo(o2.getKoodiArvo());
-				} else if (p1==-1) {
-					return 1;
-				} else if (p2==-1) {
-					return -1;
-				} else {
-					return new Integer(p1).compareTo(p2);
-				}
-			}
-		});
-        
+            @Override
+            public int compare(KoodiType o1, KoodiType o2) {
+                final int p1 = PRIORITIZED_LANG_URIS.indexOf(o1.getKoodiUri());
+                final int p2 = PRIORITIZED_LANG_URIS.indexOf(o2.getKoodiUri());
+                if (p1 == -1 && p2 == -1) {
+                    return o1.getKoodiArvo().compareTo(o2.getKoodiArvo());
+                } else if (p1 == -1) {
+                    return 1;
+                } else if (p2 == -1) {
+                    return -1;
+                } else {
+                    return new Integer(p1).compareTo(p2);
+                }
+            }
+        });
+
         grid.addComponent(kcOpetuskieli);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -697,7 +694,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.addComponent(cssLayout);
         grid.newLine();
     }
-    
+
     private void buildEmptyGridRow(GridLayout grid) {
         Label lbl = new Label();
         lbl.addStyleName(Oph.SPACING_BOTTOM_30);
@@ -808,7 +805,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     public void reload() {
 
         final KoulutuskoodiModel koulutuskoodi = koulutusModel.getKoulutuskoodiModel();
-        
+
         if (koulutuskoodi.getOpintoala() != null) {
             koulutusModel.setOpintoala(koulutuskoodi.getOpintoala());
             opintoala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintoala(), KoulutusKoodistoModel.MODEL_NAME_PROPERY));
@@ -825,14 +822,16 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         }
 
         String lySuffix = "";
-        if (koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
+        if (!isPervako && koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
             koulutusModel.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
-            lySuffix = " "+new TarjontaUIHelper().getKoodiLyhytNimi(koulutuskoodi.getOpintojenLaajuusyksikko().getKoodistoUri(), I18N.getLocale());
+            if (koulutuskoodi.getOpintojenLaajuusyksikko().getKoodistoUri() != null) {
+                lySuffix = " " + new TarjontaUIHelper().getKoodiLyhytNimi(koulutuskoodi.getOpintojenLaajuusyksikko().getKoodistoUri(), I18N.getLocale());
+            }
         }
 
-        if (koulutuskoodi.getOpintojenLaajuus() != null) {
+        if (!isPervako && koulutuskoodi.getOpintojenLaajuus() != null) {
             koulutusModel.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
-            opintojenLaajuus.setValue(koulutuskoodi.getOpintojenLaajuus() + lySuffix);
+            opintojenLaajuus.setValue(koulutuskoodi.getOpintojenLaajuus().getNimi() + lySuffix);
         }
 
         if (koulutuskoodi.getKoulutuksenRakenne() != null) {
@@ -844,7 +843,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             koulutusModel.setTavoitteet(koulutuskoodi.getTavoitteet());
             tavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTavoitteet(), KoulutusKoodistoModel.MODEL_NAME_PROPERY));
         }
-
 
         if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
             koulutusModel.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
@@ -890,12 +888,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 closeNoKoulutusDialog();
             }
         });
-        
+
         noKoulutusView.setWidth("120px");
         noKoulutusView.setHeight("60px");
-        
+
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
-       
+
         getWindow().addWindow(noKoulutusDialog);
     }
 
@@ -904,5 +902,5 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             getWindow().removeWindow(noKoulutusDialog);
         }
     }
-    
+
 }

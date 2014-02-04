@@ -9,6 +9,5 @@ app.controller('HakuRoutingController', ['$scope', '$log', '$routeParams', '$rou
         $log.info("$route: ", $route);
         $log.info("$route action: ", $route.current.$$route.action);
         $log.info("SCOPE: ", $scope);
-
     }
 ]);

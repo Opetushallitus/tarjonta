@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
@@ -39,7 +39,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
     private Logger logger = LoggerFactory.getLogger(LinkingResourceImplV1.class);
 
     @Autowired
-    KoulutusSisaltyvyysDAOImpl koulutusSisaltyvyysDAO;
+    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     @Autowired
     KoulutusmoduuliDAOImpl koulutusmoduuliDAO;
@@ -273,7 +273,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
     }
 
     @Override
-    public ResultV1RDTO unlink(String parent, String child) {      
+    public ResultV1RDTO unlink(String parent, String child) {
         return multiUnlink(parent, child);
     }
 

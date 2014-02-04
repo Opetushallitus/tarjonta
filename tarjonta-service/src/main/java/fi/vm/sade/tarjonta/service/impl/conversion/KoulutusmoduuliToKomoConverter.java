@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
  * Conversion services for REST api.
@@ -33,11 +35,13 @@ import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmoduuli, KomoDTO> {
 
     @SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
@@ -50,7 +54,6 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         KomoDTO t = new KomoDTO();
 
         // TODO convert, but efficiently! t.setAlaModuulit(null);
-
         t.setCreated(null);
         t.setCreatedBy(null);
         t.setEqfLuokitusUri(s.getEqfLuokitus());
@@ -59,7 +62,11 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
         t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaKoodi());
         t.setKoulutusTyyppiUri(s.getKoulutustyyppi()); // TODO onko uri?
-        t.setLaajuusArvo(s.getLaajuusArvo());
+        t.setLaajuusArvoUri(s.getLaajuusArvo()); //koodi uri
+        if (s.getLaajuusArvo() != null) {
+            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(s.getLaajuusArvo());
+            t.setLaajuusArvo(koodiByUri != null ? koodiByUri.getKoodiArvo() : null);
+        }
         t.setLaajuusYksikkoUri(s.getLaajuusYksikko());
         t.setLukiolinjaUri(s.getLukiolinja()); // TODO onko?
         t.setModuuliTyyppi(s.getModuuliTyyppi() != null ? s.getModuuliTyyppi().name() : null);
@@ -87,7 +94,6 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         //
         // TODO check the efficiency of this... :(
         //
-
         List<String> ylaModuleOIDs = new ArrayList<String>();
         List<String> alaModuleOIDs = new ArrayList<String>();
 
@@ -106,11 +112,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setAlaModuulit(alaModuleOIDs);
 
         // LOG.debug("  --> {}", t);
-
         return t;
     }
-
-
-
 
 }

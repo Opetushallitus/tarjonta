@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.tarjonta.service.types.*;
 import net.sf.ehcache.CacheManager;
 
 import org.slf4j.Logger;
@@ -61,11 +62,6 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
@@ -112,6 +108,7 @@ public class TarjontaUIHelper {
         KoodistoURI.KOODISTO_OPINTOALA_URI,
         KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI,
         KoodistoURI.KOODISTO_KOULUTUSASTE_URI
     };
 
@@ -244,7 +241,7 @@ public class TarjontaUIHelper {
         return getKoodiNimi(koodiUriWithPossibleVersionInformation, null);
     }
 
-    public String getHakukohdeHakukentta(String hakuOid, Locale locale, String hakukohdeNimi) {
+    public String getHakukohdeHakukentta(String koulutusOid, Locale locale, String hakukohdeNimi) {
         if (hakukohdeNimi == null) {
             throw new IllegalArgumentException("Hakukohde nimi koodi uri with version string object cannot be null.");
         }
@@ -252,8 +249,30 @@ public class TarjontaUIHelper {
         StringBuilder result = new StringBuilder();
         result.append(getBestLanguageMatchesForKoodi(hakukohdeNimi, locale));
         result.append(", ");
-        result.append(getHakuKausiJaVuosi(hakuOid, locale));
+        //result.append(getHakuKausiJaVuosi(hakuOid, locale));
+        result.append(getKoulutusHakukausiJaVuosi(koulutusOid,locale));
         return result.toString();
+    }
+
+    private String getKoulutusHakukausiJaVuosi(String koulutusOid, Locale locale) {
+
+        StringBuilder koulutuksenAlkamistiedot = new StringBuilder();
+
+        KoulutuksetKysely kusely = new KoulutuksetKysely();
+        kusely.setKoulutusOid(koulutusOid);
+        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kusely);
+
+
+
+        for(KoulutusPerustieto koulutusPerustieto: vastaus.getKoulutukset()) {
+
+            koulutuksenAlkamistiedot.append(getKoodiNimi(koulutusPerustieto.getKoulutuksenAlkamiskausi().getUri(),locale));
+            koulutuksenAlkamistiedot.append(" ");
+            koulutuksenAlkamistiedot.append(koulutusPerustieto.getKoulutuksenAlkamisVuosi());
+
+        }
+
+        return koulutuksenAlkamistiedot.toString();
     }
 
     private String getHakuKausiJaVuosi(String hakuOid, Locale locale) {

@@ -92,15 +92,18 @@
         <script src="js/shared/directives/multiSelect.js"></script>
         <script src="js/shared/directives/mkTextfield.js"></script>
         <script src="js/shared/directives/richTextarea.js"></script>
+        <script src="js/shared/directives/multilangSimpleTextArea.js"></script>
         <script src="js/shared/directives/mkRichTextarea.js"></script>
         <script src="js/shared/directives/imageField.js"></script>
         <script src="js/shared/directives/controlsLayout.js"></script>
         <script src="js/shared/directives/treeField.js"></script>
         <script src="js/shared/directives/showErrors.js"></script>
+        <script src="js/shared/directives/dateTime.js"></script>
         <script src="js/shared/directives/zippy.js"></script>
 
         <script src="js/shared/filters/orderByNum.js"></script>
         <script src="js/shared/filters/dateFormat.js"></script>
+        <script src="js/shared/filters/startsWith.js"></script>
 
         <script src="partials/controllers.js"></script>
         <script src="partials/directives.js"></script>
@@ -129,14 +132,16 @@
         <script src="partials/koulutus/sisaltyvyys/liita-sisaltyvyys-ctrl.js"></script>
         <script src="partials/koulutus/sisaltyvyys/poista-sisaltyvyys-ctrl.js"></script>
 
+        <script src="partials/komo/komo-ctrl.js"></script>
+
         <script src="partials/koulutus/edit/editControllers.js"></script>
         <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
         <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
         <script src="partials/koulutus/edit/aiheet-teemat.js"></script>
         <script src="partials/koulutus/edit/koulutusConverter.js"></script>
+        <script src="partials/koulutus/edit/tutkintonimike.js"></script>
 
         <script src="partials/koulutus/edit/alkamispaiva-ja-kausi.js"></script>
-        <script src="partials/koulutus/edit/alkamispaivat.js"></script>
 
         <script src="partials/koulutus/review/reviewControllers.js"></script>
 
@@ -152,6 +157,7 @@
         <script src="partials/common/dialogService.js"></script>
 
         <script src="partials/tarjontaApp.js"></script>
+        <script src="partials/init.js"></script>
 
         <!-- TYYLIT - huomaa järjestys kun lisäilet -->
         <!-- 1. bootstrap pohjalle -->
@@ -174,8 +180,7 @@
         <link href="css/richTextarea.css" rel="stylesheet"/>
         <link href="css/mkRichTextarea.css" rel="stylesheet"/>
         <link href="css/tarjontaform.css" rel="stylesheet"/>
-      
-
+        <link href="css/dateTime.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     </head>
@@ -187,8 +192,8 @@
             <div data-ng-controller="LocalisationCtrl">
 
                 <div data-ng-switch on="renderPath[0]">
-                    <div data-ng-switch-when="foo">
-                        <div data-ng-include="'partials/koulutus/index.html'"></div>
+                    <div data-ng-switch-when="error">
+                        <div data-ng-include="'partials/error.html'"></div>
                     </div>
                     <div data-ng-switch-when="home">
                         <div data-ng-include="'partials/search/search.html'"></div>
@@ -266,6 +271,10 @@
                     <div data-ng-switch-when="koodistoTest">
                         <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
                     </div>
+                      
+                    <div data-ng-switch-when="komo">
+                        <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
+                    </div>
                 </div><!-- /renderPath[0] -->
 
                 <!--
@@ -290,90 +299,35 @@
                 -->
 
             </div>
+        </div>
 
-            <div data-ng-controller="LoadingCtrl"
-                 data-ng-show="loading"
-                 id="ajax-loader"
-                 class="{{ isModal() ? 'max' : 'min'}}">
-                <div>
-                    <img alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                    <span>{{ t("loading")}}</span>
+        <div data-ng-controller="LoadingCtrl">
+        <div id="ajax-loader" class="pre-init max ng-class: { max:isModal(), min:!isModal(), lowered:isError() }" data-ng-show="loading">
+            <div class="frame">
+                <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+                <span class="post-init spinner-msg" tt="loading" ng-show="!isError() && isTimeout(false)"></span>
+                <div class="post-init timeout" ng-show="!isError() && isTimeout(true)">
+                    <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
+                        tai järjestelmän väliaikaisesta kuormituksesta.</p>
+
+                    <a href bg-click="restart()" class="btn float-right">
+                        <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
+                    </a>
                 </div>
             </div>
+            <div class="fail">
+                <hr/>               
+                <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
 
-            <script>
-                    var init_counter = 0;
-                    var initFunction = function(id, xhr, status) {
-                        init_counter--;
+                <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>
 
-                        console.log("Got ready signal from: " + id);
-                        console.log("  status = ", status);
-                        console.log("  xhr = ", xhr);
+                <hr/>
+                <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
 
-                        if (init_counter > 0) {
-                            console.log("Got ready signal from: '" + id + "' -- still waiting for " + init_counter + " requests.");
-                        } else {
-                            console.log("OK! That was the last request, init the app!");
-
-                            angular.element(document).ready(function() {
-                                angular.module('myApp', ['app']);
-                                angular.bootstrap(document, ['myApp']);
-                            });
-                        }
-                    };
-
-                    //
-                    // Get current users info (/cas/me)
-                    //
-                    console.log("** Loading user info; from: ", window.CONFIG.env.casUrl);
-                    window.CONFIG.env.cas = {}
-                    init_counter++;
-                    jQuery.ajax(window.CONFIG.env.casUrl, {
-                        dataType: "json",
-                        success: function(xhr, status) {
-                            window.CONFIG.env.cas.userinfo = xhr;
-                            initFunction("AUTHENTICATION", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            initFunction("AUTHENTICATION FAILED", xhr, status);
-                        }
-                    });
-
-                    //
-                    // Preload "tarjonta.tila"???
-                    //
-                    console.log("** Loading tarjonta.tila info; from: " + window.CONFIG.env.tarjontaRestUrlPrefix + "tila");
-                    init_counter++;
-                    jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + "tila", {
-                        dataType: "json",
-                        success: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = xhr.result;
-                            initFunction("tarjonta.tila", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.tila"] = {};
-                            initFunction("tarjonta.tila FAILED", xhr, status);
-                        }
-                    });
-
-                    //
-                    // Preload application localisations for tarjonta
-                    //
-                    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta";
-                    console.log("** Loading localisation info; from: ", localisationUrl);
-                    init_counter++;
-                    jQuery.ajax(localisationUrl, {
-                        dataType: "json",
-                        complete: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.localisations"] = xhr.responseJSON;
-                            initFunction("localisations", xhr, status);
-                        },
-                        error: function(xhr, status) {
-                            window.CONFIG.env["tarjonta.localisations"] = [];
-                            initFunction("localisations FAILED", xhr, status);
-                        }
-                    });
-            </script>
+            </div>
         </div>
+        </div>
+
+        <script> tarjontaInit();</script>
     </body>
 </html>

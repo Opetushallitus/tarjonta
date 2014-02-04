@@ -34,6 +34,6 @@ public class ValintaApplication extends AbstractWebApplication {
     protected void initApplication() {
         window = new ValintaperustekuvausRootView();
         setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        setTheme("tarjonta");
     }
 }

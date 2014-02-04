@@ -5,7 +5,8 @@
 		<select  bindonce multiple="multiple"
 				ng-model="preselection"
 				ng-options="e.key as e.value for e in items"
-				ng-change="onPreselection(preselection)">
+				ng-change="onPreselection(preselection)"
+				ng-disabled="disabled()">
 	    </select>
 	    <ul class="selection">
 	    	<li ng-repeat="k in selection">
@@ -19,8 +20,9 @@
 	    <div>
 	        <input type="text"
 	                class="typeahead"
+	                ng-disabled="disabled()"
 	                ng-model="combo.selection"
-	                typeahead="value for value in titles | filter:$viewValue | limitTo:10"
+	                typeahead="value for value in titles | startsWith:$viewValue | limitTo:10"
 	                typeahead-on-select="onComboSelect()"
 	                typeahead-editable="false"
 	                typeahead-wait-ms="50"/>
@@ -39,7 +41,7 @@
 	<table class="checklist" ng-switch-default>
 		<tr bindonce ng-repeat="r in rows">
 			<td bindonce ng-repeat="e in r">
-				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" /> <span bo-text="e.value"/>
+				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" ng-disabled="disabled()"/> <span bo-text="e.value"/>
 			</td>
 		</tr>
 	</table>

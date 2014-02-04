@@ -1,6 +1,6 @@
 var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','ResultsTable']);
 
-app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal) {
+app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal,$log) {
 
 
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
@@ -16,6 +16,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     $scope.model.valintaperusteet = [];
 
     $scope.model.sorat = [];
+
+    $scope.model.years = [];
 
     $scope.model.userLang  =  AuthService.getLanguage();
 
@@ -34,9 +36,11 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     var getUserOrgs = function() {
 
         if (!AuthService.isUserOph())   {
+
+            $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
             OrganisaatioService.etsi({oidRestrictionList:AuthService.getOrganisations()})
                 .then(function(data){
-
+                    $log.info('OID RESTRICTION LIST : ', data);
                   getOppilaitosTyyppis(data.organisaatiot);
 
                 });
@@ -44,6 +48,57 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
     };
+
+
+    var getYears = function() {
+
+        var today = new Date();
+
+        var currentYear = today.getFullYear();
+
+        $scope.model.years.push(currentYear);
+
+        var incrementYear = currentYear;
+
+        var decrementYear = currentYear;
+
+        for (var i = 0; i < 10;i++) {
+
+
+            incrementYear++;
+
+            if (i < 2) {
+                decrementYear--;
+                $scope.model.years.push(decrementYear);
+            }
+
+
+
+            $scope.model.years.push(incrementYear);
+
+
+
+        }
+
+        if ($scope.model.searchSpec.vuosi === undefined) {
+            $scope.model.searchSpec.vuosi = currentYear;
+        }
+        $scope.model.years.sort();
+
+    };
+
+
+    var checkForUserOrgs = function() {
+
+        //If user has not selected anything for oppilaitostyyppi and has oppilaitostyyppis in userOrgTypes, then
+        //it is safe to assume that user is not ophadmin so restrict the query with first available oppilaitostyyppi
+        $log.info('SEARCH SPEC OPPILAITOSTYYPPI : ', $scope.model.searchSpec.oppilaitosTyyppi);
+        if ($scope.model.searchSpec.oppilaitosTyyppi === undefined && $scope.model.userOrgTypes.length  > 0 ) {
+            $scope.model.searchSpec.oppilaitosTyyppi =  $scope.model.userOrgTypes[0];
+            $log.info(' USER ORG TYPE SET :  ', $scope.model.userOrgTypes[0]);
+        }
+
+    }
 
     var showCreateNewDialog = function(vpkTyyppiParam) {
 
@@ -182,6 +237,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
      //getKuvaukses();
     getUserOrgs();
+    getYears();
 
     /*
 
@@ -231,18 +287,33 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     }
 
+    $scope.copyKuvaus = function(kuvaus) {
+
+        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+kuvaus.kuvauksenTyyppi +"/"+kuvaus.kuvauksenTunniste+"/COPY";
+        $location.path(kuvausEditUri);
+    }
+
     $scope.search = function() {
 
+        checkForUserOrgs();
         angular.forEach($scope.model.kuvaustyyppis,function(tyyppi){
+
+            $log.info('SEARCHING KUVAUKSES WITH : ', tyyppi);
 
             var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,tyyppi);
 
+            $scope.model.valintaperusteet = [];
+
+            $scope.model.sorat = [];
+
             searchPromise.then(function(resultData){
+
+                $log.info('GOT KUVAUS RESULT : ', resultData);
 
                 if (resultData.status === "OK") {
                     if (tyyppi === $scope.model.kuvaustyyppis[0]) {
 
-                        $scope.model.valintaperusteet = [];
+
 
                         $scope.model.valintaperusteet.push.apply($scope.model.valintaperusteet,resultData.result);
 
@@ -255,7 +326,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
                     } else if (tyyppi === $scope.model.kuvaustyyppis[1]) {
 
-                        $scope.model.sorat = [];
+
 
                         $scope.model.sorat.push.apply($scope.model.sorat,resultData.result);
 

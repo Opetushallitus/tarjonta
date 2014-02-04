@@ -220,9 +220,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "alkamispvm")
     private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
-    
-    private transient boolean showMeta = true;
-    
+
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusArvo;
     }
@@ -417,7 +415,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the opetuskielis
      */
     public Set<KoodistoUri> getOpetuskielis() {
-        return Collections.unmodifiableSet(opetuskielis);
+        return opetuskielis;
     }
 
     /**
@@ -457,7 +455,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<KoodistoUri> getOpetusmuotos() {
-        return Collections.unmodifiableSet(opetusmuotos);
+        return opetusmuotos;
     }
     
     public void addOpetusmuoto(KoodistoUri opetusmuoto) {
@@ -884,20 +882,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
-    }
-
-    /**
-     * @return the showMeta
-     */
-    public boolean isShowMeta() {
-        return showMeta;
-    }
-
-    /**
-     * @param showMeta the showMeta to set
-     */
-    public void setShowMeta(boolean showMeta) {
-        this.showMeta = showMeta;
     }
     
     public Set<KoodistoUri> getAihees() {

@@ -2,30 +2,18 @@
   Kieliriippuva data review tabeissa.
 -->
 
-<table class="tarjontaForm">   
+<table class="tarjontaForm">
     <tr><th></th><td></td><td></td></tr>
-    
+
     <!-- PERUSTIEDOT / TODO collapse -->
-    
+
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
         <td><a class="btn" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
-    
+
     <tbody ng-show="!model.collapse.perusTiedot">
-    
-    <!-- oid/tila/tyyppi -->
-    <!-- 
-    <tr>
-        <th tt="koulutus.review.perustiedot.oidTilaTyyppi"/>
-        <td colspan="2">
-            {{model.koulutus.oid}} /
-            {{model.koulutus.tila}} /
-            {{model.koulutus.koulutusmoduuliTyyppi}}
-        </td>
-    </tr>
-     -->
-    
+
     <!-- organisaation nimi -->
     <tr>
         <th tt="koulutus.review.perustiedot.organisaatio"/>
@@ -33,16 +21,16 @@
             {{model.koulutus.organisaatio.nimi}}
         </td>
     </tr>
-    
+
     <!-- koulutus -->
     <tr>
         <th tt="koulutus.review.perustiedot.koulutus"/>
         <td colspan="2">
-            {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].kaannos}}
-            <i>{{model.koulutus.koulutuskoodi.koodi.kaannos}}</i>
+            {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
+            <i>{{model.koulutus.koulutuskoodi.nimi}}</i>
         </td>
     </tr>
-    
+
     <!-- tutkinto-ohjelman tunniste -->
     <tr>
         <th tt="koulutus.review.perustiedot.tutkintoOhjelmaJaTunniste"/>
@@ -51,20 +39,20 @@
             <i>({{model.koulutus.tunniste}})</i>
         </td>
     </tr>
-    
+
     <!-- koulutusaste -->
     <tr>
         <th tt="koulutus.review.perustiedot.koulutusaste"/>
         <td colspan="2">
-            {{model.koulutus.koulutusaste.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.koulutusaste.meta[lang.koodi_uri].nimi || model.koulutus.koulutusaste.nimi }}
         </td>
     </tr>
- 
+
     <!-- koulutusala -->
     <tr>
         <th tt="koulutus.review.perustiedot.koulutusala"/>
         <td colspan="2">
-            {{model.koulutus.koulutusala.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.koulutusala.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
 
@@ -72,117 +60,119 @@
     <tr>
         <th tt="koulutus.review.perustiedot.opintoala"/>
         <td colspan="2">
-            {{model.koulutus.opintoala.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.opintoala.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-    
+
     <!-- teemat ja aiheet -->
     <tr>
         <th tt="koulutus.review.perustiedot.teematJaAiheet"/>
         <td colspan="2">
-            <span data-ng-repeat='teema in model.koulutus.teemas.meta'>{{ teema.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='aihe in model.koulutus.aihees.meta'>{{ aihe.meta[lang.koodi_uri].nimi }}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
-    
+
     <!-- tutkinto -->
     <tr>
         <th tt="koulutus.review.perustiedot.tutkinto"/>
         <td colspan="2">
-            {{model.koulutus.tutkinto.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.tutkinto.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-    
+
     <!-- tutkintonimike -->
     <tr>
         <th tt="koulutus.review.perustiedot.tutkintonimike"/>
         <td colspan="2">
-            {{model.koulutus.tutkintonimike.meta[lang.koodi_uri].kaannos}}
+            <span  ng-repeat="metas in model.koulutus.tutkintonimikes.meta">
+               {{metas.meta[lang.koodi_uri].nimi}}
+            </span>
         </td>
     </tr>
-    
+
     <!-- vaativuustaso -->
     <tr>
         <th tt="koulutus.review.perustiedot.vaativuustaso"/>
         <td colspan="2">
-            {{model.koulutus.eqf.meta[lang.koodi_uri].kaannos}}
+            {{model.koulutus.eqf.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-     
+
     <!-- opintojen laajuus -->
     <tr>
         <th tt="koulutus.review.perustiedot.opintojenLaajuus"/>
         <td colspan="2">
-            {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].kaannos}} [op]
+            {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].nimi}} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-    
-    <!-- koulutuslaji 
+
+    <!-- koulutuslaji
     <tr>
         <th tt="koulutus.review.perustiedot.koulutuslaji"/>
         <td colspan="2">
             [KOULUTUSLAJI]
         </td>
     </tr>-->
-    
+
     <!-- pohjakoulutusvaatimus -->
-    <!-- 
+    <!--
     <tr>
         <th tt="koulutus.review.perustiedot.pohjakoulutusvaatimus"/>
         <td colspan="2">
-            <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='meta in model.koulutus.pohjakoulutusvaatimukset.meta'>{{ meta.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
      -->
-    
+
     <!-- alkamispvm -->
     <tr>
         <th tt="koulutus.review.perustiedot.alkamispvm"/>
-        <td colspan="2"> 
-            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].kaannos}} {{model.koulutus.koulutuksenAlkamisvuosi}} 
-            <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | ldate }}</p>
+        <td colspan="2">
+            {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].nimi}} {{model.koulutus.koulutuksenAlkamisvuosi}}
+            <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | date:'dd.MM.yyyy' }}</p>
         </td>
     </tr>
-    
+
     <!-- suunniteltu kesto -->
     <tr>
         <th tt="koulutus.review.perustiedot.suunniteltuKesto"/>
         <td colspan="2">
-            {{ model.koulutus.suunniteltuKestoArvo}} {{ model.koulutus.suunniteltuKestoTyyppi.meta[lang.koodi_uri].kaannos}}
+            {{ model.koulutus.suunniteltuKestoArvo}} {{ model.koulutus.suunniteltuKestoTyyppi.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-    
+
     <!-- opetuskielet -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetuskielet"/>
         <td colspan="2">
-            <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
-    
+
     <!-- opetusajat -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetusajat"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
-    
+
     <!-- opetusmuodot -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetusmuodot"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusmuodos.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
-    
+
     <!-- opetuspaikat -->
     <tr>
         <th tt="koulutus.review.perustiedot.opetuspaikat"/>
         <td colspan="2">
-            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.kaannos}}{{ $last ? '' : ', ' }}</span>
+            <span data-ng-repeat='o in model.koulutus.opetusPaikkas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
         </td>
     </tr>
-    
+
     <!-- maksullisuus -->
     <tr>
         <th tt="koulutus.review.perustiedot.maksullisuus"/>
@@ -192,14 +182,14 @@
     </tr>
 
     </tbody>
-    
+
     <!-- KUVAILEVAT TIEDOT -->
-        
+
     <tr class="collapse" ng-class="model.collapse.kuvailevatTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.kuvailevatTiedot.otsikko" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot"></th>
         <td><a class="btn" href data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
-    
+
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
 
     <!-- kuva -->
@@ -209,16 +199,16 @@
             <image-field editable="false" oid="{{model.koulutus.oid}}" uri="{{lang.koodi_uri}}"></image-field>
         </td>
     </tr>
-    
+
     <tr ng-repeat="lisatieto in lisatiedot">
         <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
         <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
     </tr>
-    
+
     </tbody>
 
     <!-- SISÄLTYVÄT OPINTOKOKONAISUUDET -->
-        
+
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet"></th>
         <td>
@@ -232,9 +222,9 @@
     <tr>
         <th></th>
         <td colspan="2">
-            <tree-field 
-            names="[]" 
-            oids="model.selectedKomoOid" 
+            <tree-field
+            names="[]"
+            oids="model.selectedKomoOid"
             review-oids="null"
             fn-click-handler="null"
             fn-loaded-handler="null"
@@ -242,25 +232,38 @@
         </td>
     </tr>
 
-    </tbody> 
- 
+    </tbody>
+
 
     <!-- HAKUKOHTEET -->
-            
+
     <tr class="collapse" ng-class="model.collapse.hakukohteet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.hakukohteet.otsikko" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet"></th>
-        <td><a class="btn" href data-ng-click="doEdit($event, 'HAKUKOHTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+        <td><a class="btn" href data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde"/> <span class="icon-edit"></span></a></td>
     </tr>
-    
+
     <tbody ng-show="!model.collapse.hakukohteet">
-    
+
     <tr>
         <th></th>
         <td colspan="2">
-             [TODO hakukohteiden listaus]
+            <table class="table">
+                <tr data-ng-repeat="hakukohde in  model.hakukohteet">
+                    <td>
+                        <a ng-href="#/hakukohde/{{hakukohde.oid}}">{{hakukohde.nimi[model.koodistoLocale]}}</a>
+                    </td>
+                    <td>
+                        <div class="align-right">
+                            <!-- <a class="btn" href ><span tt="hakukohde.review.koulutus.nayta.koulutus"/> <span class="icon-eye-open"></span></a> -->
+
+                           <a class="btn" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
        </td>
     </tr>
 
     </tbody>
-    
+
 </table>

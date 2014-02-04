@@ -467,11 +467,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         labelDataBind(koulutusaste, model.getKoulutusaste());
         labelDataBind(koulutusala, model.getKoulutusala());
         labelDataBind(opintojenLaajuusyksikko, model.getOpintojenLaajuusyksikko());
-
-        if (model.getOpintojenLaajuus() != null) {
-            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(model, "opintojenLaajuus"));
-        }
-
+        labelDataBind(opintojenLaajuus, model.getOpintojenLaajuus());
         labelDataBind(tutkintonimike, model.getTutkintonimike());
         labelDataBind(koulutuksenRakenne, model.getKoulutuksenRakenne());
         labelDataBind(tavoitteet, model.getTavoitteet());

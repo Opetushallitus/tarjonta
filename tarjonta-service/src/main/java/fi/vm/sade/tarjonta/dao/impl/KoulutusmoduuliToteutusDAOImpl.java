@@ -67,8 +67,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus, String koulutusohjelma,
             List<String> opetuskielis, List<String> koulutuslajis) {
         if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0) {
-            String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND "
-                    + "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
+            String query = "SELECT komoto FROM "
+                    + "KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k "
+                    + "WHERE komoto.koulutusmoduuli = komo "
+                    + "AND komoto.pohjakoulutusvaatimus = :pkv "
+                    + "AND komoto.tarjoaja = :tarjoaja "
+                    + "AND komo.koulutusKoodi = :koulutuskoodi "
+                    + "AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi "
+                    + "AND o.koodiUri IN (:opetuskielis) "
+                    + "AND k.koodiUri IN (:koulutuslajis)";
 
             return getEntityManager()
                     .createQuery(query)
@@ -127,7 +134,6 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .join(komoto.koulutusmoduuli, komo)
                 .orderBy(komo.koulutusKoodi.asc())
                 .list(komoto);
-
     }
 
     @Override

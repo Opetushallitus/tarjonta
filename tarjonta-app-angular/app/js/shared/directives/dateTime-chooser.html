@@ -1,0 +1,50 @@
+<div id="dateTimeChooser">
+
+    <div class="modal-header">
+        <h3 tt="tarjonta.kalenteri">kalenteri</h3>
+    </div>
+    
+    <div class="modal-body">
+
+        <div class="ymcontrols">
+            <div class="float-left">
+	            <a href class="btn" ng-click="incYear(-1)"><span class="icon-fast-backward"></span></a>
+	            <a href class="btn" ng-click="incMonth(-1)"><span class="icon-step-backward"></span></a>
+            </div>
+            
+            <select class="month" ng-model="select.m" ng-options="monthNames[v] for v in months" ng-change="onComboSelect()"></select>
+            <select class="year" ng-model="select.y" ng-options="v for v in years" ng-change="onComboSelect()"></select>
+
+            <div class="float-right">
+	            <a href class="btn" ng-click="incMonth(1)"><span class="icon-step-forward"></span></a>
+	            <a href class="btn" ng-click="incYear(1)"><span class="icon-fast-forward"></span></a>
+            </div>
+        </div>
+
+        <table>
+	        <tr>
+	            <th class="week" tt="tarjonta.kalenteri.viikko">Viikko</th>
+                <th tt="tarjonta.kalenteri.viikko.ma">Maanantai</th>
+                <th tt="tarjonta.kalenteri.viikko.ti">Tiistai</th>
+                <th tt="tarjonta.kalenteri.viikko.ke">Keskiviikko</th>
+                <th tt="tarjonta.kalenteri.viikko.to">Torstai</th>
+                <th tt="tarjonta.kalenteri.viikko.pe">Perjantai</th>
+                <th tt="tarjonta.kalenteri.viikko.la">Lauantai</th>
+                <th tt="tarjonta.kalenteri.viikko.su">Sunnuntai</th>
+	        </tr>
+
+            <tr ng-repeat="e in calendar">
+                <td class="week">{{e.week}}</td>
+                <td ng-repeat="d in e.days" ng-click="onSelect(d)" ng-class="(d.other ? ' other' : '') + (d.vkl ? ' vkl' : '') + (d.selected ? ' selected' : '')">{{d.day}}</td> 
+            </tr>        
+    
+        </table>
+
+    </div>
+    
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()" tt="tarjonta.toiminnot.peruuta">(cancel)</button>
+        <button class="btn btn-primary" ng-click="ok()" tt="tarjonta.toiminnot.valitse">(ok)</button>
+    </div>
+
+</div>

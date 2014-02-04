@@ -34,6 +34,10 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
 		$scope.edit = $scope.mode()===false;
 		
+		$scope.isEdit = function() {
+			return $scope.edit && $scope.mode()!==true;
+		}
+		
 		$scope.html = function() {
 			return $sce.trustAsHtml($scope.model);
 		}
@@ -47,6 +51,9 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 		}
 		
 		$scope.startEdit = function($event) {
+			if ($scope.mode()===true) {
+				return;
+			}
 			if ($event) {
 				$event.stopPropagation();
 			}
@@ -57,7 +64,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 		}
 		
 		$scope.stopEdit = function() {
-			if ($scope.mode()==null || $scope.mode()==undefined) {
+			if ($scope.mode()!==false) {
 				$scope.edit = false;
 			}
 		}
@@ -73,7 +80,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
         scope: {
         	model: "=",  // teksti
         	mode: "&",   // boolean, jonka mukaan editorikäyttöliittymä näytetään
-        				 // - jos null tai undefined, editorin näytetään kun hiirikursori on kentän päällä
+        				 // - jos null tai undefined, editorin näytetään klikattaessa
         				 // - jos false, editori näytetään (aina)
         				 // - jos true, editoria ei näytetä
         	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä

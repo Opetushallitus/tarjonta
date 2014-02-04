@@ -1,11 +1,10 @@
-<form name="perustiedotForm">
 
     <table class="tarjontaForm">
         <!-- koulutuskoodi -->
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi"/>
-            <td>{{model.koulutuskoodi.kaannos}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
-            <td><a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/></td>
+            <td>{{model.koulutuskoodi.nimi}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
+            <td><!--a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/--></td>
         </tr>
 
         <!-- koulutusohjelma -->
@@ -16,7 +15,7 @@
                       name="koulutusohjelma" required></mk-textfield>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p> 
+            <p class="error" ng-show="uiModel.showError && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p> 
         </td>
         </tr>
 
@@ -42,40 +41,39 @@
         <!-- k. aste -->
         <tr>
             <th tt="koulutus.edit.koulutusaste"/>
-            <td>{{model.koulutusaste.kaannos}}</td>
+            <td>{{model.koulutusaste.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- k. ala -->
         <tr>
             <th tt="koulutus.edit.koulutusala"/>
-            <td>{{model.koulutusala.kaannos}}</td>
+            <td>{{model.koulutusala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- o. ala -->
         <tr>
             <th tt="koulutus.edit.opintoala"/>
-            <td>{{model.opintoala.kaannos}}</td>
+            <td>{{model.opintoala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkinto -->
         <tr>
             <th tt="koulutus.edit.tutkinto"/>
-            <td>{{model.tutkinto.kaannos}}</td>
+            <td>{{model.tutkinto.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.edit.tutkintonimike"/>
-            <td>{{model.tutkintonimike.kaannos}}</td>
-            <td></td>
+            <td><tutkintonimike model="uiModel.tutkintonimikes"></tutkintonimike></td>
         </tr>
         <tr>
             <th tt="koulutus.edit.eqf-luokitus"/>
-            <td>{{model.eqf.kaannos}}</td>
+            <td>{{model.eqf.nimi}}</td>
             <td></td>
         </tr>
 
@@ -83,10 +81,10 @@
         <tr class="required">
             <th tt="koulutus.edit.opintojen-laajuus"/> 
             <td>
-                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select>
+                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select> {{model.opintojenLaajuusyksikko.nimi}}
             </td>
             <td>
-                <p class="error" ng-show="uiModel.showError && perustiedotForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
+                <p class="error" ng-show="uiModel.showError && koulutusForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
             </td>
         </tr>
         <tr>
@@ -101,15 +99,15 @@
         <tr class="required">
             <th tt="koulutus.edit.koulutuksen-alkamispvm"/>
             <td>
-                <alkamispaiva-ja-kausi 
-                    pvms="model.koulutuksenAlkamisPvms"       
-                    vuosi="model.koulutuksenAlkamisvuosi"
-                    kausi-uri = "model.koulutuksenAlkamiskausi.uri"
-                    kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
-                </alkamispaiva-ja-kausi> 
+        <alkamispaiva-ja-kausi 
+            pvms="model.koulutuksenAlkamisPvms"       
+            vuosi="model.koulutuksenAlkamisvuosi"
+            kausi-uri = "model.koulutuksenAlkamiskausi.uri"
+            kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
+        </alkamispaiva-ja-kausi> 
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.alkamisPvm.$error.required" tt="koulutus.edit.koulutuksen-alkamispvm.required"/>
+          
         </td>
         </tr>
 
@@ -121,7 +119,7 @@
                 <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKestoTyyppi.koodis | orderBy:'koodiNimi'"></select>
             </td>
             <td>
-                <p class="error" ng-show="uiModel.showError && (perustiedotForm.suunniteltuKestoArvo.$error.required || perustiedotForm.suunniteltuKestoTyyppi.$error.required)"
+                <p class="error" ng-show="uiModel.showError && (koulutusForm.suunniteltuKestoArvo.$error.required || koulutusForm.suunniteltuKestoTyyppi.$error.required)"
                    tt="koulutus.edit.suunniteltu-kesto.required"/>
             </td>
         </tr>
@@ -139,12 +137,12 @@
             model="uiModel.tmp"
             selection="uiModel.opetuskielis.uris"
             promise="uiModel.opetuskielis.promise"
-            display="dualpane"
+            display="combobox"
             name="opetuskielis" required/>
 
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required"/>
         </td>
         </tr>
         <tr>
@@ -189,7 +187,7 @@
             name="opetusAikas" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required"/>
         </td>
         </tr>
 
@@ -205,7 +203,7 @@
             name="opetusmuodos" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required"/>
         </td>
         </tr>
 
@@ -221,7 +219,7 @@
             name="opetusPaikkas" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required"/>
         </td>
         </tr>
 
@@ -232,7 +230,7 @@
         <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>        
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && perustiedotForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
+            <!--p class="error" ng-show="uiModel.showError && koulutusForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/-->
         </td>
         </tr>
         <tr>
@@ -255,4 +253,4 @@
 
 
     </table>
-</form>
+

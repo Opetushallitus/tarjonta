@@ -1418,7 +1418,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (model.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
             return model.getEditedHakukohdeNimi();
         }
-        return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        //return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        return uiHelper.getHakukohdeHakukentta(model.getKomotoOids().get(0),I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
     public ListHakukohdeView getHakukohdeListView() {
@@ -1674,7 +1675,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
         //OVT-6477 valmentava ja kuntouttava saa olla useita
-        if (Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
+        //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
+        if (Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());

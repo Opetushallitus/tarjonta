@@ -1,0 +1,13 @@
+<span>
+    <span ng-if="ctrl.isMulti">
+        <multi-select      
+                      key="uri"
+                      value="nimi"
+                      order-with="userLanguages"
+                      model="ctrl.data"
+                      selection="model.uris"
+                      display="dualpane"
+                      name="tutkintonimike" required/>
+    </span>
+    <span ng-if="!ctrl.isMulti" ng-repeat="(key, value) in model.meta">{{value.nimi}}</span>
+</span>

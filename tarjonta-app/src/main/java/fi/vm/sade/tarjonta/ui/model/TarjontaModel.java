@@ -314,9 +314,10 @@ public class TarjontaModel extends BaseUIViewModel {
 * @param rootOrganisationOid the root organisation Oid to set
      */
     public void setRootOrganisaatioOid(String rootOrganisationOid) {
-        Preconditions.checkNotNull(rootOrganisationOid, "Organisation root OID cannot be null.");
+        
+        //Preconditions.checkNotNull(rootOrganisationOid, "Organisation root OID cannot be null.");
 
-        this.rootOrganisaatioOid = rootOrganisationOid;
+        this.rootOrganisaatioOid = "1.2.246.562.10.00000000001";
     }
 
     /**

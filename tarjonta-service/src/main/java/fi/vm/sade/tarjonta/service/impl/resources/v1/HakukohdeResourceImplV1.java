@@ -25,6 +25,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
@@ -77,7 +79,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-    
+
     @Autowired(required=true)
     TarjontaSearchService tarjontaSearchService;
 
@@ -96,7 +98,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired
     private ConverterV1 converter;
 
-    
+    @Autowired
+    private PermissionChecker permissionChecker;
+
+
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
@@ -107,6 +112,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas
                 : new ArrayList<String>();
 
+
+
         HakukohteetKysely q = new HakukohteetKysely();
         q.setNimi(searchTerms);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
@@ -115,7 +122,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         if(hakukohdeOid!=null) {
             q.setHakukohdeOid(hakukohdeOid);
         }
-        
+
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
 
         for (String s : hakukohdeTilas) {
@@ -124,6 +131,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
+
+
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
@@ -136,7 +145,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
        if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstis() != null && hakukohde.getValintaperusteKuvaus().getTekstis().size() > 0) {
            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
 
-           HashMap<String,String> tekstis = converter.convertMonikielinenTekstiToStringHashMap(hakukohde.getValintaperusteKuvaus());
+           HashMap<String,String> tekstis = converter.convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false);
            result.setStatus(ResultV1RDTO.ResultStatus.OK);
            result.setResult(tekstis);
 
@@ -157,10 +166,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-            MonikielinenTeksti valintaPerusteetMonikielinen = converter.convertStringHashMapToMonikielinenTeksti(valintaPerusteet);
+            MonikielinenTeksti valintaPerusteetMonikielinen = converter.convertMapToMonikielinenTeksti(valintaPerusteet);
 
             hakukohde.setValintaperusteKuvaus(valintaPerusteetMonikielinen);
-
+            //TODO : Enable
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             hakukohdeDao.update(hakukohde);
 
             ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
@@ -183,8 +193,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-            MonikielinenTeksti soraKuvaukset = converter.convertStringHashMapToMonikielinenTeksti(sorat);
+            MonikielinenTeksti soraKuvaukset = converter.convertMapToMonikielinenTeksti(sorat);
             hakukohde.setSoraKuvaus(soraKuvaukset);
+            //TODO: Fix it
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             hakukohdeDao.update(hakukohde);
 
             ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
@@ -263,17 +275,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
 
         LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
-        if (oid != null && oid.length() > 0) {
+        if (oid != null && oid.trim().length() > 0) {
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
         HakukohdeV1RDTO hakukohdeRDTO = converter.toHakukohdeRDTO(hakukohde);
 
         if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
-              hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste()));
+              hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste(),hakukohdeRDTO.getSoraKuvausKielet()));
         }
 
         if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
-             hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste()));
+             hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet()));
         }
 
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
@@ -289,15 +301,24 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
-    private HashMap<String,String> getKuvauksetWithId(Long kuvausId) {
+    private HashMap<String,String> getKuvauksetWithId(Long kuvausId, Set<String> kielet) {
 
         HashMap<String,String> kuvaukset = new HashMap<String,String>();
 
         ValintaperusteSoraKuvaus kuvaus = kuvausDAO.read(kuvausId);
 
-        for (MonikielinenMetadata meta: kuvaus.getTekstis()) {
-            kuvaukset.put(meta.getKieli(),meta.getArvo());
+        if (kielet != null ) {
+            for (MonikielinenMetadata meta: kuvaus.getTekstis()) {
+                for (String kieli : kielet) {
+                    if (kieli.trim().equals(meta.getKieli().trim())) {
+                        kuvaukset.put(meta.getKieli(),meta.getArvo());
+                    }
+
+                }
+
+            }
         }
+
 
         return kuvaukset;
 
@@ -341,6 +362,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         hakukohdeRDTO.setOid(null);
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
+        hakukohde.setLastUpdateDate(new Date());
 
         LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
@@ -352,6 +374,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
           hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
 
         }
+        //TODO: Should check createHakukohde ? It uses hakukohdeTyyppi which is WS-specific, if user has right to create
+        //koulutus for organization doesn't he have the right to create hakukohdes also ?
+        String koulutusTarjoajaOid = hakukohdeRDTO.getTarjoajaOids().iterator().next();
+        //TODO: Fix it
+        //permissionChecker.checkCreateKoulutus(koulutusTarjoajaOid);
+
+
 
         hakukohde = hakukohdeDao.insert(hakukohde);
 
@@ -394,8 +423,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-
+        hakukohde.setLastUpdateDate(new Date());
         Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
+        //TODO: Fix it
+        //permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
 
         //These are updated in a separate resource
         hakukohde.getValintakoes().clear();
@@ -449,6 +480,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<Boolean> deleteHakukohde(String oid) {
         try {
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
+            //TODO: Fix it
+            //permissionChecker.checkRemoveHakukohde(hakukohde.getOid());
+
             if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
                 for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
                     koulutus.removeHakukohde(hakukohde);
@@ -526,7 +560,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
-
+            //Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            //TODO : Fix it
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
             if (hakukohdeOid != null && valintakoe != null) {
                 LOG.debug("INSERTING VALINTAKOE : {} with kieli : {}" , valintakoe.getValintakoeNimi(), valintakoe.getKieli() );
@@ -567,7 +603,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         try {
-
+            //TODO: Fix it
+            //Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             Valintakoe valintakoe = converter.toValintakoe(valintakoeV1RDTO);
 
             List<ValintakoeV1RDTO> valintakokees = new ArrayList<ValintakoeV1RDTO>();
@@ -611,7 +649,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<Boolean> removeValintakoe(String hakukohdeOid, String valintakoeOid) {
         try {
-
+            //TODO: Fix it
+            //Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             LOG.debug("REMOVEVALINTAKOE: {}", valintakoeOid);
             Valintakoe valintakoe =  hakukohdeDao.findValintaKoeById(valintakoeOid);
             hakukohdeDao.removeValintakoe(valintakoe);
@@ -682,7 +722,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
          try {
-
+             //TODO: Fix it
+             //Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+             //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
              List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
              if (validationMessageses.size() > 0) {
                  ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
@@ -722,7 +764,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
         try {
-
+            //TODO: Fix it
+            // Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
             if (validationMessageses.size() > 0) {
                 ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
@@ -764,7 +808,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, String liiteId) {
 
         try {
-
+            //TODO: Fix it
+            //Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
+            //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
             HakukohdeLiite hakukohdeLiite = hakukohdeDao.findHakuKohdeLiiteById(liiteId);
 
 
@@ -808,7 +854,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         return komotos;
     }
-    
+
     @Override
     @Transactional(readOnly = false)
     public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
@@ -843,7 +889,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
 
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-
+        //TODO: Fix it
+        //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
         List<KoulutusmoduuliToteutus> liitettavatKomotot = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses);
 
         if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
@@ -876,7 +923,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(hakukohdeOid);
-
+        //TODO: Fix it
+        //permissionChecker.checkUpdateHakukohde(hakukohde.getOid());
         if (hakukohde != null) {
 
             List<KoulutusmoduuliToteutus> komotoToRemove = new ArrayList<KoulutusmoduuliToteutus>();
@@ -911,6 +959,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDao.update(hakukohde);
+                    try {
+                        solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                    }  catch (Exception exp ){
+
+                    }
                 } else {
 
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);

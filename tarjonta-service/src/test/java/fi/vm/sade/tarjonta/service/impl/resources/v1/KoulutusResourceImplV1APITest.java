@@ -23,6 +23,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
@@ -37,27 +38,35 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class })
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
 
     private static final Integer VUOSI = 2013;
+    private static final String OPETUSAIKAS = "opetusaikas";
+    private static final String OPETUSPAIKKAS = "opetuspaikkas";
     private static final String KAUSI_KOODI_URI = "kausi_k";
-    private static final String LAAJUUS_ARVO = "laajuus_arvo";
+    private static final String LAAJUUSARVO = "laajuusarvo";
+    private static final String LAAJUUSYKSIKKO = "laajuusyksikko";
     private static final String KOULUTUSOHJELMA = "koulutusohjelma";
     private static final String URI_KIELI_FI = "kieli_fi";
     private static final String LOCALE_FI = "FI";
@@ -80,8 +89,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
     private static final String TUNNISTE = "tunniste_txt";
     private static final String SUUNNITELTU_KESTO_VALUE = "10";
     private static final String SUUNNITELTU_KESTO = "suunniteltu_kesto";
-    private static final String[] PERSON = { "henkilo_oid", "firstanames",
-            "lastname", "Mr.", "oph@oph.fi", "12345678" };
+    private static final String[] PERSON = {"henkilo_oid", "firstanames",
+        "lastname", "Mr.", "oph@oph.fi", "12345678"};
     private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
 
     private static String toKoodiUriStr(final String type) {
@@ -120,17 +129,22 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
 
     @Before
     public void setup() {
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
+
         Mockito.stub(organisaatioService.findByOid(ORGANISAATIO_OID)).toReturn(
                 getOrganisaatio(ORGANISAATIO_OID));
         stubKoodi(koodiService, "kieli_fi", "FI");
         stubKoodi(koodiService, "koulutuskoodi_uri", "FI");
         stubKoodi(koodiService, "tutkinto_uri", "FI");
-        stubKoodi(koodiService, "laajuus_arvo_uri", "FI");
+        stubKoodi(koodiService, "laajuusarvo_uri", "FI");
+        stubKoodi(koodiService, "laajuusyksikko_uri", "FI");
         stubKoodi(koodiService, "koulutusaste_uri", "FI");
         stubKoodi(koodiService, "koulutusala_uri", "FI");
         stubKoodi(koodiService, "opintoala_uri", "FI");
         stubKoodi(koodiService, "tutkintonimike_uri", "FI");
         stubKoodi(koodiService, "aihees_uri", "FI");
+        stubKoodi(koodiService, "opetusaikas_uri", "FI");
+        stubKoodi(koodiService, "opetuspaikkas_uri", "FI");
         stubKoodi(koodiService, "opetuskieli_uri", "FI");
         stubKoodi(koodiService, "opetusmuoto_uri", "FI");
         stubKoodi(koodiService, "pohjakoulutus_uri", "FI");
@@ -154,7 +168,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
-                vastaus);
+                        vastaus);
     }
 
     private KoodiType getKoodiType(String uri, String arvo) {
@@ -206,9 +220,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         /*
          * KOMO data fields:
          */
-        dto.getKoulutusohjelma()
-                .getMeta()
-                .put(URI_KIELI_FI, toMetaValue("koulutusohjelma", URI_KIELI_FI));
+
+        meta(dto.getKoulutusohjelma(), URI_KIELI_FI, toMetaValue("koulutusohjelma", URI_KIELI_FI));
         dto.getKoulutusohjelma()
                 .getTekstis()
                 .put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
@@ -217,7 +230,6 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));
         dto.setTutkinto(toKoodiUri(TUTKINTO));
-        dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
         dto.setEqf(toKoodiUri(EQF));
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
@@ -228,23 +240,15 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
-        dto.getAihees().getMeta().put(URI_KIELI_FI, toKoodiUri(AIHEES));
-        dto.getOpetuskielis().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(OPETUSKIELI));
-        dto.getOpetusmuodos().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(OPETUMUOTO));
-        dto.getAmmattinimikkeet().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(AMMATTINIMIKE));
-        dto.getPohjakoulutusvaatimukset().getMeta()
-                .put(URI_KIELI_FI, toKoodiUri(POHJAKOULUTUS));
+        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, OPETUSAIKAS);
+        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, OPETUSPAIKKAS);
 
-        dto.getAihees().getUris().put(toKoodiUriStr(AIHEES), 1);
-        dto.getOpetuskielis().getUris().put(toKoodiUriStr(OPETUSKIELI), 1);
-        dto.getOpetusmuodos().getUris().put(toKoodiUriStr(OPETUMUOTO), 1);
-        dto.getAmmattinimikkeet().getUris()
-                .put(toKoodiUriStr(AMMATTINIMIKE), 1);
-        dto.getPohjakoulutusvaatimukset().getUris()
-                .put(toKoodiUriStr(POHJAKOULUTUS), 1);
+        koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, TUTKINTONIMIKE);
+        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, AIHEES);
+        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, OPETUSKIELI);
+        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, OPETUMUOTO);
+        koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, AMMATTINIMIKE);
+        koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, POHJAKOULUTUS);
 
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
@@ -253,7 +257,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
                 new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], PERSON[5], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUS_ARVO));
+        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = koulutusResource
                 .postKorkeakouluKoulutus(dto);
@@ -261,7 +266,20 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         KoulutusKorkeakouluV1RDTO result = v.getResult();
         String oid = result.getKomotoOid();
 
-        ResultV1RDTO v1 = koulutusResource.findByOid(oid, false);
+        
+        String strErrorKeys = "";
+        if (v.getErrors() != null && !v.getErrors().isEmpty()) {
+            
+            for (ErrorV1RDTO d : v.getErrors()) {
+                strErrorKeys += d.getErrorMessageKey() + " ";
+            }
+        }
+
+        assertEquals("Validation errors keys : " + strErrorKeys, true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+
+        assertNotNull("missing komoto oid", oid);
+
+        ResultV1RDTO v1 = koulutusResource.findByOid(oid, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(1, result.getYhteyshenkilos().size());
 
@@ -269,9 +287,24 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         result.getYhteyshenkilos().clear();
 
         koulutusResource.postKorkeakouluKoulutus(result);
-        v1 = koulutusResource.findByOid(oid, false);
+        v1 = koulutusResource.findByOid(oid, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(0, result.getYhteyshenkilos().size());
 
+    }
+
+    private static KoodiV1RDTO meta(final KoodiV1RDTO dto, final String kieli, final KoodiV1RDTO metaValue) {
+        dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+        return dto.getMeta().put(kieli, metaValue);
+    }
+
+    private void koodiUrisMap(final KoodiUrisV1RDTO dto, final String kieliUri, final String fieldName) {
+        meta(dto, URI_KIELI_FI, toKoodiUri(fieldName));
+
+        if (dto.getUris() == null) {
+            dto.setUris(Maps.<String, Integer>newHashMap());
+        }
+
+        dto.getUris().put(toKoodiUriStr(fieldName), 1);
     }
 }

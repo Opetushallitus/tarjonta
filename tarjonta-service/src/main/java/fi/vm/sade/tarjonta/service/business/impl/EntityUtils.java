@@ -460,7 +460,7 @@ public final class EntityUtils {
         /*
          * Optional data
          */
-        tyyppi.setLaajuusarvoUri(parentKomo.getLaajuusArvo());
+        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo() != null && !komo.getLaajuusArvo().isEmpty() ? komo.getLaajuusArvo() : parentKomo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
@@ -759,12 +759,36 @@ public final class EntityUtils {
         return KoulutusasteTyyppi.fromValue(koulutustyyppi);
     }
 
+     public static void keepSelectedKoodistoUri(Set<KoodistoUri> allDates, KoodistoUri keepDates) {
+        keepSelectedKoodistoUris(allDates, Sets.<KoodistoUri>newHashSet(keepDates));
+    }
+    
+    /**
+     * Remove all orphaned koodisto uri objects from a set of koodisto uri objects.
+     *
+     * @param allUris
+     * @param keepUris
+     */
+    public static void keepSelectedKoodistoUris(Set<KoodistoUri> allUris, Set<KoodistoUri> keepUris) {
+        Set<KoodistoUri> removableDates = Sets.<KoodistoUri>newHashSet(allUris);
+
+        for (KoodistoUri uri : keepUris) {
+            if (removableDates.contains(uri)) {
+                removableDates.remove(uri);
+            }
+        }
+
+        for (KoodistoUri uri : removableDates) {
+            allUris.remove(uri);
+        }
+    }
+
     public static void keepSelectedDates(Set<Date> allDates, Date keepDates) {
         keepSelectedDates(allDates, Sets.<Date>newHashSet(keepDates));
     }
 
     /**
-     * Remove not selected dates from a set of dates.
+     * Remove all orphaned date objects from a set of date objects.
      *
      * @param allDates
      * @param keepDates

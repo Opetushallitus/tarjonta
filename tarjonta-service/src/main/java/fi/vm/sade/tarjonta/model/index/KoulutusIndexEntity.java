@@ -18,7 +18,6 @@ public class KoulutusIndexEntity {
     private String koulutusohjelmaKoodi;
     private String lukiolinja;
     private String koulutusKoodi;
-    private String tutkintonimike;
     private Date koulutuksenAlkamisPvm;
     private TarjontaTila tila;
     private String koulutusmoduuliOid;
@@ -39,8 +38,7 @@ public class KoulutusIndexEntity {
     @QueryProjection
     public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
             TarjontaTila tila, String koulutusTyyppi,
-            String koulutusmoduuliOid, String koulutusKoodi,
-            String tutkintoNimike, String koulutustyyppi, String lukiolinja,
+            String koulutusmoduuliOid, String koulutusKoodi, String lukiolinja,
             String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi) {
         this.koulutusId = id;
         this.oid = oid;
@@ -48,7 +46,6 @@ public class KoulutusIndexEntity {
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
         this.koulutusKoodi = koulutusKoodi;
-        this.tutkintonimike = tutkintoNimike;
         this.koulutusTyyppi = koulutusTyyppi;
         this.lukiolinja = lukiolinja;
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
@@ -101,10 +98,6 @@ public class KoulutusIndexEntity {
         return koulutusKoodi;
     }
 
-    public String getTutkintonimike() {
-        return tutkintonimike;
-    }
-
     public Date getKoulutuksenAlkamisPvm() {
         return koulutuksenAlkamisPvm;
     }
@@ -131,8 +124,7 @@ public class KoulutusIndexEntity {
                 + ", tarjoaja=" + tarjoaja + ", koulutusTyyppi="
                 + koulutusTyyppi + ", koulutusohjelmaKoodi="
                 + koulutusohjelmaKoodi + ", lukiolinja=" + lukiolinja
-                + ", koulutusKoodi=" + koulutusKoodi + ", tutkintonimike="
-                + tutkintonimike + ", koulutuksenAlkamisPvm="
+                + ", koulutusKoodi=" + koulutusKoodi + ", koulutuksenAlkamisPvm="
                 + koulutuksenAlkamisPvm + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus

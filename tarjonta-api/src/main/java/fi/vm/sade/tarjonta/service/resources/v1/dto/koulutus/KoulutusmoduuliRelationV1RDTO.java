@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -36,12 +38,14 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO opintoala;
     @ApiModelProperty(value = "OPH tutkinto-koodi", required = true)
     private KoodiV1RDTO tutkinto;
-    @ApiModelProperty(value = "OPH tutkintonimike-koodi (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
-    private KoodiV1RDTO tutkintonimike;
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
+    private KoodiUrisV1RDTO tutkintonimikes;
     @ApiModelProperty(value = "EQF-koodi", required = true)
     private KoodiV1RDTO eqf;
-    @ApiModelProperty(value = "Opintojen laajuuden numeraalinen arvo", required = true)
+    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuus;
+    @ApiModelProperty(value = "Opintojen laajuuden yksikko", required = true)
+    private KoodiV1RDTO opintojenLaajuusyksikko;
 
     /**
      * @return the koulutuskoodi
@@ -116,15 +120,19 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     /**
      * @return the tutkintonimike
      */
-    public KoodiV1RDTO getTutkintonimike() {
-        return tutkintonimike;
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (this.tutkintonimikes == null) {
+            this.tutkintonimikes = new KoodiUrisV1RDTO();
+        }
+
+        return tutkintonimikes;
     }
 
     /**
-     * @param tutkintonimike the tutkintonimike to set
+     * @param tutkintonimikes the tutkintonimikes to set
      */
-    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
     }
 
     /**
@@ -153,6 +161,20 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
      */
     public void setOpintojenLaajuus(KoodiV1RDTO opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
+    }
+
+    /**
+     * @return the opintojenLaajuusyksikko
+     */
+    public KoodiV1RDTO getOpintojenLaajuusyksikko() {
+        return opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @param opintojenLaajuusyksikko the opintojenLaajuusyksikko to set
+     */
+    public void setOpintojenLaajuusyksikko(KoodiV1RDTO opintojenLaajuusyksikko) {
+        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
     }
 
 }

@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.shared;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -115,6 +116,10 @@ public class TarjontaKoodistoHelper {
         return result;
     }
 
+    public KoodiType convertKielikoodiToKoodiType(final String kieli) {
+        return getKoodiByUri(convertKielikoodiToKieliUri(kieli));
+    }
+
     public static String convertKieliUriToKielikoodi(String kieli) {
         if (kieli == null || (kieli != null && kieli.length() == 2)) {
             //return null or real lang code
@@ -182,7 +187,7 @@ public class TarjontaKoodistoHelper {
             result[0] = koodiUriWithVersion.substring(0, index);
             result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
         } else {
-            LOG.warn("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
+            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
             result[0] = koodiUriWithVersion;
             result[1] = "-1";
         }
@@ -257,28 +262,60 @@ public class TarjontaKoodistoHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         LOG.debug("getKoodiNimi({}, {})", koodiUriWithPossibleVersionInformation, locale);
 
-        String result = null;
-
         if (locale == null) {
             locale = I18N.getLocale();
         }
 
         KoodiType koodi = getKoodiByUri(koodiUriWithPossibleVersionInformation);
-        if (koodi == null) {
-            result = null;
+        return getNimiByKoodi(koodi, locale);
+    }
+
+    public KoodiType getKoodi(final String uri, int version) {
+        Preconditions.checkNotNull(uri, "koodi URI cannot be null");
+        SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
+
+        List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
+        if (queryResult != null && queryResult.size() == 1) {
+            return queryResult.get(0);
         } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get koodi nimi (name) with given uri, version and locale.
+     *
+     * @param uri
+     * @param version
+     * @param locale
+     * @return
+     */
+    public String getKoodiNimi(final String uri, final int version, Locale locale) {
+        LOG.debug("getKoodiNimi({}, {})", uri, locale);
+
+        if (locale == null) {
+            locale = I18N.getLocale();
+        }
+
+        final KoodiType koodi = getKoodi(uri, version);
+        if (koodi != null) {
+            return getNimiByKoodi(koodi, locale);
+        } else {
+            return null;
+        }
+    }
+
+    public String getNimiByKoodi(final KoodiType koodi, final Locale locale) {
+        if (koodi != null) {
 
             // Get metadata
             KoodiMetadataType kmdt = getKoodiMetadataForLanguage(koodi, locale);
 
             if (kmdt != null) {
-                result = kmdt.getNimi();
+                return kmdt.getNimi();
             }
         }
-
-        LOG.debug("  --> result = {}", result);
-
-        return result;
+        return null;
     }
 
     /**
@@ -292,7 +329,7 @@ public class TarjontaKoodistoHelper {
         if (koodiType == null) {
             return null;
         }
-        return getKoodiNimi(createKoodiUriWithVersion(koodiType), locale);
+        return getNimiByKoodi(koodiType, locale);
     }
 
     /**

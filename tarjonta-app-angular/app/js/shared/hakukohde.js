@@ -27,6 +27,11 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
+
+        remove : {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
         save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -156,6 +161,31 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
 
             return promise.promise;
+
+        } ,
+
+        getHakukohdeKoulutukses : function(hakukohdeOid) {
+
+            if (hakukohdeOid !== undefined) {
+
+                var promise = $q.defer();
+
+                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
+
+                $http.get(getHakukohdeKoulutuksesUri)
+                    .success(function(data){
+                       promise.resolve(data);
+                    })
+                    .error(function(data){
+                      promise.resolve(data);
+                    });
+
+
+                return promise.promise;
+
+            } else {
+                return undefined;
+            }
 
         }
 

@@ -18,7 +18,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
             function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
-                $log.info("HakuEditController()");
+                $log.info("HakuEditController()", $scope);
 
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
@@ -59,6 +59,23 @@ app.controller('HakuEditController',
                     $log.info("goToReview()");
                 };
 
+                $scope.checkHaunNimiValidity = function() {
+                    $log.info("checkHaunNimiValidity()");
+                    var result = false;
+
+                    // At least one name should have real value
+                    angular.forEach($scope.model.haku.nimi, function (value, key) {
+                        result = result || !value;
+
+                        // regexp check for empty / whitespace
+                        // $log.info("key: " + key + " -- value: " + value);
+                    });
+
+                    // TODO check that at leas kieli_fi is defined?
+
+                    return result;
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
                     var model = {
@@ -69,6 +86,10 @@ app.controller('HakuEditController',
                         collapse: {
                             model: true
                         },
+
+                        // Preloaded Haku result
+                        hakux : $route.current.locals.hakux,
+
                         haku: {
                             "nimi": {
                                 "kieli_fi": "suomi",
@@ -76,19 +97,74 @@ app.controller('HakuEditController',
                                 "kieli_en": "englanti",
                                 "kieli_ay": "aimara"
                             },
-                            "hakutapaUri": "hakutapa_02",
-                            "haunkohdejoukkoUri": "haunkohdejoukko_10",
-                            "alkamiskausiUri": "kausi_k",
-                            "kausiUri": "kausi_s",
-                            "hakutyyppiUri": "hakutyyppi_02",
-                            "kausiVuosi": 2013,
-                            "alkamiskausiVuosi": 2014,
                             hakuaikas: [
-                                {nimi: "Hakuajan nimi 1", alkaa: new Date(), loppuu: new Date()},
-                                {nimi: "Hakuajan nimi 2", alkaa: new Date(), loppuu: new Date()}
+                                {nimi: null, alkaa: new Date(), loppuu: new Date()}
                             ],
-                            hakulomakeKaytaJarjestemlmanOmaa: true
+
+                            // State of the checkbox
+                            hakulomakeKaytaJarjestemlmanOmaa: !!$route.current.locals.hakux.hakulomakeUri
                         },
+
+                        parameter: {
+                            // Tarjonnan julkaisu ja hakuaika
+                            PH_TJT : new Date(),
+                            PH_HKLPT : new Date(),
+                            PH_HKMT : new Date(),
+
+                            // Valinnat ja sijoittelu
+                            PH_KKM_S : new Date(),
+                            PH_KKM_E : new Date(),
+                            PH_HVVPTP : new Date(),
+                            PH_KTT_S : new Date(),
+                            PH_KTT_E : new Date(),
+                            PH_OLVVPKE_S : new Date(),
+                            PH_OLVVPKE_E : new Date(),
+                            PH_VLS_S : new Date(),
+                            PH_VLS_E : new Date(),
+                            PH_SS_S : new Date(),
+                            PH_SS_E : new Date(),
+                            PH_SSAVTM : true,
+                            PH_SST : 48,
+                            PH_SSKA : "23:59",
+                            PH_VTSSV : new Date(), // kk
+                            PH_VSSAV : new Date(), // kk
+
+                            // Tulokset ja paikan vastaanotto
+                            PH_JKLIP : new Date(),
+                            PH_HKP : new Date(),
+                            PH_VTJH_S : new Date(),
+                            PH_VTJH_E : new Date(),
+                            PH_EVR : new Date(),
+                            PH_OPVP : new Date(),
+                            PH_HPVOA : 7,
+
+                            // Lisähaku
+                            PH_HKTA : new Date(),
+                            // PH_HKP : new Date(),
+
+                            // Hakukauden parametrit
+                            PHK_PLPS_S : new Date(),
+                            PHK_PLPS_E : new Date(),
+                            PHK_PLAS_S : new Date(),
+                            PHK_PLAS_E : new Date(),
+                            PHK_LPAS_S : new Date(),
+                            PHK_LPAS_E : new Date(),
+
+                            // Tiedonsiirto
+                            PHK_KTTS : new Date(),
+                            PHK_TAVS_S : new Date(),
+                            PHK_TAVS_E : new Date(),
+                            PHK_TAVSM : true,
+                            PHK_KAVS_S : new Date(),
+                            PHK_KAVS_E : new Date(),
+                            PHK_KAVSM : true,
+                            PHK_VTST : 2,
+                            PHK_VTSAK : "23:59",
+
+                            place: "Holder"
+                        },
+
+
                         place: "holder"
                     };
 

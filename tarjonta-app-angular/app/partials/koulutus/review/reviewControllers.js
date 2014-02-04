@@ -1,9 +1,15 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory) {
+app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService,AuthService) {
         $log.info("BaseReviewController()");
+
+       if(angular.isUndefined( $scope.koulutusModel.result)){
+           $location.path("/error");
+           return;
+       }
+
 
         $scope.formControls = {};
         $scope.model = {
@@ -20,6 +26,91 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             koulutus: $scope.koulutusModel.result, // preloaded in route resolve, see
             selectedKomoOid: [$scope.koulutusModel.result.komoOid]
         };
+
+        $scope.model.showError = false;
+
+        $scope.model.validationmsgs = [];
+
+        $scope.model.userLangUri;
+
+
+        console.log('KOULUTUS : ', $scope.model.koulutus);
+
+        for(var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
+
+            if (kieliUri.indexOf(kieliUri) != -1) {
+                $scope.model.userLangUri = kieliUri;
+            }
+
+        }
+
+        console.log('USER LANGUAGE : ', $scope.model.userLangUri);
+
+        var hakukohdePromise =  HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
+
+        hakukohdePromise.then(function(hakukohteet){
+           $scope.model.hakukohteet = hakukohteet.result;
+
+        });
+
+
+        var checkIsOkToRemoveHakukohde = function(hakukohde) {
+
+             var hakukohdeQueryPromise = HakukohdeKoulutukses.getHakukohdeKoulutukses(hakukohde.oid);
+
+            hakukohdeQueryPromise.then(function(hakukohdeKoulutuksesResponse){
+
+                if (hakukohdeKoulutuksesResponse.result.length > 1) {
+
+                    var texts = {
+                        title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
+                        description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
+                        ok: LocalisationService.t("ok"),
+                        cancel: LocalisationService.t("cancel")
+                    };
+
+                    var d = dialogService.showDialog(texts);
+                    d.result.then(function(data){
+                        if ("ACTION" === data) {
+                            reallyRemoveHakukohdeFromKoulutus(hakukohde);
+
+                        }
+                    });
+
+
+                } else {
+
+                    $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
+                    $scope.model.showError = true;
+
+                }
+
+            })
+
+        };
+
+        var reallyRemoveHakukohdeFromKoulutus = function(hakukohde) {
+
+
+
+            var koulutusOids =[];
+
+            koulutusOids.push($scope.model.koulutus.oid);
+
+            HakukohdeKoulutukses.removeKoulutuksesFromHakukohde(hakukohde.oid,koulutusOids);
+
+               angular.forEach($scope.model.hakukohteet,function(loopHakukohde){
+
+                      if (loopHakukohde.oid === hakukohde.oid) {
+                           var indx = $scope.model.hakukohteet.indexOf(loopHakukohde);
+                          $scope.model.hakukohteet.splice(indx,1);
+
+                      }
+
+               });
+
+        };
+
 
         var komoOid = $scope.koulutusModel.result.komoOid;
 
@@ -93,6 +184,37 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             window.history.back();
         };
 
+        $scope.removeKoulutusFromHakukohde = function(hakukohde) {
+
+            checkIsOkToRemoveHakukohde(hakukohde);
+            /*
+            if (checkIsOkToRemoveHakukohde(hakukohde)) {
+
+                    var texts = {
+                        title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
+                        description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
+                        ok: LocalisationService.t("ok"),
+                        cancel: LocalisationService.t("cancel")
+                    };
+
+                    var d = dialogService.showDialog(texts);
+                    d.result.then(function(data){
+                        if ("ACTION" === data) {
+                            reallyRemoveHakukohdeFromKoulutus(hakukohde);
+
+                        }
+                    });
+
+
+            } else {
+
+                $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
+                $scope.model.showError = true;
+
+            }   */
+
+        }
+
         $scope.doDelete = function(event) {
             $log.info("doDelete()...");
 
@@ -112,6 +234,21 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
                     dialogService.showNotImplementedDialog();
                 }
             });
+
+        };
+
+        $scope.addHakukohde = function() {
+
+               console.log('KOULUTUS : ', $scope.model.koulutus);
+
+            var koulutusOids = [];
+            koulutusOids.push($scope.model.koulutus.oid);
+
+
+
+            SharedStateService.addToState('SelectedKoulutukses',koulutusOids);
+            SharedStateService.addToState('SelectedOrgOid',$scope.model.koulutus.organisaatio.oid);
+            $location.path('/hakukohde/new/edit');
 
         };
 
