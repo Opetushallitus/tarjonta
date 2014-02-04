@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * DTO representing Haku.
  *
  * @author mlyly
  */
@@ -67,6 +68,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     private Map<String, KoodiV1RDTO> koodiMeta;
 
+    private int maxHakukohdes;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
@@ -167,17 +169,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.sijoittelu = sijoittelu;
     }
 
-//    public List<TekstiRDTO> getNimi() {
-//        if (nimi == null) {
-//            nimi = new ArrayList<TekstiRDTO>();
-//        }
-//        return nimi;
-//    }
-//
-//    public void setNimi(List<TekstiRDTO> nimi) {
-//        this.nimi = nimi;
-//    }
-
     public List<HakuaikaV1RDTO> getHakuaikas() {
         if (hakuaikas == null) {
             hakuaikas = new ArrayList<HakuaikaV1RDTO>();
@@ -239,6 +230,14 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public Map<String, String> getNimi() {
         return nimi;
+    }
+
+    public int getMaxHakukohdes() {
+        return maxHakukohdes;
+    }
+
+    public void setMaxHakukohdes(int maxHakukohdes) {
+        this.maxHakukohdes = maxHakukohdes;
     }
 
 }
