@@ -43,11 +43,11 @@
                keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" verbose="true">
 			
 			<!-- deploy lates from local maven repo -->
-			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
-				<include name="*${pom.version}.war"/>
+			<fileset dir="tarjonta-service/target">
+				<include name="tarjonta-service.war"/>
 			</fileset>
-			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
-				<include name="*${pom.version}.war"/>
+			<fileset dir="tarjonta-app/target">
+				<include name="tarjonta-app-9.0-SNAPSHOT.war"/>
 			</fileset>
 		</scp>
 
