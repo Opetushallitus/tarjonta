@@ -114,6 +114,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
             opintojenLaajuus: {koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+           
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
             opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
@@ -123,6 +124,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             aihees: {koodisto: 'koodisto-uris.aiheet'},
             ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
+            koulutuksenAlkamisvuosi: {default : ''},
             koulutusmoduuliTyyppi: {default: 'TUTKINTO'},
             koulutusasteTyyppi: {default: 'KORKEAKOULUTUS'},
             tila: {'default': 'LUONNOS'},

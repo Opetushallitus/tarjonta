@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.Koulutu
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
@@ -153,7 +154,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
-        List<KoulutusValidationMessages> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
+        List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         if (validateKoulutus.isEmpty()) {
 
@@ -170,6 +171,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             resultRDTO.setResult(converterToRDTO.convert(fullKomotoWithKomo, getUserLang(), true));
         } else {
             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+
             resultRDTO.setErrors(validateKoulutus);
             resultRDTO.setResult(dto);
         }

@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -265,7 +266,17 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         KoulutusKorkeakouluV1RDTO result = v.getResult();
         String oid = result.getKomotoOid();
 
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        
+        String strErrorKeys = "";
+        if (v.getErrors() != null && !v.getErrors().isEmpty()) {
+            
+            for (ErrorV1RDTO d : v.getErrors()) {
+                strErrorKeys += d.getErrorMessageKey() + " ";
+            }
+        }
+
+        assertEquals("Validation errors keys : " + strErrorKeys, true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+
         assertNotNull("missing komoto oid", oid);
 
         ResultV1RDTO v1 = koulutusResource.findByOid(oid, false, null);

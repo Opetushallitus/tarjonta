@@ -20,7 +20,6 @@ app.controller('BaseEditController',
                     $scope.uiModel.showSuccess = true;
                     $scope.uiModel.showError = false;
                     $scope.uiModel.hakukohdeTabsDisabled = false;
-                    $scope.uiModel.validationmsgs = [];
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
@@ -152,6 +151,10 @@ app.controller('BaseEditController',
                     $scope.saveByStatus('VALMIS');
                 };
                 $scope.saveByStatus = function(tila) {
+                    if ($scope.uiModel.validationmsgs.length > 0) {
+                        $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
+                    }
+
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
@@ -176,15 +179,22 @@ app.controller('BaseEditController',
 
                         KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                             var model = saveResponse.result;
-
+                            $scope.uiModel.validationmsgs = [];
+                            
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
                             } else {
+                                 $scope.uiModel.showValidationErrors = true;
+                                 $scope.uiModel.showError = false;
                                 if (!angular.isUndefined(saveResponse.errors)) {
-                                    $scope.uiModel.validationmsgs = saveResponse.errors;
+
+                                    for (var i = 0; i < saveResponse.errors.length; i++) {
+                                         $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
+                                    }
+
                                 }
 
                                 //save failed
@@ -295,7 +305,11 @@ app.controller('BaseEditController',
                     $log.info("goBack()...");
                     $location.path("/");
                 };
-                $scope.goToReview = function(event) {
+                $scope.goToReview = function(event, boolInvalid) {
+                    if (!angular.isUndefined(boolInvalid) && boolInvalid) {
+                        return;
+                    }
+
                     $log.info("goBack()...");
                     $route.current.locals.koulutusModel.result = $scope.model;
                     $location.path("/koulutus/" + $scope.model.oid);
