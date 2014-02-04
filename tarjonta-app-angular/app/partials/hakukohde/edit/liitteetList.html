@@ -1,80 +1,5 @@
 <div>
 
-    <tabset>
-        <tab ng-repeat="kieli in model.opetusKielet" heading="{{kieli.koodiNimi}}">
-                        
-            <pre>{{ model.selectedLiite[kieli.koodiUri] | json }}</pre>
-            
-            <table class="tarjontaForm">
-                <tr class="required">
-                    <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
-                    <td><input type="text" ng-model="model.selectedLiite[kieli.koodiUri].liitteenNimi"/></td>
-                    <td style="vertical-align:top">
-                        <button class="btn float-right">(Lisää uusi liite)</button>
-                    </td>
-                </tr>    
-                            
-                <tr class="required">
-                    <th tt="tarjonta.hakukohde.liite.modal.kuvaus"></th>
-                    <td colspan="2">
-                        <rich-textarea mode="false" model="model.selectedLiite[kieli.koodiUri].liitteenKuvaukset[kieli.koodiUri]"></rich-textarea>
-                    </td>
-                </tr>
-            
-                <tr class="required">
-                    <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
-                    <td>
-                        <t-date-time timestamp="true" type="long" ng-model="model.selectedLiite[kieli.koodiUri].toimitettavaMennessa"></t-date-time>
-                    </td>
-                    <td></td>
-                </tr>
-            
-                <tr class="required">
-                    <th tt="tarjonta.hakukohde.liite.modal.toimitusosoite"></th>
-                    <td>
-                        <input type="radio" name="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="false" /> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span><br/>
-                        <input type="radio" name="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="true"/> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
-                        
-                        <div class="inset">
-                            <input type="text" ng-disabled="!model.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/>
-                        </div>
-                        
-                        <input type="checkbox" ng-model="model.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/> <span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span><br/>
-                        <div class="inset">
-                            <input type="text" ng-model="model.selectedLiite[kieli.koodiUri].sahkoinenToimitusOsoite" ng-disabled="!model.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/>
-                        </div>
-                    </td>
-                    <td></td>
-                </tr>
-            
-            </table>
-             
-            <hr/>
-                
-            <table class="table table-hover">
-                <tr>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.kuvaus">Liite</th>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.osoite">Toimitusosoite</th>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.toimitusPvm">Toimitettava viimeistään</th>
-                </tr>
-                
-                <tr ng-repeat="liite in getLiitteetByKieli(kieli.koodiUri)" class="selected">
-                    <td>{{liite.liitteenNimi}}</td>
-                    <td>{{liite.liitteenToimitusOsoite}}</td>
-                    <td>{{liite.toimitettavaMennessa | date:'d.M.yyyy H:mm'}}</td>
-                </tr>
-            
-            
-            </table>
-            
-        </tab>
-        
-    </tabset>
-
-    <pre>{{ model | json }}</pre>
-
-    <!-- 
-
     <p class="float-right">
         <button class="btn btn-primary" ng-click="model.uusiLiite()">{{t('tarjonta.hakukohde.liite.listaus.uusi.liite')}} <span class="icon-plus-sign"></span></button>
     </p>
@@ -105,6 +30,5 @@
         </tab>
     </tabset>
 
-     -->
 
 </div>
