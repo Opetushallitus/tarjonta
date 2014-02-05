@@ -6,9 +6,9 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
             <td>
-                <t-date-time type="long" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S" required></t-date-time>
                 --
-                <t-date-time type="long" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E" required></t-date-time>
             </td>
             <td>
                 <div>
@@ -21,9 +21,8 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
             <td>
-                <t-date-time type="long" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP" required></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP" required></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_HVVPTP" tt-prefix="haku.edit.aikataulu" ></show-errors>
@@ -34,12 +33,10 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
             <td>
-                <t-date-time type="long" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S" required></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S">
- -->                --
-                <t-date-time type="long" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E" required></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S" required></t-date-time>
+                --
+                <t-date-time type="long" timestamp="true" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E" required></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_KTT_S" tt-prefix="haku.edit.aikataulu"></show-errors>
@@ -51,12 +48,10 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
             <td>
-                <t-date-time type="long" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S" required></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S">
- -->                --
-                <t-date-time type="long" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S" required></t-date-time>
+                --
+                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E"></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_OLVVPKE_S" tt-prefix="haku.edit.aikataulu"></show-errors>
@@ -68,12 +63,10 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_VLS'>Valintalaskennan suorittaminen</th>
             <td>
-                <t-date-time type="long" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S">
- -->                --
-                <t-date-time type="long" name="PH_VLS_E" ng-model="model.parameter.PH_VLS_E"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_VLS_E" ng-model="model.parameter.PH_VLS_E">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S"></t-date-time>
+                --
+                <t-date-time type="long" timestamp="true" name="PH_VLS_E" ng-model="model.parameter.PH_VLS_E"></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_VLS_S" tt-prefix="haku.edit.aikataulu"></show-errors>
@@ -85,12 +78,10 @@
         <tr class="required">
             <th ttt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
-                <t-date-time type="long" name="PH_SS_S" ng-model="model.parameter.PH_SS_S"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_SS_S" ng-model="model.parameter.PH_SS_S" required>
- -->                --
-                <t-date-time type="long" name="PH_SS_E" ng-model="model.parameter.PH_SS_E"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_SS_E" ng-model="model.parameter.PH_SS_E" required>
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_SS_S" ng-model="model.parameter.PH_SS_S"></t-date-time>
+                --
+                <t-date-time type="long" timestamp="true" name="PH_SS_E" ng-model="model.parameter.PH_SS_E"></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_SS_S" tt-prefix="haku.edit.aikataulu"></show-errors>
@@ -152,9 +143,8 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
             <td>
-                <t-date-time type="long" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP"></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_JKLIP" tt-prefix="haku.edit.aikataulu"></show-errors>
@@ -165,9 +155,8 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <t-date-time type="long" name="PH_PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
-<!--                 <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKP" ng-model="model.parameter.PH_HKP">
- -->            </td>
+                <t-date-time type="long" timestamp="true" name="PH_PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
+            </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_HKP" tt-prefix="haku.edit.aikataulu"></show-errors>
