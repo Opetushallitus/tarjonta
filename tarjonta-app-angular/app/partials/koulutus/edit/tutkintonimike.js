@@ -14,9 +14,9 @@ app.directive('tutkintonimike', ['$log', '$modal', 'LocalisationService', functi
             };
 
             $scope.$watch("model.meta", function(valNew, valOld) {
-                var length = Object.keys(valNew).length;
+                if (angular.isDefined(valNew) && angular.isObject(valNew)) {
+                    var length = Object.keys(valNew).length;
 
-                if (!angular.isUndefined(length)) {
                     $scope.ctrl.isMulti = (length > 1);
 
                     if (!$scope.ctrl.isMulti) {
