@@ -82,7 +82,8 @@ angular.module('app',
             'TreeFieldDirective',
             'AiheetJaTeematChooser',
             'TarjontaDateTime',
-            'debounce'
+            'debounce',
+            'Parameter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

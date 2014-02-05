@@ -16,12 +16,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	if ($scope.type == "object") {
     		$scope.model = $scope.ngModel;
 	    	$scope.$watch("ngModel", function(nv, ov){
-	    		$scope.model = nv;
+	    	  $scope.model = nv;
 	    	});
     	} else if ($scope.type == "long") {
     		$scope.model = new Date($scope.ngModel);
 	    	$scope.$watch("ngModel", function(nv, ov){
-	    		$scope.model = new Date($scope.ngModel);
+	    	  $scope.model = new Date($scope.ngModel);
 	    	});
     	} else {
     		throw ("Unknown type "+$scope.type);
@@ -40,11 +40,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		if ($scope.model==null) {
             	   $scope.date = "";
             	   $scope.time = "";
-        		$scope.ngModel = null;
+            	     $scope.ngModel = null;
     		} else {
             	  $scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
             	  $scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
-        		$scope.ngModel = $scope.type == "object" ? $scope.model : $scope.model.getTime();
+        	  $scope.ngModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
     		}
     	}
     	
@@ -177,10 +177,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					$scope.years = [];
 
 					$scope.model = ctrl.model;
-                                        if(angular.isUndefined($scope.model) || $scope.model === null){
+					
+					var isValidDate=Object.prototype.toString.call($scope.model) == "[object Date]" && !isNaN($scope.model.getTime());
+					  
+                                        if(angular.isUndefined($scope.model) || $scope.model === null || !isValidDate){
                                             $scope.model = new Date();
                                         }
-                                        
                                         
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
 					$scope.calendar=[];
