@@ -109,7 +109,10 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
                 var hakukohdeKoulutusUri =  Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
 
-                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                }).success(function(data){
                     return true;
                 }).error(function(data){
                         return false;
@@ -128,7 +131,10 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
 
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
-                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                }).success(function(data){
                     promise.resolve(true);
                 }).error(function(data){
                     promise.resolve(false);

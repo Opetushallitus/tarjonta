@@ -246,9 +246,12 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     $scope.selectKuvaus = function(kuvaus) {
-        if ($scope.model.searchSpec.oppilaitosTyyppi !== undefined) {
+
+        console.log('KUVAUS : ', kuvaus);
+
+        if (kuvaus.organisaatioTyyppi !== undefined) {
             console.log('KUVAUS: ', kuvaus);
-            var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.searchSpec.oppilaitosTyyppi + "/"+kuvaus.kuvauksenTyyppi+"/"+kuvaus.kuvauksenTunniste;
+            var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +kuvaus.organisaatioTyyppi + "/"+kuvaus.kuvauksenTyyppi+"/"+kuvaus.kuvauksenTunniste;
             console.log('KUVAUS EDIT URI : ', kuvausEditUri);
             $location.path(kuvausEditUri);
         }
