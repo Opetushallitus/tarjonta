@@ -7,8 +7,11 @@ angular
     .factory(
         'ParameterService',
         function($q, $resource, $log, Config) {
-
-          var baseUrl = "http://127.0.0.1:8085/ohjausparametrit-service/api/rest/parametri"; // Config.env['parameter-service.rest.url'];
+          var NAME="tarjontaOhjausparametritResutUrlPrefix";
+          if(Config.env[NAME]==undefined) {
+            throw "'" + NAME + "' ei ole määritelty!";
+          }
+          var baseUrl = Config.env[NAME] + '/api/rest/parametri';
 
           var prefixes = [ "PH_" ];
           haeUrl = baseUrl + "/:path/:name";
