@@ -154,6 +154,8 @@ app.controller('BaseEditController',
                     if ($scope.uiModel.validationmsgs.length > 0) {
                         $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
                     }
+                    
+                      $scope.formControls.notifs.errorDetail = []; 
 
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
@@ -179,8 +181,7 @@ app.controller('BaseEditController',
 
                         KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                             var model = saveResponse.result;
-                            $scope.uiModel.validationmsgs = [];
-                            
+         
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
                                 showSuccess();
