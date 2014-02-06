@@ -1056,6 +1056,7 @@ public class ConverterV1 {
         ret.setNimi(ht.getNimi());
         ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
                 .getKoulutuksenAlkamiskausi().getNimi());
+        ret.setKausiUri(ht.getKoulutuksenAlkamiskausi() == null ? null : ht.getKoulutuksenAlkamiskausi().getUri());
         ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
         if (ht.getPohjakoulutusvaatimus() != null) {
             ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus()
