@@ -139,6 +139,8 @@
 
 				//node label
 				var nodeLabel = attrs.nodeLabel || 'label';
+				
+				var autoSelect = scope[attrs.autoselect];
 
 				//children
 				var nodeChildren = attrs.nodeChildren || 'children';
@@ -195,7 +197,13 @@
 					var template = "<ul>" + drawChildren(newList) + "</ul>";
 					var dom = $compile( template );
 					element.html('').append( dom (scope) );
-					});
+	                                   //autoselect
+                                        if(autoSelect && newList && newList.length>0) {
+                                          scope.selectOrg(autoSelect);
+                                          autoSelect = undefined;
+                                        }
+
+				});
 
 			}
 		};
