@@ -53,16 +53,6 @@
     </servlet-mapping>
 
     <filter>
-        <filter-name>springFilterProxy</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <!-- filter to be proxied is defined in enricing-context.xml -->
-            <param-name>targetBeanName</param-name>
-            <param-value>tarjontaEnrichingFilter</param-value>
-        </init-param>
-    </filter>
-
-    <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
@@ -90,11 +80,6 @@
     <filter-mapping>
         <filter-name>MDCFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>springFilterProxy</filter-name>
-        <url-pattern>/rest/publication/export-rich</url-pattern>
     </filter-mapping>
 
     <resource-ref>
