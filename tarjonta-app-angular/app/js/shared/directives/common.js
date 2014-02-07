@@ -42,16 +42,22 @@ app.directive('kuvaus', function() {
  * 
  */
 .directive('koodi',function(Koodisto) {
+  
     return {
         restrict: 'E',
-        template: '{{result}}',
         scope: {
             uri: '=uri',
             lang: '=lang',
         },
-        controller: function($scope) {
-          var koodi=Koodisto.searchKoodi($scope.uri, $scope.lang).then(function(data){$scope.result=data});
-        }
+        link: function(scope, element, attrs) {
+          Koodisto.searchKoodi(scope.uri, scope.lang).then(
+              function(data){
+                console.log(element);
+                element.replaceWith(data);
+                }
+              );
+          }
+        
     };
 });
 
