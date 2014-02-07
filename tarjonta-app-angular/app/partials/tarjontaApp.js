@@ -82,6 +82,7 @@ angular.module('app',
             'TreeFieldDirective',
             'AiheetJaTeematChooser',
             'TarjontaDateTime',
+            'TarjontaOsoiteField',
             'debounce'
         ]);
 
