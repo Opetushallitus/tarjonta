@@ -97,13 +97,15 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
          * INIT ACTIONS:
          */
 
-        if (!angular.isUndefined($scope.oid) &&
-                $scope.oid.length > 0 &&
-                !angular.isUndefined($scope.uri) &&
-                $scope.uri.length > 0) {
-            //when page loaded, try to load img
-            $scope.loadImage($scope.oid, $scope.uri);
-        }
+        $scope.$watch('uri', function(uri, oldObj) {
+            if (!angular.isUndefined($scope.oid) &&
+                    $scope.oid.length > 0 &&
+                    !angular.isUndefined(uri) &&
+                    $scope.uri.length > 0) {
+                //when page loaded, try to load img
+                $scope.loadImage($scope.oid, uri);
+            }
+        });
 
         $scope.crear = function() {
             $scope.image = null; //clear pre-uploaded image. 

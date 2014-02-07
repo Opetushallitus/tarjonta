@@ -29,11 +29,13 @@
 		
 		    <rich-textarea max="1500" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, selectedKieliUri)[selectedKieliUri]"></rich-textarea>
 		</div>
+        
+        <h4 tt="koulutus.edit.kuva.title"></h4>
+	<image-field btn-name-remove="{{t('poista')}}" btn-name-save="{{t('tallenna')}}" editable="true" oid="{{model.oid}}" uri="{{selectedKieliUri}}"></image-field>
+
 
     </rich-textarea-container>
 	    
-	<h4 tt="koulutus.edit.kuva.title"></h4>
-	<image-field btn-name-remove="{{t('poista')}}" btn-name-save="{{t('tallenna')}}" editable="true" oid="{{model.oid}}" uri="{{selectedKieliUri}}"></image-field>
-
+	
 </div>
 
