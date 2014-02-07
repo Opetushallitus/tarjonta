@@ -52,7 +52,7 @@ app.directive('kuvaus', function() {
         link: function(scope, element, attrs) {
           Koodisto.searchKoodi(scope.uri, scope.lang).then(
               function(data){
-                console.log(element);
+                //console.log(element);
                 element.replaceWith(data);
                 }
               );
