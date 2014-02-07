@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import fi.vm.sade.tarjonta.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,13 +39,6 @@ import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QHakukohdeLiite;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QValintakoe;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -164,6 +158,44 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohdeLiite liite = QHakukohdeLiite.hakukohdeLiite;
         Long idLong = new Long(id);
         return from(liite).where(liite.id.eq(idLong)).singleResult(liite);
+    }
+
+    public List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid) {
+
+        /*QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(qKomoto)
+                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qKomoto);     */
+
+      Query query = getEntityManager().createQuery("SELECT k from KoulutusmoduuliToteutus k join fetch k.hakukohdes" +
+
+
+                "WHERE k.alkamiskausi = :kausi " +
+                "AND k.alkamisVuosi = :vuosi " +
+                "AND k.tarjoaja = :tarjoaja");
+
+        query.setParameter("kausi",term);
+        query.setParameter("vuosi",year);
+        query.setParameter("tarjoaja",providerOid);
+
+        return (List<KoulutusmoduuliToteutus>)query.getResultList();
+
+    }
+
+    @Override
+    public List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid) {
+
+
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+
+        return from(qHakukohde)
+                .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .where(qHakukohde.hakukohdeNimi.eq(name)
+                .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
+    
     }
 
     @Override

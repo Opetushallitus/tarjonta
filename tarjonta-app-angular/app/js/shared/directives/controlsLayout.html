@@ -12,8 +12,9 @@
 <span ng-repeat="b in model.buttons">
 	<a href
 	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
-	    data-ng-click="b.action()"
+	    data-ng-click="b.disabled() ? function() : b.action()"
 	    ng-disabled="b.disabled()">{{t(b.tt)}}<span ng-show="b.icon"> <span ng-class="'icon-'+b.icon"/></span></a>
+    
 </span>
 
 <div class="msgOk" ng-show="showSuccess()">

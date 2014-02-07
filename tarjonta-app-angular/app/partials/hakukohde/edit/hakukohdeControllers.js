@@ -46,6 +46,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.hakukohdeOppilaitosTyyppis = [];
 
+    var koulutusKausiUri;
+
+    var koulutusVuosi;
+
     $scope.model.showError = false;
 
     $scope.model.showHakuaikas = false;
@@ -418,6 +422,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     TarjontaService.haeKoulutukset(spec).then(function(data){
 
 
+        console.log('KOULUTUKSET : ', data);
+
         var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -429,6 +435,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     tarjoajaOidsSet.add(tulos.oid);
 
                     angular.forEach(tulos.tulokset,function(toinenTulos){
+
+                        koulutusKausiUri = toinenTulos.kausiUri;
+                        koulutusVuosi = toinenTulos.vuosi;
+
                         koulutusSet.add(toinenTulos.nimi);
 
                     });
@@ -534,7 +544,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var hakuPromise = HakuService.getAllHakus();
 
     hakuPromise.then(function(hakuDatas) {
-        console.log('GOT HAKUS ', hakuDatas.length);
+        console.log('GOT HAKUS ', hakuDatas);
         $scope.model.hakus = [];
         angular.forEach(hakuDatas,function(haku){
 
@@ -563,7 +573,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
             if (haku.kohdejoukkoUri==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
-                $scope.model.hakus.push(haku);
+
+
+                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
+                if (haku.koulutuksenAlkamiskausiUri === koulutusKausiUri && haku.koulutuksenAlkamisVuosi === koulutusVuosi) {
+                    $scope.model.hakus.push(haku);
+                }
+
+
             }
 
         });

@@ -83,7 +83,8 @@ angular.module('app',
             'AiheetJaTeematChooser',
             'TarjontaDateTime',
             'TarjontaOsoiteField',
-            'debounce'
+            'debounce',
+            'Parameter'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

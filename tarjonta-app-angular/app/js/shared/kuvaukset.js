@@ -80,7 +80,13 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
             if (kuvaus !== undefined && tyyppi !== undefined) {
 
                 var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.post(kuvausPostUri,kuvaus)
+
+
+                $http.post(kuvausPostUri,kuvaus,{
+                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                })
+
                     .success(function(data){
                        promise.resolve(data);
                     })
@@ -104,7 +110,10 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
             if (kuvaus !== undefined && tyyppi !== undefined) {
 
                 var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.put(kuvausPostUri,kuvaus)
+                $http.put(kuvausPostUri,kuvaus,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                })
                     .success(function(data){
                         promise.resolve(data);
                     })
@@ -183,7 +192,10 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
 
                 $log.info('KUVAUS SEARCH SPEC URI : ', queryUri);
 
-                 $http.post(queryUri,searchSpec)
+                 $http.post(queryUri,searchSpec,{
+                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                 })
                      .success(function(data){
                           promise.resolve(data);
                      }).error(function(errorData) {

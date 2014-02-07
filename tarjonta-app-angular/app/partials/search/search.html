@@ -91,7 +91,7 @@
 	        	
                     <a href class="btn" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi"/></a>
                     <a href class="btn" ng-click="luoUusiHakukohde()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde"/> <span class="icon-plus-sign"></span></a>
-                    <a href class="btn float-right" ng-click="openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus"/> <span class="icon-plus-sign"></span></a>
+                    <a href class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus"/> <span class="icon-plus-sign"></span></a>
                 </div>
 
 	        	<results-table

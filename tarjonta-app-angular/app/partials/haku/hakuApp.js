@@ -30,7 +30,8 @@ angular.module('app.haku',
             'config',
             'auth',
             'DateTimePicker',
-            'DateFormat'
+            'DateFormat',
+            'Parameter'
         ]);
 
 angular.module('app',

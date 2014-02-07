@@ -112,6 +112,9 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 },
                 selectedUri : function() {
                     return $scope.model.searchSpec.oppilaitosTyyppi;
+                },
+                Tyyppi : function() {
+                    return vpkTyyppiParam;
                 }
             }
         });
@@ -246,9 +249,12 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     $scope.selectKuvaus = function(kuvaus) {
-        if ($scope.model.searchSpec.oppilaitosTyyppi !== undefined) {
+
+        console.log('KUVAUS : ', kuvaus);
+
+        if (kuvaus.organisaatioTyyppi !== undefined) {
             console.log('KUVAUS: ', kuvaus);
-            var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.searchSpec.oppilaitosTyyppi + "/"+kuvaus.kuvauksenTyyppi+"/"+kuvaus.kuvauksenTunniste;
+            var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +kuvaus.organisaatioTyyppi + "/"+kuvaus.kuvauksenTyyppi+"/"+kuvaus.kuvauksenTunniste;
             console.log('KUVAUS EDIT URI : ', kuvausEditUri);
             $location.path(kuvausEditUri);
         }
@@ -358,7 +364,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 });
 
-app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,LocalisationService,Koodisto,filterUris, selectedUri){
+app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,LocalisationService,Koodisto,filterUris, selectedUri, Tyyppi){
 
     /*
 
@@ -373,7 +379,13 @@ app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,Loca
 
     $scope.dialog.userOrgTypes = [];
 
-    $scope.dialog.title = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.title');
+    if (Tyyppi !== undefined && Tyyppi === 'valintaperustekuvaus') {
+        $scope.dialog.title = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.title');
+    }  else {
+        $scope.dialog.title = LocalisationService.t('tarjonta.sorakuvaus.luo.uusi.dialog.title');
+    }
+
+
 
     $scope.dialog.description = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.instruction');
 

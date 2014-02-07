@@ -26,7 +26,6 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         /*
          * METHODS:
          */
-
         $scope.loadImage = function(oid, uri) {
             if (angular.isUndefined(uri) || uri.length === 0) {
                 throw new Error("Language uri cannot be undefined!");
@@ -50,8 +49,12 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
 
                     var input = '<div><img width="300" height="300" src="data:' + $scope.mime + ';base64,' + $scope.base64 + '"></div>';
                     $element.find('div').replaceWith($compile(input)($scope));
-                    $scope.crear(); //clear pre-uploaded image. 
+                    $scope.clearImage(); //clear pre-uploaded image. 
                 } else if (response.status === 'NOT_FOUND') {
+                    $scope.base64 = {};
+                    var input = '<div><!-- no image --></div>';
+                    $element.find('div').replaceWith($compile(input)($scope));
+                    $scope.clearImage()
                     console.info("Image not found.");
                 } else {
                     console.error("Image upload failed.", response);
@@ -88,7 +91,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
             ret.promise.then(function(response) {
                 var input = '<div><!-- image removed --></div>';
                 $element.find('div').replaceWith($compile(input)($scope));
-                $scope.crear();
+                $scope.clearImage();
                 $scope.filename = null;
             });
         };
@@ -97,15 +100,18 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
          * INIT ACTIONS:
          */
 
-        if (!angular.isUndefined($scope.oid) &&
-                $scope.oid.length > 0 &&
-                !angular.isUndefined($scope.uri) &&
-                $scope.uri.length > 0) {
-            //when page loaded, try to load img
-            $scope.loadImage($scope.oid, $scope.uri);
-        }
+        $scope.$watch('uri', function(uri, oldObj) {
+            console.log(uri);
+            if (!angular.isUndefined($scope.oid) &&
+                    $scope.oid.length > 0 &&
+                    !angular.isUndefined(uri) &&
+                    uri.length > 0) {
+                //when page loaded, try to load img
+                $scope.loadImage($scope.oid, uri);
+            }
+        });
 
-        $scope.crear = function() {
+        $scope.clearImage = function() {
             $scope.image = null; //clear pre-uploaded image. 
         }
     }
@@ -117,7 +123,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         controller: controller,
         scope: {
             editable: "@", //disable upload
-            uri: "@", //kieli URI     
+            uri: "=", //kieli URI     
             oid: "@", //komoto OID
             btnNameSave: "@",
             btnNameRemove: "@"

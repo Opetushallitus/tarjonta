@@ -24,10 +24,14 @@ var app = angular.module('app.haku.edit.ctrl', []);
  * @param {type} param2
  */
 app.controller('HakuEditController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1',
-            function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1) {
+        ['$q', '$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'ParameterService',
+            function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
                 $log.info("HakuEditController()", $scope);
 
+                var hakuOid = $route.current.params.id;
+                
+                // TODO preloaded / resolved haku is where?
+                // $route.local.xxx
                 $scope.model = null;
 
                 $scope.getLocale = function() {
@@ -60,6 +64,10 @@ app.controller('HakuEditController',
 
                         $scope.model.showError = true;
                         $scope.model.validationmsgs = result.errors;
+                        
+                        console.log("->saveparameters");
+                        $scope.saveParameters();
+                        console.log("saveparameters->");
 
                     }, function (error) {
                         $log.info("saveLuonnos() - FAILED", error);
@@ -70,6 +78,9 @@ app.controller('HakuEditController',
                     // $scope.model.showError = !$scope.model.showError;
                     // $scope.model.showSuccess = !$scope.model.showError;
                     // $log.info("saveLuonnos()");
+
+
+
                 };
 
                 $scope.saveValmis = function(event) {
@@ -118,9 +129,16 @@ app.controller('HakuEditController',
 
                     return result;
                 };
+                
+                
+                $scope.saveParameters= function() {
+                	ParameterService.tallenna(hakuOid, $scope.model.parameter);
+                };
 
                 $scope.init = function() {
                     $log.info("init...");
+                    
+                    
                     var model = {
                         formControls: {},
                         showError: false,
@@ -146,71 +164,18 @@ app.controller('HakuEditController',
                         },
 
                         parameter: {
-                            // Tarjonnan julkaisu ja hakuaika
-                            PH_TJT : new Date(),
-                            PH_HKLPT : new Date(),
-                            PH_HKMT : new Date(),
+                          //parametrit populoituu tänne... ks. haeHaunParametrit(...)
 
-                            // Valinnat ja sijoittelu
-                            PH_KKM_S : new Date(),
-                            PH_KKM_E : new Date(),
-                            PH_HVVPTP : new Date(),
-                            PH_KTT_S : new Date(),
-                            PH_KTT_E : new Date(),
-                            PH_OLVVPKE_S : new Date(),
-                            PH_OLVVPKE_E : new Date(),
-                            PH_VLS_S : new Date(),
-                            PH_VLS_E : new Date(),
-                            PH_SS_S : new Date(),
-                            PH_SS_E : new Date(),
-                            PH_SSAVTM : true,
-                            PH_SST : 48,
-                            PH_SSKA : "23:59",
-                            PH_VTSSV : new Date(), // kk
-                            PH_VSSAV : new Date(), // kk
-
-                            // Tulokset ja paikan vastaanotto
-                            PH_JKLIP : new Date(),
-                            PH_HKP : new Date(),
-                            PH_VTJH_S : new Date(),
-                            PH_VTJH_E : new Date(),
-                            PH_EVR : new Date(),
-                            PH_OPVP : new Date(),
-                            PH_HPVOA : 7,
-
-                            // Lisähaku
-                            PH_HKTA : new Date(),
-                            // PH_HKP : new Date(),
-
-                            // Hakukauden parametrit
-                            PHK_PLPS_S : new Date(),
-                            PHK_PLPS_E : new Date(),
-                            PHK_PLAS_S : new Date(),
-                            PHK_PLAS_E : new Date(),
-                            PHK_LPAS_S : new Date(),
-                            PHK_LPAS_E : new Date(),
-
-                            // Tiedonsiirto
-                            PHK_KTTS : new Date(),
-                            PHK_TAVS_S : new Date(),
-                            PHK_TAVS_E : new Date(),
-                            PHK_TAVSM : true,
-                            PHK_KAVS_S : new Date(),
-                            PHK_KAVS_E : new Date(),
-                            PHK_KAVSM : true,
-                            PHK_VTST : 2,
-                            PHK_VTSAK : "23:59",
-
-                            place: "Holder"
-                        },
+                        }
 
 
-                        place: "holder"
                     };
 
                     $log.info("init... done.");
                     $scope.model = model;
-                };
 
-                $scope.init();
-            }]);
+                // lataa nykyiset parametrit model.parameter objektiin
+                ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+              };
+              $scope.init();
+            } ]);
