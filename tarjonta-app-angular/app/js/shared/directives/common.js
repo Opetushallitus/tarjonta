@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-var app = angular.module('CommonDirectives', ['ngResource']);
+var app = angular.module('CommonDirectives', ['ngResource', 'Koodisto']);
 
 app.directive('kuvaus', function() {
     return {
@@ -34,4 +34,24 @@ app.directive('kuvaus', function() {
             // scope.getKuvausApiModelLanguageUri($parse(atts.ngModel), lang);
         }
     };
+})
+
+
+/** 
+ * tulostaa koodin nimen
+ * 
+ */
+.directive('koodi',function(Koodisto) {
+    return {
+        restrict: 'E',
+        template: '{{result}}',
+        scope: {
+            uri: '=uri',
+            lang: '=lang',
+        },
+        controller: function($scope) {
+          var koodi=Koodisto.searchKoodi($scope.uri, $scope.lang).then(function(data){$scope.result=data});
+        }
+    };
 });
+
