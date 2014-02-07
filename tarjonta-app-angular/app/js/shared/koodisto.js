@@ -204,11 +204,42 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
             //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
 
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' },{cache:true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
+            $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri' },{cache:true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
                 returnKoodi.resolve(getKoodiViewModelFromKoodi(koodi, locale));
             });
            // console.log('Returning promise from getKoodistoWithKoodiUri');
             return returnKoodi.promise;
+        },
+        
+        searchKoodi: function(koodiUri, locale){
+          locale = locale || "fi"; // default locale is finnish
+
+          var ret = $q.defer();
+          //          https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/searchKoodis?koodiUris=haunkohdejoukko_11
+
+          if(koodiUri.indexOf('#')!=-1) {
+            koodiUri = koodiUri.substring(0,koodiUri.indexOf('#'));
+          }
+          
+          var resourceUrl = host + "searchKoodis";
+          $resource(resourceUrl,{},{ 'get': {method:'GET', isArray:true},cache:true}).get({koodiUris:koodiUri}, function(result){
+            for(var i=0;i<result.length;i++) {
+              var koodi=result[i];
+              var metadatas=koodi.metadata;
+              var nimi={};
+              for(var j=0;j<metadatas.length;j++) {
+                var metadata = metadatas[j];
+                nimi[metadata.kieli]=metadata.nimi;
+              }
+              console.log("nimi:", nimi);
+              ret.resolve(nimi[locale.toUpperCase()]||nimi.FI||nimi.EN||nimi.SV); //fallback
+              
+            }
+
+          });
+
+
+          return ret.promise;
         }
 
     };
