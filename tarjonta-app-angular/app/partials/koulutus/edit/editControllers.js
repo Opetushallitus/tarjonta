@@ -12,6 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
+              
 
                 $scope.formControls = {};
 
@@ -29,6 +30,7 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.selectedKieliUri ="" //tab language
                     uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
@@ -329,7 +331,7 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                    $scope.selectedKieliUri = kieliUri;
+                   $scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {

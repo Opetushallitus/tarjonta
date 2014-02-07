@@ -310,7 +310,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         if (angular.isUndefined(image) || image === null) {
-            throw new Error('Image object cannot be undefined or null.');
+           return;
         }
 
         var formData = new FormData();
