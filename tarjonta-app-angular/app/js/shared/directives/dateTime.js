@@ -304,7 +304,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         	scope.isRequired = function() {
         		return attrs.required || scope.ngRequired();
         	}
-        	if (scope.name) {
+        	if (scope.name && !angular.isUndefined(controller)) {
             	controller.$addControl({"$name": scope.name, "$error": scope.errors});
         	}
         },

@@ -154,8 +154,8 @@ app.controller('BaseEditController',
                     if ($scope.uiModel.validationmsgs.length > 0) {
                         $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
                     }
-                    
-                      $scope.formControls.notifs.errorDetail = []; 
+                    $scope.formControls.notifs.errorDetail = [];
+                    $scope.uiModel.showError = false;
 
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
@@ -181,19 +181,19 @@ app.controller('BaseEditController',
 
                         KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                             var model = saveResponse.result;
-         
+
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
                             } else {
-                                 $scope.uiModel.showValidationErrors = true;
-                                 $scope.uiModel.showError = false;
+                                $scope.uiModel.showValidationErrors = true;
+                                $scope.uiModel.showError = false;
                                 if (!angular.isUndefined(saveResponse.errors)) {
 
                                     for (var i = 0; i < saveResponse.errors.length; i++) {
-                                         $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
+                                        $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
                                     }
 
                                 }
