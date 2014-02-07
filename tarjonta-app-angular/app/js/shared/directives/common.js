@@ -45,12 +45,10 @@ app.directive('kuvaus', function() {
   
     return {
         restrict: 'E',
-        scope: {
-            uri: '=uri',
-            lang: '=lang',
-        },
         link: function(scope, element, attrs) {
-          Koodisto.searchKoodi(scope.uri, scope.lang).then(
+          var uri = scope.$eval(attrs.uri);
+          var lang = scope.$eval(attrs.lang);
+          Koodisto.searchKoodi(uri, lang).then(
               function(data){
                 //console.log(element);
                 element.replaceWith(data);
