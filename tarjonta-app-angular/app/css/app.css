@@ -692,3 +692,26 @@ div.tarjontaDateTime button {
     position: relative;
     top:-5px;
 }
+
+/* bootstrap-taulukko */
+
+table.table.selection tr.selected td {
+    background-color:rgb(146, 204, 224);
+}
+
+/* osoitefield */
+
+div.tarjontaOsoiteField .osoite {
+    width:320px;
+}
+
+div.tarjontaOsoiteField .postinumero {
+    width:102px;
+}
+
+div.tarjontaOsoiteField .postitoimipaikka {
+    width:200px;
+    border-color:#eeeeee;
+    box-shadow:none;
+}
+

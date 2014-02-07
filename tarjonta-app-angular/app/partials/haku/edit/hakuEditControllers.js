@@ -28,9 +28,6 @@ app.controller('HakuEditController',
             function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
                 $log.info("HakuEditController()", $scope);
 
-                //parameter prefixes loaded/saved
-                var prefixes=["PH_"];
-                
                 var hakuOid = $route.current.params.id;
                 
                 // TODO preloaded / resolved haku is where?
@@ -67,6 +64,10 @@ app.controller('HakuEditController',
 
                         $scope.model.showError = true;
                         $scope.model.validationmsgs = result.errors;
+                        
+                        console.log("->saveparameters");
+                        $scope.saveParameters();
+                        console.log("saveparameters->");
 
                     }, function (error) {
                         $log.info("saveLuonnos() - FAILED", error);
@@ -79,15 +80,11 @@ app.controller('HakuEditController',
                     // $log.info("saveLuonnos()");
 
 
-                    console.log("->saveparameters");
-                    $scope.saveParameters();
-		    console.log("saveparameters->");
 
                 };
 
                 $scope.saveValmis = function(event) {
                     $log.info("saveValmis()");
-                    $scope.saveParameters();
                 };
 
                 $scope.goToReview = function(event) {
@@ -135,7 +132,6 @@ app.controller('HakuEditController',
                 
                 
                 $scope.saveParameters= function() {
-                	console.log("save parameters->");
                 	ParameterService.tallenna(hakuOid, $scope.model.parameter);
                 };
 
@@ -168,60 +164,7 @@ app.controller('HakuEditController',
                         },
 
                         parameter: {
-                            // Tarjonnan julkaisu ja hakuaika
-//                            PH_TJT : new Date(),
-//                            PH_HKLPT : new Date(),
-//                            PH_HKMT : new Date(),
-//
-//                            // Valinnat ja sijoittelu
-//                            PH_KKM_S : new Date(),
-//                            PH_KKM_E : new Date(),
-//                            PH_HVVPTP : new Date(),
-//                            PH_KTT_S : new Date(),
-//                            PH_KTT_E : new Date(),
-//                            PH_OLVVPKE_S : new Date(),
-//                            PH_OLVVPKE_E : new Date(),
-//                            PH_VLS_S : new Date(),
-//                            PH_VLS_E : new Date(),
-//                            PH_SS_S : new Date(),
-//                            PH_SS_E : new Date(),
-//                            PH_SSAVTM : true,
-//                            PH_SST : 48,
-//                            PH_SSKA : "23:59",
-//                            PH_VTSSV : new Date(), // kk
-//                            PH_VSSAV : new Date(), // kk
-//
-//                            // Tulokset ja paikan vastaanotto
-//                            PH_JKLIP : new Date(),
-//                            PH_HKP : new Date(),
-//                            PH_VTJH_S : new Date(),
-//                            PH_VTJH_E : new Date(),
-//                            PH_EVR : new Date(),
-//                            PH_OPVP : new Date(),
-//                            PH_HPVOA : 7,
-//
-//                            // Lisähaku
-//                            PH_HKTA : new Date(),
-//                            // PH_HKP : new Date(),
-//
-//                            // Hakukauden parametrit
-//                            PHK_PLPS_S : new Date(),
-//                            PHK_PLPS_E : new Date(),
-//                            PHK_PLAS_S : new Date(),
-//                            PHK_PLAS_E : new Date(),
-//                            PHK_LPAS_S : new Date(),
-//                            PHK_LPAS_E : new Date(),
-//
-//                            // Tiedonsiirto
-//                            PHK_KTTS : new Date(),
-//                            PHK_TAVS_S : new Date(),
-//                            PHK_TAVS_E : new Date(),
-//                            PHK_TAVSM : true,
-//                            PHK_KAVS_S : new Date(),
-//                            PHK_KAVS_E : new Date(),
-//                            PHK_KAVSM : true,
-//                            PHK_VTST : 2,
-//                            PHK_VTSAK : "23:59",
+                          //parametrit populoituu tänne... ks. haeHaunParametrit(...)
 
                         }
 
@@ -230,37 +173,9 @@ app.controller('HakuEditController',
 
                     $log.info("init... done.");
                     $scope.model = model;
-                    
-				    //lataa parametrit
-                    $scope.paramTemplates={}
-                    for(var i=0;i<prefixes.length;i++) {
-                    	
-                   		(function(prefix){
-                   			var p = ParameterService.haeTemplatet({path:prefix}).then(function(params){
-                   				for(var i=0;i<params.length;i++) {
-               						//var path = params[i].path;
-               						//model.parameter[path]=undefined;
-                   					$scope.paramTemplates[params[i].path]=params[i];
-                   				};
-                   			});
-                        
-                   			p.then(function(){
-                   				ParameterService.haeParametrit({path:prefix, name:hakuOid}).then(function(params){
-                   					for(var i=0;i<params.length;i++) {
-                   						var path = params[i].path;
-                   						var type = $scope.paramTemplates[path].type;
-                   						var value = params[i].value;
-                   						console.log("path, type", path, type);
-//                   						if("DATE"===type) {
-//                   							value=new Date(value);
-//                   						}
-                   						
-                   						model.parameter[path]=value;
-                   					}
-                   				});
-                   			});
-                    	})(prefixes[i]);
-                    }
-                };
-                $scope.init();
-            }]);
+
+                // lataa nykyiset parametrit model.parameter objektiin
+                ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+              };
+              $scope.init();
+            } ]);

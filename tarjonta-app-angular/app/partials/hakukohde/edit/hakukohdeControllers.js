@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
 
 
 app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
@@ -1093,11 +1093,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                             kieliPromiseArray.push(kieliPromise);
                         }
 
-
-
-
                     }
-
                     $scope.dialog.kuvaukset.push(valintaPerusteObj);
 
                 });

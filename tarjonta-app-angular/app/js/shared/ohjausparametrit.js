@@ -35,6 +35,17 @@ angular
               isArray : true
             }
           });
+          
+          var haeTemplatet=function(hakuehdot) {
+            $log.debug('haetaan templatet, q:', hakuehdot);
+            var ret = $q.defer();
+            templatet.get(hakuehdot, function(result) {
+              ret.resolve(result);
+            }, function(err) {
+              console.error("Error loading template data", err);
+            });
+            return ret.promise;
+          };
 
           var haeParametrit = function(hakuehdot) {
             $log.debug('haetaan parametrit, q:', hakuehdot);
@@ -91,16 +102,7 @@ angular
              * 
              * @returns promise
              */
-            haeTemplatet : function(hakuehdot) {
-              $log.debug('haetaan templatet, q:', hakuehdot);
-              var ret = $q.defer();
-              templatet.get(hakuehdot, function(result) {
-                ret.resolve(result);
-              }, function(err) {
-                console.error("Error loading template data", err);
-              });
-              return ret.promise;
-            },
+            haeTemplatet : haeTemplatet,
 
             /**
              * 
@@ -149,6 +151,50 @@ angular
 
               console.log("exit from service");
               //TODO update all changed
+            },
+            
+            /**
+             * Hakee haun parametrit
+             * @param hakuOid haun oidi
+             * @param target kohde olio johon parametrit asetetaan key-value pareina.
+             * @returns nothing
+             */
+            haeHaunParametrit:function(hakuOid, target){
+              var paramTemplates={};
+              for ( var i = 0; i < prefixes.length; i++) {
+
+                (function(prefix) {
+                  var p = haeTemplatet({
+                    path : prefix
+                  }).then(function(params) {
+                    for ( var i = 0; i < params.length; i++) {
+                      // var path = params[i].path;
+                      // model.parameter[path]=undefined;
+                      paramTemplates[params[i].path] = params[i];
+                    }
+                    ;
+                  });
+
+                  p.then(function() {
+                    haeParametrit({
+                      path : prefix,
+                      name : hakuOid
+                    }).then(function(params) {
+                      for ( var i = 0; i < params.length; i++) {
+                        var path = params[i].path;
+                        var type = paramTemplates[path].type;
+                        var value = params[i].value;
+                        console.log("path, type", path, type);
+                        // if("DATE"===type) {
+                        // value=new Date(value);
+                        // }
+
+                        target[path] = value;
+                      }
+                    });
+                  });
+                })(prefixes[i]);
+              }
             }
           };
         });

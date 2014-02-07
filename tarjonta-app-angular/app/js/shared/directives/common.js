@@ -38,20 +38,64 @@ app.directive('kuvaus', function() {
 
 
 /** 
+ * 
  * tulostaa koodin nimen
+ * 
+ * <koodi uri="jokukoodi_22" lang="fi">
  * 
  */
 .directive('koodi',function(Koodisto) {
+  
     return {
         restrict: 'E',
-        template: '{{result}}',
-        scope: {
-            uri: '=uri',
-            lang: '=lang',
-        },
-        controller: function($scope) {
-          var koodi=Koodisto.searchKoodi($scope.uri, $scope.lang).then(function(data){$scope.result=data});
+        link: function(scope, element, attrs) {
+          var uri = scope.$eval(attrs.uri);
+          var lang = scope.$eval(attrs.lang);
+          Koodisto.searchKoodi(uri, lang).then(
+              function(data){
+                //console.log(element);
+                element.replaceWith(data);
+                }
+              );
+          }
+        
+    };
+})
+
+
+/** 
+ * tulostaa päivämäärän:
+ * <t-date value="haku.alkoitusPvm" timestamp="true"/>
+ */
+.directive('tShowdate',function() {
+  
+    return {
+        restrict: 'E',
+        link: function(scope, element, attrs) {
+          console.log(attrs);
+          console.log(scope);
+          console.log(element);
+          var isLong = !"long" !== attrs.type;
+          var isTimestamp = attrs.timestamp!==undefined||true;
+          var value = scope.$eval(attrs.value);
+          var date = isLong?new Date(value):value;
+          
+          var d = date.getDate();
+          var m = date.getMonth() + 1;
+          var y = date.getFullYear();
+          var datestring = (d <= 9 ? '0' + d : d) + '. ' + (m<=9 ? '0' + m : m) + '. ' + y;
+          
+          
+          
+          console.log("value:", value);
+          if(value) {
+            element.replaceWith(datestring);
+          } else {
+            "-"
+          }
         }
+        
     };
 });
+
 

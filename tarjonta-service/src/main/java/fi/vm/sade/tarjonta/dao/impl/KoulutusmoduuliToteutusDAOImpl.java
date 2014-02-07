@@ -19,8 +19,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.path.DateTimePath;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import org.hibernate.ejb.criteria.path.MapKeyHelpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,10 +305,10 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QBinaryData qBinaryData = QBinaryData.binaryData;
+ 
         return from(qKomoto).
                 join(qKomoto.kuvat, qBinaryData).
-                where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.containsKey(kieliUri))).
-                singleResult(qBinaryData);
+                where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.get(kieliUri).eq(qBinaryData))).singleResult(qBinaryData);
     }
     
     /**

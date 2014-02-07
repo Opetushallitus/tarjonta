@@ -12,6 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
+              
 
                 $scope.formControls = {};
 
@@ -29,6 +30,7 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.selectedKieliUri ="" //tab language
                     uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
@@ -187,22 +189,20 @@ app.controller('BaseEditController',
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
+                                $scope.koulutusForm.$dirty = false;
+                                $scope.koulutusForm.$invalid = false;
                             } else {
                                 $scope.uiModel.showValidationErrors = true;
-                                $scope.uiModel.showError = false;
+                               
                                 if (!angular.isUndefined(saveResponse.errors)) {
-
                                     for (var i = 0; i < saveResponse.errors.length; i++) {
                                         $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
                                     }
-
                                 }
-
                                 //save failed
                                 $scope.uiModel.showError = true;
                             }
                         });
-
                     });
                 };
 
@@ -306,8 +306,14 @@ app.controller('BaseEditController',
                     $log.info("goBack()...");
                     $location.path("/");
                 };
-                $scope.goToReview = function(event, boolInvalid) {
+                $scope.goToReview = function(event, boolInvalid, validationmsgs) {
                     if (!angular.isUndefined(boolInvalid) && boolInvalid) {
+                        //ui errors
+                        return;
+                    }
+
+                    if (!angular.isUndefined(validationmsgs) && validationmsgs > 0) {
+                        //server errors
                         return;
                     }
 
@@ -325,7 +331,7 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                    $scope.selectedKieliUri = kieliUri;
+                   $scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
