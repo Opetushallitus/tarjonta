@@ -38,7 +38,10 @@ app.directive('kuvaus', function() {
 
 
 /** 
+ * 
  * tulostaa koodin nimen
+ * 
+ * <koodi uri="jokukoodi_22" lang="fi">
  * 
  */
 .directive('koodi',function(Koodisto) {
@@ -57,5 +60,42 @@ app.directive('kuvaus', function() {
           }
         
     };
+})
+
+
+/** 
+ * tulostaa päivämäärän:
+ * <t-date value="haku.alkoitusPvm" timestamp="true"/>
+ */
+.directive('tShowdate',function() {
+  
+    return {
+        restrict: 'E',
+        link: function(scope, element, attrs) {
+          console.log(attrs);
+          console.log(scope);
+          console.log(element);
+          var isLong = !"long" !== attrs.type;
+          var isTimestamp = attrs.timestamp!==undefined||true;
+          var value = scope.$eval(attrs.value);
+          var date = isLong?new Date(value):value;
+          
+          var d = date.getDate();
+          var m = date.getMonth() + 1;
+          var y = date.getFullYear();
+          var datestring = (d <= 9 ? '0' + d : d) + '. ' + (m<=9 ? '0' + m : m) + '. ' + y;
+          
+          
+          
+          console.log("value:", value);
+          if(value) {
+            element.replaceWith(datestring);
+          } else {
+            "-"
+          }
+        }
+        
+    };
 });
+
 

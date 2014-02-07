@@ -49,9 +49,9 @@
             </td>
         </tr>
 
-        <tr>
+        <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2">ALKAA --- LOPPUU</td>
+            <td colspan="2"><t-showdate value="hakuaika.alkuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
     </table>
@@ -79,10 +79,10 @@
     <table class="tarjontaForm">
         <tr>
             <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2">ALKAA --- LOPPUU</td>
+            <td colspan="2"><t-showdate value="hakuaika.loppuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
-        <tr>
+        <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th ttt='haku.edit.aikataulu.PH_HKTA'>Hakukohteiden tallennus alkaa</th>
             <td>
                 <t-date-time type="long" name="PH_HKTA" timestamp="true" ng-model="model.parameter.PH_HKTA"></t-date-time>
