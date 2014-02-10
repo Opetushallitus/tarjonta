@@ -81,7 +81,7 @@
     <tr class="required">
         <th ttt='haku.edit.hakuaika'>Hakuaika</th>
         <td colspan="2">
-            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
+            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
                 <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
                 <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
                 <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>

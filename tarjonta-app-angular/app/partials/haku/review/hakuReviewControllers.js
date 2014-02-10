@@ -87,6 +87,7 @@ app.directive('xxx', [
             $log.info("KOODIVERSION: '" + koodiVersion + "'");
 
             KOODI.get({koodisto: koodistoUri, koodi: koodiUri}, function(result) {
+                $log.info("RESULT", result);
                 deferred.resolve("SUCCESS! " + result.resourceUri);
             }, function (error) {
                 deferred.resolve("KOODISTO LOOKUP FAILED");

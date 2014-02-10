@@ -1,4 +1,4 @@
-<div id="editHaku" ng-controller="HakuEditController" >
+<div id="editHaku" ng-controller="HakuEditController" ng-form='hakuForm'>
 
     <div ng-if="model.hakux.status != 'OK'">I'm sorry Dave, I'm afraid I can't do that.</div>
     <div ng-if="model.hakux.status == 'OK'">
@@ -27,8 +27,6 @@
         <display-controls model="model.formControls" display="header"></display-controls>
 
         <div class="container-fluid">
-            <form novalidate name='hakuForm'>
-
                 <tabset>
                     <tab heading="Haun tiedot">
                         <div ng-include="'partials/haku/edit/hakuEditBasic.html'"></div>
@@ -40,8 +38,6 @@
                         <div ng-include="'partials/haku/edit/hakuEditHakukaudenAikataulut.html'"></div>
                     </tab>
                 </tabset>
-
-            </form>
         </div>
 
         <display-controls model="model.formControls" display="footer"></display-controls>
