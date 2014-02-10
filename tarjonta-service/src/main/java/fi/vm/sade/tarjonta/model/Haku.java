@@ -276,7 +276,11 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public Set<Hakuaika> getHakuaikas() {
-        return Collections.unmodifiableSet(hakuaikas);
+        if (hakuaikas == null) {
+            hakuaikas = new HashSet<Hakuaika>();
+        }
+        return hakuaikas;
+        // return Collections.unmodifiableSet(hakuaikas);
     }
 
     public void addHakuaika(Hakuaika hakuaika) {

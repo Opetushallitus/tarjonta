@@ -177,7 +177,7 @@ app.controller('BaseEditController',
                             $scope.uiModel.showError = true;
                             return;
                         }
-
+                        
                         var KoulutusRes = tarjontaService.koulutus();
                         var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
@@ -191,6 +191,8 @@ app.controller('BaseEditController',
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
                                 $scope.koulutusForm.$dirty = false;
                                 $scope.koulutusForm.$invalid = false;
+                                
+                                $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
                                 $scope.uiModel.showValidationErrors = true;
                                

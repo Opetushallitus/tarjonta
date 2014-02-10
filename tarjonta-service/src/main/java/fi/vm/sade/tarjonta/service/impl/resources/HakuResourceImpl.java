@@ -134,11 +134,7 @@ public class HakuResourceImpl implements HakuResource {
     public List<HakuDTO> findAllHakus() {
         List<HakuDTO> hakuDTOs = new ArrayList<HakuDTO>();
 
-        SearchCriteriaType search = new SearchCriteriaType();
-        search.setMeneillaan(true);
-        search.setPaattyneet(true);
-        search.setTulevat(true);
-        List<Haku> hakus = hakuDAO.findAll(search);
+        List<Haku> hakus = hakuDAO.findAll();
         LOG.info("Found : {} hakus",hakus.size());
 
         if (hakus != null){
@@ -147,8 +143,6 @@ public class HakuResourceImpl implements HakuResource {
                 hakuDTOs.add(hakuDTO);
             }
         }
-
-
 
         return hakuDTOs;
     }

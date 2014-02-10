@@ -55,6 +55,11 @@ app.controller('HakuEditController',
                 };
 
                 $scope.saveLuonnos = function(event) {
+                  
+                  console.log("event:", event);
+                  
+                  console.log("scope hakuform:", $scope);
+                  
                     var haku = $scope.model.hakux.result;
 
                     $log.info("saveLuonnos()", haku);
