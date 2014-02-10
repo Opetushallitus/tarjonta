@@ -14,6 +14,17 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -58,8 +69,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private OIDService oidService;
 
     @Override
-    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params) {
-        LOG.info("search({})", params);
+    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, UriInfo uriInfo) {
+        LOG.info("search({},{})", params, uriInfo.getQueryParameters());
 
         int count = (params != null) ? params.getCount() : 0;
         int startIndex = (params != null) ? params.getStartIndex() : 0;
@@ -86,11 +97,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
 
-        SearchCriteriaType search = new SearchCriteriaType();
-        search.setMeneillaan(true);
-        search.setPaattyneet(true);
-        search.setTulevat(true);
-        List<Haku> hakus = hakuDAO.findAll(search);
+        List<Haku> hakus = hakuDAO.findAll();
 
         LOG.debug("FOUND  : {} hakus",hakus.size());
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
