@@ -1,8 +1,7 @@
-<div>
+<div class="localizedTabs">
 
     <tabset>
-        <tab ng-repeat="kieli in model.opetusKielet" heading="{{kieli.koodiNimi}}">
-            
+        <tab ng-repeat="kieli in model.opetusKielet" heading="{{kieli.koodiNimi}}" active="model.selectedTab[kieli.koodiUri]">
             <table class="tarjontaForm">
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
@@ -83,10 +82,19 @@
             
         </tab>
         
+        <tab class="addLangTab">
+            <tab-heading><span class="icon-plus"></span></tab-heading>
+            
+            <multi-select
+                on-change="onLangSelection()"
+                x-order-with="userLangs"
+                model="langs"
+                selection="selectedLangs"
+                display="dualpane"></multi-select>
+        </tab>
+        
     </tabset>
 
-    <!--
     <pre>{{ model | json }}</pre>
-     -->
 
 </div>

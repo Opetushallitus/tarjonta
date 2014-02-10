@@ -726,7 +726,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
             var haku = getHakuWithOid($scope.model.hakukohde.hakuOid);
 
-            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
+            if (haku && haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
 
                 angular.forEach(haku.hakuaikas,function(hakuaika){
 

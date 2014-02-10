@@ -23,7 +23,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
     }
 
     function controller($scope) {
-
+    	
         $scope.errors = {
             required: false,
             pristine: true,
@@ -37,6 +37,12 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.names = {};
         
         $scope.initialized = false;
+
+    	function onChange() {
+    		if ($scope.onChange) {
+    			$scope.onChange();
+    		}
+    	}
 
         function updateErrors() {
             $scope.errors.dirty = true;
@@ -148,7 +154,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.selection.sort(function(a, b) {
                 return $scope.names[a].localeCompare($scope.names[b]);
             });
+            
             updateErrors();
+            onChange();
         }
 
         $scope.onSelection = function(selection) {
@@ -207,6 +215,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             } else {
                 $scope.selection.splice(p, 1);
             }
+            onChange();
             updateErrors();
         }
 
@@ -316,6 +325,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             ttShowAll: "@", // näytä kaikki -tekstin käännösavain (combobox)
             ttShowAllTitle: "@", // näytä kaikki -dialogin otsikko (combobox)
             ttShowAllHelp: "@", // näytä kaikki -dialogin ohjeteksti (combobox)
+            
+            onChange: "&", // funktio, jota kutsutaan valinnan muuttuessa
 
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
