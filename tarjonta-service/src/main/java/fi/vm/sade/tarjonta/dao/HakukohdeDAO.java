@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
@@ -67,6 +68,10 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     void insertLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
 
     void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid);
+
+    List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid);
+
+    List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid);
 
     // String getAlkamiskausiUri();
 

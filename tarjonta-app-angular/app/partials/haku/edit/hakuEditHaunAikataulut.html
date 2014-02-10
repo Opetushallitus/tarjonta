@@ -1,14 +1,13 @@
 
 <div>
     <!-- Common parameters for all hakutyyppi's -->
-
     <h3 ttt='haku.edit.aikataulu.julkaisuJaHakuaika'>Tarjonnan julkaisu ja hakuaika</h3>
 
     <table class="tarjontaForm">
         <tr class="required">
             <th ttt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_TJT" required ng-model="model.parameter.PH_TJT">
+            <t-date-time type="long" name="PH_TJT" timestamp="true" ng-model="model.parameter.PH_TJT" required></t-date-time>
                 <p class="help-block" ttt='haku.edit.aikataulu.PH_TJT.help'>
                     Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
                 </p>
@@ -23,7 +22,7 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_HKLPT'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKLPT" required ng-model="model.parameter.PH_HKLPT">
+            <t-date-time type="long" name="PH_HKLPT" timestamp="true" ng-model="model.parameter.PH_HKLPT" required></t-date-time>
                 <p class="help-block" ttt='haku.edit.aikataulu.PH_HKLPT.help'>
                     Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.
                 </p>
@@ -38,7 +37,7 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_HKMT'>Hakukohteen muokkauksen takaraja</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKMT" required ng-model="model.parameter.PH_HKMT">
+            <t-date-time type="long" name="PH_HKMT" timestamp="true" ng-model="model.parameter.PH_HKMT" required></t-date-time>
                 <p class="help-block" ttt='haku.edit.aikataulu.PH_HKMT.help'>
                     Annetun ajan jälkeen hakukohteita ei voi muokata.
                 </p>
@@ -50,9 +49,9 @@
             </td>
         </tr>
 
-        <tr>
+        <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2">ALKAA --- LOPPUU</td>
+            <td colspan="2"><t-showdate value="hakuaika.alkuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
     </table>
@@ -80,13 +79,13 @@
     <table class="tarjontaForm">
         <tr>
             <th ttt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2">ALKAA --- LOPPUU</td>
+            <td colspan="2"><t-showdate value="hakuaika.loppuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
-        <tr>
+        <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th ttt='haku.edit.aikataulu.PH_HKTA'>Hakukohteiden tallennus alkaa</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKTA" ng-model="model.parameter.PH_HKTA">
+                <t-date-time type="long" name="PH_HKTA" timestamp="true" ng-model="model.parameter.PH_HKTA"></t-date-time>
             </td>
             <td>
                 <div>
@@ -98,7 +97,7 @@
         <tr>
             <th ttt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <input type="datetime" placeholder="dd.MM.yyyy HH:mm" name="PH_HKP" ng-model="model.parameter.PH_HKP">
+                <t-date-time type="long" name="PH_HKP" timestamp="true" ng-model="model.parameter.PH_HKP"></t-date-time>
             </td>
             <td>
                 <div>

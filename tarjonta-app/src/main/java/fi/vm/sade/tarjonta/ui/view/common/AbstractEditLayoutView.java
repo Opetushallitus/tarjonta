@@ -453,7 +453,13 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
                 if (e.getFaultInfo().getErrorCode() != null) {
                     if (e.getFaultInfo().getErrorCode().equals("javax.persistence.OptimisticLockException")) {
                         presenter.showNotification(UserNotification.SAVE_FAILED_OPTIMISTIC_LOCKING);
-                    } else {
+                    } else if (e.getFaultInfo().getErrorCode().equals("fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException")){
+
+
+                        presenter.showNotification(UserNotification.HAKUKOHDE_EXISTS_ERROR);
+                    }
+
+                    else {
                         LOG.error("An unknown application error - persist failed, message :  " + e.getFaultInfo().getErrorCode(), e);
                         presenter.showNotification(UserNotification.SAVE_FAILED);
                     }

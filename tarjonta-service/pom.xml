@@ -97,6 +97,7 @@
             <version>${project.version}</version>
         </dependency>
 
+<!--
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-enricher</artifactId>
@@ -111,8 +112,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
+-->
 
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>

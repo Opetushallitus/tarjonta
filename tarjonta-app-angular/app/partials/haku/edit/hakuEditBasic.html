@@ -1,8 +1,9 @@
 <table class="tarjontaForm">
+
     <tr class="required">
         <th ttt='haku.edit.hakutapa'>Hakutapa</th>
         <td>
-            <div koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.hakux.result.hakutapaUri" version="true" required name="hakutapa"></div>
+            <div koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.hakux.result.hakutapaUri" version="true" isrequired="true" name="hakutapa"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" ></div>
@@ -12,7 +13,7 @@
     <tr class="required">
         <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
         <td>
-            <div koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.hakux.result.hakutyyppiUri" version="true" required name="hakuTyyppi"></div>
+            <div koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.hakux.result.hakutyyppiUri" version="true" isrequired="true" name="hakuTyyppi"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" ></div>
@@ -22,7 +23,7 @@
     <tr class="required">
         <th ttt='haku.edit.hakukausi'>Hakukausi ja vuosi</th>
         <td>
-            <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.hakukausiUri" version="true" required name="hakuKausi"></div>
+            <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.hakukausiUri" version="true" isrequired="true" name="hakuKausi"></div>
             <input type="number" placeholder="vuosi" ng-model="model.hakux.result.hakukausiVuosi" required name="hakuVuosi">
         </td>
         <td>
@@ -36,7 +37,7 @@
     <tr class="required">
         <th ttt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
         <td>
-            <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.koulutuksenAlkamiskausiUri" version="true" required name="alkamisKausi"></div>
+            <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.koulutuksenAlkamiskausiUri" version="true" isrequired="true" name="alkamisKausi"></div>
             <input type="number" placeholder="vuosi" ng-model="model.hakux.result.koulutuksenAlkamisVuosi" required name="alkamisVuosi">
         </td>
         <td>
@@ -50,7 +51,7 @@
     <tr class="required">
         <th ttt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
-            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" required name="haunKohdejoukko"></div>
+            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" ></div>
@@ -60,7 +61,7 @@
     <tr class="required">
         <th ttt='haku.edit.haunNimi'>Haun nimi</th>
         <td>
-            <div mk-textfield model="model.hakux.result.nimi" required name="haunNimi"></div>
+            <div mk-textfield model="model.hakux.result.nimi" required="true" name="haunNimi"></div>
             <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
         </td>
         <td>
@@ -71,7 +72,7 @@
     <tr>
         <th ttt='haku.edit.haunTunniste'>Haun tunniste</th>
         <td>
-            <strong>{{ model.hakux.result.oid }}</strong>
+            <strong>{{ model.hakux.result.oid}}</strong>
         </td>
         <td>
         </td>
@@ -80,10 +81,10 @@
     <tr class="required">
         <th ttt='haku.edit.hakuaika'>Hakuaika</th>
         <td colspan="2">
-            <div ng-repeat="hakuaika in model.haku.hakuaikas">
+            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
                 <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
-                <input type="text" placeholder="Alkuaika pvm + kello" ng-model="hakuaika.alkaa">
-                <input type="text" placeholder="Loppuaika pvm + kello" ng-model="hakuaika.loppuu">
+                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
+                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
 
                 <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
             </div>
@@ -111,13 +112,20 @@
 
             <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
                 <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
-                <input type="url" ng-model="model.hakux.result.hakulomakeUri" placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" required>
+                <input type="url" ng-model="model.hakux.result.hakulomakeUri"
+                       placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" ng-required="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
             </p>
+            <p ng-show="model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
+                <span ttt="haku.edit.maxHakukohdes.label">Hakukohteiden enimmäismäärä:</span>
+                <input type="number" ng-model="model.hakux.result.maxHakukohdes" name="maxHakukohdes" ng-required="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+            </p>
+
         </td>
         <td>
             <div>
                 <div show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit"
                      field-check="!model.haku.hakulomakeKaytaJarjestemlmanOmaa"></div>
+                <div show-errors form="hakuForm" field="maxHakukohdes" tt-prefix="haku.edit" ></div>
             </div>
         </td>
     </tr>

@@ -206,7 +206,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
              //console.log('VIIM PAIVITYS INFO : ', $scope.model.);
 
-             var usrPromise =  YhteyshenkiloService.haeHenkilo($scope.model.valintaperustekuvaus.viimPaivittajaOid);
+            /* var usrPromise =  YhteyshenkiloService.haeHenkilo($scope.model.valintaperustekuvaus.viimPaivittajaOid);
 
              usrPromise.then(function(data){
 
@@ -224,7 +224,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                  }
 
 
-             });
+             });  */
          }
 
       }  else {

@@ -296,16 +296,20 @@ public class TarjontaFixtures {
         haku.setLastUpdatedByOid("TEST");
         return haku;
     }
+    
+      public BinaryData createBinaryData() {
+          return createBinaryData("filename", "mimetype");
+      }
 
-    public BinaryData createBinaryData() {
+    public BinaryData createBinaryData(String name, String type) {
         BinaryData image = new BinaryData();
 
         byte[] bytes = new byte[1];
         bytes[0] = 1;
 
         image.setData(bytes);
-        image.setFilename("filename");
-        image.setMimeType("mimetype");
+        image.setFilename(name);
+        image.setMimeType(type);
         
         return image;
     }

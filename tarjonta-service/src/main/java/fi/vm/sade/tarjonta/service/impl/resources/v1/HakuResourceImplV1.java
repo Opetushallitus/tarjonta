@@ -136,6 +136,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return result;
     }
 
+    // POST /haku
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         try {
@@ -164,12 +165,23 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
     }
 
+    // PUT /haku/OID
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
-        LOG.info("updateHakukohde({})", haku);
-        throw new UnsupportedOperationException("Not supported yet.");
+        LOG.error("updateHaku({})", haku);
+
+        Haku h = hakuDAO.findByOid(haku.getOid());
+
+        ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
+
+        result.setResult(haku);
+        result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+        result.addError(ErrorV1RDTO.createValidationError("alkuPvm", "foo.bar"));
+
+        return result;
     }
 
+    // DELETE /haku/OID
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
 

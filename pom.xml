@@ -31,7 +31,6 @@
         <module>tarjonta-api</module>
         <module>tarjonta-publication-api</module>
         <module>tarjonta-shared</module>
-        <module>tarjonta-enricher</module>
         <module>tarjonta-service</module>
 	<module>tarjonta-app-angular</module>
         <module>tarjonta-app</module>
