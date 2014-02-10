@@ -100,6 +100,11 @@ app.factory('HakuV1', function($resource, $log, Config) {
                 isArray: false,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
+            search: {
+              method: 'GET',
+              isArray: false,
+              headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
             remove: {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}

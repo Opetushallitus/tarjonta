@@ -69,19 +69,18 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private OIDService oidService;
 
     @Override
-    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, UriInfo uriInfo) {
-        LOG.info("search({},{})", params, uriInfo.getQueryParameters());
+    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
+        LOG.info("search({},{})", params);
 
         int count = (params != null) ? params.getCount() : 0;
         int startIndex = (params != null) ? params.getStartIndex() : 0;
 
-        ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>();
+        List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
+        ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-        List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
-        result.setResult(tmp);
-
-        List<String> oidList = hakuDAO.findOIDsBy(null, count, startIndex, null, null);
+        
+        List<String> oidList = hakuDAO.findOIDByCriteria(count, startIndex, criteriaList);
 
         for (String oid : oidList) {
             OidV1RDTO dto = new OidV1RDTO();

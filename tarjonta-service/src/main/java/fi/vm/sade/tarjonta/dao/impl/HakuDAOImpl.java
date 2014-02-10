@@ -15,23 +15,16 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_ALKAMIS_PVM;
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_LOPPUMIS_PVM;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -44,7 +37,9 @@ import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -101,6 +96,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     @Override
     public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
 
+        
 
         QHaku haku = QHaku.haku;
 
@@ -167,6 +163,74 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         getEntityManager().detach(entity);
         Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
         super.update(entity);
+    }
+
+    
+    //mappi enumista sarakkeeseen
+    private final Map<Field,String> mapping = new ImmutableMap.Builder<Field, String>()
+            .put(Field.HAKUKAUSI, QHaku.haku.hakukausiUri.toString())
+            .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi.toString())
+            .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri.toString())
+            .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi.toString())
+            .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri.toString())
+            .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri.toString())
+            .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri.toString())
+            .put(Field.TILA, QHaku.haku.tila.toString())
+            .build();
+
+    private final Map<Match,String> matchType = new ImmutableMap.Builder<Match, String>()
+            .put(Match.MUST, "=")
+            .put(Match.MUST_NOT, "!=")
+            .put(Match.LESS_THAN, "<")
+            .put(Match.MORE_THAN, ">")
+            .build();
+
+    public <T>List<T> findByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
+        
+        
+        String q = "SELECT " + (oidOnly?"haku.oid":"haku") + " from Haku haku" + (criteriaList.size()>0?" where ":"");
+
+        for(int i=0;i<criteriaList.size();i++) {
+            HakuSearchCriteria criteria = criteriaList.get(i);
+            String field = mapping.get(criteria.getField());
+            if(field==null) {
+                //no mapping available
+                throw new IllegalArgumentException("No mapping found for critaria name:" + criteria.getField());
+            }
+            q = q += field + matchType.get(criteria.getMatch()) + "?" + (i+1);
+            
+            if(i<criteriaList.size()-1) {
+                q = q += " AND ";
+            }
+        }
+        
+        final Query query = getEntityManager().createQuery(q);
+        for(int i=0;i<criteriaList.size();i++) {
+            HakuSearchCriteria criteria = criteriaList.get(i);
+            query.setParameter(i+1, criteria.getValue());
+        }
+        
+        if (count > 0) {
+            query.setMaxResults(count);
+        }
+        if (startIndex > 0) {
+            query.setFirstResult(startIndex);
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findOIDByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList) {
+        return findByCriteria(count, startIndex, criteriaList, true);
+    }
+
+    @Override
+    public List<Haku> findHakuByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList) {
+        return findByCriteria(count, startIndex, criteriaList, false);
     }
 
 }

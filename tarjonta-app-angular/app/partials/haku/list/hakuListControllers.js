@@ -49,38 +49,6 @@ app.controller('HakuListController',
                     delete $scope.model.search.koulutuksenAlkamisVuosi;
                 };
 
-
-                $scope.getHakuName = function(haku) {
-                    var userLocale = LocalisationService.getLocale();
-                    var userKieliUri = "kieli_" + userLocale;
-
-                    var result = haku.nimi[userKieliUri];
-
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_fi"];
-                        if (!isEmpty(result)) {
-                            result = result + " (FI)";
-                        }
-                    }
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_sv"];
-                        if (!isEmpty(result)) {
-                            result = result + " (SV)";
-                        }
-                    }
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_en"];
-                        if (!isEmpty(result)) {
-                            result = result + " (EN)";
-                        }
-                    }
-                    if (isEmpty(result)) {
-                        result = "[EI NIMIEÄ]";
-                    }
-
-                    return result;
-                };
-
                 $scope.init = function() {
                     $log.info("init...");
 
@@ -97,8 +65,16 @@ app.controller('HakuListController',
 
                     // Load all hakus
                     Haku.findAll(function(result) {
+                      var userLocale = LocalisationService.getLocale();
+                      var userKieliUri = "kieli_" + userLocale;
+
                         $log.info("Haku.get() result", result);
                         model.hakus = result.result;
+                        for(var i=0;i<model.hakus.length;i++){
+                          //lokalisoi haun nimi
+                          var haku = model.hakus[i];
+                          haku.nimi = result=haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
+                        }
                     }, function(error) {
                         $log.info("Haku.get() error", error);
                         model.hakus = [];

@@ -144,8 +144,6 @@ public class HakuResourceImpl implements HakuResource {
             }
         }
 
-
-
         return hakuDTOs;
     }
 

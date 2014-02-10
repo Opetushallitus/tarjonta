@@ -63,7 +63,7 @@
                             </tr>
 
                             <tr ng-repeat="haku in model.hakus">
-                                <td>{{getHakuName(haku) }}</td>
+                                <td>{{haku.nimi}}</td>
                                 <td><koodi uri="haku.hakutyyppiUri"/></td>
                                 <td><koodi uri="haku.hakukausiUri"/> {{haku.hakukausiVuosi}}</td>
                                 <td><koodi uri="haku.koulutuksenAlkamiskausiUri"/> {{haku.koulutuksenAlkamisVuosi }} </td>
