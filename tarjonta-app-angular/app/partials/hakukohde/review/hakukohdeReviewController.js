@@ -54,7 +54,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     	  return null;
       }
 
-
+      console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
 
       /*
         ----------------------------> Helper functions  < ----------------------------
@@ -95,6 +95,19 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
               for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
                   allKieles.add(kieliUri);
               }
+
+              angular.forEach($scope.model.hakukohde.valintakokeet,function(valintakoe) {
+
+                  allKieles.add(valintakoe.kieliUri);
+
+              });
+
+              angular.forEach($scope.model.hakukohde.hakukohteenLiitteet,function(liite){
+
+                  allKieles.add(liite.kieliUri);
+
+              });
+
               $scope.model.allkieles = allKieles.toArray();
           }
 
