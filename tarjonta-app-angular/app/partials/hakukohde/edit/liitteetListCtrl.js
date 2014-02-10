@@ -38,7 +38,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		kieliUri: lc,
     		liitteenNimi: "",
     		liitteenKuvaus: {teksti: ""},
-    		toimitettavaMennessa: tmennessa,
+    		toimitettavaMennessa: null, //tmennessa,
     		liitteenToimitusOsoite: getDefaultOsoite(),
     		muuOsoiteEnabled: false,
     		sahkoinenOsoiteEnabled: false,
@@ -215,6 +215,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
        	var liite = $scope.model.selectedLiite[kieliUri];
     	return notEmpty(liite.liitteenNimi)
     		&& notEmpty(liite.liitteenKuvaus.teksti)
+    		&& liite.toimitettavaMennessa!=null
     		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
     		&& (!liite.muuOsoiteEnabled || (liite.liitteenToimitusOsoite
     				&& notEmpty(liite.liitteenToimitusOsoite.osoiterivi1,
