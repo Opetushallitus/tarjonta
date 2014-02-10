@@ -54,7 +54,7 @@ app.factory('Liite',function($resource, Config) {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
-        insert: {
+        save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
@@ -80,7 +80,7 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
-        insert: {
+        save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
