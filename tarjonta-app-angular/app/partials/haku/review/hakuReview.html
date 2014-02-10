@@ -13,42 +13,44 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    {{ model.hakux.result.oid }}
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakutyyppi">Hakutyyppi</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    <span xxx koodisto="'hakutyyppi'" koodi="model.hakux.result.hakutyyppiUri" version='12345' locale="FI" />
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    <span xxxx koodisto=""  koodi-uri="model.hakux.result.hakukausiUri" />
+                    {{ model.hakux.result.hakukausiVuosi }}
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    <span xxxx koodi-uri="model.hakux.result.koulutuksenAlkamiskausiUri" />
+                    {{ model.hakux.result.koulutuksenAlkamisVuosi }}
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.kohdejoukko">Haun kohdejoukko</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    <span xxxx koodi-uri="model.hakux.result.kohdejoukkoUri" />
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakutapa">Hakutapa</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    <span xxxx koodi-uri="model.hakux.result.hakutapaUri" />
                 </td>
             </tr>
 
@@ -62,14 +64,19 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    TODO
+                    <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
+                        {{ hakuaika.hakuaikaId }}
+                        {{ hakuaika.alkuPvm }}
+                        {{ hakuaika.loppuPvm }}
+                    </div>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Hakulomake</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    TODO
                 </td>
             </tr>
 
@@ -228,7 +235,7 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                    TODO
                 </td>
             </tr>
 

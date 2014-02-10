@@ -15,14 +15,23 @@
 
 var app = angular.module('app.haku.edit.ctrl', []);
 
+/**
+ * Haku edit controllers.
+ *
+ * Note: current haku is preloaded in "tarjontaApp.js" route definitions. Extracted in "init()"-method.
+ *
+ * @param {type} param1
+ * @param {type} param2
+ */
 app.controller('HakuEditController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService',
-            function HakuEditController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService) {
+        ['$q', '$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'ParameterService',
+            function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
                 $log.info("HakuEditController()", $scope);
 
+                var hakuOid = $route.current.params.id;
+                
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
-
                 $scope.model = null;
 
                 $scope.getLocale = function() {
@@ -31,14 +40,14 @@ app.controller('HakuEditController',
 
                 $scope.doRemoveHakuaika = function(hakuaika, index) {
                     $log.info("doRemoveHakuaika()", hakuaika, index);
-                    if ($scope.model.haku.hakuaikas.length > 1) {
-                        $scope.model.haku.hakuaikas.splice(index, 1);
+                    if ($scope.model.hakux.result.hakuaikas.length > 1) {
+                        $scope.model.hakux.result.hakuaikas.splice(index, 1);
                     }
                 };
 
                 $scope.doAddNewHakuaika = function() {
                     $log.info("doAddNewHakuaika()");
-                    $scope.model.haku.hakuaikas.push({nimi: "", alkaa: 0, loppuu: 0});
+                    $scope.model.hakux.result.hakuaikas.push({nimi: "", alkuPvm: new Date().getTime(), loppuPvm: new Date().getTime()});
                 };
 
                 $scope.goBack = function(event) {
@@ -46,9 +55,32 @@ app.controller('HakuEditController',
                 };
 
                 $scope.saveLuonnos = function(event) {
-                    $scope.model.showError = !$scope.model.showError;
-                    $scope.model.showSuccess = !$scope.model.showError;
-                    $log.info("saveLuonnos()");
+                    var haku = $scope.model.hakux.result;
+
+                    $log.info("saveLuonnos()", haku);
+
+                    HakuV1.update(haku, function(result) {
+                        $log.info("saveLuonnos() - OK", result);
+
+                        $scope.model.showError = true;
+                        $scope.model.validationmsgs = result.errors;
+                        
+                        console.log("->saveparameters");
+                        $scope.saveParameters();
+                        console.log("saveparameters->");
+
+                    }, function (error) {
+                        $log.info("saveLuonnos() - FAILED", error);
+
+                        $scope.model.showError = true;
+                    });
+
+                    // $scope.model.showError = !$scope.model.showError;
+                    // $scope.model.showSuccess = !$scope.model.showError;
+                    // $log.info("saveLuonnos()");
+
+
+
                 };
 
                 $scope.saveValmis = function(event) {
@@ -59,25 +91,54 @@ app.controller('HakuEditController',
                     $log.info("goToReview()");
                 };
 
-                $scope.checkHaunNimiValidity = function() {
-                    $log.info("checkHaunNimiValidity()");
-                    var result = false;
+                $scope.onStartDateChanged = function(element, hakuaika) {
+                    $log.info("onStartDateChanged: " + element + " - " + hakuaika);
+                };
 
-                    // At least one name should have real value
-                    angular.forEach($scope.model.haku.nimi, function (value, key) {
-                        result = result || !value;
+                $scope.onEndDateChanged = function(element, hakuaika) {
+                    $log.info("onEndDateChanged: " + element + " - " + hakuaika);
+                };
+
+                $scope.onDateChanged = function(hakuaika) {
+                    $log.info("onDateChanged: " + hakuaika);
+                };
+
+
+                $scope.checkHaunNimiValidity = function() {
+                    // Count number of keys that have content
+                    var numKeys = 0;
+
+                    var result = true;
+                    angular.forEach($scope.model.hakux.result.nimi, function (value, key) {
+                        numKeys++;
+
+                        result = result && !value;
+
+                        // $log.info("  " + key + " == " + value + " --> result = " + result);
 
                         // regexp check for empty / whitespace
                         // $log.info("key: " + key + " -- value: " + value);
                     });
 
+                    if (numKeys == 0) {
+                        result = true;
+                    }
+
                     // TODO check that at leas kieli_fi is defined?
+                    // $log.info("checkHaunNimiValidity() : " + result);
 
                     return result;
+                };
+                
+                
+                $scope.saveParameters= function() {
+                	ParameterService.tallenna(hakuOid, $scope.model.parameter);
                 };
 
                 $scope.init = function() {
                     $log.info("init...");
+                    
+                    
                     var model = {
                         formControls: {},
                         showError: false,
@@ -91,86 +152,30 @@ app.controller('HakuEditController',
                         hakux : $route.current.locals.hakux,
 
                         haku: {
-                            "nimi": {
-                                "kieli_fi": "suomi",
-                                "kieli_sv": "ruotsi",
-                                "kieli_en": "englanti",
-                                "kieli_ay": "aimara"
-                            },
                             hakuaikas: [
                                 {nimi: null, alkaa: new Date(), loppuu: new Date()}
                             ],
 
-                            // State of the checkbox
+                            date1 : new Date(),
+                            date2 : 1380081600000,
+
+                            // State of the checkbox for "oma hakulomake" - if uri is given the use it
                             hakulomakeKaytaJarjestemlmanOmaa: !!$route.current.locals.hakux.hakulomakeUri
                         },
 
                         parameter: {
-                            // Tarjonnan julkaisu ja hakuaika
-                            PH_TJT : new Date(),
-                            PH_HKLPT : new Date(),
-                            PH_HKMT : new Date(),
+                          //parametrit populoituu tänne... ks. haeHaunParametrit(...)
 
-                            // Valinnat ja sijoittelu
-                            PH_KKM_S : new Date(),
-                            PH_KKM_E : new Date(),
-                            PH_HVVPTP : new Date(),
-                            PH_KTT_S : new Date(),
-                            PH_KTT_E : new Date(),
-                            PH_OLVVPKE_S : new Date(),
-                            PH_OLVVPKE_E : new Date(),
-                            PH_VLS_S : new Date(),
-                            PH_VLS_E : new Date(),
-                            PH_SS_S : new Date(),
-                            PH_SS_E : new Date(),
-                            PH_SSAVTM : true,
-                            PH_SST : 48,
-                            PH_SSKA : "23:59",
-                            PH_VTSSV : new Date(), // kk
-                            PH_VSSAV : new Date(), // kk
-
-                            // Tulokset ja paikan vastaanotto
-                            PH_JKLIP : new Date(),
-                            PH_HKP : new Date(),
-                            PH_VTJH_S : new Date(),
-                            PH_VTJH_E : new Date(),
-                            PH_EVR : new Date(),
-                            PH_OPVP : new Date(),
-                            PH_HPVOA : 7,
-
-                            // Lisähaku
-                            PH_HKTA : new Date(),
-                            // PH_HKP : new Date(),
-
-                            // Hakukauden parametrit
-                            PHK_PLPS_S : new Date(),
-                            PHK_PLPS_E : new Date(),
-                            PHK_PLAS_S : new Date(),
-                            PHK_PLAS_E : new Date(),
-                            PHK_LPAS_S : new Date(),
-                            PHK_LPAS_E : new Date(),
-
-                            // Tiedonsiirto
-                            PHK_KTTS : new Date(),
-                            PHK_TAVS_S : new Date(),
-                            PHK_TAVS_E : new Date(),
-                            PHK_TAVSM : true,
-                            PHK_KAVS_S : new Date(),
-                            PHK_KAVS_E : new Date(),
-                            PHK_KAVSM : true,
-                            PHK_VTST : 2,
-                            PHK_VTSAK : "23:59",
-
-                            place: "Holder"
-                        },
+                        }
 
 
-                        place: "holder"
                     };
 
                     $log.info("init... done.");
                     $scope.model = model;
-                };
 
-                $scope.init();
-            }]);
+                // lataa nykyiset parametrit model.parameter objektiin
+                ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+              };
+              $scope.init();
+            } ]);

@@ -20,7 +20,7 @@
             <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
             <controls-notify type="error-detail" tt="'tarjonta.tallennus.virhe.invalid'" show="!hakuForm.$pristine && model.showError && hakuForm.$invalid"></controls-notify>
-            <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
+            <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e.errorMessageKey" tp="e.errorMessageParameters" show="model.showError"></controls-notify>
 
         </controls-model>
 

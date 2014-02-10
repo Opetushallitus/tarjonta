@@ -4,17 +4,27 @@ var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation', 'Tarjont
 
 app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
+           $scope.isKausiVuosiRadioButtonActive = function(){
+                return $scope.pvms.length === 0 
+                        && (!angular.isUndefined($scope.vuosi) 
+                        && angular.isNumber($scope.vuosi)) 
+                        && (!angular.isUndefined($scope.kausiUri) 
+                        && $scope.kausiUri.length > 0)
+            };
+            
             $scope.ctrl = {
-            	kausi:false,
+            	kausi: $scope.isKausiVuosiRadioButtonActive(),
             	multi:false,
                 koodis: []
             };
-
+            
             $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
 
             $scope.$watch("kausiUri", function(valNew, valOld) {
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
+            
+            
 
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = -1

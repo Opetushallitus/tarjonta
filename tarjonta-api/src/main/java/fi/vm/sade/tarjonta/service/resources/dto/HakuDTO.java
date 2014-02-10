@@ -37,6 +37,7 @@ public class HakuDTO extends BaseRDTO {
     private String _koulutuksenAlkamiskausiUri;
     private String _tila;
     private boolean _sijoittelu;
+    private int maxHakukohdes = 0;
 
     private List<HakuaikaRDTO> _hakuaikas;
 
@@ -157,6 +158,14 @@ public class HakuDTO extends BaseRDTO {
 
     public void setHakuaikas(List<HakuaikaRDTO> _hakuaikas) {
         this._hakuaikas = _hakuaikas;
+    }
+
+    public int getMaxHakukohdes() {
+        return maxHakukohdes;
+    }
+
+    public void setMaxHakukohdes(int maxHakukohdes) {
+        this.maxHakukohdes = maxHakukohdes;
     }
 
 }
