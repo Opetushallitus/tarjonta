@@ -3,7 +3,7 @@
         <td>
             <div><!-- an image will be loaded here --></div>
         </td>
-        <td>{{filename}}</td>
+        <td>{{ctrl.filename}}</td>
     </tr>
     <tr ng-show="editable">
         <td>
@@ -14,8 +14,8 @@
                    resize-max-height="300"
                    resize-max-width="250"
                    resize-quality="0.9" />
-            <button class="btn" type="submit" ng-click="uploadImage($event, uri, image)">{{btnNameSave}}</button>
-            <button class="btn" ng-show="filename" type="submit" ng-click="deleteImage($event, uri)">{{btnNameRemove}}</button>
+            <button class="btn" ng-show="ctrl.isSaveButtonVisible" type="submit" ng-click="uploadImage($event, uri, image)">{{btnNameSave}}</button>
+            <button class="btn" ng-show="ctrl.filename" type="submit" ng-click="deleteImage($event, uri)">{{btnNameRemove}}</button>
 
             <img ng-show="image" ng-src="{{image.resized.dataURL}}"/></td>
         </td>
