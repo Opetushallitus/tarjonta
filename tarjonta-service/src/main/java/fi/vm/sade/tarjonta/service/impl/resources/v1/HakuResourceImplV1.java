@@ -40,6 +40,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -100,10 +101,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 case KOULUTUKSEN_ALKAMISVUOSI:
                     value = Integer.parseInt(sValue);
                     break;
+                case TILA:
+                    value = TarjontaTila.valueOf(sValue);
+                    break;
 
                 
                 default:
-                    throw new RuntimeException("unhandled parameter:" + key  + "=" + value);
+                    throw new RuntimeException("unhandled parameter:" + key  + "=" + sValue);
 
                     
                 }

@@ -10,18 +10,30 @@
         <tr>
             <td><input type="text" placeholder="hakuehto" class="input search-query" ng-model="model.search.hakuehto" ng-enter="doSearch()"></td>
             <td>
-                <select ng-model="hakuehdot.TILA" ng-options="s as t for (s,t) in states" >
+                <select ng-model="searchParams.TILA" ng-options="s as t for (s,t) in states" >
                     <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
                 </select>
             </td>
 
             <td>
-                <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.search.koulutuksenAlkamiskausiUri" version="true"></div>
+                <select ng-model="searchParams.HAKUVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
+                </select>
             </td>
             <td>
-                <input type="number" placeholder="vuosi" ng-model="model.search.koulutuksenAlkamisVuosi">
+                <select ng-model="searchParams.KOULUTUKSEN_ALKAMISVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
+                </select>
             </td>
-
+            <td>
+                <div koodistocombo koodistouri="'hakutapa'" koodiuri="searchParams.HAKUTAPA" version="false"></div>
+            </td>
+            <td>
+				<div koodistocombo koodistouri="'hakutyyppi'" koodiuri="searchParams.HAKUTYYPPI" version="false"></div>
+            </td>
+            <td>
+                <div koodistocombo promopt="kjdsfkjsdflkj" koodistouri="'haunkohdejoukko'" koodiuri="searchParams.KOHDEJOUKKO" version="false"></div>
+            </td>
         </tr>
 
         <tr>
@@ -58,7 +70,9 @@
                             </tr>
 
                             <tr ng-repeat="haku in model.hakus">
-                                <td>{{haku.nimi}}</td>
+                                <td>{{haku.nimi}}
+                                {{haku}}
+                                </td>
                                 <td><koodi uri="haku.hakutyyppiUri"/></td>
                                 <td><koodi uri="haku.hakukausiUri"/> {{haku.hakukausiVuosi}}</td>
                                 <td><koodi uri="haku.koulutuksenAlkamiskausiUri"/> {{haku.koulutuksenAlkamisVuosi }} </td>

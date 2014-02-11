@@ -68,10 +68,6 @@ app.factory('HakuService', function($http, $q, Config) {
 
                 }
 
-
-
-
-
             };
 
         });
@@ -115,14 +111,37 @@ app.factory('HakuV1', function($resource, $log, Config) {
     });
 
 /**
- * Service joka käyttää HakuV1 resurssia
+ * Haku Service 
  */
-app.factory('HakuV1Service', function(HakuV1, LocalisationService) {
+app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
+
   var userKieliUri = LocalisationService.getKieliUri();
 
   return {
+    /**
+     * Hae hakuja määritellyillä hakuehdoilla
+     */
     search:function(parameters){
       console.log("Searching with: ", parameters);
+      
+      
+      var defer = $q.defer();
+      
+      HakuV1.search(parameters).$promise.then(function(data){
+        var promises=[];
+        var haut=[]
+        for(var i=0;i<data.result.length;i++) {
+          promises.push(HakuV1.get(data.result[i]).$promise.then(function(haku){
+            if(haut.push(haku.result);
+          }));
+        }
+        $q.all(promises).then(function(){
+          defer.resolve(haut);
+        })
+        console.log("hakutulos:", data);
+      });
+      
+      return defer.promise
       }
   };
 
