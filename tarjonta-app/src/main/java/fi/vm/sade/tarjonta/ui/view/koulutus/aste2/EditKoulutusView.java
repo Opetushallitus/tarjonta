@@ -23,9 +23,11 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -123,6 +125,19 @@ public class EditKoulutusView extends AbstractVerticalLayout {
             }
             
         });
+
+        enableOrDisableButtons();
+    }
+
+    private void enableOrDisableButtons() {
+
+       KoulutusPerustiedotViewModel perustiedotViewModel = presenter.getModel().getKoulutusPerustiedotModel();
+
+        HakukohteetVastaus hakukohteetVastaus = presenter.getHakukohteetForKoulutus(perustiedotViewModel.getOid());
+
+       System.out.println("PERUSTIEDOT : " + perustiedotViewModel.getPohjakoulutusvaatimus());
+       System.out.println("VASTAUS  : " + hakukohteetVastaus.getHitCount());
+
     }
     
     @SuppressWarnings("rawtypes")
