@@ -6,7 +6,7 @@ import java.util.List;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**

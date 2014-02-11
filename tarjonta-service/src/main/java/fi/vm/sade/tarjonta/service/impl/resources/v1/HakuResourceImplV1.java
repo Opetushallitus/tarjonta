@@ -14,10 +14,25 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
@@ -56,10 +71,47 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private OIDService oidService;
 
+    
     @Override
-    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
-        LOG.info("search({},{})", params);
+    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
+        LOG.info("search({})", params);
 
+        MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
+        
+        for(String key: values.keySet()) {
+            LOG.info("processing parameter:" + key);
+            
+
+            if(!key.toUpperCase().equals(key)) continue;
+            
+            try {
+                Field field = Field.valueOf(key);
+            } catch (Throwable t) {
+                LOG.info("Ignoring unknown parameter:" + key);
+                continue;
+            }
+            
+
+            for(String sValue: values.get(key)) {
+                Field field = Field.valueOf(key);
+                Object value=null;
+                switch (field) {
+                case HAKUVUOSI:
+                case KOULUTUKSEN_ALKAMISVUOSI:
+                    value = Integer.parseInt(sValue);
+                    break;
+
+                
+                default:
+                    throw new RuntimeException("unhandled parameter:" + key  + "=" + value);
+
+                    
+                }
+                criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
+                
+            }
+        }
+        
         int count = (params != null) ? params.getCount() : 0;
         int startIndex = (params != null) ? params.getStartIndex() : 0;
 

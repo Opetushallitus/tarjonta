@@ -39,9 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -138,18 +138,18 @@ public class HakuDAOImplTest extends TestData {
         int count =0;
         int index=0;
         List<HakuSearchCriteria> criteria;
-        List<String> result = dao.findOIDByCriteria(count, index, new ArrayList<HakuV1Resource.HakuSearchCriteria>());
+        List<String> result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
         Assert.assertEquals(2, result.size());
         
         //countilla
         count =1;
-        result = dao.findOIDByCriteria(count, index, new ArrayList<HakuV1Resource.HakuSearchCriteria>());
+        result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
         Assert.assertEquals(1, result.size());
 
         //indexillä
         count=0;
         index=1;
-        result = dao.findOIDByCriteria(count, index, new ArrayList<HakuV1Resource.HakuSearchCriteria>());
+        result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
         Assert.assertEquals(1, result.size());
         
         count=0;
