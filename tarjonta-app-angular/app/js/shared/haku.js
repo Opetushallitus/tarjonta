@@ -129,7 +129,7 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
       
       HakuV1.search(parameters).$promise.then(function(data){
         var promises=[];
-        var haut=[]
+        var haut=[];
         for(var i=0;i<data.result.length;i++) {
           promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
             var haku=hakuresult.result;
@@ -139,11 +139,10 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
         }
         $q.all(promises).then(function(){
           defer.resolve(haut);
-        })
-        console.log("hakutulos:", data);
+        });
       });
       
-      return defer.promise
+      return defer.promise;
       }
   };
 
