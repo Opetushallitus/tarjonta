@@ -11,23 +11,16 @@
         <tbody ng-show="!model.collapse.haunTiedot">
 
             <tr>
-                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
-                <td colspan="2">
-                    {{ model.hakux.result.oid }}
-                </td>
-            </tr>
-
-            <tr>
                 <th ttt="haku.review.haunTiedot.hakutyyppi">Hakutyyppi</th>
                 <td colspan="2">
-                    <span xxx koodisto="'hakutyyppi'" koodi="model.hakux.result.hakutyyppiUri" version='12345' locale="FI" />
+                    <div koodi uri="model.hakux.result.hakutyyppiUri">resolved</div>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
                 <td colspan="2">
-                    <span xxxx koodisto=""  koodi-uri="model.hakux.result.hakukausiUri" />
+                    <div data-koodi data-uri="model.hakux.result.hakukausiUri">resolved</div>
                     {{ model.hakux.result.hakukausiVuosi }}
                 </td>
             </tr>
@@ -35,7 +28,7 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.koulutuksenAlkamiskausiUri" />
+                    <div data-koodi data-uri="model.hakux.result.koulutuksenAlkamiskausiUri">resolved</div>
                     {{ model.hakux.result.koulutuksenAlkamisVuosi }}
                 </td>
             </tr>
@@ -43,14 +36,14 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.kohdejoukko">Haun kohdejoukko</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.kohdejoukkoUri" />
+                    <div data-koodi data-uri="model.hakux.result.kohdejoukkoUri">resolved</div>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakutapa">Hakutapa</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.hakutapaUri" />
+                    <div data-koodi data-uri="model.hakux.result.hakutapaUri">resolved</div>
                 </td>
             </tr>
 
@@ -64,11 +57,10 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">
-                    TODO
                     <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
-                        {{ hakuaika.hakuaikaId }}
-                        {{ hakuaika.alkuPvm }}
-                        {{ hakuaika.loppuPvm }}
+                        <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
+                        <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        {{$last ? '': ', '}}
                     </div>
                 </td>
             </tr>
