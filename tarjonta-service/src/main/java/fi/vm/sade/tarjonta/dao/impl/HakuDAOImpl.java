@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.expr.ComparableExpressionBase;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -37,9 +38,9 @@ import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria.Field;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource.HakuSearchCriteria.Match;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -167,15 +168,15 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
     
     //mappi enumista sarakkeeseen
-    private final Map<Field,String> mapping = new ImmutableMap.Builder<Field, String>()
-            .put(Field.HAKUKAUSI, QHaku.haku.hakukausiUri.toString())
-            .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi.toString())
-            .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri.toString())
-            .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi.toString())
-            .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri.toString())
-            .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri.toString())
-            .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri.toString())
-            .put(Field.TILA, QHaku.haku.tila.toString())
+    private final Map<Field,ComparableExpressionBase> mapping = new ImmutableMap.Builder<Field, ComparableExpressionBase>()
+            .put(Field.HAKUKAUSI, QHaku.haku.hakukausiUri)
+            .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi)
+            .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri)
+            .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi)
+            .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri)
+            .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri)
+            .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri)
+            .put(Field.TILA, QHaku.haku.tila)
             .build();
 
     private final Map<Match,String> matchType = new ImmutableMap.Builder<Match, String>()
@@ -193,7 +194,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         for(int i=0;i<criteriaList.size();i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
-            String field = mapping.get(criteria.getField());
+            String field = mapping.get(criteria.getField()).toString();
             if(field==null) {
                 //no mapping available
                 throw new IllegalArgumentException("No mapping found for critaria name:" + criteria.getField());

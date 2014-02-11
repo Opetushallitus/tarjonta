@@ -14,18 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -33,7 +26,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
 /**
  * Supported operations.
@@ -55,64 +58,10 @@ import javax.ws.rs.core.MediaType;
 @Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
 public interface HakuV1Resource {
 
-    //HAUN HAKUEHTO
-    public static class HakuSearchCriteria {
-        
-        public static class Builder{
-            List<HakuSearchCriteria> criteria = new ArrayList<HakuV1Resource.HakuSearchCriteria>();
-
-            public Builder mustMatch(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.MUST));
-                return this;
-            }
-
-            public Builder lessThan(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.LESS_THAN));
-                return this;
-            }
-
-            public Builder moreThan(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.MORE_THAN));
-                return this;
-            }
-
-            public List<HakuSearchCriteria> build() {
-                return criteria;
-            }
-        }
-
-        public static enum Match {
-            MUST,LESS_THAN,MORE_THAN,MUST_NOT;
-        }
-        public static enum Field {
-            TILA, HAKUKAUSI, HAKUVUOSI, KOULUTUKSEN_ALKAMISKAUSI, KOULUTUKSEN_ALKAMISVUOSI, HAKUTAPA, HAKUTYYPPI, KOHDEJOUKKO;
-        }
-
-        HakuSearchCriteria(Field field, Object value,Match match) {
-            this.match = match;
-            this.field = field;
-            this.value = value;
-        }
-        
-        public Match getMatch() {
-            return match;
-        }
-        public Field getField() {
-            return field;
-        }
-        public Object getValue() {
-            return value;
-        }
-
-        private final Match match;
-        private final Field field;
-        private final Object value;
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Palauttaa kaikki hakujen oid:t", notes = "Listaa kaikki hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> hakuSearchCriteria);
+    @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{oid}")

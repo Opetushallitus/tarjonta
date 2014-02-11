@@ -19,7 +19,8 @@ var app = angular.module('Haku', ['ngResource', 'config']);
 
 
 app.factory('HakuService', function($http, $q, Config) {
-
+  
+  
 
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
@@ -67,10 +68,6 @@ app.factory('HakuService', function($http, $q, Config) {
 
                 }
 
-
-
-
-
             };
 
         });
@@ -112,3 +109,41 @@ app.factory('HakuV1', function($resource, $log, Config) {
         });
 
     });
+
+/**
+ * Haku Service 
+ */
+app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
+
+  var userKieliUri = LocalisationService.getKieliUri();
+
+  return {
+    /**
+     * Hae hakuja määritellyillä hakuehdoilla
+     */
+    search:function(parameters){
+      console.log("Searching with: ", parameters);
+      
+      
+      var defer = $q.defer();
+      
+      HakuV1.search(parameters).$promise.then(function(data){
+        var promises=[];
+        var haut=[];
+        for(var i=0;i<data.result.length;i++) {
+          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
+            var haku=hakuresult.result;
+            haut.push(haku);
+            haku.nimi= haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
+          }));
+        }
+        $q.all(promises).then(function(){
+          defer.resolve(haut);
+        });
+      });
+      
+      return defer.promise;
+      }
+  };
+
+});

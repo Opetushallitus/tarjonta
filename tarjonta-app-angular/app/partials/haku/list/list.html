@@ -3,30 +3,41 @@
     <table>
         <tr>
             <th></th>
-            <th ttt="haku.search.tila">Tila</th>
-            <th colspan="2" ttt="haku.search.alkamiskausiJaVuosi">Koulutuksen alkamiskausi ja vuosi</th>
+            <th><span tt="haku.search.tila"/></th>
+            <th><span tt="haku.search.alkamiskausiJaVuosi"/></th>
+            <th><span tt="haku.search.koulutuksenAlkamiskausiJaVuosi"/></th>
+            <th><span tt="haku.search.hakutapa"/></th>
+            <th><span tt="haku.search.hakutyyppi"/></th>
+            <th><span tt="haku.search.haunKohdejoukko"/></th>
         </tr>
 
         <tr>
             <td><input type="text" placeholder="hakuehto" class="input search-query" ng-model="model.search.hakuehto" ng-enter="doSearch()"></td>
             <td>
-                <select ng-model="model.search.tila">
-                    <option value="" ttt="haku.tila.kaikki">-- Kaikki --</option>
-                    <option value="JULKAISTU" ttt="haku.tila.JULKAISTU">Julkaistu</option>
-                    <option value="VALMIS" ttt="haku.tila.VALMIS">Valmis</option>
-                    <option value="LUONNOS" ttt="haku.tila.LUONNOS">Luonnos</option>
-                    <option value="PERUTTU" ttt="haku.tila.PERUTTU">Peruttu</option>
-                    <option value="KOPIOITU" ttt="haku.tila.KOPIOITU">Kopioitu</option>
+                <select ng-model="searchParams.TILA" ng-options="s as t for (s,t) in states" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
                 </select>
             </td>
 
             <td>
-                <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.search.koulutuksenAlkamiskausiUri" version="true"></div>
+                <select ng-model="searchParams.HAKUVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
+                </select>
             </td>
             <td>
-                <input type="number" placeholder="vuosi" ng-model="model.search.koulutuksenAlkamisVuosi">
+                <select ng-model="searchParams.KOULUTUKSEN_ALKAMISVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
+                </select>
             </td>
-
+            <td>
+                <div koodistocombo koodistouri="'hakutapa'" koodiuri="searchParams.HAKUTAPA" version="true"></div>
+            </td>
+            <td>
+				<div koodistocombo koodistouri="'hakutyyppi'" koodiuri="searchParams.HAKUTYYPPI" version="true"></div>
+            </td>
+            <td>
+                <div koodistocombo koodistouri="'haunkohdejoukko'" koodiuri="searchParams.KOHDEJOUKKO" version="true"></div>
+            </td>
         </tr>
 
         <tr>
@@ -63,7 +74,8 @@
                             </tr>
 
                             <tr ng-repeat="haku in model.hakus">
-                                <td>{{haku.nimi}}</td>
+                                <td>{{haku.nimi}}
+                                </td>
                                 <td><koodi uri="haku.hakutyyppiUri"/></td>
                                 <td><koodi uri="haku.hakukausiUri"/> {{haku.hakukausiVuosi}}</td>
                                 <td><koodi uri="haku.koulutuksenAlkamiskausiUri"/> {{haku.koulutuksenAlkamisVuosi }} </td>

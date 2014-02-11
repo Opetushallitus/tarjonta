@@ -16,7 +16,9 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -29,6 +31,8 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
@@ -36,14 +40,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import java.util.Random;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,10 +72,56 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private OIDService oidService;
 
+    
     @Override
-    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
-        LOG.info("search({},{})", params);
+    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
+        LOG.info("search({})", params);
 
+        MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
+        
+        for(String key: values.keySet()) {
+            LOG.info("processing parameter:" + key);
+            
+
+            if(!key.toUpperCase().equals(key)) continue;
+            
+            try {
+                Field field = Field.valueOf(key);
+            } catch (Throwable t) {
+                LOG.info("Ignoring unknown parameter:" + key);
+                continue;
+            }
+            
+
+            for(String sValue: values.get(key)) {
+                Field field = Field.valueOf(key);
+                Object value=null;
+                switch (field) {
+                case HAKUVUOSI:
+                case KOULUTUKSEN_ALKAMISVUOSI:
+                    value = Integer.parseInt(sValue);
+                    break;
+                case TILA:
+                    value = TarjontaTila.valueOf(sValue);
+                    break;
+                case HAKUKAUSI:
+                case HAKUTAPA:
+                case HAKUTYYPPI:
+                case KOHDEJOUKKO:
+                case KOULUTUKSEN_ALKAMISKAUSI:
+                    value = sValue;
+                    break;
+                
+                default:
+                    throw new RuntimeException("unhandled parameter:" + key  + "=" + sValue);
+
+                    
+                }
+                criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
+                
+            }
+        }
+        
         int count = (params != null) ? params.getCount() : 0;
         int startIndex = (params != null) ? params.getStartIndex() : 0;
 
@@ -79,7 +129,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-        
+
         List<String> oidList = hakuDAO.findOIDByCriteria(count, startIndex, criteriaList);
 
         for (String oid : oidList) {
@@ -114,11 +164,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
 
-
-
-
         return  resultV1RDTO;
-
     }
 
     @Override
@@ -135,8 +181,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
             }
         } catch (Exception ex) {
-            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            result.addError(ErrorV1RDTO.createSystemError(ex, "system.error", oid));
+            createSystemErrorFromException(ex, result);
         }
 
         return result;
@@ -208,14 +253,16 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             LOG.info("updateHaku() - make whopee!");
 
-            result.setResult(_converter.fromHakuToHakuRDTO(hakuToUpdate, false));
+            // Convert to DTO - reload to get hakuaika id's for example
+            h = hakuDAO.findByOid(haku.getOid());
+            result.setResult(_converter.fromHakuToHakuRDTO(h, false));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
         } catch (Exception ex) {
-            LOG.info("updateHaku() - EXCEPTION");
-
             createSystemErrorFromException(ex, result);
         }
+
+        LOG.info("RETURN RESULT: " + result);
 
         return result;
     }
@@ -284,11 +331,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * @return if false Haku has errors.
      */
     private boolean validateHaku(HakuV1RDTO haku, ResultV1RDTO<HakuV1RDTO> result) {
+        LOG.info("vaidateHaku() {}", haku);
+
         if (haku == null) {
             result.addError(ErrorV1RDTO.createValidationError("", "haku.validation.null"));
             return false;
         }
 
+        // TODO not valid if this is JATKUVA HAKU!
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
         }
@@ -333,14 +383,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.addError(ErrorV1RDTO.createValidationError("nimi", "haku.validation.nimi.empty"));
         }
 
-        // Hakulomake URI
+        // Hakulomake URI  -OR- maxHakukohdes
         if (isEmpty(haku.getHakulomakeUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
+            // max hakuaikas cannot be empty
+            if (haku.getMaxHakukohdes() <= 0) {
+                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
+            }
         } else {
-            // TODO hakulomakeuri check with regexp
-        }
+            // Cannot have this since we have hakulomakeUri
+            if (haku.getMaxHakukohdes() > 0) {
+                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
+            }
 
-        // TODO hakulomakeUri OR maxHakukohdes selection / validation?
+            try {
+                URL url = new URL( haku.getHakulomakeUri() );
+            } catch (MalformedURLException ex) {
+                result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
+            }
+        }
 
         // TODO  haku.getHakukausiArvo() - what is this?
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
@@ -349,6 +409,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+
+            for (ErrorV1RDTO err : result.getErrors()) {
+                LOG.info("  ERROR: t={}, f={}, msg={}", err.getErrorTarget(), err.getErrorField(), err.getErrorMessageKey());
+            }
         }
 
         return !result.hasErrors();
@@ -357,7 +421,5 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private boolean isEmpty(String s) {
         return (s == null || s.trim().isEmpty());
     }
-
-
 
 }

@@ -118,6 +118,15 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         return this.locale;
     };
 
+    var kieliUri = "kieli_" + this.getLocale();
+    
+    /**
+     * returns language uri that matches the current language
+     */
+    this.getKieliUri = function(){
+      return kieliUri;
+    };
+    
     this.setLocale = function(value) {
         this.locale = value;
     };

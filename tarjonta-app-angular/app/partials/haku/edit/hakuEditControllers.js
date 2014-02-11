@@ -29,7 +29,7 @@ app.controller('HakuEditController',
                 $log.info("HakuEditController()", $scope);
 
                 var hakuOid = $route.current.params.id;
-                
+
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
                 $scope.model = null;
@@ -55,11 +55,11 @@ app.controller('HakuEditController',
                 };
 
                 $scope.saveLuonnos = function(event) {
-                  
-                  console.log("event:", event);
-                  
-                  console.log("scope hakuform:", $scope);
-                  
+
+                  $log.info("event:", event);
+
+                  $log.info("scope hakuform:", $scope);
+
                     var haku = $scope.model.hakux.result;
 
                     $log.info("saveLuonnos()", haku);
@@ -67,12 +67,13 @@ app.controller('HakuEditController',
                     HakuV1.update(haku, function(result) {
                         $log.info("saveLuonnos() - OK", result);
 
-                        $scope.model.showError = true;
+                        $scope.model.showError = false;
+                        $scope.model.showSuccess = true;
                         $scope.model.validationmsgs = result.errors;
-                        
-                        console.log("->saveparameters");
+
+                        $log.info("->saveparameters");
                         $scope.saveParameters();
-                        console.log("saveparameters->");
+                        $log.info("saveparameters->");
 
                     }, function (error) {
                         $log.info("saveLuonnos() - FAILED", error);
@@ -134,16 +135,16 @@ app.controller('HakuEditController',
 
                     return result;
                 };
-                
-                
+
+
                 $scope.saveParameters= function() {
                 	ParameterService.tallenna(hakuOid, $scope.model.parameter);
                 };
 
                 $scope.init = function() {
                     $log.info("init...");
-                    
-                    
+
+
                     var model = {
                         formControls: {},
                         showError: false,
