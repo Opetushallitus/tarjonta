@@ -104,7 +104,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 case TILA:
                     value = TarjontaTila.valueOf(sValue);
                     break;
-
+                case HAKUKAUSI:
+                case HAKUTAPA:
+                case HAKUTYYPPI:
+                case KOHDEJOUKKO:
+                case KOULUTUKSEN_ALKAMISKAUSI:
+                    value = sValue;
+                    break;
                 
                 default:
                     throw new RuntimeException("unhandled parameter:" + key  + "=" + sValue);
