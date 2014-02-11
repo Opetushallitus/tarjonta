@@ -10,13 +10,8 @@
         <tr>
             <td><input type="text" placeholder="hakuehto" class="input search-query" ng-model="model.search.hakuehto" ng-enter="doSearch()"></td>
             <td>
-                <select ng-model="model.search.tila">
-                    <option value="" ttt="haku.tila.kaikki">-- Kaikki --</option>
-                    <option value="JULKAISTU" ttt="haku.tila.JULKAISTU">Julkaistu</option>
-                    <option value="VALMIS" ttt="haku.tila.VALMIS">Valmis</option>
-                    <option value="LUONNOS" ttt="haku.tila.LUONNOS">Luonnos</option>
-                    <option value="PERUTTU" ttt="haku.tila.PERUTTU">Peruttu</option>
-                    <option value="KOPIOITU" ttt="haku.tila.KOPIOITU">Kopioitu</option>
+                <select ng-model="hakuehdot.TILA" ng-options="s as t for (s,t) in states" >
+                    <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
                 </select>
             </td>
 

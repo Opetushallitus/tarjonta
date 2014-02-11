@@ -19,7 +19,8 @@ var app = angular.module('Haku', ['ngResource', 'config']);
 
 
 app.factory('HakuService', function($http, $q, Config) {
-
+  
+  
 
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
@@ -112,3 +113,17 @@ app.factory('HakuV1', function($resource, $log, Config) {
         });
 
     });
+
+/**
+ * Service joka käyttää HakuV1 resurssia
+ */
+app.factory('HakuV1Service', function(HakuV1, LocalisationService) {
+  var userKieliUri = LocalisationService.getKieliUri();
+
+  return {
+    search:function(parameters){
+      console.log("Searching with: ", parameters);
+      }
+  };
+
+});

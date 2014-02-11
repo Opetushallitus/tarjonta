@@ -17,15 +17,32 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService) {
+        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service',
+            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service) {
                 $log.info("HakuListController()");
 
-                $scope.model = null;
-
-                function isEmpty(value) {
-                    return (typeof value === "undefined" || value == null || value.length === 0);
+                $scope.states= [];
+                
+                for (var s in CONFIG.env["tarjonta.tila"]) {
+                  $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
                 }
+                
+                console.log("states:", $scope.states);
+                
+                $scope.clearSearch = function() {
+                  $scope.searchParams=  {
+                    TILA : undefined,
+                    HAKUKAUSI : undefined,
+                    HAKUVUOSI : undefined,
+                    KOULUTUKSEN_ALKAMISKAUSI : undefined,
+                    KOULUTUKSEN_ALKAMISVUOSI : undefined,
+                    HAKUTAPA : undefined,
+                    HAKUTYYPPI : undefined,
+                    KOHDEJOUKKO : undefined
+                  };
+                };
+                
+                $scope.clearSearch();
 
                 $scope.doCreateNew = function() {
                     $log.info("doCreateNew()");
@@ -39,15 +56,10 @@ app.controller('HakuListController',
 
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
-                    dialogService.showNotImplementedDialog();
+                    HakuV1Service.search({"args":"bargs"});
                 };
 
-                $scope.doSearchClear = function() {
-                    $log.info("doSearchClear()");
-                    $scope.model.search.tila = "";
-                    delete $scope.model.search.koulutuksenAlkamiskausiUri;
-                    delete $scope.model.search.koulutuksenAlkamisVuosi;
-                };
+
 
                 $scope.init = function() {
                     $log.info("init...");
