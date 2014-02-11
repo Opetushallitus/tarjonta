@@ -15,11 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +62,18 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
     private @Value("${koodisto.suomi.uri:suomi}")
     String suomiUri;
 
+    @Value("${koodisto-uris.yhteishaku}")
+    private String hakutapaYhteishakuUrl;
+
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
+
+
+    private Button poista;
+
     public ShowHakukohdeView(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
         LOG.debug(this.getClass().getName() + "()");
@@ -93,6 +103,46 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
             }
         }
         vl.addComponent(tabs);
+        enableOrDisableButtonsByHaku();
+    }
+
+    private void enableOrDisableButtonsByHaku() {
+
+        HakuViewModel hakuViewModel = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel();
+        boolean isHakuStarted = checkHakuStarted(hakuViewModel);
+        if (isHakuStarted && poista != null) {
+            poista.setEnabled(false);
+        }
+
+    }
+
+    private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
+
+        if (isErillishakuOrLisahaku(hakuViewModel)) {
+            return false;
+        } else if (hakuViewModel.getPaattymisPvm().before(getMaxHakuPaattymisDate())) {
+            return true;
+        } else {
+            return false;
+        }
+        //What if user is OPH ? should he or she have the right to edit haku ?
+            /*else if (presenter.getPermission().userIsOphCrud()) {
+
+            }*/
+
+
+    }
+
+    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
+        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
+    }
+
+
+    private Date getMaxHakuPaattymisDate() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return cal.getTime();
     }
 
     public void showErrorMsg(String msg) {
@@ -121,7 +171,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+        poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
