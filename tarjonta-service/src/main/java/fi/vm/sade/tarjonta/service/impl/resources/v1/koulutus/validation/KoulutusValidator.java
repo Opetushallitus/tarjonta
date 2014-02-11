@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOCo
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import java.util.ArrayList;
@@ -64,13 +63,13 @@ public class KoulutusValidator {
                 KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE);
     }
 
-    private static void validateKoodistoRelations(KoulutusmoduuliRelationV1RDTO dto, Set<KoulutusValidationMessages> validationMessages) {
+    private static void validateKoodistoRelations(KoulutusKorkeakouluV1RDTO dto, Set<KoulutusValidationMessages> validationMessages) {
         validateKoodi(validationMessages, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
         validateKoodi(validationMessages, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(validationMessages, dto.getKoulutusaste(), KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_INVALID);
         validateKoodi(validationMessages, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(validationMessages, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_OPINTOALA_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOALA_INVALID);
-        validateKoodi(validationMessages, dto.getOpintojenLaajuus(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_INVALID);
+        validateKoodi(validationMessages, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_INVALID);
         validateKoodi(validationMessages, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         validateKoodiUris(validationMessages, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
     }

@@ -29,6 +29,12 @@ public class KomoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "OPH oppilaitostyyppi-koodit (vain ammatillisella- ja lukio-koulutuksella) Huom! Tieto saattaa poistu tulevissa versioissa-", required = true)
     private KoodiUrisV1RDTO oppilaitostyyppis;
 
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
+    private KoodiUrisV1RDTO tutkintonimikes;
+
+    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
+    private KoodiV1RDTO opintojenLaajuusarvo;
+
     public KomoV1RDTO() {
     }
 
@@ -36,6 +42,10 @@ public class KomoV1RDTO extends KoulutusV1RDTO {
      * @return the oppilaitostyyppis
      */
     public KoodiUrisV1RDTO getOppilaitostyyppis() {
+        if (oppilaitostyyppis == null) {
+            oppilaitostyyppis = new KoodiUrisV1RDTO();
+        }
+
         return oppilaitostyyppis;
     }
 
@@ -44,5 +54,37 @@ public class KomoV1RDTO extends KoulutusV1RDTO {
      */
     public void setOppilaitostyyppis(KoodiUrisV1RDTO oppilaitostyyppis) {
         this.oppilaitostyyppis = oppilaitostyyppis;
+    }
+
+    /**
+     * @return the tutkintonimikes
+     */
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (tutkintonimikes == null) {
+            tutkintonimikes = new KoodiUrisV1RDTO();
+        }
+
+        return tutkintonimikes;
+    }
+
+    /**
+     * @param tutkintonimikes the tutkintonimikes to set
+     */
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
+    }
+
+    /**
+     * @return the opintojenLaajuusarvo
+     */
+    public KoodiV1RDTO getOpintojenLaajuusarvo() {
+        return opintojenLaajuusarvo;
+    }
+
+    /**
+     * @param opintojenLaajuusarvo the opintojenLaajuusarvo to set
+     */
+    public void setOpintojenLaajuusarvo(KoodiV1RDTO opintojenLaajuusarvo) {
+        this.opintojenLaajuusarvo = opintojenLaajuusarvo;
     }
 }

@@ -17,15 +17,13 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
  * @author jani
  */
 @ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
-public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
+public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
 
     //KOODISTO KOMO DATA OBJECTS:
     @ApiModelProperty(value = "Kuusinumeroinen tilastokeskuksen koulutuskoodi", required = true)
@@ -38,12 +36,8 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO opintoala;
     @ApiModelProperty(value = "OPH tutkinto-koodi", required = true)
     private KoodiV1RDTO tutkinto;
-    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
-    private KoodiUrisV1RDTO tutkintonimikes;
     @ApiModelProperty(value = "EQF-koodi", required = true)
     private KoodiV1RDTO eqf;
-    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
-    private KoodiV1RDTO opintojenLaajuus;
     @ApiModelProperty(value = "Opintojen laajuuden yksikko", required = true)
     private KoodiV1RDTO opintojenLaajuusyksikko;
 
@@ -118,24 +112,6 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
     }
 
     /**
-     * @return the tutkintonimike
-     */
-    public KoodiUrisV1RDTO getTutkintonimikes() {
-        if (this.tutkintonimikes == null) {
-            this.tutkintonimikes = new KoodiUrisV1RDTO();
-        }
-
-        return tutkintonimikes;
-    }
-
-    /**
-     * @param tutkintonimikes the tutkintonimikes to set
-     */
-    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
-        this.tutkintonimikes = tutkintonimikes;
-    }
-
-    /**
      * @return the eqf
      */
     public KoodiV1RDTO getEqf() {
@@ -147,20 +123,6 @@ public class KoulutusmoduuliRelationV1RDTO extends BaseV1RDTO {
      */
     public void setEqf(KoodiV1RDTO eqf) {
         this.eqf = eqf;
-    }
-
-    /**
-     * @return the opintojenLaajuus
-     */
-    public KoodiV1RDTO getOpintojenLaajuus() {
-        return opintojenLaajuus;
-    }
-
-    /**
-     * @param opintojenLaajuus the opintojenLaajuus to set
-     */
-    public void setOpintojenLaajuus(KoodiV1RDTO opintojenLaajuus) {
-        this.opintojenLaajuus = opintojenLaajuus;
     }
 
     /**

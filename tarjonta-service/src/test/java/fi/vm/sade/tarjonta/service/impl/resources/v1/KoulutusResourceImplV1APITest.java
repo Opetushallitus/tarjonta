@@ -257,7 +257,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
                 new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], PERSON[5], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = koulutusResource

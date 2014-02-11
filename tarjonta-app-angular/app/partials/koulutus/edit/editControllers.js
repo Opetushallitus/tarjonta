@@ -51,11 +51,6 @@ app.controller('BaseEditController',
                             return;
                         }
 
-                        if (angular.isUndefined(model.opintojenLaajuusyksikko.uri)) {
-                            //remove when not needed...
-                            $scope.searchOpintojenLaajuusyksikko(model);
-                        }
-
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
                                 uiModel.contactPerson = converter.converPersonObjectForUi(value);
@@ -125,8 +120,6 @@ app.controller('BaseEditController',
                     $scope.model = model;
                 };
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    $scope.searchOpintojenLaajuusyksikko(apiModel);
-
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
@@ -136,7 +129,7 @@ app.controller('BaseEditController',
                         angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
                             uiModel[key].meta = restRelationData[key].meta;
 
-                            if (!angular.isUndefined(apiModel[key].uris)) {
+                            if (!angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
                                 uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
                             }
                         });
@@ -356,14 +349,6 @@ app.controller('BaseEditController',
                     }
 
                     return kuvaus[textEnum].tekstis;
-                };
-
-                $scope.searchOpintojenLaajuusyksikko = function(apiModel) {
-                    var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
-
-                    promise.then(function(koodi) {
-                        apiModel['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
-                    });
                 };
 
                 // TODO omaksi direktiivikseen tjsp..

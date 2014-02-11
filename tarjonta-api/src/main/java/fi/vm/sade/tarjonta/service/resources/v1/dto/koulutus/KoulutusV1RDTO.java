@@ -29,10 +29,10 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
- * @author mlyly
+ * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
-public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
+public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;

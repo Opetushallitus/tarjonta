@@ -251,7 +251,7 @@ public class KoulutusResourceImplV1Test {
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         //EXPECT
@@ -352,7 +352,7 @@ public class KoulutusResourceImplV1Test {
         assertEqualDtoKoodi(OPINTOALA, result.getOpintoala());
         assertEqualDtoKoodi(EQF, result.getEqf());
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
-        assertEqualDtoKoodi(LAAJUUSARVO, result.getOpintojenLaajuus());
+        assertEqualDtoKoodi(LAAJUUSARVO, result.getOpintojenLaajuusarvo());
         assertEqualDtoKoodi(LAAJUUSYKSIKKO, result.getOpintojenLaajuusyksikko());
         assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
 

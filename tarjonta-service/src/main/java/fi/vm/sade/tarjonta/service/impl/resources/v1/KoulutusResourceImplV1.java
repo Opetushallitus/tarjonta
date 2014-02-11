@@ -34,7 +34,6 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
@@ -44,8 +43,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -78,7 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -310,30 +310,42 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(String koulutuskoodi, Boolean meta, String lang) {
+    public ResultV1RDTO getKoulutusRelation(String koulutuskoodi, KoulutusasteTyyppi koulutusasteTyyppi, Boolean meta, String lang) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
-        KoulutusmoduuliRelationV1RDTO relation = null;
-
         lang = checkArgsLangCode(lang);
         meta = checkArgsMeta(meta);
 
+        Class clazz = KoulutusmoduuliStandardRelationV1RDTO.class;
+
+        switch (koulutusasteTyyppi) {
+            case KORKEAKOULUTUS:
+                clazz = KoulutusmoduuliKorkeakouluRelationV1RDTO.class;
+                break;
+            default:
+                break;
+        }
+
+        ResultV1RDTO resultRDTO = new ResultV1RDTO();
         /*
          * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
          */
-        if (koulutuskoodi.contains("_")) {
-            //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(koulutuskoodi, true, new Locale(lang.toUpperCase()), meta);
-        } else {
-            SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
-            List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
-            if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
-                throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
+        try {
+            if (koulutuskoodi.contains("_")) {
+                //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
+                resultRDTO.setResult( koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(clazz, koulutuskoodi, new Locale(lang.toUpperCase()), meta));
+            } else {
+                SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
+                List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
+                if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
+                    throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
+                }
+                resultRDTO.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(clazz, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(lang.toUpperCase()), meta));
             }
-            relation = koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(searchKoodisByKoodisto.get(0).getKoodiUri(), true, new Locale(lang.toUpperCase()), meta);
+        } catch (Exception ex) {
+            LOG.error("Koodisto relation error.", ex);    
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
 
-        ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusmoduuliRelationV1RDTO>();
-        resultRDTO.setResult(relation);
         return resultRDTO;
     }
 
@@ -346,7 +358,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Transactional(readOnly = false)
     public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
-        Preconditions.checkArgument(komoto != null, "Koulutusta ei löytynyt: %s", oid);
+        Preconditions.checkArgument(komoto != null, "Koulutusta ei lÃ¶ytynyt: %s", oid);
         if (!komoto.getTila().acceptsTransitionTo(tila)) {
             return new ResultV1RDTO<String>(komoto.getTila().toString());
         }
@@ -540,4 +552,5 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         LOG.error("Not user data found.");
         return "FI";
     }
+
 }
