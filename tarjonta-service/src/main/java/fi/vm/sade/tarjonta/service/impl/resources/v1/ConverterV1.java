@@ -76,6 +76,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * API V1 converters to/from model/domain.
@@ -180,18 +181,41 @@ public class ConverterV1 {
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
         haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
 
-        // TODO hakuaika prosessing is kind of brute force Luke
-        for (Hakuaika hakuaika : haku.getHakuaikas()) {
-            haku.removeHakuaika(hakuaika);
+        // Temporary list of hakuaikas to process
+        ArrayList<Hakuaika> tmpHakuaikas = new ArrayList<Hakuaika>();
+        tmpHakuaikas.addAll(haku.getHakuaikas());
+
+        // Process UI hakuaikas.
+        for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
+            LOG.info("hakuaika: ", hakuaikaDTO);
+
+            Hakuaika ha = haku.getHakuaikaById(hakuaikaDTO.getHakuaikaId());
+            if (ha == null) {
+                LOG.info(" == new hakuaika");
+
+                // NEW hakuaika
+                ha = new Hakuaika();
+                ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
+                ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
+                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+
+                haku.addHakuaika(ha);
+            } else {
+                LOG.info(" == old hakuaika TODO");
+
+                ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
+                ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
+                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+
+                // Remove update form the list to find out deleted hakuaikas
+                tmpHakuaikas.remove(ha);
+            }
         }
 
-        for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
-            Hakuaika hakuaika = new Hakuaika();
-            hakuaika.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
-            hakuaika.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
-            hakuaika.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
-
-            haku.addHakuaika(hakuaika);
+        // Remove hakuaikas that are deleted.
+        for (Hakuaika hakuaika : tmpHakuaikas) {
+            LOG.info("DELETED hakuaika: ", hakuaika);
+            haku.removeHakuaika(hakuaika);
         }
 
         return haku;
