@@ -131,8 +131,10 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
         var promises=[];
         var haut=[]
         for(var i=0;i<data.result.length;i++) {
-          promises.push(HakuV1.get(data.result[i]).$promise.then(function(haku){
-            if(haut.push(haku.result);
+          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
+            var haku=hakuresult.result;
+            haut.push(haku);
+            haku.nimi= haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
           }));
         }
         $q.all(promises).then(function(){
