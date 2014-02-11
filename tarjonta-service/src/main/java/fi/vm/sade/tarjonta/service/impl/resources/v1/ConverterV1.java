@@ -154,12 +154,16 @@ public class ConverterV1 {
         return t;
     }
 
-    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO) {
+
+    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) throws ExceptionMessage {
         if (hakuV1RDTO == null) {
             return null;
         }
 
-        Haku haku = new Haku();
+        if (haku == null) {
+            haku = new Haku();
+            haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+        }
 
         haku.setOid(hakuV1RDTO.getOid());
         haku.setHakukausiUri(hakuV1RDTO.getHakukausiUri());
@@ -176,13 +180,19 @@ public class ConverterV1 {
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
         haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
 
-        if (hakuV1RDTO.getHakuaikas() != null ){
-           for (HakuaikaV1RDTO hakuaikaRDTO: hakuV1RDTO.getHakuaikas()) {
-               haku.addHakuaika(convertHakuaikaV1RDTOToHakuaika(hakuaikaRDTO));
-
-           }
+        // TODO hakuaika prosessing is kind of brute force Luke
+        for (Hakuaika hakuaika : haku.getHakuaikas()) {
+            haku.removeHakuaika(hakuaika);
         }
 
+        for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
+            Hakuaika hakuaika = new Hakuaika();
+            hakuaika.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
+            hakuaika.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
+            hakuaika.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+
+            haku.addHakuaika(hakuaika);
+        }
 
         return haku;
     }

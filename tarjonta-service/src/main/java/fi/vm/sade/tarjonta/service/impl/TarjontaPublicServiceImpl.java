@@ -225,11 +225,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             }
 
         } else {
-            SearchCriteriaType allCriteria = new SearchCriteriaType();
-            allCriteria.setMeneillaan(true);
-            allCriteria.setPaattyneet(true);
-            allCriteria.setTulevat(true);
-            hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria), false));
+            hakuVastaus.getResponse().addAll(convert(hakuDao.findAll(), false));
         }
 
 

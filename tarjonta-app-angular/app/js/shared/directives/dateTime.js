@@ -19,9 +19,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 	    	  $scope.model = nv;
 	    	});
     	} else if ($scope.type == "long") {
-    		$scope.model = new Date($scope.ngModel);
+    		$scope.model = $scope.ngModel==null ? null : new Date($scope.ngModel);
 	    	$scope.$watch("ngModel", function(nv, ov){
-	    	  $scope.model = new Date($scope.ngModel);
+	    	  $scope.model = $scope.ngModel==null ? null : new Date($scope.ngModel);
 	    	});
     	} else {
     		throw ("Unknown type "+$scope.type);

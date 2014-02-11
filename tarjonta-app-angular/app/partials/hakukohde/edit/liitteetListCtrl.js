@@ -6,6 +6,13 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.model.opetusKielet = [];
     
     $scope.model.selectedLiite = {};
+
+    $scope.model.selectedTab = {};
+    
+    $scope.langs = [];
+    $scope.selectedLangs = [];
+    
+    var initialTabSelected = false;
     
     function getDefaultOsoite() {
     	return {
@@ -31,7 +38,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		kieliUri: lc,
     		liitteenNimi: "",
     		liitteenKuvaus: {teksti: ""},
-    		toimitettavaMennessa: tmennessa,
+    		toimitettavaMennessa: null, //tmennessa,
     		liitteenToimitusOsoite: getDefaultOsoite(),
     		muuOsoiteEnabled: false,
     		sahkoinenOsoiteEnabled: false,
@@ -43,8 +50,14 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         var liitteetPromise = liitteetResource.$promise;
 
         liitteetPromise.then(function(liitteet){
-            console.log('LIITTEET GOT: ',liitteet);
+            //console.log('LIITTEET GOT: ',liitteet);
             $scope.model.liitteet = liitteet.result;
+            for (var i in liitteet.result) {
+            	var li = liitteet.result[i];
+            	if ($scope.selectedLangs.indexOf(li.kieliUri)==-1) {
+            		$scope.selectedLangs.push(li.kieliUri);
+            	}
+            }
         });
     }
     
@@ -52,16 +65,56 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     kielet.then(function(ret){
     	
     	//console.log("KIELET = ", ret);
+    	$scope.langs = ret;
     	for (var i in ret) {
     		var lc = ret[i].koodiUri;
     		var p = $scope.model.hakukohde.opetusKielet.indexOf(lc);
     		if (p!=-1) {
     			$scope.model.opetusKielet.push(ret[i]);
     			$scope.model.selectedLiite[lc] = newLiite(lc);
+    			$scope.model.selectedTab[lc] = !initialTabSelected;
+   				initialTabSelected = true;
+   				
+   				if ($scope.selectedLangs.indexOf(lc)==-1) {
+   					$scope.selectedLangs.push(lc);
+   				}
     		}
     	}
     	
     });
+    
+    $scope.onLangSelection = function() {
+    	for (var i in $scope.model.liitteet) {
+        	var li = $scope.model.liitteet[i];
+        	if ($scope.selectedLangs.indexOf(li.kieliUri)==-1) {
+        		$scope.selectedLangs.push(li.kieliUri);
+        	}
+        }
+    	
+    	for (var i in $scope.model.opetusKielet) {
+    		var k = $scope.model.opetusKielet[i];
+    		var si = $scope.selectedLangs.indexOf(k.koodiUri);
+    		if (si==-1) {
+    			$scope.model.opetusKielet.splice(i,1);
+    			$scope.model.selectedLiite[k.koodiUri] = undefined;
+			}
+    	}
+    	
+    	for (var i in $scope.selectedLangs) {
+    		var lc = $scope.selectedLangs[i];
+    		if (!$scope.model.selectedLiite[lc]) {
+        		$scope.model.selectedLiite[lc] = newLiite(lc);
+        		
+        		for (var j in $scope.langs) {
+        			if ($scope.langs[j].koodiUri == lc) {
+        				$scope.model.opetusKielet.push($scope.langs[j]);
+        				break;
+        			}
+        		}
+    		}
+    	}
+    	
+    }
     
     $scope.getLiitteetByKieli = function(lc) {
     	var ret = [];
@@ -78,7 +131,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     // valitsee liitteen listasta editoitavaksi
     $scope.selectLiite = function(liite) {
-    	console.log("select liite",liite);
+    	//console.log("select liite",liite);
     	
     	for (var i in $scope.model.liitteet) {
     		if ($scope.model.liitteet[i].kieliUri == liite.kieliUri) {
@@ -162,6 +215,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
        	var liite = $scope.model.selectedLiite[kieliUri];
     	return notEmpty(liite.liitteenNimi)
     		&& notEmpty(liite.liitteenKuvaus.teksti)
+    		&& liite.toimitettavaMennessa!=null
     		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
     		&& (!liite.muuOsoiteEnabled || (liite.liitteenToimitusOsoite
     				&& notEmpty(liite.liitteenToimitusOsoite.osoiterivi1,

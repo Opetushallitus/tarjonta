@@ -160,4 +160,29 @@ public class ResultV1RDTO<T> implements Serializable {
             getErrors().add(error);
         }
     }
+
+    /**
+     * Returns true if any "errors" added. ie. getErrors() returns nonempty collection.
+     *
+     * @return
+     */
+    public boolean hasErrors() {
+        return _errors != null && !_errors.isEmpty();
+    }
+
+    /**
+     * Return true if any of the errors is given type.
+     *
+     * @param errorType
+     * @return
+     */
+    public boolean hasErrors(ErrorV1RDTO.ErrorCode errorType) {
+        boolean result = false;
+        for (ErrorV1RDTO errorV1RDTO : getErrors()) {
+            result = result || errorV1RDTO.getErrorCode().equals(errorType);
+        }
+        return result;
+    }
+
+
 }

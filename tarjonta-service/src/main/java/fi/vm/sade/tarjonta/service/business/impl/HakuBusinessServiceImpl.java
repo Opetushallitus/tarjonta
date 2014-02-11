@@ -1,14 +1,11 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 
 /**
  * @author Antti
@@ -18,11 +15,6 @@ public class HakuBusinessServiceImpl implements HakuBusinessService {
 
     @Autowired
     private HakuDAO hakuDao;
-
-    @Override
-    public List<Haku> findAll(SearchCriteriaType searchCriteria) {
-        return hakuDao.findAll(searchCriteria);
-    }
 
     @Override
     public Haku save(Haku haku) {
