@@ -60,6 +60,7 @@
                     <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
                         <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
                         <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        {{ hakuaika.nimi }}
                         {{$last ? '': ', '}}
                     </div>
                 </td>
