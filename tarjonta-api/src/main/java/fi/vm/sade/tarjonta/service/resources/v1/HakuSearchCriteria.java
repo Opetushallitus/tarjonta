@@ -13,28 +13,23 @@ public class HakuSearchCriteria {
             return criteria;
         }
 
-        public Builder lessThan(HakuSearchCriteria.Field field, Object value) {
-            criteria.add(new HakuSearchCriteria(field, value, Match.LESS_THAN));
-            return this;
-        }
-
-        public Builder moreThan(HakuSearchCriteria.Field field, Object value) {
-            criteria.add(new HakuSearchCriteria(field, value, Match.MORE_THAN));
-            return this;
-        }
-
         public Builder mustMatch(HakuSearchCriteria.Field field, Object value) {
-            criteria.add(new HakuSearchCriteria(field, value, Match.MUST));
+            criteria.add(new HakuSearchCriteria(field, value, Match.MUST_MATCH));
+            return this;
+        }
+
+        public Builder like(Field field, Object value) {
+            criteria.add(new HakuSearchCriteria(field, value, Match.LIKE));
             return this;
         }
     }
 
     public static enum Field {
-        TILA, HAKUKAUSI, HAKUVUOSI, KOULUTUKSEN_ALKAMISKAUSI, KOULUTUKSEN_ALKAMISVUOSI, HAKUTAPA, HAKUTYYPPI, KOHDEJOUKKO;
+        TILA, HAKUKAUSI, HAKUVUOSI, KOULUTUKSEN_ALKAMISKAUSI, KOULUTUKSEN_ALKAMISVUOSI, HAKUTAPA, HAKUTYYPPI, KOHDEJOUKKO, HAKUSANA;
     }
 
     public static enum Match {
-        MUST, LESS_THAN, MORE_THAN, MUST_NOT;
+        MUST_MATCH, MUST_NOT, LIKE;
     }
 
     private Match match;

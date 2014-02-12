@@ -12,7 +12,7 @@
         </tr>
 
         <tr>
-            <td><input type="text" placeholder="{{('haku.list.hakuehto')}}" class="input search-query" ng-model="earchParams.TILA" ng-enter="doSearch()"></td>
+            <td><input type="text" placeholder="{{('haku.list.hakuehto')}}" class="input search-query" ng-model="searchParams.HAKUSANA" ng-enter="doSearch()"></td>
             <td>
                 <select ng-model="searchParams.TILA" ng-options="s as t for (s,t) in states" >
                     <option value="" tt="haku.list.hakuehto.tila"/></option>
@@ -42,7 +42,7 @@
 
         <tr>
             <td class="align-right" colspan="7">
-                <div class="btn" ng-click="doSearchClear()"><span tt="haku.list.tyhjenna"></span></div>
+                <div class="btn" ng-click="clearSearch()"><span tt="haku.list.tyhjenna"></span></div>
                 <div class="btn" ng-click="doSearch()"><span tt="haku.list.hae"></span></div>
             </td>
         </tr>

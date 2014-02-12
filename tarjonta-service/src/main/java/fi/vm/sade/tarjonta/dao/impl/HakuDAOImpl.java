@@ -176,40 +176,44 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri)
             .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri)
             .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri)
+            .put(Field.HAKUSANA, QTekstiKaannos.tekstiKaannos.arvo)
             .put(Field.TILA, QHaku.haku.tila)
             .build();
+    
 
     private final Map<Match,String> matchType = new ImmutableMap.Builder<Match, String>()
-            .put(Match.MUST, "=")
+            .put(Match.MUST_MATCH, "=")
             .put(Match.MUST_NOT, "!=")
-            .put(Match.LESS_THAN, "<")
-            .put(Match.MORE_THAN, ">")
+            .put(Match.LIKE, " like ")
             .build();
 
     public <T>List<T> findByCriteria(int count, int startIndex,
             List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
-        
-        
-        String q = "SELECT " + (oidOnly?"haku.oid":"haku") + " from Haku haku" + (criteriaList.size()>0?" where ":"");
+
+        String q = "SELECT distinct " + (oidOnly?"haku.oid":"haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size()>0?" where ":"");
 
         for(int i=0;i<criteriaList.size();i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
             String field = mapping.get(criteria.getField()).toString();
             if(field==null) {
                 //no mapping available
-                throw new IllegalArgumentException("No mapping found for critaria name:" + criteria.getField());
+                throw new IllegalArgumentException("No mapping found for criteria name:" + criteria.getField());
             }
-            q = q += field + matchType.get(criteria.getMatch()) + "?" + (i+1);
+            String template = (criteria.getField()==Field.HAKUSANA?"LOWER(%s)":"%s");
+            
+            q += String.format(template, field ) + matchType.get(criteria.getMatch()) + "?" + (i+1);
             
             if(i<criteriaList.size()-1) {
-                q = q += " AND ";
+                q += " AND ";
             }
         }
+        
+        System.out.println("q:" + q);
         
         final Query query = getEntityManager().createQuery(q);
         for(int i=0;i<criteriaList.size();i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
-            query.setParameter(i+1, criteria.getValue());
+            query.setParameter(i+1, (criteria.getField()==Field.HAKUSANA?criteria.getValue().toString().toLowerCase():criteria.getValue()));
         }
         
         if (count > 0) {
