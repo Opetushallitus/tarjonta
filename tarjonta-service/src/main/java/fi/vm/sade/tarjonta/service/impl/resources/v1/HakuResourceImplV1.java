@@ -14,25 +14,14 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
@@ -77,19 +66,18 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private OIDService oidService;
 
-
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
         LOG.info("search({})", params);
 
         MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
 
-        for(String key: values.keySet()) {
+        for (String key : values.keySet()) {
             LOG.info("processing parameter:" + key);
 
-
-            if(!key.toUpperCase().equals(key)) continue;  //our fields are upper cased!
-            
+            if (!key.toUpperCase().equals(key)) {
+                continue;  //our fields are upper cased!
+            }
             try {
                 Field field = Field.valueOf(key);
             } catch (Throwable t) {
@@ -97,42 +85,40 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 continue;
             }
 
-
-            for(String sValue: values.get(key)) {
+            for (String sValue : values.get(key)) {
                 Field field = Field.valueOf(key);
-                Object value=null;
-                boolean like=false;
+                Object value = null;
+                boolean like = false;
                 switch (field) {
-                case HAKUVUOSI:
-                case KOULUTUKSEN_ALKAMISVUOSI:
-                    value = Integer.parseInt(sValue);
-                    break;
-                case TILA:
-                    value = TarjontaTila.valueOf(sValue);
-                    break;
-                case HAKUSANA:
-                    like=true; // %foo% haku
-                    value = "%" + sValue + "%";
-                    break;
-                case HAKUKAUSI:
-                case HAKUTAPA:
-                case HAKUTYYPPI:
-                case KOHDEJOUKKO:
-                case KOULUTUKSEN_ALKAMISKAUSI:
-                    value = sValue;
-                    break;
+                    case HAKUVUOSI:
+                    case KOULUTUKSEN_ALKAMISVUOSI:
+                        value = Integer.parseInt(sValue);
+                        break;
+                    case TILA:
+                        value = TarjontaTila.valueOf(sValue);
+                        break;
+                    case HAKUSANA:
+                        like = true; // %foo% haku
+                        value = "%" + sValue + "%";
+                        break;
+                    case HAKUKAUSI:
+                    case HAKUTAPA:
+                    case HAKUTYYPPI:
+                    case KOHDEJOUKKO:
+                    case KOULUTUKSEN_ALKAMISKAUSI:
+                        value = sValue;
+                        break;
 
-                default:
-                    throw new RuntimeException("unhandled parameter:" + key  + "=" + sValue);
-
+                    default:
+                        throw new RuntimeException("unhandled parameter:" + key + "=" + sValue);
 
                 }
-                if(like) {
-                    criteriaList.addAll(new HakuSearchCriteria.Builder().like(field,  value).build());
+                if (like) {
+                    criteriaList.addAll(new HakuSearchCriteria.Builder().like(field, value).build());
                 } else {
-                    criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
+                    criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field, value).build());
                 }
-                
+
             }
         }
 
@@ -140,9 +126,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         int startIndex = (params != null) ? params.getStartIndex() : 0;
 
         List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
-        ResultV1RDTO<List<OidV1RDTO>>  result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
+        ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
-
 
         List<String> oidList = hakuDAO.findOIDByCriteria(count, startIndex, criteriaList);
 
@@ -162,13 +147,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         List<Haku> hakus = hakuDAO.findAll();
 
-        LOG.debug("FOUND  : {} hakus",hakus.size());
+        LOG.debug("FOUND  : {} hakus", hakus.size());
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus != null && hakus.size() > 0) {
-            for (Haku haku:hakus) {
+            for (Haku haku : hakus) {
 
-                HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku,false);
+                HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku, false);
                 hakuDtos.add(hakuV1RDTO);
             }
 
@@ -178,7 +163,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
 
-        return  resultV1RDTO;
+        return resultV1RDTO;
     }
 
     @Override
@@ -226,7 +211,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
                 LOG.info("updateHakue() - NEW haku!");
             }
-
 
             if (!isNew) {
                 LOG.info("updateHaku() - find by oid");
@@ -288,7 +272,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             hakuDAO.remove(hakuToRemove);
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
-        }  else {
+        } else {
             result.setResult(false);
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
@@ -370,8 +354,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     /**
-     * Create AND log "system.error" object.
-     * Creates an ID for this exception which can be found in system logs for debugging.
+     * Create AND log "system.error" object. Creates an ID for this exception which can be found in system logs for debugging.
      *
      * @param ex
      * @param result
@@ -383,7 +366,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         LOG.error("Haku - operation failed! ERROR_ID=" + errorId, ex);
     }
-
 
     /**
      * Simple validations for Haku.
@@ -458,7 +440,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
 
             try {
-                URL url = new URL( haku.getHakulomakeUri() );
+                URL url = new URL(haku.getHakulomakeUri());
             } catch (MalformedURLException ex) {
                 result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
             }
@@ -468,7 +450,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getMaxHakukohdes()
-
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
