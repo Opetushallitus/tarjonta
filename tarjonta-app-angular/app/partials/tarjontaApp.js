@@ -306,7 +306,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
                                 /*var deferredHakukohde = $q.defer();
                                  Hakukohde.get({oid: $route.current.params.id},function(result){
-                                 
+
                                  deferredHakukohde.resolve(result);
                                  });
                                  //return deferredHakukohde.$promise;
@@ -325,6 +325,47 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         hakus: function($log, $route) {
                             $log.info("/haku", $route);
                             return ["foo", "bar", "zyzzy"];
+                        }
+                    }
+                })
+
+                .when('/haku/NEW', {
+                    action: "haku.edit",
+                    controller: 'HakuRoutingController',
+                    resolve: {
+                        hakux: function($log, $route, HakuV1) {
+                            $log.info("/haku/NEW", $route);
+                            // Fake the loading of Haku
+                            return {
+                                "status" : "OK",
+                                "result" : {
+                                    "hakukausiUri" : "",
+                                    "hakutapaUri" : "",
+                                    "hakukausiVuosi" : 1900 + new Date().getYear(),
+                                    "hakutyyppiUri" : "",
+                                    "kohdejoukkoUri" : "",
+                                    "koulutuksenAlkamisVuosi" : 1900 + new Date().getYear(),
+                                    "koulutuksenAlkamiskausiUri" : "",
+                                    "tila" : "LUONNOS",
+                                    "sijoittelu" : false,
+                                    "hakuaikas" : [ {
+                                      "nimi" : "",
+                                      "alkuPvm" : new Date().getTime(),
+                                      "loppuPvm" : new Date().getTime(),
+                                    } ],
+                                    "hakukohdeOids" : [ ],
+                                    "lastUpdatedByOid" : "NA",
+                                    "lastUpdatedDate" : new Date().getTime(),
+                                    "nimi" : {
+                                      "kieli_fi" : "",
+                                      "kieli_sv" : "",
+                                      "kieli_en" : ""
+                                    },
+                                    "maxHakukohdes" : 0,
+                                    // "hakulomakeUri" : "http://www.hut.fi",
+                                    "place" : "holder"
+                                }
+                            };
                         }
                     }
                 })

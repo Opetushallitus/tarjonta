@@ -77,17 +77,9 @@ app.controller('HakuEditController',
 
                     }, function (error) {
                         $log.info("saveLuonnos() - FAILED", error);
-
                         $scope.model.showError = true;
                     });
-
-                    // $scope.model.showError = !$scope.model.showError;
-                    // $scope.model.showSuccess = !$scope.model.showError;
-                    // $log.info("saveLuonnos()");
-
-
-
-                };
+               };
 
                 $scope.saveValmis = function(event) {
                     $log.info("saveValmis()");
@@ -109,6 +101,14 @@ app.controller('HakuEditController',
                     $log.info("onDateChanged: " + hakuaika);
                 };
 
+                /**
+                 * Check if Haku is "new".
+                 *
+                 * @returns {boolean} true is haku in "model.hakux.result" is NEW (ie. doesn't have OID)
+                 */
+                $scope.isNewHaku = function() {
+                    return angular.isNotDefined($scope.model.hakux.result.oid);
+                };
 
                 $scope.checkHaunNimiValidity = function() {
                     // Count number of keys that have content
@@ -117,21 +117,12 @@ app.controller('HakuEditController',
                     var result = true;
                     angular.forEach($scope.model.hakux.result.nimi, function (value, key) {
                         numKeys++;
-
                         result = result && !value;
-
-                        // $log.info("  " + key + " == " + value + " --> result = " + result);
-
-                        // regexp check for empty / whitespace
-                        // $log.info("key: " + key + " -- value: " + value);
                     });
 
                     if (numKeys == 0) {
                         result = true;
                     }
-
-                    // TODO check that at leas kieli_fi is defined?
-                    // $log.info("checkHaunNimiValidity() : " + result);
 
                     return result;
                 };
@@ -158,15 +149,8 @@ app.controller('HakuEditController',
                         hakux : $route.current.locals.hakux,
 
                         haku: {
-                            hakuaikas: [
-                                {nimi: null, alkaa: new Date(), loppuu: new Date()}
-                            ],
-
-                            date1 : new Date(),
-                            date2 : 1380081600000,
-
                             // State of the checkbox for "oma hakulomake" - if uri is given the use it
-                            hakulomakeKaytaJarjestemlmanOmaa: !!$route.current.locals.hakux.hakulomakeUri
+                            hakulomakeKaytaJarjestemlmanOmaa: !angular.isDefined($route.current.locals.hakux.result.hakulomakeUri)
                         },
 
                         parameter: {
