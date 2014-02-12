@@ -88,8 +88,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             LOG.info("processing parameter:" + key);
 
 
-            if(!key.toUpperCase().equals(key)) continue;
-
+            if(!key.toUpperCase().equals(key)) continue;  //our fields are upper cased!
+            
             try {
                 Field field = Field.valueOf(key);
             } catch (Throwable t) {
@@ -101,6 +101,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             for(String sValue: values.get(key)) {
                 Field field = Field.valueOf(key);
                 Object value=null;
+                boolean like=false;
                 switch (field) {
                 case HAKUVUOSI:
                 case KOULUTUKSEN_ALKAMISVUOSI:
@@ -108,6 +109,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     break;
                 case TILA:
                     value = TarjontaTila.valueOf(sValue);
+                    break;
+                case HAKUSANA:
+                    like=true; // %foo% haku
+                    value = "%" + sValue + "%";
                     break;
                 case HAKUKAUSI:
                 case HAKUTAPA:
@@ -122,8 +127,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
 
                 }
-                criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
-
+                if(like) {
+                    criteriaList.addAll(new HakuSearchCriteria.Builder().like(field,  value).build());
+                } else {
+                    criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
+                }
+                
             }
         }
 

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import javax.persistence.*;

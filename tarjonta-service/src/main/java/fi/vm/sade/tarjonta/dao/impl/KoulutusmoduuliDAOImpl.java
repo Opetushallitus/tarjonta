@@ -15,9 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,6 +264,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
+        List<String> kkKoulutusAstes = new ArrayList<String>();
+
+        kkKoulutusAstes.add(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
+        kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
+        kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
+
+       whereExpr = QuerydslUtils.and(whereExpr,komo.koulutustyyppi.notIn(kkKoulutusAstes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {

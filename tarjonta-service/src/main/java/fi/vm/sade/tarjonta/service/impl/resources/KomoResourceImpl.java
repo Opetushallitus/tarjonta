@@ -96,7 +96,7 @@ public class KomoResourceImpl implements KomoResource {
 
         List<OidRDTO> result =
                 HakuResourceImpl.convertOidList(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.debug("  result={}", result);
+        LOG.debug("  result={}", result.size());
         return result;
     }
 

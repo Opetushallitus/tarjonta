@@ -6,6 +6,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoePisterajaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -226,17 +227,73 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setPaasykoeHylkaysMax(nolla);
         t.setPaasykoeHylkaysMin(nolla);
 
+        // Muutetaan yhdistetyt valintakokeet erillisiksi kokeiksi
+        Set<Valintakoe> result = new HashSet<Valintakoe>();
         for (Valintakoe koe : s.getValintakoes()) {
-            if (koe.getTyyppiUri() == null) {
-                for (Pisteraja p : koe.getPisterajat()) {
-                    if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
-                        koe.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
+            Valintakoe vk = null;
+            Valintakoe lt = null;
+
+            Set<Pisteraja> addToBothVKs = new HashSet<Pisteraja>();
+
+            for (Pisteraja pisteraja : koe.getPisterajat()) {
+
+                if (ValinnanPisterajaTyyppi.PAASYKOE.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                    vk = (vk == null) ? new Valintakoe() : vk;
+                    if (vk.getPisterajat() == null) {
+                        vk.setPisterajat(new HashSet<Pisteraja>());
                     }
-                    if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
-                        koe.setTyyppiUri(LISANAYTTO);
+                    vk.getPisterajat().add(pisteraja);
+                } else if (ValinnanPisterajaTyyppi.LISAPISTEET.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                    lt = (lt == null) ? new Valintakoe() : lt;
+                    if (lt.getPisterajat() == null) {
+                        lt.setPisterajat(new HashSet<Pisteraja>());
                     }
+                    lt.getPisterajat().add(pisteraja);
+                } else {
+                    addToBothVKs.add(pisteraja);
                 }
             }
+
+            if (vk != null) {
+                vk.setKuvaus(koe.getKuvaus());
+                vk.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
+                vk.getPisterajat().addAll(addToBothVKs);
+                result.add(vk);
+            }
+
+            if (lt != null) {
+
+                lt.setKuvaus(koe.getLisanaytot());
+                if(koe.getTyyppiUri() != null &&
+                        (koe.getTyyppiUri().split("#")[0].equals(LISANAYTTO) || koe.getTyyppiUri().split("#")[0].equals(LISAPISTE))) {
+                    lt.setTyyppiUri(koe.getTyyppiUri());
+                } else {
+                    lt.setTyyppiUri(LISANAYTTO);
+                }
+
+
+                lt.getPisterajat().addAll(addToBothVKs);
+
+                result.add(lt);
+            }
+
+            // Jos valintakokeella ei ole pisterajoja
+            if(lt == null && vk == null) {
+                result.add(koe);
+            }
+        }
+
+        for (Valintakoe koe : result) {
+//            if (koe.getTyyppiUri() == null) {
+//                for (Pisteraja p : koe.getPisterajat()) {
+//                    if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
+//                        koe.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
+//                    }
+//                    if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+//                        koe.setTyyppiUri(LISANAYTTO);
+//                    }
+//                }
+//            }
             if (koe.getTyyppiUri() != null) {
                 if (koe.getTyyppiUri().split("#")[0].equals(PAASY_JA_SOVELTUVUUSKOE)) {
                     for (Pisteraja p : koe.getPisterajat()) {
@@ -274,7 +331,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
             t.setHylkaysMax(t.getPaasykoeHylkaysMax());
         }
 
-        t.setValintakokeet(convertValintakokeet(s.getValintakoes()));
+        t.setValintakokeet(convertValintakokeet(result));
 
 
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
