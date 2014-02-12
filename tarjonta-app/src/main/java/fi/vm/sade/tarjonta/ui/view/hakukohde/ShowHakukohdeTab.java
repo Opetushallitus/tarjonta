@@ -86,6 +86,26 @@ public class ShowHakukohdeTab extends VerticalLayout {
         buildPage(this);
     }
 
+
+    private boolean isPersvako() {
+
+        HakukohdeViewModel vm = presenter.getModel().getHakukohde();
+
+        List<KoulutusasteTyyppi> persvaos = new ArrayList<KoulutusasteTyyppi>();
+        persvaos.add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        //persvaos.add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+
+        KoulutusasteTyyppi koulutusasteTyyppi = vm.getKoulutusasteTyyppi();
+
+        if (persvaos.contains(koulutusasteTyyppi)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
     private OrganisaatioContext getContext() {
         if (context == null) {
             context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
@@ -642,7 +662,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
         //addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid, "lisatietojaHakemisesta", getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
-        if (!isHakukohdeNivelvaihe()) {
+        if (!isHakukohdeNivelvaihe() && !isPersvako()) {
             SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
             addItemToGrid(grid, "liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm() == null ? null
                     : sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));
