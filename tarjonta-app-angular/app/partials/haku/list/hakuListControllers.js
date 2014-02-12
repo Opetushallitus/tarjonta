@@ -81,8 +81,8 @@ app.controller('HakuListController',
                     if(params['HAKUVUOSIKAUSI']) {
                       var hVuosikausi = params['HAKUVUOSIKAUSI'];
                       delete params['HAKUVUOSIKAUSI'];
-                      params['KOULUTUKSEN_ALKAMISVUOSI']=hVuosikausi.vuosi;
-                      params['KOULUTUKSEN_ALKAMISKAUSI']=hVuosikausi.kausi;
+                      params['HAKUVUOSI']=hVuosikausi.vuosi;
+                      params['HAKUKAUSI']=hVuosikausi.kausi;
                     } 
                     
                     HakuV1Service.search(params).then(function(haut){$scope.model.hakus=haut;});

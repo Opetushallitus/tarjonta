@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
@@ -113,6 +114,7 @@ public class HakuDAOImplTest extends TestData {
         
         Haku h1 = new Haku();
         h1.setOid(OID1);
+        h1.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
         h1.setKoulutuksenAlkamiskausiUri("k");
         h1.setKoulutuksenAlkamisVuosi(2014);
         h1.setTila(TarjontaTila.VALMIS);
@@ -124,6 +126,7 @@ public class HakuDAOImplTest extends TestData {
         dao.insert(h1);
         
         Haku h2 = new Haku();
+        h2.setNimi(new MonikielinenTeksti("fi", "nimi2_fi"));
         h2.setOid(OID2);
         h2.setKoulutuksenAlkamiskausiUri("s");
         h2.setKoulutuksenAlkamisVuosi(2015);
@@ -175,20 +178,32 @@ public class HakuDAOImplTest extends TestData {
         assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
 
         //hakutapa
-        criteria = new HakuSearchCriteria.Builder().mustMatch(Field.HAKUTAPA, "hakutapa1").build();
-        assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
+        criteria = new HakuSearchCriteria.Builder().mustMatch(Field.HAKUTAPA, "hakutapa2").build();
+        assertResult(OID2, dao.findOIDByCriteria(count, index, criteria));
 
         //hakutyyppi
         criteria = new HakuSearchCriteria.Builder().mustMatch(Field.HAKUTYYPPI, "hakutyyppi1").build();
         assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
 
         //kohdejoukko
-        criteria = new HakuSearchCriteria.Builder().mustMatch(Field.KOHDEJOUKKO, "kohdejoukko1").build();
-        assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
+        criteria = new HakuSearchCriteria.Builder().mustMatch(Field.KOHDEJOUKKO, "kohdejoukko2").build();
+        assertResult(OID2, dao.findOIDByCriteria(count, index, criteria));
 
         //tila
         criteria = new HakuSearchCriteria.Builder().mustMatch(Field.TILA, TarjontaTila.VALMIS).build();
         assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
+
+        //nimi like
+        criteria = new HakuSearchCriteria.Builder().like(Field.HAKUSANA, "%nimi1%").build();
+        assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
+
+        //nimi like
+        criteria = new HakuSearchCriteria.Builder().like(Field.HAKUSANA, "%nimi2%").build();
+        assertResult(OID2, dao.findOIDByCriteria(count, index, criteria));
+
+        //nimi like mixed case
+        criteria = new HakuSearchCriteria.Builder().like(Field.HAKUSANA, "%NIMI2%").build();
+        assertResult(OID2, dao.findOIDByCriteria(count, index, criteria));
 
     }
 
