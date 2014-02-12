@@ -48,7 +48,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
  * GET    oid/state                                  -- state
  * PUT    oid/state                                  -- update state
  * POST   /                                          -- create haku
- * PUT    /oid                                       -- update hakue
+ * POST   /oid                                       -- update haku
  * DELETE oid                                        -- remove haku
  * </pre>
  *
@@ -75,7 +75,7 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Luo haun", notes = "Luo haun", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
 
-    @PUT
+    @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)

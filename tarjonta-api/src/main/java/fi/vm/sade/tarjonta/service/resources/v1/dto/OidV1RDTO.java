@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2013,2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -22,8 +22,23 @@ import java.io.Serializable;
  */
 public class OidV1RDTO implements Serializable {
 
-    private String _oid;
-    private int _version;
+    private String _oid = null;
+    private int _version = 0;
+
+    public OidV1RDTO() {
+        super();
+    }
+
+    public OidV1RDTO(String oid) {
+        this();
+        setOid(oid);
+    }
+
+    public OidV1RDTO(String oid, int version) {
+        this();
+        setOid(oid);
+        setVersion(version);
+    }
 
     public String getOid() {
         return _oid;

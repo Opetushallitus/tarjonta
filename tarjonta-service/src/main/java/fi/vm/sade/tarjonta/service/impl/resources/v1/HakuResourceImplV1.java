@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
@@ -67,31 +69,34 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private HakuDAO hakuDAO;
 
     @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired
     private ConverterV1 _converter;
 
     @Autowired
     private OIDService oidService;
 
-    
+
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
         LOG.info("search({})", params);
 
         MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
-        
+
         for(String key: values.keySet()) {
             LOG.info("processing parameter:" + key);
-            
+
 
             if(!key.toUpperCase().equals(key)) continue;
-            
+
             try {
                 Field field = Field.valueOf(key);
             } catch (Throwable t) {
                 LOG.info("Ignoring unknown parameter:" + key);
                 continue;
             }
-            
+
 
             for(String sValue: values.get(key)) {
                 Field field = Field.valueOf(key);
@@ -111,17 +116,17 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 case KOULUTUKSEN_ALKAMISKAUSI:
                     value = sValue;
                     break;
-                
+
                 default:
                     throw new RuntimeException("unhandled parameter:" + key  + "=" + sValue);
 
-                    
+
                 }
                 criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field,  value).build());
-                
+
             }
         }
-        
+
         int count = (params != null) ? params.getCount() : 0;
         int startIndex = (params != null) ? params.getStartIndex() : 0;
 
@@ -190,50 +195,40 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     // POST /haku
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
-        LOG.info("createHaku()");
-
-        ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
-        result.setResult(haku);
-
-        try {
-            // 1. Server side validate
-            if (!validateHaku(haku, result)) {
-                return result;
-            }
-
-            // 2. Generate OID
-            haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-
-            Haku hakuToInsert = _converter.convertHakuV1DRDTOToHaku(haku, (Haku) null);
-            Haku hakuResult = hakuDAO.insert(hakuToInsert);
-
-            result.setResult(_converter.fromHakuToHakuRDTO(hakuResult, false));
-
-            result.setStatus(ResultV1RDTO.ResultStatus.OK);
-        } catch (Exception ex) {
-            createSystemErrorFromException(ex, result);
-        }
-
-        return result;
+        LOG.info("createHaku() - {}", haku);
+        return updateHaku(haku);
     }
 
-    // PUT /haku/OID
+    // POST /haku/OID
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
-        LOG.info("updateHaku()");
+        LOG.info("updateHaku() - {}", haku);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
-        result.setResult(haku);
+        // result.setResult(haku);
 
         try {
-            LOG.info("updateHaku() - find by oid");
+            boolean isNew = isEmpty(haku.getOid());
 
-            // Check haku exists
-            Haku h = hakuDAO.findByOid(haku.getOid());
-            if (h == null) {
-                result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", haku.getOid()));
-                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-                return result;
+            Haku hakuToUpdate = null;
+
+            if (isNew) {
+                // Generate new OID for haku to be created
+                haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+                LOG.info("updateHakue() - NEW haku!");
+            }
+
+
+            if (!isNew) {
+                LOG.info("updateHaku() - find by oid");
+
+                // Check is haku exists
+                hakuToUpdate = hakuDAO.findByOid(haku.getOid());
+                if (hakuToUpdate == null) {
+                    result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", haku.getOid()));
+                    result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+                    return result;
+                }
             }
 
             LOG.info("updateHaku() - validate");
@@ -245,20 +240,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             LOG.info("updateHaku() - convert");
 
-            Haku hakuToUpdate = _converter.convertHakuV1DRDTOToHaku(haku, h);
+            hakuToUpdate = _converter.convertHakuV1DRDTOToHaku(haku, hakuToUpdate);
 
-            LOG.info("updateHaku() - update");
-
-            hakuDAO.update(hakuToUpdate);
+            if (isNew) {
+                LOG.info("updateHaku() - insert");
+                hakuDAO.insert(hakuToUpdate);
+            } else {
+                LOG.info("updateHaku() - update");
+                hakuDAO.update(hakuToUpdate);
+            }
 
             LOG.info("updateHaku() - make whopee!");
 
             // Convert to DTO - reload to get hakuaika id's for example
-            h = hakuDAO.findByOid(haku.getOid());
-            result.setResult(_converter.fromHakuToHakuRDTO(h, false));
+            hakuToUpdate = hakuDAO.findByOid(haku.getOid());
+            result.setResult(_converter.fromHakuToHakuRDTO(hakuToUpdate, false));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             createSystemErrorFromException(ex, result);
         }
 
@@ -270,41 +269,95 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     // DELETE /haku/OID
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
+        LOG.info("deleteHaku() oid={}", oid);
+
+        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
 
         Haku hakuToRemove = hakuDAO.findByOid(oid);
 
         if (hakuToRemove != null) {
-
             hakuDAO.remove(hakuToRemove);
-
-            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
-            resultV1RDTO.setResult(true);
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            return resultV1RDTO;
-
-
+            result.setResult(true);
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
         }  else {
-            ResultV1RDTO<Boolean> resultV1RDTO = new ResultV1RDTO<Boolean>();
-            resultV1RDTO.setResult(false);
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-            return resultV1RDTO;
+            result.setResult(false);
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
 
+        return result;
     }
 
+    // GET /haku/OID/hakukohde
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(String oid, GenericSearchParamsV1RDTO params) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOG.info("getHakukohdesForHaku(): oid={}, params={}", oid, params);
+
+        ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
+        result.setResult(new ArrayList<OidV1RDTO>());
+
+        try {
+            if (params == null) {
+                params = new GenericSearchParamsV1RDTO();
+            }
+            result.setParams(params);
+
+            for (String hakukohdeOid : hakukohdeDAO.findByHakuOid(oid, null, params.getCount(), params.getStartIndex(),
+                    params.getModifiedBeforeAsDate(), params.getModifiedAfterAsDate())) {
+                result.getResult().add(new OidV1RDTO(hakukohdeOid));
+            }
+        } catch (Throwable ex) {
+            createSystemErrorFromException(ex, result);
+        }
+
+        return result;
     }
 
     @Override
     public ResultV1RDTO<String> getHakuState(String oid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOG.info("getHakuState({})", oid);
+
+        ResultV1RDTO<String> result = new ResultV1RDTO<String>();
+
+        try {
+            Haku h = hakuDAO.findByOid(oid);
+            result.setResult(h.getTila().name());
+        } catch (Throwable ex) {
+            createSystemErrorFromException(ex, result);
+        }
+
+        return result;
     }
 
     @Override
     public ResultV1RDTO<String> setHakuState(String oid, String state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOG.info("setHakuState({}, {})", oid, state);
+
+        ResultV1RDTO<String> result = new ResultV1RDTO<String>();
+        result.setResult(state);
+
+        try {
+            // Validate state
+            TarjontaTila tila = TarjontaTila.valueOf(state);
+            if (tila == null) {
+                result.addError(ErrorV1RDTO.createValidationError(null, "haku.state.invalid", oid));
+                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+                return result;
+            }
+
+            // Get haku
+            Haku h = hakuDAO.findByOid(oid);
+            if (h == null) {
+                result.addError(ErrorV1RDTO.createValidationError(null, "haku.not.exists", oid));
+                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+                return result;
+            }
+
+            hakuDAO.update(h);
+        } catch (Throwable ex) {
+            createSystemErrorFromException(ex, result);
+        }
+
+        return result;
     }
 
     /**
