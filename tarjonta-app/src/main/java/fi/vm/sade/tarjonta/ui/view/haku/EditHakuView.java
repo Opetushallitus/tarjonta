@@ -124,6 +124,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
         
         Date today = new Date();
         Date haunAlkamisPvm = getAlkamisaika();
+
         if (haunAlkamisPvm.before(today)) {
             errorView.addError(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
             throw new ExceptionMessage(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));

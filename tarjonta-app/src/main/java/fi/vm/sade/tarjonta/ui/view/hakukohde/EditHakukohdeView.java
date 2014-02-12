@@ -116,21 +116,25 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
 
       HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
-
-      boolean isHakuStarted =  checkHakuStarted(hakuViewModel);
-      if (isHakuStarted) {
-          enableButtonByListener(clickListenerSaveAsDraft,!isHakuStarted);
-          enableButtonByListener(clickListenerSaveAsReady,!isHakuStarted);
+      if (hakuViewModel != null) {
+          boolean isHakuStarted =  checkHakuStarted(hakuViewModel);
+          if (isHakuStarted) {
+              enableButtonByListener(clickListenerSaveAsDraft,!isHakuStarted);
+              enableButtonByListener(clickListenerSaveAsReady,!isHakuStarted);
+          }
       }
+
 
 
     }
 
     private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
 
+            Date hakualkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
+
             if (isErillishakuOrLisahaku(hakuViewModel)) {
                 return false;
-            } else if (hakuViewModel.getPaattymisPvm().before(getMaxHakuPaattymisDate())) {
+            } else if (new Date().after(hakualkamisPvm)) {
                 return true;
             } else {
                 return false;
@@ -148,10 +152,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     }
 
 
-    private Date getMaxHakuPaattymisDate() {
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -3);
         return cal.getTime();
     }
     /*

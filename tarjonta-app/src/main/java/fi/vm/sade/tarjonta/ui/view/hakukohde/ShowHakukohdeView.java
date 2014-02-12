@@ -118,9 +118,11 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
     private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
 
+        Date minHakuAlkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
+
         if (isErillishakuOrLisahaku(hakuViewModel)) {
             return false;
-        } else if (hakuViewModel.getPaattymisPvm().before(getMaxHakuPaattymisDate())) {
+        } else if (new Date().after(minHakuAlkamisPvm)) {
             return true;
         } else {
             return false;
@@ -138,10 +140,11 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
     }
 
 
-    private Date getMaxHakuPaattymisDate() {
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -3);
         return cal.getTime();
     }
 
