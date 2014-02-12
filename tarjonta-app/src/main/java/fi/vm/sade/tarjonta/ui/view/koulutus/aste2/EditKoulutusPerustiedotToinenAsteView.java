@@ -66,6 +66,11 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
         this.makeFormDataUnmodified();
     }
 
+    public void disableOrEnableSaveButtons(Boolean enabled) {
+        enableButtonByListener(clickListenerSaveAsDraft,enabled);
+        enableButtonByListener(clickListenerSaveAsReady,enabled);
+    }
+
     @Override
     public boolean isformDataLoaded() {
         return model.isLoaded();
