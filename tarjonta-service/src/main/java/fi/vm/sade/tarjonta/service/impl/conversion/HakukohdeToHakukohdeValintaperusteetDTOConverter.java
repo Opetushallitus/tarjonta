@@ -256,11 +256,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
 
             if (vk != null) {
                 vk.setKuvaus(koe.getKuvaus());
-                if(koe.getTyyppiUri() != null) {
-                    vk.setTyyppiUri(koe.getTyyppiUri());
-                } else {
-                    vk.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
-                }
+                vk.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
                 vk.getPisterajat().addAll(addToBothVKs);
                 result.add(vk);
             }
@@ -268,7 +264,8 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
             if (lt != null) {
 
                 lt.setKuvaus(koe.getLisanaytot());
-                if(koe.getTyyppiUri() != null) {
+                if(koe.getTyyppiUri() != null &&
+                        (koe.getTyyppiUri().split("#")[0].equals(LISANAYTTO) || koe.getTyyppiUri().split("#")[0].equals(LISAPISTE))) {
                     lt.setTyyppiUri(koe.getTyyppiUri());
                 } else {
                     lt.setTyyppiUri(LISANAYTTO);
