@@ -122,14 +122,16 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-        int count = (params != null) ? params.getCount() : 0;
-        int startIndex = (params != null) ? params.getStartIndex() : 0;
+        if (params == null) {
+            params = new GenericSearchParamsV1RDTO();
+        }
 
         List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
         ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
-        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        result.setParams(params);
 
-        List<String> oidList = hakuDAO.findOIDByCriteria(count, startIndex, criteriaList);
+        // TODO use getModifiedAfter / getModifedBefore?
+        List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
 
         for (String oid : oidList) {
             OidV1RDTO dto = new OidV1RDTO();
@@ -412,9 +414,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (isEmpty(haku.getHakutyyppiUri())) {
             result.addError(ErrorV1RDTO.createValidationError("hakutyyppiUri", "haku.validation.hakutyyppiUri.invalid"));
         }
-        if (isEmpty(haku.getHaunTunniste())) {
-            result.addError(ErrorV1RDTO.createValidationError("haunTunniste", "haku.validation.haunTunniste.invalid"));
-        }
+//        if (isEmpty(haku.getHaunTunniste())) {
+//            result.addError(ErrorV1RDTO.createValidationError("haunTunniste", "haku.validation.haunTunniste.invalid"));
+//        }
         if (isEmpty(haku.getKohdejoukkoUri())) {
             result.addError(ErrorV1RDTO.createValidationError("kohdejoukkoUri", "haku.validation.kohdejoukkoUri.invalid"));
         }

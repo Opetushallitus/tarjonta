@@ -55,17 +55,57 @@ app.controller('HakuEditController',
                 };
 
                 $scope.saveLuonnos = function(event) {
-
-                  $log.info("event:", event);
-
-                  $log.info("scope hakuform:", $scope);
+                    $log.info("event:", event);
+                    $log.info("scope hakuform:", $scope);
 
                     var haku = $scope.model.hakux.result;
+                    haku.tila = "LUONNOS";
 
                     $log.info("saveLuonnos()", haku);
 
-                    HakuV1.update(haku, function(result) {
+                    HakuV1.save(haku, function(result) {
                         $log.info("saveLuonnos() - OK", result);
+                        $log.info("saveLuonnos() - OK status = ", result.status);
+
+                        // Clear messages
+                        if ($scope.model.validationmsgs) {
+                            $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
+                        }
+
+                        if (result.status == "OK") {
+                            $scope.model.showError = false;
+                            $scope.model.showSuccess = true;
+
+                            $log.info("->saveparameters");
+                            $scope.saveParameters();
+                            $log.info("saveparameters->");
+
+                            // Move broweser to "edit" mode.
+                            $location.path("/haku/" + result.result.oid + "/edit");
+                        } else {
+                            $scope.model.showError = true;
+                            $scope.model.showSuccess = false;
+                            $scope.model.validationmsgs = result.errors;
+                        }
+
+                    }, function (error) {
+                        $log.info("saveLuonnos() - FAILED", error);
+                        $scope.model.showError = true;
+                    });
+                };
+
+                $scope.saveValmis = function(event) {
+                    $log.info("saveValmis()");
+                    $log.info("  event:", event);
+                    $log.info("  scope hakuform:", $scope);
+
+                    var haku = $scope.model.hakux.result;
+                    haku.tila = "VALMIS";
+
+                    $log.info("saveValmis()", haku);
+
+                    HakuV1.save(haku, function(result) {
+                        $log.info("saveValmis() - OK", result);
 
                         $scope.model.showError = false;
                         $scope.model.showSuccess = true;
@@ -76,13 +116,9 @@ app.controller('HakuEditController',
                         $log.info("saveparameters->");
 
                     }, function (error) {
-                        $log.info("saveLuonnos() - FAILED", error);
+                        $log.info("saveValmis() - FAILED", error);
                         $scope.model.showError = true;
                     });
-               };
-
-                $scope.saveValmis = function(event) {
-                    $log.info("saveValmis()");
                 };
 
                 $scope.goToReview = function(event) {

@@ -361,9 +361,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                       "kieli_sv" : "",
                                       "kieli_en" : ""
                                     },
-                                    "maxHakukohdes" : 0,
+                                    "maxHakukohdes" : 0
                                     // "hakulomakeUri" : "http://www.hut.fi",
-                                    "place" : "holder"
                                 }
                             };
                         }

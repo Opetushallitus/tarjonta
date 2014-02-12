@@ -19,8 +19,8 @@ var app = angular.module('Haku', ['ngResource', 'config']);
 
 
 app.factory('HakuService', function($http, $q, Config) {
-  
-  
+
+
 
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
@@ -79,11 +79,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
         return $resource(serviceUrl, {oid: '@oid'}, {
-            update: {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            },
-            insert: {
+            save: {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
@@ -111,7 +107,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
     });
 
 /**
- * Haku Service 
+ * Haku Service
  */
 app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
 
@@ -123,10 +119,10 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
      */
     search:function(parameters){
       console.log("Searching with: ", parameters);
-      
-      
+
+
       var defer = $q.defer();
-      
+
       HakuV1.search(parameters).$promise.then(function(data){
         var promises=[];
         var haut=[];
@@ -141,7 +137,7 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
           defer.resolve(haut);
         });
       });
-      
+
       return defer.promise;
       }
   };
