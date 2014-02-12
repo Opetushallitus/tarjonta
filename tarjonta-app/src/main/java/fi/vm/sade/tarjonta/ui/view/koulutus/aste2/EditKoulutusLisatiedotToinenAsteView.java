@@ -78,6 +78,11 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
         return presenter.getModel().getKoulutusPerustiedotModel().isLoaded();
     }
 
+    public void disableOrEnableSaveButtons(Boolean enabled) {
+        enableButtonByListener(clickListenerSaveAsDraft,enabled);
+        enableButtonByListener(clickListenerSaveAsReady,enabled);
+    }
+
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         presenter.saveKoulutus(tila, KoulutusActiveTab.LISATIEDOT);

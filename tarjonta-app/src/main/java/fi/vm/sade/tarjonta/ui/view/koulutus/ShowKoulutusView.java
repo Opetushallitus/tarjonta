@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +67,14 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
 
     private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
+
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
+
+    private Button poista;
 
     public ShowKoulutusView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -117,6 +125,61 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }
 
         layout.addComponent(tabs);
+        enableOrDisableButtonsByHaku();
+    }
+
+
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -3);
+        return cal.getTime();
+    }
+
+    private void enableOrDisableButtonsByHaku() {
+        if (presenter.getModel().getKoulutusPerustiedotModel() != null && presenter.getModel().getKoulutusPerustiedotModel().getOid() != null) {
+
+            KoulutusPerustiedotViewModel perustiedotViewModel = presenter.getModel().getKoulutusPerustiedotModel();
+
+            HakukohteetVastaus hakukohteetVastaus = presenter.getHakukohteetForKoulutus(perustiedotViewModel.getOid());
+
+            if(checkHakukohteetForStartedHaku(hakukohteetVastaus)) {
+                if (poista != null) {
+                    poista.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    private Boolean checkHakukohteetForStartedHaku(HakukohteetVastaus hakukohteetVastaus) {
+        if (hakukohteetVastaus != null && hakukohteetVastaus.getHitCount() > 0) {
+
+            boolean hakuStarted = false;
+            for (HakukohdePerustieto hakukohdePerustieto : hakukohteetVastaus.getHakukohteet()) {
+                hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
+            }
+
+
+            return hakuStarted;
+        } else {
+            return false;
+        }
+    }
+
+    private Boolean checkHakuStarted(Date hakuAlkamisPvm, String hakutyyppi) {
+
+        Date minAlkamisPvm = getMinHakuAlkamisDate(hakuAlkamisPvm);
+
+        if (this.hakutyyppiLisahakuUrl.equals(hakutyyppi) || this.hakutapaErillishaku.equals(hakutyyppi)) {
+            return false;
+        } else if (new Date().after(minAlkamisPvm)) {
+            return true;
+        } else {
+            return false;
+        }
+
+
     }
 
     public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
@@ -159,7 +222,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     	
     	
 
-    	final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+    	poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
     	    private static final long serialVersionUID = 5019806363620874205L;
 
     	    @Override
