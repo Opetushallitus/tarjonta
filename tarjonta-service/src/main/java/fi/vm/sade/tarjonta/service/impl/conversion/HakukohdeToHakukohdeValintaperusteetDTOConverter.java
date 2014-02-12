@@ -228,7 +228,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setPaasykoeHylkaysMin(nolla);
 
         // Muutetaan yhdistetyt valintakokeet erillisiksi kokeiksi
-        List<Valintakoe> result = new ArrayList<Valintakoe>();
+        Set<Valintakoe> result = new HashSet<Valintakoe>();
         for (Valintakoe koe : s.getValintakoes()) {
             Valintakoe vk = null;
             Valintakoe lt = null;
@@ -286,10 +286,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
             }
         }
 
-        s.getValintakoes().clear();
-        s.getValintakoes().addAll(result);
-
-        for (Valintakoe koe : s.getValintakoes()) {
+        for (Valintakoe koe : result) {
 //            if (koe.getTyyppiUri() == null) {
 //                for (Pisteraja p : koe.getPisterajat()) {
 //                    if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
@@ -337,7 +334,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
             t.setHylkaysMax(t.getPaasykoeHylkaysMax());
         }
 
-        t.setValintakokeet(convertValintakokeet(s.getValintakoes()));
+        t.setValintakokeet(convertValintakokeet(result));
 
 
         t.setHakuOid(s.getHaku() != null ? s.getHaku().getOid() : null);
