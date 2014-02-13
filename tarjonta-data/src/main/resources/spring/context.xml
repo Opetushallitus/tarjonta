@@ -15,7 +15,7 @@
     <context:component-scan base-package="fi.vm.sade.tarjonta.data" />
 
     <context:property-placeholder
-        location="classpath:tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
+        location="classpath:tarjonta-data.properties"
         ignore-resource-not-found="true"/>
 
     <bean id="commonConstants" class="fi.vm.sade.tarjonta.data.util.CommonConstants">
@@ -29,13 +29,22 @@
 
     <cxf:bus>
         <cxf:outInterceptors>
-            <ref bean="authCxfInterceptor"/>
+            <ref bean="casOutInterceptor"/>
             <!--bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/-->
         </cxf:outInterceptors>
         <!--cxf:inInterceptors>
             <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
         </cxf:inInterceptors-->
     </cxf:bus>
+
+    <bean id="casOutInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${cas.web.url}"/>
+        <property name="targetService"
+                  value="${koodisto.backend.url}/j_spring_cas_security_check"/>
+        <property name="appClientUsername" value="${auth.username}"/>
+        <property name="appClientPassword" value="${auth.password}"/>
+    </bean>
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
 
     <jaxws:client id="koodiService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
@@ -45,10 +54,10 @@
                   address="${KoodistoService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
     <jaxws:client id="koodiAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiAdminService"
-                  address="${KoodiAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
+                  address="${KoodiAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
     <jaxws:client id="koodistoAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
-                  address="${KoodistoAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
+                  address="${KoodistoAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
 
     <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
 
