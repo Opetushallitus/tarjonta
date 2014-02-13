@@ -49,7 +49,7 @@ public class AllowAllCorsRequestsFilter implements Filter {
             String headerOrigin = req.getHeader("Origin");
 
             if (headerOrigin != null) {
-                LOG.info("  fixing CORS --> allow: '{}'", headerOrigin);
+                LOG.debug("  fixing CORS --> allow: '{}'", headerOrigin);
 
                 HttpServletResponse res = (HttpServletResponse) response;
                 res.addHeader("Access-Control-Allow-Origin", headerOrigin);
