@@ -32,11 +32,13 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -68,7 +70,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private OIDService oidService;
 
     @Override
-    public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
+    public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
         LOG.debug("search({})", params);
 
         MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
@@ -122,21 +124,35 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             params = new GenericSearchParamsV1RDTO();
         }
 
-        List<OidV1RDTO> tmp = new ArrayList<OidV1RDTO>();
-        ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
-        result.setParams(params);
 
         List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+        ResultV1RDTO<List<String>> result = new ResultV1RDTO<List<String>>(oidList);
+        result.setParams(params);
 
-        for (String oid : oidList) {
-            OidV1RDTO dto = new OidV1RDTO();
-            dto.setOid(oid);
-            tmp.add(dto);
-        }
 
         LOG.debug(" --> result = {}", result);
 
         return result;
+    }
+
+    public ResultV1RDTO<List<HakuV1RDTO>> multiGet(List<String> oids) {
+        if(oids.size()==0) {
+            return new ResultV1RDTO<List<HakuV1RDTO>>(Collections.EMPTY_LIST, ResultStatus.OK);
+        }
+        List<Haku> hakus = hakuDAO.findByOids(oids);
+        
+        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(
+                hakuDtos);
+        for (Haku haku : hakus) {
+            HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku, false);
+            hakuDtos.add(hakuV1RDTO);
+        }
+
+        resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+        return resultV1RDTO;
+
     }
 
     @Override
@@ -144,6 +160,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         List<Haku> hakus = hakuDAO.findAll();
 
+        
         LOG.debug("FOUND  : {} hakus", hakus.size());
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
