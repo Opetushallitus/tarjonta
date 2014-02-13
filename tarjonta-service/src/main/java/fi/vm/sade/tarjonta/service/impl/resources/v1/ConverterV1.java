@@ -76,7 +76,6 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * API V1 converters to/from model/domain.
@@ -219,19 +218,6 @@ public class ConverterV1 {
         }
 
         return haku;
-    }
-
-
-    private Hakuaika convertHakuaikaV1RDTOToHakuaika(HakuaikaV1RDTO hakuaikaV1RDTO) {
-
-        Hakuaika hakuaika = new Hakuaika();
-
-        hakuaika.setSisaisenHakuajanNimi(hakuaikaV1RDTO.getNimi());
-        hakuaika.setAlkamisPvm(hakuaikaV1RDTO.getAlkuPvm());
-        hakuaika.setPaattymisPvm(hakuaikaV1RDTO.getLoppuPvm());
-
-        return hakuaika;
-
     }
 
 
