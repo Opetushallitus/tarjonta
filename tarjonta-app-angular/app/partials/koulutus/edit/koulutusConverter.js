@@ -110,7 +110,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         },
         RELATIONS: {
             tutkintonimikes: {},
-            opintojenLaajuusarvos: {}
+            opintojenLaajuusarvos: {skipApiModel : true}
         }, COMBO: {
             //in correct place
             suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
@@ -351,7 +351,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.RELATIONS, function(value, key) {
-            apiModel[key] = {'uris': {}};
+            if (angular.isUndefined(value.skipApiModel) && !value.skipApiModel) {
+                apiModel[key] = {'uris': {}};
+            }
         });
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {
