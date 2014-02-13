@@ -76,8 +76,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             LOG.debug("  count not specified, autolimit search to {} entries!", count);
         }
 
-        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.debug("  result={}", result);
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince,false));
+        LOG.debug("  result count ={}", result.size());
         return result;
     }
 
